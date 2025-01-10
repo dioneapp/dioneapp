@@ -18,6 +18,7 @@
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "utf-8-validate": "^6.0.5",
+    "winston": "^3.17.0",
     "ws": "^8.18.0"
   },
   "devDependencies": {

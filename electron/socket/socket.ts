@@ -1,8 +1,10 @@
 import { Server } from 'socket.io';
 import { ipcMain } from 'electron';
 import http from 'http';
+import logger from '../server/utils/logger';
 
 export const start = (httpServer: http.Server) => {
+    logger.info('Starting connection server...');
     const io = new Server(httpServer, {
         cors: {
             origin: '*',
@@ -25,7 +27,8 @@ export const start = (httpServer: http.Server) => {
         });
     });
 
-    console.log('socket initialized successfully');
     // send alert to close loading window and open main window
+    logger.info('Socket connection works successfully');
+
     ipcMain.emit('socket-ready');
 }

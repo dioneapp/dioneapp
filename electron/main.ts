@@ -1,7 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import { start as startServer, stop as stopServer } from './server/server.js'
+import { start as startServer, stop as stopServer } from './server/server'
+import logger from './server/utils/logger'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -102,21 +103,24 @@ app.on('activate', () => {
 })
 
 app.whenReady().then(() => {
+  logger.info('Starting app...');
   createLoadingWindow();
   startServer();
 
   ipcMain.on('socket-ready', () => {
-    console.log('alert received');
+    logger.info('server started successfully');
     if (loadingWin) {
       loadingWin.close();
     }
     createWindow();
+    logger.info('App started successfully');
   });
 
   // IPC listener
   ipcMain.on('app:close', () => {
     stopServer();
     app.quit();
+    logger.info('App stopped successfully');
   });
   ipcMain.on('app:minimize', () => {
     if (win) {
