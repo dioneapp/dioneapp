@@ -1,8 +1,9 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, globalShortcut, ipcMain, shell } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { start as startServer, stop as stopServer } from './server/server'
 import logger from './server/utils/logger'
+import { getCurrentPort } from './server/utils/getPort'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -67,6 +68,12 @@ function createWindow() {
     titleBarStyle: 'hidden'
   })
 
+  if (win) {
+    win.webContents.on('console-message', (message, line, sourceId) => {
+      console.log(`[Renderer Console] ${message} (at ${sourceId}:${line})`);
+    });
+  }
+
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
@@ -80,6 +87,9 @@ function createWindow() {
   }
 
   win.removeMenu()
+  if (process.env.DEV) {
+    win.webContents.openDevTools()
+  }
 }
 
 app.setName('Dione')
@@ -107,6 +117,12 @@ app.whenReady().then(() => {
   createLoadingWindow();
   startServer();
 
+  // listen shortcuts
+  globalShortcut.register('Control+R', () => {
+    console.log('Ctrl+R shortcut triggered');
+    win?.reload();
+  })
+
   ipcMain.on('socket-ready', () => {
     logger.info('server started successfully');
     if (loadingWin) {
@@ -114,6 +130,12 @@ app.whenReady().then(() => {
     }
     createWindow();
     logger.info('App started successfully');
+  });
+
+  ipcMain.on('socket-error', () => {
+    logger.error('Socket connection failed');
+    win?.close();
+    createLoadingWindow();
   });
 
   // IPC listener
@@ -129,4 +151,24 @@ app.whenReady().then(() => {
       loadingWin?.minimize();
     }
   });
+
+
+  // get actual port
+  async function getPort() {
+    const port = await getCurrentPort();
+    return port;
+  }
+
+  ipcMain.handle('get-current-port', async () => {
+    console.log('getting current port...');
+    const port = await getPort();
+    console.log('current port:', port);
+    return port
+  });
+
+  // open external link
+  ipcMain.on('open-external-link', (_event, url) => {
+    shell.openExternal(url)
+  })
+
 });
