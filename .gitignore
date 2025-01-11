@@ -26,3 +26,9 @@ dist-ssr
 # Release
 release/
 dist-electron/
+
+# env
+.env
+
+# deeivihh stuff
+.notes
