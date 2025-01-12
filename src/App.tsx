@@ -3,6 +3,7 @@ import Loading from "./pages/loading";
 import Titlebar from "./components/layout/titlebar";
 import Home from "./pages/home";
 import Sidebar from "./components/layout/sidebar";
+import Install from "./pages/install";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/loading" element={<Loading />} />
+      <Route path="/install/:id" element={<Install />} />
       </Routes>
       </div>
     </div>

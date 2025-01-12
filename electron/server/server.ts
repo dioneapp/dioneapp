@@ -15,9 +15,9 @@ export const start = async () => {
         // get available port
         const port = await getAvailablePort();
         // socket
-        setupSocket(httpServer)
+        const io = setupSocket(httpServer)
         // routes 
-        setupRoutes(server)
+        setupRoutes(server, io)
 
         httpServer.listen(port, () => {
             logger.info('Backend server started on http://localhost:' + port);

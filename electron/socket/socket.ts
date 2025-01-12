@@ -22,9 +22,8 @@ export const start = (httpServer: http.Server) => {
 
             socket.emit('message', 'Welcome to the WebSocket server!');
 
-            socket.on('clientMessage', (data) => {
-                console.log('Received message from client:', data);
-                socket.emit('serverMessage', 'Message received: ' + data);
+            socket.on('installUpdate', (data) => {
+                console.log('Received message from server:', data);
             });
 
             socket.on('disconnect', () => {
@@ -32,11 +31,13 @@ export const start = (httpServer: http.Server) => {
             });
         });
 
-        // send alert to close loading window and open main window
         logger.info('Socket connection works successfully');
         ipcMain.emit('socket-ready');
+        
+        return io;  
     } catch (error) {
         logger.error('Failed to start socket connection:', error);
         ipcMain.emit('socket-error');
+        throw error;
     }
-}
+};

@@ -1,11 +1,11 @@
 export default function Loading() {
     return (
-        <div className="h-full w-full">
-            <div className="fixed inset-0 flex justify-center items-center">
+        <div className="h-full w-full relative">
+            <div className="absolute inset-0 flex justify-center items-center">
                 <div
                 className="absolute bg-white h-[70vh] w-[70vh] rounded-full blur-3xl opacity-[0.01]"
                 />
-                <div className="bg-purple-500 opacity-10 h-[50vh] w-[50vh] rounded-full blur-2xl" />
+                <div className="bg-[#BCB1E7] opacity-10 h-[50vh] w-[50vh] rounded-full blur-2xl" />
             </div>
             <div className="flex flex-col items-center justify-center h-full w-full ">
                 <div className="flex flex-col items-center justify-center h-full w-full">

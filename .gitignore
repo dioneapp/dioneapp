@@ -30,5 +30,8 @@ dist-electron/
 # env
 .env
 
+# installed apps
+apps/
+
 # deeivihh stuff
 .notes

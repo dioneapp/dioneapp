@@ -19,6 +19,10 @@ body {
     -webkit-app-region: drag
 }
 
+#no-draggable {
+    -webkit-app-region: no-drag
+}
+
 #minimize-button {
     -webkit-app-region: no-drag
 }
