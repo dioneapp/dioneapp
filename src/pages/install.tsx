@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { io } from "socket.io-client";
 import { getCurrentPort } from "../utils/getPort";
 import Loading from "./loading";
-import { io } from "socket.io-client";
+import CopyIcon from "../../public/copy.svg";
 
 export default function Install() {
     const [loading, setLoading] = useState<boolean>(true);
@@ -81,6 +82,13 @@ export default function Install() {
         }
     }
 
+    // Copy logs to clipboard
+    const copyLogsToClipboard = () => {
+        const logsText = logs.join("\n");
+        navigator.clipboard
+            .writeText(logsText)
+    };
+
     return (
         <div className="flex flex-col items-start justify-start p-8 h-screen w-screen">
             {loading ? (
@@ -95,15 +103,23 @@ export default function Install() {
                         </div>
                     </div>
                     <p className="text-xs text-neutral-300">
-                        link: <span className="select-all">{data?.script_url}</span>
+                        <span className="select-all">{data?.script_url}</span>
                     </p>
-                    <div className="mt-24 w-full h-full border bg-neutral-800">
+                    <div className="mt-24 w-full h-full border border-white/10 bg-neutral-800 rounded-lg relative">
                         <div className="flex flex-col gap-2 w-full h-full overflow-auto p-4">
                             {logs.map((log, index) => (
                                 <p className="text-xs text-neutral-300" key={index}>
                                     {log || "loading"}
                                 </p>
                             ))}
+                        </div>
+                        <div className="absolute bottom-4 right-4">
+                            <button
+                                className="w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-medium py-1 px-4 text-center"
+                                onClick={copyLogsToClipboard}
+                            >
+                                <img src={CopyIcon} alt="Close App" className="h-4 w-4" />
+                            </button>
                         </div>
                     </div>
                 </div>
