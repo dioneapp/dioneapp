@@ -4,7 +4,7 @@
   "appId": "6969",
   "asar": true,
   "productName": "Dione",
-  "copyright": "Copyright © 2025 AI Hispano",
+  "copyright": "Copyright © 2025 Dione",
   "directories": {
     "output": "release/${version}"
   },

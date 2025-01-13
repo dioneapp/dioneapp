@@ -34,10 +34,10 @@ function createLoadingWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
-    width: 1200,
-    height: 800,
-    minWidth: 700,
-    minHeight: 700,
+    width: 1472,
+    height: 828,
+    minWidth: 1280,
+    minHeight: 720,
     title: 'Loading Dione',
     center: true,
     titleBarStyle: 'hidden'
@@ -59,10 +59,10 @@ function createWindow() {
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
-    width: 1200,
-    height: 800,
-    minWidth: 700,
-    minHeight: 700,
+    width: 1472,
+    height: 828,
+    minWidth: 1280,
+    minHeight: 720,
     title: 'Dione',
     center: true,
     titleBarStyle: 'hidden'
