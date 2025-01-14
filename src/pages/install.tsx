@@ -89,6 +89,23 @@ export default function Install() {
             .writeText(logsText)
     };
 
+    // Trigger uninstall
+    async function uninstall() {
+        try {
+            const port = await getCurrentPort();
+            const response = await fetch(`http://localhost:${port}/delete/${data?.name}`, {
+                method: "GET",
+            });
+
+            if (response.ok) {
+                setLogs((prevLogs) => [...prevLogs, "App uninstalled successfully"]);
+            }
+        } catch (error) {
+            console.error("Error initiating uninstall:", error);
+            setLogs((prevLogs) => [...prevLogs, "Error initiating uninstall"]);
+        }
+    }
+
     return (
         <div className="flex flex-col items-start justify-start p-8 h-screen w-screen">
             {loading ? (
@@ -102,10 +119,16 @@ export default function Install() {
                             <a href="/">no</a>
                         </div>
                     </div>
+                    <div className="flex gap-4">
+                        <p className="font-semibold">Uninstall {data?.name}?</p>
+                        <div className="flex gap-4">
+                            <button onClick={uninstall}>yes</button>
+                        </div>
+                    </div>
                     <p className="text-xs text-neutral-300">
                         <span className="select-all">{data?.script_url}</span>
                     </p>
-                    <div className="mt-24 w-full h-full border border-white/10 bg-neutral-800 rounded-lg relative">
+                    <div className="mt-auto w-full h-full max-h-96 border border-white/10 bg-neutral-800 rounded-lg relative">
                         <div className="flex flex-col gap-2 w-full h-full overflow-auto p-4">
                             {logs.map((log, index) => (
                                 <p className="text-xs text-neutral-300" key={index}>
