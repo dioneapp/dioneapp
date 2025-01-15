@@ -11,7 +11,7 @@ export const setupRoutes = (server: Express, io: Server) => {
         io.emit('message', 'Someone connected');
     });
 
-    server.get('/discovery', (_req, res) => {
+    server.get('/explore', (_req, res) => {
         async function getData() {
             const { data, error } = await supabase
                 .from('scripts')
@@ -26,6 +26,24 @@ export const setupRoutes = (server: Express, io: Server) => {
         }
         getData();
     });
+
+    server.get('/featured', (_req, res) => {
+        async function getData() {
+            const { data, error } = await supabase
+                .from('scripts')
+                .select('*')
+                .order('likes', { ascending: false }) 
+                .limit(4); 
+            if (error) {
+                console.error(error);
+                res.send(error);
+            } else {
+                res.send(data);
+            }
+        }
+        getData();
+    });
+    
     server.get('/search/:id', (req, res) => {
         async function getData() {
             console.log('searching for id:', req.params.id);
