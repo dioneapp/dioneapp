@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { getCurrentPort } from "../utils/getPort";
 import Loading from "./loading";
 import CopyIcon from "../../public/copy.svg";
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Install() {
     const [loading, setLoading] = useState<boolean>(true);
     const [data, setData] = useState<any | undefined>(undefined);
     const [logs, setLogs] = useState<string[]>([]);
     const { id } = useParams<{ id: string }>();
+    const [showLogs, setShowLogs] = useState<boolean>(false); 
 
     // Fetch script data
     useEffect(() => {
@@ -22,131 +24,170 @@ export default function Install() {
                         "Content-Type": "application/json",
                     },
                 });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const script = await response.json();
                 console.log("script retrieved:", script);
                 setData(script[0]);
-                setLoading(false);
             } catch (error) {
                 console.error("Error fetching data:", error);
                 setLogs((prevLogs) => [...prevLogs, "Error fetching script data"]);
+            } finally {
+                setLoading(false); 
             }
         }
 
         getData();
     }, [id]);
 
-    // Set up socket connection
+
     useEffect(() => {
+        let socket: any = null; 
+
         async function setupSocket() {
-            const port = await getCurrentPort();
-            const socket = io(`http://localhost:${port}`);
+            try {
+                const port = await getCurrentPort();
+                socket = io(`http://localhost:${port}`); 
 
-            socket.on("clientUpdate", (message: string) => {
-                console.log("Received log:", message);
-                setLogs((prevLogs) => [...prevLogs, message]);
-            });
+                socket.on("clientUpdate", (message: string) => {
+                    console.log("Received log:", message);
+                    setLogs((prevLogs) => [...prevLogs, message]);
+                });
 
-            socket.on("connect", () => {
-                console.log("Connected to socket:", socket.id);
-                setLogs((prevLogs) => [...prevLogs, "Socket connected"]);
-            });
+                socket.on("connect", () => {
+                    console.log("Connected to socket:", socket.id);
+                    setLogs((prevLogs) => [...prevLogs, "Socket connected"]);
+                });
 
-            socket.on("disconnect", () => {
-                console.log("Socket disconnected");
-                setLogs((prevLogs) => [...prevLogs, "Socket disconnected"]);
-            });
+                socket.on("disconnect", () => {
+                    console.log("Socket disconnected");
+                    setLogs((prevLogs) => [...prevLogs, "Socket disconnected"]);
+                });
 
-            socket.on("installUpdate", (message: string) => {
-                console.log("Received action update:", message);
-                setLogs((prevLogs) => [...prevLogs, message]);
-            });
+                socket.on("installUpdate", (message: string) => {
+                    console.log("Received action update:", message);
+                    setLogs((prevLogs) => [...prevLogs, message]);
+                });
+            } catch (error) {
+                console.error("Error setting up socket:", error);
+                setLogs((prevLogs) => [...prevLogs, "Error setting up socket"]);
+            }
 
-            return () => {
-                socket.disconnect();
-            };
         }
 
         setupSocket();
+        return () => {
+            if (socket) {
+                socket.disconnect();
+            }
+        };
+
     }, []);
 
-    // Trigger download
     async function download() {
         try {
             const port = await getCurrentPort();
             await fetch(`http://localhost:${port}/download/${id}`, {
                 method: "GET",
             });
+            setShowLogs(true);
         } catch (error) {
             console.error("Error initiating download:", error);
             setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
         }
     }
 
-    // Copy logs to clipboard
+
     const copyLogsToClipboard = () => {
         const logsText = logs.join("\n");
         navigator.clipboard
             .writeText(logsText)
     };
 
-    // Trigger uninstall
-    async function uninstall() {
-        try {
-            const port = await getCurrentPort();
-            const response = await fetch(`http://localhost:${port}/delete/${data?.name}`, {
-                method: "GET",
-            });
-
-            if (response.ok) {
-                setLogs((prevLogs) => [...prevLogs, "App uninstalled successfully"]);
-            }
-        } catch (error) {
-            console.error("Error initiating uninstall:", error);
-            setLogs((prevLogs) => [...prevLogs, "Error initiating uninstall"]);
-        }
-    }
-
+    const handleDownload = () => {
+        download();
+    };
+    
     return (
-        <div className="flex flex-col items-start justify-start p-8 h-screen w-screen">
-            {loading ? (
-                <Loading />
-            ) : (
-                <div className="flex flex-col gap-2 w-full h-full">
-                    <div className="flex gap-4">
-                        <p className="font-semibold">Download {data?.name}?</p>
-                        <div className="flex gap-4">
-                            <button onClick={download}>yes</button>
-                            <a href="/">no</a>
-                        </div>
-                    </div>
-                    <div className="flex gap-4">
-                        <p className="font-semibold">Uninstall {data?.name}?</p>
-                        <div className="flex gap-4">
-                            <button onClick={uninstall}>yes</button>
-                        </div>
-                    </div>
-                    <p className="text-xs text-neutral-300">
-                        <span className="select-all">{data?.script_url}</span>
-                    </p>
-                    <div className="mt-auto w-full h-full max-h-96 border border-white/10 bg-neutral-800 rounded-lg relative">
-                        <div className="flex flex-col gap-2 w-full h-full overflow-auto p-4">
-                            {logs.map((log, index) => (
-                                <p className="text-xs text-neutral-300" key={index}>
-                                    {log || "loading"}
-                                </p>
-                            ))}
-                        </div>
-                        <div className="absolute bottom-4 right-4">
-                            <button
-                                className="w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-medium py-1 px-4 text-center"
-                                onClick={copyLogsToClipboard}
+        <div className="relative min-h-screen w-full overflow-hidden select-none">
+            <div className="relative min-h-screen backdrop-blur-xl flex items-center justify-center p-8">
+                {loading ? (
+                    <div className="text-white">Loading...</div>
+                ) : (
+                    <AnimatePresence>
+                        {!showLogs && (
+                            <motion.div
+                                key="actions"
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.2 }}
+                                className="flex flex-col gap-6 w-full max-w-xl"
                             >
-                                <img src={CopyIcon} alt="Close App" className="h-4 w-4" />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+                                <div className="bg-neutral-800/80 p-6 rounded-2xl shadow-lg relative overflow-hidden max-w-xl w-full border border-white/10 backdrop-blur-md">
+                                    <div className="flex gap-4">
+                                        <img
+                                            src={data?.logo_url || "/icon.svg"}
+                                            alt={`${data?.name} icon`}
+                                            className="h-16 w-16 rounded-xl border border-white/10 object-cover object-center group-hover:border-white/20 transition-all duration-200"
+                                        />
+                                        <div className="flex flex-col pointer-events-none">
+                                            <h1 className="text-2xl font-semibold mb-1 truncate text-white">{data?.name}</h1>
+                                            <p className="text-xs text-[#BCB1E7] mb-1">
+                                                {data?.script_url}
+                                            </p>
+                                            <p className="text-xs text-[#BCB1E7]">
+                                                Published by @{data?.author}
+                                            </p>
+                                            <p className="text-xs text-neutral-400 mb-6 mt-2">
+                                                {data?.description}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex justify-center gap-2 w-full">
+                                        <button
+                                            onClick={handleDownload}
+                                            className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+                                        >
+                                            Download
+                                        </button>
+
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {showLogs && (
+                            <motion.div
+                                key="logs"
+                                initial={{ opacity: 0, height: 0, y: 20 }}
+                                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                                exit={{ opacity: 0, height: 0, y: -20 }}
+                                transition={{ duration: 0.3 }}
+                                className="bg-neutral-800/80 rounded-2xl shadow-lg relative overflow-hidden max-w-xl w-full border border-white/10 backdrop-blur-md"
+                            >
+                                <div className="max-h-96 overflow-auto p-4 pointer-events-none">
+                                    {logs.map((log, index) => (
+                                        <p className="text-xs text-neutral-300 whitespace-pre-wrap" key={index}>
+                                            {log || "loading"}
+                                        </p>
+                                    ))}
+                                </div>
+                                <div className="absolute bottom-4 right-4">
+                                    <button
+                                        className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
+                                        onClick={copyLogsToClipboard}
+                                    >
+                                        <img src={CopyIcon} alt="Copy Logs" className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                )}
+            </div>
         </div>
     );
-}
+};
