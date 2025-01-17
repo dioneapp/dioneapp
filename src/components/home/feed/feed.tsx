@@ -6,10 +6,11 @@ import { Script } from "./types.ts";
 
 interface ScriptListProps {
   endpoint: string;
+  type?: string;
   className?: string;
 }
 
-export default function List({ endpoint, className = "" }: ScriptListProps) {
+export default function List({ endpoint, type, className = "" }: ScriptListProps) {
   const [port, setPort] = useState<number | null>(null);
   const [scripts, setScripts] = useState<Script[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,7 +58,7 @@ export default function List({ endpoint, className = "" }: ScriptListProps) {
   }, [port, endpoint]);
 
 
-  if (loading) {
+  if (loading && type != 'explore') {
     return <Loading />;
   }
 
