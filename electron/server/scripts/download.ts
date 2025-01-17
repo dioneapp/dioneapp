@@ -4,13 +4,13 @@ import { Response } from 'express';
 import { Server as SocketIO } from 'socket.io';
 import { supabase } from '../utils/database';
 import logger from '../utils/logger';
-import { ActionRunner } from './runner';
 import * as git from 'isomorphic-git';
 import http from 'isomorphic-git/http/node';
+import { runActions } from './runner';
 
 export async function getScripts(id: string, res: Response, io: SocketIO): Promise<void> {
   const root = process.cwd();
-  io.emit('installUpdate', `Searching ${id} script in database...`);
+  io.emit('installUpdate', `Searching script in database...`);
 
   // get script from db
   const { data, error } = await supabase
@@ -47,6 +47,9 @@ export async function getScripts(id: string, res: Response, io: SocketIO): Promi
       depth: 1,
     });
 
+    // run install 
+    await runActions(saveDirectory, io);
+
     io.emit('installUpdate', 'All files cloned successfully.');
     res.status(200).send('All files cloned successfully.');
   } catch (err) {
@@ -54,9 +57,4 @@ export async function getScripts(id: string, res: Response, io: SocketIO): Promi
     res.status(500).send('Error cloning scripts.');
     logger.error(`Error cloning scripts from ${data.name}:`, err);
   }
-  
-  // run install 
-  const runner = new ActionRunner(io);
-  const scriptPath = path.join(saveDirectory, "install.js")
-  await runner.runActions(scriptPath, saveDirectory);
 }

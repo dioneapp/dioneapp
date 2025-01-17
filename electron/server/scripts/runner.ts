@@ -1,90 +1,140 @@
-import { exec } from 'child_process';
 import * as fs from 'fs';
-import * as path from 'path';
+import path from 'path';
+import { exec } from 'child_process';
 import { Server } from 'socket.io';
-import { promisify } from 'util';
+import logger from '../utils/logger';
 
-const execAsync = promisify(exec);
-
-// run shell command
-async function runCommand(command: string, directory: string, io: Server, venv: string | null) {
-  io.emit('installUpdate', `Executing '${command}' in ${directory}`);
-
-  if (venv) {
-    command = `${path.join(venv, 'Scripts', 'activate')} && ${command}`;
-  }
-
-  try {
-    const { stdout, stderr } = await execAsync(command, { cwd: directory });
-    if (stdout) io.emit('installUpdate', stdout);
-    if (stderr) io.emit('installUpdate', stderr);
-  } catch (error: any) {
-    throw new Error(`Error executing '${command}': ${error.message}`);
-  }
+interface Command {
+    name: string;
+    type: string;
+    commands: string[];
+    'not-required'?: boolean;
 }
 
-export class ActionRunner {
-  constructor(private io: Server) {}
+interface Action {
+    dependencies?: { [key: string]: { version: string } };
+    installation?: Command[];
+    start?: Command[];
+    stop?: Command[];
+    uninstall?: Command[];
+}
 
-  // run script actions
-  async runActions(scriptPath: string, workingDirectory: string) {
+const runCommand = (command: string, io: Server, workingDir: string): Promise<void> => {
+  if (command.endsWith('.bat')) {
+    command = `cmd /c start "" "${command}"`;
+  }
+  
+    return new Promise((resolve, reject) => {
+        exec(command, { cwd: workingDir, }, (error, stdout, stderr) => {
+            if (error) {
+                logger.error("Error executing command:", command);
+                logger.error(stderr);
+                io.emit('installUpdate', 'Error executing command:', command);
+                io.emit('installUpdate', stderr);
+                reject(error);
+            } else {
+                logger.info("Command executed:", command);
+                logger.info(stdout);
+                io.emit('installUpdate', stdout);
+                resolve();
+            }
+        });
+    });
+};
+
+const executeActions = async (actions: Action, io: Server, workingDir: string) => {
+    io.emit('installUpdate', 'Executing actions...');
+    if (actions.installation) {
+        io.emit('installUpdate', 'Installing...');
+        for (const command of actions.installation) {
+            io.emit('installUpdate', `Executing step: ${command.name}`);
+            for (const cmd of command.commands) {
+                if (cmd.startsWith('cd')) {
+                    io.emit('installUpdate', `Changing directory to ${cmd.split(' ')[1]}`);
+                    const newDir = cmd.split(' ')[1];
+                    workingDir = path.join(workingDir, newDir);
+                } else {
+                  await runCommand(cmd, io, workingDir);
+                }
+            }
+        }
+    }
+};
+
+export const startScript = async (workingDir: string, io: Server) => {
     try {
-      const content = fs.readFileSync(scriptPath, 'utf-8');
-      const data = eval('(' + content.replace('module.exports =', '').trim() + ')');
-      const actions = data.run || [];
-      const args = data.args || {};
+        io.emit('installUpdate', 'Starting script...');
+        const dioneFile = path.join(workingDir, 'dione.json');
+        const data = fs.readFileSync(dioneFile, 'utf8');
+        const actions: Action = JSON.parse(data);
 
-      // get platform and gpu
-      const platform = process.platform;
-      const gpu = args.gpu || 'unknown';
-
-      for (const { method, params, when } of actions) {
-        // evaluate condition 
-        if (when && !this.evaluateCondition(when, { platform, gpu, args })) {
-          this.io.emit('info', `Skipping: ${method} due to condition: ${when}`);
-          continue;
+        if (actions.start) {
+            io.emit('installUpdate', 'Starting...');
+            for (const command of actions.start) {
+                io.emit('installUpdate', `${command.name}`);
+                for (const cmd of command.commands) {
+                    await runCommand(cmd, io, workingDir);
+                }
+            }
+        } else {
+            io.emit('installUpdate', 'No start commands found.');
         }
-
-        this.io.emit('info', `Executing: ${method}`);
-
-        if (method === 'shell.run') {
-          // run shell command
-          const commands = Array.isArray(params.message) ? params.message : [params.message];
-          const actionDir = params.path ? path.join(workingDirectory, params.path) : workingDirectory;
-          for (const cmd of commands) {
-            await runCommand(cmd, actionDir, this.io, params.venv);
-          }
-        } else if (method === 'script.start') {
-          // run other script
-          const fullPath = path.join(workingDirectory, params.uri);
-          await this.runScript(fullPath, params.params);
-        }
-      }
-
-      this.io.emit('installUpdate', 'All finished successfully');
-    } catch (error: any) {
-      this.io.emit('installUpdate', `An error occurred: ${error.message}`);
-      throw error;
+    } catch (error) {
+        console.error('Error starting script:', error);
     }
-  }
-
-  // run other script
-  async runScript(scriptPath: string, params: any) {
-    if (params.uri) {
-      this.io.emit('installUpdate', `Executing '${params.uri}' in ${params.path}`);
-      await this.runActions(scriptPath, params.path);
-    }
-  }
-
-  // evaluate conditions
-  private evaluateCondition(condition: string, context: { platform: string; gpu: string; args: any }): boolean {
-    const evalCondition = condition
-      .replace(/{{platform}}/g, `'${context.platform}'`)
-      .replace(/{{gpu}}/g, `'${context.gpu}'`)
-      .replace(/{{args && args.venv ? args.venv : null}}/g, context.args.venv ? `'${context.args.venv}'` : 'null')
-      .replace(/{{args && args.path ? args.path : '.'}}/g, context.args.path ? `'${context.args.path}'` : "'.'")
-      .replace(/{{args && args.xformers ? 'xformers' : ''}}/g, context.args.xformers ? "'xformers'" : "''");
-
-    return eval(evalCondition);
-  }
 }
+
+export const stopScript = async (workingDir: string, io: Server) => {
+    try {
+        io.emit('installUpdate', 'Stopping script...');
+        const dioneFile = path.join(workingDir, 'dione.json');
+        const data = fs.readFileSync(dioneFile, 'utf8');
+        const actions: Action = JSON.parse(data);
+
+        if (actions.stop) {
+            io.emit('installUpdate', 'Stopping...');
+            for (const command of actions.stop) {
+                io.emit('installUpdate', `${command.name}`);
+                for (const cmd of command.commands) {
+                    await runCommand(cmd, io, workingDir);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error stopping script:', error);
+    }
+};
+
+export const uninstallScript = async (workingDir: string, io: Server) => {
+    try {
+        io.emit('installUpdate', 'Uninstalling script...');
+        const dioneFile = path.join(workingDir, 'dione.json');
+        const data = fs.readFileSync(dioneFile, 'utf8');
+        const actions: Action = JSON.parse(data);
+
+        if (actions.uninstall) {
+            io.emit('installUpdate', 'Uninstalling...');
+            for (const command of actions.uninstall) {
+                io.emit('installUpdate', `${command.name}`);
+                for (const cmd of command.commands) {
+                    await runCommand(cmd, io, workingDir);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error uninstalling script:', error);
+    }
+};
+
+export const runActions = async (workingDir: string, io: Server) => {
+    try {
+        io.emit('installUpdate', 'Reading actions...');
+        const dioneFile = path.join(workingDir, 'dione.json');
+        const data = fs.readFileSync(dioneFile, 'utf8');
+        const actions: Action = JSON.parse(data);
+        
+        await executeActions(actions, io, workingDir);
+    } catch (error) {
+        console.error('Error reading or executing actions:', error);
+    }
+};

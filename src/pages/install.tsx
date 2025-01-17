@@ -58,12 +58,12 @@ export default function Install() {
 
                 socket.on("connect", () => {
                     console.log("Connected to socket:", socket.id);
-                    setLogs((prevLogs) => [...prevLogs, "Socket connected"]);
+                    setLogs((prevLogs) => [...prevLogs, "Connected to server"]);
                 });
 
                 socket.on("disconnect", () => {
                     console.log("Socket disconnected");
-                    setLogs((prevLogs) => [...prevLogs, "Socket disconnected"]);
+                    setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
                 });
 
                 socket.on("installUpdate", (message: string) => {
@@ -87,12 +87,12 @@ export default function Install() {
     }, []);
 
     async function download() {
+        setShowLogs(true);
         try {
             const port = await getCurrentPort();
             await fetch(`http://localhost:${port}/download/${id}`, {
                 method: "GET",
             });
-            setShowLogs(true);
         } catch (error) {
             console.error("Error initiating download:", error);
             setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
@@ -106,8 +106,8 @@ export default function Install() {
             .writeText(logsText)
     };
 
-    const handleDownload = () => {
-        download();
+    const handleDownload = async () => {
+        await download();
     };
     
     return (
