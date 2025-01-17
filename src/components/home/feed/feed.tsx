@@ -63,7 +63,7 @@ export default function List({ endpoint, type, className = "" }: ScriptListProps
   }
 
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`w-full ${className} last:mb-4`}>
       <div className="grid grid-cols-2 gap-4">
         {scripts.map((script) => (
           <ScriptCard key={script.id} script={script} />

@@ -4,7 +4,7 @@ import Featured from "../components/home/featured";
 
 export default function Home() {
   return (
-    <div className="flex flex-col h-full w-full max-w-[2000px] mx-auto mt-6">
+    <div className="flex flex-col h-full w-full max-w-[2000px] mx-auto">
       <main className="flex-1 flex flex-col overflow-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col">
           <section className="w-full h-44 relative mt-6">
@@ -25,7 +25,7 @@ export default function Home() {
                            backdrop-blur-sm z-10 px-2">
               Explore
             </h1>
-            <div className="flex-1 pb-4 px-2">
+            <div className="flex-1 px-2">
               <Explore />
             </div>
           </section>
