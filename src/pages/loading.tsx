@@ -1,6 +1,6 @@
 export default function Loading() {
     return (
-        <div className="h-full w-full relative">
+        <div className="h-full w-full relative overflow-hidden">
             <div className="absolute inset-0 flex justify-center items-center">
                 <div
                 className="absolute bg-white h-[70vh] w-[70vh] rounded-full blur-3xl opacity-[0.01]"
