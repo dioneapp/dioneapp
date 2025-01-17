@@ -7,7 +7,7 @@ export default function Ad() {
       <div className="bg-[#BCB1E7] rounded-full absolute w-44 h-24 blur-3xl"/>
         <div className="w-full px-4 py-8 mx-auto text-center z-50">
           <h2 className="text-3xl font-semibold text-center text-nowrap">
-            <span>Explore, Install, Innovate, - in 1 Click.</span>
+            <span>Explore, Install, Innovate — in 1 Click.</span>
           </h2>
         </div>
       </div>
