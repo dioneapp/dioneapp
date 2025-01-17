@@ -68,11 +68,12 @@ function createWindow() {
     titleBarStyle: 'hidden'
   })
 
-  if (win) {
-    win.webContents.on('console-message', (message, line, sourceId) => {
-      console.log(`[Renderer Console] ${message} (at ${sourceId}:${line})`);
-    });
-  }
+  // show client logs on terminal
+  // if (win) {
+  //   win.webContents.on('console-message', (message, line, sourceId) => {
+  //     console.log(`[Renderer Console] ${message} (at ${sourceId}:${line})`);
+  //   });
+  // }
 
   // Test active push message to Renderer-process.
   win.webContents.on('did-finish-load', () => {
@@ -87,9 +88,6 @@ function createWindow() {
   }
 
   win.removeMenu()
-  if (process.env.DEV) {
-    win.webContents.openDevTools()
-  }
 }
 
 app.setName('Dione')
