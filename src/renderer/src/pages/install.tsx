@@ -5,6 +5,7 @@ import { getCurrentPort } from "../utils/getPort";
 import CopyIcon from "../assets/copy.svg";
 import { motion, AnimatePresence } from 'framer-motion';
 import { openLink } from "../utils/openLink";
+import { useToast } from "@renderer/utils/useToast";
 
 export default function Install() {
     const [loading, setLoading] = useState<boolean>(true);
@@ -13,6 +14,13 @@ export default function Install() {
     const { id } = useParams<{ id: string }>();
     const [showLogs, setShowLogs] = useState<boolean>(false);
     const [_imgLoading, setImgLoading] = useState<boolean>(true);
+    const { addToast } = useToast()
+    const showToast = (variant: "default" | "success" | "error" | "warning", message: string) => {
+        addToast({
+          variant,
+          children: message,
+        })
+      }
 
     // Fetch script data
     useEffect(() => {
@@ -101,12 +109,14 @@ export default function Install() {
 
 
     const copyLogsToClipboard = () => {
+        showToast("success", "Logs successfully copied to clipboard.")
         const logsText = logs.join("\n");
         navigator.clipboard
             .writeText(logsText)
     };
 
     const handleDownload = async () => {
+        showToast("default", `Downloading ${data.name}...`)
         await download();
     };
 

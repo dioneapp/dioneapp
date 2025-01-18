@@ -4,9 +4,11 @@ import Titlebar from "./components/layout/titlebar";
 import Home from "./pages/home";
 import Sidebar from "./components/layout/sidebar";
 import Install from "./pages/install";
+import { ToastProvider } from "./utils/useToast";
 
 function App() {
   return (
+    <ToastProvider>
     <div className="h-screen w-screen">
       <Titlebar />
       <div className="flex h-full">
@@ -20,6 +22,7 @@ function App() {
         </div>
       </div>
     </div>
+    </ToastProvider>
   );
 }
 
