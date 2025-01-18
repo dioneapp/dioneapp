@@ -8,6 +8,7 @@ To get a local copy up and running, follow these simple example steps.
 #### Prerequisites
 - [Node.js](https://nodejs.org/en/download/)
 - [pnpm](https://pnpm.io/installation)
+- [NPM](https://www.npmjs.com/get-npm)
 - [Git](https://git-scm.com/downloads)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/) 
 

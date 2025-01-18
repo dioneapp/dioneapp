@@ -8,7 +8,7 @@
 	"files": {
 		"ignoreUnknown": false,
 		"ignore": [],
-		"include": ["./src/**/*.{ts,tsx}", "./electron/**/*.{ts,tsx}"]
+		"include": ["./src/**/*.{ts,tsx}"]
 	},
 	"formatter": {
 		"enabled": true,
