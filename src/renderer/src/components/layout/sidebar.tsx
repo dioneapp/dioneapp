@@ -1,7 +1,7 @@
-import { openLink } from "../../utils/openLink";
-import QuickLaunch from "./quick-launch";
 import dio from "../../assets/dio.svg";
 import settings from "../../assets/settings.svg";
+import { openLink } from "../../utils/openLink";
+import QuickLaunch from "./quick-launch";
 
 export default function Sidebar() {
     return (
@@ -18,8 +18,8 @@ export default function Sidebar() {
                     </a>
                     <p className="text-xs text-neutral-400 px-0.5">Explore, Install, Innovate — in 1 Click.</p>
                     <div className="mt-2 w-full flex gap-2 px-0.5">
-                        <button onClick={() => openLink("https://applio.org/discord")} className="text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center">Discord</button>
-                        <button onClick={() => openLink("https://github.com/dioneapp/dioneapp/issues")} className="text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1">Report a bug</button>
+                        <button onClick={() => openLink("https://getdione.app/discord")} className="text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center">Discord</button>
+                        <button onClick={() => openLink("https://getdione.app/github")} className="text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1">Report a bug</button>
                     </div>
                 </div>
                 <QuickLaunch />
@@ -27,7 +27,7 @@ export default function Sidebar() {
                 <div className="mt-4 w-full flex items-center justify-between px-2 pb-4">
                     <button
                         className="p-2 hover:bg-white/10 rounded-full transition-colors"
-                        onClick={() => {/* settings handler */ }}
+                        onClick={() => openLink("/settings")}
                     >
                         <img src={settings} alt="Settings icon" className="h-6 w-6" />
 

@@ -4,6 +4,7 @@ import Titlebar from "./components/layout/titlebar";
 import Home from "./pages/home";
 import Sidebar from "./components/layout/sidebar";
 import Install from "./pages/install";
+import Settings from "./pages/settings";
 import { ToastProvider } from "./utils/useToast";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/loading" element={<Loading />} />
             <Route path="/install/:id" element={<Install />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </div>
       </div>

@@ -6,10 +6,10 @@ export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const variantClasses = {
-  default: "bg-white/10 shadow-xl shadow-white/10",
-  success: "bg-green-500/20 shadow-xl shadow-green-500/20",
-  error: "bg-red-500/20 shadow-xl shadow-red-500/20",
-  warning: "bg-yellow-500/20 shadow-xl shadow-yellow-500/20",
+  default: "bg-white/10",
+  success: "bg-green-500/20",
+  error: "bg-red-500/20",
+  warning: "bg-yellow-500/20",
 }
 
 export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
@@ -17,10 +17,10 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
     return (
       <div
         ref={ref}
-        className={`pointer-events-auto flex w-full max-w-md rounded-xl backdrop-filter backdrop-blur-3xl shadow-lg transition-all duration-300 ease-in-out px-4 ${variantClasses[variant]} ${className}`}
+        className={`pointer-events-auto flex w-full max-w-md rounded-full backdrop-filter backdrop-blur-3xl transition-all duration-300 ease-in-out px-2 ${variantClasses[variant]} ${className}`}
         {...props}
       >
-        <div className="flex-1 p-4 text-xs text-neutral-300">{children}</div>
+        <div className="flex-1 p-2 text-xs text-neutral-300">{children}</div>
         <button
           onClick={onClose}
           className="flex items-center justify-center p-2 opacity-70 hover:opacity-100 transition-opacity"
