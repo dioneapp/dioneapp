@@ -1,6 +1,7 @@
 import { openLink } from "../../utils/openLink";
 import QuickLaunch from "./quick-launch";
 import dio from "../../assets/dio.svg";
+import settings from "../../assets/settings.svg";
 
 export default function Sidebar() {
     return (
@@ -20,9 +21,24 @@ export default function Sidebar() {
                         <button onClick={() => openLink("https://applio.org/discord")} className="text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center">Discord</button>
                         <button onClick={() => openLink("https://github.com/dioneapp/dioneapp/issues")} className="text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1">Report a bug</button>
                     </div>
-                    <div className="h-0.5 rounded-full w-full from-transparent via-white/80 to-transparent bg-gradient-to-l mt-4" />
                 </div>
                 <QuickLaunch />
+                <div className="h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l mt-6" />
+                <div className="mt-4 w-full flex items-center justify-between px-2 pb-4">
+                    <button
+                        className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                        onClick={() => {/* settings handler */ }}
+                    >
+                        <img src={settings} alt="Settings icon" className="h-6 w-6" />
+
+                    </button>
+                    <button
+                        className="text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-2 px-10 text-center"
+                        onClick={() => {/* login handler */ }}
+                    >
+                        Login
+                    </button>
+                </div>
             </div>
         </div>
     )
