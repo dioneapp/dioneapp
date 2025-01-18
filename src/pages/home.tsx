@@ -12,6 +12,7 @@ export default function Home() {
             <Ad />
           </section> */}
 
+          {/* featured section */}
           <section className="relative">
             <h1 className="text-2xl sm:text-3xl font-semibold mb-4">
               Featured
@@ -20,7 +21,8 @@ export default function Home() {
               <Featured />
             </div>
           </section>
-
+          
+          {/* explore section */}
           <section className="relative">
             <h1 className="text-2xl sm:text-3xl font-semibold mb-4">
               Explore
