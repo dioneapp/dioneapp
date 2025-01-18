@@ -1,5 +1,5 @@
-import ScriptList from "./feed/feed";
+import ScriptList from "./feed";
 
 export default function Explore() {
-  return <ScriptList endpoint="/explore" type="explore"/>;
+  return <ScriptList endpoint="/explore" type="explore" />;
 }

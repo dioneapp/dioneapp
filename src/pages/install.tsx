@@ -198,7 +198,7 @@ export default function Install() {
                                 </div>
                             </motion.div>
                         )}
-                    </AnimatePresence>
+                    </AnimatePresence> 
                 )}
             </div>
         </div>

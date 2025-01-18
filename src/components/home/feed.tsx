@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import Loading from "../../../pages/loading.tsx";
-import { getCurrentPort } from "../../../utils/getPort.ts";
-import ScriptCard from "./card.tsx";
-import { Script } from "./types.ts";
+import Loading from "../../pages/loading.tsx";
+import { getCurrentPort } from "../../utils/getPort.ts";
+import ScriptCard from "./feed/card.tsx";
+import { Script } from "./feed/types.ts";
 
 interface ScriptListProps {
   endpoint: string;
