@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import dio from "../../assets/dio.svg";
 import settings from "../../assets/settings.svg";
 import { openLink } from "../../utils/openLink";
@@ -25,13 +26,13 @@ export default function Sidebar() {
                 <QuickLaunch />
                 <div className="h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l mt-6" />
                 <div className="mt-4 w-full flex items-center justify-between px-2 pb-4">
-                    <button
+                    <Link
+                        to={"/settings"}
                         className="p-2 hover:bg-white/10 rounded-full transition-colors"
-                        onClick={() => openLink("/settings")}
                     >
                         <img src={settings} alt="Settings icon" className="h-6 w-6" />
 
-                    </button>
+                    </Link>
                     <button
                         className="text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-2 px-10 text-center"
                         onClick={() => {/* login handler */ }}
