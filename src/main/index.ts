@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain, Tray, globalShortcut } from 'electron';
+import { app, shell, BrowserWindow, ipcMain, Tray, globalShortcut, dialog } from 'electron';
 import path, { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.ico?asset';
@@ -6,9 +6,20 @@ import logger from './server/utils/logger';
 import { start as startServer, stop as stopServer } from './server/server';
 import { getCurrentPort } from './server/utils/getPort';
 
+// set default protocol client
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('dione', process.execPath, [path.resolve(process.argv[1])]);
+  } else {
+    app.setAsDefaultProtocolClient('dione');
+  }
+}
+
+// define main window
+let mainWindow;
 // Creates the main application window with specific configurations.
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     minWidth: 1200,
@@ -38,6 +49,26 @@ function createWindow() {
     return { action: 'deny' };
   });
 
+  // deep link for macos and linux
+  app.on('open-url', (url) => {
+    dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`)
+  });
+
+  // deep link for windows
+  const gotTheLock = app.requestSingleInstanceLock();
+  if (!gotTheLock) {
+    app.quit();
+    process.exit(0);
+  } else {
+    app.on('second-instance', (_event, commandLine) => {
+      if (mainWindow) {
+        if (mainWindow.isMinimized()) mainWindow.restore()
+        mainWindow.focus()
+      }
+      dialog.showErrorBox('Welcome Back', `You arrived from: ${commandLine.pop()}`)
+    })
+  }
+
   // Load renderer content (URL in development, HTML file in production)
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
@@ -45,6 +76,7 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
   }
 }
+
 
 // Sets up the application when ready.
 app.whenReady().then(() => {
