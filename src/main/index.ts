@@ -1,13 +1,13 @@
-import { app, shell, BrowserWindow, ipcMain, Tray, globalShortcut } from 'electron'
-import path, { join } from 'path'
-import { electronApp, optimizer, is } from '@electron-toolkit/utils'
-import icon from '../../resources/icon.ico?asset'
-import logger from './server/utils/logger'
-import { start as startServer, stop as stopServer } from './server/server'
-import { getCurrentPort } from './server/utils/getPort'
+import { app, shell, BrowserWindow, ipcMain, Tray, globalShortcut } from 'electron';
+import path, { join } from 'path';
+import { electronApp, optimizer, is } from '@electron-toolkit/utils';
+import icon from '../../resources/icon.ico?asset';
+import logger from './server/utils/logger';
+import { start as startServer, stop as stopServer } from './server/server';
+import { getCurrentPort } from './server/utils/getPort';
 
-function createWindow(): void {
-  // Create the browser window.
+// Creates the main application window with specific configurations.
+function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -20,114 +20,100 @@ function createWindow(): void {
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
-    }
-  })
+      sandbox: false,
+    },
+  });
 
-  // remove menu
+  // Remove default menu from the window
   mainWindow.removeMenu();
 
+  // Show the window when ready
   mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
+    mainWindow.show();
+  });
 
+  // Prevent opening new windows and handle external links
   mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
+    shell.openExternal(details.url);
+    return { action: 'deny' };
+  });
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
+  // Load renderer content (URL in development, HTML file in production)
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
+    mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
   }
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+// Sets up the application when ready.
 app.whenReady().then(() => {
   logger.info('Starting app...');
 
-  // set tray
+  // Set up tray icon
   app.setName('Dione');
   const appIcon = new Tray(path.join(__dirname, '../../resources/icon.ico'));
-  electronApp.setAppUserModelId('Dione')
-  appIcon.setToolTip("Dione");
+  electronApp.setAppUserModelId('Dione');
+  appIcon.setToolTip('Dione');
 
-  // start server
+  // Start the server
   startServer();
 
-  // shortcuts
+  // Register global shortcuts
   globalShortcut.register('Control+R', () => {
     console.log('Ctrl+R shortcut triggered');
     BrowserWindow.getFocusedWindow()?.reload();
-  })
+  });
 
-  // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production.
-  // see https://github.com/alex8088/electron-toolkit/tree/master/packages/utils
+  // Automatically manage development shortcuts and production optimizations
   app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window)
-  })
+    optimizer.watchWindowShortcuts(window);
+  });
 
-  // socket stuff
+  // Set up IPC handlers
   ipcMain.on('socket-ready', () => {
-    logger.info('server started successfully');
+    logger.info('Server started successfully');
   });
 
   ipcMain.on('socket-error', () => {
     logger.error('Socket connection failed');
   });
 
-  // IPC test
-  ipcMain.on('ping', () => console.log('pong'))
+  ipcMain.on('ping', () => console.log('pong'));
 
-  // IPC listener
   ipcMain.handle('app:close', () => {
     stopServer();
     app.quit();
     logger.info('App stopped successfully');
   });
+
   ipcMain.handle('app:minimize', () => {
     BrowserWindow.getFocusedWindow()?.minimize();
   });
 
-  // utils
-  // get actual port
-  async function getPort() {
+  // Retrieve the current port
+  ipcMain.handle('get-current-port', async () => {
     const port = await getCurrentPort();
     return port;
-  }
-  ipcMain.handle('get-current-port', async () => {
-    const port = await getPort();
-    return port
   });
 
-  // open external link
+  // Open external links
   ipcMain.handle('open-external-link', (_event, url) => {
-    shell.openExternal(url)
-  })
+    shell.openExternal(url);
+  });
 
-  createWindow()
+  // Create the main application window
+  createWindow();
 
-  app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
-})
+  // Handle reactivation of the app (e.g., clicking the dock icon on macOS)
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+});
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+// Quit the application when all windows are closed, except on macOS.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit()
+    app.quit();
   }
-})
-
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
+});
