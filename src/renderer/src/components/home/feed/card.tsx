@@ -16,7 +16,7 @@ function ScriptCard({ script }: ScriptCardProps) {
       to={`/install/${script.id}`}
       className="group flex gap-4 h-auto min-h-[120px] border border-white/10 hover:border-white/20 
                 bg-gradient-to-r from-[#BCB1E7]/5 to-transparent backdrop-blur-3xl 
-                rounded-lg p-4 transition-all duration-200 hover:shadow-lg"
+                rounded-lg p-4 transition-all duration-200 hover:shadow-lg items-center"
     >
       <img
         src={script.logo_url || "/icon.svg"}
@@ -29,7 +29,7 @@ function ScriptCard({ script }: ScriptCardProps) {
         <h2 className="text-xl sm:text-2xl text-white font-medium truncate">
           {script.name}
         </h2>
-        <p className="text-xs text-neutral-400 line-clamp-3 break-words">
+        <p className="text-xs text-neutral-400 line-clamp-2 break-words">
           {script.description}
         </p>
       </div>
