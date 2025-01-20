@@ -104,4 +104,39 @@ export const setupRoutes = (server: Express, io: Server) => {
             res.status(500).send('An error occurred while processing your request.');
         }
     });
+
+    server.get('/set-session', async (req, res) => {
+        const accessToken = req.get("accessToken");
+        const refreshToken = req.get("refreshToken");
+        try {
+            const { data, error } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+            }) 
+            if (error) {
+                console.error(error);
+                res.send(error);
+            } else {
+                res.send(data);
+            }
+        } catch (error) {
+            logger.error('Error handling get session request:', error);
+            res.status(500).send('An error occurred while processing your request.');
+        }
+    });
+
+    server.get('/get-session', async (req, res) => {
+        try {
+            const { data, error } = await supabase.auth.getSession();
+            if (error) {
+                console.error(error);
+                res.send(error);
+            } else {
+                res.send(data);
+            }
+        } catch (error) {
+            logger.error('Error handling get session request:', error);
+            res.status(500).send('An error occurred while processing your request.');
+        }
+    });
 }

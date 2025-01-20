@@ -49,12 +49,32 @@ function createWindow() {
     return { action: 'deny' };
   });
 
-  // deep link for macos and linux
-  app.on('open-url', (url) => {
-    dialog.showErrorBox('Welcome Back', `You arrived from: ${url}`)
-  });
+  const handleDeepLink = (url) => {
+    try {
+      const cleanUrl = url.replace(/^dione:\/\//, '');
+      const authMatch = cleanUrl.match(/auth=([^&]+)/);
+      if (authMatch) {
+        const authToken = authMatch[1];
+        mainWindow.webContents.send('auth-token', authToken);
+      } else {
+        console.error('Not found auth token in deep link');
+      }
+  
+      const refreshMatch = cleanUrl.match(/refresh=([^&]+)/);
+      if (refreshMatch) {
+        const refreshToken = refreshMatch[1];
+        mainWindow.webContents.send('refresh-token', refreshToken);
+      } else {
+        console.error('Not found refresh token in deep link');
+      }
+  
+    } catch (error) {
+      logger.error('Error handling deep link:', error);
+    }
+  };
 
-  // deep link for windows
+  app.on('open-url', handleDeepLink);
+
   const gotTheLock = app.requestSingleInstanceLock();
   if (!gotTheLock) {
     app.quit();
@@ -62,11 +82,12 @@ function createWindow() {
   } else {
     app.on('second-instance', (_event, commandLine) => {
       if (mainWindow) {
-        if (mainWindow.isMinimized()) mainWindow.restore()
-        mainWindow.focus()
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.focus();
       }
-      dialog.showErrorBox('Welcome Back', `You arrived from: ${commandLine.pop()}`)
-    })
+
+      handleDeepLink(commandLine.pop());
+    });
   }
 
   // Load renderer content (URL in development, HTML file in production)

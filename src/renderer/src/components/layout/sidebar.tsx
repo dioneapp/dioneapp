@@ -1,10 +1,75 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import dio from "../../assets/dio.svg";
 import settings from "../../assets/settings.svg";
 import { openLink } from "../../utils/openLink";
 import QuickLaunch from "./quick-launch";
+import { useEffect, useState } from "react";
+import { getCurrentPort } from "@renderer/utils/getPort";
 
 export default function Sidebar() {
+    const [authToken, setAuthToken] = useState<string | null>(null);
+    const [refreshToken, setRefreshToken] = useState<string | null>(null);
+    const [logged, setLogged] = useState<boolean>(false);
+
+    useEffect(() => {
+        const session = localStorage.getItem('session');
+        const user = localStorage.getItem('user');
+        if (session && user) {
+            setLogged(true);
+        } else {
+            setLogged(false);
+        }
+    }, [])
+    
+    useEffect(() => {
+        const listenForAuthToken = () => {
+            window.electron.ipcRenderer.on('auth-token', (_event, authToken) => {
+                setAuthToken(authToken);
+            });
+            window.electron.ipcRenderer.on('refresh-token', (_event, refreshToken) => {
+                setRefreshToken(refreshToken);
+            });
+        }
+
+        listenForAuthToken();
+    }, [])
+
+    useEffect(() => {
+        if (authToken && refreshToken) {
+            async function setSessionAPI(token: string, refreshToken: string) {
+                const port = await getCurrentPort();
+                const response = await fetch(`http://localhost:${port}/set-session`, {
+                    headers: {
+                        'accessToken': token,
+                        'refreshToken': refreshToken
+                    }
+                });
+                const data = await response.json();
+                if (data.session) {
+                    setSession(data.session);
+                    setUser(data.user);
+                    setLogged(true)
+                }
+            }
+
+            setSessionAPI(authToken, refreshToken);
+        }
+    }, [authToken, refreshToken])
+
+    async function setSession(session: any) {
+        localStorage.setItem('session', JSON.stringify(session));
+    }
+    async function setUser(user: any) {
+        localStorage.setItem('user', JSON.stringify(user));
+    }
+
+    async function logout() {
+        localStorage.removeItem('session');
+        localStorage.removeItem('user');
+        setLogged(false);
+    }
+
+
     return (
         <div className="flex flex-col items-center justify-center h-screen w-70 border-r border-white/10 relative overflow-hidden">
             <div className="absolute -top-10 -left-14 bg-[#BCB1E7] blur-3xl w-64 h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" />
@@ -33,12 +98,21 @@ export default function Sidebar() {
                         <img src={settings} alt="Settings icon" className="h-6 w-6" />
 
                     </Link>
-                    <button
-                        className="text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-2 px-10 text-center"
-                        onClick={() => {/* login handler */ }}
-                    >
-                        Login
-                    </button>
+                    {logged ? (
+                        <button
+                            className="text-xs bg-white/10 transition-colors duration-400 rounded-full font-semibold py-2 px-10 text-center"
+                            onClick={logout}
+                        >
+                            Logout
+                        </button>
+                    ) : (
+                        <button
+                            className="text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-2 px-10 text-center"
+                            onClick={() => openLink("https://getdione.app/auth/login")}
+                        >
+                            Login
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
