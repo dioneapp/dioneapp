@@ -15,6 +15,7 @@ export default function Install() {
     const [showLogs, setShowLogs] = useState<boolean>(false);
     const [_imgLoading, setImgLoading] = useState<boolean>(true);
     const [installed, setInstalled] = useState<boolean>(false);
+    const [showIframe, setShowIframe] = useState<boolean>(false);
     const { addToast } = useToast()
     const showToast = (variant: "default" | "success" | "error" | "warning", message: string) => {
         addToast({
@@ -172,6 +173,8 @@ export default function Install() {
     const handleStart = async () => {
         showToast("default", `Starting ${data.name}...`)
         await start();
+        setShowLogs(false);
+        setShowIframe(true);
     };
 
     const handleUninstall = async () => {
@@ -181,12 +184,52 @@ export default function Install() {
 
     return (
         <div className="relative min-h-screen w-full overflow-hidden">
-            <div className="relative min-h-screen backdrop-blur-xl flex items-center justify-center p-8">
+            <div className="relative min-h-screen backdrop-blur-xl flex items-center justify-center p-4">
                 {loading ? (
                     <div className="text-white">Loading...</div>
                 ) : (
                     <AnimatePresence>
-                        {!showLogs && (
+                        {showIframe ? (
+                            <motion.div
+                                key="iframe"
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                transition={{ duration: 0.3 }}
+                                className="w-full max-w-4xl h-[600px] rounded-xl overflow-hidden border border-white/10 shadow-xl"
+                            >
+                                <iframe
+                                    src="http://localhost:6969" /* TODO: make this dynamic */
+                                    className="w-full h-full bg-white"
+                                    frameBorder="0"
+                                />
+                            </motion.div>
+                        ) : showLogs ? (
+                            <motion.div
+                                key="logs"
+                                initial={{ opacity: 0, height: 0, y: 20 }}
+                                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                                exit={{ opacity: 0, height: 0, y: -20 }}
+                                transition={{ duration: 0.3 }}
+                                className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-xl w-full backdrop-blur-md"
+                            >
+                                <div className="max-h-96 overflow-auto p-4 pointer-events-none">
+                                    {logs.map((log, index) => (
+                                        <p className="text-xs text-neutral-300 whitespace-pre-wrap" key={index}>
+                                            {log || "loading"}
+                                        </p>
+                                    ))}
+                                </div>
+                                <div className="absolute bottom-4 right-4">
+                                    <button
+                                        className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
+                                        onClick={copyLogsToClipboard}
+                                    >
+                                        <img src={CopyIcon} alt="Copy Logs" className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            </motion.div>
+                        ) : (
                             <motion.div
                                 key="actions"
                                 initial={{ opacity: 0, y: 20 }}
@@ -199,7 +242,6 @@ export default function Install() {
                                     {/* background effects */}
                                     <div className="absolute top-0 left-0.5/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-10" />
                                     <div className="relative z-10">
-
                                         <div className="flex gap-4">
                                             <img
                                                 onLoad={() => setImgLoading(false)}
@@ -235,18 +277,18 @@ export default function Install() {
                                         <div className="flex justify-center gap-2 w-full">
                                             {installed ? (
                                                 <div className="flex gap-2 justify-end w-full">
-                                                <button
-                                                    onClick={handleStart}
-                                                    className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
-                                                >
-                                                    Start
-                                                </button>
-                                                <button
-                                                    onClick={handleUninstall}
-                                                    className="bg-red-500/50 hover:bg-red-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
-                                                >
-                                                    Uninstall
-                                                </button>
+                                                    <button
+                                                        onClick={handleStart}
+                                                        className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+                                                    >
+                                                        Start
+                                                    </button>
+                                                    <button
+                                                        onClick={handleUninstall}
+                                                        className="bg-red-500/50 hover:bg-red-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+                                                    >
+                                                        Uninstall
+                                                    </button>
                                                 </div>
                                             ) : (
                                                 <button
