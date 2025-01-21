@@ -14,6 +14,7 @@ export default function Install() {
     const { id } = useParams<{ id: string }>();
     const [showLogs, setShowLogs] = useState<boolean>(false);
     const [_imgLoading, setImgLoading] = useState<boolean>(true);
+    const [installed, setInstalled] = useState<boolean>(false);
     const { addToast } = useToast()
     const showToast = (variant: "default" | "success" | "error" | "warning", message: string) => {
         addToast({
@@ -49,6 +50,26 @@ export default function Install() {
 
         getData();
     }, [id]);
+
+    useEffect(() => {
+        async function fetchIfDownloaded() {
+            const port = await getCurrentPort();
+            const response = await fetch(`http://localhost:${port}/installed/${data.name}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const jsonData = await response.json();
+            console.log("data", jsonData);
+            setInstalled(jsonData);
+        }
+
+        fetchIfDownloaded();
+    }, [data])
 
 
     useEffect(() => {
@@ -102,8 +123,36 @@ export default function Install() {
                 method: "GET",
             });
         } catch (error) {
-            console.error("Error initiating download:", error);
+            showToast("error", `Error initiating download: ${error}`)
             setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
+        }
+    }
+
+    async function start() {
+        setShowLogs(true);
+        try {
+            const port = await getCurrentPort();
+            await fetch(`http://localhost:${port}/start/${data.name}`, {
+                method: "GET",
+            });
+        } catch (error) {
+            showToast("error", `Error initiating ${data.name}: ${error}`)
+            setLogs((prevLogs) => [...prevLogs, `Error initiating ${data.name}`]);
+        }
+    }
+
+    async function uninstall() {
+        try {
+            const port = await getCurrentPort();
+            await fetch(`http://localhost:${port}/delete/${data.name}`, {
+                method: "GET",
+            });
+            showToast("success", `${data.name} uninstalled successfully.`)
+            setInstalled(false);
+            window.location.reload();
+        } catch (error) {
+            showToast("error", `Error uninstalling ${data.name}: ${error}`)
+            setLogs((prevLogs) => [...prevLogs, `Error uninstalling ${data.name}`]);
         }
     }
 
@@ -118,6 +167,16 @@ export default function Install() {
     const handleDownload = async () => {
         showToast("default", `Downloading ${data.name}...`)
         await download();
+    };
+
+    const handleStart = async () => {
+        showToast("default", `Starting ${data.name}...`)
+        await start();
+    };
+
+    const handleUninstall = async () => {
+        showToast("default", `Uninstalling ${data.name}...`)
+        await uninstall();
     };
 
     return (
@@ -174,13 +233,29 @@ export default function Install() {
                                         </div>
 
                                         <div className="flex justify-center gap-2 w-full">
-                                            <button
-                                                onClick={handleDownload}
-                                                className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
-                                            >
-                                                Download
-                                            </button>
-
+                                            {installed ? (
+                                                <div className="flex gap-2 justify-end w-full">
+                                                <button
+                                                    onClick={handleStart}
+                                                    className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+                                                >
+                                                    Start
+                                                </button>
+                                                <button
+                                                    onClick={handleUninstall}
+                                                    className="bg-red-500/50 hover:bg-red-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+                                                >
+                                                    Uninstall
+                                                </button>
+                                                </div>
+                                            ) : (
+                                                <button
+                                                    onClick={handleDownload}
+                                                    className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+                                                >
+                                                    Install
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                     </div>
