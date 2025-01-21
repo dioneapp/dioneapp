@@ -71,7 +71,7 @@ export default function Sidebar() {
 
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen w-70 border-r border-white/10 relative overflow-hidden">
+        <div className="flex flex-col items-center justify-center h-screen w-70 border-r border-white/10 overflow-hidden">
             <div className="absolute -top-10 -left-14 bg-[#BCB1E7] blur-3xl w-64 h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" />
             <div className="flex flex-col items-center justify-start h-full w-full p-4 z-50 px-6">
                 <div className="w-full h-44 flex flex-col justify-center items-start gap-2">
