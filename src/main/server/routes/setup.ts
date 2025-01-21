@@ -47,11 +47,30 @@ export const setupRoutes = (server: Express, io: Server) => {
     
     server.get('/search/:id', (req, res) => {
         async function getData() {
-            console.log('searching for id:', req.params.id);
+            logger.log('searching for id:', req.params.id);
             const { data, error } = await supabase
                 .from('scripts')
                 .select('*')
                 .eq('id', req.params.id);
+            if (error) {
+                console.error(error);
+                res.send(error);
+            } else {
+                res.send(data);
+            }
+        }
+        getData();
+    });
+
+    server.get('/search_name/:name', async (req, res) => {
+        async function getData() {
+            logger.info('searching for name:', req.params.name);
+            const { data, error } = await supabase
+                .from('scripts')
+                .select('*')
+                .eq('name', req.params.name)
+                .limit(1)
+                .single();
             if (error) {
                 console.error(error);
                 res.send(error);
