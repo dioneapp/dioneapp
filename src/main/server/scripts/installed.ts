@@ -12,6 +12,10 @@ export default async function getAllScripts() {
 export async function getInstalledScript(name: string) {
    const root = process.cwd();
    const scriptDir = path.join(root, 'apps', name);
-   const exists = await fs.promises.readdir(scriptDir);
-   return exists ? true : false;
+   try {
+      await fs.promises.readdir(scriptDir);
+      return true;
+   } catch (error) {
+      return false;
+   }
 }
