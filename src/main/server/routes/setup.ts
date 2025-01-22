@@ -30,17 +30,39 @@ export const setupRoutes = (server: Express, io: Server) => {
 
     server.get('/featured', (_req, res) => {
         async function getData() {
-            const { data, error } = await supabase
+            const { data: featuredScripts, error: featuredScriptsError } = await supabase
                 .from('scripts')
                 .select('*')
-                .order('likes', { ascending: false }) 
-                .limit(4); 
-            if (error) {
-                console.error(error);
-                res.send(error);
-            } else {
-                res.send(data);
+                .eq('featured', true)
+                .limit(4);
+
+            if (featuredScriptsError) {
+                console.error(featuredScriptsError);
+                res.send(featuredScriptsError);
+                return;
             }
+
+            const maxScripts = 4 - featuredScripts.length;
+
+            if (maxScripts <= 0) {
+                res.send(featuredScripts);
+                return;
+            }
+
+            const { data: randomScripts, error: randomScriptsError } = await supabase
+                .from('scripts')
+                .select('*')
+                .order('likes', { ascending: false })
+                .limit(maxScripts);
+
+            if (randomScriptsError) {
+                console.error(randomScriptsError);
+                res.send(randomScriptsError);
+                return;
+            }
+
+            const data = [...featuredScripts, ...randomScripts];
+            res.send(data);
         }
         getData();
     });
