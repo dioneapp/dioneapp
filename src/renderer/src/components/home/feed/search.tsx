@@ -1,11 +1,17 @@
+import { useState } from "react";
+import ScriptList from "../feed";
 import Search from "../../../assets/Search.svg";
 
 export default function SearchBar() {
+    const [search, setSearch] = useState("");
+
     return (
+        <>
         <div className="w-full space-y-4 mb-4">
             <div className="relative">
                 <input
                     type="text"
+                    onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search scripts..."
                     className="w-full h-10 text-sm text-white 
                         bg-black/10 bg-gradient-to-r from-[#BCB1E7]/5 to-transparent 
@@ -22,5 +28,11 @@ export default function SearchBar() {
                 />
             </div>
         </div>
+        {search.length === 0 ? (
+            <ScriptList endpoint="/explore" type="explore" />
+        ): (
+            <ScriptList endpoint={`/searchbar/${search}`} type="search" />
+        )} 
+        </>
     );
 }

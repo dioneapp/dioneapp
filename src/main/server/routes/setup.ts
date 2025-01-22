@@ -144,7 +144,7 @@ export const setupRoutes = (server: Express, io: Server) => {
         }
     });
 
-    server.get('/get-session', async (req, res) => {
+    server.get('/get-session', async (_req, res) => {
         try {
             const { data, error } = await supabase.auth.getSession();
             if (error) {
@@ -155,6 +155,25 @@ export const setupRoutes = (server: Express, io: Server) => {
             }
         } catch (error) {
             logger.error('Error handling get session request:', error);
+            res.status(500).send('An error occurred while processing your request.');
+        }
+    });
+
+    server.get('/searchbar/:name', async (req, res) => {
+        const { name } = req.params;
+        try {
+            const { data, error } = await supabase
+                .from('scripts')
+                .select('*')
+                .ilike('name', `%${name}%`)
+            if (error) {
+                console.error(error);
+                res.send(error);
+            } else {
+                res.send(data);
+            }
+        } catch (error) {
+            logger.error('Error handling get script request:', error);
             res.status(500).send('An error occurred while processing your request.');
         }
     });
