@@ -70,6 +70,8 @@ export default function List({ endpoint, type, className = "" }: ScriptListProps
         ))}
       </div>
 
+      {scripts.length === 0 && <div className="text-center text-neutral-500 text-sm">No scripts found</div>}
+
       {port && (
         <div className="fixed bottom-2 right-2 text-[8px] text-neutral-500 
                       bg-black/50 backdrop-blur-sm rounded px-2 py-1">
