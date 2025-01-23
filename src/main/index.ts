@@ -59,13 +59,20 @@ function createWindow() {
       } else {
         console.error('Not found auth token in deep link');
       }
-  
       const refreshMatch = cleanUrl.match(/refresh=([^&]+)/);
       if (refreshMatch) {
         const refreshToken = refreshMatch[1];
         mainWindow.webContents.send('refresh-token', refreshToken);
       } else {
         console.error('Not found refresh token in deep link');
+      }
+
+      const downloadMatch = cleanUrl.match(/download=([^&]+)/);
+      if (downloadMatch) {
+        const downloadUrl = downloadMatch[1];
+        mainWindow.webContents.send('download', downloadUrl);
+      } else {
+        console.error('Not found download in deep link');
       }
   
     } catch (error) {

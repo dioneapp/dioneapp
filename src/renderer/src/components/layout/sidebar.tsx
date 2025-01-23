@@ -11,6 +11,8 @@ export default function Sidebar() {
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
     const [logged, setLogged] = useState<boolean>(false);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         const session = localStorage.getItem('session');
         const user = localStorage.getItem('user');
@@ -31,7 +33,15 @@ export default function Sidebar() {
             });
         }
 
+        const listenForDownloadToken = () => {
+            window.electron.ipcRenderer.on('download', (_event, downloadID) => {
+                console.log('go to download', downloadID);
+                navigate(`/install/${downloadID}`);
+            });
+        }
+
         listenForAuthToken();
+        listenForDownloadToken();
     }, [])
 
     useEffect(() => {

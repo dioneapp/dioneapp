@@ -86,7 +86,6 @@ export const setupRoutes = (server: Express, io: Server) => {
 
     server.get('/search_name/:name', async (req, res) => {
         async function getData() {
-            logger.info('searching for name:', req.params.name);
             const { data, error } = await supabase
                 .from('scripts')
                 .select('*')
