@@ -17,7 +17,7 @@ function App() {
         <div className="flex-1 overflow-auto mt-6">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/loading" element={<Loading />} />
+            <Route path="/loading" element={<Loading />}/>
             <Route path="/install/:id" element={<Install />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>

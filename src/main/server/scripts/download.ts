@@ -10,7 +10,7 @@ import { runActions } from './runner';
 
 export async function getScripts(id: string, res: Response, io: SocketIO): Promise<void> {
   const root = process.cwd();
-  io.emit('installUpdate', `Searching script in database...`);
+  io.emit('installUpdate', { type: 'status', status: 'pending', content: `Searching script...` });
 
   // get script from db
   const { data, error } = await supabase
@@ -20,16 +20,19 @@ export async function getScripts(id: string, res: Response, io: SocketIO): Promi
     .single();
 
   if (error || !data) {
-    io.emit('installUpdate', 'Script not found in database.');
+    io.emit('installUpdate', { type: 'error', content: `Script not found in database` });
     res.status(404).send('Script not found.');
     logger.error(`Script ${id} not found in database.`);
     return;
   }
 
   logger.info(`Cloning scripts from ${data.name} with version ${data.version}.`);
-  io.emit('installUpdate', `Found ${data.name} script with version ${data.version}.`);
+  io.emit('installUpdate', { type: 'log', content: `Found script '${data.name}' with version '${data.version}'` });
+  io.emit('installUpdate', { type: 'status', status: 'success', content: 'Script founded' });
+
   const saveDirectory = path.join(root, 'apps', data.name);
-  io.emit('installUpdate', `Cloning at ${saveDirectory}...`);
+  io.emit('installUpdate', { type: 'log', content: `Cloning script to '${saveDirectory}'` });	
+  io.emit('installUpdate', { type: 'status', status: 'pending', content: `Cloning script...` });
 
   if (!fs.existsSync(saveDirectory)) {
     // make app dir
@@ -46,6 +49,7 @@ export async function getScripts(id: string, res: Response, io: SocketIO): Promi
       singleBranch: true,
       depth: 1,
     });
+    io.emit('installUpdate', { type: 'status', status: 'success', content: 'Script cloned' });
 
     // run install 
     await runActions(saveDirectory, io);
@@ -53,7 +57,8 @@ export async function getScripts(id: string, res: Response, io: SocketIO): Promi
     io.emit('installUpdate', 'All files cloned successfully.');
     res.status(200).send('All files cloned successfully.');
   } catch (err) {
-    io.emit('installUpdate', 'Error cloning scripts.');
+    io.emit('installUpdate', { type: 'error', content: `Error detected` });
+    io.emit('installUpdate', 'Error cloning scripts:', err);
     res.status(500).send('Error cloning scripts.');
     logger.error(`Error cloning scripts from ${data.name}:`, err);
   }
