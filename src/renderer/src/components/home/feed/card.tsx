@@ -1,6 +1,6 @@
 import { memo } from 'react';
-import { Script } from './types';
 import { Link } from 'react-router-dom';
+import { Script } from './types';
 
 interface ScriptCardProps {
   script: Script;
@@ -8,7 +8,7 @@ interface ScriptCardProps {
 
 function ScriptCard({ script }: ScriptCardProps) {
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    e.currentTarget.src = "/icon.svg";
+    e.currentTarget.src = "/svgs/icon.svg";
   };
 
   return (
@@ -19,7 +19,7 @@ function ScriptCard({ script }: ScriptCardProps) {
                 rounded-lg p-4 transition-all duration-200 hover:shadow-lg items-center"
     >
       <img
-        src={script.logo_url || "/icon.svg"}
+        src={script.logo_url || "/svgs/icon.svg"}
         onError={handleImageError}
         alt={`${script.name} icon`}
         className="h-16 w-16 rounded-xl border border-white/10 object-cover 

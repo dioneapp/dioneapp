@@ -1,10 +1,12 @@
+import { getCurrentPort } from "@renderer/utils/getPort";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import dio from "../../assets/dio.svg";
-import settings from "../../assets/settings.svg";
 import { openLink } from "../../utils/openLink";
 import QuickLaunch from "./quick-launch";
-import { useEffect, useState } from "react";
-import { getCurrentPort } from "@renderer/utils/getPort";
+import dio from "../../assets/svgs/dio.svg";
+import settings from "../../assets/svgs/settings.svg";
+import discord from "../../assets/svgs/discord.svg";
+import github from "../../assets/svgs/github.svg";
 
 export default function Sidebar() {
     const [authToken, setAuthToken] = useState<string | null>(null);
@@ -22,7 +24,7 @@ export default function Sidebar() {
             setLogged(false);
         }
     }, [])
-    
+
     useEffect(() => {
         const listenForAuthToken = () => {
             window.electron.ipcRenderer.on('auth-token', (_event, authToken) => {
@@ -94,8 +96,21 @@ export default function Sidebar() {
                     </Link>
                     <p className="text-xs text-neutral-400 px-0.5">Explore, Install, Innovate — in 1 Click.</p>
                     <div className="mt-2 w-full flex gap-2 px-0.5">
-                        <button onClick={() => openLink("https://getdione.app/discord")} className="text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center">Discord</button>
-                        <button onClick={() => openLink("https://getdione.app/github")} className="text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1">Report a bug</button>
+                        <button onClick={() => openLink("https://getdione.app/discord")}
+                            className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center"
+                        >
+                            <img src={discord} alt="Discord icon" className="h-4 w-4" />
+
+                            <span className="font-semibold">Discord</span>
+                        </button>
+
+                        <button onClick={() => openLink("https://getdione.app/github")}
+                            className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center"
+                        >
+                            <img src={github} alt="GitHub icon" className="h-4 w-4" />
+
+                            <span className="font-semibold">GitHub</span>
+                        </button>
                     </div>
                 </div>
                 <QuickLaunch />

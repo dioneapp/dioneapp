@@ -1,4 +1,4 @@
-import dioneIcon from "../assets/icon.svg"
+import dioneIcon from "../assets/svgs/icon.svg"
 
 export default function Loading() {
     return (
