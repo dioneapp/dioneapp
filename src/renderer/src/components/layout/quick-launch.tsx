@@ -59,8 +59,8 @@ export default function QuickLaunch() {
   }, [installedApps])
 
   const renderAppButton = (app: any, index: number) => (
-    <Link to={`/install/${app.id}`} key={index} className="flex flex-col justify-center items-center rounded-xl gap-2 w-full h-full">
-      <div className="h-20 w-20 border border-white/10 object-fill rounded-xl flex items-center justify-center overflow-hidden">
+    <Link to={`/install/${app.id}`} key={index} className="flex flex-col items-center gap-1">
+      <div className="h-18 w-18 border border-white/10 object-fill rounded-xl flex items-center justify-center overflow-hidden">
         <img
           src={app.logo_url || "/svgs/placeholder.svg"}
           alt={`${app.name} logo`}
@@ -72,8 +72,8 @@ export default function QuickLaunch() {
   )
 
   const renderEmptyButton = (index: number) => (
-    <button onClick={() => setShowTutorial(!showTutorial)} key={index} className="flex flex-col justify-center items-center rounded-xl gap-2 w-full h-full">
-      <div className="h-20 w-20 border border-white/10 object-fill rounded-xl flex items-center justify-center">
+    <button onClick={() => setShowTutorial(!showTutorial)} key={index} className="flex flex-col items-center gap-1">
+      <div className="h-18 w-18 border border-white/10 object-fill rounded-xl flex items-center justify-center">
         <svg className="w-10 h-10 hover:rotate-90 duration-300 transition-all" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#FFFFFF"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" /></svg>
       </div>
       <p className="text-xs text-neutral-400">Add App</p>
@@ -85,7 +85,7 @@ export default function QuickLaunch() {
       <div className="flex mt-auto w-full h-64">
         <div className="w-full">
           <h2 className="font-semibold">Quick Launch</h2>
-          <div className="grid grid-cols-3 gap-2 my-4">
+          <div className="grid grid-cols-3 my-6 gap-2">
             {Array(maxApps)
               .fill(null)
               .map((_, index) => (apps[index] ? renderAppButton(apps[index], index) : renderEmptyButton(index)))}
