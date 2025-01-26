@@ -5,6 +5,8 @@ import logger from "../utils/logger";
 import { getScripts } from "../scripts/download";
 import { deleteScript } from "../scripts/delete";
 import getAllScripts, { getInstalledScript } from "../scripts/installed";
+import path from "node:path";
+import { startScript, stopScript } from "../scripts/runner";
 
 export const setupRoutes = (server: Express, io: Server) => {
     server.get('/', (_req, res) => {
@@ -109,6 +111,32 @@ export const setupRoutes = (server: Express, io: Server) => {
             await getScripts(id, res, io); 
         } catch (error) {
             logger.error('Error handling download request:', error);
+            res.status(500).send('An error occurred while processing your request.');
+        }
+    });
+
+    server.get('/start/:name', async (req, res) => {
+        const { name } = req.params;
+        const root = process.cwd();
+        const workingDir = path.join(root, 'apps', name);
+        console.log('Working dir:', workingDir);
+        try {
+            await startScript(workingDir, io);
+        } catch (error) {
+            logger.error('Error handling start request:', error);
+            res.status(500).send('An error occurred while processing your request.');
+        }
+    });
+
+    server.get('/stop/:name', async (req, res) => {
+        const { name } = req.params;
+        const root = process.cwd();
+        const workingDir = path.join(root, 'apps', name);
+        console.log('Working dir:', workingDir);
+        try {
+            await stopScript(workingDir, io);
+        } catch (error) {
+            logger.error('Error handling stop request:', error);
             res.status(500).send('An error occurred while processing your request.');
         }
     });

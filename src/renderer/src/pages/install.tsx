@@ -1,6 +1,6 @@
 import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence, motion } from 'framer-motion';
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import CopyIcon from "../assets/svgs/copy.svg";
@@ -20,6 +20,8 @@ export default function Install() {
     const [_imgLoading, setImgLoading] = useState<boolean>(true);
     const [installed, setInstalled] = useState<boolean>(false);
     const [showIframe, setShowIframe] = useState<boolean>(false);
+    const [catchPort, setCatchPort] = useState<number>();
+    const [iframeSrc, setIframeSrc] = useState<string>("");
     const { addToast } = useToast()
     const showToast = (variant: "default" | "success" | "error" | "warning", message: string) => {
         addToast({
@@ -106,11 +108,15 @@ export default function Install() {
                     if (type === "log") {
                         setLogs((prevLogs) => [...prevLogs, content]);
                     }
-                    if (type == "status") {
+                    if (type === "status") {
                         setStatusLog({ status: status || "pending", content });
                         if (content === 'Actions executed') {
                             window.location.reload();
                         }
+                    }
+                    if (type === "catch") {
+                        loadIframe(parseInt(content));
+                        setCatchPort(parseInt(content));
                     }
                 });
             } catch (error) {
@@ -155,6 +161,21 @@ export default function Install() {
         }
     }
 
+    // todo: dont work
+    async function stop() {
+        setShowLogs(true);
+        setShowIframe(false);
+        try {
+            const port = await getCurrentPort();
+            await fetch(`http://localhost:${port}/stop/${data.name}`, {
+                method: "GET",
+            });
+        } catch (error) {
+            showToast("error", `Error stoping ${data.name}: ${error}`)
+            setLogs((prevLogs) => [...prevLogs, `Error stoping ${data.name}`]);
+        }
+    }
+
     async function uninstall() {
         try {
             const port = await getCurrentPort();
@@ -190,10 +211,43 @@ export default function Install() {
         setShowIframe(true);
     };
 
+    const handleStop = async () => {
+        showToast("default", `Stoping ${data.name}...`)
+        await stop();
+        setShowLogs(false);
+    }
+
     const handleUninstall = async () => {
         showToast("default", `Uninstalling ${data.name}...`)
         await uninstall();
     };
+
+    const isLocalAvailable = async (port) => {
+        try {
+            const response = await fetch(`http://localhost:${port}`);
+            return response.ok;
+        } catch (error) {
+            return false;
+        }
+    };
+
+    const loadIframe = async (localPort) => {
+        let isAvailable = false;
+        while (!isAvailable) {
+            isAvailable = await isLocalAvailable(localPort);
+            if (!isAvailable) {
+                await new Promise(resolve => setTimeout(resolve, 1000)); 
+            }
+        }
+        setIframeSrc(`http://localhost:${localPort}`);
+        setShowIframe(true);
+    };
+
+    const handleReloadIframe = async () => {
+        const iframe = document.getElementById("iframe") as HTMLIFrameElement;
+
+        iframe.src = iframe.src
+    }
 
     return (
         <div className="relative min-h-screen w-full overflow-hidden">
@@ -203,6 +257,15 @@ export default function Install() {
                 ) : (
                     <AnimatePresence>
                         {showIframe ? (
+                            <div className="w-full h-full flex flex-col gap-2">
+                                <div className="w-full flex gap-2 justify-end items-center">
+                                <button className="w-fit flex items-center justify-center border border-white/10 p-2 cursor-pointer z-50 rounded-xl text-black font-medium" onClick={handleStop}>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M320-640v320-320Zm-80 400v-480h480v480H240Zm80-80h320v-320H320v320Z"/></svg>
+                                </button>
+                                <button className="w-fit flex items-center justify-center border border-white/10 p-2 cursor-pointer z-50 rounded-xl text-black font-medium" onClick={handleReloadIframe}>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg>
+                                </button>
+                                </div>
                             <motion.div
                                 key="iframe"
                                 initial={{ opacity: 0, scale: 0.95 }}
@@ -212,11 +275,13 @@ export default function Install() {
                                 className="w-full max-w-4xl h-[600px] rounded-xl overflow-hidden border border-white/10 shadow-xl"
                             >
                                 <iframe
-                                    src="http://localhost:6969" /* TODO: make this dynamic */
+                                    id="iframe"
+                                    src={iframeSrc}
                                     className="w-full h-full bg-white"
                                     frameBorder="0"
                                 />
                             </motion.div>
+                            </div>
                         ) : showLogs ? (
                             <motion.div className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center"
                                 key="logs"

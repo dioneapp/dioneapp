@@ -11,6 +11,7 @@ interface Command {
     type: string;
     commands: string[];
     'not-required'?: boolean;
+    catch?: number;
 }
 // action types
 interface Action {
@@ -153,8 +154,18 @@ export const startScript = async (workingDir: string, io: Server) => {
             io.emit('installUpdate', 'Starting...');
             for (const command of actions.start) {
                 io.emit('installUpdate', `${command.name}`);
+                if (command.catch) {
+                    logger.info('Executing script on:', `127.0.0.1://${command.catch}`);
+                    io.emit('installUpdate', { type: 'catch', content: command.catch });
+                }
                 for (const cmd of command.commands) {
-                    await runCommand(cmd, io, workingDir);
+                    if (cmd.startsWith('cd')) {
+                        io.emit('installUpdate', { type: 'log', content: `Changing directory to '${cmd.split(' ')[1]}'` });
+                        const newDir = cmd.split(' ')[1];
+                        workingDir = path.join(workingDir, newDir);
+                    } else {
+                        await runCommand(cmd, io, workingDir);
+                    }
                 }
             }
         } else {
