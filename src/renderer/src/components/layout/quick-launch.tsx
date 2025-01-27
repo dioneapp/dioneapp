@@ -11,6 +11,7 @@ export default function QuickLaunch() {
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null)
   const [availableApps, setAvailableApps] = useState<any[]>([])
   const maxApps = 6
+  const localStorageKey = 'quickLaunchApps';
 
   const backdropVariants = {
     hidden: { opacity: 0 },
@@ -37,6 +38,17 @@ export default function QuickLaunch() {
   }
 
   useEffect(() => {
+    const savedApps = localStorage.getItem(localStorageKey);
+    if (savedApps) {
+      setApps(JSON.parse(savedApps));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(localStorageKey, JSON.stringify(apps));
+  }, [apps]);
+
+  useEffect(() => {
     async function getInstalledApps() {
       try {
         const port = await getCurrentPort()
@@ -61,7 +73,9 @@ export default function QuickLaunch() {
               .then(res => res.ok ? res.json() : [])
           )
         )
-        setApps(results.flat().slice(0, maxApps))
+        if (!localStorage.getItem(localStorageKey)) {
+          setApps(results.flat().slice(0, maxApps))
+        }
       } catch (error) {
         console.error("Error loading apps:", error)
       }
@@ -95,9 +109,25 @@ export default function QuickLaunch() {
     setSelectedSlot(null)
   }
 
+  const removeApp = (index: number) => {
+    const newApps = [...apps];
+    newApps[index] = null;
+    setApps(newApps);
+  };
+
   const renderAppButton = (app: any, index: number) => (
-    <Link to={`/install/${app.id}`} key={index} className="flex flex-col items-center gap-1">
-      <div className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center overflow-hidden">
+    <Link
+      to={`/install/${app.id}`}
+      key={index}
+      className="flex flex-col items-center gap-1"
+    >
+      <div
+        className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center overflow-hidden"
+        onContextMenu={(e) => {
+          e.preventDefault();
+          removeApp(index);
+        }}
+      >
         <img
           src={app.logo_url || "/svgs/placeholder.svg"}
           alt={app.name}
