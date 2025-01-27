@@ -85,7 +85,7 @@ export default function QuickLaunch() {
       <div className="flex mt-auto w-full h-64">
         <div className="w-full">
           <h2 className="font-semibold">Quick Launch</h2>
-          <div className="grid grid-cols-3 my-6 gap-2">
+          <div className="grid grid-cols-3 my-4 gap-2">
             {Array(maxApps)
               .fill(null)
               .map((_, index) => (apps[index] ? renderAppButton(apps[index], index) : renderEmptyButton(index)))}
@@ -95,7 +95,7 @@ export default function QuickLaunch() {
       {showTutorial && (
         <div onClick={() => setShowTutorial(false)} className="absolute inset-0 w-full h-full bg-black/50 backdrop-blur-xl z-10">
           <div className="flex justify-center items-center w-full h-full max-w-6xl mx-auto">
-            <div className="w-full h-full p-4">
+            <div className="w-full h-full p-2">
               <div className="bg-white/10 rounded-xl backdrop-blur-3xl w-full h-full relative flex flex-col justify-center items-end">
                 <div className="absolute top-4 right-4">
                   <span className="text-xs text-neutral-300 hover:bg-white/20 cursor-pointer bg-white/10 rounded-full px-4 py-2">Close</span>

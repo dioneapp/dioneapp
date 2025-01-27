@@ -114,7 +114,7 @@ export default function Sidebar() {
                     </div>
                 </div>
                 <QuickLaunch />
-                <div className="h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l mt-6" />
+                <div className="h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l mt-4" />
                 <div className="mt-4 w-full flex items-center justify-between px-2 pb-4">
                     <Link
                         to={"/settings"}
