@@ -132,7 +132,7 @@ export default function Sidebar() {
                         </button>
                     ) : (
                         <button
-                            className="text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-2 px-10 text-center"
+                            className="text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-2 px-10 text-center cursor-pointer"
                             onClick={() => openLink("https://getdione.app/auth/login")}
                         >
                             Login

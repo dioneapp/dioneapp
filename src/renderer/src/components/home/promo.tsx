@@ -20,7 +20,7 @@ export default function PromoBanner() {
           </div>
           <button
             onClick={() => openLink("https://getdione.app/featured/join")}
-            className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 text-sm font-medium whitespace-nowrap"
+            className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
           >
             Get Featured
           </button>
