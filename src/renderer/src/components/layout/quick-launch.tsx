@@ -73,7 +73,7 @@ export default function QuickLaunch() {
 
   const renderEmptyButton = (index: number) => (
     <button onClick={() => setShowTutorial(!showTutorial)} key={index} className="flex flex-col items-center gap-1">
-      <div className="h-18 w-18 border border-white/10 object-fill rounded-xl flex items-center justify-center">
+      <div className="h-18 w-18 border border-white/10 object-fill rounded-xl flex items-center justify-center cursor-pointer">
         <svg className="w-10 h-10 hover:rotate-90 duration-300 transition-all" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#FFFFFF"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" /></svg>
       </div>
       <p className="text-xs text-neutral-400">Add App</p>
