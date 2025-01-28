@@ -4,29 +4,8 @@ import { exec } from 'child_process';
 import { Server } from 'socket.io';
 import logger from '../utils/logger';
 import semver from 'semver';
+import { Action, DependencyChecks } from './types';
 
-// command types
-interface Command {
-    name: string;
-    type: string;
-    commands: string[];
-    'not-required'?: boolean;
-    catch?: number;
-}
-// action types
-interface Action {
-    dependencies?: { [key: string]: { version: string } };
-    installation?: Command[];
-    start?: Command[];
-    stop?: Command[];
-    uninstall?: Command[];
-}
-// dependency types
-interface DependencyChecks {
-    command: string,
-    altCommand?: string,
-    versionRegex: RegExp
-}
 // check dependencies commands
 const dependencyCheckers: {[key: string]: DependencyChecks} = {
     git: {
