@@ -18,9 +18,9 @@ export default function ActionsComponent({ data, setImgLoading, installed, handl
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
         transition={{ duration: 0.2 }}
-        className="flex flex-col gap-6 w-full max-w-xl"
+        className="flex flex-col gap-6 w-full max-w-xl overflow-auto"
     >
-        <div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-xl w-full backdrop-blur-md">
+        <div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-auto max-w-xl w-full backdrop-blur-md">
             {/* background effects */}
             <div className="absolute top-0 left-0.5/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-10" />
             <div className="relative z-10">

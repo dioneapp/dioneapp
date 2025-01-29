@@ -5,12 +5,16 @@ interface IframeProps {
     iframeSrc: string;
     handleStop: () => void;
     handleReloadIframe: () => void;
+    currentPort: number;
 }
 
-export default function IframeComponent({ iframeSrc, handleStop, handleReloadIframe }: IframeProps) {
+export default function IframeComponent({ iframeSrc, handleStop, handleReloadIframe, currentPort }: IframeProps) {
     return (
-        <div className="w-full h-full flex flex-col gap-2">
+        <div className="w-full h-full flex justify-center flex-col gap-2">
         <div className="w-full flex gap-2 justify-end items-center">
+        <div className="w-full flex items-center justify-start border border-white/10 p-2.5 z-50 rounded-xl">
+        <input className="text-sm text-neutral-400 px-2 cursor-default focus:outline-none" value={`localhost:${currentPort || "3000"}`} readOnly/>
+        </div>
         <button className="w-fit flex items-center justify-center border border-white/10 p-2 cursor-pointer z-50 rounded-xl text-black font-medium" onClick={handleStop}>
         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M320-640v320-320Zm-80 400v-480h480v480H240Zm80-80h320v-320H320v320Z"/></svg>
         </button>
@@ -24,13 +28,13 @@ export default function IframeComponent({ iframeSrc, handleStop, handleReloadIfr
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3 }}
-            className="w-full max-w-4xl h-[600px] rounded-xl overflow-hidden border border-white/10 shadow-xl"
+            className="w-full h-full rounded-xl overflow-hidden border border-white/10 shadow-xl hide-scrollbar"
         >
             <iframe
                 id="iframe"
                 src={iframeSrc}
-                className="w-full h-full bg-white"
-                style={{ border: 0 }}
+                className="w-full h-full bg-white hide-scrollbar"
+                style={{ border: 0, scrollbarWidth: "thin" }}
             />
         </motion.div>
         </div>

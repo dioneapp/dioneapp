@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import path from 'path';
-import { exec } from 'child_process';
 import { Server } from 'socket.io';
 import logger from '../utils/logger';
 import semver from 'semver';
 import { Action, DependencyChecks } from './types';
+import { execute } from './execute';
 
 // check dependencies commands
 const dependencyCheckers: {[key: string]: DependencyChecks} = {
@@ -20,6 +20,10 @@ const dependencyCheckers: {[key: string]: DependencyChecks} = {
     conda: {
         command: 'conda --version',
         versionRegex: /conda (\d+\.\d+\.\d+)/,
+    },
+    node: {
+        command: 'npm --version',
+        versionRegex: /(\d+\.\d+\.\d+)/,
     }
 }
 // check if dependency is installed
@@ -37,13 +41,13 @@ const checkDependency = async (
 
     let version: string | null = null
     try {
-        let output = await runCommand(checker.command, io, workingDir, "dependency")
+        let output = await execute(checker.command, io, workingDir, "dependency") || ''
         const match = output.match(checker.versionRegex);
         if (match) version = match[1];
 
         // try alt command
         if (!version && checker.altCommand) {
-            output = await runCommand(checker.altCommand, io, workingDir, "dependency")
+            output = await execute(checker.altCommand, io, workingDir, "dependency") || ''
             const altMatch = output.match(checker.versionRegex);
             if (altMatch) version = altMatch[1];
         }
@@ -66,54 +70,63 @@ const checkDependency = async (
 
     io.emit("installUpdate", {type: 'log', content: `✓ Dependency '${depName}' ${version} found.`});
 }
-// run command
-const runCommand = (command: string, io: Server, workingDir: string, type?: string): Promise<string> => {
-  if (command.endsWith('.bat')) {
-    command = `cmd /c start "" "${command}"`;
-  }
-    return new Promise((resolve, reject) => {
-        exec(command, { cwd: workingDir, encoding: 'utf8' }, (error, stdout, stderr) => {
-            if (error) {
-                logger.error("Error executing command:", command);
-                logger.error(stderr);
-                io.emit('installUpdate', { type: 'error', content: stderr });
-                reject(error);
-            } else {
-                logger.info("Command executed:", command);
-                logger.info(stdout);
-                io.emit('installUpdate', { type: 'log', content: `Executing command: '${command}'` });
-                if (type !== 'dependency') {
-                    io.emit('installUpdate', { type: 'log', content: `Command response: '${stdout || undefined}'` });
-                }
-                resolve(stdout);
-            }
-        });
-    });
-};
+// another way to run a command, probably dont need this
+// const runCommand = (command: string, io: Server, workingDir: string, type?: string): Promise<string> => {
+//   if (command.endsWith('.bat')) {
+//     command = `cmd /c start "" "${command}"`;
+//   }
+//     return new Promise((resolve, reject) => {
+//         exec(command, { cwd: workingDir, encoding: 'utf8' }, (error, stdout, stderr) => {
+//             if (error) {
+//                 logger.error("Error executing command:", command);
+//                 logger.error(stderr);
+//                 io.emit('installUpdate', { type: 'error', content: stderr });
+//                 reject(error);
+//             } else {
+//                 logger.info("Command executed:", command);
+//                 logger.info(stdout);
+//                 io.emit('installUpdate', { type: 'log', content: `Executing command: '${command}'` });
+//                 if (type !== 'dependency') {
+//                     io.emit('installUpdate', { type: 'log', content: `Command response: '${stdout || undefined}'` });
+//                 }
+//                 resolve(stdout);
+//             }
+//         });
+//     });
+// };
 
 // execute actions
 const executeActions = async (actions: Action, io: Server, workingDir: string) => {
     io.emit('installUpdate', { type: 'status', status: 'pending', content: 'Executing actions...' });
+    
     // execute dependencies checks
     if (actions.dependencies) {
-        io.emit('installUpdate', {type: 'status', status: 'pending', content: 'Checking dependencies...'});
+        io.emit('installUpdate', { type: 'status', status: 'pending', content: 'Checking dependencies...' });
         for (const [depName, depConfig] of Object.entries(actions.dependencies)) {
             await checkDependency(depName, depConfig.version, io, workingDir);
         }
-        io.emit('installUpdate', {type: 'status', status: 'success', content: 'Dependencies checked'});
+        io.emit('installUpdate', { type: 'status', status: 'success', content: 'Dependencies checked' });
     }
+
     // execute installation commands
     if (actions.installation) {
         io.emit('installUpdate', { type: 'status', status: 'pending', content: 'Installing...' });
-        for (const command of actions.installation) {
-            for (const cmd of command.commands) {
-                io.emit('installUpdate', { type: 'log', content: `${command.name}: ${command.commands}` });
+        for (const step of actions.installation) {
+            for (const cmd of step.commands) { 
+                io.emit('installUpdate', { 
+                    type: 'log', 
+                    content: `${step.name}: ${cmd}` 
+                });
+
                 if (cmd.startsWith('cd')) {
-                    io.emit('installUpdate', { type: 'log', content: `Changing directory to '${cmd.split(' ')[1]}'` });
                     const newDir = cmd.split(' ')[1];
-                    workingDir = path.join(workingDir, newDir);
+                    workingDir = path.resolve(workingDir, newDir); 
+                    io.emit('installUpdate', { 
+                        type: 'log', 
+                        content: `Actual dir: ${workingDir}` 
+                    });
                 } else {
-                  await runCommand(cmd, io, workingDir);
+                    await execute(cmd, io, workingDir);
                 }
             }
         }
@@ -121,21 +134,22 @@ const executeActions = async (actions: Action, io: Server, workingDir: string) =
 
     io.emit('installUpdate', { type: 'status', status: 'success', content: 'Actions executed' });
 };
+
 // start script
 export const startScript = async (workingDir: string, io: Server) => {
     try {
-        io.emit('installUpdate', 'Starting script...');
+        io.emit('installUpdate', { type: 'log', content: 'Reading script...' });
         const dioneFile = path.join(workingDir, 'dione.json');
         const data = fs.readFileSync(dioneFile, 'utf8');
         const actions: Action = JSON.parse(data);
         // read start action
         if (actions.start) {
-            io.emit('installUpdate', 'Starting...');
+            io.emit('installUpdate', { type: 'status', status: 'pending', content: 'Starting script...' });
             for (const command of actions.start) {
-                io.emit('installUpdate', `${command.name}`);
                 if (command.catch) {
-                    logger.info('Executing script on:', `127.0.0.1://${command.catch}`);
+                    logger.info(`Executing script on: http://127.0.0.1://${command.catch}`);
                     io.emit('installUpdate', { type: 'catch', content: command.catch });
+                    io.emit('installUpdate', { type: 'log', content: `Watching port ${command.catch}` });
                 }
                 for (const cmd of command.commands) {
                     if (cmd.startsWith('cd')) {
@@ -143,7 +157,8 @@ export const startScript = async (workingDir: string, io: Server) => {
                         const newDir = cmd.split(' ')[1];
                         workingDir = path.join(workingDir, newDir);
                     } else {
-                        await runCommand(cmd, io, workingDir);
+                        io.emit('installUpdate', { type: 'log', content: `${command.name}` });
+                        await execute(cmd, io, workingDir);
                     }
                 }
             }
@@ -154,27 +169,31 @@ export const startScript = async (workingDir: string, io: Server) => {
         console.error('Error starting script:', error);
     }
 }
-// stop script
-export const stopScript = async (workingDir: string, io: Server) => {
-    try {
-        io.emit('installUpdate', 'Stopping script...');
-        const dioneFile = path.join(workingDir, 'dione.json');
-        const data = fs.readFileSync(dioneFile, 'utf8');
-        const actions: Action = JSON.parse(data);
-        // read stop action
-        if (actions.stop) {
-            io.emit('installUpdate', 'Stopping...');
-            for (const command of actions.stop) {
-                io.emit('installUpdate', `${command.name}`);
-                for (const cmd of command.commands) {
-                    await runCommand(cmd, io, workingDir);
-                }
-            }
-        }
-    } catch (error) {
-        console.error('Error stopping script:', error);
-    }
-};
+
+// stop script, probably dont need this
+// export const stopScript = async (workingDir: string, io: Server) => {
+//     try {
+//         io.emit('installUpdate', 'Stopping script...');
+//         const dioneFile = path.join(workingDir, 'dione.json');
+//         const data = fs.readFileSync(dioneFile, 'utf8');
+//         const actions: Action = JSON.parse(data);
+//         // read stop action
+//         if (actions.stop) {
+//             io.emit('installUpdate', 'Stopping...');
+//             for (const command of actions.stop) {
+//                 io.emit('installUpdate', `${command.name}`);
+//                 for (const cmd of command.commands) {
+//                     await execute(cmd, io, workingDir);
+//                 }
+//             }
+//         }
+//     } catch (error) {
+//         console.error('Error stopping script:', error);
+//     }
+
+//     io.emit('installUpdate', { type: 'log', content: 'Process exited with code 1' });
+// };
+
 // uninstall script
 export const uninstallScript = async (workingDir: string, io: Server) => {
     try {
@@ -188,7 +207,7 @@ export const uninstallScript = async (workingDir: string, io: Server) => {
             for (const command of actions.uninstall) {
                 io.emit('installUpdate', `${command.name}`);
                 for (const cmd of command.commands) {
-                    await runCommand(cmd, io, workingDir);
+                    await execute(cmd, io, workingDir);
                 }
             }
         }

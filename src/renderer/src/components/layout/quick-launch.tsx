@@ -202,7 +202,7 @@ export default function QuickLaunch() {
                     <img src={CloseIcon} alt="Close App" className="h-3 w-3" />
                   </button>
                 </div>
-                <div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto">
+                <div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto mt-4">
                   {availableApps.map((app, index) => (
                     <motion.div
                       key={index}
@@ -229,7 +229,7 @@ export default function QuickLaunch() {
                         <span className="text-xs text-neutral-400">{app.name}</span>
                       </button>
                     </motion.div>
-                  ))}
+                  ))}                   
                 </div>
               </div>
             </motion.div>

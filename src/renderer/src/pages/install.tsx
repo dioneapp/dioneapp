@@ -1,12 +1,13 @@
 import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { getCurrentPort } from "../utils/getPort";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
 import ActionsComponent from "@renderer/components/install/actions";
+import Loading from "./loading";
 
 export default function Install() {
     const [loading, setLoading] = useState<boolean>(true);
@@ -29,7 +30,8 @@ export default function Install() {
             variant,
             children: message,
         })
-    }
+    }   
+    const navigate = useNavigate();
 
     // Fetch script data
     useEffect(() => {
@@ -119,6 +121,10 @@ export default function Install() {
                         loadIframe(parseInt(content));
                         setCatchPort(parseInt(content));
                     }
+                    if (content === "Script killed successfully") {
+                        navigate(0) // should change this, but for now fix logs after stop script
+                        showToast("success", `${data.name} exited successfully.`)
+                    }
                 });
             } catch (error) {
                 console.error("Error setting up socket:", error);
@@ -162,9 +168,8 @@ export default function Install() {
         }
     }
 
-    // todo: dont work
     async function stop() {
-        setShowLogs(true);
+        setShowLogs(false);
         setShowIframe(false);
         try {
             const port = await getCurrentPort();
@@ -175,6 +180,9 @@ export default function Install() {
             showToast("error", `Error stoping ${data.name}: ${error}`)
             setLogs((prevLogs) => [...prevLogs, `Error stoping ${data.name}`]);
         }
+        console.log('llega')
+        
+        showToast("success", `${data.name} stopped successfully.`)
     }
 
     async function uninstall() {
@@ -251,18 +259,20 @@ export default function Install() {
     }
 
     return (
-        <div className="relative min-h-screen w-full overflow-hidden">
-            <div className="relative min-h-screen backdrop-blur-xl flex items-center justify-center p-4">
+        <div className="relative w-full h-full overflow-auto">
+            <div className="absolute inset-0 flex items-center justify-center backdrop-blur-xl p-4">
+                <div className="w-full h-full flex justify-center items-center">
                 {loading ? (
-                    <div className="text-white">Loading...</div>
+                    <Loading />
                 ) : (
                     <AnimatePresence>
-                        {showIframe ? (<IframeComponent iframeSrc={iframeSrc} handleStop={handleStop} handleReloadIframe={handleReloadIframe} />) : showLogs ? (
-                            <LogsComponent statusLog={statusLog} logs={logs} copyLogsToClipboard={copyLogsToClipboard} /> ) : (
+                        {showIframe ? (<IframeComponent iframeSrc={iframeSrc} handleStop={handleStop} handleReloadIframe={handleReloadIframe} currentPort={catchPort as number} />) : showLogs ? (
+                            <LogsComponent statusLog={statusLog} logs={logs} setLogs={setLogs} copyLogsToClipboard={copyLogsToClipboard} handleStop={handleStop}/> ) : (
                              <ActionsComponent data={data} installed={installed} handleDownload={handleDownload} handleStart={handleStart} handleUninstall={handleUninstall} setImgLoading={setImgLoading} />
                         )}
                     </AnimatePresence>
                 )}
+                </div>
             </div>
         </div>
     );

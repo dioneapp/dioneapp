@@ -6,7 +6,8 @@ import { getScripts } from "../scripts/download";
 import { deleteScript } from "../scripts/delete";
 import getAllScripts, { getInstalledScript } from "../scripts/installed";
 import path from "node:path";
-import { startScript, stopScript } from "../scripts/runner";
+import { startScript } from "../scripts/runner";
+import { stopActiveProcess } from "../scripts/execute";
 
 export const setupRoutes = (server: Express, io: Server) => {
     server.get('/', (_req, res) => {
@@ -88,6 +89,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 
     server.get('/search_name/:name', async (req, res) => {
         async function getData() {
+            logger.info('searching for name:', req.params.name);
             const { data, error } = await supabase
                 .from('scripts')
                 .select('*')
@@ -119,7 +121,8 @@ export const setupRoutes = (server: Express, io: Server) => {
         const { name } = req.params;
         const root = process.cwd();
         const workingDir = path.join(root, 'apps', name);
-        console.log('Working dir:', workingDir);
+        logger.info(`Starting script '${name}' on '${workingDir}'`);
+        io.emit('installUpdate', { type: 'log', content: `Starting script '${name}' on '${workingDir}'` });
         try {
             await startScript(workingDir, io);
         } catch (error) {
@@ -134,7 +137,7 @@ export const setupRoutes = (server: Express, io: Server) => {
         const workingDir = path.join(root, 'apps', name);
         console.log('Working dir:', workingDir);
         try {
-            await stopScript(workingDir, io);
+            await stopActiveProcess(io);
         } catch (error) {
             logger.error('Error handling stop request:', error);
             res.status(500).send('An error occurred while processing your request.');
@@ -226,4 +229,5 @@ export const setupRoutes = (server: Express, io: Server) => {
             res.status(500).send('An error occurred while processing your request.');
         }
     });
+
 }

@@ -92,6 +92,32 @@ body {
     border-radius: 10px;
   }
 
+  iframe::-webkit-scrollbar
+  {
+    width: 2px;
+  }
+  
+  iframe::-webkit-scrollbar-track
+  {
+    background: transparent
+  }
+  
+  iframe::-webkit-scrollbar-thumb
+  {
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+  }
+
   #scrollable {
     -webkit-overflow-scrolling: touch;
   }
+
+  .hide-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
