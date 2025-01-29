@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import CopyIcon from "@renderer/assets/svgs/copy.svg";
+import StopIcon from "@renderer/assets/svgs/stop.svg";
 import { useEffect } from "react";
 
 interface LogsProps {
@@ -70,9 +71,8 @@ export default function LogsComponent({ statusLog, logs, setLogs, copyLogsToClip
                     className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
                     onClick={handleStop}
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 -960 960 960" fill="#111111">
-                        <path d="M320-640v320-320Zm-80 400v-480h480v480H240Zm80-80h320v-320H320v320Z"/>
-                    </svg>
+                                        <img src={StopIcon} alt="Stop Install" className="h-4 w-4" />
+
                 </button>
             </div>
         </motion.div>

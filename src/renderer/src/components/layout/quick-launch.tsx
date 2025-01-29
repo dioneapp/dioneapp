@@ -141,7 +141,8 @@ export default function QuickLaunch() {
   const renderEmptyButton = (index: number) => (
     <button
       onClick={() => showAppSelector(index)}
-      className="flex flex-col items-center gap-1"
+      className="flex flex-col items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+      disabled={installedApps.length === 0}
     >
       <div className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer">
         <svg className="w-10 h-10 hover:rotate-90 transition-transform"
