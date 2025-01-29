@@ -97,7 +97,7 @@ export default function Sidebar() {
                     <p className="text-xs text-neutral-400 px-0.5">Explore, Install, Innovate — in 1 Click.</p>
                     <div className="mt-2 w-full flex gap-2 px-0.5">
                         <button onClick={() => openLink("https://getdione.app/discord")}
-                            className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center"
+                            className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
                         >
                             <img src={discord} alt="Discord icon" className="h-4 w-4" />
 
@@ -105,7 +105,7 @@ export default function Sidebar() {
                         </button>
 
                         <button onClick={() => openLink("https://getdione.app/github")}
-                            className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center"
+                            className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
                         >
                             <img src={github} alt="GitHub icon" className="h-4 w-4" />
 
