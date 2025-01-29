@@ -25,7 +25,7 @@ function ScriptCard({ script }: ScriptCardProps) {
         className="h-16 w-16 rounded-xl border border-white/10 object-cover 
                  object-center group-hover:border-white/20 transition-all duration-200"
       />
-      <div className="flex flex-col gap-2 flex-1 min-w-0">
+      <div className="flex flex-col gap-1 flex-1 min-w-0">
         <h2 className="text-xl sm:text-2xl text-white font-medium truncate">
           {script.name}
         </h2>
