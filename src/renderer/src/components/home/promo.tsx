@@ -4,10 +4,9 @@ export default function PromoBanner() {
   return (
     <div className="mt-4 w-full rounded-xl border border-white/10 overflow-hidden">
       <div className="relative w-full p-4">
-        {/* background effects */}
-        <div className="absolute top-0 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full translate-y-1/2 blur-3xl" />
-
+        {/* Background effects - modified */}
+        <div className="absolute top-0 left-1/4 md:left-1/3 w-32 h-32 md:w-64 md:h-64 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl md:blur-[100px] animate-pulse [animation-duration:7000ms]" />
+        <div className="absolute bottom-0 right-1/4 md:right-1/3 w-32 h-32 md:w-64 md:h-64 bg-[#BCB1E7] rounded-full translate-y-1/2 blur-3xl md:blur-[100px] animate-pulse [animation-duration:7000ms]" />
         {/* main promo content */}
         <div className="relative flex flex-row items-center justify-between px-4 z-10">
           <div className="flex flex-col space-y-1">
