@@ -1,5 +1,5 @@
-import CloseIcon from "../../assets/svgs/Close.svg";
-import OpenIcon from "../../assets/svgs/Open.svg";
+import CloseIcon from "@assets/svgs/Close.svg";
+import OpenIcon from "@assets/svgs/Open.svg";
 
 export default function Titlebar() {
   const handleClose = async () => {

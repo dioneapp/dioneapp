@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Search from "../../../assets/svgs/Search.svg";
+import Search from "@assets/svgs/Search.svg";
 import ScriptList from "../feed";
 
 export default function SearchBar() {

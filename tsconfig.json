@@ -1,5 +1,10 @@
 {
   "files": [],
   "references": [{ "path": "./tsconfig.node.json" }, { "path": "./tsconfig.web.json" }],
-  "include": ["src/main/**/*", "src/renderer/**/*"]
+  "include": ["src/main/**/*", "src/renderer/**/*"],
+  "compilerOptions": {
+    "paths": {
+      "@assets/*": ["src/renderer/src/assets/*"],
+    }
+  }
 }

@@ -2,7 +2,7 @@ import { getCurrentPort } from "@renderer/utils/getPort"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion";
-import CloseIcon from "../../assets/svgs/Close.svg";
+import CloseIcon from "@assets/svgs/Close.svg";
 
 export default function QuickLaunch() {
   const [installedApps, setInstalledApps] = useState<string[]>([])

@@ -3,16 +3,15 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { openLink } from "../../utils/openLink";
 import QuickLaunch from "./quick-launch";
-import dio from "../../assets/svgs/dio.svg";
-import settings from "../../assets/svgs/settings.svg";
-import discord from "../../assets/svgs/discord.svg";
-import github from "../../assets/svgs/github.svg";
+import dio from "@assets/svgs/dio.svg";
+import settings from "@assets/svgs/settings.svg";
+import discord from "@assets/svgs/discord.svg";
+import github from "@assets/svgs/github.svg";
 
 export default function Sidebar() {
     const [authToken, setAuthToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
     const [logged, setLogged] = useState<boolean>(false);
-
     const navigate = useNavigate();
 
     useEffect(() => {

@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import CopyIcon from "@renderer/assets/svgs/copy.svg";
-import StopIcon from "@renderer/assets/svgs/stop.svg";
+import CopyIcon from "@assets/svgs/copy.svg";
+import StopIcon from "@assets/svgs/stop.svg";
 import { useEffect } from "react";
 
 interface LogsProps {
