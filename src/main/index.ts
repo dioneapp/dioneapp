@@ -1,10 +1,11 @@
-import { app, shell, BrowserWindow, ipcMain, Tray, globalShortcut, dialog } from 'electron';
+import { app, shell, BrowserWindow, ipcMain, Tray, globalShortcut } from 'electron';
 import path, { join } from 'path';
 import { electronApp, optimizer, is } from '@electron-toolkit/utils';
 import icon from '../../resources/icon.ico?asset';
 import logger from './server/utils/logger';
 import { start as startServer, stop as stopServer } from './server/server';
 import { getCurrentPort } from './server/utils/getPort';
+import os from 'os';
 
 // set default protocol client
 if (process.defaultApp) {
@@ -112,7 +113,22 @@ app.whenReady().then(() => {
 
   // Set up tray icon
   app.setName('Dione');
-  const appIcon = new Tray(path.join(__dirname, '../../resources/icon.ico'));
+  let appIcon;
+  switch (os.platform()) {
+    // add the appropriate icon for the platform
+    case 'win32':
+      appIcon = new Tray(path.resolve(__dirname, '../../resources/icon.ico'));
+      break;
+    case 'darwin':
+      appIcon = new Tray(path.resolve(__dirname, '../../resources/icon.icns'));
+      break;
+    case 'linux':
+      appIcon = new Tray(path.resolve(__dirname, '../../resources/icon.png'));
+      break;
+    default:
+      appIcon = new Tray(path.resolve(__dirname, '../../resources/icon.ico'));
+      break;
+  }
   electronApp.setAppUserModelId('Dione');
   appIcon.setToolTip('Dione');
 
