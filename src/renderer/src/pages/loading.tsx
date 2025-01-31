@@ -1,4 +1,4 @@
-import dioneIcon from "@assets/svgs/icon.svg"
+import Icon from "@renderer/components/icons/icon";
 
 export default function Loading() {
     return (
@@ -13,7 +13,7 @@ export default function Loading() {
             {/* main loading content */}
             <div className="flex flex-col items-center justify-center h-full w-full py-12">
                 <div className="flex flex-col items-center justify-center h-full w-full">
-                    <img src={dioneIcon} alt="Loading Dione" className="h-80 w-80" />
+                    <Icon name="Icon" className="h-80 w-80" />
                     <div className="loader w-40">
                         <div className="loaderBar"></div>
                     </div>

@@ -3,10 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { openLink } from "../../utils/openLink";
 import QuickLaunch from "./quick-launch";
-import dio from "@assets/svgs/dio.svg";
-import settings from "@assets/svgs/settings.svg";
-import discord from "@assets/svgs/discord.svg";
-import github from "@assets/svgs/github.svg";
+import Icon from "../icons/icon";
 
 export default function Sidebar() {
     const [authToken, setAuthToken] = useState<string | null>(null);
@@ -90,7 +87,7 @@ export default function Sidebar() {
                         to={"/"}
                         className="flex gap-2 hover:opacity-80 transition-opacity"
                     >
-                        <img src={dio} alt="Dione logo" className="h-8 w-8" />
+                        <Icon name="Dio" className="h-8 w-8" />
                         <h1 className="font-semibold text-3xl">Dione</h1>
                     </Link>
                     <p className="text-xs text-neutral-400 px-0.5">Explore, Install, Innovate — in 1 Click.</p>
@@ -98,7 +95,7 @@ export default function Sidebar() {
                         <button onClick={() => openLink("https://getdione.app/discord")}
                             className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
                         >
-                            <img src={discord} alt="Discord icon" className="h-4 w-4" />
+                            <Icon name="Discord" className="h-4 w-4" />
 
                             <span className="font-semibold">Discord</span>
                         </button>
@@ -106,7 +103,7 @@ export default function Sidebar() {
                         <button onClick={() => openLink("https://getdione.app/github")}
                             className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
                         >
-                            <img src={github} alt="GitHub icon" className="h-4 w-4" />
+                            <Icon name="github" className="h-4 w-4" />
 
                             <span className="font-semibold">GitHub</span>
                         </button>
@@ -119,7 +116,7 @@ export default function Sidebar() {
                         to={"/settings"}
                         className="p-2 hover:bg-white/10 rounded-full transition-colors"
                     >
-                        <img src={settings} alt="Settings icon" className="h-6 w-6" />
+                        <Icon name="Settings" className="h-6 w-6" />
 
                     </Link>
                     {logged ? (

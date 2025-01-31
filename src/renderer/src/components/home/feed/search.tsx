@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Search from "@assets/svgs/Search.svg";
 import ScriptList from "../feed";
+import Icon from "@renderer/components/icons/icon";
 
 export default function SearchBar() {
     const [search, setSearch] = useState("");
@@ -21,10 +21,9 @@ export default function SearchBar() {
                         focus:outline-none focus:border-white/20
                         active:border-white/20 active:outline-none"
                     />
-                    <img
-                        src={Search}
-                        alt="Search"
-                        className="absolute right-3 top-2.5 h-5 w-5 pointer-events-none"
+                    <Icon
+                        name="Search"
+                        className="absolute right-1.5 bottom-1.5 w-5 h-5 pointer-events-none"
                     />
                 </div>
             </div>

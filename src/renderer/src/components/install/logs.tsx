@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
-import CopyIcon from "@assets/svgs/copy.svg";
-import StopIcon from "@assets/svgs/stop.svg";
 import { useEffect } from "react";
+import Icon from "../icons/icon";
 
 interface LogsProps {
     statusLog: { status: string; content: string; };
@@ -60,18 +59,18 @@ export default function LogsComponent({ statusLog, logs, setLogs, copyLogsToClip
                     </p>
                 ))}
             </div>
-            <div className="absolute bottom-4 right-4">
+            <div className="absolute bottom-2 right-2">
                 <button
                     className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer mr-2"
                     onClick={copyLogsToClipboard}
                 >
-                    <img src={CopyIcon} alt="Copy Logs" className="h-4 w-4" />
+                    <Icon name="Copy" className="h-4 w-4" />
                 </button>
                 <button
                     className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
                     onClick={handleStop}
                 >
-                                        <img src={StopIcon} alt="Stop Install" className="h-4 w-4" />
+                   <Icon name="Stop" className="h-4 w-4" />
 
                 </button>
             </div>
