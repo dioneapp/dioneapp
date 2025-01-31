@@ -11,7 +11,8 @@ export default async function getAllScripts() {
 
 export async function getInstalledScript(name: string) {
    const root = process.cwd();
-   const scriptDir = path.join(root, 'apps', name);
+   const sanitizedName = name.replace(/\s+/g, '-');
+   const scriptDir = path.join(root, 'apps', sanitizedName);
    try {
       await fs.promises.readdir(scriptDir);
       return true;

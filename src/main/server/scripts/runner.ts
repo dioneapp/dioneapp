@@ -2,9 +2,10 @@ import * as fs from 'fs';
 import path from 'path';
 import { Server } from 'socket.io';
 import logger from '../utils/logger';
-import semver from 'semver';
+import * as semver from 'semver';
 import { Action, DependencyChecks } from './types';
 import { execute } from './execute';
+import { createEnvironment, executeOnEnvironment, existsEnvironment } from './environment';
 
 // check dependencies commands
 const dependencyCheckers: {[key: string]: DependencyChecks} = {
@@ -59,41 +60,13 @@ const checkDependency = async (
         io.emit("installUpdate", { type: 'error', content: `Error: Dependency '${depName}' not found` });
         logger.error(`Error: Dependency '${depName}' not found`);
     }
-    if (requiredVersion.toLowerCase() === 'latest') {
-        io.emit("installUpdate", {type: 'log', content: `✓ Dependency '${depName}' ${version} found`});
-        return;
-    }
     if (!semver.satisfies(version, requiredVersion)) {
         io.emit("installUpdate", { type: 'error', content: `Error: Dependency '${depName}' version ${version} does not satisfy ${requiredVersion}` });
         logger.error(`Error: Dependency '${depName}' version ${version} does not satisfy ${requiredVersion}`);
     }
 
-    io.emit("installUpdate", {type: 'log', content: `✓ Dependency '${depName}' ${version} found.`});
+    io.emit("installUpdate", {type: 'log', content: `✓ Dependency '${depName}' found.`});
 }
-// another way to run a command, probably dont need this
-// const runCommand = (command: string, io: Server, workingDir: string, type?: string): Promise<string> => {
-//   if (command.endsWith('.bat')) {
-//     command = `cmd /c start "" "${command}"`;
-//   }
-//     return new Promise((resolve, reject) => {
-//         exec(command, { cwd: workingDir, encoding: 'utf8' }, (error, stdout, stderr) => {
-//             if (error) {
-//                 logger.error("Error executing command:", command);
-//                 logger.error(stderr);
-//                 io.emit('installUpdate', { type: 'error', content: stderr });
-//                 reject(error);
-//             } else {
-//                 logger.info("Command executed:", command);
-//                 logger.info(stdout);
-//                 io.emit('installUpdate', { type: 'log', content: `Executing command: '${command}'` });
-//                 if (type !== 'dependency') {
-//                     io.emit('installUpdate', { type: 'log', content: `Command response: '${stdout || undefined}'` });
-//                 }
-//                 resolve(stdout);
-//             }
-//         });
-//     });
-// };
 
 // execute actions
 const executeActions = async (actions: Action, io: Server, workingDir: string) => {
@@ -112,6 +85,15 @@ const executeActions = async (actions: Action, io: Server, workingDir: string) =
     if (actions.installation) {
         io.emit('installUpdate', { type: 'status', status: 'pending', content: 'Installing...' });
         for (const step of actions.installation) {
+            if (step.env) {
+                const exists = await existsEnvironment(step.env, workingDir)
+                logger.warn(`${step.env} dont exists in ${workingDir}`)
+                if (!exists) {
+                    io.emit(`Creating environment '${step.env}' on '${workingDir}'`)
+                    logger.info('Creating environment')
+                    await createEnvironment(step.env, workingDir, io)
+                }
+            }
             for (const cmd of step.commands) { 
                 io.emit('installUpdate', { 
                     type: 'log', 
@@ -121,17 +103,17 @@ const executeActions = async (actions: Action, io: Server, workingDir: string) =
                 if (cmd.startsWith('cd')) {
                     const newDir = cmd.split(' ')[1];
                     workingDir = path.resolve(workingDir, newDir); 
-                    io.emit('installUpdate', { 
-                        type: 'log', 
-                        content: `Actual dir: ${workingDir}` 
-                    });
-                } else {
+                    io.emit('installUpdate', { type: 'log', content: `Actual dir: ${workingDir}` });
+                } else if (step.env) {
+                    await executeOnEnvironment(cmd, step.env, workingDir, io)
+                } else  {
                     await execute(cmd, io, workingDir);
                 }
             }
         }
     }
 
+    // this message is always shown, even if there are errors. check the logs for detailed error information
     io.emit('installUpdate', { type: 'status', status: 'success', content: 'Actions executed' });
 };
 
@@ -158,7 +140,11 @@ export const startScript = async (workingDir: string, io: Server) => {
                         workingDir = path.join(workingDir, newDir);
                     } else {
                         io.emit('installUpdate', { type: 'log', content: `${command.name}` });
-                        await execute(cmd, io, workingDir);
+                        if (command.env) {
+                            await executeOnEnvironment(cmd, command.env, workingDir, io)
+                        } else  {
+                            await execute(cmd, io, workingDir);
+                        }
                     }
                 }
             }
@@ -225,6 +211,8 @@ export const runActions = async (workingDir: string, io: Server) => {
         
         await executeActions(actions, io, workingDir);
     } catch (error) {
+        io.emit('installUpdate', {type: "log", content: `ERROR: '${error}'`})
+        io.emit('installUpdate', {type: "status", status: "error", content: "Error found"})
         console.error('Error reading or executing actions:', error);
     }
 };

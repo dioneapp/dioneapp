@@ -88,16 +88,18 @@ export const setupRoutes = (server: Express, io: Server) => {
     });
 
     server.get('/search_name/:name', async (req, res) => {
+        if (!req.params.name) return;
         async function getData() {
-            logger.info('searching for name:', req.params.name);
+            const sanitizedName = req.params.name.replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
+            logger.info('searching for name:', sanitizedName);
             const { data, error } = await supabase
                 .from('scripts')
                 .select('*')
-                .eq('name', req.params.name)
+                .eq('name', sanitizedName)
                 .limit(1)
                 .single();
             if (error) {
-                console.error(error);
+                logger.error(`Not found an script named ${sanitizedName}`)
                 res.send(error);
             } else {
                 res.send(data);
@@ -119,10 +121,11 @@ export const setupRoutes = (server: Express, io: Server) => {
 
     server.get('/start/:name', async (req, res) => {
         const { name } = req.params;
+        const sanitizedName = name.replace(/\s+/g, '-');
         const root = process.cwd();
-        const workingDir = path.join(root, 'apps', name);
-        logger.info(`Starting script '${name}' on '${workingDir}'`);
-        io.emit('installUpdate', { type: 'log', content: `Starting script '${name}' on '${workingDir}'` });
+        const workingDir = path.join(root, 'apps', sanitizedName);
+        logger.info(`Starting script '${sanitizedName}' on '${workingDir}'`);
+        io.emit('installUpdate', { type: 'log', content: `Starting script '${sanitizedName}' on '${workingDir}'` });
         try {
             await startScript(workingDir, io);
         } catch (error) {
@@ -133,8 +136,9 @@ export const setupRoutes = (server: Express, io: Server) => {
 
     server.get('/stop/:name', async (req, res) => {
         const { name } = req.params;
+        const sanitizedName = name.replace(/\s+/g, '-');
         const root = process.cwd();
-        const workingDir = path.join(root, 'apps', name);
+        const workingDir = path.join(root, 'apps', sanitizedName);
         console.log('Working dir:', workingDir);
         try {
             await stopActiveProcess(io);
@@ -146,9 +150,10 @@ export const setupRoutes = (server: Express, io: Server) => {
 
     server.get('/delete/:name', async (req, res) => {
         const { name } = req.params;
+        const sanitizedName = name.replace(/\s+/g, '-');
 
         try {
-            deleteScript(name, res);
+            deleteScript(sanitizedName, res);
         } catch (error) {
             logger.error('Error handling delete request:', error);
             res.status(500).send('An error occurred while processing your request.');

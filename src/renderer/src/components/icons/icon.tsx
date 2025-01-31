@@ -11,6 +11,7 @@ const Icon: React.FC<IconProps> = ({ name, className = "" }) => {
   const [svgContent, setSvgContent] = useState<string | null>(null);
 
   useEffect(() => {
+    // make sure to write the name correctly or the icon will not be displayed!
     const iconSvg = icons[`/src/assets/svgs/${name}.svg`];
     if (iconSvg) {
       setSvgContent(iconSvg);

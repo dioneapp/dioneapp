@@ -134,7 +134,7 @@ export default function QuickLaunch() {
           className="h-full w-full object-cover"
         />
       </div>
-      <p className="text-xs text-neutral-400">{app.name}</p>
+      <p className="text-xs text-neutral-400 truncate">{app.name}</p>
     </Link>
   )
 

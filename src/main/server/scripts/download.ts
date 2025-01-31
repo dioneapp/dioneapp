@@ -30,7 +30,8 @@ export async function getScripts(id: string, res: Response, io: SocketIO): Promi
   io.emit('installUpdate', { type: 'log', content: `Found script '${data.name}' with version '${data.version}'` });
   io.emit('installUpdate', { type: 'status', status: 'success', content: 'Script founded' });
 
-  const saveDirectory = path.join(root, 'apps', data.name);
+  const sanitizedScriptName = data.name.replace(/\s+/g, '-');
+  const saveDirectory = path.join(root, 'apps', sanitizedScriptName);
   io.emit('installUpdate', { type: 'log', content: `Cloning script to '${saveDirectory}'` });	
   io.emit('installUpdate', { type: 'status', status: 'pending', content: `Cloning script...` });
 

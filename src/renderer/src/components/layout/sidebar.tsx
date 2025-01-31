@@ -103,7 +103,7 @@ export default function Sidebar() {
                         <button onClick={() => openLink("https://getdione.app/github")}
                             className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
                         >
-                            <Icon name="github" className="h-4 w-4" />
+                            <Icon name="GitHub" className="h-4 w-4" />
 
                             <span className="font-semibold">GitHub</span>
                         </button>

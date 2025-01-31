@@ -5,6 +5,7 @@ export interface Command {
     commands: string[];
     'not-required'?: boolean;
     catch?: number;
+    env?: string;
 }
 // action types
 export interface Action {
