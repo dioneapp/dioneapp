@@ -116,12 +116,9 @@ export default function QuickLaunch() {
   };
 
   const renderAppButton = (app: any, index: number) => (
-    <Link
-      to={`/install/${app.id}`}
-      key={index}
-      className="flex flex-col items-center gap-1"
-    >
-      <div
+    <div key={index} className="flex flex-col items-center gap-1">
+      <Link
+        to={`/install/${app.id}`}
         className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center overflow-hidden"
         onContextMenu={(e) => {
           e.preventDefault();
@@ -133,18 +130,19 @@ export default function QuickLaunch() {
           alt={app.name}
           className="h-full w-full object-cover"
         />
-      </div>
+      </Link>
       <p className="text-xs text-neutral-400 truncate">{app.name}</p>
-    </Link>
-  )
+    </div>
+  );
+
 
   const renderEmptyButton = (index: number) => (
-    <button
-      onClick={() => showAppSelector(index)}
-      className="flex flex-col items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
-      disabled={installedApps.length === 0}
-    >
-      <div className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer">
+    <div className="flex flex-col items-center gap-1">
+      <button
+        onClick={() => showAppSelector(index)}
+        className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={installedApps.length === 0}
+      >
         <svg className="w-10 h-10 hover:rotate-90 transition-transform"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 -960 960 960"
@@ -152,10 +150,11 @@ export default function QuickLaunch() {
         >
           <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
         </svg>
-      </div>
+      </button>
       <p className="text-xs text-neutral-400">Add App</p>
-    </button>
-  )
+    </div>
+  );
+
 
   return (
     <div className="flex mt-auto w-full h-64">
@@ -230,7 +229,7 @@ export default function QuickLaunch() {
                         <span className="text-xs text-neutral-400">{app.name}</span>
                       </button>
                     </motion.div>
-                  ))}                   
+                  ))}
                 </div>
               </div>
             </motion.div>
