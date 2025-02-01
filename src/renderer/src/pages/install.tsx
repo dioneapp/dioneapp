@@ -1,5 +1,5 @@
 import { useToast } from "@renderer/utils/useToast";
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
@@ -7,7 +7,7 @@ import { getCurrentPort } from "../utils/getPort";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
 import ActionsComponent from "@renderer/components/install/actions";
-import Loading from "./loading";
+import Loading from "@renderer/components/install/loading-skeleton";
 
 export default function Install() {
     const [loading, setLoading] = useState<boolean>(true);
@@ -262,16 +262,37 @@ export default function Install() {
         <div className="relative w-full h-full overflow-auto">
             <div className="absolute inset-0 flex items-center justify-center backdrop-blur-xl p-4">
                 <div className="w-full h-full flex justify-center items-center">
-                {loading ? (
-                    <Loading />
-                ) : (
-                    <AnimatePresence>
-                        {showIframe ? (<IframeComponent iframeSrc={iframeSrc} handleStop={handleStop} handleReloadIframe={handleReloadIframe} currentPort={catchPort as number} />) : showLogs ? (
-                            <LogsComponent statusLog={statusLog} logs={logs} setLogs={setLogs} copyLogsToClipboard={copyLogsToClipboard} handleStop={handleStop}/> ) : (
-                             <ActionsComponent data={data} installed={installed} handleDownload={handleDownload} handleStart={handleStart} handleUninstall={handleUninstall} setImgLoading={setImgLoading} />
-                        )}
-                    </AnimatePresence>
-                )}
+                    {loading ? (
+                        <Loading />
+                    ) : (
+                        <AnimatePresence>
+                            {showIframe ? (
+                                <IframeComponent
+                                    iframeSrc={iframeSrc}
+                                    handleStop={handleStop}
+                                    handleReloadIframe={handleReloadIframe}
+                                    currentPort={catchPort as number}
+                                />
+                            ) : showLogs ? (
+                                <LogsComponent
+                                    statusLog={statusLog}
+                                    logs={logs}
+                                    setLogs={setLogs}
+                                    copyLogsToClipboard={copyLogsToClipboard}
+                                    handleStop={handleStop}
+                                />
+                            ) : (
+                                <ActionsComponent
+                                    data={data}
+                                    installed={installed}
+                                    handleDownload={handleDownload}
+                                    handleStart={handleStart}
+                                    handleUninstall={handleUninstall}
+                                    setImgLoading={setImgLoading}
+                                />
+                            )}
+                        </AnimatePresence>
+                    )}
                 </div>
             </div>
         </div>

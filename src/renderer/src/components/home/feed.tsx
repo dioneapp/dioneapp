@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { getCurrentPort } from "../../utils/getPort";
-import Loading from "@renderer/pages/loading";
 import { Script } from "./feed/types";
 import ScriptCard from "./feed/card";
+import Loading from "./loading-skeleton";
 
 interface ScriptListProps {
   endpoint: string;
@@ -58,7 +58,7 @@ export default function List({ endpoint, type, className = "" }: ScriptListProps
   }, [port, endpoint]);
 
 
-  if (loading && type != 'explore') {
+  if (loading) {
     return <Loading />;
   }
 
