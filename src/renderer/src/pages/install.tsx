@@ -10,20 +10,22 @@ import ActionsComponent from "@renderer/components/install/actions";
 import Loading from "@renderer/components/install/loading-skeleton";
 
 export default function Install() {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [data, setData] = useState<any | undefined>(undefined);
-    const [logs, setLogs] = useState<string[]>([]);
-    const [statusLog, setStatusLog] = useState<{ status: string; content: string }>({
-        status: "",
-        content: ""
-    });
     const { id } = useParams<{ id: string }>();
-    const [showLogs, setShowLogs] = useState<boolean>(false);
+    // loading stuff
+    const [loading, setLoading] = useState<boolean>(true);
     const [_imgLoading, setImgLoading] = useState<boolean>(true);
+    // data stuff
+    const [data, setData] = useState<any | undefined>(undefined);
     const [installed, setInstalled] = useState<boolean>(false);
+    // logs stuff
+    const [logs, setLogs] = useState<string[]>([]);
+    const [statusLog, setStatusLog] = useState<{ status: string; content: string }>({ status: "", content: ""});
+    const [showLogs, setShowLogs] = useState<boolean>(false);
+    // iframe stuff
     const [showIframe, setShowIframe] = useState<boolean>(false);
     const [catchPort, setCatchPort] = useState<number>();
     const [iframeSrc, setIframeSrc] = useState<string>("");
+    // toast stuff
     const { addToast } = useToast()
     const showToast = (variant: "default" | "success" | "error" | "warning", message: string) => {
         addToast({
@@ -31,15 +33,17 @@ export default function Install() {
             children: message,
         })
     }   
+    // dep stuff
+    const [depNotFound, setDepNotFound] = useState<{ name: string; version: string }[]>([])
+    // navegation stuff
     const navigate = useNavigate();
 
-    // Fetch script data
+    // fetch script data
     useEffect(() => {
         async function getData() {
             try {
                 const port = await getCurrentPort();
-                const response = await fetch(`http://localhost:${port}/search/${id}`, {
-                    method: "GET",
+                const response = await fetch(`http://localhost:${port}/search/${id}`, { method: "GET",
                     headers: {
                         "Content-Type": "application/json",
                     },
@@ -61,26 +65,24 @@ export default function Install() {
         getData();
     }, [id]);
 
-    useEffect(() => {
-        async function fetchIfDownloaded() {
-            const port = await getCurrentPort();
-            const response = await fetch(`http://localhost:${port}/installed/${data.name}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const jsonData = await response.json();
-            console.log("data", jsonData);
-            setInstalled(jsonData);
+    async function fetchIfDownloaded() {
+        const port = await getCurrentPort();
+        const response = await fetch(`http://localhost:${port}/installed/${data.name}`, { method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const jsonData = await response.json();
+        console.log("data", jsonData);
+        setInstalled(jsonData);
+    }
 
+    useEffect(() => {
         fetchIfDownloaded();
     }, [data])
-
 
     useEffect(() => {
         let socket: any = null;
@@ -103,6 +105,10 @@ export default function Install() {
                 socket.on("disconnect", () => {
                     console.log("Socket disconnected");
                     setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
+                });
+
+                socket.on("dependencyNotFound", (message: {name: string, version: string}) => {
+                    setDepNotFound(prevDepNotFound => [...prevDepNotFound, { name: message.name, version: message.version }]);
                 });
 
                 socket.on("installUpdate", (message: { type: string; content: string; status: string }) => {
@@ -180,8 +186,7 @@ export default function Install() {
             showToast("error", `Error stoping ${data.name}: ${error}`)
             setLogs((prevLogs) => [...prevLogs, `Error stoping ${data.name}`]);
         }
-        console.log('llega')
-        
+
         showToast("success", `${data.name} stopped successfully.`)
     }
 
@@ -223,6 +228,7 @@ export default function Install() {
     const handleStop = async () => {
         showToast("default", `Stoping ${data.name}...`)
         await stop();
+        await fetchIfDownloaded();
         setShowLogs(false);
     }
 

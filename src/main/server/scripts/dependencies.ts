@@ -25,7 +25,7 @@ const dependencyCheckers: {[key: string]: DependencyChecks} = {
     }
 }
 // check if dependency is installed
-export const checkDependency = async (depName: string, requiredVersion: string, io: Server, workingDir: string): Promise<void> => {
+export const checkDependency = async (depName: string, requiredVersion: string, io: Server, workingDir: string): Promise<string> => {
     const checker = dependencyCheckers[depName];
     if (!checker) {
         io.emit("installUpdate", { type: 'error', content: `Error: Dependency '${depName}' is not supported` });
@@ -52,8 +52,10 @@ export const checkDependency = async (depName: string, requiredVersion: string, 
     }
     if (!version) {
         // dependency not found
-        io.emit("installUpdate", { type: 'error', content: `Error: Dependency '${depName}' not found` });
+        io.emit('dependencyNotFound', {name: depName, version: requiredVersion})
+        // io.emit("installUpdate", { type: 'log', content: `WARN: Dependency '${depName}' not found` });
         logger.error(`Error: Dependency '${depName}' not found`);
+        return "not_found";
     }
     if (!semver.satisfies(version, requiredVersion)) {
         // version is not exact
@@ -68,4 +70,6 @@ export const checkDependency = async (depName: string, requiredVersion: string, 
         // version is exact
         io.emit("installUpdate", {type: 'log', content: `✓ Dependency '${depName}' found with version '${requiredVersion}'.`});
     }
+
+    return "success"
 }

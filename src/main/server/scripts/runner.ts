@@ -15,7 +15,12 @@ const executeActions = async (actions: Action, io: Server, workingDir: string) =
     if (actions.dependencies) {
         io.emit('installUpdate', { type: 'status', status: 'pending', content: 'Checking dependencies...' });
         for (const [depName, depConfig] of Object.entries(actions.dependencies)) {
-            await checkDependency(depName, depConfig.version, io, workingDir);
+            const result = await checkDependency(depName, depConfig.version, io, workingDir);
+            if (result === 'not_found') {
+                io.emit('installUpdate', { type: 'status', status: 'error', content: 'Error detected' })
+                io.emit('installUpdate', { type: 'log', content: `ERROR: Aborting... Dependency '${depName}@${depConfig.version}' not found.` });
+                return;
+            }
         }
         io.emit('installUpdate', { type: 'status', status: 'success', content: 'Dependencies checked' });
     }
