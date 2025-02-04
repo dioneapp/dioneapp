@@ -222,7 +222,8 @@ export const setupRoutes = (server: Express, io: Server) => {
             const { data, error } = await supabase
                 .from('scripts')
                 .select('*')
-                .ilike('name', `%${name}%`)
+                .filter('name', 'ilike', `${name}%`)
+                .order('name', { ascending: true });
             if (error) {
                 console.error(error);
                 res.send(error);
