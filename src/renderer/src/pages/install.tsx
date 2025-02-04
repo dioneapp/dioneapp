@@ -34,7 +34,7 @@ export default function Install() {
         })
     }   
     // dep stuff
-    const [depNotFound, setDepNotFound] = useState<{ name: string; version: string }[]>([])
+    const [_depNotFound, setDepNotFound] = useState<{ name: string; version: string }[]>([])
     // navegation stuff
     const navigate = useNavigate();
 
