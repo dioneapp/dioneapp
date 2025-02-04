@@ -51,9 +51,9 @@ export const stopActiveProcess = async (io: Server) => {
   }
 };
 // execute command
-export const execute = async (command: string, io: Server, workingDir: string, logs?: string): Promise<string | void> => {
+export const execute = async (command: string, io: Server, workingDir: string, logs?: string): Promise<string> => {
   if (!logs) logs = "installUpdate";
-  
+  let output 
   try {
     await stopActiveProcess(io);
 
@@ -88,7 +88,7 @@ export const execute = async (command: string, io: Server, workingDir: string, l
     activePID = activeProcess.pid;
 
     const processOutput = (data: Buffer, isError = false) => {
-      const output = data.toString();
+      output = data.toString();
       io.emit(logs, { type: "log", content: output });
       isError ? logger.error(output) : logger.info(output);
     };
@@ -98,16 +98,18 @@ export const execute = async (command: string, io: Server, workingDir: string, l
     activeProcess.stderr.on('data', (data: Buffer) => processOutput(data, true));
 
     // return a promise that resolves when the process exits
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<string>((resolve) => {
       activeProcess.on('exit', (code: number) => {
         io.emit(logs, `Process exited with code ${code}`);
         logger.info(`Process exited with code ${code}`);
         activeProcess = null;
         activePID = null;
         if (code === 0) {
-          resolve();
+          resolve(output);
         } else {
-          reject(new Error(`Process exited with code ${code}`)); 
+          io.emit(logs, {type: "status", status: "error", content: "Error detected"})
+          logger.error(`Process exited with code ${code}`)
+          resolve("false")
         }
       });
     });
@@ -116,5 +118,6 @@ export const execute = async (command: string, io: Server, workingDir: string, l
     io.emit(logs, { type: "status", status: "error", content: 'Error detected' });
     io.emit(logs, { type: "log", content: `ERROR: ${error.message}` });
     logger.error(`ERROR: ${error.message}`);
+    return "false"
   }
 };

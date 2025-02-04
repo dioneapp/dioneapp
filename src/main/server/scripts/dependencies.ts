@@ -50,7 +50,7 @@ export const checkDependency = async (depName: string, requiredVersion: string, 
         io.emit("installUpdate", { type: 'error', content: `Error checking dependency '${depName}': ${error}` });
         logger.error(`Error checking dependency '${depName}': ${error}`);
     }
-    if (!version) {
+    if (!version && !output || output === "false") {
         // dependency not found
         io.emit('dependencyNotFound', {name: depName, version: requiredVersion})
         // io.emit("installUpdate", { type: 'log', content: `WARN: Dependency '${depName}' not found` });
