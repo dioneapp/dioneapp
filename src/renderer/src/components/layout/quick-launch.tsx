@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion";
 import CloseIcon from "@assets/svgs/Close.svg";
 
+export let localStorageKey = 'quickLaunchApps';
 export default function QuickLaunch() {
   const [installedApps, setInstalledApps] = useState<string[]>([])
   const [apps, setApps] = useState<any[]>([])
@@ -11,7 +12,6 @@ export default function QuickLaunch() {
   const [selectedSlot, setSelectedSlot] = useState<number | null>(null)
   const [availableApps, setAvailableApps] = useState<any[]>([])
   const maxApps = 6
-  const localStorageKey = 'quickLaunchApps';
 
   const backdropVariants = {
     hidden: { opacity: 0 },
@@ -45,7 +45,9 @@ export default function QuickLaunch() {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem(localStorageKey, JSON.stringify(apps));
+    if (apps.length > 0) {
+      localStorage.setItem(localStorageKey, JSON.stringify(apps));
+    }
   }, [apps]);
 
   useEffect(() => {
@@ -107,12 +109,15 @@ export default function QuickLaunch() {
     setApps(newApps)
     setShowAppList(false)
     setSelectedSlot(null)
+    window.location.reload() // should change this
   }
 
   const removeApp = (index: number) => {
     const newApps = [...apps];
-    newApps[index] = null;
+    newApps.splice(index, 1);
     setApps(newApps);
+    localStorage.setItem(localStorageKey, JSON.stringify(newApps));
+    window.location.reload() // should change this
   };
 
   const renderAppButton = (app: any, index: number) => (

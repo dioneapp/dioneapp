@@ -89,6 +89,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 
     server.get('/search_name/:name', async (req, res) => {
         if (!req.params.name) return;
+        if (req.params.name.length === 0) return;
         async function getData() {
             const sanitizedName = req.params.name.replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
             logger.info('searching for name:', sanitizedName);

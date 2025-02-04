@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 // import all svgs in the assets folder
-const icons = import.meta.glob("@assets/svgs/*.svg", { eager: true, as: "raw" });
+const icons = import.meta.glob("@assets/svgs/*.svg", { eager: true, query: '?raw', import: 'default' });
 
 type IconProps = {
   name: string;
@@ -14,7 +14,7 @@ const Icon: React.FC<IconProps> = ({ name, className = "" }) => {
     // make sure to write the name correctly or the icon will not be displayed!
     const iconSvg = icons[`/src/assets/svgs/${name}.svg`];
     if (iconSvg) {
-      setSvgContent(iconSvg);
+      setSvgContent(iconSvg as unknown as string);
     } else {
       console.error(`⚠️ Icon "${name}" not found`);
       setSvgContent(null);

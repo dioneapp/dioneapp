@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { getCurrentPort } from "../../utils/getPort";
 import { Script } from "./feed/types";
 import ScriptCard from "./feed/card";
 import Loading from "./loading-skeleton";
+import { getCurrentPort } from "@renderer/utils/getPort";
 
 interface ScriptListProps {
   endpoint: string;
@@ -10,27 +10,14 @@ interface ScriptListProps {
   className?: string;
 }
 
-export default function List({ endpoint, type, className = "" }: ScriptListProps) {
-  const [port, setPort] = useState<number | null>(null);
+export default function List({ endpoint, className = "" }: ScriptListProps) {
   const [scripts, setScripts] = useState<Script[]>([]);
   const [loading, setLoading] = useState(true);
   const [_error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPort = async () => {
-      try {
-        const currentPort = await getCurrentPort();
-        setPort(currentPort);
-      } catch (err) {
-        setError("Failed to get port number");
-        setLoading(false);
-      }
-    };
-    fetchPort();
-  }, []);
-
-  useEffect(() => {
     const fetchScripts = async () => {
+      const port = await getCurrentPort();
       if (!port) return;
 
       try {
@@ -44,9 +31,13 @@ export default function List({ endpoint, type, className = "" }: ScriptListProps
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+        
         const data = await response.json();
-        setScripts(data);
+        if (Array.isArray(data)) {
+          setScripts(data);
+        } else {
+          setError("Fetched data is not an array");
+        }
       } catch (err) {
         setError("Failed to fetch scripts");
       } finally {
@@ -55,7 +46,7 @@ export default function List({ endpoint, type, className = "" }: ScriptListProps
     };
 
     fetchScripts();
-  }, [port, endpoint]);
+  }, [endpoint]);
 
 
   if (loading) {
@@ -71,13 +62,6 @@ export default function List({ endpoint, type, className = "" }: ScriptListProps
       </div>
 
       {scripts.length === 0 && <div className="text-center text-neutral-500 text-sm">No scripts found</div>}
-
-      {port && (
-        <div className="fixed bottom-2 right-2 text-[8px] text-neutral-500 
-                      bg-black/50 backdrop-blur-sm rounded px-2 py-1">
-          Port: {port}
-        </div>
-      )}
     </div>
   );
 }
