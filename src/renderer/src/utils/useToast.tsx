@@ -20,9 +20,11 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
     const id = Math.random().toString()
     const newToast = { ...toast, id }
     setToasts((prev) => [...prev, newToast])
-    setTimeout(() => {
-      removeToast(id)
-    }, 5000) // Remove toast after 5000ms
+    if (toast.fixed === "false") {
+      setTimeout(() => {
+        removeToast(id)
+      }, 5000) // Remove toast after 5000ms
+    }
   }, [])
 
   const removeToast = React.useCallback((id: string) => {

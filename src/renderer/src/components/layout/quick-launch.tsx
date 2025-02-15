@@ -87,14 +87,8 @@ export default function QuickLaunch() {
 
   async function showAppSelector(index: number) {
     try {
-      const port = await getCurrentPort()
-      const results = await Promise.all(
-        installedApps.map(app =>
-          fetch(`http://localhost:${port}/search_name/${app}`)
-            .then(res => res.ok ? res.json() : [])
-        )
-      )
-      setAvailableApps(results.flat())
+      const results = localStorage.getItem(localStorageKey)
+      setAvailableApps(results ? JSON.parse(results) : [])
       setSelectedSlot(index)
       setShowAppList(true)
     } catch (error) {
@@ -208,7 +202,7 @@ export default function QuickLaunch() {
                   </button>
                 </div>
                 <div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto mt-4">
-                  {availableApps.map((app, index) => (
+                  {availableApps && availableApps.map((app, index) => (
                     <motion.div
                       key={index}
                       custom={index}
@@ -221,17 +215,26 @@ export default function QuickLaunch() {
                         className="flex flex-col items-center p-3 rounded-xl transition-colors w-full cursor-pointer"
                       >
                         <motion.div
-                          className="h-16 w-16 mb-2 border border-white/10 rounded-xl flex items-center justify-center overflow-hidden"
+                          className={`h-16 w-16 mb-2 ${app.logo_url ? 'border border-white/10' : ''} rounded-xl flex items-center justify-center overflow-hidden`}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
                         >
+                          {app.logo_url ? (
                           <img
                             src={app.logo_url || "/svgs/placeholder.svg"}
                             alt={app.name}
                             className="h-full w-full object-cover"
                           />
+                          ) : (
+                          <div className="h-full w-full object-cover bg-white/10 animate-pulse">
+                          </div>
+                          )}
                         </motion.div>
-                        <span className="text-xs text-neutral-400">{app.name}</span>
+                        {app.name ? (
+                          <span className="text-xs text-neutral-400">{app.name}</span>
+                        ): (
+                          <div className="text-xs bg-white/10 animate-pulse w-16 h-2 rounded-xl"/>
+                        )}
                       </button>
                     </motion.div>
                   ))}

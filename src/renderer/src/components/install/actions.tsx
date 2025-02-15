@@ -1,5 +1,6 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
+import Loading from "./loading-skeleton";
 
 interface ActionsProps {
     data: any;
@@ -20,6 +21,8 @@ export default function ActionsComponent({
 }: ActionsProps) {
 
     return (
+        <>
+        {data ? (
         <motion.div
             key="actions"
             initial={{ opacity: 0, y: 20 }}
@@ -41,7 +44,7 @@ export default function ActionsComponent({
                             <img
                                 onLoad={() => setImgLoading(false)}
                                 onError={() => setImgLoading(false)}
-                                src={data?.logo_url || "/svgs/icon.svg"}
+                                src={data?.logo_url || "/svgs/Icon.svg"}
                                 alt={`${data?.name} icon`}
                                 className="h-16 w-16 rounded-xl border border-white/10 object-cover object-center transition-all duration-200"
                             />
@@ -121,5 +124,9 @@ export default function ActionsComponent({
                 </div>
             </div>
         </motion.div>
+        ) : (
+            <Loading />
+        )}
+        </>
     );
 }

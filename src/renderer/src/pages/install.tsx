@@ -27,16 +27,24 @@ export default function Install() {
     const [iframeSrc, setIframeSrc] = useState<string>("");
     // toast stuff
     const { addToast } = useToast()
-    const showToast = (variant: "default" | "success" | "error" | "warning", message: string) => {
+    const showToast = (variant: "default" | "success" | "error" | "warning", message: string, fixed?: "true" | "false") => {
         addToast({
             variant,
             children: message,
+            fixed
         })
     }   
     // dep stuff
     const [_depNotFound, setDepNotFound] = useState<{ name: string; version: string }[]>([])
     // navegation stuff
     const navigate = useNavigate();
+    // errors stuff
+    const [error, setError] = useState<boolean>(false)
+    useEffect(() => {
+        if (error === true) {
+            showToast("error", "We are having connection problems, please try again later.", "true")
+        }
+    }, [error])
 
     // fetch script data
     useEffect(() => {
@@ -48,13 +56,14 @@ export default function Install() {
                         "Content-Type": "application/json",
                     },
                 });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (response.ok) {
+                    const script = await response.json();
+                    setData(script[0])
+                } else {
+                    throw new Error("Failed to fetch data")
                 }
-                const script = await response.json();
-                console.log("script retrieved:", script);
-                setData(script[0]);
             } catch (error) {
+                setError(true)
                 console.error("Error fetching data:", error);
                 setLogs((prevLogs) => [...prevLogs, "Error fetching script data"]);
             } finally {
@@ -66,18 +75,21 @@ export default function Install() {
     }, [id]);
 
     async function fetchIfDownloaded() {
-        const port = await getCurrentPort();
-        const response = await fetch(`http://localhost:${port}/installed/${data.name}`, { method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        if (data.name) {
+            const port = await getCurrentPort();
+            const response = await fetch(`http://localhost:${port}/installed/${data.name}`, { method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (response.ok) {
+                const jsonData = await response.json();
+                console.log("data", jsonData);
+                setInstalled(jsonData);
+            } else {
+                setError(true)
+            }
         }
-        const jsonData = await response.json();
-        console.log("data", jsonData);
-        setInstalled(jsonData);
     }
 
     useEffect(() => {
@@ -133,6 +145,7 @@ export default function Install() {
                     }
                 });
             } catch (error) {
+                setError(true)
                 console.error("Error setting up socket:", error);
                 setLogs((prevLogs) => [...prevLogs, "Error setting up socket"]);
             }

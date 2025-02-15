@@ -78,8 +78,8 @@ export const setupRoutes = (server: Express, io: Server) => {
                 .select('*')
                 .eq('id', req.params.id);
             if (error) {
-                console.error(error);
-                res.send(error);
+                logger.error('No database connection established:', error)
+                res.status(500).send(error);
             } else {
                 res.send(data);
             }

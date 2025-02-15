@@ -10,7 +10,7 @@ interface ScriptListProps {
   className?: string;
 }
 
-export default function List({ endpoint, className = "" }: ScriptListProps) {
+export default function List({ endpoint, type, className = "" }: ScriptListProps) {
   const [scripts, setScripts] = useState<Script[]>([]);
   const [loading, setLoading] = useState(true);
   const [_error, setError] = useState<string | null>(null);
@@ -61,7 +61,7 @@ export default function List({ endpoint, className = "" }: ScriptListProps) {
         ))}
       </div>
 
-      {scripts.length === 0 && <div className="text-center text-neutral-500 text-sm">No scripts found</div>}
+      {scripts.length === 0 && type !== "featured" && <div className="text-center text-neutral-500 text-sm">No scripts found</div>}
     </div>
   );
 }

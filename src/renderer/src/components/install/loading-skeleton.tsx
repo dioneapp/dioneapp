@@ -10,8 +10,8 @@ export default function Loading() {
         transition={{ duration: 0.2 }}
         className="flex flex-col gap-6 w-full max-w-xl overflow-auto"
     >
-        <div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-auto max-w-xl w-full backdrop-blur-md">
-            <div className="absolute top-0 left-0.5/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-10" />
+        <div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-visible max-w-xl w-full backdrop-blur-md">
+            <div className="absolute top-0 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-10" />
             <div className="relative z-10">
                 <div className="flex gap-4">
                     <div className="flex w-full gap-2 animate-pulse">

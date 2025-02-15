@@ -2,6 +2,7 @@ import * as React from "react"
 
 export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
   variant: 'default' | 'success' | 'error' | 'warning'
+  fixed?: string
   onClose: () => void
 }
 
@@ -23,7 +24,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
         <div className="flex-1 p-2 text-xs text-neutral-300">{children}</div>
         <button
           onClick={onClose}
-          className="flex items-center justify-center p-2 opacity-70 hover:opacity-100 transition-opacity"
+          className="flex items-center justify-center p-2 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
