@@ -22,7 +22,7 @@ export const setupRoutes = (server: Express, io: Server) => {
                 .select('*')
                 .order('created_at', { ascending: false });
             if (error) {
-                console.error(error);
+                logger.error(`Unable to obtain the scripts: [ (${error.code || "No code"}) ${error.details} ]`,);
                 res.send(error);
             } else {
                 res.send(data);
@@ -40,7 +40,7 @@ export const setupRoutes = (server: Express, io: Server) => {
                 .limit(4);
 
             if (featuredScriptsError) {
-                console.error(featuredScriptsError);
+                logger.error(`Unable to obtain the scripts: [ (${featuredScriptsError.code || "No code"}) ${featuredScriptsError.details} ]`,);
                 res.send(featuredScriptsError);
                 return;
             }
@@ -59,7 +59,7 @@ export const setupRoutes = (server: Express, io: Server) => {
                 .limit(maxScripts);
 
             if (randomScriptsError) {
-                console.error(randomScriptsError);
+                logger.error(`Unable to obtain the scripts: [ (${randomScriptsError.code || "No code"}) ${randomScriptsError.details} ]`,);
                 res.send(randomScriptsError);
                 return;
             }
@@ -78,7 +78,7 @@ export const setupRoutes = (server: Express, io: Server) => {
                 .select('*')
                 .eq('id', req.params.id);
             if (error) {
-                logger.error('No database connection established:', error)
+                logger.error(`No database connection established: [ (${error.code || "No code"}) ${error.details} ]`,);
                 res.status(500).send(error);
             } else {
                 res.send(data);
@@ -92,18 +92,19 @@ export const setupRoutes = (server: Express, io: Server) => {
         if (req.params.name.length === 0) return;
         async function getData() {
             const sanitizedName = req.params.name.replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
-            logger.info('searching for name:', sanitizedName);
-            const { data, error } = await supabase
-                .from('scripts')
-                .select('*')
-                .eq('name', sanitizedName)
-                .limit(1)
-                .single();
-            if (error) {
-                logger.error(`Not found an script named ${sanitizedName}`)
-                res.send(error);
-            } else {
-                res.send(data);
+            if (sanitizedName) { 
+                const { data, error } = await supabase
+                    .from('scripts')
+                    .select('*')
+                    .eq('name', sanitizedName)
+                    .limit(1)
+                    .single();
+                if (error) {
+                    logger.error(`Not found an script named: "${sanitizedName}"`,);
+                    res.send(error);
+                } else {
+                    res.send(data);
+                }
             }
         }
         getData();
@@ -114,8 +115,8 @@ export const setupRoutes = (server: Express, io: Server) => {
 
         try {
             await getScripts(id, res, io); 
-        } catch (error) {
-            logger.error('Error handling download request:', error);
+        } catch (error: any) {
+            logger.error(`Error handling download request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,);
             res.status(500).send('An error occurred while processing your request.');
         }
     });
@@ -129,8 +130,8 @@ export const setupRoutes = (server: Express, io: Server) => {
         io.emit('installUpdate', { type: 'log', content: `Starting script '${sanitizedName}' on '${workingDir}'` });
         try {
             await startScript(workingDir, io);
-        } catch (error) {
-            logger.error('Error handling start request:', error);
+        } catch (error: any) {
+            logger.error(`Error handling start request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,);
             res.status(500).send('An error occurred while processing your request.');
         }
     });
@@ -140,11 +141,11 @@ export const setupRoutes = (server: Express, io: Server) => {
         const sanitizedName = name.replace(/\s+/g, '-');
         const root = process.cwd();
         const workingDir = path.join(root, 'apps', sanitizedName);
-        console.log('Working dir:', workingDir);
+        logger.info('Working on:', workingDir);
         try {
             await stopActiveProcess(io);
-        } catch (error) {
-            logger.error('Error handling stop request:', error);
+        } catch (error: any) {
+            logger.error(`Error handling stop request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,);
             res.status(500).send('An error occurred while processing your request.');
         }
     });
@@ -155,8 +156,8 @@ export const setupRoutes = (server: Express, io: Server) => {
 
         try {
             deleteScript(sanitizedName, res);
-        } catch (error) {
-            logger.error('Error handling delete request:', error);
+        } catch (error: any) {
+            logger.error(`Error handling delete request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,);
             res.status(500).send('An error occurred while processing your request.');
         }
     });
@@ -165,8 +166,8 @@ export const setupRoutes = (server: Express, io: Server) => {
         try {
             const data = await getAllScripts();
             res.send(data);
-        } catch (error) {
-            logger.error('Error handling get all scripts request:', error);
+        } catch (error: any) {
+            logger.error(`Unable to obtain installed scripts: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,);
             res.status(500).send('An error occurred while processing your request.');
         }
     });
@@ -176,8 +177,8 @@ export const setupRoutes = (server: Express, io: Server) => {
         try {
             const isInstalled = await getInstalledScript(name);
             res.send(isInstalled);
-        } catch (error) {
-            logger.error('Error handling get script request:', error);
+        } catch (error: any) {
+            logger.error(`Unable to obtain "${name}" script: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,);
             res.status(500).send('An error occurred while processing your request.');
         }
     });
@@ -191,13 +192,13 @@ export const setupRoutes = (server: Express, io: Server) => {
                 refresh_token: refreshToken,
             }) 
             if (error) {
-                console.error(error);
+                logger.error(`Unable to established session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,);
                 res.send(error);
             } else {
                 res.send(data);
             }
-        } catch (error) {
-            logger.error('Error handling get session request:', error);
+        } catch (error: any) {
+            logger.error(`Unable to get session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,);
             res.status(500).send('An error occurred while processing your request.');
         }
     });
@@ -206,13 +207,13 @@ export const setupRoutes = (server: Express, io: Server) => {
         try {
             const { data, error } = await supabase.auth.getSession();
             if (error) {
-                console.error(error);
+                logger.error(`Unable to get session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,);
                 res.send(error);
             } else {
                 res.send(data);
             }
-        } catch (error) {
-            logger.error('Error handling get session request:', error);
+        } catch (error: any) {
+            logger.error(`Unable to get session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,);
             res.status(500).send('An error occurred while processing your request.');
         }
     });
@@ -226,13 +227,13 @@ export const setupRoutes = (server: Express, io: Server) => {
                 .filter('name', 'ilike', `${name}%`)
                 .order('name', { ascending: true });
             if (error) {
-                console.error(error);
+                logger.error(`Unable to search in database: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,);
                 res.send(error);
             } else {
                 res.send(data);
             }
-        } catch (error) {
-            logger.error('Error handling get script request:', error);
+        } catch (error: any) {
+            logger.error(`Error getting '${name}': [ (${error.code || "No code"}) ${error.message || "No details"} ]`,);
             res.status(500).send('An error occurred while processing your request.');
         }
     });

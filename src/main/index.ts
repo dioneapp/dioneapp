@@ -6,6 +6,7 @@ import logger from './server/utils/logger';
 import { start as startServer, stop as stopServer } from './server/server';
 import { getCurrentPort } from './server/utils/getPort';
 import os from 'os';
+import { readConfig, writeConfig } from './config';
 
 // set default protocol client
 if (process.defaultApp) {
@@ -109,6 +110,17 @@ function createWindow() {
 
 // Sets up the application when ready.
 app.whenReady().then(() => {
+  let isFirstLaunch = false;
+
+  const config = readConfig();
+  if (!config) {
+    logger.warn("First time using Dione")
+    isFirstLaunch = true; // first time using app
+    writeConfig({ firstLaunch: false });
+  } else {
+    isFirstLaunch = config.firstLaunch;
+  }
+
   logger.info('Starting app...');
 
   // Set up tray icon
@@ -149,6 +161,8 @@ app.whenReady().then(() => {
   });
 
   // Set up IPC handlers
+  ipcMain.handle('check-first-launch', () => isFirstLaunch);
+
   ipcMain.on('socket-ready', () => {
     logger.info('Server started successfully');
   });

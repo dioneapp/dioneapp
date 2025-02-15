@@ -11,7 +11,7 @@ export default async function getAllScripts() {
          logger.info('No installed apps found.');
          return JSON.stringify({ apps: [] });
       }
-      console.log('founded apps:', apps)
+      logger.info(`Installed applications: [${apps.map(app => `"${app}"`).join(', ')}]`)
       return JSON.stringify({ apps });
    } catch (error) {
       logger.error('Error reading apps directory:', error);
