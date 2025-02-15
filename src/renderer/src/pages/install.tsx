@@ -281,37 +281,33 @@ export default function Install() {
         <div className="relative w-full h-full overflow-auto">
             <div className="absolute inset-0 flex items-center justify-center backdrop-blur-xl p-4">
                 <div className="w-full h-full flex justify-center items-center">
-                    {loading ? (
-                        <Loading />
-                    ) : (
-                        <AnimatePresence>
-                            {showIframe ? (
-                                <IframeComponent
-                                    iframeSrc={iframeSrc}
-                                    handleStop={handleStop}
-                                    handleReloadIframe={handleReloadIframe}
-                                    currentPort={catchPort as number}
-                                />
-                            ) : showLogs ? (
-                                <LogsComponent
-                                    statusLog={statusLog}
-                                    logs={logs}
-                                    setLogs={setLogs}
-                                    copyLogsToClipboard={copyLogsToClipboard}
-                                    handleStop={handleStop}
-                                />
-                            ) : (
-                                <ActionsComponent
-                                    data={data}
-                                    installed={installed}
-                                    handleDownload={handleDownload}
-                                    handleStart={handleStart}
-                                    handleUninstall={handleUninstall}
-                                    setImgLoading={setImgLoading}
-                                />
-                            )}
-                        </AnimatePresence>
-                    )}
+                    <AnimatePresence>
+                        {showIframe ? (
+                            <IframeComponent
+                                iframeSrc={iframeSrc}
+                                handleStop={handleStop}
+                                handleReloadIframe={handleReloadIframe}
+                                currentPort={catchPort as number}
+                            />
+                        ) : showLogs ? (
+                            <LogsComponent
+                                statusLog={statusLog}
+                                logs={logs}
+                                setLogs={setLogs}
+                                copyLogsToClipboard={copyLogsToClipboard}
+                                handleStop={handleStop}
+                            />
+                        ) : (
+                            <ActionsComponent
+                                data={data}
+                                installed={installed}
+                                handleDownload={handleDownload}
+                                handleStart={handleStart}
+                                handleUninstall={handleUninstall}
+                                setImgLoading={setImgLoading}
+                            />
+                        )}
+                    </AnimatePresence>
                 </div>
             </div>
         </div>
