@@ -72,7 +72,7 @@ export const setupRoutes = (server: Express, io: Server) => {
     
     server.get('/search/:id', (req, res) => {
         async function getData() {
-            logger.info('searching for id:', req.params.id);
+            logger.info(`Searching script with ID: "${req.params.id}"`);
             const { data, error } = await supabase
                 .from('scripts')
                 .select('*')

@@ -14,7 +14,7 @@ export const start = (httpServer: http.Server) => {
         });
 
         io.on('connection', (socket) => {
-            console.log('A user connected');
+            logger.info(`A user has connected to the server with ID: "${socket.id}"`);
             
             socket.on('connect_error', (err) => {
                 logger.error(`Connection error: ${err.message}`);
@@ -27,7 +27,7 @@ export const start = (httpServer: http.Server) => {
             });
 
             socket.on('disconnect', () => {
-                console.log('A user disconnected');
+                logger.info(`A user has disconnected to the server with ID: "${socket.id}"`);
             });
         });
 
