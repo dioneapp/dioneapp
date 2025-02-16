@@ -1,8 +1,8 @@
-import { getCurrentPort } from "@renderer/utils/getPort"
-import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
-import { motion, AnimatePresence } from "framer-motion";
 import CloseIcon from "@assets/svgs/Close.svg";
+import { getCurrentPort } from "@renderer/utils/getPort";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export let localStorageKey = 'quickLaunchApps';
 export default function QuickLaunch() {
@@ -115,7 +115,7 @@ export default function QuickLaunch() {
   };
 
   const renderAppButton = (app: any, index: number) => (
-    <div key={index} className="flex flex-col items-center gap-1">
+    <div key={`slot-${index}`} className="flex flex-col items-center gap-1">
       <Link
         to={`/install/${app.id}`}
         className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center overflow-hidden"
@@ -160,9 +160,11 @@ export default function QuickLaunch() {
       <div className="w-full">
         <h2 className="font-semibold">Quick Launch</h2>
         <div className="grid grid-cols-3 my-4 gap-2">
-          {Array(maxApps).fill(null).map((_, index) =>
-            apps[index] ? renderAppButton(apps[index], index) : renderEmptyButton(index)
-          )}
+          {Array(maxApps).fill(null).map((_, index) => (
+            <div key={`slot-${index}`}>
+              {apps[index] ? renderAppButton(apps[index], index) : renderEmptyButton(index)}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -220,20 +222,20 @@ export default function QuickLaunch() {
                           whileTap={{ scale: 0.95 }}
                         >
                           {app.logo_url ? (
-                          <img
-                            src={app.logo_url || "/svgs/placeholder.svg"}
-                            alt={app.name}
-                            className="h-full w-full object-cover"
-                          />
+                            <img
+                              src={app.logo_url || "/svgs/placeholder.svg"}
+                              alt={app.name}
+                              className="h-full w-full object-cover"
+                            />
                           ) : (
-                          <div className="h-full w-full object-cover bg-white/10 animate-pulse">
-                          </div>
+                            <div className="h-full w-full object-cover bg-white/10 animate-pulse">
+                            </div>
                           )}
                         </motion.div>
                         {app.name ? (
                           <span className="text-xs text-neutral-400">{app.name}</span>
-                        ): (
-                          <div className="text-xs bg-white/10 animate-pulse w-16 h-2 rounded-xl"/>
+                        ) : (
+                          <div className="text-xs bg-white/10 animate-pulse w-16 h-2 rounded-xl" />
                         )}
                       </button>
                     </motion.div>

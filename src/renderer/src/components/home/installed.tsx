@@ -10,33 +10,41 @@ export default function Installed() {
     useEffect(() => {
         const savedApps = localStorage.getItem(localStorageKey);
         if (savedApps) {
-            setApps(JSON.parse(savedApps));
-            setLoading(false)
+            try {
+                const parsedApps = JSON.parse(savedApps);
+                // filter out any null or invalid entries
+                const validApps = parsedApps.filter(app => app && app.id);
+                setApps(validApps);
+            } catch (error) {
+                console.error("Error parsing saved apps:", error);
+                setApps([]);
+            }
+            setLoading(false);
         }
     }, []);
 
     return (
         <>
-        {apps.length > 0 && (
-            <>
-            {loading ? (
-                <Loading />
-            ): (
+            {apps.length > 0 && (
                 <>
-                <h1 className="text-2xl sm:text-3xl font-semibold mb-4">
-                  Installed
-                </h1>
-                <div className={`w-full last:mb-4`}>
-                    <div className="grid grid-cols-2 gap-4">
-                    {apps.map((script) => (
-                        <ScriptCard key={script.id} script={script} />
-                    ))}
-                    </div>
-                </div>
+                    {loading ? (
+                        <Loading />
+                    ) : (
+                        <>
+                            <h1 className="text-2xl sm:text-3xl font-semibold mb-4">
+                                Installed
+                            </h1>
+                            <div className="w-full last:mb-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    {apps.map((script) => (
+                                        <ScriptCard key={script.id} script={script} />
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </>
             )}
-        </>
-        )}
         </>
     );
 }
