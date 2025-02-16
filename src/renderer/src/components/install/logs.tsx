@@ -54,7 +54,7 @@ export default function LogsComponent({ statusLog, logs, setLogs, copyLogsToClip
         >
             <div className="max-h-96 overflow-auto p-4 pointer-events-auto">
                 {logs.map((log, index) => (
-                    <p className={`text-xs whitespace-pre-wrap ${log.startsWith("ERROR") ? "text-red-400" : log.startsWith("WARN:") ? "text-yellow-400" : "text-neutral-300"}`} key={index}>
+                    <p className={`text-xs whitespace-pre-wrap ${log.startsWith("ERROR") || log.includes("error") ? "text-red-400" : log.startsWith("WARN:") ? "text-yellow-400" : "text-neutral-300"}`} key={index}>
                         {log || "loading"}
                     </p>
                 ))}

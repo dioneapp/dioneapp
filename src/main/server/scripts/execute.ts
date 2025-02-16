@@ -30,24 +30,32 @@ const killProcess = async (pid: number, io: Server) => {
 };
 // is active process running?
 export const stopActiveProcess = async (io: Server) => {
-  if (activeProcess && activePID) {
-    logger.warn(`Stopping process ${activePID} and its children`);
+  if (!activeProcess || !activePID) {
+    return;
+  }
+
+  logger.warn(`Stopping process ${activePID} and its children`);
+  
+  try {
+    await killProcess(activePID, io);
     
-    try {
-      await killProcess(activePID, io);
-      
-      // wait to ensure process is killed
-      await new Promise((resolve) => {
-        activeProcess.on('exit', () => resolve(true));
-        setTimeout(resolve, 3000);
-      });
-      
-    } catch (error) {
-      logger.error(`Error stopping process: ${error}`);
-    } finally {
-      activeProcess = null;
-      activePID = null;
-    }
+    // wait active process finish
+    await Promise.race([
+      new Promise((resolve, reject) => {
+        activeProcess.on('exit', resolve);
+        activeProcess.on('error', reject);
+      }),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Process kill timeout')), 3000)
+      )
+    ]);
+
+  } catch (error) {
+    logger.error(`Error stopping process: ${error}`);
+    throw error;
+  } finally {
+    activeProcess = null;
+    activePID = null;
   }
 };
 // execute command
@@ -90,7 +98,12 @@ export const execute = async (command: string, io: Server, workingDir: string, l
     const processOutput = (data: Buffer, isError = false) => {
       output = data.toString();
       io.emit(logs, { type: "log", content: output });
-      isError ? logger.error(output) : logger.info(output);
+      if (isError) {
+        logger.error(output);
+        io.emit(logs, { type: "log", content: `ERROR: ${output}` });
+      } else {
+        logger.info(output);
+      }
     };
 
     // get output

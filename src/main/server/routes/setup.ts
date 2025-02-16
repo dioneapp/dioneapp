@@ -144,11 +144,13 @@ export const setupRoutes = (server: Express, io: Server) => {
         logger.info('Working on:', workingDir);
         try {
             await stopActiveProcess(io);
+            res.status(200).json({ success: true });
         } catch (error: any) {
             logger.error(`Error handling stop request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,);
             res.status(500).send('An error occurred while processing your request.');
         }
     });
+    
 
     server.get('/delete/:name', async (req, res) => {
         const { name } = req.params;

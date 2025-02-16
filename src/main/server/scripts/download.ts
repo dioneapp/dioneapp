@@ -41,7 +41,7 @@ export async function getScripts(id: string, res: Response, io: SocketIO): Promi
   }
 
   try {
-    // clone script repo
+    // clone script repo, we should remove this to use raw
     await git.clone({
       fs,
       http,
@@ -58,8 +58,8 @@ export async function getScripts(id: string, res: Response, io: SocketIO): Promi
     io.emit('installUpdate', 'All files cloned successfully.');
     res.status(200).send('All files cloned successfully.');
   } catch (err) {
-    io.emit('installUpdate', { type: 'error', content: `Error detected` });
-    io.emit('installUpdate', 'Error cloning scripts:', err);
+    io.emit('installUpdate', { type: 'status', status: 'error', content: `Error detected` });
+    io.emit('installUpdate', {type: 'log', content: `An error occurred while downloading the script: ${err}`});
     res.status(500).send('Error cloning scripts.');
     logger.error(`Error cloning scripts from ${data.name}:`, err);
   }

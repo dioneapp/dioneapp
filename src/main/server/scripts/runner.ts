@@ -14,14 +14,20 @@ const executeActions = async (actions: Action, io: Server, workingDir: string) =
     // execute dependencies checks
     if (actions.dependencies) {
         io.emit('installUpdate', { type: 'status', status: 'pending', content: 'Checking dependencies...' });
+        const missingDep: string[] = []
         for (const [depName, depConfig] of Object.entries(actions.dependencies)) {
             const result = await checkDependency(depName, depConfig.version, io, workingDir);
             if (result === 'not_found') {
-                io.emit('installUpdate', { type: 'status', status: 'error', content: 'Error detected' })
-                io.emit('installUpdate', { type: 'log', content: `ERROR: Aborting... Dependency '${depName}@${depConfig.version}' not found.` });
-                return;
+                missingDep.push(`${depName}@${depConfig.version}`);
             }
         }
+
+        if (missingDep.length > 0) {
+            io.emit('installUpdate', { type: 'status', status: 'error', content: 'Error detected' })
+            io.emit('installUpdate', { type: 'log', content: `ERROR: Aborting... Missing dependencies: ${missingDep.join(', ')}`});
+            return;
+        }
+        
         io.emit('installUpdate', { type: 'status', status: 'success', content: 'Dependencies checked' });
     }
 
@@ -102,7 +108,9 @@ export const startScript = async (workingDir: string, io: Server) => {
             io.emit('installUpdate', { type: 'error', content: 'No start action found' });
         }
     } catch (error) {
-        console.error('Error starting script:', error);
+        io.emit('installUpdate', {type: 'status', status: 'error', content: 'Error detected'})
+        io.emit('installUpdate', {type: 'log', content: `ERROR: ${error}`})
+        logger.error('Error starting script:', error);
     }
 }
 

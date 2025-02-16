@@ -19,7 +19,6 @@ export default function ActionsComponent({
     handleUninstall,
     handleDownload,
 }: ActionsProps) {
-
     return (
         <>
         <motion.div

@@ -16,12 +16,12 @@ export default function Install() {
     // data stuff
     const [data, setData] = useState<any | undefined>(undefined);
     const [installed, setInstalled] = useState<boolean>(false);
+    // show
+    const [show, setShow] = useState("actions")
     // logs stuff
     const [logs, setLogs] = useState<string[]>([]);
     const [statusLog, setStatusLog] = useState<{ status: string; content: string }>({ status: "", content: ""});
-    const [showLogs, setShowLogs] = useState<boolean>(false);
     // iframe stuff
-    const [showIframe, setShowIframe] = useState<boolean>(false);
     const [catchPort, setCatchPort] = useState<number>();
     const [iframeSrc, setIframeSrc] = useState<string>("");
     // toast stuff
@@ -33,8 +33,6 @@ export default function Install() {
             fixed
         })
     }   
-    // dep stuff
-    const [_depNotFound, setDepNotFound] = useState<{ name: string; version: string }[]>([])
     // navegation stuff
     const navigate = useNavigate();
     // errors stuff
@@ -118,10 +116,6 @@ export default function Install() {
                     setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
                 });
 
-                socket.on("dependencyNotFound", (message: {name: string, version: string}) => {
-                    setDepNotFound(prevDepNotFound => [...prevDepNotFound, { name: message.name, version: message.version }]);
-                });
-
                 socket.on("installUpdate", (message: { type: string; content: string; status: string }) => {
                     const { type, status, content } = message;
                     console.log("Received log:", message);
@@ -161,7 +155,7 @@ export default function Install() {
     }, []);
 
     async function download() {
-        setShowLogs(true);
+        setShow("logs")
         try {
             const port = await getCurrentPort();
             await fetch(`http://localhost:${port}/download/${id}`, {
@@ -174,7 +168,6 @@ export default function Install() {
     }
 
     async function start() {
-        setShowLogs(true);
         try {
             const port = await getCurrentPort();
             await fetch(`http://localhost:${port}/start/${data.name}`, {
@@ -187,18 +180,23 @@ export default function Install() {
     }
 
     async function stop() {
-        setShowLogs(false);
-        setShowIframe(false);
         try {
             const port = await getCurrentPort();
-            await fetch(`http://localhost:${port}/stop/${data.name}`, {
+            const response = await fetch(`http://localhost:${port}/stop/${data.name}`, {
                 method: "GET",
             });
+            if (response.ok) {
+                setInstalled(true)
+                setShow("actions")
+            } else {
+                showToast("error", `Error stoping ${data.name}: Error ${response.status}`)         
+            }
         } catch (error) {
             showToast("error", `Error stoping ${data.name}: ${error}`)
             setLogs((prevLogs) => [...prevLogs, `Error stoping ${data.name}`]);
         }
 
+        setShow("actions")
         showToast("success", `${data.name} stopped successfully.`)
     }
 
@@ -232,16 +230,13 @@ export default function Install() {
 
     const handleStart = async () => {
         showToast("default", `Starting ${data.name}...`)
+        setShow("logs")
         await start();
-        setShowLogs(false);
-        setShowIframe(true);
     };
 
     const handleStop = async () => {
         showToast("default", `Stoping ${data.name}...`)
         await stop();
-        await fetchIfDownloaded();
-        setShowLogs(false);
     }
 
     const handleUninstall = async () => {
@@ -267,12 +262,11 @@ export default function Install() {
             }
         }
         setIframeSrc(`http://localhost:${localPort}`);
-        setShowIframe(true);
+        setShow("iframe")
     };
 
     const handleReloadIframe = async () => {
         const iframe = document.getElementById("iframe") as HTMLIFrameElement;
-
         iframe.src = iframe.src
     }
 
@@ -280,15 +274,15 @@ export default function Install() {
         <div className="relative w-full h-full overflow-auto">
             <div className="absolute inset-0 flex items-center justify-center p-4">
                 <div className="w-full h-full flex justify-center items-center">
-                    <AnimatePresence>
-                        {showIframe ? (
+                    <AnimatePresence mode="wait">
+                        {show === 'iframe' && (
                             <IframeComponent
                                 iframeSrc={iframeSrc}
                                 handleStop={handleStop}
                                 handleReloadIframe={handleReloadIframe}
                                 currentPort={catchPort as number}
                             />
-                        ) : showLogs ? (
+                        )} {show === 'logs' && (
                             <LogsComponent
                                 statusLog={statusLog}
                                 logs={logs}
@@ -296,7 +290,7 @@ export default function Install() {
                                 copyLogsToClipboard={copyLogsToClipboard}
                                 handleStop={handleStop}
                             />
-                        ) : (
+                        )} {show === 'actions' && (
                             <ActionsComponent
                                 data={data}
                                 installed={installed}
