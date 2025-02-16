@@ -28,6 +28,10 @@ export const readConfig = (): AppConfig | null => {
 
 // write config
 export const writeConfig = (config: AppConfig) => {
-    fs.writeFileSync(getConfigPath(), JSON.stringify(config));
+    const path = getConfigPath();
+    const fd = fs.openSync(path, 'w'); 
+    fs.writeFileSync(fd, JSON.stringify(config)); 
+    fs.fsyncSync(fd); 
+    fs.closeSync(fd);
 };
   

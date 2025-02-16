@@ -100,7 +100,7 @@ export const setupRoutes = (server: Express, io: Server) => {
                     .limit(1)
                     .single();
                 if (error) {
-                    logger.error(`Not found an script named: "${sanitizedName}"`,);
+                    logger.error(`Not found an script named: "${sanitizedName}"`);
                     res.send(error);
                 } else {
                     res.send(data);

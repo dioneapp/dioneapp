@@ -39,6 +39,7 @@ export default function List({ endpoint, type, className = "" }: ScriptListProps
           setError("Fetched data is not an array");
         }
       } catch (err) {
+        console.error(err)
         setError("Failed to fetch scripts");
       } finally {
         setLoading(false);

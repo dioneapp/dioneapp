@@ -117,17 +117,6 @@ function createWindow() {
 
 // Sets up the application when ready.
 app.whenReady().then(() => {
-  let isFirstLaunch = false;
-
-  const config = readConfig();
-  if (!config) {
-    logger.warn("First time using Dione")
-    isFirstLaunch = true; // first time using app
-    writeConfig({ firstLaunch: false });
-  } else {
-    isFirstLaunch = config.firstLaunch;
-  }
-
   logger.info('Starting app...');
 
   // Set up tray icon
@@ -168,7 +157,17 @@ app.whenReady().then(() => {
   });
 
   // Set up IPC handlers
-  ipcMain.handle('check-first-launch', () => isFirstLaunch);
+  ipcMain.handle('check-first-launch', () => {
+    let config = readConfig();
+    if (!config) {
+      logger.warn("First time using Dione")
+      writeConfig({ firstLaunch: false });
+      return true
+    } else {
+      config = readConfig();
+      return false
+    }
+});
 
   ipcMain.on('socket-ready', () => {
     logger.info('Server started successfully');
