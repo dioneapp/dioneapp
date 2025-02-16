@@ -19,7 +19,6 @@ function App() {
       if (result) {
         navigate("/first-time")
       }
-      navigate("/first-time")
     }
 
     checkFirstLaunch()
