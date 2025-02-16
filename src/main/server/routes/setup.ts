@@ -97,7 +97,7 @@ export const setupRoutes = (server: Express, io: Server) => {
                     .from('scripts')
                     .select('*')
                     .eq('name', sanitizedName)
-                    .limit(1)
+                    .range(0,1)
                     .single();
                 if (error) {
                     logger.error(`Not found an script named: "${sanitizedName}"`);
