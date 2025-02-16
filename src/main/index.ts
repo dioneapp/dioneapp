@@ -6,7 +6,7 @@ import logger from './server/utils/logger';
 import { start as startServer, stop as stopServer } from './server/server';
 import { getCurrentPort } from './server/utils/getPort';
 import os from 'os';
-import { readConfig, writeConfig } from './config';
+import { readConfig, defaultConfig, writeConfig } from './config';
 
 // set default protocol client
 if (process.defaultApp) {
@@ -161,7 +161,7 @@ app.whenReady().then(() => {
     let config = readConfig();
     if (!config) {
       logger.warn("First time using Dione")
-      writeConfig({ firstLaunch: false });
+      writeConfig(defaultConfig);
       return true
     } else {
       config = readConfig();

@@ -5,19 +5,27 @@ import logger from "./server/utils/logger";
 
 export interface AppConfig {
     firstLaunch: boolean;
+    theme: 'light' | 'dark'; 
+    language: string;
 }
 
+// default config
+export const defaultConfig: AppConfig = {
+    firstLaunch: false,
+    theme: 'dark',
+    language: 'en', 
+};
 // get config file
 export const getConfigPath = () => {
     return path.join(app.getPath('userData'), 'config.json');
 };
-  
 // read config
 export const readConfig = (): AppConfig | null => {
     try {
         const configPath = getConfigPath();
         if (fs.existsSync(configPath)) {
-        return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+            const storedConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+            return { ...defaultConfig, ...storedConfig };
         }
         return null;
     } catch (error) {
@@ -34,4 +42,10 @@ export const writeConfig = (config: AppConfig) => {
     fs.fsyncSync(fd); 
     fs.closeSync(fd);
 };
-  
+// update config
+export const updateConfig = (newSettings: Partial<AppConfig>) => {
+    const currentConfig = readConfig();
+    const updatedConfig: AppConfig = { ...defaultConfig, ...currentConfig, ...newSettings };
+    
+    writeConfig(updatedConfig);
+  };
