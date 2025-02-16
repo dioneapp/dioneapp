@@ -2,7 +2,7 @@ import { openLink } from "../../utils/openLink";
 
 export default function PromoBanner() {
   return (
-    <div className="mt-4 w-full rounded-xl border border-white/10 overflow-hidden">
+    <div className="mt-4 w-full rounded-xl border border-white/10 bg-[#080808]/50 overflow-hidden">
       <div className="relative w-full p-4">
         {/* Background effects - modified */}
         <div className="absolute top-0 left-1/4 md:left-1/3 w-32 h-32 md:w-64 md:h-64 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl md:blur-[100px] animate-pulse [animation-duration:7000ms]" />

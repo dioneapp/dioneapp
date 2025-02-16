@@ -14,9 +14,8 @@ export default function SearchBar() {
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search scripts..."
                         className="w-full h-10 text-sm text-white 
-                        bg-black/10 bg-gradient-to-r from-[#BCB1E7]/5 to-transparent 
-                        border border-white/10 hover:border-white/20 backdrop-blur-3xl
-                        rounded-lg pl-4 pr-4 transition-colors duration-200 hover:shadow-lg
+                        bg-gradient-to-r from-[#BCB1E7]/5 to-[#080808]/10
+                        border border-white/10 hover:border-white/20 rounded-lg pl-4 pr-4 transition-colors duration-200 hover:shadow-lg
                         placeholder:text-neutral-400 
                         focus:outline-none focus:border-white/20
                         active:border-white/20 active:outline-none"

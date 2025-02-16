@@ -1,4 +1,4 @@
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Loading from "./pages/loading";
 import Titlebar from "./components/layout/titlebar";
 import Home from "./pages/home";
@@ -7,9 +7,11 @@ import Install from "./pages/install";
 import Settings from "./pages/settings";
 import { ToastProvider } from "./utils/useToast";
 import { useEffect } from "react";
+import FirstTime from "./pages/first-time";
 
 function App() {
   const navigate = useNavigate()
+  const {pathname} = useLocation()
 
   useEffect(() => {
     const checkFirstLaunch = async () => {
@@ -17,6 +19,7 @@ function App() {
       if (result) {
         navigate("/first-time")
       }
+      navigate("/first-time")
     }
 
     checkFirstLaunch()
@@ -26,13 +29,14 @@ function App() {
     <div className="h-screen w-screen">
       <Titlebar />
       <div className="flex h-full">
-        <Sidebar />
+       {pathname !== "/first-time" && ( <Sidebar />)}
         <div className={`flex-1 mt-6 overflow-x-hidden`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/loading" element={<Loading />}/>
             <Route path="/install/:id" element={<Install />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/first-time" element={<FirstTime />} />
           </Routes>
         </div>
       </div>

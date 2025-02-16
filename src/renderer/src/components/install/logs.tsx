@@ -50,7 +50,7 @@ export default function LogsComponent({ statusLog, logs, setLogs, copyLogsToClip
             </div>
         </div>
         <motion.div
-            className="p-10 rounded-tl-xl rounded-b-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full backdrop-blur-md"
+            className="p-10 rounded-tl-xl rounded-b-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/80"
         >
             <div className="max-h-96 overflow-auto p-4 pointer-events-auto">
                 {logs.map((log, index) => (

@@ -11,7 +11,7 @@ export default function Titlebar() {
   };
 
   return (
-    <div id="titlebar" className="absolute top-0 w-full z-50">
+    <div id="titlebar" className="absolute top-0 w-full z-50" style={{zIndex: 100}}>
       <div className="flex flex-row items-center justify-center h-10 w-full px-2">
         <div className="flex gap-1 items-center justify-end h-full w-full">
           <button id="minimize-button" onClick={handleMinimize} className="cursor-pointer p-2">

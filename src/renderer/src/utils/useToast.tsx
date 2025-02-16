@@ -20,7 +20,8 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
     const id = Math.random().toString()
     const newToast = { ...toast, id }
     setToasts((prev) => [...prev, newToast])
-    if (toast.fixed === "false") {
+    console.log('show fixed?:', toast.fixed)
+    if (toast.fixed === "false" || toast.fixed === undefined) {
       setTimeout(() => {
         removeToast(id)
       }, 5000) // Remove toast after 5000ms
@@ -34,7 +35,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
   return (
     <ToastContext.Provider value={{ addToast, removeToast }}>
       {children}
-      <div className="fixed bottom-0 right-0 p-4 space-y-4 max-h-screen overflow-hidden pointer-events-none">
+      <div className="z-50 fixed bottom-0 right-0 p-4 space-y-4 max-h-screen overflow-hidden pointer-events-none">
       <AnimatePresence>
         {toasts.map((toast) => (
           <motion.div

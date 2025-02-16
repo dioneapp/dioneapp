@@ -30,6 +30,14 @@ function createWindow() {
     autoHideMenuBar: true,
     titleBarStyle: 'hidden',
     icon: icon,
+    fullscreenable: false,
+    maximizable: false,
+    fullscreen: false,
+    frame: false,
+    // window effects
+    vibrancy: 'fullscreen-ui',    // macos
+    backgroundMaterial: 'acrylic', // windows 11
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
@@ -41,7 +49,7 @@ function createWindow() {
   mainWindow.removeMenu();
 
   // Show the window when ready
-  mainWindow.on('ready-to-show', () => {
+  mainWindow.webContents.once('did-finish-load', () => {
     mainWindow.show();
   });
 
@@ -106,7 +114,6 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
   }
 }
-
 
 // Sets up the application when ready.
 app.whenReady().then(() => {

@@ -15,8 +15,7 @@ function ScriptCard({ script }: ScriptCardProps) {
     <Link
       to={`/install/${script.id}`}
       className="group flex gap-4 h-auto min-h-[120px] border border-white/10 hover:border-white/20 
-                bg-gradient-to-r from-[#BCB1E7]/5 to-transparent backdrop-blur-3xl 
-                rounded-lg p-4 transition-all duration-200 hover:shadow-lg items-center"
+                bg-gradient-to-r from-[#BCB1E7]/5 to-[#080808]/10 rounded-lg p-4 transition-all duration-200 hover:shadow-lg items-center"
     >
       <img
         src={script.logo_url || "/svgs/icon.svg"}

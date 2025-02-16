@@ -7,7 +7,6 @@ import { getCurrentPort } from "../utils/getPort";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
 import ActionsComponent from "@renderer/components/install/actions";
-import Loading from "@renderer/components/install/loading-skeleton";
 
 export default function Install() {
     const { id } = useParams<{ id: string }>();
@@ -279,7 +278,7 @@ export default function Install() {
 
     return (
         <div className="relative w-full h-full overflow-auto">
-            <div className="absolute inset-0 flex items-center justify-center backdrop-blur-xl p-4">
+            <div className="absolute inset-0 flex items-center justify-center p-4">
                 <div className="w-full h-full flex justify-center items-center">
                     <AnimatePresence>
                         {showIframe ? (
