@@ -5,6 +5,14 @@ import logger from '../utils/logger';
 export default async function getAllScripts() {
    const root = process.cwd();
    const scriptsDir = path.join(root, 'apps');
+   
+   try {
+      await fs.promises.mkdir(scriptsDir, { recursive: true });
+   } catch (error) {
+      logger.error('Error creating apps directory:', error);
+      return JSON.stringify({ apps: [] });
+   }
+
    try {
       const apps = await fs.promises.readdir(scriptsDir);
       if (apps.length === 0) {
