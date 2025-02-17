@@ -167,7 +167,7 @@ app.whenReady().then(() => {
       config = readConfig();
       return false
     }
-});
+  });
 
   ipcMain.on('socket-ready', () => {
     logger.info('Server started successfully');
