@@ -9,6 +9,7 @@ export default function Sidebar() {
     const [authToken, setAuthToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
     const [logged, setLogged] = useState<boolean>(false);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,6 +20,7 @@ export default function Sidebar() {
         } else {
             setLogged(false);
         }
+        setLoading(false);
     }, [])
 
     useEffect(() => {
@@ -119,9 +121,11 @@ export default function Sidebar() {
                         <Icon name="Settings" className="h-6 w-6" />
 
                     </Link>
+                    {!loading && (
+                    <>
                     {logged ? (
                         <button
-                            className="text-xs bg-white/10 transition-colors duration-400 rounded-full font-semibold py-2 px-10 text-center"
+                            className="text-xs bg-white/10 transition-colors duration-400 rounded-full font-semibold py-2 px-10 text-center cursor-pointer"
                             onClick={logout}
                         >
                             Logout
@@ -133,6 +137,8 @@ export default function Sidebar() {
                         >
                             Login
                         </button>
+                    )}
+                    </>
                     )}
                 </div>
             </div>

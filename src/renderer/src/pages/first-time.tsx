@@ -3,7 +3,8 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
 import { useToast } from "@renderer/utils/useToast";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import Background from "@renderer/components/first-time/background";
 
 export default function FirstTime() {
     // toast stuff
@@ -25,7 +26,6 @@ export default function FirstTime() {
     const [authToken, setAuthToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
     const [logged, setLogged] = useState<boolean>(false);
-    const navigate = useNavigate()
 
     // levels
     const [level, setLevel] = useState(1)
@@ -86,12 +86,7 @@ export default function FirstTime() {
     return (
         <div className="absolute w-screen h-screen inset-0 z-50 bg-[#080808]/5 overflow-hidden">
             {/* background stuff */}
-            <div>
-                <div className="absolute -top-4 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-10" />
-                <div className="absolute -bottom-24 right-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full blur-3xl z-10" />
-                <div className="absolute -bottom-24 rotate-45 left-4 w-32 h-32 bg-[#BCB1E7] rounded-full blur-3xl z-10" />
-                <div className="absolute top-24 rotate-45 right-4 w-32 h-32 bg-[#BCB1E7] rounded-full blur-3xl z-10" />
-            </div>
+            <Background />
             {level === 1 && (
                 <div className="w-full h-full flex flex-col  items-center justify-center">
                     <div className="flex flex-col gap-4 justify-center items-center">

@@ -9,6 +9,9 @@ import path from "node:path";
 import { startScript } from "../scripts/runner";
 import { stopActiveProcess } from "../scripts/execute";
 
+// routers
+import configRouter from "./config";
+
 export const setupRoutes = (server: Express, io: Server) => {
     server.get('/', (_req, res) => {
         res.send({message: 'Hello World!'});
@@ -239,5 +242,8 @@ export const setupRoutes = (server: Express, io: Server) => {
             res.status(500).send('An error occurred while processing your request.');
         }
     });
+
+    // config stuff
+    server.use('/config', configRouter);
 
 }
