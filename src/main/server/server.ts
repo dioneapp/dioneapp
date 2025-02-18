@@ -1,34 +1,34 @@
-import express from 'express';
-import http from 'http';
-import { setupRoutes } from './routes/setup';
-import { getAvailablePort } from './utils/getPort';
-import {start as setupSocket} from "../socket/socket"
-import logger from './utils/logger';
-import cors from 'cors';
+import express from "express";
+import http from "http";
+import { setupRoutes } from "./routes/setup";
+import { getAvailablePort } from "./utils/getPort";
+import { start as setupSocket } from "../socket/socket";
+import logger from "./utils/logger";
+import cors from "cors";
 
 const server = express();
 const httpServer = http.createServer(server);
 
 export const start = async () => {
-    try {
-        server.use(cors())
-        // get available port
-        const port = await getAvailablePort();
-        // socket
-        const io = setupSocket(httpServer)
-        // routes 
-        setupRoutes(server, io)
+	try {
+		server.use(cors());
+		// get available port
+		const port = await getAvailablePort();
+		// socket
+		const io = setupSocket(httpServer);
+		// routes
+		setupRoutes(server, io);
 
-        httpServer.listen(port, () => {
-            logger.info('Backend server started on http://localhost:' + port);
-        });
-    } catch (error) {
-        console.error('Error finding available port:', error);
-    }
+		httpServer.listen(port, () => {
+			logger.info("Backend server started on http://localhost:" + port);
+		});
+	} catch (error) {
+		console.error("Error finding available port:", error);
+	}
 };
 
 export const stop = () => {
-    httpServer.close(() => {
-        logger.info('Server stopped');
-    });
+	httpServer.close(() => {
+		logger.info("Server stopped");
+	});
 };

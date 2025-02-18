@@ -7,8 +7,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": [],
-		"include": ["./src/**/*.{ts,tsx}"]
+		"ignore": []
 	},
 	"formatter": {
 		"enabled": true,

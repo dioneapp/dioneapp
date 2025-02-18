@@ -6,7 +6,7 @@
   "author": "AI Hispano",
   "homepage": "https://getdione.app",
   "scripts": {
-    "format": "biome format --write .",
+    "format": "biome format --write ./src",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
     "typecheck": "npm run typecheck:node && npm run typecheck:web",

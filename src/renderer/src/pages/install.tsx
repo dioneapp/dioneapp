@@ -1,5 +1,5 @@
 import { useToast } from "@renderer/utils/useToast";
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
@@ -9,300 +9,323 @@ import LogsComponent from "@renderer/components/install/logs";
 import ActionsComponent from "@renderer/components/install/actions";
 
 export default function Install() {
-    const { id } = useParams<{ id: string }>();
-    // loading stuff
-    const [loading, setLoading] = useState<boolean>(true);
-    const [_imgLoading, setImgLoading] = useState<boolean>(true);
-    // data stuff
-    const [data, setData] = useState<any | undefined>(undefined);
-    const [installed, setInstalled] = useState<boolean>(false);
-    // show
-    const [show, setShow] = useState("actions")
-    // logs stuff
-    const [logs, setLogs] = useState<string[]>([]);
-    const [statusLog, setStatusLog] = useState<{ status: string; content: string }>({ status: "", content: ""});
-    // iframe stuff
-    const [catchPort, setCatchPort] = useState<number>();
-    const [iframeSrc, setIframeSrc] = useState<string>("");
-    // toast stuff
-    const { addToast } = useToast()
-    const showToast = (variant: "default" | "success" | "error" | "warning", message: string, fixed?: "true" | "false") => {
-        addToast({
-            variant,
-            children: message,
-            fixed
-        })
-    }   
-    // navegation stuff
-    const navigate = useNavigate();
-    // errors stuff
-    const [error, setError] = useState<boolean>(false)
-    useEffect(() => {
-        if (error === true) {
-            showToast("error", "We are having connection problems, please try again later.", "true")
-        }
-    }, [error])
+	const { id } = useParams<{ id: string }>();
+	// loading stuff
+	const [loading, setLoading] = useState<boolean>(true);
+	const [_imgLoading, setImgLoading] = useState<boolean>(true);
+	// data stuff
+	const [data, setData] = useState<any | undefined>(undefined);
+	const [installed, setInstalled] = useState<boolean>(false);
+	// show
+	const [show, setShow] = useState("actions");
+	// logs stuff
+	const [logs, setLogs] = useState<string[]>([]);
+	const [statusLog, setStatusLog] = useState<{
+		status: string;
+		content: string;
+	}>({ status: "", content: "" });
+	// iframe stuff
+	const [catchPort, setCatchPort] = useState<number>();
+	const [iframeSrc, setIframeSrc] = useState<string>("");
+	// toast stuff
+	const { addToast } = useToast();
+	const showToast = (
+		variant: "default" | "success" | "error" | "warning",
+		message: string,
+		fixed?: "true" | "false",
+	) => {
+		addToast({
+			variant,
+			children: message,
+			fixed,
+		});
+	};
+	// navegation stuff
+	const navigate = useNavigate();
+	// errors stuff
+	const [error, setError] = useState<boolean>(false);
+	useEffect(() => {
+		if (error === true) {
+			showToast(
+				"error",
+				"We are having connection problems, please try again later.",
+				"true",
+			);
+		}
+	}, [error]);
 
-    // fetch script data
-    useEffect(() => {
-        async function getData() {
-            try {
-                const port = await getCurrentPort();
-                const response = await fetch(`http://localhost:${port}/search/${id}`, { method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (response.ok) {
-                    const script = await response.json();
-                    setData(script[0])
-                } else {
-                    throw new Error("Failed to fetch data")
-                }
-            } catch (error) {
-                setError(true)
-                console.error("Error fetching data:", error);
-                setLogs((prevLogs) => [...prevLogs, "Error fetching script data"]);
-            } finally {
-                setLoading(false);
-            }
-        }
+	// fetch script data
+	useEffect(() => {
+		async function getData() {
+			try {
+				const port = await getCurrentPort();
+				const response = await fetch(`http://localhost:${port}/search/${id}`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+				if (response.ok) {
+					const script = await response.json();
+					setData(script[0]);
+				} else {
+					throw new Error("Failed to fetch data");
+				}
+			} catch (error) {
+				setError(true);
+				console.error("Error fetching data:", error);
+				setLogs((prevLogs) => [...prevLogs, "Error fetching script data"]);
+			} finally {
+				setLoading(false);
+			}
+		}
 
-        getData();
-    }, [id]);
+		getData();
+	}, [id]);
 
-    async function fetchIfDownloaded() {
-        if (data.name) {
-            const port = await getCurrentPort();
-            const response = await fetch(`http://localhost:${port}/installed/${data.name}`, { method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            if (response.ok) {
-                const jsonData = await response.json();
-                console.log("data", jsonData);
-                setInstalled(jsonData);
-            } else {
-                setError(true)
-            }
-        }
-    }
+	async function fetchIfDownloaded() {
+		if (data.name) {
+			const port = await getCurrentPort();
+			const response = await fetch(
+				`http://localhost:${port}/installed/${data.name}`,
+				{
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				},
+			);
+			if (response.ok) {
+				const jsonData = await response.json();
+				console.log("data", jsonData);
+				setInstalled(jsonData);
+			} else {
+				setError(true);
+			}
+		}
+	}
 
-    useEffect(() => {
-        fetchIfDownloaded();
-    }, [data])
+	useEffect(() => {
+		fetchIfDownloaded();
+	}, [data]);
 
-    useEffect(() => {
-        let socket: any = null;
+	useEffect(() => {
+		let socket: any = null;
 
-        async function setupSocket() {
-            try {
-                const port = await getCurrentPort();
-                socket = io(`http://localhost:${port}`);
+		async function setupSocket() {
+			try {
+				const port = await getCurrentPort();
+				socket = io(`http://localhost:${port}`);
 
-                socket.on("clientUpdate", (message: string) => {
-                    console.log("Received log:", message);
-                    setLogs((prevLogs) => [...prevLogs, message]);
-                });
+				socket.on("clientUpdate", (message: string) => {
+					console.log("Received log:", message);
+					setLogs((prevLogs) => [...prevLogs, message]);
+				});
 
-                socket.on("connect", () => {
-                    console.log("Connected to socket:", socket.id);
-                    setLogs((prevLogs) => [...prevLogs, "Connected to server"]);
-                });
+				socket.on("connect", () => {
+					console.log("Connected to socket:", socket.id);
+					setLogs((prevLogs) => [...prevLogs, "Connected to server"]);
+				});
 
-                socket.on("disconnect", () => {
-                    console.log("Socket disconnected");
-                    setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
-                });
+				socket.on("disconnect", () => {
+					console.log("Socket disconnected");
+					setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
+				});
 
-                socket.on("installUpdate", (message: { type: string; content: string; status: string }) => {
-                    const { type, status, content } = message;
-                    console.log("Received log:", message);
-                    if (type === "log") {
-                        setLogs((prevLogs) => [...prevLogs, content]);
-                    }
-                    if (type === "status") {
-                        setStatusLog({ status: status || "pending", content });
-                        if (content === 'Actions executed') {
-                            window.location.reload();
-                        }
-                    }
-                    if (type === "catch") {
-                        loadIframe(parseInt(content));
-                        setCatchPort(parseInt(content));
-                    }
-                    if (content === "Script killed successfully") {
-                        navigate(0) // should change this, but for now fix logs after stop script
-                        showToast("success", `${data.name} exited successfully.`)
-                    }
-                });
-            } catch (error) {
-                setError(true)
-                console.error("Error setting up socket:", error);
-                setLogs((prevLogs) => [...prevLogs, "Error setting up socket"]);
-            }
+				socket.on(
+					"installUpdate",
+					(message: { type: string; content: string; status: string }) => {
+						const { type, status, content } = message;
+						console.log("Received log:", message);
+						if (type === "log") {
+							setLogs((prevLogs) => [...prevLogs, content]);
+						}
+						if (type === "status") {
+							setStatusLog({ status: status || "pending", content });
+							if (content === "Actions executed") {
+								window.location.reload();
+							}
+						}
+						if (type === "catch") {
+							loadIframe(parseInt(content));
+							setCatchPort(parseInt(content));
+						}
+						if (content === "Script killed successfully") {
+							navigate(0); // should change this, but for now fix logs after stop script
+							showToast("success", `${data.name} exited successfully.`);
+						}
+					},
+				);
+			} catch (error) {
+				setError(true);
+				console.error("Error setting up socket:", error);
+				setLogs((prevLogs) => [...prevLogs, "Error setting up socket"]);
+			}
+		}
 
-        }
+		setupSocket();
+		return () => {
+			if (socket) {
+				socket.disconnect();
+			}
+		};
+	}, []);
 
-        setupSocket();
-        return () => {
-            if (socket) {
-                socket.disconnect();
-            }
-        };
+	async function download() {
+		setShow("logs");
+		try {
+			const port = await getCurrentPort();
+			await fetch(`http://localhost:${port}/download/${id}`, {
+				method: "GET",
+			});
+		} catch (error) {
+			showToast("error", `Error initiating download: ${error}`);
+			setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
+		}
+	}
 
-    }, []);
+	async function start() {
+		try {
+			const port = await getCurrentPort();
+			await fetch(`http://localhost:${port}/start/${data.name}`, {
+				method: "GET",
+			});
+		} catch (error) {
+			showToast("error", `Error initiating ${data.name}: ${error}`);
+			setLogs((prevLogs) => [...prevLogs, `Error initiating ${data.name}`]);
+		}
+	}
 
-    async function download() {
-        setShow("logs")
-        try {
-            const port = await getCurrentPort();
-            await fetch(`http://localhost:${port}/download/${id}`, {
-                method: "GET",
-            });
-        } catch (error) {
-            showToast("error", `Error initiating download: ${error}`)
-            setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
-        }
-    }
+	async function stop() {
+		try {
+			const port = await getCurrentPort();
+			const response = await fetch(
+				`http://localhost:${port}/stop/${data.name}`,
+				{
+					method: "GET",
+				},
+			);
+			if (response.ok) {
+				setInstalled(true);
+				setShow("actions");
+			} else {
+				showToast(
+					"error",
+					`Error stoping ${data.name}: Error ${response.status}`,
+				);
+			}
+		} catch (error) {
+			showToast("error", `Error stoping ${data.name}: ${error}`);
+			setLogs((prevLogs) => [...prevLogs, `Error stoping ${data.name}`]);
+		}
 
-    async function start() {
-        try {
-            const port = await getCurrentPort();
-            await fetch(`http://localhost:${port}/start/${data.name}`, {
-                method: "GET",
-            });
-        } catch (error) {
-            showToast("error", `Error initiating ${data.name}: ${error}`)
-            setLogs((prevLogs) => [...prevLogs, `Error initiating ${data.name}`]);
-        }
-    }
+		setShow("actions");
+		showToast("success", `${data.name} stopped successfully.`);
+	}
 
-    async function stop() {
-        try {
-            const port = await getCurrentPort();
-            const response = await fetch(`http://localhost:${port}/stop/${data.name}`, {
-                method: "GET",
-            });
-            if (response.ok) {
-                setInstalled(true)
-                setShow("actions")
-            } else {
-                showToast("error", `Error stoping ${data.name}: Error ${response.status}`)         
-            }
-        } catch (error) {
-            showToast("error", `Error stoping ${data.name}: ${error}`)
-            setLogs((prevLogs) => [...prevLogs, `Error stoping ${data.name}`]);
-        }
+	async function uninstall() {
+		try {
+			const port = await getCurrentPort();
+			await fetch(`http://localhost:${port}/delete/${data.name}`, {
+				method: "GET",
+			});
+			showToast("success", `${data.name} uninstalled successfully.`);
+			setInstalled(false);
+			window.location.reload();
+		} catch (error) {
+			showToast("error", `Error uninstalling ${data.name}: ${error}`);
+			setLogs((prevLogs) => [...prevLogs, `Error uninstalling ${data.name}`]);
+		}
+	}
 
-        setShow("actions")
-        showToast("success", `${data.name} stopped successfully.`)
-    }
+	const copyLogsToClipboard = () => {
+		showToast("success", "Logs successfully copied to clipboard.");
+		const logsText = logs.join("\n");
+		navigator.clipboard.writeText(logsText);
+	};
 
-    async function uninstall() {
-        try {
-            const port = await getCurrentPort();
-            await fetch(`http://localhost:${port}/delete/${data.name}`, {
-                method: "GET",
-            });
-            showToast("success", `${data.name} uninstalled successfully.`)
-            setInstalled(false);
-            window.location.reload();
-        } catch (error) {
-            showToast("error", `Error uninstalling ${data.name}: ${error}`)
-            setLogs((prevLogs) => [...prevLogs, `Error uninstalling ${data.name}`]);
-        }
-    }
+	const handleDownload = async () => {
+		showToast("default", `Downloading ${data.name}...`);
+		await download();
+	};
 
+	const handleStart = async () => {
+		showToast("default", `Starting ${data.name}...`);
+		setShow("logs");
+		await start();
+	};
 
-    const copyLogsToClipboard = () => {
-        showToast("success", "Logs successfully copied to clipboard.")
-        const logsText = logs.join("\n");
-        navigator.clipboard
-            .writeText(logsText)
-    };
+	const handleStop = async () => {
+		showToast("default", `Stoping ${data.name}...`);
+		await stop();
+	};
 
-    const handleDownload = async () => {
-        showToast("default", `Downloading ${data.name}...`)
-        await download();
-    };
+	const handleUninstall = async () => {
+		showToast("default", `Uninstalling ${data.name}...`);
+		await uninstall();
+	};
 
-    const handleStart = async () => {
-        showToast("default", `Starting ${data.name}...`)
-        setShow("logs")
-        await start();
-    };
+	const isLocalAvailable = async (port) => {
+		try {
+			const response = await fetch(`http://localhost:${port}`);
+			return response.ok;
+		} catch (error) {
+			return false;
+		}
+	};
 
-    const handleStop = async () => {
-        showToast("default", `Stoping ${data.name}...`)
-        await stop();
-    }
+	const loadIframe = async (localPort) => {
+		let isAvailable = false;
+		while (!isAvailable) {
+			isAvailable = await isLocalAvailable(localPort);
+			if (!isAvailable) {
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+			}
+		}
+		setIframeSrc(`http://localhost:${localPort}`);
+		setShow("iframe");
+	};
 
-    const handleUninstall = async () => {
-        showToast("default", `Uninstalling ${data.name}...`)
-        await uninstall();
-    };
+	const handleReloadIframe = async () => {
+		const iframe = document.getElementById("iframe") as HTMLIFrameElement;
+		iframe.src = iframe.src;
+	};
 
-    const isLocalAvailable = async (port) => {
-        try {
-            const response = await fetch(`http://localhost:${port}`);
-            return response.ok;
-        } catch (error) {
-            return false;
-        }
-    };
-
-    const loadIframe = async (localPort) => {
-        let isAvailable = false;
-        while (!isAvailable) {
-            isAvailable = await isLocalAvailable(localPort);
-            if (!isAvailable) {
-                await new Promise(resolve => setTimeout(resolve, 1000)); 
-            }
-        }
-        setIframeSrc(`http://localhost:${localPort}`);
-        setShow("iframe")
-    };
-
-    const handleReloadIframe = async () => {
-        const iframe = document.getElementById("iframe") as HTMLIFrameElement;
-        iframe.src = iframe.src
-    }
-
-    return (
-        <div className="relative w-full h-full overflow-auto">
-            <div className="absolute inset-0 flex items-center justify-center p-4">
-                <div className="w-full h-full flex justify-center items-center">
-                    <AnimatePresence mode="wait">
-                        {show === 'iframe' && (
-                            <IframeComponent
-                                iframeSrc={iframeSrc}
-                                handleStop={handleStop}
-                                handleReloadIframe={handleReloadIframe}
-                                currentPort={catchPort as number}
-                            />
-                        )} {show === 'logs' && (
-                            <LogsComponent
-                                statusLog={statusLog}
-                                logs={logs}
-                                setLogs={setLogs}
-                                copyLogsToClipboard={copyLogsToClipboard}
-                                handleStop={handleStop}
-                            />
-                        )} {show === 'actions' && (
-                            <ActionsComponent
-                                data={data}
-                                installed={installed}
-                                handleDownload={handleDownload}
-                                handleStart={handleStart}
-                                handleUninstall={handleUninstall}
-                                setImgLoading={setImgLoading}
-                            />
-                        )}
-                    </AnimatePresence>
-                </div>
-            </div>
-        </div>
-    );
-};
+	return (
+		<div className="relative w-full h-full overflow-auto">
+			<div className="absolute inset-0 flex items-center justify-center p-4">
+				<div className="w-full h-full flex justify-center items-center">
+					<AnimatePresence mode="wait">
+						{show === "iframe" && (
+							<IframeComponent
+								iframeSrc={iframeSrc}
+								handleStop={handleStop}
+								handleReloadIframe={handleReloadIframe}
+								currentPort={catchPort as number}
+							/>
+						)}{" "}
+						{show === "logs" && (
+							<LogsComponent
+								statusLog={statusLog}
+								logs={logs}
+								setLogs={setLogs}
+								copyLogsToClipboard={copyLogsToClipboard}
+								handleStop={handleStop}
+							/>
+						)}{" "}
+						{show === "actions" && (
+							<ActionsComponent
+								data={data}
+								installed={installed}
+								handleDownload={handleDownload}
+								handleStart={handleStart}
+								handleUninstall={handleUninstall}
+								setImgLoading={setImgLoading}
+							/>
+						)}
+					</AnimatePresence>
+				</div>
+			</div>
+		</div>
+	);
+}
