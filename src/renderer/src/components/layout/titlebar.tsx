@@ -1,5 +1,6 @@
 import CloseIcon from "@assets/svgs/Close.svg";
 import OpenIcon from "@assets/svgs/Open.svg";
+import Icon from "../icons/icon";
 
 export default function Titlebar() {
 	const handleClose = async () => {
@@ -19,18 +20,20 @@ export default function Titlebar() {
 			<div className="flex flex-row items-center justify-center h-10 w-full px-2">
 				<div className="flex gap-1 items-center justify-end h-full w-full">
 					<button
+						type="button"
 						id="minimize-button"
 						onClick={handleMinimize}
 						className="cursor-pointer p-2"
 					>
-						<img src={OpenIcon} alt="Close App" className="h-3 w-3" />
+						<Icon name="Minus" className="h-3 w-3" />
 					</button>
 					<button
+						type="button"
 						id="close-button"
 						onClick={handleClose}
 						className="cursor-pointer p-2"
 					>
-						<img src={CloseIcon} alt="Close App" className="h-3 w-3" />
+						<Icon name="Close" className="h-3 w-3" />
 					</button>
 				</div>
 			</div>

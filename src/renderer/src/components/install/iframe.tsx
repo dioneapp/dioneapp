@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import Icon from "../icons/icon";
 
 interface IframeProps {
 	iframeSrc: string;
@@ -113,18 +114,12 @@ export default function IframeComponent({
 							</span>
 						</div>
 						<button
+							type="button"
 							onClick={handleOpenInBrowser}
 							className="p-1.5 hover:bg-white/10 border-l border-white/10 transition-colors rounded-r-md cursor-pointer relative group"
 							title="Open in browser"
 						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="w-4 h-4"
-								viewBox="0 -960 960 960"
-								fill="currentColor"
-							>
-								<path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h560v-280h80v280q0 33-23.5 56.5T760-120H200Zm188-212-56-56 372-372H560v-80h280v280h-80v-144L388-332Z" />
-							</svg>
+							<Icon name="Open" className="w-4 h-4" />
 							<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 bg-black/80 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
 								Open in Browser
 							</div>
@@ -153,30 +148,16 @@ export default function IframeComponent({
 
 				<div className="flex gap-1.5">
 					<motion.button
-						className="flex items-center justify-center p-1.5 hover:bg-white/10 border-l border-white/10 bg-white/5 transition-colors rounded-md border relative group cursor-pointer"
+						className="flex items-center justify-center p-1.5 hover:bg-white/80 border-l bg-white transition-colors rounded-md border relative group cursor-pointer"
 						onClick={handleStop}
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="w-4 h-4"
-							viewBox="0 -960 960 960"
-							fill="currentColor"
-						>
-							<path d="M320-640v320-320Zm-80 400v-480h480v480H240Zm80-80h320v-320H320v320Z" />
-						</svg>
+						<Icon name="Stop" className="w-4 h-4 " />
 					</motion.button>
 					<motion.button
-						className="flex items-center justify-center p-1.5 hover:bg-white/10 border-l border-white/10 bg-white/5 transition-colors rounded-md border relative group cursor-pointer"
+						className="flex items-center justify-center p-1.5 hover:bg-white/80 border-l bg-white transition-colors rounded-md border relative group cursor-pointer"
 						onClick={handleReloadIframe}
 					>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="w-4 h-4"
-							viewBox="0 -960 960 960"
-							fill="currentColor"
-						>
-							<path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
-						</svg>
+						<Icon name="Reload" className="w-4 h-4" />
 					</motion.button>
 				</div>
 			</motion.div>
@@ -189,10 +170,11 @@ export default function IframeComponent({
 				className="w-full h-full rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl"
 			>
 				<iframe
+					title="Script screen"
 					id="iframe"
 					src={iframeSrc}
-					className="w-full h-full bg-neutral-900 hide-scrollbar"
-					style={{ border: 0 }}
+					className="w-full h-full bg-neutral-900"
+					style={{ border: 0, overflow: "hidden" }}
 				/>
 			</motion.div>
 		</div>

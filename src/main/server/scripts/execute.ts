@@ -1,145 +1,190 @@
-import { spawn } from "node:child_process";
-import { Server } from "socket.io";
-import logger from "../utils/logger";
-import pidtree from "pidtree";
-import { platform } from "os";
+import fs from "node:fs";
+import path from "node:path";
+import type { Server } from "socket.io";
+import { executeCommands } from "./process";
 
-let activeProcess: any = null;
-let activePID: number | null = null;
-
-// kill process and its children
-const killProcess = async (pid: number, io: Server) => {
-	try {
-		const currentPlatform = platform();
-
-		if (currentPlatform === "win32") {
-			// for windows
-			spawn("taskkill", ["/PID", pid.toString(), "/T", "/F"]);
-		} else {
-			// macos/linux
-			const childPids = await pidtree(pid, { root: true });
-			for (const childPid of childPids) {
-				process.kill(childPid, "SIGKILL");
-			}
-			process.kill(pid, "SIGKILL");
-		}
-		io.emit("installUpdate", {
-			type: "log",
-			content: `Script killed successfully`,
-		});
-	} catch (error) {
-		logger.error(`Cant killing process with PID ${pid}: ${error}`);
-	}
-};
-// is active process running?
-export const stopActiveProcess = async (io: Server) => {
-	if (!activeProcess || !activePID) {
-		return;
-	}
-
-	logger.warn(`Stopping process ${activePID} and its children`);
-
-	try {
-		await killProcess(activePID, io);
-
-		// wait active process finish
-		await Promise.race([
-			new Promise((resolve, reject) => {
-				activeProcess.on("exit", resolve);
-				activeProcess.on("error", reject);
-			}),
-			new Promise((_, reject) =>
-				setTimeout(() => reject(new Error("Process kill timeout")), 3000),
-			),
-		]);
-	} catch (error) {
-		logger.error(`Error stopping process: ${error}`);
-		throw error;
-	} finally {
-		activeProcess = null;
-		activePID = null;
-	}
-};
-// execute command
-export const execute = async (
-	command: string,
+async function readConfig(pathname: string) {
+	const config = await fs.promises.readFile(pathname, "utf8");
+	return JSON.parse(config);
+}
+export default async function executeInstallation(
+	pathname: string,
 	io: Server,
-	workingDir: string,
-	logs?: string,
-): Promise<string> => {
-	if (!logs) logs = "installUpdate";
-	let output;
-	try {
-		await stopActiveProcess(io);
+) {
+	const config = await readConfig(pathname);
+	const configDir = path.dirname(pathname);
+	const installation = config.installation || [];
 
-		const currentPlatform = platform();
-		const isWindows = currentPlatform === "win32";
-		const isBatchFile =
-			isWindows && (command.endsWith(".bat") || command.endsWith(".cmd"));
-		const [executable, ...args] = command.split(/\s+/);
+	io.emit("installUpdate", {
+		type: "log",
+		content: `INFO: Found ${installation.length} installation steps to execute`,
+	});
 
-		if (isBatchFile) {
-			activeProcess = spawn("cmd.exe", ["/c", executable, ...args], {
-				cwd: workingDir,
-				stdio: ["pipe"],
-				windowsHide: true,
+	// process installation steps sequentially
+	for (const step of installation) {
+		try {
+			io.emit("installUpdate", {
+				type: "log",
+				content: `INFO: Starting step "${step.name}"`,
 			});
-		} else {
-			activeProcess = spawn(executable, args, {
-				cwd: workingDir,
-				stdio: ["pipe"],
-				shell: isWindows,
-				windowsHide: true,
+			io.emit("installUpdate", {
+				type: "status",
+				status: "pending",
+				content: `${step.name}`,
 			});
-		}
 
-		activePID = activeProcess.pid;
+			if (step.commands && step.commands.length > 0) {
+				const commandsArray: string[] = Array.isArray(step.commands)
+					? step.commands
+					: [step.commands.toString()];
 
-		const processOutput = (data: Buffer, isError = false) => {
-			output = data.toString();
-			io.emit(logs, { type: "log", content: output });
-			if (isError) {
-				logger.error(output);
-				io.emit(logs, { type: "log", content: `ERROR: ${output}` });
-			} else {
-				logger.info(output);
-			}
-		};
-
-		// get output
-		activeProcess.stdout.on("data", (data: Buffer) => processOutput(data));
-		activeProcess.stderr.on("data", (data: Buffer) =>
-			processOutput(data, true),
-		);
-
-		// return a promise that resolves when the process exits
-		return new Promise<string>((resolve) => {
-			activeProcess.on("exit", (code: number) => {
-				io.emit(logs, `Process exited with code ${code}`);
-				logger.info(`Process exited with code ${code}`);
-				activeProcess = null;
-				activePID = null;
-				if (code === 0) {
-					resolve(output);
-				} else {
-					io.emit(logs, {
-						type: "status",
-						status: "error",
-						content: "Error detected",
+				// if exists env property, create virtual environment and execute commands inside it
+				if (step.env) {
+					const envName = step.env.toString();
+					io.emit("installUpdate", {
+						type: "log",
+						content: `INFO: Creating/using virtual environment: ${envName}`,
 					});
-					logger.error(`Process exited with code ${code}`);
-					resolve("false");
+
+					// create virtual environment and execute commands inside it
+					const envCommands = createVirtualEnvCommands(
+						envName,
+						commandsArray,
+						configDir,
+					);
+					await executeCommands(envCommands, configDir, io);
+				} else {
+					// execute commands normally
+					await executeCommands(commandsArray, configDir, io);
 				}
+
+				io.emit("installUpdate", {
+					type: "log",
+					content: `INFO: Completed step "${step.name}"`,
+				});
+				io.emit("installUpdate", {
+					type: "status",
+					status: "success",
+					content: `${step.name}`,
+				});
+			}
+		} catch (error) {
+			io.emit("installUpdate", {
+				type: "log",
+				content: `ERROR: Failed in step "${step.name}": ${error}`,
 			});
-		});
-	} catch (error: any) {
-		io.emit(logs, {
-			type: "status",
-			status: "error",
-			content: "Error detected",
-		});
-		io.emit(logs, { type: "log", content: `ERROR: ${error.message}` });
-		logger.error(`ERROR: ${error.message}`);
-		return "false";
+			io.emit("installUpdate", {
+				type: "status",
+				status: "error",
+				content: "Error detected",
+			});
+			throw error;
+		}
 	}
-};
+}
+
+export async function executeStartup(pathname: string, io: Server) {
+	const config = await readConfig(path.join(pathname, "dione.json"));
+	const configDir = pathname;
+	const start = config.start || [];
+
+	io.emit("installUpdate", {
+		type: "log",
+		content: `INFO: Found ${start.length} start steps to execute`,
+	});
+
+	// process start steps sequentially
+	for (const step of start) {
+		try {
+			io.emit("installUpdate", {
+				type: "log",
+				content: `INFO: Starting step "${step.name}"`,
+			});
+			io.emit("installUpdate", {
+				type: "status",
+				status: "pending",
+				content: `${step.name}`,
+			});
+
+			if (step.commands && step.commands.length > 0) {
+				const commandsArray: string[] = Array.isArray(step.commands)
+					? step.commands
+					: [step.commands.toString()];
+
+				if (step.catch) {
+					io.emit("installUpdate", { type: "catch", content: step.catch });
+					io.emit("installUpdate", {
+						type: "log",
+						content: `Watching port ${step.catch}`,
+					});
+				}
+
+				// if exists env property, create virtual environment and execute commands inside it
+				if (step.env) {
+					const envName = step.env.toString();
+					io.emit("installUpdate", {
+						type: "log",
+						content: `INFO: Creating/using virtual environment: ${envName}`,
+					});
+
+					// create virtual environment and execute commands inside it
+					const envCommands = createVirtualEnvCommands(
+						envName,
+						commandsArray,
+						configDir,
+					);
+					await executeCommands(envCommands, configDir, io);
+				} else {
+					// execute commands normally
+					await executeCommands(commandsArray, configDir, io);
+				}
+
+				io.emit("installUpdate", {
+					type: "log",
+					content: `INFO: Completed step "${step.name}"`,
+				});
+				io.emit("installUpdate", {
+					type: "status",
+					status: "success",
+					content: `${step.name}`,
+				});
+			}
+		} catch (error) {
+			io.emit("installUpdate", {
+				type: "log",
+				content: `ERROR: Failed in step "${step.name}": ${error}`,
+			});
+			io.emit("installUpdate", {
+				type: "status",
+				status: "error",
+				content: "Error detected",
+			});
+			throw error;
+		}
+	}
+}
+
+// commands to create virtual environment
+function createVirtualEnvCommands(
+	envName: string,
+	commands: string[],
+	baseDir: string,
+): string[] {
+	const isWindows = process.platform === "win32";
+	const envPath = path.join(baseDir, envName);
+
+	if (isWindows) {
+		// Windows
+		const activateScript = path.join(envPath, "Scripts", "activate");
+		return [
+			`if not exist "${envPath}" (python -m venv "${envName}")`,
+			`call "${activateScript}" && ${commands.join(" && ")} && deactivate`,
+		];
+	}
+	// Linux/macOS
+	const activateScript = path.join(envPath, "bin", "activate");
+	return [
+		`if [ ! -d "${envPath}" ]; then python -m venv "${envName}"; fi`,
+		`source "${activateScript}" && ${commands.join(" && ")} && deactivate`,
+	];
+}

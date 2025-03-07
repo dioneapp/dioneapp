@@ -1,97 +1,104 @@
-import { Server } from "socket.io";
-import { execute } from "./execute";
+import fs from "node:fs";
+import { execSync } from "node:child_process";
+import acceptedDependencies from "./acceptedDependencies.json";
 import logger from "../utils/logger";
-import * as semver from "semver";
-import { DependencyChecks } from "./types";
+import semver from "semver";
+import type { Command } from "./execute";
 
-// check dependencies commands
-const dependencyCheckers: { [key: string]: DependencyChecks } = {
-	git: {
-		command: "git --version",
-		versionRegex: /git version (\d+\.\d+\.\d+)/,
-	},
-	python: {
-		command: "python --version",
-		altCommand: "python3 --version",
-		versionRegex: /Python (\d+\.\d+\.\d+)/,
-	},
-	conda: {
-		command: "conda --version",
-		versionRegex: /conda (\d+\.\d+\.\d+)/,
-	},
-	node: {
-		command: "npm --version",
-		versionRegex: /(\d+\.\d+\.\d+)/,
-	},
-};
-// check if dependency is installed
-export const checkDependency = async (
-	depName: string,
-	requiredVersion: string,
-	io: Server,
-	workingDir: string,
-): Promise<string> => {
-	const checker = dependencyCheckers[depName];
-	if (!checker) {
-		io.emit("installUpdate", {
-			type: "error",
-			content: `Error: Dependency '${depName}' is not supported`,
-		});
-		logger.error(`Error: Dependency '${depName}' is not supported`);
-	}
+export interface DioneConfig {
+	dependencies?: {
+		[key: string]: {
+			version: string;
+		};
+	};
+	installation: Command[];
+}
+interface DependencyConfig {
+	[key: string]: {
+		checkCommand: string;
+		versionRegex?: string;
+		parseVersion?: (output: string) => string;
+	};
+}
 
-	let version: string | null = null;
-	let output: string | null = null;
+export async function readDioneConfig(filePath: string): Promise<DioneConfig> {
 	try {
-		output =
-			(await execute(checker.command, io, workingDir, "dependency")) || "";
-		const match = output.match(checker.versionRegex);
-		if (match) version = match[1];
-
-		// try alt command
-		if (!version && checker.altCommand) {
-			output =
-				(await execute(checker.altCommand, io, workingDir, "dependency")) || "";
-			const altMatch = output.match(checker.versionRegex);
-			if (altMatch) version = altMatch[1];
-		}
+		const data = await fs.promises.readFile(filePath, "utf8");
+		return JSON.parse(data) as DioneConfig;
 	} catch (error) {
-		// error checking
-		io.emit("installUpdate", {
-			type: "error",
-			content: `Error checking dependency '${depName}': ${error}`,
-		});
-		logger.error(`Error checking dependency '${depName}': ${error}`);
+		console.error("Error reading dione config file:", error);
+		throw error;
 	}
-	if ((!version && !output) || output === "false") {
-		// dependency not found
-		logger.error(`Error: Dependency '${depName}' not found`);
-		return "not_found";
-	}
-	if (!semver.satisfies(version, requiredVersion)) {
-		// version is not exact
-		io.emit("installUpdate", {
-			type: "error",
-			content: `ERROR: Dependency '${depName}' version ${version} does not satisfy ${requiredVersion}`,
-		});
-		logger.error(
-			`Error: Dependency '${depName}' version ${version} does not satisfy ${requiredVersion}`,
-		);
-	}
-	if (requiredVersion === "latest" && output) {
-		// dependency exists and the version does not matter
-		io.emit("installUpdate", {
-			type: "log",
-			content: `✓ Dependency '${depName}' found.`,
-		});
-	}
-	if (semver.satisfies(version, requiredVersion)) {
-		// version is exact
-		io.emit("installUpdate", {
-			type: "log",
-			content: `✓ Dependency '${depName}' found with version '${requiredVersion}'.`,
-		});
-	}
+}
 
-	return "success";
-};
+async function isDependencyInstalled(
+	dependency: string,
+	requiredVersion: string,
+	dependencyConfig: DependencyConfig,
+): Promise<boolean> {
+	try {
+		if (!dependencyConfig[dependency]) {
+			console.warn(`Not found dependency ${dependency} in config file`);
+			return false;
+		}
+		const config = dependencyConfig[dependency];
+		const output = await execSync(config.checkCommand);
+		const installedVersion = output.toString().trim();
+
+		if (requiredVersion === "latest") {
+			return true;
+		}
+
+		if (!semver.satisfies(installedVersion, requiredVersion)) {
+			logger.error(`Dependency "${dependency}" version is not satisfied`);
+			return false;
+		}
+
+		return true;
+	} catch (error) {
+		console.error(`Error checking dependency ${dependency} version:`, error);
+		return false;
+	}
+}
+
+export async function checkDependencies(dioneFile: string): Promise<{
+	success: boolean;
+	missing: string[];
+}> {
+	try {
+		const config = await readDioneConfig(dioneFile);
+		const missing: string[] = [];
+
+		// if no dependencies, return success
+		if (!config.dependencies) {
+			logger.warn("No dependencies found in dione.json");
+			return { success: true, missing };
+		}
+
+		for (const [dependency, details] of Object.entries(config.dependencies)) {
+			const isInstalled = await isDependencyInstalled(
+				dependency,
+				details.version,
+				acceptedDependencies,
+			);
+
+			if (!isInstalled) {
+				logger.error(`Dependency "${dependency}" is not installed`);
+				missing.push(dependency);
+			}
+		}
+		if (missing.length === 0) {
+			logger.info("All dependencies are installed");
+		}
+		return {
+			success: missing.length === 0,
+			missing,
+		};
+	} catch (error) {
+		logger.error("Error checking dependencies:", error);
+		return {
+			success: false,
+			missing: [],
+		};
+	}
+}

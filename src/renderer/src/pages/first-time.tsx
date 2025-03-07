@@ -174,7 +174,7 @@ export default function FirstTime() {
 					<div className="mt-12 flex flex-col gap-4">
 						<div className="flex flex-col gap-2 items-center justify-center">
 							<Link
-								to="/"
+								to="/?loginFinished=true"
 								className="bg-white/20 transition-all duration-400 w-28 rounded-full p-2 text-sm text-neutral-200 cursor-pointer"
 							>
 								<span className="text-center w-full flex items-center justify-center">

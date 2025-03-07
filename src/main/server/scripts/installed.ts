@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import logger from "../utils/logger";
 
 export default async function getAllScripts() {
@@ -33,6 +33,7 @@ export async function getInstalledScript(name: string) {
 	const root = process.cwd();
 	const sanitizedName = name.replace(/\s+/g, "-");
 	const scriptDir = path.join(root, "apps", sanitizedName);
+	console.log("script dir", scriptDir);
 	try {
 		await fs.promises.readdir(scriptDir);
 		return true;

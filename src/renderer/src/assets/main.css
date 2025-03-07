@@ -3,6 +3,7 @@
 body {
 	color: #fff;
 	font-family: "Poppins", serif;
+	user-select: none;
 }
 
 #titlebar {

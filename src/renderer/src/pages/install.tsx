@@ -7,8 +7,11 @@ import { getCurrentPort } from "../utils/getPort";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
 import ActionsComponent from "@renderer/components/install/actions";
+import { useAppContext } from "@renderer/components/layout/global-context";
+import Icon from "@renderer/components/icons/icon";
 
 export default function Install() {
+	const { setInstalledApps } = useAppContext();
 	const { id } = useParams<{ id: string }>();
 	// loading stuff
 	const [loading, setLoading] = useState<boolean>(true);
@@ -84,10 +87,10 @@ export default function Install() {
 	}, [id]);
 
 	async function fetchIfDownloaded() {
-		if (data.name) {
+		if (data?.name) {
 			const port = await getCurrentPort();
 			const response = await fetch(
-				`http://localhost:${port}/installed/${data.name}`,
+				`http://localhost:${port}/scripts/installed/${data.name}`,
 				{
 					method: "GET",
 					headers: {
@@ -97,7 +100,6 @@ export default function Install() {
 			);
 			if (response.ok) {
 				const jsonData = await response.json();
-				console.log("data", jsonData);
 				setInstalled(jsonData);
 			} else {
 				setError(true);
@@ -139,6 +141,12 @@ export default function Install() {
 						console.log("Received log:", message);
 						if (type === "log") {
 							setLogs((prevLogs) => [...prevLogs, content]);
+							if (content.includes("Cant kill process")) {
+								showToast(
+									"error",
+									"Error stopping script, please try again later or do it manually.",
+								);
+							}
 						}
 						if (type === "status") {
 							setStatusLog({ status: status || "pending", content });
@@ -147,8 +155,8 @@ export default function Install() {
 							}
 						}
 						if (type === "catch") {
-							loadIframe(parseInt(content));
-							setCatchPort(parseInt(content));
+							loadIframe(Number.parseInt(content));
+							setCatchPort(Number.parseInt(content));
 						}
 						if (content === "Script killed successfully") {
 							navigate(0); // should change this, but for now fix logs after stop script
@@ -178,6 +186,7 @@ export default function Install() {
 			await fetch(`http://localhost:${port}/download/${id}`, {
 				method: "GET",
 			});
+			setInstalledApps((prevApps) => [...prevApps, data.name]);
 		} catch (error) {
 			showToast("error", `Error initiating download: ${error}`);
 			setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
@@ -187,7 +196,7 @@ export default function Install() {
 	async function start() {
 		try {
 			const port = await getCurrentPort();
-			await fetch(`http://localhost:${port}/start/${data.name}`, {
+			await fetch(`http://localhost:${port}/scripts/start/${data.name}`, {
 				method: "GET",
 			});
 		} catch (error) {
@@ -200,38 +209,50 @@ export default function Install() {
 		try {
 			const port = await getCurrentPort();
 			const response = await fetch(
-				`http://localhost:${port}/stop/${data.name}`,
+				`http://localhost:${port}/scripts/stop/${data.name}`,
 				{
 					method: "GET",
 				},
 			);
-			if (response.ok) {
-				setInstalled(true);
+			if (response.status === 200) {
 				setShow("actions");
+				setInstalled(true);
+				showToast("success", `${data.name} stopped successfully.`);
+				await fetchIfDownloaded();
 			} else {
 				showToast(
 					"error",
-					`Error stoping ${data.name}: Error ${response.status}`,
+					`Error stopping ${data.name}: Error ${response.status}`,
 				);
 			}
 		} catch (error) {
-			showToast("error", `Error stoping ${data.name}: ${error}`);
-			setLogs((prevLogs) => [...prevLogs, `Error stoping ${data.name}`]);
+			showToast("error", `Error stopping ${data.name}: ${error}`);
+			setLogs((prevLogs) => [...prevLogs, `Error stopping ${data.name}`]);
 		}
-
-		setShow("actions");
-		showToast("success", `${data.name} stopped successfully.`);
 	}
 
 	async function uninstall() {
 		try {
 			const port = await getCurrentPort();
-			await fetch(`http://localhost:${port}/delete/${data.name}`, {
-				method: "GET",
-			});
-			showToast("success", `${data.name} uninstalled successfully.`);
-			setInstalled(false);
-			window.location.reload();
+			const response = await fetch(
+				`http://localhost:${port}/scripts/delete/${data.name}`,
+				{
+					method: "GET",
+				},
+			);
+			if (response.status === 200) {
+				showToast("success", `${data.name} uninstalled successfully.`);
+				setInstalled(false);
+				await fetchIfDownloaded();
+				setInstalledApps((prevApps) =>
+					prevApps.filter((app) => app !== data.name),
+				);
+			} else {
+				showToast(
+					"error",
+					`Error uninstalling ${data.name}, please try again later or do it manually.`,
+				);
+			}
 		} catch (error) {
 			showToast("error", `Error uninstalling ${data.name}: ${error}`);
 			setLogs((prevLogs) => [...prevLogs, `Error uninstalling ${data.name}`]);
@@ -256,7 +277,7 @@ export default function Install() {
 	};
 
 	const handleStop = async () => {
-		showToast("default", `Stoping ${data.name}...`);
+		showToast("default", `Stopping ${data.name}...`);
 		await stop();
 	};
 
@@ -293,6 +314,18 @@ export default function Install() {
 
 	return (
 		<div className="relative w-full h-full overflow-auto">
+			{show === "actions" && (
+				<div className="p-12 z-50 absolute">
+					<button
+						type="button"
+						onClick={() => navigate(-1)}
+						className="flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 py-2 px-4 text-center cursor-pointer"
+					>
+						<Icon name="Back" className="h-4 w-4" />
+						<span className="font-semibold">Back</span>
+					</button>
+				</div>
+			)}
 			<div className="absolute inset-0 flex items-center justify-center p-4">
 				<div className="w-full h-full flex justify-center items-center">
 					<AnimatePresence mode="wait">

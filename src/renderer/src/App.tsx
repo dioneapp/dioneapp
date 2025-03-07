@@ -1,4 +1,10 @@
-import { Route, Routes, useLocation, Navigate } from "react-router-dom";
+import {
+	Route,
+	Routes,
+	useLocation,
+	Navigate,
+	useSearchParams,
+} from "react-router-dom";
 import Loading from "./pages/loading";
 import Titlebar from "./components/layout/titlebar";
 import Home from "./pages/home";
@@ -10,12 +16,15 @@ import FirstTime from "./pages/first-time";
 import { useEffect, useState } from "react";
 
 function App() {
+	const [searchParams] = useSearchParams();
 	const { pathname } = useLocation();
 	const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState(true);
+	const loginFinished = searchParams.get("loginFinished");
 
 	useEffect(() => {
 		window.electron.ipcRenderer.invoke("check-first-launch").then((result) => {
+			console.log("is first launch?", result);
 			setIsFirstLaunch(result);
 			setIsLoading(false);
 		});
@@ -25,7 +34,7 @@ function App() {
 		return null; // this probably makes the application take a few ms longer to start, so we can wait for the result of check-first-launch to display something on the screen
 	}
 
-	if (isFirstLaunch && pathname !== "/first-time") {
+	if (isFirstLaunch && pathname !== "/first-time" && !loginFinished) {
 		return <Navigate to="/first-time" replace />;
 	}
 

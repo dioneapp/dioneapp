@@ -1,0 +1,22 @@
+{
+	"python": {
+		"checkCommand": "python --version",
+		"versionRegex": "Python (\\d+\\.\\d+\\.\\d+)"
+	},
+	"node": {
+		"checkCommand": "node --version",
+		"versionRegex": "v(\\d+\\.\\d+\\.\\d+)"
+	},
+	"npm": {
+		"checkCommand": "npm --version",
+		"versionRegex": "(\\d+\\.\\d+\\.\\d+)"
+	},
+	"git": {
+		"checkCommand": "git --version",
+		"versionRegex": "git version (\\d+\\.\\d+\\.\\d+)"
+	},
+	"docker": {
+		"checkCommand": "docker --version",
+		"versionRegex": "Docker version (\\d+\\.\\d+\\.\\d+)"
+	}
+}

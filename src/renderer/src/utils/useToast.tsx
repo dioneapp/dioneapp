@@ -1,4 +1,4 @@
-import { Toast, ToastProps } from "@renderer/components/layout/toast";
+import { Toast, type ToastProps } from "@renderer/components/layout/toast";
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -24,7 +24,6 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 		const id = Math.random().toString();
 		const newToast = { ...toast, id };
 		setToasts((prev) => [...prev, newToast]);
-		console.log("show fixed?:", toast.fixed);
 		if (toast.fixed === "false" || toast.fixed === undefined) {
 			setTimeout(() => {
 				removeToast(id);

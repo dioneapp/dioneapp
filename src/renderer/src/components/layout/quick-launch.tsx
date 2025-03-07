@@ -3,10 +3,11 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useAppContext } from "./global-context";
+import Icon from "../icons/icon";
 
-export let localStorageKey = "quickLaunchApps";
 export default function QuickLaunch() {
-	const [installedApps, setInstalledApps] = useState<string[]>([]);
+	const { installedApps, setInstalledApps } = useAppContext();
 	const [apps, setApps] = useState<any[]>([]);
 	const [showAppList, setShowAppList] = useState<boolean>(false);
 	const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
@@ -38,60 +39,48 @@ export default function QuickLaunch() {
 	};
 
 	useEffect(() => {
-		const savedApps = localStorage.getItem(localStorageKey);
-		if (savedApps) {
-			setApps(JSON.parse(savedApps));
-		}
-	}, []);
-
-	useEffect(() => {
-		if (apps.length > 0) {
-			localStorage.setItem(localStorageKey, JSON.stringify(apps));
-		}
-	}, [apps]);
-
-	useEffect(() => {
 		async function getInstalledApps() {
 			try {
 				const port = await getCurrentPort();
-				const response = await fetch(`http://localhost:${port}/installed`);
-				if (!response.ok) return;
+				const response = await fetch(
+					`http://localhost:${port}/scripts/installed`,
+				);
+				if (!response.ok) throw new Error("Failed to fetch installed apps");
 				const data = await response.json();
-				setInstalledApps(data.apps || []);
+				setInstalledApps(data.apps);
 			} catch (error) {
 				console.error("Error fetching installed apps:", error);
 			}
 		}
+
 		getInstalledApps();
 	}, []);
 
-	useEffect(() => {
-		async function loadQuickLaunchApps() {
-			try {
-				const port = await getCurrentPort();
-				const results = await Promise.all(
-					installedApps
-						.slice(0, maxApps)
-						.map((app) =>
-							fetch(`http://localhost:${port}/search_name/${app}`).then(
-								(res) => (res.ok ? res.json() : []),
-							),
+	async function loadQuickLaunchApps() {
+		try {
+			const port = await getCurrentPort();
+			const results = await Promise.all(
+				installedApps
+					.slice(0, maxApps)
+					.map((app) =>
+						fetch(`http://localhost:${port}/search_name/${app}`).then((res) =>
+							res.ok ? res.json() : [],
 						),
-				);
-				if (!localStorage.getItem(localStorageKey)) {
-					setApps(results.flat().slice(0, maxApps));
-				}
-			} catch (error) {
-				console.error("Error loading apps:", error);
-			}
+					),
+			);
+			setApps(results.flat().slice(0, maxApps));
+		} catch (error) {
+			console.error("Error loading apps:", error);
 		}
-		if (installedApps.length) loadQuickLaunchApps();
+	}
+
+	useEffect(() => {
+		loadQuickLaunchApps();
 	}, [installedApps]);
 
 	async function showAppSelector(index: number) {
 		try {
-			const results = localStorage.getItem(localStorageKey);
-			setAvailableApps(results ? JSON.parse(results) : []);
+			setAvailableApps(apps);
 			setSelectedSlot(index);
 			setShowAppList(true);
 		} catch (error) {
@@ -113,7 +102,6 @@ export default function QuickLaunch() {
 		const newApps = [...apps];
 		newApps.splice(index, 1);
 		setApps(newApps);
-		localStorage.setItem(localStorageKey, JSON.stringify(newApps));
 		window.location.reload(); // should change this
 	};
 
@@ -140,18 +128,12 @@ export default function QuickLaunch() {
 	const renderEmptyButton = (index: number) => (
 		<div className="flex flex-col items-center gap-1">
 			<button
+				type="button"
 				onClick={() => showAppSelector(index)}
 				className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 				disabled={installedApps.length === 0}
 			>
-				<svg
-					className="w-10 h-10 hover:rotate-90 transition-transform"
-					xmlns="http://www.w3.org/2000/svg"
-					viewBox="0 -960 960 960"
-					fill="#FFFFFF"
-				>
-					<path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
-				</svg>
+				<Icon name="Plus" className="h-10 w-10" />
 			</button>
 			<p className="text-xs text-neutral-400">Add App</p>
 		</div>
@@ -204,6 +186,7 @@ export default function QuickLaunch() {
 										</p>
 									</div>
 									<button
+										type="button"
 										onClick={() => setShowAppList(false)}
 										className="px-2 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
 									>
@@ -211,44 +194,44 @@ export default function QuickLaunch() {
 									</button>
 								</div>
 								<div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto mt-4">
-									{availableApps &&
-										availableApps.map((app, index) => (
-											<motion.div
-												key={index}
-												custom={index}
-												variants={appItemVariants}
-												initial="hidden"
-												animate="visible"
+									{availableApps?.map((app) => (
+										<motion.div
+											key={app.id}
+											custom={app.id}
+											variants={appItemVariants}
+											initial="hidden"
+											animate="visible"
+										>
+											<button
+												type="button"
+												onClick={() => addToSlot(app)}
+												className="flex flex-col items-center p-3 rounded-xl transition-colors w-full cursor-pointer"
 											>
-												<button
-													onClick={() => addToSlot(app)}
-													className="flex flex-col items-center p-3 rounded-xl transition-colors w-full cursor-pointer"
+												<motion.div
+													className={`h-16 w-16 mb-2 ${app.logo_url ? "border border-white/10" : ""} rounded-xl flex items-center justify-center overflow-hidden`}
+													whileHover={{ scale: 1.05 }}
+													whileTap={{ scale: 0.95 }}
 												>
-													<motion.div
-														className={`h-16 w-16 mb-2 ${app.logo_url ? "border border-white/10" : ""} rounded-xl flex items-center justify-center overflow-hidden`}
-														whileHover={{ scale: 1.05 }}
-														whileTap={{ scale: 0.95 }}
-													>
-														{app.logo_url ? (
-															<img
-																src={app.logo_url || "/svgs/placeholder.svg"}
-																alt={app.name}
-																className="h-full w-full object-cover"
-															/>
-														) : (
-															<div className="h-full w-full object-cover bg-white/10 animate-pulse"></div>
-														)}
-													</motion.div>
-													{app.name ? (
-														<span className="text-xs text-neutral-400">
-															{app.name}
-														</span>
+													{app.logo_url ? (
+														<img
+															src={app.logo_url || "/svgs/Error.svg"}
+															alt={app.name}
+															className="h-full w-full object-cover"
+														/>
 													) : (
-														<div className="text-xs bg-white/10 animate-pulse w-16 h-2 rounded-xl" />
+														<div className="h-full w-full object-cover bg-white/10 animate-pulse" />
 													)}
-												</button>
-											</motion.div>
-										))}
+												</motion.div>
+												{app.name ? (
+													<span className="text-xs text-neutral-400">
+														{app.name}
+													</span>
+												) : (
+													<div className="text-xs bg-white/10 animate-pulse w-16 h-2 rounded-xl" />
+												)}
+											</button>
+										</motion.div>
+									))}
 								</div>
 							</div>
 						</motion.div>

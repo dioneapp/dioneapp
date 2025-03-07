@@ -1,16 +1,16 @@
-import { Express } from "express";
+import type { Express } from "express";
 import { supabase } from "../utils/database";
-import { Server } from "socket.io";
+import type { Server } from "socket.io";
 import logger from "../utils/logger";
 import { getScripts } from "../scripts/download";
-import { deleteScript } from "../scripts/delete";
-import getAllScripts, { getInstalledScript } from "../scripts/installed";
-import path from "node:path";
-import { startScript } from "../scripts/runner";
-import { stopActiveProcess } from "../scripts/execute";
+// import { deleteScript } from "../scripts/delete";
+// import getAllScripts, { getInstalledScript } from "../scripts/installed";
+// import { startScript } from "../scripts/runner";
+// import { stopActiveProcess } from "../scripts/execute";
 
 // routers
 import configRouter from "./config";
+import { createScriptRouter } from "./scripts";
 
 export const setupRoutes = (server: Express, io: Server) => {
 	server.get("/", (_req, res) => {
@@ -129,86 +129,11 @@ export const setupRoutes = (server: Express, io: Server) => {
 		const { id } = req.params;
 
 		try {
-			await getScripts(id, res, io);
+			await getScripts(id, io);
+			res.status(200).send("Script downloaded successfully.");
 		} catch (error: any) {
 			logger.error(
 				`Error handling download request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
-			);
-			res.status(500).send("An error occurred while processing your request.");
-		}
-	});
-
-	server.get("/start/:name", async (req, res) => {
-		const { name } = req.params;
-		const sanitizedName = name.replace(/\s+/g, "-");
-		const root = process.cwd();
-		const workingDir = path.join(root, "apps", sanitizedName);
-		logger.info(`Starting script '${sanitizedName}' on '${workingDir}'`);
-		io.emit("installUpdate", {
-			type: "log",
-			content: `Starting script '${sanitizedName}' on '${workingDir}'`,
-		});
-		try {
-			await startScript(workingDir, io);
-		} catch (error: any) {
-			logger.error(
-				`Error handling start request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
-			);
-			res.status(500).send("An error occurred while processing your request.");
-		}
-	});
-
-	server.get("/stop/:name", async (req, res) => {
-		const { name } = req.params;
-		const sanitizedName = name.replace(/\s+/g, "-");
-		const root = process.cwd();
-		const workingDir = path.join(root, "apps", sanitizedName);
-		logger.info("Working on:", workingDir);
-		try {
-			await stopActiveProcess(io);
-			res.status(200).json({ success: true });
-		} catch (error: any) {
-			logger.error(
-				`Error handling stop request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
-			);
-			res.status(500).send("An error occurred while processing your request.");
-		}
-	});
-
-	server.get("/delete/:name", async (req, res) => {
-		const { name } = req.params;
-		const sanitizedName = name.replace(/\s+/g, "-");
-
-		try {
-			deleteScript(sanitizedName, res);
-		} catch (error: any) {
-			logger.error(
-				`Error handling delete request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
-			);
-			res.status(500).send("An error occurred while processing your request.");
-		}
-	});
-
-	server.get("/installed", async (_req, res) => {
-		try {
-			const data = await getAllScripts();
-			res.send(data);
-		} catch (error: any) {
-			logger.error(
-				`Unable to obtain installed scripts: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
-			);
-			res.status(500).send("An error occurred while processing your request.");
-		}
-	});
-
-	server.get("/installed/:name", async (req, res) => {
-		const { name } = req.params;
-		try {
-			const isInstalled = await getInstalledScript(name);
-			res.send(isInstalled);
-		} catch (error: any) {
-			logger.error(
-				`Unable to obtain "${name}" script: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
 			);
 			res.status(500).send("An error occurred while processing your request.");
 		}
@@ -283,4 +208,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 
 	// config stuff
 	server.use("/config", configRouter);
+
+	// script stuff
+	server.use("/scripts", createScriptRouter(io));
 };

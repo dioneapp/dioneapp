@@ -1,104 +1,174 @@
-import fs from "fs";
-import path from "path";
-import { Response } from "express";
-import { Server as SocketIO } from "socket.io";
-import { supabase } from "../utils/database";
+import https from "node:https";
+import fs from "node:fs";
+import path from "node:path";
+import type { Server } from "socket.io";
 import logger from "../utils/logger";
-import * as git from "isomorphic-git";
-import http from "isomorphic-git/http/node";
-import { runActions } from "./runner";
+import { supabase } from "../utils/database";
+import { checkDependencies } from "./dependencies";
+import executeInstallation from "./execute";
 
-export async function getScripts(
-	id: string,
-	res: Response,
-	io: SocketIO,
-): Promise<void> {
-	const root = process.cwd();
-	io.emit("installUpdate", {
-		type: "status",
-		status: "pending",
-		content: `Searching script...`,
-	});
-
-	// get script from db
-	const { data, error } = await supabase
-		.from("scripts")
-		.select("script_url,name,version")
-		.eq("id", id)
-		.single();
-
-	if (error || !data) {
-		io.emit("installUpdate", {
-			type: "error",
-			content: `Script not found in database`,
-		});
-		res.status(404).send("Script not found.");
-		logger.error(`Script ${id} not found in database.`);
-		return;
-	}
-
-	logger.info(
-		`Cloning scripts from ${data.name} with version ${data.version}.`,
-	);
-	io.emit("installUpdate", {
-		type: "log",
-		content: `Found script '${data.name}' with version '${data.version}'`,
-	});
-	io.emit("installUpdate", {
-		type: "status",
-		status: "success",
-		content: "Script founded",
-	});
-
-	const sanitizedScriptName = data.name.replace(/\s+/g, "-");
-	const saveDirectory = path.join(root, "apps", sanitizedScriptName);
-	io.emit("installUpdate", {
-		type: "log",
-		content: `Cloning script to '${saveDirectory}'`,
-	});
-	io.emit("installUpdate", {
-		type: "status",
-		status: "pending",
-		content: `Cloning script...`,
-	});
-
-	if (!fs.existsSync(saveDirectory)) {
-		// make app dir
-		fs.mkdirSync(saveDirectory, { recursive: true });
-	}
-
+export async function getScripts(id: string, io: Server) {
 	try {
-		// clone script repo, we should remove this to use raw
-		await git.clone({
-			fs,
-			http,
-			dir: saveDirectory,
-			url: data.script_url,
-			singleBranch: true,
-			depth: 1,
-		});
+		const { data, error } = await supabase
+			.from("scripts")
+			.select("*")
+			.eq("id", id)
+			.single();
+		if (!data || error) {
+			io.emit("installUpdate", {
+				type: "log",
+				content: "ERROR: Script not found",
+			});
+			io.emit("installUpdate", {
+				type: "status",
+				status: "error",
+				content: "Error detected",
+			});
+			return null;
+		}
+
+		const root = process.cwd();
+		const sanitizedName = data.name.replace(/\s+/g, "-");
+		const saveDirectory = path.join(root, "apps", sanitizedName);
+		const script_url = data.script_url;
+
+		try {
+			// create app stuff
+			await fs.promises.mkdir(saveDirectory, { recursive: true });
+			const outputFilePath = path.join(saveDirectory, "dione.json");
+			// download dione.json
+			await downloadFile(script_url, outputFilePath, io);
+		} catch (error) {
+			io.emit("installUpdate", {
+				type: "log",
+				content: `ERROR: Error creating apps directory: ${error}`,
+			});
+			io.emit("installUpdate", {
+				type: "status",
+				status: "error",
+				content: "Error detected",
+			});
+			logger.error("Error creating apps directory:", error);
+		}
+	} catch (error) {
 		io.emit("installUpdate", {
-			type: "status",
-			status: "success",
-			content: "Script cloned",
+			type: "log",
+			content: `ERROR: ${error}`,
 		});
-
-		// run install
-		await runActions(saveDirectory, io);
-
-		io.emit("installUpdate", "All files cloned successfully.");
-		res.status(200).send("All files cloned successfully.");
-	} catch (err) {
 		io.emit("installUpdate", {
 			type: "status",
 			status: "error",
-			content: `Error detected`,
+			content: "Error detected",
 		});
-		io.emit("installUpdate", {
-			type: "log",
-			content: `An error occurred while downloading the script: ${err}`,
-		});
-		res.status(500).send("Error cloning scripts.");
-		logger.error(`Error cloning scripts from ${data.name}:`, err);
+		logger.error(`Error downloading script: ${error}`);
+		return null;
 	}
+}
+
+function extractInfo(url: string): string {
+	const regex = /github\.com\/([^\/]+\/[^\/]+)/;
+	const match = url.match(regex);
+	if (match && match[1]) {
+		return match[1];
+	}
+	throw new Error("No valid GitHub repository found");
+}
+
+export function downloadFile(
+	GITHUB_URL: string,
+	FILE_PATH: string,
+	io: Server,
+) {
+	io.emit("installUpdate", {
+		type: "log",
+		content: `Downloading script from ${GITHUB_URL}`,
+	});
+	io.emit("installUpdate", {
+		type: "status",
+		status: "pending",
+		content: "Downloading script...",
+	});
+
+	const repo = extractInfo(GITHUB_URL);
+	const url = `https://raw.githubusercontent.com/${repo}/main/dione.json`; // should change this later, for now only works with main branch
+	const file = fs.createWriteStream(FILE_PATH);
+
+	https
+		.get(url, (response) => {
+			if (response.statusCode === 200) {
+				response.pipe(file);
+				file.on("finish", async () => {
+					file.close();
+					io.emit("installUpdate", {
+						type: "log",
+						content: "Script downloaded successfully.",
+					});
+					io.emit("installUpdate", {
+						type: "status",
+						status: "success",
+						content: "Script downloaded",
+					});
+					// download finished, now checking dependencies
+					const result = await checkDependencies(FILE_PATH);
+					if (result.success) {
+						io.emit("installUpdate", {
+							type: "log",
+							content: "All required dependencies are installed.",
+						});
+						io.emit("installUpdate", {
+							type: "status",
+							status: "success",
+							content: "Dependencies installed",
+						});
+						// checking dependencies finished, now executing installation
+						await executeInstallation(FILE_PATH, io).catch((error) => {
+							console.error(`Unhandled error: ${error.message}`);
+							process.exit(1);
+						});
+					} else {
+						io.emit("installUpdate", {
+							type: "log",
+							content: `ERROR: Some dependencies are missing: ${result.missing.join(", ")}`,
+						});
+						io.emit("installUpdate", {
+							type: "status",
+							status: "error",
+							content: "Error detected",
+						});
+					}
+				});
+				file.on("error", (error) => {
+					file.close();
+					fs.unlinkSync(FILE_PATH);
+					logger.error(`Error writing file: ${error}`);
+				});
+			} else {
+				file.close();
+				fs.unlinkSync(FILE_PATH);
+				logger.error(`Error downloading script: ${response.statusCode}`);
+				io.emit("installUpdate", {
+					type: "log",
+					content: `ERROR: Error downloading script, status code: ${response.statusCode}`,
+				});
+				io.emit("installUpdate", {
+					type: "status",
+					status: "error",
+					content: "Error detected",
+				});
+			}
+		})
+		.on("error", (error) => {
+			file.close();
+			fs.unlinkSync(FILE_PATH);
+			logger.error("Error in request:", error);
+			io.emit("installUpdate", {
+				type: "log",
+				content: `ERROR: Error in request: ${error.message}`,
+			});
+			io.emit("installUpdate", {
+				type: "status",
+				status: "error",
+				content: "Error detected",
+			});
+		});
 }
