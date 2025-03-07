@@ -150,7 +150,7 @@ export default function Install() {
 						}
 						if (type === "status") {
 							setStatusLog({ status: status || "pending", content });
-							if (content === "Actions executed") {
+							if (content.toLowerCase().includes("actions executed")) {
 								window.location.reload();
 							}
 						}

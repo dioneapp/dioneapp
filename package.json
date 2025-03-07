@@ -20,6 +20,25 @@
     "build:mac": "electron-vite build && electron-builder --mac",
     "build:linux": "electron-vite build && electron-builder --linux"
   },
+  "build": {
+    "appId": "dione",
+    "productName": "Dione",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "./resources/icon.ico"
+    }, 
+    "nsis": {
+      "oneClick": false,
+      "installerIcon": "./resources/icon.ico",
+      "uninstallerIcon": "./resources/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Dione",
+      "allowToChangeInstallationDirectory": true
+    }
+  },
   "dependencies": {
     "@electron-toolkit/preload": "^3.0.1",
     "@electron-toolkit/utils": "^3.0.0",

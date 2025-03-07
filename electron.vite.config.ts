@@ -1,5 +1,5 @@
 import { resolve } from 'node:path'
-import { defineConfig, externalizeDepsPlugin } from 'electron-vite'
+import { defineConfig, defineViteConfig, externalizeDepsPlugin } from 'electron-vite'
 import react from '@vitejs/plugin-react'
 
 export default defineConfig({
@@ -10,13 +10,18 @@ export default defineConfig({
   preload: {
     plugins: [externalizeDepsPlugin()]
   },
-  renderer: {
-    resolve: {
-      alias: {
-        '@renderer': resolve('src/renderer/src'),
-        '@assets': resolve('src/renderer/src/assets')
-      }
-    },
-    plugins: [react()]
-  }
+  renderer: defineViteConfig(() => {
+     return {
+      server: {
+        port: 2214
+      },
+      resolve: {
+        alias: {
+          '@renderer': resolve('src/renderer/src'),
+          '@assets': resolve('src/renderer/src/assets')
+        }
+      },
+      plugins: [react()]
+     }
+    })
 })
