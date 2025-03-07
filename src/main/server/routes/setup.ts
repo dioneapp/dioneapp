@@ -3,10 +3,6 @@ import { supabase } from "../utils/database";
 import type { Server } from "socket.io";
 import logger from "../utils/logger";
 import { getScripts } from "../scripts/download";
-// import { deleteScript } from "../scripts/delete";
-// import getAllScripts, { getInstalledScript } from "../scripts/installed";
-// import { startScript } from "../scripts/runner";
-// import { stopActiveProcess } from "../scripts/execute";
 
 // routers
 import configRouter from "./config";

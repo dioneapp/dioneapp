@@ -61,14 +61,14 @@ export async function getScripts(id: string, io: Server) {
 			content: "Error detected",
 		});
 		logger.error(`Error downloading script: ${error}`);
-		return null;
 	}
+	return null;
 }
 
 function extractInfo(url: string): string {
 	const regex = /github\.com\/([^\/]+\/[^\/]+)/;
 	const match = url.match(regex);
-	if (match && match[1]) {
+	if (match?.[1]) {
 		return match[1];
 	}
 	throw new Error("No valid GitHub repository found");

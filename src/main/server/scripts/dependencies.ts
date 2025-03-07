@@ -3,7 +3,13 @@ import { execSync } from "node:child_process";
 import acceptedDependencies from "./acceptedDependencies.json";
 import logger from "../utils/logger";
 import semver from "semver";
-import type { Command } from "./execute";
+
+export interface Command {
+	name: string;
+	commands: string[];
+	catch?: number;
+	"not-required"?: boolean;
+}
 
 export interface DioneConfig {
 	dependencies?: {

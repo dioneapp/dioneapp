@@ -1,5 +1,3 @@
-import CloseIcon from "@assets/svgs/Close.svg";
-import OpenIcon from "@assets/svgs/Open.svg";
 import Icon from "../icons/icon";
 
 export default function Titlebar() {

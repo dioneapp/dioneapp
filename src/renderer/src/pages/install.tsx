@@ -14,7 +14,7 @@ export default function Install() {
 	const { setInstalledApps } = useAppContext();
 	const { id } = useParams<{ id: string }>();
 	// loading stuff
-	const [loading, setLoading] = useState<boolean>(true);
+	const [_loading, setLoading] = useState<boolean>(true);
 	const [_imgLoading, setImgLoading] = useState<boolean>(true);
 	// data stuff
 	const [data, setData] = useState<any | undefined>(undefined);

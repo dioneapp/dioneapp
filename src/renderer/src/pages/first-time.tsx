@@ -32,7 +32,7 @@ export default function FirstTime() {
 	// auth stuff
 	const [authToken, setAuthToken] = useState<string | null>(null);
 	const [refreshToken, setRefreshToken] = useState<string | null>(null);
-	const [logged, setLogged] = useState<boolean>(false);
+	const [_logged, setLogged] = useState<boolean>(false);
 
 	// levels
 	const [level, setLevel] = useState(1);
@@ -113,6 +113,7 @@ export default function FirstTime() {
 					</div>
 					<div className="mt-12 flex flex-col gap-4">
 						<button
+							type="button"
 							className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
 							onClick={() => {
 								setLevel(2);
@@ -122,6 +123,7 @@ export default function FirstTime() {
 							Log in
 						</button>
 						<button
+							type="button"
 							className="text-xs text-white opacity-50 flex items-center justify-center gap-1 hover:opacity-80 transition-opacity duration-300"
 							onClick={copyToClipboard}
 						>
@@ -146,6 +148,7 @@ export default function FirstTime() {
 						<div className="flex flex-col gap-2 items-center justify-center">
 							<h3 className="text-white/50 text-xs">Could not authenticate?</h3>
 							<button
+								type="button"
 								className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
 								onClick={() => {
 									setLevel(1);
