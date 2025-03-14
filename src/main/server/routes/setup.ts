@@ -6,6 +6,7 @@ import { getScripts } from "../scripts/download";
 
 // routers
 import configRouter from "./config";
+import dependenciesRouter from "./dependencies";
 import { createScriptRouter } from "./scripts";
 
 export const setupRoutes = (server: Express, io: Server) => {
@@ -207,4 +208,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 
 	// script stuff
 	server.use("/scripts", createScriptRouter(io));
+
+	// dependencies stuff
+	server.use("/deps", dependenciesRouter);
 };

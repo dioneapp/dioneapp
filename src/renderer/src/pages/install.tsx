@@ -1,6 +1,6 @@
 import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import { getCurrentPort } from "../utils/getPort";
@@ -9,6 +9,7 @@ import LogsComponent from "@renderer/components/install/logs";
 import ActionsComponent from "@renderer/components/install/actions";
 import { useAppContext } from "@renderer/components/layout/global-context";
 import Icon from "@renderer/components/icons/icon";
+import MissingDepsModal from "@renderer/components/layout/missing-deps-modal";
 
 export default function Install() {
 	const { setInstalledApps } = useAppContext();
@@ -56,6 +57,8 @@ export default function Install() {
 			);
 		}
 	}, [error]);
+	// missing dependencies stuff
+	const [missingDependencies, setMissingDependencies] = useState<any>()
 
 	// fetch script data
 	useEffect(() => {
@@ -132,6 +135,10 @@ export default function Install() {
 				socket.on("disconnect", () => {
 					console.log("Socket disconnected");
 					setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
+				});
+
+				socket.on("missingDeps", (data) => {
+					setMissingDependencies(data);
 				});
 
 				socket.on(
@@ -295,17 +302,29 @@ export default function Install() {
 		}
 	};
 
+	const stopCheckingRef = useRef(false);
 	const loadIframe = async (localPort) => {
+		stopCheckingRef.current = false; 
+	
 		let isAvailable = false;
-		while (!isAvailable) {
+		while (!isAvailable && !stopCheckingRef.current) { 
 			isAvailable = await isLocalAvailable(localPort);
-			if (!isAvailable) {
+			if (!isAvailable && !stopCheckingRef.current) {
 				await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
 		}
-		setIframeSrc(`http://localhost:${localPort}`);
-		setShow("iframe");
+	
+		if (isAvailable && !stopCheckingRef.current) { 
+			setIframeSrc(`http://localhost:${localPort}`);
+			setShow("iframe");
+		}
 	};
+
+	useEffect(() => {
+		return () => {
+			stopCheckingRef.current = true;
+		};
+	}, []);
 
 	const handleReloadIframe = async () => {
 		const iframe = document.getElementById("iframe") as HTMLIFrameElement;
@@ -313,6 +332,8 @@ export default function Install() {
 	};
 
 	return (
+		<>
+		{missingDependencies && <MissingDepsModal data={missingDependencies} set={setMissingDependencies} />}
 		<div className="relative w-full h-full overflow-auto">
 			{show === "actions" && (
 				<div className="p-12 z-50 absolute">
@@ -360,5 +381,6 @@ export default function Install() {
 				</div>
 			</div>
 		</div>
+		</>
 	);
 }

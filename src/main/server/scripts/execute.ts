@@ -101,6 +101,7 @@ export async function executeStartup(pathname: string, io: Server) {
 
   // process start steps sequentially
   try {
+    let response;
     for (const step of start) {
       io.emit("installUpdate", {
         type: "log",
@@ -139,10 +140,14 @@ export async function executeStartup(pathname: string, io: Server) {
             commandsArray,
             configDir,
           );
-          await executeCommands(envCommands, configDir, io);
+          response = await executeCommands(envCommands, configDir, io);
         } else {
           // execute commands normally
-          await executeCommands(commandsArray, configDir, io);
+          response = await executeCommands(commandsArray, configDir, io);
+        }
+
+        if (response.error) {
+          throw new Error(response.error);
         }
 
         io.emit("installUpdate", {

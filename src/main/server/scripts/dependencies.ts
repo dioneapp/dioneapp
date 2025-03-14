@@ -37,48 +37,53 @@ export async function readDioneConfig(filePath: string): Promise<DioneConfig> {
 	}
 }
 
+type versionResult = {
+	isValid: boolean;
+	reason?: string;
+  };
+
 async function isDependencyInstalled(
 	dependency: string,
 	requiredVersion: string,
 	dependencyConfig: DependencyConfig,
-): Promise<boolean> {
+): Promise<versionResult> {
 	try {
 		if (!dependencyConfig[dependency]) {
-			console.warn(`Not found dependency ${dependency} in config file`);
-			return false;
+			logger.warn(`Not found dependency ${dependency} in config file`);
+			return {isValid: false, reason: "not-accepted"};
 		}
 		const config = dependencyConfig[dependency];
 		const output = await execSync(config.checkCommand);
 		const installedVersion = output.toString().trim();
 
 		if (requiredVersion === "latest") {
-			return true;
+			return { isValid: true, reason: "required-version" };
 		}
 
 		if (!semver.satisfies(installedVersion, requiredVersion)) {
 			logger.error(`Dependency "${dependency}" version is not satisfied`);
-			return false;
+			return {isValid: false, reason: "version-not-satisfied"};
 		}
 
-		return true;
+		return {isValid: true, reason: "required-version"};
 	} catch (error) {
 		console.error(`Error checking dependency ${dependency} version:`, error);
-		return false;
+		return {isValid: false, reason: "error"};
 	}
 }
 
 export async function checkDependencies(dioneFile: string): Promise<{
 	success: boolean;
-	missing: string[];
+	missing: { name: string; installed: boolean, reason: string, }[];
 }> {
 	try {
 		const config = await readDioneConfig(dioneFile);
-		const missing: string[] = [];
+		const missing: { name: string; installed: boolean, reason: string, version: string }[] = [];
 
 		// if no dependencies, return success
 		if (!config.dependencies) {
 			logger.warn("No dependencies found in dione.json");
-			return { success: true, missing };
+			return { success: true, missing: [] };
 		}
 
 		for (const [dependency, details] of Object.entries(config.dependencies)) {
@@ -88,16 +93,18 @@ export async function checkDependencies(dioneFile: string): Promise<{
 				acceptedDependencies,
 			);
 
-			if (!isInstalled) {
+			if (!isInstalled.isValid) {
 				logger.error(`Dependency "${dependency}" is not installed`);
-				missing.push(dependency);
+				missing.push({ name: dependency, installed: isInstalled.isValid, reason: isInstalled.reason as string, version: details.version });
+			} else {
+				missing.push({ name: dependency, installed: isInstalled.isValid, reason: "installed", version: details.version });
 			}
 		}
 		if (missing.length === 0) {
 			logger.info("All dependencies are installed");
 		}
 		return {
-			success: missing.length === 0,
+			success: missing.every((dep) => dep.installed),
 			missing,
 		};
 	} catch (error) {

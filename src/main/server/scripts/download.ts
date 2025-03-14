@@ -126,9 +126,10 @@ export function downloadFile(
 							process.exit(1);
 						});
 					} else {
+						io.emit("missingDeps", result.missing);
 						io.emit("installUpdate", {
 							type: "log",
-							content: `ERROR: Some dependencies are missing: ${result.missing.join(", ")}`,
+							content: `ERROR: Some dependencies are missing: ${result.missing.map((dep) => dep.name).join(", ")}`,
 						});
 						io.emit("installUpdate", {
 							type: "status",

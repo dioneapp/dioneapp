@@ -11,6 +11,10 @@
 		"checkCommand": "npm --version",
 		"versionRegex": "(\\d+\\.\\d+\\.\\d+)"
 	},
+	"pnpm": {
+		"checkCommand": "pnpm --version",
+		"versionRegex": "v(\\d+\\.\\d+\\.\\d+)"
+	},
 	"git": {
 		"checkCommand": "git --version",
 		"versionRegex": "git version (\\d+\\.\\d+\\.\\d+)"
@@ -18,5 +22,21 @@
 	"docker": {
 		"checkCommand": "docker --version",
 		"versionRegex": "Docker version (\\d+\\.\\d+\\.\\d+)"
+	},
+	"npx": {
+		"checkCommand": "npx --version",
+		"versionRegex": "v(\\d+\\.\\d+\\.\\d+)"
+	},
+	"yarn": {
+		"checkCommand": "yarn --version",
+		"versionRegex": "v(\\d+\\.\\d+\\.\\d+)"
+	},
+	"curl": {
+		"checkCommand": "curl --version",
+		"versionRegex": "curl (\\d+\\.\\d+\\.\\d+)"
+	},
+	"wget": {
+		"checkCommand": "wget --version",
+		"versionRegex": "GNU Wget (\\d+\\.\\d+\\.\\d+)"
 	}
 }
