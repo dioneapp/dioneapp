@@ -78,7 +78,18 @@ export async function checkDependencies(dioneFile: string): Promise<{
 }> {
 	try {
 		const config = await readDioneConfig(dioneFile);
+		const needEnv = JSON.stringify(config).includes("env");
 		const missing: { name: string; installed: boolean, reason: string, version: string }[] = [];
+
+		// if use an env, add uv as dependency
+		if (needEnv && !config.dependencies?.uv) {
+            config.dependencies = {
+                ...config.dependencies,
+                uv: {
+                    version: "latest"
+                }
+            };
+        }
 
 		// if no dependencies, return success
 		if (!config.dependencies) {

@@ -194,14 +194,14 @@ function createVirtualEnvCommands(
     // Windows
     const activateScript = path.join(envPath, "Scripts", "activate");
     return [
-      `if not exist "${envPath}" (python -m venv "${envName}")`,
+      `if not exist "${envPath}" (uv -m venv "${envName}")`,
       `call "${activateScript}" && ${commands.join(" && ")} && deactivate`,
     ];
   }
   // Linux/macOS
   const activateScript = path.join(envPath, "bin", "activate");
   return [
-    `if [ ! -d "${envPath}" ]; then python -m venv "${envName}"; fi`,
+    `if [ ! -d "${envPath}" ]; then uv -m venv "${envName}"; fi`,
     `source "${activateScript}" && ${commands.join(" && ")} && deactivate`,
   ];
 }
