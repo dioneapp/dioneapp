@@ -6,7 +6,7 @@ export default function Home() {
 	return (
 		<div className="min-h-screen bg-background">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
-				<main className="flex flex-col gap-10 py-6">
+				<main className="flex flex-col gap-6 py-6">
 					{/* featured section */}
 					<section className="relative">
 						<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
