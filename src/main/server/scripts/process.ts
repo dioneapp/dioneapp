@@ -152,7 +152,16 @@ export const executeCommand = async (
 					logger.error(`[stderr-error] ${text}`);
 					// if error, stop execution
 					killProcess(activeProcess, io);
-					throw new Error(text);
+					io.emit("installUpdate", {
+						type: "log",
+						content: `"${command}": ${text}`,
+					});
+					io.emit("installUpdate", {
+						type: "status",
+						status: "error",
+						content: "Error detected",
+					});
+					return;
 				}
 				if (text.match(/warning|warn|deprecated/i)) {
 					io.emit(logs, { type: "log", content: `WARN: ${text}` });
@@ -166,11 +175,6 @@ export const executeCommand = async (
 
 		return new Promise<string>((resolve) => {
 			activeProcess.on("exit", (code: number) => {
-				io.emit(logs, {
-					type: "log",
-					content: `Process exited with code ${code}`,
-				});
-
 				// cleanup
 				const oldPid = activePID;
 				activeProcess = null;
@@ -185,7 +189,11 @@ export const executeCommand = async (
 					io.emit(logs, {
 						type: "status",
 						status: "error",
-						content: `Command failed: ${command}`,
+						content: "Error detected", 
+					});
+					io.emit("installUpdate", {
+						type: "log",
+						content: `ERROR: ${errorMsg}`,
 					});
 					logger.error(errorMsg);
 					resolve(`ERROR: ${errorMsg}\n${stderrData}`);
@@ -261,7 +269,10 @@ export const executeCommands = async (
 			});
 		} else {
 			// execute command
-			await executeCommand(command, io, currentWorkingDir);
+			const reponse =await executeCommand(command, io, currentWorkingDir);
+			if (reponse.toLowerCase().includes("error")) {
+				throw new Error(reponse);
+			}
 		}
 	}
 };

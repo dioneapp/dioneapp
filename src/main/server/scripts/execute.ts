@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import type { Server } from "socket.io";
 import { executeCommands } from "./process";
+import logger from "../utils/logger";
 
 async function readConfig(pathname: string) {
   const config = await fs.promises.readFile(pathname, "utf8");
@@ -76,16 +77,7 @@ export default async function executeInstallation(
       content: "Actions executed",
     });
   } catch (error) {
-    io.emit("installUpdate", {
-      type: "log",
-      content: `ERROR: Failed in step": ${error}`,
-    });
-    io.emit("installUpdate", {
-      type: "status",
-      status: "error",
-      content: "Error detected",
-    });
-    throw error;
+    logger.error(`Failed in step: ${error}`);
   }
 }
 
@@ -147,6 +139,15 @@ export async function executeStartup(pathname: string, io: Server) {
         }
 
         if (response.error) {
+          io.emit("installUpdate", {
+            type: "log",
+            content: `ERROR: Failed in step "${step.name}": ${response.error}`,
+          });
+          io.emit("installUpdate", {
+            type: "status",
+            status: "error",
+            content: "Error detected",
+          });
           throw new Error(response.error);
         }
 
@@ -194,14 +195,14 @@ function createVirtualEnvCommands(
     // Windows
     const activateScript = path.join(envPath, "Scripts", "activate");
     return [
-      `if not exist "${envPath}" (uv -m venv "${envName}")`,
+      `if not exist "${envPath}" (uv venv ${envName})`,
       `call "${activateScript}" && ${commands.join(" && ")} && deactivate`,
     ];
   }
   // Linux/macOS
   const activateScript = path.join(envPath, "bin", "activate");
   return [
-    `if [ ! -d "${envPath}" ]; then uv -m venv "${envName}"; fi`,
+    `if [ ! -d "${envPath}" ]; then uv venv ${envName}; fi`,
     `source "${activateScript}" && ${commands.join(" && ")} && deactivate`,
   ];
 }

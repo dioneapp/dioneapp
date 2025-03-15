@@ -48,6 +48,7 @@ export default function Install() {
 	const navigate = useNavigate();
 	// errors stuff
 	const [error, setError] = useState<boolean>(false);
+	const errorRef = useRef(false);
 	useEffect(() => {
 		if (error === true) {
 			showToast(
@@ -146,6 +147,9 @@ export default function Install() {
 					(message: { type: string; content: string; status: string }) => {
 						const { type, status, content } = message;
 						console.log("Received log:", message);
+						if (content.toLowerCase().includes("error") || status === "error") {
+							errorRef.current = true;
+						  }
 						if (type === "log") {
 							setLogs((prevLogs) => [...prevLogs, content]);
 							if (content.includes("Cant kill process")) {
@@ -157,17 +161,20 @@ export default function Install() {
 						}
 						if (type === "status") {
 							setStatusLog({ status: status || "pending", content });
-							if (content.toLowerCase().includes("actions executed")) {
-								window.location.reload();
+							if (content.toLowerCase().includes("actions executed") && !errorRef.current) {
+							  console.log('Redirecting...');
+							  window.location.reload();
 							}
-						}
+						  }
 						if (type === "catch") {
 							loadIframe(Number.parseInt(content));
 							setCatchPort(Number.parseInt(content));
 						}
-						if (content === "Script killed successfully") {
+						
+						if (content === "Script killed successfully" && !errorRef.current) {
+							console.log('Redirecting...')
 							navigate(0); // should change this, but for now fix logs after stop script
-							showToast("success", `${data.name} exited successfully.`);
+							showToast("success", `${data.name || "Script"} exited successfully.`);
 						}
 					},
 				);
