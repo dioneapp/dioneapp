@@ -152,10 +152,9 @@ export default function Install() {
 						if (content.toLowerCase().includes("error") || status === "error") {
 							errorRef.current = true;
 						}
-						if (type === "log" && content.toLowerCase().includes("started server")) {
-							setShow("iframe");
-							showToast("default", `${data.name} has opened a webview.`);
-							setIframeAvailable(true);
+						// launch iframe if server is running
+						if (type === "log" && content.toLowerCase().includes("started server") || content.toLowerCase().includes("http") || content.toLowerCase().includes("127.0.0.1") || content.toLowerCase().includes("localhost") || content.toLowerCase().includes("0.0.0.0")) {
+							loadIframe(Number.parseInt(content));
 						}
 						if (type === "log") {
 							setLogs((prevLogs) => [...prevLogs, content]);
@@ -334,8 +333,9 @@ export default function Install() {
 	
 		if (isAvailable && !stopCheckingRef.current) { 
 			setIframeSrc(`http://localhost:${localPort}`);
-			// setShow("iframe");
-			// setIframeAvailable(true);
+			setShow("iframe");
+			setIframeAvailable(true);
+			showToast("default", `${data.name} has opened a webview.`);
 		}
 	};
 	useEffect(() => {
