@@ -189,13 +189,8 @@ export default function QuickLaunch() {
 											up to {maxApps}.
 										</p>
 									</div>
-									<button
-										type="button"
-										onClick={() => setShowAppList(false)}
-										className="px-2 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
-									>
-										<Icon name="Close" className="h-3 w-3" />
-									</button>
+		
+									<button className="cursor-pointer z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-full" type="button" onClick={() => setShowAppList(false)}><Icon name="Close" className="h-3 w-3" /></button>
 								</div>
 								<div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto mt-4">
 									{availableApps?.map((app) => (
