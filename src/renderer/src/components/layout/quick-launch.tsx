@@ -2,8 +2,8 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppContext } from "./global-context";
 import Icon from "../icons/icon";
+import { useAppContext } from "./global-context";
 
 export default function QuickLaunch() {
 	const { installedApps, setInstalledApps } = useAppContext();
@@ -89,6 +89,11 @@ export default function QuickLaunch() {
 
 	function addToSlot(app: any) {
 		if (selectedSlot === null) return;
+
+		if (apps.some(existingApp => existingApp?.id === app.id)) {
+			return;
+		}
+
 		const newApps = [...apps];
 		newApps[selectedSlot] = app;
 		setApps(newApps);
