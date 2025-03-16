@@ -1,27 +1,23 @@
 import { motion } from "framer-motion";
-import { useEffect } from "react";
 import Icon from "../icons/icon";
 
 interface LogsProps {
 	statusLog: { status: string; content: string };
 	logs: string[];
-	setLogs: (logs: string[]) => void;
 	copyLogsToClipboard: () => void;
 	handleStop: () => void;
+	iframeAvailable: boolean;
+	setShow: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function LogsComponent({
 	statusLog,
 	logs,
-	setLogs,
 	copyLogsToClipboard,
 	handleStop,
+	iframeAvailable,
+	setShow,
 }: LogsProps) {
-	// clear logs on mount
-	useEffect(() => {
-		setLogs([]);
-	}, []);
-
 	return (
 		<motion.div
 			className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden"
@@ -60,17 +56,48 @@ export default function LogsComponent({
 				>
 					{logs.map((log) => (
 						<p
-							className={`text-xs select-text whitespace-pre-wrap text-wrap ${log.startsWith("ERROR") || log.includes("error") ? "text-red-400" : log.startsWith("WARN:") ? "text-yellow-400" : log.startsWith("INFO:") ? "text-blue-400" : "text-neutral-300"}`}
+							className={`text-xs select-text whitespace-pre-wrap text-wrap ${
+								log.startsWith("ERROR") || log.includes("error")
+									? "text-red-400"
+									: log.startsWith("WARN:") || log.toLowerCase().includes("warning")
+									? "text-yellow-400"
+									: log.startsWith("INFO:") || log.toLowerCase().includes("info")
+									? "text-blue-400"
+									: log.startsWith("OUT:") || !log.toLowerCase().includes("info")
+									? "text-neutral-400"
+									: "text-neutral-300"
+							}`}
 							key={log}
 						>
-							{log || "Loading..."}
+							<span className="flex gap-1 items-center justify-start">
+								{(log.startsWith("ERROR") || log.includes("error")) ? (
+									<Icon name="NotInstalled" className="w-4 h-4" />
+								) : log.startsWith("WARN:") || log.includes("warning") ? (
+									<Icon name="Warning" className="w-4 h-4" />
+								) : log.startsWith("INFO:") || log.includes("info") ? (
+									<Icon name="Info" className="w-4 h-4" />
+								) : log.startsWith("OUT") && (
+									<Icon name="Output" className="w-4 h-4" />
+								)}{" "}
+								{log.replace(/^(ERROR:|WARN:|INFO:|OUT:)/, "").trim() || "Loading..."}
+							</span>
 						</p>
 					))}
 				</div>
 				<div className="absolute bottom-2 right-2">
+					<div className="flex gap-1.5">
+					{iframeAvailable && (
+						<button
+							type="button"
+							className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
+							onClick={() => setShow("iframe")}
+						>
+							<Icon name="Iframe" className="h-4 w-4" />
+						</button>
+					)}	
 					<button
 						type="button"
-						className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer mr-2"
+						className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
 						onClick={copyLogsToClipboard}
 					>
 						<Icon name="Copy" className="h-4 w-4" />
@@ -82,6 +109,7 @@ export default function LogsComponent({
 					>
 						<Icon name="Stop" className="h-4 w-4" />
 					</button>
+					</div>
 				</div>
 			</motion.div>
 		</motion.div>

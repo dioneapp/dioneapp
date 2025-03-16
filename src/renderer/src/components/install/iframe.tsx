@@ -7,6 +7,7 @@ interface IframeProps {
 	handleStop: () => void;
 	handleReloadIframe: () => void;
 	currentPort: number;
+	setShow: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface SystemUsage {
@@ -21,6 +22,7 @@ export default function IframeComponent({
 	handleStop,
 	handleReloadIframe,
 	currentPort,
+	setShow,
 }: IframeProps) {
 	const [systemUsage, setSystemUsage] = useState<SystemUsage>({
 		cpu: 0,
@@ -148,6 +150,12 @@ export default function IframeComponent({
 
 				<div className="flex gap-1.5">
 					<motion.button
+						className="flex items-center justify-center p-2 hover:bg-white/10 border-l border-white/10 transition-colors rounded-md border relative group cursor-pointer"
+						onClick={() => setShow("logs")}
+					>
+						<Icon name="Back" className="w-4 h-4 " />
+					</motion.button>
+					<motion.button
 						className="flex items-center justify-center p-1.5 hover:bg-white/80 border-l bg-white transition-colors rounded-md border relative group cursor-pointer"
 						onClick={handleStop}
 					>
@@ -175,6 +183,7 @@ export default function IframeComponent({
 					src={iframeSrc}
 					className="w-full h-full bg-neutral-900"
 					style={{ border: 0, overflow: "hidden" }}
+					sandbox="allow-scripts allow-same-origin allow-forms "
 				/>
 			</motion.div>
 		</div>

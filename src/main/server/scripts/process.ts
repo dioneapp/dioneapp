@@ -106,6 +106,7 @@ export const executeCommand = async (
 				PYTHONUNBUFFERED: "1",
 				NODE_NO_BUFFERING: "1",
 				FORCE_UNBUFFERED_OUTPUT: "1",
+				PYTHONIOENCODING: "UTF-8",
 			},
 		};
 
@@ -132,18 +133,18 @@ export const executeCommand = async (
 		});
 
 		// exit
-		activeProcess.stdout.setEncoding("utf8");
+		// activeProcess.stdout.setEncoding("utf8");
 		activeProcess.stdout.on("data", (data: Buffer) => {
-			const text = data.toString().trim();
+			const text = data.toString("utf8").trim();
 			if (text) {
 				stdoutData += `${text}\n`;
 				io.emit(logs, { type: "log", content: text });
 				logger.info(`[stdout] ${text}`);
 			}
 		});
-		activeProcess.stderr.setEncoding("utf8");
+		// activeProcess.stderr.setEncoding("utf8");
 		activeProcess.stderr.on("data", (data: Buffer) => {
-			const text = data.toString().trim();
+			const text = data.toString("utf8").trim();
 			if (text) {
 				stderrData += `${text}\n`;
 				// for some reason, stderr sometimes contains info messages
@@ -167,7 +168,7 @@ export const executeCommand = async (
 					io.emit(logs, { type: "log", content: `WARN: ${text}` });
 					logger.warn(`[stderr-warn] ${text}`);
 				} else {
-					io.emit(logs, { type: "log", content: text });
+					io.emit(logs, { type: "log", content: `OUT: ${text}` });
 					logger.info(`[stderr-info] ${text}`);
 				}
 			}

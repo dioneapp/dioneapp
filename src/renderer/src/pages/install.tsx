@@ -31,6 +31,7 @@ export default function Install() {
 	// iframe stuff
 	const [catchPort, setCatchPort] = useState<number>();
 	const [iframeSrc, setIframeSrc] = useState<string>("");
+	const [iframeAvailable, setIframeAvailable] = useState<boolean>(false);
 	// toast stuff
 	const { addToast } = useToast();
 	const showToast = (
@@ -112,6 +113,7 @@ export default function Install() {
 	}
 
 	useEffect(() => {
+		setIframeAvailable(false);
 		fetchIfDownloaded();
 	}, [data]);
 
@@ -149,7 +151,12 @@ export default function Install() {
 						console.log("Received log:", message);
 						if (content.toLowerCase().includes("error") || status === "error") {
 							errorRef.current = true;
-						  }
+						}
+						if (type === "log" && content.toLowerCase().includes("started server")) {
+							setShow("iframe");
+							showToast("default", `${data.name} has opened a webview.`);
+							setIframeAvailable(true);
+						}
 						if (type === "log") {
 							setLogs((prevLogs) => [...prevLogs, content]);
 							if (content.includes("Cant kill process")) {
@@ -167,6 +174,7 @@ export default function Install() {
 							}
 						  }
 						if (type === "catch") {
+							setIframeAvailable(false);
 							loadIframe(Number.parseInt(content));
 							setCatchPort(Number.parseInt(content));
 						}
@@ -303,7 +311,10 @@ export default function Install() {
 	const isLocalAvailable = async (port) => {
 		try {
 			const response = await fetch(`http://localhost:${port}`);
-			return response.ok;
+			if (response.status !== 200) {
+				return false;
+			} 
+			return true;
 		} catch (error) {
 			return false;
 		}
@@ -323,10 +334,10 @@ export default function Install() {
 	
 		if (isAvailable && !stopCheckingRef.current) { 
 			setIframeSrc(`http://localhost:${localPort}`);
-			setShow("iframe");
+			// setShow("iframe");
+			// setIframeAvailable(true);
 		}
 	};
-
 	useEffect(() => {
 		return () => {
 			stopCheckingRef.current = true;
@@ -335,7 +346,7 @@ export default function Install() {
 
 	const handleReloadIframe = async () => {
 		const iframe = document.getElementById("iframe") as HTMLIFrameElement;
-		iframe.src = iframe.src;
+		iframe.src = iframe.src
 	};
 
 	return (
@@ -363,15 +374,17 @@ export default function Install() {
 								handleStop={handleStop}
 								handleReloadIframe={handleReloadIframe}
 								currentPort={catchPort as number}
+								setShow={setShow}
 							/>
 						)}{" "}
 						{show === "logs" && (
 							<LogsComponent
 								statusLog={statusLog}
 								logs={logs}
-								setLogs={setLogs}
 								copyLogsToClipboard={copyLogsToClipboard}
 								handleStop={handleStop}
+								iframeAvailable={iframeAvailable}
+								setShow={setShow}
 							/>
 						)}{" "}
 						{show === "actions" && (
