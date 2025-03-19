@@ -122,6 +122,28 @@ export const setupRoutes = (server: Express, io: Server) => {
 		getData();
 	});
 
+	server.get("/search_type/:type", async (req, res) => {
+		if (!req.params.type) return;
+		if (req.params.type.length === 0) return;
+		async function getData() {
+			const type = req.params.type;
+			if (type) {
+				const { data, error } = await supabase
+					.from("scripts")
+					.select("*")
+					.ilike("tags", type)
+				if (error) {
+					console.log('No found scripts with TAG', type, error);
+					res.send(error);
+				} else {
+					console.log('No found scripts with TAG', type, error);
+					res.send(data);
+				}
+			}
+		}
+		getData();
+	});
+
 	server.get("/download/:id", async (req, res) => {
 		const { id } = req.params;
 
