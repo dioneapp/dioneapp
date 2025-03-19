@@ -6,13 +6,13 @@ import {
 	Tray,
 	globalShortcut,
 } from "electron";
-import path, { join } from "path";
+import path, { join } from "node:path";
 import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import icon from "../../resources/icon.ico?asset";
 import logger from "./server/utils/logger";
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
-import os from "os";
+import os from "node:os";
 import { readConfig, defaultConfig, writeConfig } from "./config";
 
 // set default protocol client
@@ -67,6 +67,8 @@ function createWindow() {
 		shell.openExternal(details.url);
 		return { action: "deny" };
 	});
+
+	if (process.platform === "linux") app.commandLine.appendSwitch("no-sandbox");
 
 	const handleDeepLink = (url) => {
 		try {
