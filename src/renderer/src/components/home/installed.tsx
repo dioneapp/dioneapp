@@ -58,7 +58,7 @@ export default function Installed() {
 					<Loading />
 				) : (
 					<>
-						<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
+						<h1 className="text-2xl sm:text-3xl font-semibold mb-4 mt-2">
 							Installed
 						</h1>
 						<div className="w-full last:mb-4">

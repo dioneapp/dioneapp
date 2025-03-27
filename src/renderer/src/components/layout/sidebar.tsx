@@ -11,14 +11,19 @@ export default function Sidebar() {
 	const [logged, setLogged] = useState<boolean>(false);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
+	const [dbUser, setDbUser] = useState<any>(null);
 
 	useEffect(() => {
 		const session = localStorage.getItem("session");
 		const user = localStorage.getItem("user");
+		const dbUser = localStorage.getItem("dbUser");
 		if (session && user) {
 			setLogged(true);
 		} else {
 			setLogged(false);
+		}
+		if (dbUser) {
+			setDbUser(JSON.parse(dbUser));
 		}
 		setLoading(false);
 	}, []);
@@ -69,16 +74,50 @@ export default function Sidebar() {
 		}
 	}, [authToken, refreshToken]);
 
+	useEffect(() => {
+		getUser();
+	}, [logged]);
+
 	async function setSession(session: any) {
 		localStorage.setItem("session", JSON.stringify(session));
 	}
 	async function setUser(user: any) {
 		localStorage.setItem("user", JSON.stringify(user));
 	}
+	async function getUser() {
+		if (dbUser) return;
+		if (!logged) return;
+		if (localStorage.getItem("dbUser")) return;
+
+		const userStr = localStorage.getItem("user");
+		if (!userStr) return;
+
+		const user = JSON.parse(userStr);
+		const port = await getCurrentPort();
+
+		try {
+			const response = await fetch(`http://localhost:${port}/user/${user.id}`);
+			if (!response.ok) console.error("Error getting user:", response.status);
+
+			const data = await response.json();
+			console.log("data", data);
+			setDbUser(data);
+		} catch (error) {
+			console.error("Error getting user:", error);
+			setDbUser(null);
+		}
+	}
+
+	useEffect(() => {
+		if (dbUser) {
+			localStorage.setItem("dbUser", JSON.stringify(dbUser));
+		}
+	}, [dbUser]);
 
 	async function logout() {
 		localStorage.removeItem("session");
 		localStorage.removeItem("user");
+		localStorage.removeItem("dbUser");
 		setLogged(false);
 	}
 
@@ -99,6 +138,7 @@ export default function Sidebar() {
 					</p>
 					<div className="mt-2 w-full flex gap-2 px-0.5">
 						<button
+							type="button"
 							onClick={() => openLink("https://getdione.app/discord")}
 							className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
 						>
@@ -108,6 +148,7 @@ export default function Sidebar() {
 						</button>
 
 						<button
+							type="button"
 							onClick={() => openLink("https://getdione.app/github")}
 							className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
 						>
@@ -119,32 +160,55 @@ export default function Sidebar() {
 				</div>
 				<QuickLaunch />
 				<div className="h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l mt-4" />
-				<div className="mt-4 w-full flex items-center justify-between px-2 pb-4">
-					<Link
-						to={"/settings"}
-						className="p-2 hover:bg-white/10 rounded-full transition-colors"
-					>
-						<Icon name="Settings" className="h-6 w-6" />
-					</Link>
+				<div className="mt-4 w-full flex items-center justify-between gap-2 pb-4">
+					{!loading && logged && dbUser && (
+						<button
+							type="button"
+							className="border border-white/10 hover:bg-white/10 rounded-lg overflow-hidden transition-all flex items-center justify-center w-24 h-9 cursor-pointer hover:opacity-60 duration-500"
+						>
+							<img
+								src={dbUser[0]?.avatar_url || "/svgs/User.svg"}
+								alt="user avatar"
+								className="h-full w-full object-cover object-center"
+							/>
+						</button>
+					)}
 					{!loading && (
-						<>
+						<div className="flex gap-2 items-center justify-start w-full h-full">
 							{logged ? (
 								<button
-									className="text-xs bg-white/10 transition-colors duration-400 rounded-full font-semibold py-2 px-10 text-center cursor-pointer"
+									type="button"
+									className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
 									onClick={logout}
 								>
-									Logout
+									<Icon name="Logout" className="h-5 w-5" />
 								</button>
 							) : (
 								<button
-									className="text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-2 px-10 text-center cursor-pointer"
+									type="button"
+									className="p-2 bg-white/5 border border-white/10 hover:bg-white/10 rounded-lg transition-colors flex gap-1 items-center cursor-pointer"
 									onClick={() => openLink("https://getdione.app/auth/login")}
 								>
-									Login
+									{/* <span className="text-xs text-neutral-300 font-semibold">Login</span> */}
+									<Icon name="Login" className="h-5 w-5" />
 								</button>
 							)}
-						</>
+						</div>
 					)}
+					<div className="flex gap-2 items-center justify-end w-full h-full">
+						<Link
+							to={"/library"}
+							className="p-2 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center"
+						>
+							<Icon name="Library" className="h-5 w-5" />
+						</Link>
+						<Link
+							to={"/settings"}
+							className="p-2 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center"
+						>
+							<Icon name="Settings" className="h-5 w-5" />
+						</Link>
+					</div>
 				</div>
 			</div>
 		</div>

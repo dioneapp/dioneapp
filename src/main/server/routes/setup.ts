@@ -40,6 +40,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 					.from("scripts")
 					.select("*")
 					.eq("featured", true)
+					.order("order", { ascending: true })
 					.limit(4);
 
 			if (featuredScriptsError) {
@@ -131,12 +132,12 @@ export const setupRoutes = (server: Express, io: Server) => {
 				const { data, error } = await supabase
 					.from("scripts")
 					.select("*")
-					.ilike("tags", type)
+					.ilike("tags", type);
 				if (error) {
-					console.log('No found scripts with TAG', type, error);
+					console.log("No found scripts with TAG", type, error);
 					res.send(error);
 				} else {
-					console.log('No found scripts with TAG', type, error);
+					console.log("No found scripts with TAG", type, error);
 					res.send(data);
 				}
 			}
@@ -201,6 +202,33 @@ export const setupRoutes = (server: Express, io: Server) => {
 		}
 	});
 
+	server.get("/user/:id", async (req, res) => {
+		try {
+			console.log("User ID:", req.params.id);
+			const { data, error } = await supabase
+				.from("users")
+				.select("*")
+				.eq("username", req.params.id)
+				.limit(1);
+			if (error) {
+				logger.error(
+					`Unable to get user: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+				);
+				res
+					.status(500)
+					.send("An error occurred while processing your request.");
+			} else {
+				res.send(data);
+			}
+			console.log("User:", data);
+		} catch (error: any) {
+			logger.error(
+				`Unable to get user: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+			);
+			res.status(500).send("An error occurred while processing your request.");
+		}
+	});
+
 	server.get("/searchbar/:name", async (req, res) => {
 		const { name } = req.params;
 		try {
@@ -208,6 +236,32 @@ export const setupRoutes = (server: Express, io: Server) => {
 				.from("scripts")
 				.select("*")
 				.filter("name", "ilike", `${name}%`)
+				.order("name", { ascending: true });
+			if (error) {
+				logger.error(
+					`Unable to search in database: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
+				);
+				res.send(error);
+			} else {
+				res.send(data);
+			}
+		} catch (error: any) {
+			logger.error(
+				`Error getting '${name}': [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+			);
+			res.status(500).send("An error occurred while processing your request.");
+		}
+	});
+
+	server.get("/searchbar_type/:name/:type", async (req, res) => {
+		const name = req.params.name;
+		const type = req.params.type;
+		try {
+			const { data, error } = await supabase
+				.from("scripts")
+				.select("*")
+				.filter("name", "ilike", `${name}%`)
+				.ilike("tags", type)
 				.order("name", { ascending: true });
 			if (error) {
 				logger.error(

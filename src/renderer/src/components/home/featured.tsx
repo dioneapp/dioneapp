@@ -1,10 +1,10 @@
 import PromoBanner from "./promo";
-import ScriptList from "./feed";
+import FeaturedCarousel from "./featured-carrousel";
 
 export default function Featured() {
 	return (
 		<>
-			<ScriptList endpoint="/featured" type="featured" />
+			<FeaturedCarousel />
 			<PromoBanner />
 		</>
 	);

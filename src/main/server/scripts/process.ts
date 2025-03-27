@@ -190,7 +190,7 @@ export const executeCommand = async (
 					io.emit(logs, {
 						type: "status",
 						status: "error",
-						content: "Error detected", 
+						content: "Error detected",
 					});
 					io.emit("installUpdate", {
 						type: "log",
@@ -270,7 +270,7 @@ export const executeCommands = async (
 			});
 		} else {
 			// execute command
-			const reponse =await executeCommand(command, io, currentWorkingDir);
+			const reponse = await executeCommand(command, io, currentWorkingDir);
 			if (reponse.toLowerCase().includes("error")) {
 				throw new Error(reponse);
 			}

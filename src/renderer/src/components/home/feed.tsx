@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Script } from "./feed/types";
+import type { Script } from "./feed/types";
 import ScriptCard from "./feed/card";
 import Loading from "./loading-skeleton";
 import { getCurrentPort } from "@renderer/utils/getPort";
@@ -66,7 +66,7 @@ export default function List({
 			</div>
 
 			{scripts.length === 0 && type !== "featured" && (
-				<div className="text-center text-neutral-500 text-sm">
+				<div className="text-center text-neutral-500 text-sm mt-4">
 					No scripts found
 				</div>
 			)}

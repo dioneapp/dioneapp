@@ -11,7 +11,15 @@ export const createDependenciesRouter = (io: Server) => {
 	const router = express.Router();
 	router.use(express.json());
 
-	const defaultDependencies = ["uv", "node", "npm", "python", "git", "curl", "wget"];
+	const defaultDependencies = [
+		"uv",
+		"node",
+		"npm",
+		"python",
+		"git",
+		"curl",
+		"wget",
+	];
 
 	router.get("/check", async (req, res) => {
 		try {
@@ -28,36 +36,46 @@ export const createDependenciesRouter = (io: Server) => {
 	router.post("/install", async (req, res) => {
 		const getOS = (): "windows" | "macos" | "linux" | null => {
 			switch (process.platform) {
-				case "win32": return "windows";
-				case "darwin": return "macos";
-				case "linux": return "linux";
-				default: return null;
+				case "win32":
+					return "windows";
+				case "darwin":
+					return "macos";
+				case "linux":
+					return "linux";
+				default:
+					return null;
 			}
 		};
-	
+
 		const executeCommand = (command: string, name: string): Promise<void> => {
 			return new Promise((resolve, reject) => {
 				let installProcess;
 				const osType = getOS();
-	
+
 				if (osType === "windows") {
-					installProcess = spawn("powershell", ["-ExecutionPolicy", "ByPass", "-Command", command], { stdio: ["inherit", "pipe", "pipe"] });
+					installProcess = spawn(
+						"powershell",
+						["-ExecutionPolicy", "ByPass", "-Command", command],
+						{ stdio: ["inherit", "pipe", "pipe"] },
+					);
 				} else {
-					installProcess = spawn("sh", ["-c", command], { stdio: ["inherit", "pipe", "pipe"] });
+					installProcess = spawn("sh", ["-c", command], {
+						stdio: ["inherit", "pipe", "pipe"],
+					});
 				}
-	
+
 				installProcess.stdout.on("data", (data) => {
 					const message = data.toString();
-					logger.info(`${message}`); 
+					logger.info(`${message}`);
 					io.emit("installDep", { name, output: message });
 				});
-	
+
 				installProcess.stderr.on("data", (data) => {
 					const errorMessage = data.toString();
 					console.error(`[ERROR] ${errorMessage}`);
 					io.emit("installDep", { name, error: errorMessage });
 				});
-	
+
 				installProcess.on("close", (code) => {
 					if (code === 0) {
 						resolve();
@@ -67,48 +85,64 @@ export const createDependenciesRouter = (io: Server) => {
 				});
 			});
 		};
-	
+
 		try {
-			const dependencies = Array.isArray(req.body?.dependencies) ? req.body.dependencies : [];
+			const dependencies = Array.isArray(req.body?.dependencies)
+				? req.body.dependencies
+				: [];
 			if (!dependencies) {
-				return res.status(400).send({ error: "Dependencies to install not provided" });
+				return res
+					.status(400)
+					.send({ error: "Dependencies to install not provided" });
 			}
-	
+
 			const osType = getOS();
 			if (!osType) {
 				return res.status(400).send({ error: "Unsupported OS" });
 			}
-	
+
 			res.setHeader("Content-Type", "text/plain");
 			res.setHeader("Transfer-Encoding", "chunked");
-	
+
 			for (const dep of dependencies) {
 				if (typeof dep !== "string") {
 					console.error(`❌ Invalid dependency format: ${JSON.stringify(dep)}`);
-					io.emit("installDep", { name: "unknown", output: `❌ Invalid dependency format: ${JSON.stringify(dep)}` });
+					io.emit("installDep", {
+						name: "unknown",
+						output: `❌ Invalid dependency format: ${JSON.stringify(dep)}`,
+					});
 					continue;
 				}
-			
-				const installCommand = acceptedDependencies[dep]?.installCommand?.[osType];
+
+				const installCommand =
+					acceptedDependencies[dep]?.installCommand?.[osType];
 				if (!installCommand) {
 					res.write(`No installation command found for ${dep}\n`);
-					io.emit("installDep", { name: dep, output: `❌ No installation command found for ${dep}` });
+					io.emit("installDep", {
+						name: dep,
+						output: `❌ No installation command found for ${dep}`,
+					});
 				}
 
 				await executeCommand(installCommand, dep);
 			}
-	
+
 			res.end("\nInstallation completed successfully.\n");
-			io.emit("installDep", { name: "all", output: "🎉 Installation completed successfully!" });
-	
+			io.emit("installDep", {
+				name: "all",
+				output: "🎉 Installation completed successfully!",
+			});
 		} catch (error) {
 			console.error("Server error:", error);
 			res.write(`❌ Server error: ${(error as Error).message}\n`);
-			io.emit("installDep", { name: "all", output: `❌ Server error: ${(error as Error).message}` });
+			io.emit("installDep", {
+				name: "all",
+				output: `❌ Server error: ${(error as Error).message}`,
+			});
 			res.end();
 		}
 	});
-	
+
 	async function checkDependencies(dependencies: string[]) {
 		const isWindows = os.platform() === "win32";
 		const checkCommand = isWindows ? "where" : "which";
@@ -121,7 +155,7 @@ export const createDependenciesRouter = (io: Server) => {
 				} catch {
 					return { name: dep, installed: false };
 				}
-			})
+			}),
 		);
 
 		const allInstalled = results.every((dep) => dep.installed);
@@ -133,4 +167,4 @@ export const createDependenciesRouter = (io: Server) => {
 	}
 
 	return router;
-}
+};

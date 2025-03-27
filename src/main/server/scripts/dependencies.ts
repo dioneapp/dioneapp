@@ -40,7 +40,7 @@ export async function readDioneConfig(filePath: string): Promise<DioneConfig> {
 type versionResult = {
 	isValid: boolean;
 	reason?: string;
-  };
+};
 
 async function isDependencyInstalled(
 	dependency: string,
@@ -50,7 +50,7 @@ async function isDependencyInstalled(
 	try {
 		if (!dependencyConfig[dependency]) {
 			logger.warn(`Not found dependency ${dependency} in config file`);
-			return {isValid: false, reason: "not-accepted"};
+			return { isValid: false, reason: "not-accepted" };
 		}
 		const config = dependencyConfig[dependency];
 		const output = await execSync(config.checkCommand);
@@ -62,34 +62,39 @@ async function isDependencyInstalled(
 
 		if (!semver.satisfies(installedVersion, requiredVersion)) {
 			logger.error(`Dependency "${dependency}" version is not satisfied`);
-			return {isValid: false, reason: "version-not-satisfied"};
+			return { isValid: false, reason: "version-not-satisfied" };
 		}
 
-		return {isValid: true, reason: "required-version"};
+		return { isValid: true, reason: "required-version" };
 	} catch (error) {
 		console.error(`Error checking dependency ${dependency} version:`, error);
-		return {isValid: false, reason: "error"};
+		return { isValid: false, reason: "error" };
 	}
 }
 
 export async function checkDependencies(dioneFile: string): Promise<{
 	success: boolean;
-	missing: { name: string; installed: boolean, reason: string, }[];
+	missing: { name: string; installed: boolean; reason: string }[];
 }> {
 	try {
 		const config = await readDioneConfig(dioneFile);
 		const needEnv = JSON.stringify(config).includes("env");
-		const missing: { name: string; installed: boolean, reason: string, version: string }[] = [];
+		const missing: {
+			name: string;
+			installed: boolean;
+			reason: string;
+			version: string;
+		}[] = [];
 
 		// if use an env, add uv as dependency
 		if (needEnv && !config.dependencies?.uv) {
-            config.dependencies = {
-                ...config.dependencies,
-                uv: {
-                    version: "latest"
-                }
-            };
-        }
+			config.dependencies = {
+				...config.dependencies,
+				uv: {
+					version: "latest",
+				},
+			};
+		}
 
 		// if no dependencies, return success
 		if (!config.dependencies) {
@@ -106,9 +111,19 @@ export async function checkDependencies(dioneFile: string): Promise<{
 
 			if (!isInstalled.isValid) {
 				logger.error(`Dependency "${dependency}" is not installed`);
-				missing.push({ name: dependency, installed: isInstalled.isValid, reason: isInstalled.reason as string, version: details.version });
+				missing.push({
+					name: dependency,
+					installed: isInstalled.isValid,
+					reason: isInstalled.reason as string,
+					version: details.version,
+				});
 			} else {
-				missing.push({ name: dependency, installed: isInstalled.isValid, reason: "installed", version: details.version });
+				missing.push({
+					name: dependency,
+					installed: isInstalled.isValid,
+					reason: "installed",
+					version: details.version,
+				});
 			}
 		}
 		if (missing.length === 0) {

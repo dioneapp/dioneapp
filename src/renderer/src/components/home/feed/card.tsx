@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import { Script } from "./types";
+import type { Script } from "./types";
 
 interface ScriptCardProps {
 	script: Script;

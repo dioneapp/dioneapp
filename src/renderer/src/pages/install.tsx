@@ -60,7 +60,7 @@ export default function Install() {
 		}
 	}, [error]);
 	// missing dependencies stuff
-	const [missingDependencies, setMissingDependencies] = useState<any>()
+	const [missingDependencies, setMissingDependencies] = useState<any>();
 
 	// fetch script data
 	useEffect(() => {
@@ -153,7 +153,14 @@ export default function Install() {
 							errorRef.current = true;
 						}
 						// launch iframe if server is running
-						if (type === "log" && content.toLowerCase().includes("started server") || content.toLowerCase().includes("http") || content.toLowerCase().includes("127.0.0.1") || content.toLowerCase().includes("localhost") || content.toLowerCase().includes("0.0.0.0")) {
+						if (
+							(type === "log" &&
+								content.toLowerCase().includes("started server")) ||
+							content.toLowerCase().includes("http") ||
+							content.toLowerCase().includes("127.0.0.1") ||
+							content.toLowerCase().includes("localhost") ||
+							content.toLowerCase().includes("0.0.0.0")
+						) {
 							loadIframe(Number.parseInt(content));
 						}
 						if (type === "log") {
@@ -167,21 +174,27 @@ export default function Install() {
 						}
 						if (type === "status") {
 							setStatusLog({ status: status || "pending", content });
-							if (content.toLowerCase().includes("actions executed") && !errorRef.current) {
-							  console.log('Redirecting...');
-							  window.location.reload();
+							if (
+								content.toLowerCase().includes("actions executed") &&
+								!errorRef.current
+							) {
+								console.log("Redirecting...");
+								window.location.reload();
 							}
-						  }
+						}
 						if (type === "catch") {
 							setIframeAvailable(false);
 							loadIframe(Number.parseInt(content));
 							setCatchPort(Number.parseInt(content));
 						}
-						
+
 						if (content === "Script killed successfully" && !errorRef.current) {
-							console.log('Redirecting...')
+							console.log("Redirecting...");
 							navigate(0); // should change this, but for now fix logs after stop script
-							showToast("success", `${data.name || "Script"} exited successfully.`);
+							showToast(
+								"success",
+								`${data.name || "Script"} exited successfully.`,
+							);
 						}
 					},
 				);
@@ -312,7 +325,7 @@ export default function Install() {
 			const response = await fetch(`http://localhost:${port}`);
 			if (response.status !== 200) {
 				return false;
-			} 
+			}
 			return true;
 		} catch (error) {
 			return false;
@@ -321,17 +334,17 @@ export default function Install() {
 
 	const stopCheckingRef = useRef(false);
 	const loadIframe = async (localPort) => {
-		stopCheckingRef.current = false; 
-	
+		stopCheckingRef.current = false;
+
 		let isAvailable = false;
-		while (!isAvailable && !stopCheckingRef.current) { 
+		while (!isAvailable && !stopCheckingRef.current) {
 			isAvailable = await isLocalAvailable(localPort);
 			if (!isAvailable && !stopCheckingRef.current) {
 				await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
 		}
-	
-		if (isAvailable && !stopCheckingRef.current) { 
+
+		if (isAvailable && !stopCheckingRef.current) {
 			setIframeSrc(`http://localhost:${localPort}`);
 			setShow("iframe");
 			setIframeAvailable(true);
@@ -346,61 +359,66 @@ export default function Install() {
 
 	const handleReloadIframe = async () => {
 		const iframe = document.getElementById("iframe") as HTMLIFrameElement;
-		iframe.src = iframe.src
+		iframe.src = iframe.src;
 	};
 
 	return (
 		<>
-		{missingDependencies && <MissingDepsModal data={missingDependencies} set={setMissingDependencies} />}
-		<div className="relative w-full h-full overflow-auto">
-			{show === "actions" && (
-				<div className="p-12 z-50 absolute">
-					<button
-						type="button"
-						onClick={() => navigate(-1)}
-						className="flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 py-2 px-4 text-center cursor-pointer"
-					>
-						<Icon name="Back" className="h-4 w-4" />
-						<span className="font-semibold">Back</span>
-					</button>
-				</div>
+			{missingDependencies && (
+				<MissingDepsModal
+					data={missingDependencies}
+					set={setMissingDependencies}
+				/>
 			)}
-			<div className="absolute inset-0 flex items-center justify-center p-4">
-				<div className="w-full h-full flex justify-center items-center">
-					<AnimatePresence mode="wait">
-						{show === "iframe" && (
-							<IframeComponent
-								iframeSrc={iframeSrc}
-								handleStop={handleStop}
-								handleReloadIframe={handleReloadIframe}
-								currentPort={catchPort as number}
-								setShow={setShow}
-							/>
-						)}{" "}
-						{show === "logs" && (
-							<LogsComponent
-								statusLog={statusLog}
-								logs={logs}
-								copyLogsToClipboard={copyLogsToClipboard}
-								handleStop={handleStop}
-								iframeAvailable={iframeAvailable}
-								setShow={setShow}
-							/>
-						)}{" "}
-						{show === "actions" && (
-							<ActionsComponent
-								data={data}
-								installed={installed}
-								handleDownload={handleDownload}
-								handleStart={handleStart}
-								handleUninstall={handleUninstall}
-								setImgLoading={setImgLoading}
-							/>
-						)}
-					</AnimatePresence>
+			<div className="relative w-full h-full overflow-auto">
+				{show === "actions" && (
+					<div className="p-12 z-50 absolute">
+						<button
+							type="button"
+							onClick={() => navigate(-1)}
+							className="flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 py-2 px-4 text-center cursor-pointer"
+						>
+							<Icon name="Back" className="h-4 w-4" />
+							<span className="font-semibold">Back</span>
+						</button>
+					</div>
+				)}
+				<div className="absolute inset-0 flex items-center justify-center p-4">
+					<div className="w-full h-full flex justify-center items-center">
+						<AnimatePresence mode="wait">
+							{show === "iframe" && (
+								<IframeComponent
+									iframeSrc={iframeSrc}
+									handleStop={handleStop}
+									handleReloadIframe={handleReloadIframe}
+									currentPort={catchPort as number}
+									setShow={setShow}
+								/>
+							)}{" "}
+							{show === "logs" && (
+								<LogsComponent
+									statusLog={statusLog}
+									logs={logs}
+									copyLogsToClipboard={copyLogsToClipboard}
+									handleStop={handleStop}
+									iframeAvailable={iframeAvailable}
+									setShow={setShow}
+								/>
+							)}{" "}
+							{show === "actions" && (
+								<ActionsComponent
+									data={data}
+									installed={installed}
+									handleDownload={handleDownload}
+									handleStart={handleStart}
+									handleUninstall={handleUninstall}
+									setImgLoading={setImgLoading}
+								/>
+							)}
+						</AnimatePresence>
+					</div>
 				</div>
 			</div>
-		</div>
 		</>
 	);
 }

@@ -14,6 +14,7 @@ import Settings from "./pages/settings";
 import { ToastProvider } from "./utils/useToast";
 import FirstTime from "./pages/first-time";
 import { useEffect, useState } from "react";
+import Library from "./pages/library";
 
 function App() {
 	const [searchParams] = useSearchParams();
@@ -40,7 +41,7 @@ function App() {
 
 	return (
 		<ToastProvider>
-			<div className="h-screen w-screen">
+			<div className="h-screen w-screen" id="main">
 				<Titlebar />
 				<div className="flex h-full">
 					{pathname !== "/first-time" && <Sidebar />}
@@ -51,6 +52,7 @@ function App() {
 							<Route path="/install/:id" element={<Install />} />
 							<Route path="/settings" element={<Settings />} />
 							<Route path="/first-time" element={<FirstTime />} />
+							<Route path="/library" element={<Library />} />
 						</Routes>
 					</div>
 				</div>
