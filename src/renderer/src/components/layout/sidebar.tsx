@@ -158,6 +158,13 @@ export default function Sidebar() {
 						</button>
 					</div>
 				</div>
+				{/* we can use this space to warn about things, for example if we detect that dione is running on dev mode without api keys or smth */}
+				{/* <div className="h-fit bg-orange-300/20 border border-white/5 rounded-xl backdrop-blur-3xl w-full">
+					<div className="justify-center items-start py-8 px-6 flex flex-col gap-1"> 
+						<h1 className="font-semibold text-xl text-neutral-200">Warning!</h1>
+						<h2 className="text-[10px] text-neutral-300 text-balance">You are using an alpha version for testing, you will experience bugs and errors that you should report. With this in mind, be careful and proceed with caution.</h2>
+					</div>
+				</div> */}
 				<QuickLaunch />
 				<div className="h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l mt-4" />
 				<div className="mt-4 w-full flex items-center justify-between gap-2 pb-4">

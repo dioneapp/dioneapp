@@ -186,7 +186,7 @@ export default function FeaturedCarousel() {
 									exit={{ opacity: 0 }}
 								/>
 								{/* content */}
-								<motion.div className="z-50 absolute inset-0 p-10 transition-all duration-500 group-hover:bg-black/30">
+								<motion.div className="z-50 absolute inset-0 p-10 transition-all duration-500 group-hover:bg-black/20">
 									<div className="absolute">
 										<div className="flex gap-3">
 											<p className="text-xs text-neutral-300 gap-1 flex items-center">

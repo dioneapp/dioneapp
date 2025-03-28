@@ -51,28 +51,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 				return;
 			}
 
-			const maxScripts = 4 - featuredScripts.length;
-
-			if (maxScripts <= 0) {
-				res.send(featuredScripts);
-				return;
-			}
-
-			const { data: randomScripts, error: randomScriptsError } = await supabase
-				.from("scripts")
-				.select("*")
-				.order("likes", { ascending: false })
-				.limit(maxScripts);
-
-			if (randomScriptsError) {
-				logger.error(
-					`Unable to obtain the scripts: [ (${randomScriptsError.code || "No code"}) ${randomScriptsError.details} ]`,
-				);
-				res.send(randomScriptsError);
-				return;
-			}
-
-			const data = [...featuredScripts, ...randomScripts];
+			const data = [...featuredScripts];
 			res.send(data);
 		}
 		getData();
