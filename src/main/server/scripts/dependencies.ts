@@ -24,6 +24,11 @@ interface DependencyConfig {
 		checkCommand: string;
 		versionRegex?: string;
 		parseVersion?: (output: string) => string;
+		installCommand?: {
+			windows: string;
+			macos: string;
+			linux: string;
+		};
 	};
 }
 
@@ -32,7 +37,7 @@ export async function readDioneConfig(filePath: string): Promise<DioneConfig> {
 		const data = await fs.promises.readFile(filePath, "utf8");
 		return JSON.parse(data) as DioneConfig;
 	} catch (error) {
-		console.error("Error reading dione config file:", error);
+		logger.error("Error reading dione config file:", error);
 		throw error;
 	}
 }
@@ -67,7 +72,7 @@ async function isDependencyInstalled(
 
 		return { isValid: true, reason: "required-version" };
 	} catch (error) {
-		console.error(`Error checking dependency ${dependency} version:`, error);
+		logger.error(`Error checking dependency ${dependency} version:`, error);
 		return { isValid: false, reason: "error" };
 	}
 }
@@ -75,9 +80,16 @@ async function isDependencyInstalled(
 export async function checkDependencies(dioneFile: string): Promise<{
 	success: boolean;
 	missing: { name: string; installed: boolean; reason: string }[];
+	error?: boolean
 }> {
 	try {
-		const config = await readDioneConfig(dioneFile);
+		let config: DioneConfig;
+		try {
+			config = await readDioneConfig(dioneFile);
+		} catch (error) {
+			logger.error("Error reading dione config file:", error);
+			return { success: false, missing: [], error: true };
+		}
 		const needEnv = JSON.stringify(config).includes("env");
 		const missing: {
 			name: string;
