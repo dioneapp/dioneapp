@@ -5,7 +5,7 @@
 	},
 	"uv": {
 		"checkCommand": "uv --version",
-		"versionRegex": "v(\\d+\\.\\d+\\.\\d+)",
+		"versionRegex": "uv (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
 			"windows": "powershell -ExecutionPolicy ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\"",
 			"macos": "curl -LsSf https://astral.sh/uv/install.sh | sh",
