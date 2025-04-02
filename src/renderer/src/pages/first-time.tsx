@@ -38,6 +38,18 @@ export default function FirstTime() {
 	const [level, setLevel] = useState(1);
 
 	useEffect(() => {
+		function shouldRedirect() {
+			const session = localStorage.getItem("session");
+			const user = localStorage.getItem("user");
+			if (session && user) {
+				setLogged(true);
+				setLevel(3);
+			}
+		}
+		shouldRedirect();
+	}, [])
+
+	useEffect(() => {
 		const session = localStorage.getItem("session");
 		const user = localStorage.getItem("user");
 		if (session && user) {
