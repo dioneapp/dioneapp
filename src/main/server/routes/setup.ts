@@ -187,7 +187,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 			const { data, error } = await supabase
 				.from("users")
 				.select("*")
-				.eq("username", req.params.id)
+				.eq("id", req.params.id)
 				.limit(1);
 			if (error) {
 				logger.error(
