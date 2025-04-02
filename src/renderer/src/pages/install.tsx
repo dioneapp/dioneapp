@@ -252,6 +252,7 @@ export default function Install() {
 				setShow("actions");
 				setInstalled(true);
 				showToast("success", `${data.name} stopped successfully.`);
+				setLogs([]) // clear logs
 				await fetchIfDownloaded();
 			} else {
 				showToast(
