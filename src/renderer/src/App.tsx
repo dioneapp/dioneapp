@@ -15,6 +15,8 @@ import { ToastProvider } from "./utils/useToast";
 import FirstTime from "./pages/first-time";
 import { useEffect, useState } from "react";
 import Library from "./pages/library";
+import Login from "./pages/login";
+import NoAccess from "./pages/no-access";
 
 function App() {
 	const [searchParams] = useSearchParams();
@@ -22,6 +24,8 @@ function App() {
 	const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const loginFinished = searchParams.get("loginFinished");
+	const [isLogged, setIsLogged] = useState<boolean>(false);
+	const [haveAccess, setHaveAccess] = useState<boolean | null>();
 
 	useEffect(() => {
 		window.electron.ipcRenderer.invoke("check-first-launch").then((result) => {
@@ -31,12 +35,42 @@ function App() {
 		});
 	}, []);
 
-	if (isLoading) {
+	useEffect(() => {
+		// check if user should have access to app		
+		function checkAccess() {
+			const user = localStorage.getItem("dbUser");
+			if (user) {
+				setIsLogged(true);
+				const dbUser = JSON.parse(user);
+				if (dbUser[0].tester === true) {
+					console.log("User is a tester");
+					setHaveAccess(true);
+				} else {
+					console.log("User is not a tester");
+					setHaveAccess(false);
+				}
+			} else {
+				setIsLogged(false);
+			}
+		}
+
+		checkAccess();
+	}, []); 
+
+	if (isLoading || haveAccess === null) {
 		return null; // this probably makes the application take a few ms longer to start, so we can wait for the result of check-first-launch to display something on the screen
 	}
 
 	if (isFirstLaunch && pathname !== "/first-time" && !loginFinished) {
 		return <Navigate to="/first-time" replace />;
+	}
+
+	if (!isLogged && pathname !== "/login" && pathname !== "/first-time" && !loginFinished) {
+		return <Navigate to="/login" replace />;
+	}
+
+	if (!haveAccess && isLogged && pathname !== "/no_access") {
+		return <Navigate to="/no_access" replace />;
 	}
 
 	return (
@@ -53,6 +87,8 @@ function App() {
 							<Route path="/settings" element={<Settings />} />
 							<Route path="/first-time" element={<FirstTime />} />
 							<Route path="/library" element={<Library />} />
+							<Route path="/login" element={<Login />} />
+							<Route path="/no_access" element={<NoAccess />} />
 						</Routes>
 					</div>
 				</div>
