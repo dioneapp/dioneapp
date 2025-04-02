@@ -72,10 +72,10 @@ export default function LogsComponent({
 
 					return (
 						// biome-ignore lint/suspicious/noArrayIndexKey: in this case, only can use index
-						<p key={index} className={`text-xs flex ${textColor}`}>
-							<span className="flex justify-center items-center">
+						<p key={index} className={`text-xs flex ${textColor} my-1`}>
+							<span className="flex justify-center gap-2 items-center">
 								<span className={`w-4 h-4 flex justify-start items-center ${lowerLog.includes("error") && "mr-4"}`}>
-									{icon || <p className="flex justify-start w-full">-</p>}
+									{icon || <p className="flex justify-start w-4 h-4">-</p>}
 								</span>
 								{log.replace(/^(ERROR:|WARN:|INFO:|OUT:)/, "").trim() || "Loading..."}
 							</span>
