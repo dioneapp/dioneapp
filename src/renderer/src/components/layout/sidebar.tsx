@@ -13,6 +13,19 @@ export default function Sidebar() {
 	const navigate = useNavigate();
 	const [dbUser, setDbUser] = useState<any>(null);
 
+	// this is basically for security, in web, we can add a option to persist a session
+	useEffect(() => {
+		const session = localStorage.getItem("session");
+		if (!session) return;
+		const data = JSON.parse(session);
+		if (data.expires_at * 1000 < new Date().getTime()) {
+			localStorage.removeItem("session");
+			localStorage.removeItem("user");
+			localStorage.removeItem("dbUser");
+			setLogged(false);
+		}
+	}, []);
+
 	useEffect(() => {
 		const session = localStorage.getItem("session");
 		const user = localStorage.getItem("user");
@@ -86,8 +99,8 @@ export default function Sidebar() {
 	}
 	async function getUser() {
 		if (dbUser) return;
-		if (!logged) return;
-		if (localStorage.getItem("dbUser")) return;
+		const dbUserStr = localStorage.getItem("dbUser");
+		if (dbUserStr && JSON.parse(dbUserStr).length !== 0) return;
 
 		const userStr = localStorage.getItem("user");
 		if (!userStr) return;
@@ -193,7 +206,7 @@ export default function Sidebar() {
 							) : (
 								<button
 									type="button"
-									className="p-2 bg-white/5 border border-white/10 hover:bg-white/10 rounded-lg transition-colors flex gap-1 items-center cursor-pointer"
+									className="p-2 bg-white/5 border rounded-full border-white/10 hover:bg-white/10 transition-colors flex gap-1 items-center cursor-pointer"
 									onClick={() => openLink("https://getdione.app/auth/login")}
 								>
 									{/* <span className="text-xs text-neutral-300 font-semibold">Login</span> */}
