@@ -132,6 +132,8 @@ export default function Sidebar() {
 		localStorage.removeItem("user");
 		localStorage.removeItem("dbUser");
 		setLogged(false);
+		// remove this after beta
+		window.location.href = "/login";
 	}
 
 	return (
