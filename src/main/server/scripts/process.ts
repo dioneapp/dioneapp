@@ -1,7 +1,7 @@
 import type { Server } from "socket.io";
 import logger from "../utils/logger";
 import { spawn } from "node:child_process";
-import { platform } from "node:os";
+import { platform as getPlatform } from "node:os";
 import pidtree from "pidtree";
 import path from "node:path";
 import fs from "node:fs";
@@ -10,10 +10,9 @@ let activeProcess: any = null;
 let activePID: number | null = null;
 
 // kill process and its children
-const killProcess = async (pid: number, io: Server) => {
+export const killProcess = async (pid: number, io: Server) => {
 	try {
-		const currentPlatform = platform();
-
+		const currentPlatform = getPlatform();
 		if (currentPlatform === "win32") {
 			const taskkill = spawn("taskkill", ["/PID", pid.toString(), "/T", "/F"]);
 			taskkill.on("close", (code) => {
@@ -28,7 +27,7 @@ const killProcess = async (pid: number, io: Server) => {
 				}
 			});
 		} else {
-			// macos/linux
+			// macos / linux
 			const childPids = await pidtree(pid, { root: true });
 			for (const childPid of childPids) {
 				process.kill(childPid, "SIGKILL");
@@ -41,10 +40,11 @@ const killProcess = async (pid: number, io: Server) => {
 		});
 		return true;
 	} catch (error) {
-		logger.error(`Cant killing process with PID ${pid}: ${error}`);
+		logger.error(`Can't kill process with PID ${pid}: ${error}`);
 		return false;
 	}
 };
+
 // is active process running?
 export const stopActiveProcess = async (io: Server) => {
 	if (!activeProcess || !activePID) {
@@ -56,14 +56,14 @@ export const stopActiveProcess = async (io: Server) => {
 	try {
 		const killSuccess = await killProcess(activePID, io);
 
-		// wait active process finish
+		// ait active process finish
 		await Promise.race([
 			new Promise((resolve, reject) => {
 				activeProcess.on("exit", resolve);
 				activeProcess.on("error", reject);
 			}),
 			new Promise((_, reject) =>
-				setTimeout(() => reject(new Error("Process kill timeout")), 3000),
+				setTimeout(() => reject(new Error("Process kill timeout")), 3000)
 			),
 		]);
 
@@ -76,12 +76,13 @@ export const stopActiveProcess = async (io: Server) => {
 		activePID = null;
 	}
 };
-// execute command - rewritten from scratch
+
+// execute command
 export const executeCommand = async (
 	command: string,
 	io: Server,
 	workingDir: string,
-	logs = "installUpdate",
+	logs = "installUpdate"
 ): Promise<string> => {
 	let stdoutData = "";
 	let stderrData = "";
@@ -89,10 +90,10 @@ export const executeCommand = async (
 		// if active process exists, kill it
 		await stopActiveProcess(io);
 
-		const currentPlatform = platform();
+		const currentPlatform = getPlatform();
 		const isWindows = currentPlatform === "win32";
 
-		// separate command into executable and arguments
+		// split command into executable and arguments
 		const [executable, ...args] = command.split(/\s+/);
 
 		// command options
@@ -125,6 +126,7 @@ export const executeCommand = async (
 				stdio: ["pipe", "pipe", "pipe"],
 			});
 		}
+
 		activePID = activeProcess.pid;
 		logger.info(`Started process (PID: ${activePID}): ${command}`);
 		io.emit(logs, {
@@ -132,8 +134,6 @@ export const executeCommand = async (
 			content: `Executing: ${command}`,
 		});
 
-		// exit
-		// activeProcess.stdout.setEncoding("utf8");
 		activeProcess.stdout.on("data", (data: Buffer) => {
 			const text = data.toString("utf8").trim();
 			if (text) {
@@ -142,16 +142,13 @@ export const executeCommand = async (
 				logger.info(`[stdout] ${text}`);
 			}
 		});
-		// activeProcess.stderr.setEncoding("utf8");
 		activeProcess.stderr.on("data", (data: Buffer) => {
 			const text = data.toString("utf8").trim();
 			if (text) {
 				stderrData += `${text}\n`;
-				// for some reason, stderr sometimes contains info messages
 				if (text.match(/error|fatal|unexpected/i)) {
 					io.emit(logs, { type: "log", content: `ERROR: ${text}` });
 					logger.error(`[stderr-error] ${text}`);
-					// if error, stop execution
 					killProcess(activeProcess, io);
 					io.emit("installUpdate", {
 						type: "log",
@@ -196,7 +193,6 @@ export const executeCommand = async (
 						type: "log",
 						content: `ERROR: ${errorMsg}`,
 					});
-					logger.error(errorMsg);
 					resolve(`ERROR: ${errorMsg}\n${stderrData}`);
 				}
 			});
@@ -213,11 +209,9 @@ export const executeCommand = async (
 					status: "error",
 					content: "Failed to start process",
 				});
-
 				// cleanup
 				activeProcess = null;
 				activePID = null;
-				logger.error(errorMsg);
 				resolve(`ERROR: ${errorMsg}`);
 			});
 		});
@@ -233,22 +227,65 @@ export const executeCommand = async (
 			type: "log",
 			content: `ERROR: ${errorMsg}`,
 		});
-
 		return `ERROR: ${errorMsg}`;
 	}
 };
-// execute various commands
+
 export const executeCommands = async (
-	commands: string[],
+	commands: any[],
 	workingDir: string,
-	io: Server,
+	io: Server
 ) => {
 	let currentWorkingDir = workingDir;
+	const currentPlatform = getPlatform(); // "win32", "linux", "darwin"
 
-	for (const command of commands) {
-		// is cd command?
-		if (command.trim().startsWith("cd ")) {
-			const targetDir = command.trim().substring(3).trim();
+	for (const cmd of commands) {
+		let command: string;
+
+		// if string use it
+		if (typeof cmd === "string") {
+			command = cmd;
+		} else if (typeof cmd === "object" && cmd !== null) {
+			// if object includes platform, check if it matches current platform
+			if ("platform" in cmd) {
+				const cmdPlatform = cmd.platform.toLowerCase();
+				const normalizedPlatform =
+					currentPlatform === "win32" ? "windows" : currentPlatform === "darwin" ? "mac" : currentPlatform;
+
+				// if platform does not match current platform, skip
+				if (cmdPlatform !== normalizedPlatform) {
+					logger.info(
+						`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`
+					);
+					io.emit("installUpdate", {
+						type: "log",
+						content: `INFO: Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+					});
+					continue;
+				}
+			}
+
+			// if object includes command, use it
+			if ("command" in cmd) {
+				command = cmd.command;
+			} else {
+				logger.error(`Invalid command object: ${JSON.stringify(cmd)}`);
+				io.emit("installUpdate", {
+					type: "log",
+					content: `ERROR: Invalid command object: ${JSON.stringify(cmd)}`,
+				});
+				continue;
+			}
+		} else {
+			logger.error(`Invalid command type: ${typeof cmd}`);
+			continue;
+		}
+
+		command = command.trim();
+
+		// handle cd command
+		if (command.startsWith("cd ")) {
+			const targetDir = command.slice(3).trim();
 			currentWorkingDir = path.join(currentWorkingDir, targetDir);
 			if (!fs.existsSync(currentWorkingDir)) {
 				logger.error(`Directory does not exist: ${currentWorkingDir}`);
@@ -261,18 +298,17 @@ export const executeCommands = async (
 					status: "error",
 					content: "Error detected",
 				});
+				continue;
 			}
-
 			logger.info(`Changed working directory to: ${currentWorkingDir}`);
 			io.emit("installUpdate", {
 				type: "log",
 				content: `INFO: Changed working directory to: ${currentWorkingDir}`,
 			});
 		} else {
-			// execute command
-			const reponse = await executeCommand(command, io, currentWorkingDir);
-			if (reponse.toLowerCase().includes("error")) {
-				throw new Error(reponse);
+			const response = await executeCommand(command, io, currentWorkingDir);
+			if (response.toLowerCase().includes("error")) {
+				throw new Error(response);
 			}
 		}
 	}
