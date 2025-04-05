@@ -15,7 +15,6 @@ import { ToastProvider } from "./utils/useToast";
 import FirstTime from "./pages/first-time";
 import { useEffect, useState } from "react";
 import Library from "./pages/library";
-import Login from "./pages/login";
 import NoAccess from "./pages/no-access";
 
 function App() {
@@ -87,7 +86,6 @@ function App() {
 							<Route path="/settings" element={<Settings />} />
 							<Route path="/first-time" element={<FirstTime />} />
 							<Route path="/library" element={<Library />} />
-							<Route path="/login" element={<Login />} />
 							<Route path="/no_access" element={<NoAccess />} />
 						</Routes>
 					</div>

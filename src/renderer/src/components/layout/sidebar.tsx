@@ -133,7 +133,7 @@ export default function Sidebar() {
 		localStorage.removeItem("dbUser");
 		setLogged(false);
 		// remove this after beta
-		window.location.href = "/login";
+		window.location.href = "/first-time";
 	}
 
 	return (
