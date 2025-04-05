@@ -65,8 +65,8 @@ function App() {
 		return <Navigate to="/first-time" replace />;
 	}
 
-	if (!isLogged && pathname !== "/login" && pathname !== "/first-time" && !loginFinished) {
-		return <Navigate to="/login" replace />;
+	if (!isLogged && pathname !== "/first-time" && !loginFinished) {
+		return <Navigate to="/first-time" replace />;
 	}
 
 	if (!haveAccess && isLogged && pathname !== "/no_access") {
