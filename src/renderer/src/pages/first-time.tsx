@@ -78,7 +78,7 @@ export default function FirstTime() {
 		if (authToken && refreshToken) {
 			async function setSessionAPI(token: string, refreshToken: string) {
 				const port = await getCurrentPort();
-				const response = await fetch(`http://localhost:${port}/set-session`, {
+				const response = await fetch(`http://localhost:${port}/db/set-session`, {
 					headers: {
 						accessToken: token,
 						refreshToken: refreshToken,

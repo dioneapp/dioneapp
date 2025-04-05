@@ -67,7 +67,7 @@ export default function Install() {
 		async function getData() {
 			try {
 				const port = await getCurrentPort();
-				const response = await fetch(`http://localhost:${port}/search/${id}`, {
+				const response = await fetch(`http://localhost:${port}/db/search/${id}`, {
 					method: "GET",
 					headers: {
 						"Content-Type": "application/json",
@@ -217,7 +217,7 @@ export default function Install() {
 		setShow("logs");
 		try {
 			const port = await getCurrentPort();
-			await fetch(`http://localhost:${port}/download/${id}`, {
+			await fetch(`http://localhost:${port}/scripts/download/${id}`, {
 				method: "GET",
 			});
 			setInstalledApps((prevApps) => [...prevApps, data.name]);

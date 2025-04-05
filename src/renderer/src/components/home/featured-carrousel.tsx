@@ -22,7 +22,7 @@ export default function FeaturedCarousel() {
 			if (!port) return;
 
 			try {
-				const response = await fetch(`http://localhost:${port}/featured`, {
+				const response = await fetch(`http://localhost:${port}/db/featured`, {
 					method: "GET",
 					headers: {
 						"Content-Type": "application/json",

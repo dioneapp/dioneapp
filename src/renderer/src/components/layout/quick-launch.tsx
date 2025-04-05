@@ -62,7 +62,7 @@ export default function QuickLaunch() {
 				installedApps
 					.slice(0, maxApps)
 					.map((app) =>
-						fetch(`http://localhost:${port}/search_name/${app}`).then((res) =>
+						fetch(`http://localhost:${port}/db/search/name/${app}`).then((res) =>
 							res.ok ? res.json() : [],
 						),
 					),

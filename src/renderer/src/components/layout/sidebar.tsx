@@ -69,7 +69,7 @@ export default function Sidebar() {
 		if (authToken && refreshToken) {
 			async function setSessionAPI(token: string, refreshToken: string) {
 				const port = await getCurrentPort();
-				const response = await fetch(`http://localhost:${port}/set-session`, {
+				const response = await fetch(`http://localhost:${port}/db/set-session`, {
 					headers: {
 						accessToken: token,
 						refreshToken: refreshToken,
@@ -109,7 +109,7 @@ export default function Sidebar() {
 		const port = await getCurrentPort();
 
 		try {
-			const response = await fetch(`http://localhost:${port}/user/${user.id}`);
+			const response = await fetch(`http://localhost:${port}/db/user/${user.id}`);
 			if (!response.ok) console.error("Error getting user:", response.status);
 
 			const data = await response.json();

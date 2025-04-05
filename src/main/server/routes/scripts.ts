@@ -6,10 +6,25 @@ import path from "node:path";
 import { stopActiveProcess } from "../scripts/process";
 import type { Server } from "socket.io";
 import { executeStartup } from "../scripts/execute";
+import { getScripts } from "../scripts/download";
 
 export function createScriptRouter(io: Server) {
 	const router = express.Router();
 	router.use(express.json());
+
+	router.get("/download/:id", async (req, res) => {
+		const { id } = req.params;
+
+		try {
+			await getScripts(id, io);
+			res.status(200).send("Script downloaded successfully.");
+		} catch (error: any) {
+			logger.error(
+				`Error handling download request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
+			);
+			res.status(500).send("An error occurred while processing your request.");
+		}
+	});
 
 	// get if script is installed
 	router.get("/installed/:name", async (req, res) => {

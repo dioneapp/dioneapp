@@ -71,17 +71,17 @@ export default function SearchBar() {
 				</div>
 			</div>
 			{search.length === 0 && !type && (
-				<ScriptList endpoint="/explore" type="explore" />
+				<ScriptList endpoint="/db/explore" type="explore" />
 			)}
 			{search.length > 0 && !type && (
-				<ScriptList endpoint={`/searchbar/${search}`} type="search_name" />
+				<ScriptList endpoint={`/searchbar/name/${search}`} type="search_name" />
 			)}
 			{search.length === 0 && type && (
-				<ScriptList endpoint={`/search_type/${type}`} type="search_type" />
+				<ScriptList endpoint={`/db/search/type/${type}`} type="search_type" />
 			)}
 			{search.length > 0 && type && (
 				<ScriptList
-					endpoint={`/searchbar_type/${search}/${type}`}
+					endpoint={`/searchbar/type/${search}/${type}`}
 					type="search_name_type"
 				/>
 			)}
