@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import Icon from "../icons/icon";
+import type { JSX } from "react";
 
 interface LogsProps {
 	statusLog: { status: string; content: string };

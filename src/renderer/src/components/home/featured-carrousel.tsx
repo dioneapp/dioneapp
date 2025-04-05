@@ -9,7 +9,7 @@ import Icon from "../icons/icon";
 export default function FeaturedCarousel() {
 	const [scripts, setScripts] = useState<Script[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
+	const [_error, setError] = useState<string | null>(null);
 	const [gradients, setGradients] = useState<Record<string, string>>({});
 	const [activeIndex, setActiveIndex] = useState<string | null>(null);
 	const [currentIndex, setCurrentIndex] = useState<number>(0);
