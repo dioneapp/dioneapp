@@ -1,7 +1,7 @@
 {
   "name": "dione",
   "displayName": "Dione",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Explore, Install, Innovate — in 1 Click.",
   "main": "./out/main/index.js",
   "author": "AI Hispano",
