@@ -13,7 +13,7 @@ export default function PromoBanner() {
 						<h3 className="text-md font-semibold text-white">
 							Want to be featured here?
 						</h3>
-						<p className="text-[10px] text-neutral-300/80">
+						<p className="text-[13px] text-neutral-300/80">
 							Showcase your tool to our community
 						</p>
 					</div>

@@ -136,7 +136,7 @@ export default function FirstTime() {
 			{/* 1 - welcome */}
 			<div className={getContainerClasses(1)}>
 				<div className="flex flex-col gap-4 justify-center items-center transition-all duration-500">
-					<Icon name="Dio" className="w-20 h-20 animate-bounce mb-2" />
+					<Icon name="Dio" className="w-20 h-20 mb-2" />
 					<h1 className="text-6xl font-semibold">
 						Welcome to{" "}
 						<span className="bg-clip-text text-transparent bg-gradient-to-t from-white via-[#BCB1E7] to-[#BCB1E7]">
@@ -161,7 +161,7 @@ export default function FirstTime() {
 					</button>
 					<button
 						type="button"
-						className="text-xs text-white opacity-50 flex items-center justify-center gap-1 hover:opacity-80 transition-opacity duration-300"
+						className="text-xs text-white opacity-50 flex items-center justify-center gap-1 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
 						onClick={copyToClipboard}
 					>
 						<span>
@@ -196,7 +196,7 @@ export default function FirstTime() {
 			{/* 3 - ready */}
 			<div className={getContainerClasses(3)}>
 				<div className="flex flex-col gap-4 justify-center items-center">
-					<Icon name="Dio" className="w-20 h-20 animate-bounce mb-2" />
+					<Icon name="Dio" className="w-20 h-20 mb-2" />
 					<h1 className="text-6xl font-semibold">You are ready!</h1>
 					<h2 className="text-neutral-400 text-balance text-center max-w-xl">
 						We are glad to have you here{" "}
@@ -213,6 +213,7 @@ export default function FirstTime() {
 							to="/?loginFinished=true"
 							className="bg-white/20 transition-all duration-400 w-28 rounded-full p-2 text-sm text-neutral-200 cursor-pointer hover:bg-white/30"
 						>
+							
 							<span className="text-center w-full flex items-center justify-center">
 								Finish
 							</span>
