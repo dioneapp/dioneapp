@@ -4,6 +4,7 @@ import {
 	useLocation,
 	Navigate,
 	useSearchParams,
+	useNavigate,
 } from "react-router-dom";
 import Loading from "./pages/loading";
 import Titlebar from "./components/layout/titlebar";
@@ -18,59 +19,54 @@ import Library from "./pages/library";
 import NoAccess from "./pages/no-access";
 
 function App() {
-	const [searchParams] = useSearchParams();
 	const { pathname } = useLocation();
 	const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState(true);
-	const loginFinished = searchParams.get("loginFinished");
 	const [isLogged, setIsLogged] = useState<boolean>(false);
-	const [haveAccess, setHaveAccess] = useState<boolean | null>();
+	const [haveAccess, setHaveAccess] = useState<boolean>(false);
+	const navigate = useNavigate();
+
+	async function checkSession() {
+		const session = localStorage.getItem("session");
+		if (session) {
+			console.log('User is logged')
+			setIsLogged(true);
+			// if have a session, check access
+			checkAccess();
+		} else {
+			console.log('User is not logged')
+			setIsLogged(false);
+			if (pathname !== "/first-time") {
+				navigate("/first-time");
+			}
+		}
+	}
+
+	async function checkAccess() {
+		const dbUser = localStorage.getItem("dbUser");
+		if (dbUser) {
+			const dbUserObj = JSON.parse(dbUser);
+			if (dbUserObj[0].tester === true) {
+				console.log('User its a tester')
+				setHaveAccess(true);
+			} else {
+				console.log('User is not a tester')
+				setHaveAccess(false);
+				if (pathname !== "/no_access") {
+					navigate("/no_access");
+				}
+			}
+		}
+	}
 
 	useEffect(() => {
 		window.electron.ipcRenderer.invoke("check-first-launch").then((result) => {
 			console.log("is first launch?", result);
 			setIsFirstLaunch(result);
+			checkSession();
 			setIsLoading(false);
 		});
 	}, []);
-
-	useEffect(() => {
-		// check if user should have access to app		
-		function checkAccess() {
-			const user = localStorage.getItem("dbUser");
-			if (user) {
-				setIsLogged(true);
-				const dbUser = JSON.parse(user);
-				if (dbUser[0].tester === true) {
-					console.log("User is a tester");
-					setHaveAccess(true);
-				} else {
-					console.log("User is not a tester");
-					setHaveAccess(false);
-				}
-			} else {
-				setIsLogged(false);
-			}
-		}
-
-		checkAccess();
-	}, []); 
-
-	if (isLoading || haveAccess === null) {
-		return null; // this probably makes the application take a few ms longer to start, so we can wait for the result of check-first-launch to display something on the screen
-	}
-
-	if (isFirstLaunch && pathname !== "/first-time" && !loginFinished) {
-		return <Navigate to="/first-time" replace />;
-	}
-
-	if (!isLogged && pathname !== "/first-time" && !loginFinished) {
-		return <Navigate to="/first-time" replace />;
-	}
-
-	if (!haveAccess && isLogged && pathname !== "/no_access") {
-		return <Navigate to="/no_access" replace />;
-	}
 
 	return (
 		<ToastProvider>
