@@ -113,11 +113,18 @@ export default function Sidebar() {
 			if (!response.ok) console.error("Error getting user:", response.status);
 
 			const data = await response.json();
-			console.log("data", data);
+			checkAccess(data);
+
 			setDbUser(data);
 		} catch (error) {
 			console.error("Error getting user:", error);
 			setDbUser(null);
+		}
+	}
+
+	async function checkAccess(user: any) {
+		if (!user.tester) {
+			navigate("/no_access");
 		}
 	}
 
