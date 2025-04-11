@@ -1,25 +1,31 @@
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 import {
-	Route,
-	Routes,
 	useLocation,
-	Navigate,
-	useSearchParams,
 	useNavigate,
 } from "react-router-dom";
-import Loading from "./pages/loading";
-import Titlebar from "./components/layout/titlebar";
-import Home from "./pages/home";
 import Sidebar from "./components/layout/sidebar";
+import Titlebar from "./components/layout/titlebar";
+import FirstTime from "./pages/first-time";
+import Home from "./pages/home";
 import Install from "./pages/install";
+import Library from "./pages/library";
+import Loading from "./pages/loading";
+import NoAccess from "./pages/no-access";
 import Settings from "./pages/settings";
 import { ToastProvider } from "./utils/useToast";
-import FirstTime from "./pages/first-time";
-import { useEffect, useState } from "react";
-import Library from "./pages/library";
-import NoAccess from "./pages/no-access";
+
+// transition animation config
+const pageTransition = {
+	initial: { opacity: 0, filter: "blur(8px)" },
+	animate: { opacity: 1, filter: "blur(0px)" },
+	exit: { opacity: 0, filter: "blur(8px)" },
+	transition: { duration: 0.4, ease: "easeInOut" }
+};
 
 function App() {
-	const { pathname } = useLocation();
+	const location = useLocation();
+	const { pathname } = location;
 	const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 	const [isLoading, setIsLoading] = useState(true);
 	const [isLogged, setIsLogged] = useState<boolean>(false);
@@ -68,22 +74,41 @@ function App() {
 		});
 	}, []);
 
+	const routes = {
+		"/": Home,
+		"/loading": Loading,
+		"/settings": Settings,
+		"/first-time": FirstTime,
+		"/library": Library,
+		"/no_access": NoAccess
+	};
+
+	const getPage = () => {
+		if (pathname.startsWith("/install/")) {
+			return Install;
+		}
+
+		return routes[pathname as keyof typeof routes] || Home;
+	};
+
+	const PageComponent = getPage();
+
 	return (
 		<ToastProvider>
-			<div className="h-screen w-screen" id="main">
+			<div className="h-screen w-screen overflow-hidden" id="main">
 				<Titlebar />
-				<div className="flex h-full">
-					{pathname !== "/first-time" && <Sidebar />}
+				<div className="flex h-[calc(100%-32px)]">
+					{pathname !== "/first-time" && pathname !== "/no_access" && <Sidebar />}
 					<div className="flex-1 mt-6 overflow-x-hidden">
-						<Routes>
-							<Route path="/" element={<Home />} />
-							<Route path="/loading" element={<Loading />} />
-							<Route path="/install/:id" element={<Install />} />
-							<Route path="/settings" element={<Settings />} />
-							<Route path="/first-time" element={<FirstTime />} />
-							<Route path="/library" element={<Library />} />
-							<Route path="/no_access" element={<NoAccess />} />
-						</Routes>
+						<AnimatePresence mode="wait">
+							<motion.div
+								key={pathname}
+								{...pageTransition}
+								className="w-full h-full"
+							>
+								<PageComponent />
+							</motion.div>
+						</AnimatePresence>
 					</div>
 				</div>
 			</div>
