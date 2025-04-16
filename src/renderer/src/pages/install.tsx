@@ -11,9 +11,8 @@ import { useAppContext } from "@renderer/components/layout/global-context";
 import Icon from "@renderer/components/icons/icon";
 import MissingDepsModal from "@renderer/components/layout/missing-deps-modal";
 
-export default function Install() {
+export default function Install({ id }: { id?: string }) {
 	const { setInstalledApps } = useAppContext();
-	const { id } = useParams<{ id: string }>();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
 	const [_imgLoading, setImgLoading] = useState<boolean>(true);

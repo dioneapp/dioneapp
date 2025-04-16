@@ -17,10 +17,10 @@ import { ToastProvider } from "./utils/useToast";
 
 // transition animation config
 const pageTransition = {
-	initial: { opacity: 0, filter: "blur(8px)" },
+	initial: { opacity: 0, filter: "blur(4px)" },
 	animate: { opacity: 1, filter: "blur(0px)" },
-	exit: { opacity: 0, filter: "blur(8px)" },
-	transition: { duration: 0.4, ease: "easeInOut" }
+	exit: { opacity: 0, filter: "blur(4px)" },
+	transition: { duration: 0.2, ease: "easeInOut" }
 };
 
 function App() {
@@ -85,13 +85,16 @@ function App() {
 
 	const getPage = () => {
 		if (pathname.startsWith("/install/")) {
-			return Install;
+			const id = pathname.split("/")[2];
+			return () => <Install id={id} />;
 		}
 
 		return routes[pathname as keyof typeof routes] || Home;
 	};
 
 	const PageComponent = getPage();
+
+	console.log(pathname)
 
 	return (
 		<ToastProvider>
