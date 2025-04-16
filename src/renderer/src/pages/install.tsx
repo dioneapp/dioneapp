@@ -1,7 +1,7 @@
 import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { getCurrentPort } from "../utils/getPort";
 import IframeComponent from "@renderer/components/install/iframe";

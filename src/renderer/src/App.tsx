@@ -93,9 +93,6 @@ function App() {
 	};
 
 	const PageComponent = getPage();
-
-	console.log(pathname)
-
 	return (
 		<ToastProvider>
 			<div className="h-screen w-screen overflow-hidden" id="main">

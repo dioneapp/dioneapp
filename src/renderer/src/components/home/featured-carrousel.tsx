@@ -167,7 +167,7 @@ export default function FeaturedCarousel() {
 		<section className="flex flex-col gap-0">
 			<div className="relative h-70">
 				<AnimatePresence initial={false} mode="wait">
-					{scripts.length > 0 && activeIndex && (
+					{scripts.length > 0 && activeIndex ? (
 						<motion.div
 							key={activeIndex}
 							className="absolute w-full h-full"
@@ -228,6 +228,7 @@ export default function FeaturedCarousel() {
 									<div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-50">
 										{scripts.map((_, index) => (
 											<button
+												type="button"
 												key={index}
 												onClick={(e) => { e.preventDefault(); handleDotClick(index); }}
 												className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentIndex ? 'bg-white w-6' : 'bg-white/50 hover:bg-white/70'}`}
@@ -237,6 +238,8 @@ export default function FeaturedCarousel() {
 								</motion.div>
 							</Link>
 						</motion.div>
+					) : ( 
+						<Loading />
 					)}
 				</AnimatePresence>
 			</div>
