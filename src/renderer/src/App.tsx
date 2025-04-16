@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
 	useLocation,
 	useNavigate,
+	useParams,
 } from "react-router-dom";
 import Sidebar from "./components/layout/sidebar";
 import Titlebar from "./components/layout/titlebar";
@@ -24,6 +25,7 @@ const pageTransition = {
 };
 
 function App() {
+	const { loginFinished } = useParams();
 	const location = useLocation();
 	const { pathname } = location;
 	const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
@@ -32,7 +34,14 @@ function App() {
 	const [haveAccess, setHaveAccess] = useState<boolean>(false);
 	const navigate = useNavigate();
 
+	useEffect(() => {
+		if (loginFinished) {
+			setIsLogged(true);
+		}
+	}, [loginFinished]);
+
 	async function checkSession() {
+		if (isLogged) checkAccess();
 		const session = localStorage.getItem("session");
 		if (session) {
 			console.log('User is logged')
@@ -49,7 +58,8 @@ function App() {
 	}
 
 	async function checkAccess() {
-		const dbUser = localStorage.getItem("dbUser");
+		if (haveAccess) return;
+		const dbUser = await localStorage.getItem("dbUser");
 		if (dbUser) {
 			const dbUserObj = JSON.parse(dbUser);
 			if (dbUserObj[0].tester === true) {
@@ -97,9 +107,9 @@ function App() {
 		<ToastProvider>
 			<div className="h-screen w-screen overflow-hidden" id="main">
 				<Titlebar />
-				<div className="flex h-[calc(100%-32px)]">
+				<div className="flex h-[calc(100%-12px)]">
 					{pathname !== "/first-time" && pathname !== "/no_access" && <Sidebar />}
-					<div className="flex-1 mt-6 overflow-x-hidden">
+					<div className="flex-1 overflow-x-hidden" id="view">
 						<AnimatePresence mode="wait">
 							<motion.div
 								key={pathname}
