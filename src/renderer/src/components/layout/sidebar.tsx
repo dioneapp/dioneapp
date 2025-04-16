@@ -123,7 +123,7 @@ export default function Sidebar() {
 	}
 
 	async function checkAccess(user: any) {
-		if (!user.tester) {
+		if (!user[0].tester) {
 			navigate("/no_access");
 		}
 	}
