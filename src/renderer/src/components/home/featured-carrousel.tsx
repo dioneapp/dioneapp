@@ -1,10 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import type { Script } from "./feed/types";
-import Loading from "./loading-skeleton";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
-import Icon from "../icons/icon";
+import CarrouselSkeleton from "./carrousel-skeleton";
 
 export default function FeaturedCarousel() {
 	const [scripts, setScripts] = useState<Script[]>([]);
@@ -160,7 +159,7 @@ export default function FeaturedCarousel() {
 	];
 
 	if (loading) {
-		return <Loading />;
+		return <CarrouselSkeleton />;
 	}
 
 	return (
@@ -239,7 +238,7 @@ export default function FeaturedCarousel() {
 							</Link>
 						</motion.div>
 					) : ( 
-						<Loading />
+						<CarrouselSkeleton />
 					)}
 				</AnimatePresence>
 			</div>
