@@ -50,7 +50,7 @@ export default function Settings() {
 	};
 
 	return (
-		<div className="bg-background overflow-hidden h-full">
+		<div className="overflow-hidden h-full pt-4">
 			<div className="max-w-[2000px] h-full mx-auto px-4 sm:px-6 lg:px-8 py-4">
 				<div className="flex flex-col space-y-4 h-full">
 					{config && (
@@ -69,7 +69,7 @@ export default function Settings() {
 						</div>
 					)}
 
-					<div className="flex flex-col text-xs text-neutral-500 text-right">
+					<div className="flex flex-col text-xs text-neutral-500 text-right pb-4 select-all">
 						<p>Port {port}</p>
 						<p>Node v{versions.node}</p>
 						<p>Electron v{versions.electron}</p>
