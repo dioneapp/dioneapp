@@ -362,12 +362,20 @@ export default function Install({ id }: { id?: string }) {
 		iframe.src = iframe.src;
 	};
 
+	async function onFinishInstallDeps() {
+		setMissingDependencies(null)
+		setLogs([])
+		setError(false)
+		handleDownload();
+	}
+
 	return (
 		<>
 			{missingDependencies && (
 				<MissingDepsModal
 					data={missingDependencies}
 					set={setMissingDependencies}
+					onFinish={onFinishInstallDeps}
 				/>
 			)}
 			<div className="relative w-full h-full overflow-auto">
