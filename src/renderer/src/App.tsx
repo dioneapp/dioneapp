@@ -109,7 +109,7 @@ function App() {
 		<ToastProvider>
 			<div className="h-screen w-screen overflow-hidden" id="main">
 				<Titlebar />
-				<div className="flex h-[calc(100%-12px)]">
+				<div className="flex h-[calc(100%)]">
 					{pathname !== "/first-time" && pathname !== "/no_access" && <Sidebar />}
 					<div className="flex-1 overflow-x-hidden" id="view">
 						<AnimatePresence mode="wait">

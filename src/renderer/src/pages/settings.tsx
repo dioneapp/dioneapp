@@ -1,4 +1,5 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
+import { openLink } from "@renderer/utils/openLink";
 import { useEffect, useState } from "react";
 
 export default function Settings() {
@@ -50,7 +51,7 @@ export default function Settings() {
 	};
 
 	return (
-		<div className="overflow-hidden h-full pt-4">
+		<div className="overflow-hidden h-[calc(95%)] pt-4">
 			<div className="max-w-[2000px] h-full mx-auto px-4 sm:px-6 lg:px-8 py-4">
 				<div className="flex flex-col space-y-4 h-full">
 					{config && (
@@ -60,17 +61,16 @@ export default function Settings() {
 								<select
 									value={config.language}
 									onChange={(e) => handleUpdate({ language: e.target.value })}
-									className="bg-neutral-800 text-neutral-200 px-3 py-2 rounded"
+									className="bg-neutral-800 text-neutral-200 px-3 py-2 rounded focus:outline-none hover:bg-neutral-700/80 cursor-pointer transition-colors duration-400"
 								>
 									<option value="en">English</option>
-									<option value="es">Spanish</option>
 								</select>
 							</div>
 						</div>
 					)}
 
 					<div className="flex flex-col text-xs text-neutral-500 text-right pb-4 select-all">
-						<p>Port {port}</p>
+						<p>API <button type="button" onClick={() => openLink(`http://localhost:${port}`)} className="hover:underline cursor-alias">{port}</button></p>
 						<p>Node v{versions.node}</p>
 						<p>Electron v{versions.electron}</p>
 						<p>Chromium v{versions.chrome}</p>
