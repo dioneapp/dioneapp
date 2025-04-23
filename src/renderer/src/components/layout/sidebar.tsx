@@ -191,16 +191,16 @@ export default function Sidebar() {
 				<div className="h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l mt-4" />
 				<div className="mt-4 w-full flex items-center justify-between gap-2 pb-4">
 					{!loading && logged && dbUser && (
-						<button
-							type="button"
+						<Link
 							className="border border-white/10 hover:bg-white/10 rounded-lg overflow-hidden transition-all flex items-center justify-center w-24 h-9 cursor-pointer hover:opacity-60 duration-500"
+							to="/account"
 						>
 							<img
 								src={dbUser[0]?.avatar_url || "/svgs/User.svg"}
 								alt="user avatar"
 								className="h-full w-full object-cover object-center"
 							/>
-						</button>
+						</Link>
 					)}
 					{!loading && (
 						<div className="flex gap-2 items-center justify-start w-full h-full">
