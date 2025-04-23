@@ -6,9 +6,10 @@ import { io } from "socket.io-client";
 interface props {
 	data: any;
 	set: React.Dispatch<React.SetStateAction<any>>;
+	onFinish: () => void;
 }
 
-export default function MissingDepsModal({ data, set }: props) {
+export default function MissingDepsModal({ data, set, onFinish }: props) {
 	const [page, setPage] = useState(0);
 	const [logs, setLogs] = useState<string[]>([]);
 
@@ -40,6 +41,7 @@ export default function MissingDepsModal({ data, set }: props) {
 			}
 		}
 
+		setLogs(["Initializing dependency download..."]);
 		setupSocket();
 		return () => {
 			if (socket) {
@@ -77,7 +79,7 @@ export default function MissingDepsModal({ data, set }: props) {
 				throw new Error(response.statusText);
 			}
 
-			setLogs((prevLogs) => [...prevLogs, "🔄 Installation started..."]);
+			await onFinish();
 		} catch (error) {
 			setLogs((prevLogs) => [
 				...prevLogs,
