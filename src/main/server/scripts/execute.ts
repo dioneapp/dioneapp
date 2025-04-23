@@ -182,27 +182,31 @@ export async function executeStartup(pathname: string, io: Server) {
 	}
 }
 
+type CommandObject = { command: string };
+
 // commands to create virtual environment
 function createVirtualEnvCommands(
 	envName: string,
-	commands: string[],
-	baseDir: string,
+	commands: CommandObject[],
+	baseDir: string
 ): string[] {
 	const isWindows = process.platform === "win32";
 	const envPath = path.join(baseDir, envName);
+	const commandStrings = commands.map(cmd => cmd.command);
 
 	if (isWindows) {
-		// Windows
+		// windows
 		const activateScript = path.join(envPath, "Scripts", "activate");
 		return [
 			`if not exist "${envPath}" (uv venv ${envName})`,
-			`call "${activateScript}" && ${commands.join(" && ")} && deactivate`,
+			`call "${activateScript}" && ${commandStrings.join(" && ")} && deactivate`,
 		];
 	}
-	// Linux/macOS
+
+	// linux/macos
 	const activateScript = path.join(envPath, "bin", "activate");
 	return [
 		`if [ ! -d "${envPath}" ]; then uv venv ${envName}; fi`,
-		`source "${activateScript}" && ${commands.join(" && ")} && deactivate`,
+		`source "${activateScript}" && ${commandStrings.join(" && ")} && deactivate`,
 	];
 }
