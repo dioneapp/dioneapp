@@ -3,6 +3,8 @@ import ScriptCard from "./feed/card";
 import Loading from "./loading-skeleton";
 import { useAppContext } from "../layout/global-context";
 import { getCurrentPort } from "@renderer/utils/getPort";
+import Icon from "../icons/icon";
+import { Link } from "react-router-dom";
 
 export default function Installed() {
 	const { installedApps } = useAppContext();
@@ -53,14 +55,14 @@ export default function Installed() {
 
 	return (
 		<>
-			{apps.length > 0 &&
+			<h1 className="text-2xl sm:text-3xl font-semibold mb-4 mt-2">
+				Your library
+			</h1>
+			{apps.length > 0 ?
 				(loading ? (
 					<Loading />
 				) : (
 					<>
-						<h1 className="text-2xl sm:text-3xl font-semibold mb-4 mt-2">
-							Installed
-						</h1>
 						<div className="w-full last:mb-4">
 							<div className="grid grid-cols-2 gap-4">
 								{apps.map((script) => (
@@ -69,7 +71,15 @@ export default function Installed() {
 							</div>
 						</div>
 					</>
-				))}
+				)) : (
+					<div className="text-center flex flex-col gap-8 justify-center items-center mt-12">
+						<Icon name="DioDead" className="w-24 h-24 opacity-80 hover:opacity-50 transition-opacity duration-1000"/>
+						<div className="text-center items-center justify-center flex flex-col text-balance">
+						<h3 className="text-neutral-400 text-sm">You do not have any applications installed</h3>
+						<Link to="/home" className="text-sm text-neutral-200 mt-2 hover:underline underline-offset-4">Install one now</Link>
+						</div>
+					</div>
+				)}
 		</>
 	);
 }

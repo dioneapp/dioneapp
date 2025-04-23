@@ -15,6 +15,7 @@ import Loading from "./pages/loading";
 import NoAccess from "./pages/no-access";
 import Settings from "./pages/settings";
 import { ToastProvider } from "./utils/useToast";
+import Account from "./pages/account";
 
 // transition animation config
 const pageTransition = {
@@ -90,7 +91,8 @@ function App() {
 		"/settings": Settings,
 		"/first-time": FirstTime,
 		"/library": Library,
-		"/no_access": NoAccess
+		"/no_access": NoAccess,
+		"/account": Account,
 	};
 
 	const getPage = () => {
