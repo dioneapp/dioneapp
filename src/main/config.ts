@@ -1,12 +1,15 @@
 import { app } from "electron";
-import path from "path";
-import fs from "fs";
+import path from "node:path";
+import fs from "node:fs";
 import logger from "./server/utils/logger";
 
 export interface AppConfig {
 	firstLaunch: boolean;
 	theme: "light" | "dark";
 	language: string;
+	defaultLogsPath: string;
+	enableDesktopNotifications: boolean;
+	notifyOnInstallComplete: boolean;
 }
 
 // default config
@@ -14,6 +17,9 @@ export const defaultConfig: AppConfig = {
 	firstLaunch: false,
 	theme: "dark",
 	language: "en",
+	defaultLogsPath: path.join(app.getPath("userData"), "logs"),
+	enableDesktopNotifications: true,
+	notifyOnInstallComplete: true,
 };
 // get config file
 export const getConfigPath = () => {
