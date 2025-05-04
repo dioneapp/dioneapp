@@ -111,7 +111,7 @@ function App() {
 				<Titlebar />
 				<div className="flex h-[calc(100%)]">
 					{pathname !== "/first-time" && pathname !== "/no_access" && <Sidebar />}
-					<div className="flex-1 overflow-x-hidden" id="view">
+					<div className="flex-1 overflow-x-hidden" id={pathname === "/settings" ? "settings" : "view"}>
 						<AnimatePresence mode="wait">
 							<motion.div
 								key={pathname}
