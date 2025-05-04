@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { openLink } from "../../utils/openLink";
 import QuickLaunch from "./quick-launch";
 import Icon from "../icons/icon";
-import { motion } from "framer-motion";
 
 export default function Sidebar() {
 	const [authToken, setAuthToken] = useState<string | null>(null);
@@ -172,11 +171,8 @@ export default function Sidebar() {
 	}
 
 	return (
-	<motion.div 
-		initial={{ width: "calc(var(--spacing)* 70)" }}
-		animate={{ width: config?.compactMode ? "calc(var(--spacing)* 24)" : "calc(var(--spacing)* 70)" }}
-		transition={{ duration: 0.15 }}
-		className="flex flex-col items-center justify-center h-screen border-r border-white/10 overflow-hidden"
+	<div 
+	className="flex flex-col items-center justify-center h-screen border-r border-white/10 overflow-hidden"
 	>
 	<div className="absolute -top-10 -left-14 bg-[#BCB1E7] blur-3xl w-64 h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" />
 			<div className="flex flex-col items-center justify-start h-full w-full p-4 z-50 px-6">
@@ -292,6 +288,6 @@ export default function Sidebar() {
 					</div>}
 				</div>
 			</div>
-		</motion.div>
+		</div>
 	);
 }
