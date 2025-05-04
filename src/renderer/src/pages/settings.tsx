@@ -54,13 +54,13 @@ export default function Settings() {
 	};
 
 	return (
-		<div className="overflow-hidden h-[calc(95%)] pt-4">
+		<div className="overflow-auto h-full py-4">
 			{/* background */}
 			<div className="absolute top-0 left-0 w-full h-full bg-gradient-to-bl from-[#BCB1E7] to-[#080808] opacity-15 rounded-3xl blur-3xl z-0" />
 			<div className="max-w-[2000px] h-full mx-auto px-4 sm:px-6 lg:px-8 py-4">
 				<div className="flex flex-col space-y-4 h-full">
 					{config && (
-						<div className="flex flex-col space-y-4 h-full z-50">
+						<div className="flex flex-col space-y-4 h-full z-50 mb-12">
 							<div className="flex flex-col">
 								{/* Interface */}
 								<h2 className="text-xl font-semibold mb-6">Interface</h2>
@@ -160,14 +160,19 @@ export default function Settings() {
 							</div>	
 							</div>
 						</div>
-					</div>
+					</div>	
 					)}
-
-					<div className="flex flex-col text-xs text-neutral-500 text-right pb-4 select-all">
-						<p>API <button type="button" onClick={() => openLink(`http://localhost:${port}`)} className="hover:underline cursor-alias">{port}</button></p>
-						<p>Node v{versions.node}</p>
-						<p>Electron v{versions.electron}</p>
-						<p>Chromium v{versions.chrome}</p>
+					<div className="w-full flex items-end justify-between text-xs text-neutral-500 z-50 mt-18 pb-4">
+						<div>
+							<a href="https://getdione.app" target="_blank" rel="noopener noreferrer" className="hover:underline cursor-alias">getdione.app</a>
+							<p>built with &hearts; by <a href="https://applio.org" target="_blank" rel="noopener noreferrer" className="hover:underline cursor-alias">Applio</a> team</p>
+						</div>
+						<div className="text-right">
+							<p>API <button type="button" onClick={() => openLink(`http://localhost:${port}`)} className="hover:underline cursor-alias">{port}</button></p>
+							<p>Node v{versions.node}</p>
+							<p>Electron v{versions.electron}</p>
+							<p>Chromium v{versions.chrome}</p>
+						</div>
 					</div>
 				</div>
 			</div>
