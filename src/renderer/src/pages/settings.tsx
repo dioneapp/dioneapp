@@ -45,6 +45,9 @@ export default function Settings() {
 
 			const updatedConfig = await response.json();
 			setConfig(updatedConfig);
+			// update local storage
+			localStorage.setItem("config", JSON.stringify(updatedConfig));
+			window.dispatchEvent(new Event("config-updated"));
 		} catch (error) {
 			console.error("Error updating config:", error);
 		}
@@ -153,7 +156,7 @@ export default function Settings() {
 									<label className="text-neutral-200 font-medium">Default logs path</label>
 									<p className="text-xs text-neutral-400">Default folder to save logs.</p>
 									</div>
-									<input required className="text-xs text-neutral-300 focus:outline-none focus:ring-1 focus:ring-white/20 rounded w-96 h-10 px-2 bg-white/10 border border-white/5 backdrop-blur-3xl cursor-pointer" type="text" value={config.defaultLogsPath} onChange={(e) => { const value = e.target.value; if (value !== null && value.trim() !== '') { handleUpdate({ defaultLogsPath: value })} } } />
+									<input required readOnly className="text-xs text-neutral-300 focus:outline-none focus:ring-1 focus:ring-white/20 rounded w-96 h-10 px-2 bg-white/10 border border-white/5 backdrop-blur-3xl cursor-pointer" type="text" value={config.defaultLogsPath} onChange={(e) => { const value = e.target.value; if (value !== null && value.trim() !== '') { handleUpdate({ defaultLogsPath: value })} } } />
 							</div>	
 							</div>
 						</div>

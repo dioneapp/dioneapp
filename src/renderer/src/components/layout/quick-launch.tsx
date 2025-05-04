@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
 
-export default function QuickLaunch() {
+export default function QuickLaunch({ compactMode }: { compactMode?: boolean }) {
 	const { installedApps, setInstalledApps } = useAppContext();
 	const [apps, setApps] = useState<any[]>([]);
 	const [showAppList, setShowAppList] = useState<boolean>(false);
@@ -113,7 +113,7 @@ export default function QuickLaunch() {
 		<div key={`slot-${index}`} className="flex flex-col items-center gap-1">
 			<Link
 				to={`/install/${app.id}`}
-				className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center overflow-hidden"
+				className={`border border-white/10 rounded-xl flex items-center justify-center overflow-hidden ${compactMode ? "h-12 w-12" : "h-18 w-18"}`}
 				onContextMenu={(e) => {
 					e.preventDefault();
 					removeApp(index);
@@ -144,11 +144,11 @@ export default function QuickLaunch() {
 	);
 
 	return (
-		<div className="flex mt-auto w-full h-64">
+		<div className={compactMode ? "mb-auto" : "flex mt-auto w-full h-64"}>
 			<div className="w-full">
-				<h2 className="font-semibold">Quick Launch</h2>
-				<div className="grid grid-cols-3 my-4 gap-2">
-					{Array(maxApps)
+				{!compactMode && <h2 className="font-semibold">Quick Launch</h2>}
+				<div className={compactMode ? "flex justify-center my-4" : "grid grid-cols-3 my-4 gap-2"}>
+					{!compactMode && Array(maxApps)
 						.fill(null)
 						.map((_, index) => (
 							<div key={`slot-${index}`}>
@@ -156,7 +156,14 @@ export default function QuickLaunch() {
 									? renderAppButton(apps[index], index)
 									: renderEmptyButton(index)}
 							</div>
-						))}
+					))}
+					{compactMode && Array(maxApps)
+						.fill(null)
+						.map((_, index) => (
+							<div key={`slot-${index}`}>
+								{apps[index] && renderAppButton(apps[index], index)}
+							</div>
+					))}
 				</div>
 			</div>
 

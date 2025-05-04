@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { openLink } from "../../utils/openLink";
 import QuickLaunch from "./quick-launch";
 import Icon from "../icons/icon";
+import { motion } from "framer-motion";
 
 export default function Sidebar() {
 	const [authToken, setAuthToken] = useState<string | null>(null);
@@ -12,6 +13,33 @@ export default function Sidebar() {
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 	const [dbUser, setDbUser] = useState<any>(null);
+	const [config, setConfig] = useState<any | null>(null);
+
+	useEffect(() => {
+		const handleConfigUpdate = () => {
+			const updatedConfig = localStorage.getItem("config");
+			if (updatedConfig) {
+				setConfig(JSON.parse(updatedConfig));
+			}
+		};
+	
+		window.addEventListener("config-updated", handleConfigUpdate);
+		return () => window.removeEventListener("config-updated", handleConfigUpdate);
+	}, []);
+
+	useEffect(() => {
+		const cachedConfig = localStorage.getItem("config");
+		if (cachedConfig) setConfig(JSON.parse(cachedConfig));
+	
+		const fetchConfig = async () => {
+			const port = await getCurrentPort();
+			const res = await fetch(`http://localhost:${port}/config`);
+			const data = await res.json();
+			setConfig(data);
+			localStorage.setItem("config", JSON.stringify(data));
+		};
+		fetchConfig();
+	}, []);
 
 	// this is basically for security, in web, we can add a option to persist a session
 	useEffect(() => {
@@ -144,21 +172,27 @@ export default function Sidebar() {
 	}
 
 	return (
-		<div className="flex flex-col items-center justify-center h-screen w-70 border-r border-white/10 overflow-hidden">
-			<div className="absolute -top-10 -left-14 bg-[#BCB1E7] blur-3xl w-64 h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" />
+	<motion.div 
+		initial={{ width: "calc(var(--spacing)* 70)" }}
+		animate={{ width: config?.compactMode ? "calc(var(--spacing)* 24)" : "calc(var(--spacing)* 70)" }}
+		transition={{ duration: 0.15 }}
+		className="flex flex-col items-center justify-center h-screen border-r border-white/10 overflow-hidden"
+	>
+	<div className="absolute -top-10 -left-14 bg-[#BCB1E7] blur-3xl w-64 h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" />
 			<div className="flex flex-col items-center justify-start h-full w-full p-4 z-50 px-6">
-				<div className="w-full h-44 flex flex-col justify-center items-start gap-2">
+				<div className={`w-full flex flex-col justify-center items-start gap-2 ${config?.compactMode ? "h-24" : "h-44"}`}>
 					<Link
 						to={"/"}
-						className="flex gap-2 hover:opacity-80 transition-opacity"
+						className="flex gap-2 hover:opacity-80 transition-opacity justify-center items-center"
 					>
-						<Icon name="Dio" className="h-8 w-8" />
-						<h1 className="font-semibold text-3xl">Dione</h1>
+						{config?.compactMode && <Icon name="Dio" className="h-12 w-12" />}
+						{!config?.compactMode && <Icon name="Dio" className="h-8 w-8" />}
+						{!config?.compactMode && <h1 className="font-semibold text-3xl">Dione</h1>}
 					</Link>
-					<p className="text-xs text-neutral-400 px-0.5">
+					{!config?.compactMode && <p className="text-xs text-neutral-400 px-0.5">
 						Explore, Install, Innovate — in 1 Click.
-					</p>
-					<div className="mt-2 w-full flex gap-2 px-0.5">
+					</p>}
+					{!config?.compactMode && <div className="mt-2 w-full flex gap-2 px-0.5">
 						<button
 							type="button"
 							onClick={() => openLink("https://getdione.app/discord")}
@@ -178,7 +212,7 @@ export default function Sidebar() {
 
 							<span className="font-semibold">GitHub</span>
 						</button>
-					</div>
+					</div>}
 				</div>
 				{/* we can use this space to warn about things, for example if we detect that dione is running on dev mode without api keys or smth */}
 				{/* <div className="h-fit bg-orange-300/20 border border-white/5 rounded-xl backdrop-blur-3xl w-full">
@@ -187,12 +221,29 @@ export default function Sidebar() {
 						<h2 className="text-[10px] text-neutral-300 text-balance">You are using an alpha version for testing, you will experience bugs and errors that you should report. With this in mind, be careful and proceed with caution.</h2>
 					</div>
 				</div> */}
-				<QuickLaunch />
-				<div className="h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l mt-4" />
-				<div className="mt-4 w-full flex items-center justify-between gap-2 pb-4">
+				<QuickLaunch compactMode={config?.compactMode}/>
+				<div className={`h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l ${!config?.compactMode ? "mb-4" : ""}`} />
+				<div className={`mb-4 flex gap-2 items-center justify-center w-full h-fit group transition-all duration-500 hover:[&_div_div]:opacity-100 hover:[&_div_div]:blur-none [&_div_div]:-mt-24 hover:[&_div_div]:mt-0 [&_div_div]:opacity-0 [&_div_div]:blur-sm ${config?.compactMode ? "flex-col" : ""}`}>
+				{config?.compactMode && <div className="mt-4 items-center gap-2 justify-center mx-auto w-full h-full flex-col flex transition-all duration-500">
+						<div className="flex flex-col gap-2 transition-all duration-200 mb-2">
+						<Link
+							to={"/library"}
+							className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full flex gap-1 items-center justify-center transition-colors"
+						>
+							<Icon name="Library" className="h-5 w-5" />
+						</Link>
+						<Link
+							to={"/settings"}
+							className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center justify-center"
+						>
+							<Icon name="Settings" className="h-5 w-5" />
+						</Link>
+						</div>
+					</div>}
+				<div className={`w-full flex items-center gap-2 ${config?.compactMode ? "justify-center" : "justify-start"}`}>
 					{!loading && logged && dbUser && (
 						<Link
-							className="border border-white/10 hover:bg-white/10 rounded-lg overflow-hidden transition-all flex items-center justify-center w-24 h-9 cursor-pointer hover:opacity-60 duration-500"
+							className={` hover:bg-white/10 overflow-hidden flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"}`}
 							to="/account"
 						>
 							<img
@@ -202,12 +253,13 @@ export default function Sidebar() {
 							/>
 						</Link>
 					)}
-					{!loading && (
-						<div className="flex gap-2 items-center justify-start w-full h-full">
+					</div>
+					{!loading && !config?.compactMode && (
+						<div className="flex gap-2 items-center justify-end w-full h-full">
 							{logged ? (
 								<button
 									type="button"
-									className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-lg transition-colors flex items-center justify-center cursor-pointer"
+									className="w-9.5 h-9.5 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer"
 									onClick={logout}
 								>
 									<Icon name="Logout" className="h-5 w-5" />
@@ -224,7 +276,7 @@ export default function Sidebar() {
 							)}
 						</div>
 					)}
-					<div className="flex gap-2 items-center justify-end w-full h-full">
+					{!config?.compactMode && <div className="flex gap-2 items-center justify-end w-full h-full">
 						<Link
 							to={"/library"}
 							className="p-2 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center"
@@ -237,9 +289,9 @@ export default function Sidebar() {
 						>
 							<Icon name="Settings" className="h-5 w-5" />
 						</Link>
-					</div>
+					</div>}
 				</div>
 			</div>
-		</div>
+		</motion.div>
 	);
 }
