@@ -86,7 +86,7 @@ export default function IframeComponent({
 						transition={{ duration: 0.3 }}
 					/>
 				</div>
-				<span className="text-xs text-neutral-300 text-right w-8">
+				<span className="text-xs text-neutral-300 text-right w-6">
 					{isHovered && absoluteValue
 						? absoluteValue
 						: `${Math.round(percentage)}%`}
@@ -106,7 +106,7 @@ export default function IframeComponent({
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.4 }}
-				className="w-full flex items-center justify-between gap-2 rounded-lg"
+				className="w-full flex items-center justify-between gap-2 rounded-lg mt-6	"
 			>
 				<div className="flex items-center">
 					<div className="flex items-center border border-white/10 bg-white/5 rounded-md group overflow-hidden">
@@ -129,7 +129,7 @@ export default function IframeComponent({
 					</div>
 				</div>
 
-				<div className="flex gap-1.5 overflow-hidden">
+				<div className="flex gap-1 justify-start mx-auto w-full items-center overflow-hidden">
 					<UsageIndicator label="CPU" percentage={systemUsage.cpu} />
 					<UsageIndicator
 						label="RAM"
@@ -148,21 +148,21 @@ export default function IframeComponent({
 					/>
 				</div>
 
-				<div className="flex gap-1.5">
+				<div className="flex gap-1.5 w-fit h-full items-center justify-end">
 					<motion.button
-						className="flex items-center justify-center p-2 hover:bg-white/10 border-l border-white/10 transition-colors rounded-md border relative group cursor-pointer"
+						className="flex items-center justify-center w-10 h-full hover:bg-white/15 bg-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={() => setShow("logs")}
 					>
 						<Icon name="Back" className="w-4 h-4 " />
 					</motion.button>
 					<motion.button
-						className="flex items-center justify-center p-1.5 hover:bg-white/80 border-l bg-white transition-colors rounded-md border relative group cursor-pointer"
+						className="flex items-center justify-center w-8 h-full hover:bg-white/80 border-l bg-white transition-colors rounded-md border relative group cursor-pointer"
 						onClick={handleStop}
 					>
 						<Icon name="Stop" className="w-4 h-4 " />
 					</motion.button>
 					<motion.button
-						className="flex items-center justify-center p-1.5 hover:bg-white/80 border-l bg-white transition-colors rounded-md border relative group cursor-pointer"
+						className="flex items-center justify-center w-8 h-full hover:bg-white/80 border-l bg-white transition-colors rounded-md border relative group cursor-pointer"
 						onClick={handleReloadIframe}
 					>
 						<Icon name="Reload" className="w-4 h-4" />
