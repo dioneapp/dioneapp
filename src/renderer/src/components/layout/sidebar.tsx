@@ -223,9 +223,9 @@ export default function Sidebar() {
 				</div> */}
 				<QuickLaunch compactMode={config?.compactMode}/>
 				<div className={`h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l ${!config?.compactMode ? "mb-4" : ""}`} />
-				<div className={`mb-4 flex gap-2 items-center justify-center w-full h-fit group transition-all duration-500 hover:[&_div_div]:opacity-100 hover:[&_div_div]:blur-none [&_div_div]:-mt-24 hover:[&_div_div]:mt-0 [&_div_div]:opacity-0 [&_div_div]:blur-sm ${config?.compactMode ? "flex-col" : ""}`}>
+				<div className={`mb-4 flex gap-2 items-center justify-center w-full h-fit group transition-all duration-500 hover:[&_div_div]:opacity-100 hover:[&_div_div]:blur-none [&_div_div]:-mt-24 hover:[&_div_div]:mt-0 [&_div_div]:opacity-0 [&_div_div]:blur-lg ${config?.compactMode ? "flex-col" : ""}`}>
 				{config?.compactMode && <div className="mt-4 items-center gap-2 justify-center mx-auto w-full h-full flex-col flex transition-all duration-500">
-						<div className="flex flex-col gap-2 transition-all duration-200 mb-2">
+						<div className="flex flex-col gap-2 transition-all duration-400 mb-2">
 						<Link
 							to={"/library"}
 							className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full flex gap-1 items-center justify-center transition-colors"
