@@ -113,7 +113,7 @@ export default function QuickLaunch({ compactMode }: { compactMode?: boolean }) 
 		<div key={`slot-${index}`} className="flex flex-col items-center gap-1">
 			<Link
 				to={`/install/${app.id}`}
-				className={`border border-white/10 rounded-xl flex items-center justify-center overflow-hidden ${compactMode ? "h-12 w-12" : "h-18 w-18"}`}
+				className={`border border-white/10 hover:opacity-80 transition-opacity duration-300 rounded-xl flex items-center justify-center overflow-hidden ${compactMode ? "h-12 w-12" : "h-18 w-18"}`}
 				onContextMenu={(e) => {
 					e.preventDefault();
 					removeApp(index);
@@ -125,7 +125,7 @@ export default function QuickLaunch({ compactMode }: { compactMode?: boolean }) 
 					className="h-full w-full object-cover"
 				/>
 			</Link>
-			<p className="text-xs text-neutral-400 truncate">{app.name}</p>
+			{!compactMode && <p className="text-xs text-neutral-400 truncate">{app.name}</p>}
 		</div>
 	);
 
@@ -147,7 +147,7 @@ export default function QuickLaunch({ compactMode }: { compactMode?: boolean }) 
 		<div className={compactMode ? "mb-auto" : "flex mt-auto w-full h-64"}>
 			<div className="w-full">
 				{!compactMode && <h2 className="font-semibold">Quick Launch</h2>}
-				<div className={compactMode ? "flex justify-center my-4" : "grid grid-cols-3 my-4 gap-2"}>
+				<div className={compactMode ? "flex flex-col justify-center my-4 gap-2" : "grid grid-cols-3 my-4 gap-2"}>
 					{!compactMode && Array(maxApps)
 						.fill(null)
 						.map((_, index) => (
