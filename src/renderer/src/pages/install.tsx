@@ -154,7 +154,7 @@ export default function Install({ id }: { id?: string }) {
 						// launch iframe if server is running
 						if (
 							(type === "log" &&
-								content.toLowerCase().includes("started server")) ||
+							content.toLowerCase().includes("started server")) ||
 							content.toLowerCase().includes("http") ||
 							content.toLowerCase().includes("127.0.0.1") ||
 							content.toLowerCase().includes("localhost") ||
@@ -216,6 +216,7 @@ export default function Install({ id }: { id?: string }) {
 		setShow("logs");
 		try {
 			const port = await getCurrentPort();
+			window.electron.ipcRenderer.invoke("notify", "Downloading...", `Starting download of ${data.name}`);
 			await fetch(`http://localhost:${port}/scripts/download/${id}`, {
 				method: "GET",
 			});
@@ -229,6 +230,7 @@ export default function Install({ id }: { id?: string }) {
 	async function start() {
 		try {
 			const port = await getCurrentPort();
+			window.electron.ipcRenderer.invoke("notify", "Starting...", `Starting ${data.name}`);
 			await fetch(`http://localhost:${port}/scripts/start/${data.name}`, {
 				method: "GET",
 			});
@@ -250,6 +252,7 @@ export default function Install({ id }: { id?: string }) {
 			if (response.status === 200) {
 				setShow("actions");
 				setInstalled(true);
+				window.electron.ipcRenderer.invoke("notify", "Stopping...", `${data.name} stopped successfully.`);
 				showToast("success", `${data.name} stopped successfully.`);
 				setLogs([]) // clear logs
 				await fetchIfDownloaded();
@@ -261,6 +264,7 @@ export default function Install({ id }: { id?: string }) {
 			}
 		} catch (error) {
 			showToast("error", `Error stopping ${data.name}: ${error}`);
+			window.electron.ipcRenderer.invoke("notify", "Error...", `Error stopping ${data.name}: ${error}`);
 			setLogs((prevLogs) => [...prevLogs, `Error stopping ${data.name}`]);
 		}
 	}
@@ -275,6 +279,7 @@ export default function Install({ id }: { id?: string }) {
 				},
 			);
 			if (response.status === 200) {
+				window.electron.ipcRenderer.invoke("notify", "Uninstalling...", `${data.name} uninstalled successfully.`);
 				showToast("success", `${data.name} uninstalled successfully.`);
 				setInstalled(false);
 				await fetchIfDownloaded();
@@ -282,6 +287,7 @@ export default function Install({ id }: { id?: string }) {
 					prevApps.filter((app) => app !== data.name),
 				);
 			} else {
+				window.electron.ipcRenderer.invoke("notify", "Error...", `Error uninstalling ${data.name}: Error ${response.status}`);
 				showToast(
 					"error",
 					`Error uninstalling ${data.name}, please try again later or do it manually.`,
@@ -348,7 +354,8 @@ export default function Install({ id }: { id?: string }) {
 			setIframeSrc(`http://localhost:${localPort}`);
 			setShow("iframe");
 			setIframeAvailable(true);
-			showToast("default", `${data.name} has opened a webview.`);
+			showToast("default", `${data.name} has opened a preview.`);
+			window.electron.ipcRenderer.invoke("notify", "Preview...", `${data.name} has opened a preview.`);
 		}
 	};
 	useEffect(() => {

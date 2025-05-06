@@ -14,6 +14,7 @@ import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import os from "node:os";
 import { readConfig, defaultConfig, writeConfig } from "./config";
+import { Notification } from "electron";
 
 // set default protocol client
 if (process.defaultApp) {
@@ -131,7 +132,7 @@ app.whenReady().then(() => {
 
 	// Set up tray icon
 	app.setName("Dione");
-	let appIcon;
+	let appIcon: Tray;
 	switch (os.platform()) {
 		// add the appropriate icon for the platform
 		case "win32":
@@ -197,6 +198,26 @@ app.whenReady().then(() => {
 
 	ipcMain.handle("app:minimize", () => {
 		BrowserWindow.getFocusedWindow()?.minimize();
+	});
+
+	// notifications
+	ipcMain.handle("notify", (_event, title: string, body: string, xml?: string) => {
+		const settings = readConfig();
+		const options: Electron.NotificationConstructorOptions = {
+			title,
+			body,
+			icon: path.resolve(__dirname, "../../resources/icon.ico"),
+			timeoutType: "default",
+			toastXml: xml ? xml : undefined,
+		};
+
+		if (settings?.enableDesktopNotifications) {
+			const notification = new Notification(options);
+
+			notification.show();
+		} else {
+			logger.warn(`Notification attempt... Notifications are disabled. enableDesktopNotifications: ${settings?.enableDesktopNotifications}`);
+		}
 	});
 
 	// Retrieve the current port

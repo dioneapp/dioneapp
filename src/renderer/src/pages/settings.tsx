@@ -44,6 +44,22 @@ export default function Settings() {
 			if (!response.ok) throw new Error("Failed to update config");
 
 			const updatedConfig = await response.json();
+			const xml = `
+			<toast launch="dione://action=navigate&amp;contentId=351" activationType="protocol">
+				<visual>
+					<binding template="ToastGeneric">
+						<text>Notifications enabled</text>
+						<text>You will receive notifications for important events.</text>
+					</binding>
+				</visual>
+				<actions>
+					<action content="Learn more" activationType="protocol" arguments="https://getdione.app/docs" />
+				</actions>
+			</toast>
+			`;
+			window.electron.ipcRenderer.invoke("notify", "Notifications enabled", "You will receive notifications for important events.", xml as string);
+			if (updatedConfig.enableDesktopNotifications === true) {
+			}
 			setConfig(updatedConfig);
 			// update local storage
 			localStorage.setItem("config", JSON.stringify(updatedConfig));
