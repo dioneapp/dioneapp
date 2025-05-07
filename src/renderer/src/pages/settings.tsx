@@ -44,7 +44,7 @@ export default function Settings() {
 			if (!response.ok) throw new Error("Failed to update config");
 			const updatedConfig = await response.json();
 
-			if (updatedConfig.enableDesktopNotifications === true) {
+			if (updatedConfig.enableDesktopNotifications === true && updatedConfig.enableDesktopNotifications !== config.enableDesktopNotifications) {
 				const xml = `
 				<toast launch="dione://action=navigate&amp;contentId=351" activationType="protocol">
 					<visual>
