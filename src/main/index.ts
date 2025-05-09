@@ -15,6 +15,7 @@ import { getCurrentPort } from "./server/utils/getPort";
 import os from "node:os";
 import { readConfig, defaultConfig, writeConfig } from "./config";
 import { Notification } from "electron";
+import { autoUpdater } from "electron-updater";
 
 // set default protocol client
 if (process.defaultApp) {
@@ -58,10 +59,15 @@ function createWindow() {
 	// Remove default menu from the window
 	mainWindow.removeMenu();
 
+	mainWindow.once("ready-to-show", () => {
+		autoUpdater.checkForUpdatesAndNotify();
+	});
+
 	// Show the window when ready
 	mainWindow.webContents.once("did-finish-load", () => {
 		mainWindow.show();
 	});
+
 
 	// Prevent opening new windows and handle external links
 	mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -236,6 +242,10 @@ app.whenReady().then(() => {
 		shell.openExternal(url);
 	});
 
+	ipcMain.on('restart_app', () => {
+		autoUpdater.quitAndInstall();
+	});
+
 	// Create the main application window
 	createWindow();
 
@@ -250,4 +260,11 @@ app.on("window-all-closed", () => {
 	if (process.platform !== "darwin") {
 		app.quit();
 	}
+});
+
+autoUpdater.on('update-available', () => {
+  mainWindow.webContents.send('update_available');
+});
+autoUpdater.on('update-downloaded', () => {
+  mainWindow.webContents.send('update_downloaded');
 });
