@@ -25,8 +25,8 @@ function App() {
 	const { loginFinished } = useParams();
 	const location = useLocation();
 	const { pathname } = location;
-	const [isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
-	const [isLoading, setIsLoading] = useState(true);
+	const [_isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
+	const [_isLoading, setIsLoading] = useState(true);
 	const [isLogged, setIsLogged] = useState<boolean>(false);
 	const [haveAccess, setHaveAccess] = useState<boolean>(false);
 	const navigate = useNavigate();

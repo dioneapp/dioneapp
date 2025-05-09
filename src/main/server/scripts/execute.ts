@@ -182,31 +182,36 @@ export async function executeStartup(pathname: string, io: Server) {
 	}
 }
 
-type CommandObject = { command: string };
-
 // commands to create virtual environment
-function createVirtualEnvCommands(
-	envName: string,
-	commands: CommandObject[],
-	baseDir: string,
-): string[] {
+function createVirtualEnvCommands(envName, commands, baseDir) {
 	const isWindows = process.platform === "win32";
 	const envPath = path.join(baseDir, envName);
-	const commandStrings = commands.map((cmd) => cmd.command);
-
+  
+	// ensure commands is an array of strings without empty strings
+	const commandStrings = Array.isArray(commands)
+	  ? commands.filter(cmd => typeof cmd === "string" && cmd.trim())
+	  : [];
+  
 	if (isWindows) {
-		// windows
-		const activateScript = path.join(envPath, "Scripts", "activate");
-		return [
-			`if not exist "${envPath}" (uv venv ${envName})`,
-			`call "${activateScript}" && ${commandStrings.join(" && ")} && deactivate`,
-		];
+	  const activateScript = path.join(envPath, "Scripts", "activate");
+	  // add && only if there are commands to execute
+	  const middle = commandStrings.length
+		? `&& ${commandStrings.join(" && ")}`
+		: "";
+	  return [
+		`if not exist "${envPath}" (uv venv ${envName})`,
+		`call "${activateScript}" ${middle} && deactivate`
+	  ];
 	}
-
-	// linux/macos
+  
+	// for linux and mac
 	const activateScript = path.join(envPath, "bin", "activate");
+	const middle = commandStrings.length
+	  ? `&& ${commandStrings.join(" && ")}`
+	  : "";
 	return [
-		`if [ ! -d "${envPath}" ]; then uv venv ${envName}; fi`,
-		`source "${activateScript}" && ${commandStrings.join(" && ")} && deactivate`,
+	  `if [ ! -d "${envPath}" ]; then uv venv ${envName}; fi`,
+	  `source "${activateScript}" ${middle} && deactivate`
 	];
-}
+  }
+  
