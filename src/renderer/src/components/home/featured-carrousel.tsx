@@ -75,7 +75,7 @@ export default function FeaturedCarousel() {
 	const handleDotClick = (index: number) => {
 		setCurrentIndex(index);
 	};
-	
+
 	const generateGradients = async (scripts: Script[]) => {
 		const newGradients: Record<string, string> = {};
 
@@ -190,7 +190,6 @@ export default function FeaturedCarousel() {
 								/>
 								{/* content */}
 								<motion.div className="z-50 absolute inset-0 p-10 transition-all duration-500 group-hover:bg-black/20">
-
 									<div className="flex w-full h-full flex-col justify-start items-center">
 										{/* logo */}
 										<div className="w-full h-full flex justify-end">
@@ -220,7 +219,6 @@ export default function FeaturedCarousel() {
 												}
 											</h3>
 										</div>
-
 									</div>
 
 									{/* progress Indicators */}
@@ -229,15 +227,18 @@ export default function FeaturedCarousel() {
 											<button
 												type="button"
 												key={index}
-												onClick={(e) => { e.preventDefault(); handleDotClick(index); }}
-												className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentIndex ? 'bg-white w-6' : 'bg-white/50 hover:bg-white/70'}`}
+												onClick={(e) => {
+													e.preventDefault();
+													handleDotClick(index);
+												}}
+												className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentIndex ? "bg-white w-6" : "bg-white/50 hover:bg-white/70"}`}
 											/>
 										))}
 									</div>
 								</motion.div>
 							</Link>
 						</motion.div>
-					) : ( 
+					) : (
 						<CarrouselSkeleton />
 					)}
 				</AnimatePresence>

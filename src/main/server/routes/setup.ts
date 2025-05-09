@@ -2,8 +2,8 @@ import type { Express } from "express";
 import type { Server } from "socket.io";
 
 // routers
-import databaseRouter from "./database"
-import searchBarRouter from "./searchbar"
+import databaseRouter from "./database";
+import searchBarRouter from "./searchbar";
 import configRouter from "./config";
 import { createDependenciesRouter } from "./dependencies";
 import { createScriptRouter } from "./scripts";

@@ -55,34 +55,38 @@ export default function LogsComponent({
 						}
 					}}
 				>
-				{logs.map((log, index) => {
-					const lowerLog = log.toLowerCase();
-					let textColor = "text-neutral-400";
-					let icon: JSX.Element | null = null;
+					{logs.map((log, index) => {
+						const lowerLog = log.toLowerCase();
+						let textColor = "text-neutral-400";
+						let icon: JSX.Element | null = null;
 
-					if (lowerLog.includes("error")) {
-						textColor = "bg-red-500/10 border border-white/5 mt-12 mb-6 backdrop-filter backdrop-blur-xl p-4 rounded-xl text-neutral-300 text-pretty";
-						icon = <Icon name="NotInstalled" className="w-6 h-6" />;
-					} else if (lowerLog.includes("warning")) {
-						textColor = "text-yellow-400";
-						icon = <Icon name="Warning" className="w-4 h-4" />;
-					} else if (lowerLog.includes("info")) {
-						textColor = "text-blue-400";
-						icon = <Icon name="Info" className="w-4 h-4" />;
-					}
+						if (lowerLog.includes("error")) {
+							textColor =
+								"bg-red-500/10 border border-white/5 mt-12 mb-6 backdrop-filter backdrop-blur-xl p-4 rounded-xl text-neutral-300 text-pretty";
+							icon = <Icon name="NotInstalled" className="w-6 h-6" />;
+						} else if (lowerLog.includes("warning")) {
+							textColor = "text-yellow-400";
+							icon = <Icon name="Warning" className="w-4 h-4" />;
+						} else if (lowerLog.includes("info")) {
+							textColor = "text-blue-400";
+							icon = <Icon name="Info" className="w-4 h-4" />;
+						}
 
-					return (
-						// biome-ignore lint/suspicious/noArrayIndexKey: in this case, only can use index
-						<p key={index} className={`text-xs flex ${textColor} my-1`}>
-							<span className="flex justify-center gap-2 items-center">
-								<span className={`w-4 h-4 flex justify-start items-center ${lowerLog.includes("error") && "mr-4"}`}>
-									{icon || <p className="flex justify-start w-4 h-4">-</p>}
+						return (
+							// biome-ignore lint/suspicious/noArrayIndexKey: in this case, only can use index
+							<p key={index} className={`text-xs flex ${textColor} my-1`}>
+								<span className="flex justify-center gap-2 items-center">
+									<span
+										className={`w-4 h-4 flex justify-start items-center ${lowerLog.includes("error") && "mr-4"}`}
+									>
+										{icon || <p className="flex justify-start w-4 h-4">-</p>}
+									</span>
+									{log.replace(/^(ERROR:|WARN:|INFO:|OUT:)/, "").trim() ||
+										"Loading..."}
 								</span>
-								{log.replace(/^(ERROR:|WARN:|INFO:|OUT:)/, "").trim() || "Loading..."}
-							</span>
-						</p>
-					);
-				})}
+							</p>
+						);
+					})}
 				</div>
 				<div className="absolute bottom-2 right-2">
 					<div className="flex gap-1.5">

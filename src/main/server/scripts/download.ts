@@ -128,7 +128,8 @@ export function downloadFile(
 					} else if (result.error) {
 						io.emit("installUpdate", {
 							type: "log",
-							content: "We have not been able to read the configuration file due to an error, check that Dione.json is well formulated as JSON.",
+							content:
+								"We have not been able to read the configuration file due to an error, check that Dione.json is well formulated as JSON.",
 						});
 						io.emit("installUpdate", {
 							type: "status",
@@ -147,7 +148,6 @@ export function downloadFile(
 							content: "Error detected",
 						});
 					}
-
 				});
 				file.on("error", (error) => {
 					file.close();

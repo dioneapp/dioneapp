@@ -44,7 +44,11 @@ export default function Settings() {
 			if (!response.ok) throw new Error("Failed to update config");
 			const updatedConfig = await response.json();
 
-			if (updatedConfig.enableDesktopNotifications === true && updatedConfig.enableDesktopNotifications !== config.enableDesktopNotifications) {
+			if (
+				updatedConfig.enableDesktopNotifications === true &&
+				updatedConfig.enableDesktopNotifications !==
+					config.enableDesktopNotifications
+			) {
 				const xml = `
 				<toast launch="dione://action=navigate&amp;contentId=351" activationType="protocol">
 					<visual>
@@ -58,9 +62,14 @@ export default function Settings() {
 					</actions>
 				</toast>
 				`;
-				window.electron.ipcRenderer.invoke("notify", "Notifications enabled", "You will receive notifications for important events.", xml as string);
+				window.electron.ipcRenderer.invoke(
+					"notify",
+					"Notifications enabled",
+					"You will receive notifications for important events.",
+					xml as string,
+				);
 			}
-			
+
 			setConfig(updatedConfig);
 			// update local storage
 			localStorage.setItem("config", JSON.stringify(updatedConfig));
@@ -83,109 +92,189 @@ export default function Settings() {
 								<h2 className="text-xl font-semibold mb-6">Interface</h2>
 								<div className="flex justify-between w-full items-center h-full space-y-2">
 									<div className="h-full flex items-start justify-center flex-col mt-auto">
-										<label className="text-neutral-200 font-medium">Language</label>
-										<p className="text-xs text-neutral-400">Select your language</p>
+										<label className="text-neutral-200 font-medium">
+											Language
+										</label>
+										<p className="text-xs text-neutral-400">
+											Select your language
+										</p>
 									</div>
 									<select
 										value={config.language}
 										onChange={(e) => handleUpdate({ language: e.target.value })}
-									className="bg-white/10 border border-white/5 text-neutral-200 h-10 px-2 w-72 rounded text-sm focus:outline-none hover:bg-white/20 backdrop-blur-sm cursor-pointer transition-colors duration-400"
-								>
-									<option value="en">English</option>
-								</select>
-							</div>
-						</div>
-						<div className="flex flex-col space-y-4">
-							<div className="flex justify-between w-full items-center h-full space-y-2">
-								<div className="h-full flex items-start justify-center flex-col mt-auto">
-									<label className="text-neutral-200 font-medium">Compact mode</label>
-									<p className="text-xs text-neutral-400">Enable compact mode to reduce the space taken by the interface</p>
+										className="bg-white/10 border border-white/5 text-neutral-200 h-10 px-2 pr-8 w-72 rounded-xl text-sm focus:outline-none hover:bg-white/20 backdrop-blur-sm cursor-pointer transition-colors duration-400"
+									>
+										<option value="en">English</option>
+									</select>
 								</div>
-								<button
-								type="button"
-								onClick={() => handleUpdate({ compactMode: !config.compactMode })}
-								className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
-									config.compactMode ? 'bg-green-500/30' : 'bg-red-500/30'
-								}`}
-								>
-									<span
-										className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-										config.compactMode ? 'translate-x-6' : 'translate-x-0'
+							</div>
+							<div className="flex flex-col space-y-4">
+								<div className="flex justify-between w-full items-center h-full space-y-2">
+									<div className="h-full flex items-start justify-center flex-col mt-auto">
+										<label className="text-neutral-200 font-medium">
+											Compact mode
+										</label>
+										<p className="text-xs text-neutral-400">
+											Enable compact mode to reduce the space taken by the
+											interface
+										</p>
+									</div>
+									<button
+										type="button"
+										onClick={() =>
+											handleUpdate({ compactMode: !config.compactMode })
+										}
+										className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
+											config.compactMode ? "bg-green-500/30" : "bg-red-500/30"
 										}`}
-									/>
-								</button>
-							</div>
-						</div>
-						{/*  */}
-						<div className="flex flex-col">
-							{/* Notifications */}
-							<div className="w-full h-0.5 bg-white/10 mt-4 mb-8"/>
-							<h2 className="text-xl font-semibold mb-6">Notifications</h2>
-							<div className="flex flex-col gap-2">
-							<div className="flex justify-between w-full items-center h-full space-y-2">
-									<div className="h-full flex items-start justify-center flex-col mt-auto">
-									<label className="text-neutral-200 font-medium">Enable notifications</label>
-									<p className="text-xs text-neutral-400">Enables native system notifications.</p>
-									</div>
-									<button
-									type="button"
-									onClick={() => handleUpdate({ enableDesktopNotifications: !config.enableDesktopNotifications })}
-									className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
-										config.enableDesktopNotifications ? 'bg-green-500/30' : 'bg-red-500/30'
-									}`}
 									>
 										<span
 											className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-											config.enableDesktopNotifications ? 'translate-x-6' : 'translate-x-0'
+												config.compactMode ? "translate-x-6" : "translate-x-0"
 											}`}
 										/>
 									</button>
-							</div>	
-							<div className="flex justify-between w-full items-center h-full space-y-2">
-									<div className="h-full flex items-start justify-center flex-col mt-auto">
-									<label className="text-neutral-200 font-medium">Notify on install complete</label>
-									<p className="text-xs text-neutral-400">Notifies at the end of an installation.</p>
-									</div>
-									<button
-									type="button"
-									onClick={() => handleUpdate({ notifyOnInstallComplete: !config.notifyOnInstallComplete })}
-									className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
-										config.notifyOnInstallComplete ? 'bg-green-500/30' : 'bg-red-500/30'
-									}`}
-									>
-										<span
-											className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-											config.notifyOnInstallComplete ? 'translate-x-6' : 'translate-x-0'
+								</div>
+							</div>
+							{/*  */}
+							<div className="flex flex-col">
+								{/* Notifications */}
+								<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
+								<h2 className="text-xl font-semibold mb-6">Notifications</h2>
+								<div className="flex flex-col gap-2">
+									<div className="flex justify-between w-full items-center h-full space-y-2">
+										<div className="h-full flex items-start justify-center flex-col mt-auto">
+											<label className="text-neutral-200 font-medium">
+												Enable notifications
+											</label>
+											<p className="text-xs text-neutral-400">
+												Enables native system notifications.
+											</p>
+										</div>
+										<button
+											type="button"
+											onClick={() =>
+												handleUpdate({
+													enableDesktopNotifications:
+														!config.enableDesktopNotifications,
+												})
+											}
+											className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
+												config.enableDesktopNotifications
+													? "bg-green-500/30"
+													: "bg-red-500/30"
 											}`}
-										/>
-									</button>
-							</div>		
-							</div>
-						</div>
-						{/*  */}
-						<div className="flex flex-col">
-							{/* Logs */}
-							<div className="w-full h-0.5 bg-white/10 mt-4 mb-8"/>
-							<h2 className="text-xl font-semibold mb-6">Logs</h2>
-							<div className="flex flex-col gap-2">
-							<div className="flex justify-between w-full items-center h-full space-y-2">
-									<div className="h-full flex items-start justify-center flex-col mt-auto">
-									<label className="text-neutral-200 font-medium">Default logs path</label>
-									<p className="text-xs text-neutral-400">Default folder to save logs.</p>
+										>
+											<span
+												className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+													config.enableDesktopNotifications
+														? "translate-x-6"
+														: "translate-x-0"
+												}`}
+											/>
+										</button>
 									</div>
-									<input required readOnly className="text-xs text-neutral-300 focus:outline-none focus:ring-1 focus:ring-white/20 rounded w-96 h-10 px-2 bg-white/10 border border-white/5 backdrop-blur-3xl cursor-pointer" type="text" value={config.defaultLogsPath} onChange={(e) => { const value = e.target.value; if (value !== null && value.trim() !== '') { handleUpdate({ defaultLogsPath: value })} } } />
-							</div>	
+									<div className="flex justify-between w-full items-center h-full space-y-2">
+										<div className="h-full flex items-start justify-center flex-col mt-auto">
+											<label className="text-neutral-200 font-medium">
+												Notify on install complete
+											</label>
+											<p className="text-xs text-neutral-400">
+												Notifies at the end of an installation.
+											</p>
+										</div>
+										<button
+											type="button"
+											onClick={() =>
+												handleUpdate({
+													notifyOnInstallComplete:
+														!config.notifyOnInstallComplete,
+												})
+											}
+											className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
+												config.notifyOnInstallComplete
+													? "bg-green-500/30"
+													: "bg-red-500/30"
+											}`}
+										>
+											<span
+												className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+													config.notifyOnInstallComplete
+														? "translate-x-6"
+														: "translate-x-0"
+												}`}
+											/>
+										</button>
+									</div>
+								</div>
+							</div>
+							{/*  */}
+							<div className="flex flex-col">
+								{/* Logs */}
+								<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
+								<h2 className="text-xl font-semibold mb-6">Logs</h2>
+								<div className="flex flex-col gap-2">
+									<div className="flex justify-between w-full items-center h-full space-y-2">
+										<div className="h-full flex items-start justify-center flex-col mt-auto">
+											<label className="text-neutral-200 font-medium">
+												Default logs path
+											</label>
+											<p className="text-xs text-neutral-400">
+												Default folder to save logs.
+											</p>
+										</div>
+										<input
+											required
+											readOnly
+											className="text-xs text-neutral-300 focus:outline-none focus:ring-1 focus:ring-white/20 rounded-xl w-96 h-10 px-2 bg-white/10 border border-white/5 backdrop-blur-3xl cursor-pointer"
+											type="text"
+											value={config.defaultLogsPath}
+											onChange={(e) => {
+												const value = e.target.value;
+												if (value !== null && value.trim() !== "") {
+													handleUpdate({ defaultLogsPath: value });
+												}
+											}}
+										/>
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>	
 					)}
 					<div className="w-full flex items-end justify-between text-xs text-neutral-500 z-50 mt-18 pb-4">
 						<div>
-							<a href="https://getdione.app" target="_blank" rel="noopener noreferrer" className="hover:underline cursor-alias">getdione.app</a>
-							<p>built with &hearts; by <a href="https://applio.org" target="_blank" rel="noopener noreferrer" className="hover:underline cursor-alias">Applio</a> team</p>
+							<a
+								href="https://getdione.app"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="hover:underline cursor-alias"
+							>
+								getdione.app
+							</a>
+							<p>
+								built with &hearts; by{" "}
+								<a
+									href="https://applio.org"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="hover:underline cursor-alias"
+								>
+									Applio
+								</a>{" "}
+								team
+							</p>
 						</div>
 						<div className="text-right">
-							<p>API <button type="button" onClick={() => openLink(`http://localhost:${port}`)} className="hover:underline cursor-alias">{port}</button></p>
+							<p>
+								API{" "}
+								<button
+									type="button"
+									onClick={() => openLink(`http://localhost:${port}`)}
+									className="hover:underline cursor-alias"
+								>
+									{port}
+								</button>
+							</p>
 							<p>Node v{versions.node}</p>
 							<p>Electron v{versions.electron}</p>
 							<p>Chromium v{versions.chrome}</p>

@@ -66,12 +66,15 @@ export default function Install({ id }: { id?: string }) {
 		async function getData() {
 			try {
 				const port = await getCurrentPort();
-				const response = await fetch(`http://localhost:${port}/db/search/${id}`, {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
+				const response = await fetch(
+					`http://localhost:${port}/db/search/${id}`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
 					},
-				});
+				);
 				if (response.ok) {
 					const script = await response.json();
 					setData(script[0]);
@@ -154,7 +157,7 @@ export default function Install({ id }: { id?: string }) {
 						// launch iframe if server is running
 						if (
 							(type === "log" &&
-							content.toLowerCase().includes("started server")) ||
+								content.toLowerCase().includes("started server")) ||
 							content.toLowerCase().includes("http") ||
 							content.toLowerCase().includes("127.0.0.1") ||
 							content.toLowerCase().includes("localhost") ||
@@ -216,7 +219,11 @@ export default function Install({ id }: { id?: string }) {
 		setShow("logs");
 		try {
 			const port = await getCurrentPort();
-			window.electron.ipcRenderer.invoke("notify", "Downloading...", `Starting download of ${data.name}`);
+			window.electron.ipcRenderer.invoke(
+				"notify",
+				"Downloading...",
+				`Starting download of ${data.name}`,
+			);
 			await fetch(`http://localhost:${port}/scripts/download/${id}`, {
 				method: "GET",
 			});
@@ -230,7 +237,11 @@ export default function Install({ id }: { id?: string }) {
 	async function start() {
 		try {
 			const port = await getCurrentPort();
-			window.electron.ipcRenderer.invoke("notify", "Starting...", `Starting ${data.name}`);
+			window.electron.ipcRenderer.invoke(
+				"notify",
+				"Starting...",
+				`Starting ${data.name}`,
+			);
 			await fetch(`http://localhost:${port}/scripts/start/${data.name}`, {
 				method: "GET",
 			});
@@ -252,9 +263,13 @@ export default function Install({ id }: { id?: string }) {
 			if (response.status === 200) {
 				setShow("actions");
 				setInstalled(true);
-				window.electron.ipcRenderer.invoke("notify", "Stopping...", `${data.name} stopped successfully.`);
+				window.electron.ipcRenderer.invoke(
+					"notify",
+					"Stopping...",
+					`${data.name} stopped successfully.`,
+				);
 				showToast("success", `${data.name} stopped successfully.`);
-				setLogs([]) // clear logs
+				setLogs([]); // clear logs
 				await fetchIfDownloaded();
 			} else {
 				showToast(
@@ -264,7 +279,11 @@ export default function Install({ id }: { id?: string }) {
 			}
 		} catch (error) {
 			showToast("error", `Error stopping ${data.name}: ${error}`);
-			window.electron.ipcRenderer.invoke("notify", "Error...", `Error stopping ${data.name}: ${error}`);
+			window.electron.ipcRenderer.invoke(
+				"notify",
+				"Error...",
+				`Error stopping ${data.name}: ${error}`,
+			);
 			setLogs((prevLogs) => [...prevLogs, `Error stopping ${data.name}`]);
 		}
 	}
@@ -279,7 +298,11 @@ export default function Install({ id }: { id?: string }) {
 				},
 			);
 			if (response.status === 200) {
-				window.electron.ipcRenderer.invoke("notify", "Uninstalling...", `${data.name} uninstalled successfully.`);
+				window.electron.ipcRenderer.invoke(
+					"notify",
+					"Uninstalling...",
+					`${data.name} uninstalled successfully.`,
+				);
 				showToast("success", `${data.name} uninstalled successfully.`);
 				setInstalled(false);
 				await fetchIfDownloaded();
@@ -287,7 +310,11 @@ export default function Install({ id }: { id?: string }) {
 					prevApps.filter((app) => app !== data.name),
 				);
 			} else {
-				window.electron.ipcRenderer.invoke("notify", "Error...", `Error uninstalling ${data.name}: Error ${response.status}`);
+				window.electron.ipcRenderer.invoke(
+					"notify",
+					"Error...",
+					`Error uninstalling ${data.name}: Error ${response.status}`,
+				);
 				showToast(
 					"error",
 					`Error uninstalling ${data.name}, please try again later or do it manually.`,
@@ -355,7 +382,11 @@ export default function Install({ id }: { id?: string }) {
 			setShow("iframe");
 			setIframeAvailable(true);
 			showToast("default", `${data.name} has opened a preview.`);
-			window.electron.ipcRenderer.invoke("notify", "Preview...", `${data.name} has opened a preview.`);
+			window.electron.ipcRenderer.invoke(
+				"notify",
+				"Preview...",
+				`${data.name} has opened a preview.`,
+			);
 		}
 	};
 	useEffect(() => {
@@ -370,9 +401,9 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	async function onFinishInstallDeps() {
-		setMissingDependencies(null)
-		setLogs([])
-		setError(false)
+		setMissingDependencies(null);
+		setLogs([]);
+		setError(false);
 		handleDownload();
 	}
 

@@ -61,7 +61,7 @@ export default function FirstTime() {
 			}
 		}
 		shouldRedirect();
-	}, [])
+	}, []);
 
 	useEffect(() => {
 		const session = localStorage.getItem("session");
@@ -92,12 +92,15 @@ export default function FirstTime() {
 		if (authToken && refreshToken) {
 			async function setSessionAPI(token: string, refreshToken: string) {
 				const port = await getCurrentPort();
-				const response = await fetch(`http://localhost:${port}/db/set-session`, {
-					headers: {
-						accessToken: token,
-						refreshToken: refreshToken,
+				const response = await fetch(
+					`http://localhost:${port}/db/set-session`,
+					{
+						headers: {
+							accessToken: token,
+							refreshToken: refreshToken,
+						},
 					},
-				});
+				);
 				const data = await response.json();
 				if (data.session) {
 					setSession(data.session);
@@ -120,12 +123,13 @@ export default function FirstTime() {
 
 	// transition classes for elements
 	const getContainerClasses = (levelNumber) => {
-		return `w-full h-full flex flex-col items-center justify-center transition-all duration-500 ease-in-out ${level === levelNumber && !isTransitioning
-			? "opacity-100 translate-y-0"
-			: prevLevel === levelNumber && isTransitioning
-				? "opacity-0 -translate-y-8"
-				: "opacity-0 translate-y-8 absolute"
-			}`;
+		return `w-full h-full flex flex-col items-center justify-center transition-all duration-500 ease-in-out ${
+			level === levelNumber && !isTransitioning
+				? "opacity-100 translate-y-0"
+				: prevLevel === levelNumber && isTransitioning
+					? "opacity-0 -translate-y-8"
+					: "opacity-0 translate-y-8 absolute"
+		}`;
 	};
 
 	return (
@@ -213,7 +217,6 @@ export default function FirstTime() {
 							to="/?loginFinished=true"
 							className="bg-white/20 transition-all duration-400 w-28 rounded-full p-2 text-sm text-neutral-200 cursor-pointer hover:bg-white/30"
 						>
-							
 							<span className="text-center w-full flex items-center justify-center">
 								Finish
 							</span>

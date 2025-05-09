@@ -201,24 +201,29 @@ app.whenReady().then(() => {
 	});
 
 	// notifications
-	ipcMain.handle("notify", (_event, title: string, body: string, xml?: string) => {
-		const settings = readConfig();
-		const options: Electron.NotificationConstructorOptions = {
-			title,
-			body,
-			icon: path.resolve(__dirname, "../../resources/icon.ico"),
-			timeoutType: "default",
-			toastXml: xml ? xml : undefined,
-		};
+	ipcMain.handle(
+		"notify",
+		(_event, title: string, body: string, xml?: string) => {
+			const settings = readConfig();
+			const options: Electron.NotificationConstructorOptions = {
+				title,
+				body,
+				icon: path.resolve(__dirname, "../../resources/icon.ico"),
+				timeoutType: "default",
+				toastXml: xml ? xml : undefined,
+			};
 
-		if (settings?.enableDesktopNotifications) {
-			const notification = new Notification(options);
+			if (settings?.enableDesktopNotifications) {
+				const notification = new Notification(options);
 
-			notification.show();
-		} else {
-			logger.warn(`Notification attempt... Notifications are disabled. enableDesktopNotifications: ${settings?.enableDesktopNotifications}`);
-		}
-	});
+				notification.show();
+			} else {
+				logger.warn(
+					`Notification attempt... Notifications are disabled. enableDesktopNotifications: ${settings?.enableDesktopNotifications}`,
+				);
+			}
+		},
+	);
 
 	// Retrieve the current port
 	ipcMain.handle("get-current-port", async () => {

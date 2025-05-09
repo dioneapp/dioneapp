@@ -63,7 +63,7 @@ export const stopActiveProcess = async (io: Server) => {
 				activeProcess.on("error", reject);
 			}),
 			new Promise((_, reject) =>
-				setTimeout(() => reject(new Error("Process kill timeout")), 3000)
+				setTimeout(() => reject(new Error("Process kill timeout")), 3000),
 			),
 		]);
 
@@ -82,7 +82,7 @@ export const executeCommand = async (
 	command: string,
 	io: Server,
 	workingDir: string,
-	logs = "installUpdate"
+	logs = "installUpdate",
 ): Promise<string> => {
 	let stdoutData = "";
 	let stderrData = "";
@@ -234,7 +234,7 @@ export const executeCommand = async (
 export const executeCommands = async (
 	commands: any[],
 	workingDir: string,
-	io: Server
+	io: Server,
 ) => {
 	let currentWorkingDir = workingDir;
 	const currentPlatform = getPlatform(); // "win32", "linux", "darwin"
@@ -250,12 +250,16 @@ export const executeCommands = async (
 			if ("platform" in cmd) {
 				const cmdPlatform = cmd.platform.toLowerCase();
 				const normalizedPlatform =
-					currentPlatform === "win32" ? "windows" : currentPlatform === "darwin" ? "mac" : currentPlatform;
+					currentPlatform === "win32"
+						? "windows"
+						: currentPlatform === "darwin"
+							? "mac"
+							: currentPlatform;
 
 				// if platform does not match current platform, skip
 				if (cmdPlatform !== normalizedPlatform) {
 					logger.info(
-						`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`
+						`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
 					);
 					io.emit("installUpdate", {
 						type: "log",

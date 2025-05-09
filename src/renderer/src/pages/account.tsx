@@ -5,7 +5,9 @@ export default function Account() {
 				<main className="flex flex-col gap-6 py-5">
 					<section className="relative">
 						<div className="w-full">
-							<h1 className="text-2xl sm:text-3xl font-semibold mb-4 mt-2">Account</h1>
+							<h1 className="text-2xl sm:text-3xl font-semibold mb-4 mt-2">
+								Account
+							</h1>
 						</div>
 					</section>
 				</main>

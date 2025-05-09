@@ -188,11 +188,11 @@ type CommandObject = { command: string };
 function createVirtualEnvCommands(
 	envName: string,
 	commands: CommandObject[],
-	baseDir: string
+	baseDir: string,
 ): string[] {
 	const isWindows = process.platform === "win32";
 	const envPath = path.join(baseDir, envName);
-	const commandStrings = commands.map(cmd => cmd.command);
+	const commandStrings = commands.map((cmd) => cmd.command);
 
 	if (isWindows) {
 		// windows

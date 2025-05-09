@@ -1,10 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import {
-	useLocation,
-	useNavigate,
-	useParams,
-} from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Sidebar from "./components/layout/sidebar";
 import Titlebar from "./components/layout/titlebar";
 import FirstTime from "./pages/first-time";
@@ -22,7 +18,7 @@ const pageTransition = {
 	initial: { opacity: 0, filter: "blur(4px)" },
 	animate: { opacity: 1, filter: "blur(0px)" },
 	exit: { opacity: 0, filter: "blur(4px)" },
-	transition: { duration: 0.2, ease: "easeInOut" }
+	transition: { duration: 0.2, ease: "easeInOut" },
 };
 
 function App() {
@@ -45,12 +41,12 @@ function App() {
 		if (isLogged) checkAccess();
 		const session = localStorage.getItem("session");
 		if (session) {
-			console.log('User is logged')
+			console.log("User is logged");
 			setIsLogged(true);
 			// if have a session, check access
 			checkAccess();
 		} else {
-			console.log('User is not logged')
+			console.log("User is not logged");
 			setIsLogged(false);
 			if (pathname !== "/first-time") {
 				navigate("/first-time");
@@ -64,10 +60,10 @@ function App() {
 		if (dbUser) {
 			const dbUserObj = JSON.parse(dbUser);
 			if (dbUserObj[0].tester === true) {
-				console.log('User its a tester')
+				console.log("User its a tester");
 				setHaveAccess(true);
 			} else {
-				console.log('User is not a tester')
+				console.log("User is not a tester");
 				setHaveAccess(false);
 				if (pathname !== "/no_access") {
 					navigate("/no_access");
@@ -110,8 +106,13 @@ function App() {
 			<div className="h-screen w-screen overflow-hidden" id="main">
 				<Titlebar />
 				<div className="flex h-[calc(100%)]">
-					{pathname !== "/first-time" && pathname !== "/no_access" && <Sidebar />}
-					<div className="flex-1 overflow-x-hidden" id={pathname === "/settings" ? "settings" : "view"}>
+					{pathname !== "/first-time" && pathname !== "/no_access" && (
+						<Sidebar />
+					)}
+					<div
+						className="flex-1 overflow-x-hidden"
+						id={pathname === "/settings" ? "settings" : "view"}
+					>
 						<AnimatePresence mode="wait">
 							<motion.div
 								key={pathname}

@@ -80,7 +80,7 @@ async function isDependencyInstalled(
 export async function checkDependencies(dioneFile: string): Promise<{
 	success: boolean;
 	missing: { name: string; installed: boolean; reason: string }[];
-	error?: boolean
+	error?: boolean;
 }> {
 	try {
 		let config: DioneConfig;

@@ -58,8 +58,8 @@ export default function Installed() {
 			<h1 className="text-2xl sm:text-3xl font-semibold mb-4 mt-2">
 				Your library
 			</h1>
-			{apps.length > 0 ?
-				(loading ? (
+			{apps.length > 0 ? (
+				loading ? (
 					<Loading />
 				) : (
 					<>
@@ -71,15 +71,26 @@ export default function Installed() {
 							</div>
 						</div>
 					</>
-				)) : (
-					<div className="text-center flex flex-col gap-8 justify-center items-center mt-12">
-						<Icon name="DioDead" className="w-24 h-24 opacity-80 hover:opacity-50 transition-opacity duration-1000"/>
-						<div className="text-center items-center justify-center flex flex-col text-balance">
-						<h3 className="text-neutral-400 text-sm">You do not have any applications installed</h3>
-						<Link to="/home" className="text-sm text-neutral-200 mt-2 hover:underline underline-offset-4">Install one now</Link>
-						</div>
+				)
+			) : (
+				<div className="text-center flex flex-col gap-8 justify-center items-center mt-12">
+					<Icon
+						name="DioDead"
+						className="w-24 h-24 opacity-80 hover:opacity-50 transition-opacity duration-1000"
+					/>
+					<div className="text-center items-center justify-center flex flex-col text-balance">
+						<h3 className="text-neutral-400 text-sm">
+							You do not have any applications installed
+						</h3>
+						<Link
+							to="/home"
+							className="text-sm text-neutral-200 mt-2 hover:underline underline-offset-4"
+						>
+							Install one now
+						</Link>
 					</div>
-				)}
+				</div>
+			)}
 		</>
 	);
 }
