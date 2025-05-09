@@ -1,8 +1,24 @@
+# node_modules folder
 node_modules
+
+# dist folder
 dist
+
+# out folder
 out
+
+# os files
 .DS_Store
+
+# logs
 *.log*
+
+# apps folder
 apps
-.env
+
+# build folder
 /build/
+
+# env variables
+.env
+electron-builder.env
