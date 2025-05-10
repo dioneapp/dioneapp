@@ -27,7 +27,7 @@
   },
   "auto-changelog": {
     "name": "Dione v${version}",
-    "template": "keepachangelog",
+    "template": "compact",
     "hideCredit": true
   },
   "build": {
@@ -63,7 +63,8 @@
         "provider": "github",
         "owner": "dioneapp",
         "repo": "dioneapp",
-        "releaseType": "release"
+        "releaseType": "release",
+        "releaseNotes": "CHANGELOG.md"
     },
     "releaseInfo": {
       "releaseNotesFile": "CHANGELOG.md"
