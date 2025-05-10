@@ -9,6 +9,7 @@ files:
   - '!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+  - '!node_modules/@tailwindcss/oxide-android-arm64/**'
 asarUnpack:
   - resources/**
 win:
@@ -41,5 +42,6 @@ npmRebuild: false
 publish:
   provider: github
   token: {env.GITHUB_TOKEN}
+  releaseNotes: CHANGELOG.md
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

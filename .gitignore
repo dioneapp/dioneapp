@@ -22,3 +22,6 @@ apps
 # env variables
 .env
 electron-builder.env
+
+# changelog
+CHANGELOG.md
