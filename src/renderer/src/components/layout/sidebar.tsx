@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { openLink } from "../../utils/openLink";
 import QuickLaunch from "./quick-launch";
 import Icon from "../icons/icon";
+import { motion } from "framer-motion";
 
 export default function Sidebar() {
 	const [authToken, setAuthToken] = useState<string | null>(null);
@@ -13,6 +14,26 @@ export default function Sidebar() {
 	const navigate = useNavigate();
 	const [dbUser, setDbUser] = useState<any>(null);
 	const [config, setConfig] = useState<any | null>(null);
+
+	// updates
+	const [updateAvailable, setUpdateAvailable] = useState(false);
+
+	useEffect(() => {
+		window.electron.ipcRenderer.invoke("check-update");
+	}, []);
+
+	useEffect(() => {
+		const handleUpdateAvailable = () => setUpdateAvailable(true);
+		const handleUpdateDownloaded = () => setUpdateAvailable(true);
+	
+		window.electron.ipcRenderer.on("update_available", handleUpdateAvailable);
+		window.electron.ipcRenderer.on("update_downloaded", handleUpdateDownloaded);
+	
+		return () => {
+			window.electron.ipcRenderer.removeListener("update_available", handleUpdateAvailable);
+			window.electron.ipcRenderer.removeListener("update_downloaded", handleUpdateDownloaded);
+		};
+	}, []);
 
 	useEffect(() => {
 		const handleConfigUpdate = () => {
@@ -222,13 +243,34 @@ export default function Sidebar() {
 						</div>
 					)}
 				</div>
-				{/* we can use this space to warn about things, for example if we detect that dione is running on dev mode without api keys or smth */}
-				{/* <div className="h-fit bg-orange-300/20 border border-white/5 rounded-xl backdrop-blur-3xl w-full">
-					<div className="justify-center items-start py-8 px-6 flex flex-col gap-1"> 
-						<h1 className="font-semibold text-xl text-neutral-200">Warning!</h1>
-						<h2 className="text-[10px] text-neutral-300 text-balance">You are using an alpha version for testing, you will experience bugs and errors that you should report. With this in mind, be careful and proceed with caution.</h2>
+				{updateAvailable && !config?.compactMode && (
+					<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56">
+						<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1"> 
+							<h1 className="font-semibold text-xl text-neutral-200">Update Available</h1>
+							<h2 className="text-[10px] text-neutral-300 text-balance">
+								A new version of Dione is available, please restart the app to update.
+							</h2>
+						</div>
+					</motion.div>
+				)}
+				{updateAvailable && config?.compactMode && (
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ duration: 0.2 }}
+					className="h-fit border border-white/10 bg-neutral-800/40 rounded-full backdrop-blur-3xl w-full max-w-56 mb-4 group relative"
+				>
+					<div className="justify-center items-center py-3 flex flex-col gap-1">
+					<Icon name="Important" className="h-6 w-6" />
 					</div>
-				</div> */}
+					<div
+					className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-6 py-4 bg-black/90 text-white text-xs shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all backdrop-blur-3xl duration-200"
+					style={{ whiteSpace: "pre-line" }}
+					>
+					New update available, please restart the app to update.
+					</div>
+				</motion.div>
+				)}
 				<QuickLaunch compactMode={config?.compactMode} />
 				<div
 					className={`h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l ${!config?.compactMode ? "mb-4" : ""}`}
