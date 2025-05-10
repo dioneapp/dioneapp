@@ -16,6 +16,10 @@ import os from "node:os";
 import { readConfig, defaultConfig, writeConfig } from "./config";
 import { Notification } from "electron";
 import { autoUpdater } from "electron-updater";
+import dotenv from "dotenv";
+
+// load env variables
+dotenv.config();
 
 // set default protocol client
 if (process.defaultApp) {
@@ -60,6 +64,17 @@ function createWindow() {
 	mainWindow.removeMenu();
 
 	mainWindow.once("ready-to-show", () => {
+		autoUpdater.forceDevUpdateConfig = true;
+		autoUpdater.logger = logger;
+		autoUpdater.autoDownload = true;
+		autoUpdater.autoInstallOnAppQuit = true;
+		autoUpdater.setFeedURL({
+			provider: "github",
+			owner: "dioneapp",
+			repo: "dioneapp",
+			private: true,
+			token: process.env.GITHUB_TOKEN,
+		})
 		autoUpdater.checkForUpdatesAndNotify();
 	});
 
@@ -240,6 +255,10 @@ app.whenReady().then(() => {
 	// Open external links
 	ipcMain.handle("open-external-link", (_event, url) => {
 		shell.openExternal(url);
+	});
+
+	ipcMain.handle("check-update", () => {
+		autoUpdater.checkForUpdates();
 	});
 
 	ipcMain.on('restart_app', () => {
