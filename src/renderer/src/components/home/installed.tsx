@@ -55,7 +55,7 @@ export default function Installed() {
 
 	return (
 		<>
-			<h1 className="text-2xl sm:text-3xl font-semibold mb-4 mt-2">
+			<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
 				Your library
 			</h1>
 			{apps.length > 0 ? (

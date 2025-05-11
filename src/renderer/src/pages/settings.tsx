@@ -80,16 +80,18 @@ export default function Settings() {
 	};
 
 	return (
-		<div className="overflow-auto h-full py-4">
-			{/* background */}
-			<div className="absolute top-0 left-0 w-full h-full bg-gradient-to-bl from-[#BCB1E7] to-[#080808] opacity-15 rounded-3xl blur-3xl z-0" />
-			<div className="max-w-[2000px] h-full mx-auto px-4 sm:px-6 lg:px-8 py-4">
-				<div className="flex flex-col space-y-4 h-full">
-					{config && (
+		<div className="min-h-screen bg-background pt-4">
+			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">	
+				<main className="flex flex-col gap-6 py-5">
+					{/* background */}
+					<div className="absolute top-0 left-0 w-full h-full bg-gradient-to-bl from-[#BCB1E7] to-[#080808] opacity-15 rounded-3xl blur-3xl z-0" />
+					<div>
+						<div className="flex flex-col space-y-4 h-full">
+							{config && (
 						<div className="flex flex-col space-y-4 h-full z-50 mb-12">
 							<div className="flex flex-col">
 								{/* Interface */}
-								<h2 className="text-xl font-semibold mb-6">Interface</h2>
+								<h2 className="text-2xl sm:text-3xl font-semibold mb-6">Interface</h2>
 								<div className="flex justify-between w-full items-center h-full space-y-2">
 									<div className="h-full flex items-start justify-center flex-col mt-auto">
 										<label className="text-neutral-200 font-medium">
@@ -140,7 +142,7 @@ export default function Settings() {
 							<div className="flex flex-col">
 								{/* Notifications */}
 								<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
-								<h2 className="text-xl font-semibold mb-6">Notifications</h2>
+								<h2 className="text-2xl sm:text-3xl font-semibold mb-6">Notifications</h2>
 								<div className="flex flex-col gap-2">
 									<div className="flex justify-between w-full items-center h-full space-y-2">
 										<div className="h-full flex items-start justify-center flex-col mt-auto">
@@ -212,7 +214,7 @@ export default function Settings() {
 							<div className="flex flex-col">
 								{/* Logs */}
 								<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
-								<h2 className="text-xl font-semibold mb-6">Logs</h2>
+								<h2 className="text-2xl sm:text-3xl font-semibold mb-6">Logs</h2>
 								<div className="flex flex-col gap-2">
 									<div className="flex justify-between w-full items-center h-full space-y-2">
 										<div className="h-full flex items-start justify-center flex-col mt-auto">
@@ -241,7 +243,7 @@ export default function Settings() {
 							</div>
 						</div>
 					)}
-					<div className="w-full flex items-end justify-between text-xs text-neutral-500 z-50 mt-18 pb-4">
+					<div className="w-full flex items-end justify-between text-xs text-neutral-500 z-50 mt-14 pb-4">
 						<div>
 							<a
 								href="https://getdione.app"
@@ -252,16 +254,7 @@ export default function Settings() {
 								getdione.app
 							</a>
 							<p>
-								built with &hearts; by{" "}
-								<a
-									href="https://applio.org"
-									target="_blank"
-									rel="noopener noreferrer"
-									className="hover:underline cursor-alias"
-								>
-									Applio
-								</a>{" "}
-								team
+								built with &hearts;
 							</p>
 						</div>
 						<div className="text-right">
@@ -281,6 +274,8 @@ export default function Settings() {
 						</div>
 					</div>
 				</div>
+			  </div>
+			</main>
 			</div>
 		</div>
 	);
