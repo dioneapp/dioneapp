@@ -327,7 +327,7 @@ export default function Sidebar() {
 									className="h-full w-full object-cover object-center"
 								/>
 								{hoveredTooltip === "account" && (
-									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-white text-xs shadow-lg duration-200 whitespace-nowrap bg-black/90 backdrop-blur-3xl">
+									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap bg-black/90 backdrop-blur-3xl">
 										Account
 									</div>
 								)}
@@ -346,7 +346,7 @@ export default function Sidebar() {
 								>
 									<Icon name="Logout" className="h-5 w-5" />
 									{hoveredTooltip === "logout" && (
-										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-white text-xs shadow-lg duration-200 whitespace-nowrap">
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 											Logout
 										</div>
 									)}
@@ -361,7 +361,7 @@ export default function Sidebar() {
 								>
 									<Icon name="Login" className="h-5 w-5" />
 									{hoveredTooltip === "login" && (
-										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-white text-xs shadow-lg duration-200 whitespace-nowrap">
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 											Login
 										</div>
 									)}
@@ -379,7 +379,7 @@ export default function Sidebar() {
 							>
 								<Icon name="Library" className="h-5 w-5" />
 								{hoveredTooltip === "library" && (
-									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-white text-xs shadow-lg duration-200 whitespace-nowrap">
+									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 										Library
 									</div>
 								)}
@@ -392,7 +392,7 @@ export default function Sidebar() {
 							>
 								<Icon name="Settings" className="h-5 w-5" />
 								{hoveredTooltip === "settings" && (
-									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-white text-xs shadow-lg duration-200 whitespace-nowrap">
+									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 										Settings
 									</div>
 								)}
