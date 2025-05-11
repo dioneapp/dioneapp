@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Icon from "../icons/icon";
 
 interface IframeProps {
@@ -91,11 +91,6 @@ export default function IframeComponent({
 						? absoluteValue
 						: `${Math.round(percentage)}%`}
 				</span>
-				{isHovered && absoluteValue && (
-					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 bg-black/80 text-[10px] text-white rounded shadow">
-						{absoluteValue}
-					</div>
-				)}
 			</div>
 		);
 	};
@@ -129,7 +124,7 @@ export default function IframeComponent({
 					</div>
 				</div>
 
-				<div className="flex gap-1 justify-start mx-auto w-full items-center overflow-hidden">
+				<div className="flex gap-1 justify-center items-center flex-1">
 					<UsageIndicator label="CPU" percentage={systemUsage.cpu} />
 					<UsageIndicator
 						label="RAM"
@@ -150,19 +145,13 @@ export default function IframeComponent({
 
 				<div className="flex gap-1.5 w-fit h-full items-center justify-end">
 					<motion.button
-						className="flex items-center justify-center w-10 h-full hover:bg-white/15 bg-white/10 transition-colors rounded-md relative group cursor-pointer"
-						onClick={() => setShow("logs")}
-					>
-						<Icon name="Back" className="w-4 h-4 " />
-					</motion.button>
-					<motion.button
-						className="flex items-center justify-center w-8 h-full hover:bg-white/80 border-l bg-white transition-colors rounded-md border relative group cursor-pointer"
+						className="flex items-center justify-center w-8 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleStop}
 					>
 						<Icon name="Stop" className="w-4 h-4 " />
 					</motion.button>
 					<motion.button
-						className="flex items-center justify-center w-8 h-full hover:bg-white/80 border-l bg-white transition-colors rounded-md border relative group cursor-pointer"
+						className="flex items-center justify-center w-8 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleReloadIframe}
 					>
 						<Icon name="Reload" className="w-4 h-4" />
