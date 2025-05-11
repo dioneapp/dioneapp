@@ -65,13 +65,32 @@ export async function getScripts(id: string, io: Server) {
 	return null;
 }
 
-function extractInfo(url: string): string {
-	const regex = /github\.com\/([^\/]+\/[^\/]+)/;
-	const match = url.match(regex);
-	if (match?.[1]) {
-		return match[1];
+function extractInfo(url: string): { repo: string; branch?: string; filePath?: string } {
+	// extract owner and name
+	const repoRegex = /github\.com\/([^\/]+\/[^\/]+)/;
+	const repoMatch = url.match(repoRegex);
+	
+	if (!repoMatch?.[1]) {
+		throw new Error("No valid GitHub repository found");
 	}
-	throw new Error("No valid GitHub repository found");
+	
+	const repo = repoMatch[1];
+	
+	// check if URL contains branch and file path information
+	const fullPathRegex = /github\.com\/([^\/]+\/[^\/]+)\/blob\/([^\/]+)\/(.+)/;
+	const fullPathMatch = url.match(fullPathRegex);
+	
+	if (fullPathMatch) {
+		// return repo, branch and file path if available
+		return {
+			repo,
+			branch: fullPathMatch[2],
+			filePath: fullPathMatch[3]
+		};
+	}
+	
+	// return just the repo if no branch/file info
+	return { repo };
 }
 
 export function downloadFile(
@@ -92,8 +111,15 @@ export function downloadFile(
 	let url = GITHUB_URL;
 	if (!GITHUB_URL.includes("raw.githubusercontent.com")) {
 		try {
-			const repo = extractInfo(GITHUB_URL);
-			url = `https://raw.githubusercontent.com/${repo}/main/dione.json`; // should change this later, for now only works with main branch
+			const repoInfo = extractInfo(GITHUB_URL);
+			
+			if (repoInfo.branch && repoInfo.filePath) {
+				// if URL contains branch and file path, use them
+				url = `https://raw.githubusercontent.com/${repoInfo.repo}/${repoInfo.branch}/${repoInfo.filePath}`;
+			} else {
+				// default to main branch and dione.json if not specified
+				url = `https://raw.githubusercontent.com/${repoInfo.repo}/main/dione.json`;
+			}
 		} catch (error: any) {
 			io.emit("installUpdate", {
 				type: "log",
