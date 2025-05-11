@@ -72,7 +72,7 @@ export default function ActionsComponent({
 										<span className="w-fit h-full flex items-center justify-center">
 											<Icon name="Check" />
 										</span>
-										{data?.script_url.replace("https://github.com/", "")}
+										{data?.script_url.replace(/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//, "")}
 									</p>
 									<p className="text-xs text-[#BCB1E7] flex gap-1">
 										<span className="w-fit h-full flex items-center">
