@@ -128,7 +128,9 @@ export default function QuickLaunch({
 				/>
 			</Link>
 			{!compactMode && (
-				<p className="text-xs text-neutral-400 truncate">{app.name}</p>
+				<div className="max-w-18 overflow-hidden flex justify-center items-center">
+					<p className="text-[10px] text-neutral-400 truncate w-full">{app.name}</p>
+				</div>
 			)}
 		</div>
 	);
@@ -143,12 +145,14 @@ export default function QuickLaunch({
 			>
 				<Icon name="Plus" className="h-10 w-10" />
 			</button>
-			<p className="text-xs text-neutral-400">Add App</p>
+			<div className="max-w-18 overflow-hidden flex justify-center items-center">
+				<p className="text-[10px] text-neutral-400 truncate w-full">Add App</p>
+			</div>
 		</div>
 	);
 
 	return (
-		<div className={compactMode ? "mb-auto" : "flex mt-auto w-full h-64"}>
+		<div className={compactMode ? "mb-auto" : "flex mt-auto w-full h-64 max-w-64"}>
 			<div className="w-full">
 				{!compactMode && <h2 className="font-semibold">Quick Launch</h2>}
 				<div
