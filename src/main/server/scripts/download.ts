@@ -89,8 +89,26 @@ export function downloadFile(
 		content: "Downloading script...",
 	});
 
-	const repo = extractInfo(GITHUB_URL);
-	const url = `https://raw.githubusercontent.com/${repo}/main/dione.json`; // should change this later, for now only works with main branch
+	let url = GITHUB_URL;
+	if (!GITHUB_URL.includes("raw.githubusercontent.com")) {
+		try {
+			const repo = extractInfo(GITHUB_URL);
+			url = `https://raw.githubusercontent.com/${repo}/main/dione.json`; // should change this later, for now only works with main branch
+		} catch (error: any) {
+			io.emit("installUpdate", {
+				type: "log",
+				content: `ERROR: Invalid GitHub URL: ${error.message}`,
+			});
+			io.emit("installUpdate", {
+				type: "status",
+				status: "error",
+				content: "Error detected",
+			});
+			logger.error(`Invalid GitHub URL: ${error.message}`);
+			return;
+		}
+	}
+
 	const file = fs.createWriteStream(FILE_PATH);
 
 	https
