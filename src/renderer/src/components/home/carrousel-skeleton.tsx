@@ -6,7 +6,7 @@ export default function CarrouselSkeleton() {
 					<div className="w-full h-72 flex rounded-xl relative overflow-hidden border border-white/5">
 						{/* background skeleton */}
 						<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
-						<div className="absolute inset-0 w-full h-full bg-gradient-to-br from-gray-600/20 to-gray-900/10" />
+						<div className="absolute inset-0 w-full h-full bg-gradient-to-br from-neutral-600/20 to-neutral-900/10" />
 
 						{/* content skeleton */}
 						<div className="z-50 absolute inset-0 p-10">
