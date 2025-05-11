@@ -65,13 +65,14 @@ export default function ActionsComponent({
 										{data?.name}
 									</h1>
 									<p
-										className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-full cursor-pointer text-nowrap"
+									
+										className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-full cursor-pointer text-justify max-w-md"
 										onClick={() => openLink(data?.script_url)}
 									>
-										<span className="w-fit h-full flex items-center">
+										<span className="w-fit h-full flex items-center justify-center">
 											<Icon name="Check" />
 										</span>
-										{data?.script_url}
+										{data?.script_url.replace("https://github.com/", "")}
 									</p>
 									<p className="text-xs text-[#BCB1E7] flex gap-1">
 										<span className="w-fit h-full flex items-center">
