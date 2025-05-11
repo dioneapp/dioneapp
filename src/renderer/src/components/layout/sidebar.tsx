@@ -1,10 +1,10 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { openLink } from "../../utils/openLink";
-import QuickLaunch from "./quick-launch";
 import Icon from "../icons/icon";
-import { motion } from "framer-motion";
+import QuickLaunch from "./quick-launch";
 
 export default function Sidebar() {
 	const [authToken, setAuthToken] = useState<string | null>(null);
@@ -14,6 +14,7 @@ export default function Sidebar() {
 	const navigate = useNavigate();
 	const [dbUser, setDbUser] = useState<any>(null);
 	const [config, setConfig] = useState<any | null>(null);
+	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
 
 	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -25,10 +26,10 @@ export default function Sidebar() {
 	useEffect(() => {
 		const handleUpdateAvailable = () => setUpdateAvailable(true);
 		const handleUpdateDownloaded = () => setUpdateAvailable(true);
-	
+
 		window.electron.ipcRenderer.on("update_available", handleUpdateAvailable);
 		window.electron.ipcRenderer.on("update_downloaded", handleUpdateDownloaded);
-	
+
 		return () => {
 			window.electron.ipcRenderer.removeListener("update_available", handleUpdateAvailable);
 			window.electron.ipcRenderer.removeListener("update_downloaded", handleUpdateDownloaded);
@@ -245,7 +246,7 @@ export default function Sidebar() {
 				</div>
 				{updateAvailable && !config?.compactMode && (
 					<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56">
-						<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1"> 
+						<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
 							<h1 className="font-semibold text-xl text-neutral-200">Update Available</h1>
 							<h2 className="text-[10px] text-neutral-300 text-balance">
 								A new version of Dione is available, please restart the app to update.
@@ -254,22 +255,22 @@ export default function Sidebar() {
 					</motion.div>
 				)}
 				{updateAvailable && config?.compactMode && (
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={{ duration: 0.2 }}
-					className="h-fit border border-white/10 bg-neutral-800/40 rounded-full backdrop-blur-3xl w-full max-w-56 mb-4 group relative"
-				>
-					<div className="justify-center items-center py-3 flex flex-col gap-1">
-					<Icon name="Important" className="h-6 w-6" />
-					</div>
-					<div
-					className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-6 py-4 bg-black/90 text-white text-xs shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all backdrop-blur-3xl duration-200"
-					style={{ whiteSpace: "pre-line" }}
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ duration: 0.2 }}
+						className="h-fit border border-white/10 bg-neutral-800/40 rounded-full backdrop-blur-3xl w-full max-w-56 mb-4 group relative"
 					>
-					New update available, please restart the app to update.
-					</div>
-				</motion.div>
+						<div className="justify-center items-center py-3 flex flex-col gap-1">
+							<Icon name="Important" className="h-6 w-6" />
+						</div>
+						<div
+							className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-6 py-4 bg-black/90 text-white text-xs shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all backdrop-blur-3xl duration-200"
+							style={{ whiteSpace: "pre-line" }}
+						>
+							New update available, please restart the app to update.
+						</div>
+					</motion.div>
 				)}
 				<QuickLaunch compactMode={config?.compactMode} />
 				<div
@@ -283,15 +284,29 @@ export default function Sidebar() {
 							<div className="flex flex-col gap-2 transition-all duration-400 mb-2">
 								<Link
 									to={"/library"}
-									className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full flex gap-1 items-center justify-center transition-colors"
+									className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full flex gap-1 items-center justify-center transition-colors relative"
+									onMouseEnter={() => setHoveredTooltip("library")}
+									onMouseLeave={() => setHoveredTooltip(null)}
 								>
 									<Icon name="Library" className="h-5 w-5" />
+									{hoveredTooltip === "library" && (
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
+											Library
+										</div>
+									)}
 								</Link>
 								<Link
 									to={"/settings"}
-									className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center justify-center"
+									className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center justify-center relative"
+									onMouseEnter={() => setHoveredTooltip("settings")}
+									onMouseLeave={() => setHoveredTooltip(null)}
 								>
 									<Icon name="Settings" className="h-5 w-5" />
+									{hoveredTooltip === "settings" && (
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
+											Settings
+										</div>
+									)}
 								</Link>
 							</div>
 						</div>
@@ -301,14 +316,21 @@ export default function Sidebar() {
 					>
 						{!loading && logged && dbUser && (
 							<Link
-								className={` hover:bg-white/10 overflow-hidden flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"}`}
+								className={`hover:bg-white/10 overflow-hidden flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"} relative`}
 								to="/account"
+								onMouseEnter={() => setHoveredTooltip("account")}
+								onMouseLeave={() => setHoveredTooltip(null)}
 							>
 								<img
 									src={dbUser[0]?.avatar_url || "/svgs/User.svg"}
 									alt="user avatar"
 									className="h-full w-full object-cover object-center"
 								/>
+								{hoveredTooltip === "account" && (
+									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-white text-xs shadow-lg duration-200 whitespace-nowrap bg-black/90 backdrop-blur-3xl">
+										Account
+									</div>
+								)}
 							</Link>
 						)}
 					</div>
@@ -317,19 +339,32 @@ export default function Sidebar() {
 							{logged ? (
 								<button
 									type="button"
-									className="w-9.5 h-9.5 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer"
+									className="w-9.5 h-9.5 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer relative"
 									onClick={logout}
+									onMouseEnter={() => setHoveredTooltip("logout")}
+									onMouseLeave={() => setHoveredTooltip(null)}
 								>
 									<Icon name="Logout" className="h-5 w-5" />
+									{hoveredTooltip === "logout" && (
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-white text-xs shadow-lg duration-200 whitespace-nowrap">
+											Logout
+										</div>
+									)}
 								</button>
 							) : (
 								<button
 									type="button"
-									className="p-2 bg-white/5 border rounded-full border-white/10 hover:bg-white/10 transition-colors flex gap-1 items-center cursor-pointer"
+									className="p-2 bg-white/5 border rounded-full border-white/10 hover:bg-white/10 transition-colors flex gap-1 items-center cursor-pointer relative"
 									onClick={() => openLink("https://getdione.app/auth/login")}
+									onMouseEnter={() => setHoveredTooltip("login")}
+									onMouseLeave={() => setHoveredTooltip(null)}
 								>
-									{/* <span className="text-xs text-neutral-300 font-semibold">Login</span> */}
 									<Icon name="Login" className="h-5 w-5" />
+									{hoveredTooltip === "login" && (
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-white text-xs shadow-lg duration-200 whitespace-nowrap">
+											Login
+										</div>
+									)}
 								</button>
 							)}
 						</div>
@@ -338,15 +373,29 @@ export default function Sidebar() {
 						<div className="flex gap-2 items-center justify-end w-full h-full">
 							<Link
 								to={"/library"}
-								className="p-2 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center"
+								className="p-2 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center relative"
+								onMouseEnter={() => setHoveredTooltip("library")}
+								onMouseLeave={() => setHoveredTooltip(null)}
 							>
 								<Icon name="Library" className="h-5 w-5" />
+								{hoveredTooltip === "library" && (
+									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-white text-xs shadow-lg duration-200 whitespace-nowrap">
+										Library
+									</div>
+								)}
 							</Link>
 							<Link
 								to={"/settings"}
-								className="p-2 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center"
+								className="p-2 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center relative"
+								onMouseEnter={() => setHoveredTooltip("settings")}
+								onMouseLeave={() => setHoveredTooltip(null)}
 							>
 								<Icon name="Settings" className="h-5 w-5" />
+								{hoveredTooltip === "settings" && (
+									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-white text-xs shadow-lg duration-200 whitespace-nowrap">
+										Settings
+									</div>
+								)}
 							</Link>
 						</div>
 					)}
