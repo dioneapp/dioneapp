@@ -16,8 +16,6 @@ export default function Sidebar() {
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
 
-	console.log('USER', dbUser)
-
 	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);
 
