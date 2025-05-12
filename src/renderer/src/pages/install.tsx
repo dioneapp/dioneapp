@@ -1,8 +1,5 @@
-import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
+import { useEffect, useState } from "react";
 import { getCurrentPort } from "../utils/getPort";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
@@ -10,56 +7,38 @@ import ActionsComponent from "@renderer/components/install/actions";
 import { useAppContext } from "@renderer/components/layout/global-context";
 import Icon from "@renderer/components/icons/icon";
 import MissingDepsModal from "@renderer/components/layout/missing-deps-modal";
+import { useNavigate } from "react-router-dom";
 
 export default function Install({ id }: { id?: string }) {
-	const { setInstalledApps } = useAppContext();
+	const { 
+		setInstalledApps, 
+		logs, 
+		setLogs, 
+		statusLog, 
+		isServerRunning, 
+		setIsServerRunning,
+		setData,
+		data,
+		setError,
+		setIframeAvailable,
+		iframeAvailable,
+		setMissingDependencies,
+		missingDependencies,
+		setShow,
+		show,
+		showToast,
+		stopCheckingRef,
+		iframeSrc,
+		catchPort,
+		exitRef
+	 } = useAppContext();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
 	const [_imgLoading, setImgLoading] = useState<boolean>(true);
 	// data stuff
-	const [data, setData] = useState<any | undefined>(undefined);
 	const [installed, setInstalled] = useState<boolean>(false);
-	// show
-	const [show, setShow] = useState("actions");
-	// logs stuff
-	const [logs, setLogs] = useState<string[]>([]);
-	const [statusLog, setStatusLog] = useState<{
-		status: string;
-		content: string;
-	}>({ status: "", content: "" });
-	// iframe stuff
-	const [catchPort, setCatchPort] = useState<number>();
-	const [iframeSrc, setIframeSrc] = useState<string>("");
-	const [iframeAvailable, setIframeAvailable] = useState<boolean>(false);
-	// toast stuff
-	const { addToast } = useToast();
-	const showToast = (
-		variant: "default" | "success" | "error" | "warning",
-		message: string,
-		fixed?: "true" | "false",
-	) => {
-		addToast({
-			variant,
-			children: message,
-			fixed,
-		});
-	};
-	// navegation stuff
+	// navigation stuff
 	const navigate = useNavigate();
-	// errors stuff
-	const [error, setError] = useState<boolean>(false);
-	const errorRef = useRef(false);
-	useEffect(() => {
-		if (error === true) {
-			showToast(
-				"error",
-				"We are having connection problems, please try again later.",
-				"true",
-			);
-		}
-	}, [error]);
-	// missing dependencies stuff
-	const [missingDependencies, setMissingDependencies] = useState<any>();
 
 	// fetch script data
 	useEffect(() => {
@@ -93,6 +72,17 @@ export default function Install({ id }: { id?: string }) {
 		getData();
 	}, [id]);
 
+	// on get exitRef, stop apps
+	useEffect(() => {
+		async function stopApps() {
+			await stop("exit");
+		}
+
+		if (exitRef) {
+			stopApps();
+		}
+	}, [exitRef]);
+
 	async function fetchIfDownloaded() {
 		if (data?.name) {
 			const port = await getCurrentPort();
@@ -119,103 +109,8 @@ export default function Install({ id }: { id?: string }) {
 		fetchIfDownloaded();
 	}, [data]);
 
-	useEffect(() => {
-		let socket: any = null;
-
-		async function setupSocket() {
-			try {
-				const port = await getCurrentPort();
-				socket = io(`http://localhost:${port}`);
-
-				socket.on("clientUpdate", (message: string) => {
-					console.log("Received log:", message);
-					setLogs((prevLogs) => [...prevLogs, message]);
-				});
-
-				socket.on("connect", () => {
-					console.log("Connected to socket:", socket.id);
-					setLogs((prevLogs) => [...prevLogs, "Connected to server"]);
-				});
-
-				socket.on("disconnect", () => {
-					console.log("Socket disconnected");
-					setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
-				});
-
-				socket.on("missingDeps", (data) => {
-					setMissingDependencies(data);
-				});
-
-				socket.on(
-					"installUpdate",
-					(message: { type: string; content: string; status: string }) => {
-						const { type, status, content } = message;
-						console.log("Received log:", message);
-						if (content.toLowerCase().includes("error") || status === "error") {
-							errorRef.current = true;
-						}
-						// launch iframe if server is running
-						if (
-							(type === "log" &&
-								content.toLowerCase().includes("started server")) ||
-							content.toLowerCase().includes("http") ||
-							content.toLowerCase().includes("127.0.0.1") ||
-							content.toLowerCase().includes("localhost") ||
-							content.toLowerCase().includes("0.0.0.0")
-						) {
-							loadIframe(Number.parseInt(content));
-						}
-						if (type === "log") {
-							setLogs((prevLogs) => [...prevLogs, content]);
-							if (content.includes("Cant kill process")) {
-								showToast(
-									"error",
-									"Error stopping script, please try again later or do it manually.",
-								);
-							}
-						}
-						if (type === "status") {
-							setStatusLog({ status: status || "pending", content });
-							if (
-								content.toLowerCase().includes("actions executed") &&
-								!errorRef.current
-							) {
-								console.log("Redirecting...");
-								window.location.reload();
-							}
-						}
-						if (type === "catch") {
-							setIframeAvailable(false);
-							loadIframe(Number.parseInt(content));
-							setCatchPort(Number.parseInt(content));
-						}
-
-						if (content === "Script killed successfully" && !errorRef.current) {
-							console.log("Redirecting...");
-							navigate(0); // should change this, but for now fix logs after stop script
-							showToast(
-								"success",
-								`${data.name || "Script"} exited successfully.`,
-							);
-						}
-					},
-				);
-			} catch (error) {
-				setError(true);
-				console.error("Error setting up socket:", error);
-				setLogs((prevLogs) => [...prevLogs, "Error setting up socket"]);
-			}
-		}
-
-		setupSocket();
-		return () => {
-			if (socket) {
-				socket.disconnect();
-			}
-		};
-	}, []);
-
 	async function download() {
+		setIsServerRunning(true);
 		setShow("logs");
 		try {
 			const port = await getCurrentPort();
@@ -231,11 +126,13 @@ export default function Install({ id }: { id?: string }) {
 		} catch (error) {
 			showToast("error", `Error initiating download: ${error}`);
 			setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
+			setIsServerRunning(false);
 		}
 	}
 
 	async function start() {
 		try {
+			setIsServerRunning(true);
 			const port = await getCurrentPort();
 			window.electron.ipcRenderer.invoke(
 				"notify",
@@ -248,10 +145,11 @@ export default function Install({ id }: { id?: string }) {
 		} catch (error) {
 			showToast("error", `Error initiating ${data.name}: ${error}`);
 			setLogs((prevLogs) => [...prevLogs, `Error initiating ${data.name}`]);
+			setIsServerRunning(false);
 		}
 	}
 
-	async function stop() {
+	async function stop(type?: string) {
 		try {
 			const port = await getCurrentPort();
 			const response = await fetch(
@@ -271,6 +169,10 @@ export default function Install({ id }: { id?: string }) {
 				showToast("success", `${data.name} stopped successfully.`);
 				setLogs([]); // clear logs
 				await fetchIfDownloaded();
+				setIsServerRunning(false);
+				if (type === "exit") {
+					window.electron.ipcRenderer.invoke("app:close");
+				}
 			} else {
 				showToast(
 					"error",
@@ -287,7 +189,7 @@ export default function Install({ id }: { id?: string }) {
 			setLogs((prevLogs) => [...prevLogs, `Error stopping ${data.name}`]);
 		}
 	}
-
+	
 	async function uninstall() {
 		try {
 			const port = await getCurrentPort();
@@ -333,18 +235,25 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	const handleDownload = async () => {
+		if (isServerRunning) {
+			showToast("error", "Server is already running.", undefined, true, "Stop", handleStop);
+			return;
+		}
 		showToast("default", `Downloading ${data.name}...`);
 		await download();
 	};
 
 	const handleStart = async () => {
+		if (isServerRunning) {
+			showToast("error", "Server is already running.", undefined, true, "Stop", handleStop);
+			return;
+		}
 		showToast("default", `Starting ${data.name}...`);
 		setShow("logs");
 		await start();
 	};
 
 	const handleStop = async () => {
-		showToast("default", `Stopping ${data.name}...`);
 		await stop();
 	};
 
@@ -353,42 +262,11 @@ export default function Install({ id }: { id?: string }) {
 		await uninstall();
 	};
 
-	const isLocalAvailable = async (port) => {
-		try {
-			const response = await fetch(`http://localhost:${port}`);
-			if (response.status !== 200) {
-				return false;
-			}
-			return true;
-		} catch (error) {
-			return false;
-		}
+	const handleReconnect = async () => {
+		showToast("default", `Reconnecting ${data.name}...`);
+		setShow("logs");
 	};
 
-	const stopCheckingRef = useRef(false);
-	const loadIframe = async (localPort) => {
-		stopCheckingRef.current = false;
-
-		let isAvailable = false;
-		while (!isAvailable && !stopCheckingRef.current) {
-			isAvailable = await isLocalAvailable(localPort);
-			if (!isAvailable && !stopCheckingRef.current) {
-				await new Promise((resolve) => setTimeout(resolve, 1000));
-			}
-		}
-
-		if (isAvailable && !stopCheckingRef.current) {
-			setIframeSrc(`http://localhost:${localPort}`);
-			setShow("iframe");
-			setIframeAvailable(true);
-			showToast("default", `${data.name} has opened a preview.`);
-			window.electron.ipcRenderer.invoke(
-				"notify",
-				"Preview...",
-				`${data.name} has opened a preview.`,
-			);
-		}
-	};
 	useEffect(() => {
 		return () => {
 			stopCheckingRef.current = true;
@@ -453,12 +331,14 @@ export default function Install({ id }: { id?: string }) {
 							)}{" "}
 							{show === "actions" && (
 								<ActionsComponent
+									handleReconnect={handleReconnect}
+									isServerRunning={isServerRunning}
 									data={data}
 									installed={installed}
+									setImgLoading={setImgLoading}
 									handleDownload={handleDownload}
 									handleStart={handleStart}
 									handleUninstall={handleUninstall}
-									setImgLoading={setImgLoading}
 								/>
 							)}
 						</AnimatePresence>
