@@ -4,7 +4,7 @@ export default function Account() {
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
 				<main className="flex flex-col gap-6 py-5">
 					<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
-						Your library
+						Account
 					</h1>
 				</main>
 			</div>

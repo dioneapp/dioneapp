@@ -16,6 +16,8 @@ export default function Sidebar() {
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
 
+	console.log('USER', dbUser)
+
 	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);
 
@@ -316,16 +318,20 @@ export default function Sidebar() {
 					>
 						{!loading && logged && dbUser && (
 							<Link
-								className={`hover:bg-white/10 overflow-hidden flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"} relative`}
+								className={`hover:bg-white/10 overflow-hidden flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"} relative ${!dbUser[0]?.avatar_url && "border border-white/20"}`}
 								to="/account"
 								onMouseEnter={() => setHoveredTooltip("account")}
 								onMouseLeave={() => setHoveredTooltip(null)}
 							>
-								<img
-									src={dbUser[0]?.avatar_url || "/svgs/User.svg"}
-									alt="user avatar"
-									className="h-full w-full object-cover object-center"
-								/>
+								{dbUser[0]?.avatar_url && dbUser[0]?.avatar_url !== "" && dbUser[0]?.avatar_url !== null && dbUser[0]?.avatar_url !== undefined ? (
+									<img
+										src={dbUser[0]?.avatar_url}
+										alt="user avatar"
+										className="h-full w-full object-cover object-center"
+									/>
+								) : (
+									<Icon name="User" className="h-5 w-5" />
+								)}
 								{hoveredTooltip === "account" && (
 									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap bg-black/90 backdrop-blur-3xl">
 										Account
