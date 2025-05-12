@@ -10,7 +10,9 @@ interface ActionsProps {
 	handleStart: any;
 	handleUninstall: any;
 	handleDownload: any;
-}
+	isServerRunning: boolean;
+	handleReconnect: any;
+	}
 
 export default function ActionsComponent({
 	data,
@@ -19,6 +21,8 @@ export default function ActionsComponent({
 	handleStart,
 	handleUninstall,
 	handleDownload,
+	isServerRunning,
+	handleReconnect,
 }: ActionsProps) {
 	return (
 		<>
@@ -48,7 +52,7 @@ export default function ActionsComponent({
 						className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-auto max-w-xl w-full bg-[#080808]"
 					>
 						{/* background effects */}
-						<div className="absolute top-0 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-10" />
+						<div className="absolute top-0 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-50" />
 						<div className="relative z-10">
 							<div className="flex gap-4">
 								<div className="relative h-16 w-16 flex-shrink-0">
@@ -69,7 +73,7 @@ export default function ActionsComponent({
 												backgroundPosition: "center",
 											}}
 											className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center 
-                 group-hover:border-white/20 transition-all duration-200"
+                 												group-hover:border-white/20 transition-all duration-200"
 										/>
 									)}
 								</div>
@@ -106,10 +110,20 @@ export default function ActionsComponent({
 							</div>
 
 							<div className="flex justify-center gap-2 w-full">
-								{installed ? (
-									<div className="flex gap-2 justify-end w-full">
-										<button
-											type="button"
+								{isServerRunning && (
+									<button
+										type="button"
+										onClick={handleReconnect}
+										className="bg-neutral-500/80 hover:bg-neutral-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+									>
+										Reconnect
+									</button>
+								)}
+								{!isServerRunning && (
+									installed ? (
+										<div className="flex gap-2 justify-end w-full">
+											<button
+												type="button"
 											onClick={handleStart}
 											className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
 										>
@@ -131,7 +145,8 @@ export default function ActionsComponent({
 									>
 										Install
 									</button>
-								)}
+								)
+							)}
 							</div>
 						</div>
 					</motion.div>

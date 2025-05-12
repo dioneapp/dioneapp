@@ -4,31 +4,39 @@ export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
 	variant: "default" | "success" | "error" | "warning";
 	fixed?: string;
 	onClose: () => void;
+	button?: boolean;
+	buttonText?: string;
+	buttonAction?: () => void;
 }
 
 const variantClasses = {
-	default: "bg-white/10",
+	default: "bg-neutral-700/80",
 	success: "bg-green-500/20",
 	error: "bg-red-500/20",
 	warning: "bg-yellow-500/20",
 };
 
 export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
-	({ className, variant, onClose, children, ...props }, ref) => {
+	({ className, variant, onClose, children, button, buttonText, buttonAction, ...props }, ref) => {
 		return (
 			<div
+				style={{ zIndex: 1000 }}
 				ref={ref}
-				className={`pointer-events-auto flex w-full max-w-md rounded-full backdrop-filter backdrop-blur-3xl transition-all duration-300 ease-in-out px-2 ${variantClasses[variant]} ${className}`}
+				className={`pointer-events-auto px-2 flex w-full max-w-md ${button ? "flex-col rounded-2xl backdrop-filter backdrop-blur-3xl p-4 px-6 pb-0 gap-2" : "gap-4 rounded-full backdrop-filter backdrop-blur-3xl justify-between items-center"} transition-all duration-300 ease-in-out ${variantClasses[variant]} ${className} overflow-hidden`}
 				{...props}
 			>
-				<div className="flex-1 p-2 text-xs text-neutral-300">{children}</div>
+				<div className={`flex text-xs ${button ? "" : "px-6"} text-neutral-300`}>{children}</div>
+				<div className={button ? "gap-2 my-2 w-full flex justify-end items-end mx-auto" : ""}>
 				<button
+					type="button"
 					onClick={onClose}
-					className="flex items-center justify-center p-2 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
+					className={`flex  ${button ? "" : "items-center justify-center p-2 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"}`}
 				>
-					<svg
+					{button && (<span className="text-xs bg-neutral-800 rounded-full border border-white/10 px-4 py-1 z-50 cursor-pointer hover:bg-neutral-700 transition-colors duration-300">Close</span>)}
+					{!button && (<svg
+						aria-hidden="true"
 						xmlns="http://www.w3.org/2000/svg"
-						className="h-4 w-4"
+						className="h-4 w-4 flex justify-center items-center mb-auto"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor"
@@ -39,8 +47,18 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 							strokeLinejoin="round"
 							d="M6 18L18 6M6 6l12 12"
 						/>
-					</svg>
+					</svg>)}
 				</button>
+				{button && (
+					<button
+						type="button"
+						onClick={() => { buttonAction?.(); onClose(); }}
+						className="text-xs bg-neutral-800 rounded-full border border-white/10 px-4 py-1 z-50 cursor-pointer hover:bg-neutral-700 transition-colors duration-300"
+					>
+						{buttonText}
+					</button>
+				)}
+				</div>
 			</div>
 		);
 	},
