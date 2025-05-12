@@ -3,22 +3,31 @@ import path from "node:path";
 import type { Response } from "express";
 
 export async function deleteScript(name: string, res: Response) {
-	// sanitize name
-	const sanitizedName = name.replace(/\s+/g, "-");
+    try {
+        // sanitize name
+        const sanitizedName = name.replace(/\s+/g, "-");
 
-	// delete script dirs
-	const root = process.cwd();
-	const appsDir = path.join(root, "apps");
-	const appDir = path.join(appsDir, sanitizedName);
+        // delete script dirs
+        const root = process.cwd();
+        const appsDir = path.join(root, "apps");
+        const appDir = path.join(appsDir, sanitizedName);
 
-	if (!fs.access(appDir)) {
-		res.status(404).send("App not found.");
-		return;
-	}
+        // check if dir exists
+        try {
+            await fs.access(appDir);
+        } catch (err) {
+            res.status(404).send("App not found.");
+            return;
+        }
 
-	await closeFile(appDir);
-	await fs.rm(appDir, { recursive: true, force: true });
-	res.status(200).send("App deleted successfully.");
+        // stop and delete all files
+		await closeFile(appDir);
+        await fs.rm(appDir, { recursive: true, force: true });
+        res.status(200).send("App deleted successfully.");
+    } catch (error) {
+        console.error("Error deleting app:", error);
+        res.status(500).send("Failed to delete app. Please try again.");
+    }
 }
 
 async function closeFile(directory: string) {
