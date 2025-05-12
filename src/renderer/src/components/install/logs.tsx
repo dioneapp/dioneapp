@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
-import Icon from "../icons/icon";
 import type { JSX } from "react";
+import Icon from "../icons/icon";
 
 interface LogsProps {
 	statusLog: { status: string; content: string };
@@ -87,6 +87,10 @@ export default function LogsComponent({
 							</p>
 						);
 					})}
+				</div>
+				<div className="h-px w-full bg-white/10 my-4" />
+				<div className="text-xs text-neutral-500 mt-4 mb-2 text-center">
+					Logs shown are from the app itself. If you see an error, please report it to the original app's developers first.
 				</div>
 				<div className="absolute bottom-2 right-2">
 					<div className="flex gap-1.5">
