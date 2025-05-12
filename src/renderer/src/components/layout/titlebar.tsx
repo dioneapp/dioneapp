@@ -1,8 +1,18 @@
+import { useState } from "react";
 import Icon from "../icons/icon";
+import { useAppContext } from "../layout/global-context";
 
 export default function Titlebar() {
+	const { isServerRunning, setExitRef } = useAppContext();
+	const [showModal, setShowModal] = useState(false);
+
 	const handleClose = async () => {
-		await window.electron.ipcRenderer.invoke("app:close");
+		if (isServerRunning) {
+			setShowModal(true);
+			setExitRef(true);
+		} else {
+			window.electron.ipcRenderer.invoke("app:close");
+		}
 	};
 
 	const handleMinimize = async () => {
@@ -10,6 +20,15 @@ export default function Titlebar() {
 	};
 
 	return (
+		<>
+		{showModal && (
+			<div className="fixed top-0 left-0 w-screen h-screen backdrop-filter backdrop-blur-3xl bg-black/80 flex items-center justify-center" style={{ zIndex: 100 }}>
+				<div className="flex flex-col items-center justify-center h-full w-full">
+					<h1 className="text-4xl font-semibold mb-4">Stopping applications...</h1>
+					<p className="text-neutral-400 text-balance text-center max-w-xl">Dione will close automatically after closing all open applications.</p>
+	</div>
+			</div>
+		)}
 		<div
 			id="titlebar"
 			className="absolute top-0 w-full z-50"
@@ -36,5 +55,6 @@ export default function Titlebar() {
 				</div>
 			</div>
 		</div>
+		</>
 	);
 }
