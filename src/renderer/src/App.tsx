@@ -102,7 +102,6 @@ function App() {
 
 	const PageComponent = getPage();
 	return (
-		<ToastProvider>
 			<div className="h-screen w-screen overflow-hidden" id="main">
 				<Titlebar />
 				<div className="flex h-[calc(100%)]">
@@ -125,7 +124,6 @@ function App() {
 					</div>
 				</div>
 			</div>
-		</ToastProvider>
 	);
 }
 
