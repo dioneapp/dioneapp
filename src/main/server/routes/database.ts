@@ -5,6 +5,21 @@ import logger from "../utils/logger";
 const router = express.Router();
 router.use(express.json());
 
+
+// generate gradients for logo if is null
+const darkColors = ["#1e1e2f", "#2c2c3a", "#3b3b4f", "#1f2937", "#374151", "#4b5563", "#111827", "#2d3748"];
+const lightColors = ["#f5f5f5", "#e0e0e0", "#dbeafe", "#fce4ec", "#e8eaf6", "#f0f4c3", "#cfd8dc", "#ffd7be"];
+function generateGradient(input: string): string {
+	let hash = 0;
+	for (let i = 0; i < input.length; i++) { hash = input.charCodeAt(i) + ((hash << 5) - hash);}
+	hash = Math.abs(hash);
+	const dark = darkColors[hash % darkColors.length];
+	const light = lightColors[(hash >> 3) % lightColors.length];
+	const angle = hash % 360;
+	return `linear-gradient(${angle}deg, ${dark}, ${light})`;
+}
+
+
 // auth
 router.get("/user/:id", async (req, res) => {
 	try {
@@ -21,7 +36,6 @@ router.get("/user/:id", async (req, res) => {
 		} else {
 			res.send(data);
 		}
-		console.log("User:", data);
 	} catch (error: any) {
 		logger.error(
 			`Unable to get user: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
@@ -105,15 +119,25 @@ router.get("/explore", (_req, res) => {
 			.from("scripts")
 			.select("*")
 			.order("created_at", { ascending: false });
+
 		if (error) {
 			logger.error(
 				`Unable to obtain the scripts: [ (${error.code || "No code"}) ${error.details} ]`,
 			);
 			res.send(error);
-		} else {
-			res.send(data);
+			return;
 		}
+
+		const scripts = data.map((script) => {
+			if (script.logo_url === null || script.logo_url === undefined || script.logo_url === '') {
+				script.logo_url = generateGradient(script.name);
+			}
+			return script;
+		});
+
+		res.send(scripts);
 	}
+
 	getData();
 });
 
@@ -131,6 +155,9 @@ router.get("/search/:id", (req, res) => {
 			);
 			res.status(500).send(error);
 		} else {
+			if (data[0].logo_url === null || data[0].logo_url === undefined || data[0].logo_url === '') {
+				data[0].logo_url = generateGradient(data[0].name);
+			}
 			res.send(data);
 		}
 	}
@@ -156,6 +183,9 @@ router.get("/search/name/:name", async (req, res) => {
 				logger.error(`Not found an script named: "${sanitizedName}"`);
 				res.send(error);
 			} else {
+				if (data.logo_url === null || data.logo_url === undefined || data.logo_url === '') {
+					data.logo_url = generateGradient(data.name);
+				}
 				res.send(data);
 			}
 		}
@@ -177,7 +207,12 @@ router.get("/search/type/:type", async (req, res) => {
 				console.log("No found scripts with TAG", type, error);
 				res.send(error);
 			} else {
-				console.log("No found scripts with TAG", type, error);
+				data.map((script) => {
+					if (script.logo_url === null || script.logo_url === undefined || script.logo_url === '') {
+						script.logo_url = generateGradient(script.name);
+					}
+					return script;
+				});
 				res.send(data);
 			}
 		}

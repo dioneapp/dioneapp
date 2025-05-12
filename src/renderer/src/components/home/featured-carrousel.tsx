@@ -95,6 +95,8 @@ export default function FeaturedCarousel() {
 					} catch (error) {
 						console.error("Error extracting colors:", error);
 					}
+				} else {
+					newGradients[script.id] = 'linear-gradient(to top, #000000, #434343)';
 				}
 			}),
 		);
@@ -193,8 +195,9 @@ export default function FeaturedCarousel() {
 									<div className="flex w-full h-full flex-col justify-start items-center">
 										{/* logo */}
 										<div className="w-full h-full flex justify-end">
-											<img
-												src={
+											{scripts.find((script) => script.id === activeIndex)?.logo_url && (
+												<img
+													src={
 													scripts.find((script) => script.id === activeIndex)
 														?.logo_url
 												}
@@ -204,6 +207,7 @@ export default function FeaturedCarousel() {
 												}
 												className="w-24 h-24 rounded-xl object-cover drop-shadow-xl"
 											/>
+											)}
 										</div>
 										<div className="flex flex-col justify-end gap-2 w-full h-full -mt-6">
 											<h1 className="font-medium text-4xl tracking-tight">

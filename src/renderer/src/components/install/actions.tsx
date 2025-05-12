@@ -52,13 +52,26 @@ export default function ActionsComponent({
 						<div className="relative z-10">
 							<div className="flex gap-4">
 								<div className="relative h-16 w-16 flex-shrink-0">
-									<img
-										onLoad={() => setImgLoading(false)}
-										onError={() => setImgLoading(false)}
-										src={data?.logo_url || "/svgs/Icon.svg"}
-										alt={`${data?.name} icon`}
+									{data?.logo_url?.startsWith("http") ? (
+										<img
+											onLoad={() => setImgLoading(false)}
+											onError={() => setImgLoading(false)}
+											src={data?.logo_url}
+											alt={`${data?.name} icon`}
 										className="h-16 w-16 rounded-xl border border-white/10 object-cover object-center transition-all duration-200"
 									/>
+									) : (
+										<div
+											style={{
+												backgroundImage: data?.logo_url,
+												backgroundSize: "100%",
+												backgroundRepeat: "no-repeat",
+												backgroundPosition: "center",
+											}}
+											className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center 
+                 group-hover:border-white/20 transition-all duration-200"
+										/>
+									)}
 								</div>
 								<div className="flex flex-col">
 									<h1 className="text-2xl font-medium mb-1 truncate text-white">

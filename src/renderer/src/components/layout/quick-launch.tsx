@@ -121,11 +121,15 @@ export default function QuickLaunch({
 					removeApp(index);
 				}}
 			>
-				<img
-					src={app.logo_url || "/svgs/placeholder.svg"}
-					alt={app.name}
-					className="h-full w-full object-cover"
-				/>
+				{app.logo_url.startsWith("http") ? (
+					<img
+						src={app.logo_url}
+						alt={app.name}
+						className="h-full w-full object-cover"
+					/>
+				) : (
+					<div className="h-full w-full object-cover" style={{ backgroundImage: app.logo_url }} />
+				)}
 			</Link>
 			{!compactMode && (
 				<div className="max-w-18 overflow-hidden flex justify-center items-center">
@@ -240,14 +244,19 @@ export default function QuickLaunch({
 													whileHover={{ scale: 1.05 }}
 													whileTap={{ scale: 0.95 }}
 												>
-													{app.logo_url ? (
+													{app.logo_url.startsWith("http") ? (
 														<img
-															src={app.logo_url || "/svgs/Error.svg"}
+															src={app.logo_url}
 															alt={app.name}
 															className="h-full w-full object-cover"
 														/>
 													) : (
-														<div className="h-full w-full object-cover bg-white/10 animate-pulse" />
+														<div 
+														style={{
+															backgroundImage: app.logo_url,
+														}}
+														className="h-full w-full object-cover"
+														/>
 													)}
 												</motion.div>
 												{app.name ? (
