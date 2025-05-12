@@ -11,7 +11,6 @@ import Library from "./pages/library";
 import Loading from "./pages/loading";
 import NoAccess from "./pages/no-access";
 import Settings from "./pages/settings";
-import { ToastProvider } from "./utils/useToast";
 
 // transition animation config
 const pageTransition = {

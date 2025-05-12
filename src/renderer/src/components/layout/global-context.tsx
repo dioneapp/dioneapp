@@ -55,7 +55,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	const [exitRef, setExitRef] = useState<boolean>(false);
 	const pathname = useLocation().pathname;
 	const [installedApps, setInstalledApps] = useState<string[]>([]);
-	const [socket, setSocket] = useState<any>(null);
+	const [socket] = useState<any>(null);
 	const [logs, setLogs] = useState<string[]>([]);
 	const [statusLog, setStatusLog] = useState<{
 		status: string;
