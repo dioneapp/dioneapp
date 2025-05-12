@@ -145,6 +145,12 @@ export default function IframeComponent({
 
 				<div className="flex gap-1.5 w-fit h-full items-center justify-end">
 					<motion.button
+						className="flex items-center justify-center w-8 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						onClick={() => setShow("logs")}
+					>
+						<Icon name="Back" className="w-4 h-4 " />
+					</motion.button>
+					<motion.button
 						className="flex items-center justify-center w-8 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleStop}
 					>
