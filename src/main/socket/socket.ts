@@ -1,6 +1,6 @@
-import { Server } from "socket.io";
+import type http from "http";
 import { ipcMain } from "electron";
-import http from "http";
+import { Server } from "socket.io";
 import logger from "../server/utils/logger";
 
 export const start = (httpServer: http.Server) => {

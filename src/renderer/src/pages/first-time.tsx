@@ -1,10 +1,10 @@
+import Background from "@renderer/components/first-time/background";
 import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
 import { useToast } from "@renderer/utils/useToast";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Background from "@renderer/components/first-time/background";
 
 export default function FirstTime() {
 	// toast stuff

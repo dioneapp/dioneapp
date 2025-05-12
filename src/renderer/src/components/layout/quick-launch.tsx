@@ -128,12 +128,17 @@ export default function QuickLaunch({
 						className="h-full w-full object-cover"
 					/>
 				) : (
-					<div className="h-full w-full object-cover" style={{ backgroundImage: app.logo_url }} />
+					<div
+						className="h-full w-full object-cover"
+						style={{ backgroundImage: app.logo_url }}
+					/>
 				)}
 			</Link>
 			{!compactMode && (
 				<div className="max-w-18 overflow-hidden flex justify-center items-center">
-					<p className="text-[12px] text-neutral-300 truncate w-full">{app.name}</p>
+					<p className="text-[12px] text-neutral-300 truncate w-full">
+						{app.name}
+					</p>
 				</div>
 			)}
 		</div>
@@ -156,7 +161,9 @@ export default function QuickLaunch({
 	);
 
 	return (
-		<div className={compactMode ? "mb-auto" : "flex mt-auto w-full h-64 max-w-64"}>
+		<div
+			className={compactMode ? "mb-auto" : "flex mt-auto w-full h-64 max-w-64"}
+		>
 			<div className="w-full">
 				{!compactMode && <h2 className="font-semibold">Quick Launch</h2>}
 				<div
@@ -251,11 +258,11 @@ export default function QuickLaunch({
 															className="h-full w-full object-cover"
 														/>
 													) : (
-														<div 
-														style={{
-															backgroundImage: app.logo_url,
-														}}
-														className="h-full w-full object-cover"
+														<div
+															style={{
+																backgroundImage: app.logo_url,
+															}}
+															className="h-full w-full object-cover"
 														/>
 													)}
 												</motion.div>

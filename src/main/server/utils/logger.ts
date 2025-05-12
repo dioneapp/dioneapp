@@ -1,7 +1,7 @@
-import winston from "winston";
-import path from "path";
 import fs from "node:fs";
+import path from "path";
 import { app } from "electron";
+import winston from "winston";
 
 const logsDir = path.join(app.getPath("logs"));
 

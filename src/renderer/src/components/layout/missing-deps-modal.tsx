@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import Icon from "../icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
+import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import Icon from "../icons/icon";
 
 interface props {
 	data: any;

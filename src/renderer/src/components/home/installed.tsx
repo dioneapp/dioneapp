@@ -1,10 +1,10 @@
+import { getCurrentPort } from "@renderer/utils/getPort";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Icon from "../icons/icon";
+import { useAppContext } from "../layout/global-context";
 import ScriptCard from "./feed/card";
 import Loading from "./loading-skeleton";
-import { useAppContext } from "../layout/global-context";
-import { getCurrentPort } from "@renderer/utils/getPort";
-import Icon from "../icons/icon";
-import { Link } from "react-router-dom";
 
 export default function Installed() {
 	const { installedApps } = useAppContext();
@@ -55,9 +55,7 @@ export default function Installed() {
 
 	return (
 		<>
-			<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
-				Your library
-			</h1>
+			<h1 className="text-2xl sm:text-3xl font-semibold mb-4">Your library</h1>
 			{apps.length > 0 ? (
 				loading ? (
 					<Loading />

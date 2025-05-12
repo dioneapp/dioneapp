@@ -1,9 +1,9 @@
-import { useEffect, useState, useRef } from "react";
-import type { Script } from "./feed/types";
 import { getCurrentPort } from "@renderer/utils/getPort";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import CarrouselSkeleton from "./carrousel-skeleton";
+import type { Script } from "./feed/types";
 
 export default function FeaturedCarousel() {
 	const [scripts, setScripts] = useState<Script[]>([]);
@@ -96,7 +96,7 @@ export default function FeaturedCarousel() {
 						console.error("Error extracting colors:", error);
 					}
 				} else {
-					newGradients[script.id] = 'linear-gradient(to top, #000000, #434343)';
+					newGradients[script.id] = "linear-gradient(to top, #000000, #434343)";
 				}
 			}),
 		);
@@ -195,18 +195,19 @@ export default function FeaturedCarousel() {
 									<div className="flex w-full h-full flex-col justify-start items-center">
 										{/* logo */}
 										<div className="w-full h-full flex justify-end">
-											{scripts.find((script) => script.id === activeIndex)?.logo_url && (
+											{scripts.find((script) => script.id === activeIndex)
+												?.logo_url && (
 												<img
 													src={
-													scripts.find((script) => script.id === activeIndex)
-														?.logo_url
-												}
-												alt={
-													scripts.find((script) => script.id === activeIndex)
-														?.name
-												}
-												className="w-24 h-24 rounded-xl object-cover drop-shadow-xl"
-											/>
+														scripts.find((script) => script.id === activeIndex)
+															?.logo_url
+													}
+													alt={
+														scripts.find((script) => script.id === activeIndex)
+															?.name
+													}
+													className="w-24 h-24 rounded-xl object-cover drop-shadow-xl"
+												/>
 											)}
 										</div>
 										<div className="flex flex-col justify-end gap-2 w-full h-full -mt-6">

@@ -1,8 +1,8 @@
-import fs from "node:fs";
 import { execSync } from "node:child_process";
-import acceptedDependencies from "./acceptedDependencies.json";
-import logger from "../utils/logger";
+import fs from "node:fs";
 import semver from "semver";
+import logger from "../utils/logger";
+import acceptedDependencies from "./acceptedDependencies.json";
 
 export interface Command {
 	name: string;

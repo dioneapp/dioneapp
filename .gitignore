@@ -1,5 +1,6 @@
 # node_modules folder
 node_modules
+pnpm-lock.yaml
 
 # dist folder
 dist

@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Server } from "socket.io";
-import { executeCommands } from "./process";
 import logger from "../utils/logger";
+import { executeCommands } from "./process";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
@@ -41,13 +41,16 @@ export default async function executeInstallation(
 
 				// if exists env property, create virtual environment and execute commands inside it
 				if (step.env) {
-					const envName = typeof step.env === "string" ? step.env : step.env.name;
-					const pythonVersion = typeof step.env === "object" && "version" in step.env ? step.env.version : "";
+					const envName =
+						typeof step.env === "string" ? step.env : step.env.name;
+					const pythonVersion =
+						typeof step.env === "object" && "version" in step.env
+							? step.env.version
+							: "";
 					io.emit("installUpdate", {
 						type: "log",
 						content: `INFO: Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					});
-					
 
 					// create virtual environment and execute commands inside it
 					const envCommands = createVirtualEnvCommands(
@@ -123,8 +126,12 @@ export async function executeStartup(pathname: string, io: Server) {
 
 				// if exists env property, create virtual environment and execute commands inside it
 				if (step.env) {
-					const envName = typeof step.env === "string" ? step.env : step.env.name;
-					const pythonVersion = typeof step.env === "object" && "version" in step.env ? step.env.version : "";
+					const envName =
+						typeof step.env === "string" ? step.env : step.env.name;
+					const pythonVersion =
+						typeof step.env === "object" && "version" in step.env
+							? step.env.version
+							: "";
 					io.emit("installUpdate", {
 						type: "log",
 						content: `INFO: Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
@@ -188,38 +195,42 @@ export async function executeStartup(pathname: string, io: Server) {
 }
 
 // commands to create virtual environment
-function createVirtualEnvCommands(envName, commands, baseDir, pythonVersion = "") {
+function createVirtualEnvCommands(
+	envName,
+	commands,
+	baseDir,
+	pythonVersion = "",
+) {
 	const isWindows = process.platform === "win32";
 	const envPath = path.join(baseDir, envName);
-  
+
 	// ensure commands is an array of strings without empty strings
 	const commandStrings = Array.isArray(commands)
-	  ? commands.filter(cmd => typeof cmd === "string" && cmd.trim())
-	  : [];
+		? commands.filter((cmd) => typeof cmd === "string" && cmd.trim())
+		: [];
 
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
-  
+
 	if (isWindows) {
-	  const activateScript = path.join(envPath, "Scripts", "activate");
-	  // add && only if there are commands to execute
-	  const middle = commandStrings.length
-		? `&& ${commandStrings.join(" && ")}`
-		: "";
-	  return [
-		`if not exist "${envPath}" (uv venv ${pythonFlag} ${envName})`,
-		`call "${activateScript}" ${middle} && deactivate`
-	  ];
+		const activateScript = path.join(envPath, "Scripts", "activate");
+		// add && only if there are commands to execute
+		const middle = commandStrings.length
+			? `&& ${commandStrings.join(" && ")}`
+			: "";
+		return [
+			`if not exist "${envPath}" (uv venv ${pythonFlag} ${envName})`,
+			`call "${activateScript}" ${middle} && deactivate`,
+		];
 	}
-  
+
 	// for linux and mac
 	const activateScript = path.join(envPath, "bin", "activate");
 	const middle = commandStrings.length
-	  ? `&& ${commandStrings.join(" && ")}`
-	  : "";
+		? `&& ${commandStrings.join(" && ")}`
+		: "";
 	return [
-	  `if [ ! -d "${envPath}" ]; then uv venv ${pythonFlag} ${envName}; fi`,
-	  `source "${activateScript}" ${middle} && deactivate`
+		`if [ ! -d "${envPath}" ]; then uv venv ${pythonFlag} ${envName}; fi`,
+		`source "${activateScript}" ${middle} && deactivate`,
 	];
-  }
-  
+}

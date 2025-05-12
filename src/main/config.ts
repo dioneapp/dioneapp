@@ -1,6 +1,6 @@
-import { app } from "electron";
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
+import { app } from "electron";
 import logger from "./server/utils/logger";
 
 export interface AppConfig {

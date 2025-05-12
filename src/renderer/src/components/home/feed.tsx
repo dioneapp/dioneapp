@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import type { Script } from "./feed/types";
-import ScriptCard from "./feed/card";
-import Loading from "./loading-skeleton";
 import { getCurrentPort } from "@renderer/utils/getPort";
+import { useEffect, useState } from "react";
+import ScriptCard from "./feed/card";
+import type { Script } from "./feed/types";
+import Loading from "./loading-skeleton";
 
 interface ScriptListProps {
 	endpoint: string;

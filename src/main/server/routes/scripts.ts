@@ -1,12 +1,12 @@
-import express from "express";
-import getAllScripts, { getInstalledScript } from "../scripts/installed";
-import logger from "../utils/logger";
-import { deleteScript } from "../scripts/delete";
 import path from "node:path";
-import { stopActiveProcess } from "../scripts/process";
+import express from "express";
 import type { Server } from "socket.io";
-import { executeStartup } from "../scripts/execute";
+import { deleteScript } from "../scripts/delete";
 import { getScripts } from "../scripts/download";
+import { executeStartup } from "../scripts/execute";
+import getAllScripts, { getInstalledScript } from "../scripts/installed";
+import { stopActiveProcess } from "../scripts/process";
+import logger from "../utils/logger";
 
 export function createScriptRouter(io: Server) {
 	const router = express.Router();

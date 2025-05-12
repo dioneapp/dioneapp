@@ -1,6 +1,6 @@
 import { Toast, type ToastProps } from "@renderer/components/layout/toast";
-import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import * as React from "react";
 
 type ToastType = Omit<ToastProps, "onClose">;
 

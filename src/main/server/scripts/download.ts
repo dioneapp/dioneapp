@@ -1,9 +1,9 @@
-import https from "node:https";
 import fs from "node:fs";
+import https from "node:https";
 import path from "node:path";
 import type { Server } from "socket.io";
-import logger from "../utils/logger";
 import { supabase } from "../utils/database";
+import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies";
 import executeInstallation from "./execute";
 
@@ -65,30 +65,34 @@ export async function getScripts(id: string, io: Server) {
 	return null;
 }
 
-function extractInfo(url: string): { repo: string; branch?: string; filePath?: string } {
+function extractInfo(url: string): {
+	repo: string;
+	branch?: string;
+	filePath?: string;
+} {
 	// extract owner and name
 	const repoRegex = /github\.com\/([^\/]+\/[^\/]+)/;
 	const repoMatch = url.match(repoRegex);
-	
+
 	if (!repoMatch?.[1]) {
 		throw new Error("No valid GitHub repository found");
 	}
-	
+
 	const repo = repoMatch[1];
-	
+
 	// check if URL contains branch and file path information
 	const fullPathRegex = /github\.com\/([^\/]+\/[^\/]+)\/blob\/([^\/]+)\/(.+)/;
 	const fullPathMatch = url.match(fullPathRegex);
-	
+
 	if (fullPathMatch) {
 		// return repo, branch and file path if available
 		return {
 			repo,
 			branch: fullPathMatch[2],
-			filePath: fullPathMatch[3]
+			filePath: fullPathMatch[3],
 		};
 	}
-	
+
 	// return just the repo if no branch/file info
 	return { repo };
 }
@@ -112,7 +116,7 @@ export function downloadFile(
 	if (!GITHUB_URL.includes("raw.githubusercontent.com")) {
 		try {
 			const repoInfo = extractInfo(GITHUB_URL);
-			
+
 			if (repoInfo.branch && repoInfo.filePath) {
 				// if URL contains branch and file path, use them
 				url = `https://raw.githubusercontent.com/${repoInfo.repo}/${repoInfo.branch}/${repoInfo.filePath}`;

@@ -1,22 +1,22 @@
-import {
-	app,
-	shell,
-	BrowserWindow,
-	ipcMain,
-	Tray,
-	globalShortcut,
-} from "electron";
-import path, { join } from "node:path";
-import { electronApp, optimizer, is } from "@electron-toolkit/utils";
-import icon from "../../resources/icon.ico?asset";
-import logger from "./server/utils/logger";
-import { start as startServer, stop as stopServer } from "./server/server";
-import { getCurrentPort } from "./server/utils/getPort";
 import os from "node:os";
-import { readConfig, defaultConfig, writeConfig } from "./config";
+import path, { join } from "node:path";
+import { electronApp, is, optimizer } from "@electron-toolkit/utils";
+import dotenv from "dotenv";
+import {
+	BrowserWindow,
+	Tray,
+	app,
+	globalShortcut,
+	ipcMain,
+	shell,
+} from "electron";
 import { Notification } from "electron";
 import { autoUpdater } from "electron-updater";
-import dotenv from "dotenv";
+import icon from "../../resources/icon.ico?asset";
+import { defaultConfig, readConfig, writeConfig } from "./config";
+import { start as startServer, stop as stopServer } from "./server/server";
+import { getCurrentPort } from "./server/utils/getPort";
+import logger from "./server/utils/logger";
 
 // load env variables
 dotenv.config();
@@ -74,7 +74,7 @@ function createWindow() {
 			repo: "dioneapp",
 			private: true,
 			token: process.env.GITHUB_TOKEN,
-		})
+		});
 		autoUpdater.checkForUpdatesAndNotify();
 	});
 
@@ -82,7 +82,6 @@ function createWindow() {
 	mainWindow.webContents.once("did-finish-load", () => {
 		mainWindow.show();
 	});
-
 
 	// Prevent opening new windows and handle external links
 	mainWindow.webContents.setWindowOpenHandler((details) => {
@@ -261,7 +260,7 @@ app.whenReady().then(() => {
 		autoUpdater.checkForUpdates();
 	});
 
-	ipcMain.on('restart_app', () => {
+	ipcMain.on("restart_app", () => {
 		autoUpdater.quitAndInstall();
 	});
 
@@ -281,9 +280,9 @@ app.on("window-all-closed", () => {
 	}
 });
 
-autoUpdater.on('update-available', () => {
-  mainWindow.webContents.send('update_available');
+autoUpdater.on("update-available", () => {
+	mainWindow.webContents.send("update_available");
 });
-autoUpdater.on('update-downloaded', () => {
-  mainWindow.webContents.send('update_downloaded');
+autoUpdater.on("update-downloaded", () => {
+	mainWindow.webContents.send("update_downloaded");
 });

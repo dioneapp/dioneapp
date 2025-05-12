@@ -1,6 +1,6 @@
+import Icon from "@renderer/components/icons/icon";
 import { useState } from "react";
 import ScriptList from "../feed";
-import Icon from "@renderer/components/icons/icon";
 
 export default function SearchBar() {
 	const [search, setSearch] = useState("");

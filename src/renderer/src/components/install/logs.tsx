@@ -79,7 +79,9 @@ export default function LogsComponent({
 									<span
 										className={`w-4 h-4 flex justify-start items-center ${lowerLog.includes("error") && "mr-4"}`}
 									>
-										{icon || <span className="flex justify-start w-4 h-4">-</span>}
+										{icon || (
+											<span className="flex justify-start w-4 h-4">-</span>
+										)}
 									</span>
 									{log.replace(/^(ERROR:|WARN:|INFO:|OUT:)/, "").trim() ||
 										"Loading..."}
@@ -90,7 +92,8 @@ export default function LogsComponent({
 				</div>
 				<div className="h-px w-full bg-white/10 my-4" />
 				<div className="text-xs text-neutral-500 mt-4 mb-2 text-center">
-					Logs shown are from the app itself. If you see an error, please report it to the original app's developers first.
+					Logs shown are from the app itself. If you see an error, please report
+					it to the original app's developers first.
 				</div>
 				<div className="absolute bottom-2 right-2">
 					<div className="flex gap-1.5">

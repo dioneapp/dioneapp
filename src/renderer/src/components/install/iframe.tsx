@@ -59,9 +59,11 @@ export default function IframeComponent({
 	};
 
 	const handleEnterFullscreen = () => {
-		const container = document.getElementById("iframe-container") as HTMLElement;
+		const container = document.getElementById(
+			"iframe-container",
+		) as HTMLElement;
 		if (container && !document.fullscreenElement) {
-			container.requestFullscreen().catch(err => {
+			container.requestFullscreen().catch((err) => {
 				console.error(`Error attempting to enable fullscreen: ${err.message}`);
 			});
 		}
@@ -77,9 +79,9 @@ export default function IframeComponent({
 		const handleFullscreenChange = () => {
 			setIsFullscreen(!!document.fullscreenElement);
 		};
-		document.addEventListener('fullscreenchange', handleFullscreenChange);
+		document.addEventListener("fullscreenchange", handleFullscreenChange);
 		return () => {
-			document.removeEventListener('fullscreenchange', handleFullscreenChange);
+			document.removeEventListener("fullscreenchange", handleFullscreenChange);
 		};
 	}, []);
 
@@ -178,10 +180,15 @@ export default function IframeComponent({
 					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
-						onClick={isFullscreen ? handleExitFullscreen : handleEnterFullscreen}
-						title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+						onClick={
+							isFullscreen ? handleExitFullscreen : handleEnterFullscreen
+						}
+						title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
 					>
-						<Icon name={isFullscreen ? "Minimize" : "Maximize"} className="w-4 h-4" />
+						<Icon
+							name={isFullscreen ? "Minimize" : "Maximize"}
+							className="w-4 h-4"
+						/>
 					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
@@ -201,18 +208,23 @@ export default function IframeComponent({
 			<motion.div
 				id="iframe-container"
 				key="iframe"
-				animate={{ opacity: 1, scale: isFullscreen ? 1.05 : 1, boxShadow: isFullscreen ? '0 0 40px 10px rgba(163,149,217,0.2)' : '0 0 20px 2px rgba(0,0,0,0.2)' }}
+				animate={{
+					opacity: 1,
+					scale: isFullscreen ? 1.05 : 1,
+					boxShadow: isFullscreen
+						? "0 0 40px 10px rgba(163,149,217,0.2)"
+						: "0 0 20px 2px rgba(0,0,0,0.2)",
+				}}
 				exit={{ opacity: 0, scale: 0.95 }}
 				transition={{ duration: 0.5 }}
-				className={`w-full h-full rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl relative transition-all duration-500 ${isFullscreen ? 'fullscreen-anim' : ''}`}
+				className={`w-full h-full rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl relative transition-all duration-500 ${isFullscreen ? "fullscreen-anim" : ""}`}
 				style={{
-					borderRadius: isFullscreen ? '0' : '6px',
-					transition: 'box-shadow 0.5s, border-radius 0.5s, opacity 0.5s, transform 0.5s',
+					borderRadius: isFullscreen ? "0" : "6px",
+					transition:
+						"box-shadow 0.5s, border-radius 0.5s, opacity 0.5s, transform 0.5s",
 				}}
 			>
-
 				{isFullscreen && (
-
 					<button
 						className="absolute cursor-pointer top-6 left-6 z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-full"
 						type="button"
@@ -220,8 +232,6 @@ export default function IframeComponent({
 					>
 						<Icon name="Close" className="h-3 w-3" />
 					</button>
-
-
 				)}
 
 				<iframe
@@ -236,4 +246,3 @@ export default function IframeComponent({
 		</div>
 	);
 }
-

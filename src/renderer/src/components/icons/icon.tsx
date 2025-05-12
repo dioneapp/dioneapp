@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 // import all svgs in the assets folder
 const icons = import.meta.glob("@assets/svgs/*.svg", {
 	eager: true,
