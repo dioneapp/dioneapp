@@ -30,6 +30,7 @@ export default function IframeComponent({
 		gpu: { percent: 0, vramGB: 0 },
 		disk: { percent: 0, usedGB: 0 },
 	});
+	const [isFullscreen, setIsFullscreen] = useState(false);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -56,6 +57,31 @@ export default function IframeComponent({
 	const handleOpenInBrowser = () => {
 		window.open(`http://localhost:${currentPort || "3000"}`, "_blank");
 	};
+
+	const handleEnterFullscreen = () => {
+		const container = document.getElementById("iframe-container") as HTMLElement;
+		if (container && !document.fullscreenElement) {
+			container.requestFullscreen().catch(err => {
+				console.error(`Error attempting to enable fullscreen: ${err.message}`);
+			});
+		}
+	};
+
+	const handleExitFullscreen = () => {
+		if (document.fullscreenElement) {
+			document.exitFullscreen();
+		}
+	};
+
+	useEffect(() => {
+		const handleFullscreenChange = () => {
+			setIsFullscreen(!!document.fullscreenElement);
+		};
+		document.addEventListener('fullscreenchange', handleFullscreenChange);
+		return () => {
+			document.removeEventListener('fullscreenchange', handleFullscreenChange);
+		};
+	}, []);
 
 	const UsageIndicator = ({
 		label,
@@ -143,21 +169,28 @@ export default function IframeComponent({
 					/>
 				</div>
 
-				<div className="flex gap-1.5 w-fit h-full items-center justify-end">
+				<div className="flex gap-1">
 					<motion.button
-						className="flex items-center justify-center w-8 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={() => setShow("logs")}
 					>
 						<Icon name="Back" className="w-4 h-4 " />
 					</motion.button>
 					<motion.button
-						className="flex items-center justify-center w-8 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
+						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						onClick={isFullscreen ? handleExitFullscreen : handleEnterFullscreen}
+						title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+					>
+						<Icon name={isFullscreen ? "Minimize" : "Maximize"} className="w-4 h-4" />
+					</motion.button>
+					<motion.button
+						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleStop}
 					>
 						<Icon name="Stop" className="w-4 h-4 " />
 					</motion.button>
 					<motion.button
-						className="flex items-center justify-center w-8 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
+						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleReloadIframe}
 					>
 						<Icon name="Reload" className="w-4 h-4" />
@@ -166,21 +199,41 @@ export default function IframeComponent({
 			</motion.div>
 
 			<motion.div
+				id="iframe-container"
 				key="iframe"
-				initial={{ opacity: 0, scale: 0.98 }}
-				animate={{ opacity: 1, scale: 1 }}
-				transition={{ duration: 0.25 }}
-				className="w-full h-full rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl"
+				animate={{ opacity: 1, scale: isFullscreen ? 1.05 : 1, boxShadow: isFullscreen ? '0 0 40px 10px rgba(163,149,217,0.2)' : '0 0 20px 2px rgba(0,0,0,0.2)' }}
+				exit={{ opacity: 0, scale: 0.95 }}
+				transition={{ duration: 0.5 }}
+				className={`w-full h-full rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl relative transition-all duration-500 ${isFullscreen ? 'fullscreen-anim' : ''}`}
+				style={{
+					borderRadius: isFullscreen ? '0' : '6px',
+					transition: 'box-shadow 0.5s, border-radius 0.5s, opacity 0.5s, transform 0.5s',
+				}}
 			>
+
+				{isFullscreen && (
+
+					<button
+						className="absolute cursor-pointer top-6 left-6 z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-full"
+						type="button"
+						onClick={handleExitFullscreen}
+					>
+						<Icon name="Close" className="h-3 w-3" />
+					</button>
+
+
+				)}
+
 				<iframe
 					title="Script screen"
 					id="iframe"
 					src={iframeSrc}
 					className="w-full h-full bg-neutral-900"
 					style={{ border: 0, overflow: "hidden" }}
-					sandbox="allow-scripts allow-same-origin allow-forms "
+					sandbox="allow-scripts allow-same-origin allow-forms"
 				/>
 			</motion.div>
 		</div>
 	);
 }
+
