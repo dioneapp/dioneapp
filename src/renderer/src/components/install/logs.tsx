@@ -79,7 +79,7 @@ export default function LogsComponent({
 									<span
 										className={`w-4 h-4 flex justify-start items-center ${lowerLog.includes("error") && "mr-4"}`}
 									>
-										{icon || <p className="flex justify-start w-4 h-4">-</p>}
+										{icon || <span className="flex justify-start w-4 h-4">-</span>}
 									</span>
 									{log.replace(/^(ERROR:|WARN:|INFO:|OUT:)/, "").trim() ||
 										"Loading..."}

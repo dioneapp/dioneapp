@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { openLink } from "../../utils/openLink";
 import Icon from "../icons/icon";
 import QuickLaunch from "./quick-launch";
+import { useAppContext } from "./global-context";
 
 export default function Sidebar() {
 	const [authToken, setAuthToken] = useState<string | null>(null);
@@ -15,6 +16,7 @@ export default function Sidebar() {
 	const [dbUser, setDbUser] = useState<any>(null);
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
+	const {isServerRunning} = useAppContext();
 
 	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -212,7 +214,12 @@ export default function Sidebar() {
 						{config?.compactMode && <Icon name="Dio" className="h-12 w-12" />}
 						{!config?.compactMode && <Icon name="Dio" className="h-8 w-8" />}
 						{!config?.compactMode && (
-							<h1 className="font-semibold text-3xl">Dione</h1>
+							<div className="flex gap-1.5 justify-center items-center">
+								<h1 className="font-semibold text-3xl">Dione</h1>
+								{isServerRunning && (
+									<div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse mb-3.5" />
+								) }
+							</div>
 						)}
 					</Link>
 					{!config?.compactMode && (
