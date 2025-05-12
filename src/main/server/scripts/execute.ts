@@ -41,17 +41,20 @@ export default async function executeInstallation(
 
 				// if exists env property, create virtual environment and execute commands inside it
 				if (step.env) {
-					const envName = step.env.toString();
+					const envName = typeof step.env === "string" ? step.env : step.env.name;
+					const pythonVersion = typeof step.env === "object" && "version" in step.env ? step.env.version : "";
 					io.emit("installUpdate", {
 						type: "log",
-						content: `INFO: Creating/using virtual environment: ${envName}`,
+						content: `INFO: Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					});
+					
 
 					// create virtual environment and execute commands inside it
 					const envCommands = createVirtualEnvCommands(
 						envName,
 						commandsArray,
 						configDir,
+						pythonVersion,
 					);
 					await executeCommands(envCommands, configDir, io);
 				} else {
@@ -120,10 +123,11 @@ export async function executeStartup(pathname: string, io: Server) {
 
 				// if exists env property, create virtual environment and execute commands inside it
 				if (step.env) {
-					const envName = step.env.toString();
+					const envName = typeof step.env === "string" ? step.env : step.env.name;
+					const pythonVersion = typeof step.env === "object" && "version" in step.env ? step.env.version : "";
 					io.emit("installUpdate", {
 						type: "log",
-						content: `INFO: Creating/using virtual environment: ${envName}`,
+						content: `INFO: Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					});
 
 					// create virtual environment and execute commands inside it
@@ -131,6 +135,7 @@ export async function executeStartup(pathname: string, io: Server) {
 						envName,
 						commandsArray,
 						configDir,
+						pythonVersion,
 					);
 					response = await executeCommands(envCommands, configDir, io);
 				} else {
@@ -183,7 +188,7 @@ export async function executeStartup(pathname: string, io: Server) {
 }
 
 // commands to create virtual environment
-function createVirtualEnvCommands(envName, commands, baseDir) {
+function createVirtualEnvCommands(envName, commands, baseDir, pythonVersion = "") {
 	const isWindows = process.platform === "win32";
 	const envPath = path.join(baseDir, envName);
   
@@ -191,6 +196,9 @@ function createVirtualEnvCommands(envName, commands, baseDir) {
 	const commandStrings = Array.isArray(commands)
 	  ? commands.filter(cmd => typeof cmd === "string" && cmd.trim())
 	  : [];
+
+	// add python version flag if specified
+	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
   
 	if (isWindows) {
 	  const activateScript = path.join(envPath, "Scripts", "activate");
@@ -199,7 +207,7 @@ function createVirtualEnvCommands(envName, commands, baseDir) {
 		? `&& ${commandStrings.join(" && ")}`
 		: "";
 	  return [
-		`if not exist "${envPath}" (uv venv ${envName})`,
+		`if not exist "${envPath}" (uv venv ${pythonFlag} ${envName})`,
 		`call "${activateScript}" ${middle} && deactivate`
 	  ];
 	}
@@ -210,7 +218,7 @@ function createVirtualEnvCommands(envName, commands, baseDir) {
 	  ? `&& ${commandStrings.join(" && ")}`
 	  : "";
 	return [
-	  `if [ ! -d "${envPath}" ]; then uv venv ${envName}; fi`,
+	  `if [ ! -d "${envPath}" ]; then uv venv ${pythonFlag} ${envName}; fi`,
 	  `source "${activateScript}" ${middle} && deactivate`
 	];
   }
