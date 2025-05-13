@@ -83,8 +83,12 @@ export default function LogsComponent({
 											<span className="flex justify-start w-4 h-4">-</span>
 										)}
 									</span>
-									{log.replace(/^(ERROR:|WARN:|INFO:|OUT:)/, "").trim() ||
-										"Loading..."}
+									{log
+										.replace(/\x1B\[[0-9;]*m/g, "") // remove ascii codes
+										.replace(/^(ERROR:|WARN:|INFO:|OUT:)\s*/g, "") // remove prefix
+										.replace(/\[[^\]]*\]\s*/g, "") // remove blocks like [stderr-info] or dates
+										.trim() || "Loading..."
+									}
 								</span>
 							</p>
 						);
