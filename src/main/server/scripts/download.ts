@@ -6,6 +6,7 @@ import { supabase } from "../utils/database";
 import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies";
 import executeInstallation from "./execute";
+import { readConfig } from "../../config";
 
 export async function getScripts(id: string, io: Server) {
 	try {
@@ -29,7 +30,8 @@ export async function getScripts(id: string, io: Server) {
 
 		const root = process.cwd();
 		const sanitizedName = data.name.replace(/\s+/g, "-");
-		const saveDirectory = path.join(root, "apps", sanitizedName);
+		const settings = readConfig()
+		const saveDirectory = path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName);
 		const script_url = data.script_url;
 
 		try {

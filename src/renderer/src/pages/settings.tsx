@@ -79,6 +79,14 @@ export default function Settings() {
 		}
 	};
 
+	async function handleSaveDir() {
+		const result = await window.electron.ipcRenderer.invoke("save-dir", config.defaultInstallFolder);
+		console.log('result', result)
+		if (!result.canceled && result.filePaths[0]) {
+			handleUpdate({ defaultInstallFolder: result.filePaths[0] });
+		}
+	}
+
 	return (
 		<div className="min-h-screen bg-background pt-4">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -90,7 +98,29 @@ export default function Settings() {
 							{config && (
 								<div className="flex flex-col space-y-4 h-full z-50 mb-12">
 									<div className="flex flex-col">
+										{/* Apps */}
+										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
+											Applications
+										</h2>
+										<div className="flex flex-col gap-2">
+										<div className="flex justify-between w-full items-center h-full space-y-2">
+											<div className="h-full flex items-start justify-center flex-col mt-auto">
+												<label className="text-neutral-200 font-medium">
+													Default install folder
+												</label>
+												<p className="text-xs text-neutral-400">
+													Select the folder where applications will be installed
+												</p>
+											</div>
+											<div className="flex gap-2 items-center">
+												<input onClick={handleSaveDir} type="text" placeholder="Select folder" readOnly value={config.defaultInstallFolder} className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-72 min-w-48 w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors" />
+											</div>
+										</div>
+										</div>
+									</div>
+									<div className="flex flex-col">
 										{/* Interface */}
+										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
 											Interface
 										</h2>
@@ -108,7 +138,7 @@ export default function Settings() {
 												onChange={(e) =>
 													handleUpdate({ language: e.target.value })
 												}
-												className="bg-white/10 border border-white/5 text-neutral-200 h-10 px-2 pr-8 w-72 rounded-xl text-sm focus:outline-none hover:bg-white/20 backdrop-blur-sm cursor-pointer transition-colors duration-400"
+												className="bg-white/10 border border-white/5 text-neutral-200 h-10 px-2 pr-8 w-72 rounded-full text-sm focus:outline-none hover:bg-white/20 backdrop-blur-sm cursor-pointer transition-colors duration-400"
 											>
 												<option value="en">English</option>
 											</select>
@@ -240,7 +270,7 @@ export default function Settings() {
 												<input
 													required
 													readOnly
-													className="text-xs text-neutral-300 focus:outline-none focus:ring-1 focus:ring-white/20 rounded-xl w-96 h-10 px-2 bg-white/10 border border-white/5 backdrop-blur-3xl cursor-pointer"
+													className="text-xs font-mono text-right text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full w-fit max-w-1/2 min-w-80 truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
 													type="text"
 													value={config.defaultLogsPath}
 													onChange={(e) => {

@@ -10,6 +10,7 @@ export interface AppConfig {
 	defaultLogsPath: string;
 	enableDesktopNotifications: boolean;
 	notifyOnInstallComplete: boolean;
+	defaultInstallFolder: string;
 }
 
 // default config
@@ -20,6 +21,7 @@ export const defaultConfig: AppConfig = {
 	defaultLogsPath: path.join(app.getPath("userData"), "logs"),
 	enableDesktopNotifications: true,
 	notifyOnInstallComplete: true,
+	defaultInstallFolder: path.join(app.getAppPath(), "apps"),
 };
 // get config file
 export const getConfigPath = () => {

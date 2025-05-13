@@ -7,6 +7,7 @@ import { executeStartup } from "../scripts/execute";
 import getAllScripts, { getInstalledScript } from "../scripts/installed";
 import { stopActiveProcess } from "../scripts/process";
 import logger from "../utils/logger";
+import { readConfig } from "../../config";
 
 export function createScriptRouter(io: Server) {
 	const router = express.Router();
@@ -73,7 +74,8 @@ export function createScriptRouter(io: Server) {
 		const { name } = req.params;
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const root = process.cwd();
-		const workingDir = path.join(root, "apps", sanitizedName);
+		const config = readConfig()
+		const workingDir = path.join(config?.defaultInstallFolder || root, "apps", sanitizedName);
 		logger.info(`Stopping script '${sanitizedName}' on '${workingDir}'`);
 		try {
 			const success = await stopActiveProcess(io);
@@ -94,7 +96,8 @@ export function createScriptRouter(io: Server) {
 		const { name } = req.params;
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const root = process.cwd();
-		const workingDir = path.join(root, "apps", sanitizedName);
+		const config = readConfig()
+		const workingDir = path.join(config?.defaultInstallFolder || root, "apps", sanitizedName);
 		logger.info(`Starting script '${sanitizedName}' on '${workingDir}'`);
 		io.emit("installUpdate", {
 			type: "log",

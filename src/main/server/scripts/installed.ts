@@ -1,10 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
 import logger from "../utils/logger";
+import { readConfig } from "../../config";
 
 export default async function getAllScripts() {
 	const root = process.cwd();
-	const scriptsDir = path.join(root, "apps");
+	const config = readConfig()
+	const scriptsDir = path.join(config?.defaultInstallFolder || root, "apps");
 
 	try {
 		await fs.promises.mkdir(scriptsDir, { recursive: true });
@@ -31,8 +33,9 @@ export default async function getAllScripts() {
 
 export async function getInstalledScript(name: string) {
 	const root = process.cwd();
+	const config = readConfig()
 	const sanitizedName = name.replace(/\s+/g, "-");
-	const scriptDir = path.join(root, "apps", sanitizedName);
+	const scriptDir = path.join(config?.defaultInstallFolder || root, "apps", sanitizedName);
 	console.log("script dir", scriptDir);
 	try {
 		await fs.promises.readdir(scriptDir);

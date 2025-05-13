@@ -6,6 +6,7 @@ import {
 	BrowserWindow,
 	Tray,
 	app,
+	dialog,
 	globalShortcut,
 	ipcMain,
 	shell,
@@ -244,6 +245,19 @@ app.whenReady().then(() => {
 			}
 		},
 	);
+
+	// save dir
+	ipcMain.handle("save-dir", async (_event, path: string,) => {
+		const result = await dialog.showOpenDialog({
+			defaultPath: path,
+			properties: ["openDirectory"],
+			title: "Select a directory",
+			message: "Select a directory",
+			securityScopedBookmarks: true,
+		});
+	
+		return result;
+	  })
 
 	// Retrieve the current port
 	ipcMain.handle("get-current-port", async () => {

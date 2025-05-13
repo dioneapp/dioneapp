@@ -1,6 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Response } from "express";
+import { readConfig } from "../../config";
 
 export async function deleteScript(name: string, res: Response) {
 	try {
@@ -9,7 +10,8 @@ export async function deleteScript(name: string, res: Response) {
 
 		// delete script dirs
 		const root = process.cwd();
-		const appsDir = path.join(root, "apps");
+		const config = readConfig()
+		const appsDir = path.join(config?.defaultInstallFolder || root, "apps");
 		const appDir = path.join(appsDir, sanitizedName);
 
 		// check if dir exists
