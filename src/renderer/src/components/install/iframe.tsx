@@ -209,7 +209,7 @@ export default function IframeComponent({
 						title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
 					>
 						<Icon
-							name={isFullscreen ? "Minimize" : "Maximize"}
+							name={isFullscreen ? "Minus" : "Maximize"}
 							className="w-4 h-4"
 						/>
 					</motion.button>
