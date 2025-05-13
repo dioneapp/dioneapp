@@ -11,7 +11,7 @@ export default function Background() {
 				}}
 				transition={{
 					duration: 30,
-					repeat: Infinity,
+					repeat: Number.POSITIVE_INFINITY,
 					ease: "easeInOut",
 				}}
 			/>
@@ -23,7 +23,7 @@ export default function Background() {
 				}}
 				transition={{
 					duration: 35,
-					repeat: Infinity,
+					repeat: Number.POSITIVE_INFINITY,
 					ease: "easeInOut",
 				}}
 			/>
@@ -35,7 +35,7 @@ export default function Background() {
 				}}
 				transition={{
 					duration: 32,
-					repeat: Infinity,
+					repeat: Number.POSITIVE_INFINITY,
 					ease: "easeInOut",
 				}}
 			/>
@@ -47,7 +47,7 @@ export default function Background() {
 				}}
 				transition={{
 					duration: 38,
-					repeat: Infinity,
+					repeat: Number.POSITIVE_INFINITY,
 					ease: "easeInOut",
 				}}
 			/>

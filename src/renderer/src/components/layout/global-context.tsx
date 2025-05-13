@@ -1,23 +1,25 @@
-import { createContext, useContext, useState, useEffect, useRef } from "react";
-import { io } from "socket.io-client";
 import { getCurrentPort } from "@renderer/utils/getPort";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "@renderer/utils/useToast";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
 
 interface AppContextType {
-    setInstalledApps: React.Dispatch<React.SetStateAction<string[]>>;
-    installedApps: string[];
-    socket: any;
-    logs: string[];
-    setLogs: React.Dispatch<React.SetStateAction<string[]>>;
-    statusLog: {
-        status: string;
-        content: string;
-    };
-    setStatusLog: React.Dispatch<React.SetStateAction<{
-        status: string;
-        content: string;
-    }>>;
+	setInstalledApps: React.Dispatch<React.SetStateAction<string[]>>;
+	installedApps: string[];
+	socket: any;
+	logs: string[];
+	setLogs: React.Dispatch<React.SetStateAction<string[]>>;
+	statusLog: {
+		status: string;
+		content: string;
+	};
+	setStatusLog: React.Dispatch<
+		React.SetStateAction<{
+			status: string;
+			content: string;
+		}>
+	>;
 	isServerRunning: boolean;
 	setIsServerRunning: React.Dispatch<React.SetStateAction<boolean>>;
 	setData: React.Dispatch<React.SetStateAction<any>>;
@@ -52,13 +54,13 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function GlobalContext({ children }: { children: React.ReactNode }) {
 	const [exitRef, setExitRef] = useState<boolean>(false);
 	const pathname = useLocation().pathname;
-    const [installedApps, setInstalledApps] = useState<string[]>([]);
-    const [socket, setSocket] = useState<any>(null);
-    const [logs, setLogs] = useState<string[]>([]);
-    const [statusLog, setStatusLog] = useState<{
-        status: string;
-        content: string;
-    }>({ status: "", content: "" });
+	const [installedApps, setInstalledApps] = useState<string[]>([]);
+	const [socket] = useState<any>(null);
+	const [logs, setLogs] = useState<string[]>([]);
+	const [statusLog, setStatusLog] = useState<{
+		status: string;
+		content: string;
+	}>({ status: "", content: "" });
 	const [isServerRunning, setIsServerRunning] = useState<boolean>(false);
 	// toast stuff
 	const { addToast } = useToast();
@@ -236,52 +238,61 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	}, []);
 
 	useEffect(() => {
-		if (!pathname.includes('/install') && isServerRunning) {
-			showToast("default", "There is an application running in the background.", "true", true, "Return", () => {
-				navigate(`/install/${data.id} `);
-			});
+		if (!pathname.includes("/install") && isServerRunning) {
+			showToast(
+				"default",
+				"There is an application running in the background.",
+				"true",
+				true,
+				"Return",
+				() => {
+					navigate(`/install/${data.id} `);
+				},
+			);
 		}
-	}, [pathname.includes('/install'), isServerRunning]);
+	}, [pathname.includes("/install"), isServerRunning]);
 
-    return (
-        <AppContext.Provider value={{ 
-            setInstalledApps, 
-            installedApps,
-            socket,
-            logs,
-            setLogs,
-            statusLog,
-            setStatusLog,
-			isServerRunning,
-			setIsServerRunning,
-			data,
-			setData,
-			error,
-			setError,
-			setIframeAvailable,
-			iframeAvailable,
-			setMissingDependencies,
-			missingDependencies,
-			setShow,
-			show,
-			showToast,
-			stopCheckingRef,
-			iframeSrc,
-			setIframeSrc,
-			catchPort,
-			setCatchPort,
-			exitRef,
-			setExitRef
-        }}>
-            {children}
-        </AppContext.Provider>
-    );
+	return (
+		<AppContext.Provider
+			value={{
+				setInstalledApps,
+				installedApps,
+				socket,
+				logs,
+				setLogs,
+				statusLog,
+				setStatusLog,
+				isServerRunning,
+				setIsServerRunning,
+				data,
+				setData,
+				error,
+				setError,
+				setIframeAvailable,
+				iframeAvailable,
+				setMissingDependencies,
+				missingDependencies,
+				setShow,
+				show,
+				showToast,
+				stopCheckingRef,
+				iframeSrc,
+				setIframeSrc,
+				catchPort,
+				setCatchPort,
+				exitRef,
+				setExitRef,
+			}}
+		>
+			{children}
+		</AppContext.Provider>
+	);
 }
 
 export function useAppContext() {
-    const context = useContext(AppContext);
-    if (!context) {
-        throw new Error("Context must be used within an provider");
-    }
-    return context;
+	const context = useContext(AppContext);
+	if (!context) {
+		throw new Error("Context must be used within an provider");
+	}
+	return context;
 }

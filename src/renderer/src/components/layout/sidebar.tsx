@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { openLink } from "../../utils/openLink";
 import Icon from "../icons/icon";
-import QuickLaunch from "./quick-launch";
 import { useAppContext } from "./global-context";
+import QuickLaunch from "./quick-launch";
 
 export default function Sidebar() {
 	const [authToken, setAuthToken] = useState<string | null>(null);
@@ -16,7 +16,7 @@ export default function Sidebar() {
 	const [dbUser, setDbUser] = useState<any>(null);
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
-	const {isServerRunning} = useAppContext();
+	const { isServerRunning } = useAppContext();
 
 	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -33,8 +33,14 @@ export default function Sidebar() {
 		window.electron.ipcRenderer.on("update_downloaded", handleUpdateDownloaded);
 
 		return () => {
-			window.electron.ipcRenderer.removeListener("update_available", handleUpdateAvailable);
-			window.electron.ipcRenderer.removeListener("update_downloaded", handleUpdateDownloaded);
+			window.electron.ipcRenderer.removeListener(
+				"update_available",
+				handleUpdateAvailable,
+			);
+			window.electron.ipcRenderer.removeListener(
+				"update_downloaded",
+				handleUpdateDownloaded,
+			);
 		};
 	}, []);
 
@@ -218,7 +224,7 @@ export default function Sidebar() {
 								<h1 className="font-semibold text-3xl">Dione</h1>
 								{isServerRunning && (
 									<div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse mb-3.5" />
-								) }
+								)}
 							</div>
 						)}
 					</Link>
@@ -252,11 +258,19 @@ export default function Sidebar() {
 					)}
 				</div>
 				{updateAvailable && !config?.compactMode && (
-					<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }} className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56">
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ duration: 0.2 }}
+						className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56"
+					>
 						<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
-							<h1 className="font-semibold text-xl text-neutral-200">Update Available</h1>
+							<h1 className="font-semibold text-xl text-neutral-200">
+								Update Available
+							</h1>
 							<h2 className="text-[10px] text-neutral-300 text-balance">
-								A new version of Dione is available, please restart the app to update.
+								A new version of Dione is available, please restart the app to
+								update.
 							</h2>
 						</div>
 					</motion.div>
@@ -328,7 +342,10 @@ export default function Sidebar() {
 								onMouseEnter={() => setHoveredTooltip("account")}
 								onMouseLeave={() => setHoveredTooltip(null)}
 							>
-								{dbUser[0]?.avatar_url && dbUser[0]?.avatar_url !== "" && dbUser[0]?.avatar_url !== null && dbUser[0]?.avatar_url !== undefined ? (
+								{dbUser[0]?.avatar_url &&
+								dbUser[0]?.avatar_url !== "" &&
+								dbUser[0]?.avatar_url !== null &&
+								dbUser[0]?.avatar_url !== undefined ? (
 									<img
 										src={dbUser[0]?.avatar_url}
 										alt="user avatar"

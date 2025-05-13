@@ -1,12 +1,12 @@
 import type { Express } from "express";
 import type { Server } from "socket.io";
 
+import configRouter from "./config";
 // routers
 import databaseRouter from "./database";
-import searchBarRouter from "./searchbar";
-import configRouter from "./config";
 import { createDependenciesRouter } from "./dependencies";
 import { createScriptRouter } from "./scripts";
+import searchBarRouter from "./searchbar";
 
 export const setupRoutes = (server: Express, io: Server) => {
 	server.get("/", (_req, res) => {

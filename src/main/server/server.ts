@@ -1,10 +1,10 @@
-import express from "express";
 import http from "http";
+import cors from "cors";
+import express from "express";
+import { start as setupSocket } from "../socket/socket";
 import { setupRoutes } from "./routes/setup";
 import { getAvailablePort } from "./utils/getPort";
-import { start as setupSocket } from "../socket/socket";
 import logger from "./utils/logger";
-import cors from "cors";
 
 const server = express();
 const httpServer = http.createServer(server);

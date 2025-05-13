@@ -1,10 +1,10 @@
 import { exec, spawn } from "node:child_process";
+import os from "node:os";
 import { promisify } from "node:util";
 import express from "express";
-import os from "node:os";
-import logger from "../utils/logger";
-import acceptedDependencies from "../scripts/acceptedDependencies.json";
 import type { Server } from "socket.io";
+import acceptedDependencies from "../scripts/acceptedDependencies.json";
+import logger from "../utils/logger";
 
 export const createDependenciesRouter = (io: Server) => {
 	const execPromise = promisify(exec);

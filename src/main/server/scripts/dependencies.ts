@@ -1,5 +1,7 @@
-import fs from "node:fs";
 import { execSync } from "node:child_process";
+import fs from "node:fs";
+import semver from "semver";
+import logger from "../utils/logger";
 import acceptedDependencies from "./acceptedDependencies.json";
 import logger from "../utils/logger";
 import semver from "semver";

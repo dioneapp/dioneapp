@@ -1,7 +1,7 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import Loading from "./loading-skeleton";
 import Icon from "../icons/icon";
+import Loading from "./loading-skeleton";
 
 interface ActionsProps {
 	data: any;
@@ -12,7 +12,7 @@ interface ActionsProps {
 	handleDownload: any;
 	isServerRunning: boolean;
 	handleReconnect: any;
-	}
+}
 
 export default function ActionsComponent({
 	data,
@@ -62,8 +62,8 @@ export default function ActionsComponent({
 											onError={() => setImgLoading(false)}
 											src={data?.logo_url}
 											alt={`${data?.name} icon`}
-										className="h-16 w-16 rounded-xl border border-white/10 object-cover object-center transition-all duration-200"
-									/>
+											className="h-16 w-16 rounded-xl border border-white/10 object-cover object-center transition-all duration-200"
+										/>
 									) : (
 										<div
 											style={{
@@ -82,14 +82,16 @@ export default function ActionsComponent({
 										{data?.name}
 									</h1>
 									<p
-									
 										className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-full cursor-pointer text-justify max-w-md"
 										onClick={() => openLink(data?.script_url)}
 									>
 										<span className="w-fit h-full flex items-center justify-center">
 											<Icon name="Check" />
 										</span>
-										{data?.script_url.replace(/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//, "")}
+										{data?.script_url.replace(
+											/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
+											"",
+										)}
 									</p>
 									<p className="text-xs text-[#BCB1E7] flex gap-1">
 										<span className="w-fit h-full flex items-center">
@@ -119,34 +121,33 @@ export default function ActionsComponent({
 										Reconnect
 									</button>
 								)}
-								{!isServerRunning && (
-									installed ? (
+								{!isServerRunning &&
+									(installed ? (
 										<div className="flex gap-2 justify-end w-full">
 											<button
 												type="button"
-											onClick={handleStart}
-											className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
-										>
-											Start
-										</button>
+												onClick={handleStart}
+												className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+											>
+												Start
+											</button>
+											<button
+												type="button"
+												onClick={handleUninstall}
+												className="bg-red-500/50 hover:bg-red-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+											>
+												Uninstall
+											</button>
+										</div>
+									) : (
 										<button
 											type="button"
-											onClick={handleUninstall}
-											className="bg-red-500/50 hover:bg-red-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+											onClick={handleDownload}
+											className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
 										>
-											Uninstall
+											Install
 										</button>
-									</div>
-								) : (
-									<button
-										type="button"
-										onClick={handleDownload}
-										className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
-									>
-										Install
-									</button>
-								)
-							)}
+									))}
 							</div>
 						</div>
 					</motion.div>

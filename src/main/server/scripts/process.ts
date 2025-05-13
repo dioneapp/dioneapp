@@ -1,10 +1,10 @@
+import { spawn } from "node:child_process";
+import fs from "node:fs";
+import { platform as getPlatform } from "node:os";
+import path from "node:path";
+import pidtree from "pidtree";
 import type { Server } from "socket.io";
 import logger from "../utils/logger";
-import { spawn } from "node:child_process";
-import { platform as getPlatform } from "node:os";
-import pidtree from "pidtree";
-import path from "node:path";
-import fs from "node:fs";
 
 let activeProcess: any = null;
 let activePID: number | null = null;

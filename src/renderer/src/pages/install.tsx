@@ -1,21 +1,21 @@
-import { AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
-import { getCurrentPort } from "../utils/getPort";
+import Icon from "@renderer/components/icons/icon";
+import ActionsComponent from "@renderer/components/install/actions";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
-import ActionsComponent from "@renderer/components/install/actions";
 import { useAppContext } from "@renderer/components/layout/global-context";
-import Icon from "@renderer/components/icons/icon";
 import MissingDepsModal from "@renderer/components/layout/missing-deps-modal";
+import { AnimatePresence } from "framer-motion";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getCurrentPort } from "../utils/getPort";
 
 export default function Install({ id }: { id?: string }) {
-	const { 
-		setInstalledApps, 
-		logs, 
-		setLogs, 
-		statusLog, 
-		isServerRunning, 
+	const {
+		setInstalledApps,
+		logs,
+		setLogs,
+		statusLog,
+		isServerRunning,
 		setIsServerRunning,
 		setData,
 		data,
@@ -30,8 +30,8 @@ export default function Install({ id }: { id?: string }) {
 		stopCheckingRef,
 		iframeSrc,
 		catchPort,
-		exitRef
-	 } = useAppContext();
+		exitRef,
+	} = useAppContext();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
 	const [_imgLoading, setImgLoading] = useState<boolean>(true);
@@ -189,7 +189,7 @@ export default function Install({ id }: { id?: string }) {
 			setLogs((prevLogs) => [...prevLogs, `Error stopping ${data.name}`]);
 		}
 	}
-	
+
 	async function uninstall() {
 		try {
 			const port = await getCurrentPort();
@@ -236,7 +236,14 @@ export default function Install({ id }: { id?: string }) {
 
 	const handleDownload = async () => {
 		if (isServerRunning) {
-			showToast("error", "Server is already running.", undefined, true, "Stop", handleStop);
+			showToast(
+				"error",
+				"Server is already running.",
+				undefined,
+				true,
+				"Stop",
+				handleStop,
+			);
 			return;
 		}
 		showToast("default", `Downloading ${data.name}...`);
@@ -245,7 +252,14 @@ export default function Install({ id }: { id?: string }) {
 
 	const handleStart = async () => {
 		if (isServerRunning) {
-			showToast("error", "Server is already running.", undefined, true, "Stop", handleStop);
+			showToast(
+				"error",
+				"Server is already running.",
+				undefined,
+				true,
+				"Stop",
+				handleStop,
+			);
 			return;
 		}
 		showToast("default", `Starting ${data.name}...`);
