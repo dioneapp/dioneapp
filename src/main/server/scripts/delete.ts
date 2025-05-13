@@ -36,10 +36,14 @@ async function closeFile(directory: string) {
 		for (const file of files) {
 			const filePath = path.join(directory, file);
 			try {
-				fs.rm(filePath, { recursive: true, force: true });
-				fs.unlink(filePath);
+				const stat = await fs.stat(filePath);
+				if (stat.isDirectory()) {
+					await fs.rm(filePath, { recursive: true, force: true });
+				} else {
+					await fs.unlink(filePath);
+				}
 			} catch (err) {
-				console.warn(`Could not delete file ${filePath}: ${err}`);
+				console.warn(`Could not delete ${filePath}: ${err}`);
 			}
 		}
 	} catch (err) {
