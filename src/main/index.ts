@@ -259,6 +259,11 @@ app.whenReady().then(() => {
 		return result;
 	  })
 
+	// open dir
+	ipcMain.handle("open-dir", async (_event, path: string) => {
+		await shell.openPath(path);
+	})
+
 	// Retrieve the current port
 	ipcMain.handle("get-current-port", async () => {
 		const port = await getCurrentPort();

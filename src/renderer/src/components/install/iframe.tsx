@@ -1,13 +1,14 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Icon from "../icons/icon";
-
+import { getCurrentPort } from "@renderer/utils/getPort";
 interface IframeProps {
 	iframeSrc: string;
 	handleStop: () => void;
 	handleReloadIframe: () => void;
 	currentPort: number;
 	setShow: React.Dispatch<React.SetStateAction<string>>;
+	data: any;
 }
 
 interface SystemUsage {
@@ -23,7 +24,8 @@ export default function IframeComponent({
 	handleReloadIframe,
 	currentPort,
 	setShow,
-}: IframeProps) {
+	data,
+	}: IframeProps) {
 	const [_systemUsage, setSystemUsage] = useState<SystemUsage>({
 		cpu: 0,
 		ram: { percent: 0, usedGB: 0 },
@@ -73,6 +75,15 @@ export default function IframeComponent({
 		if (document.fullscreenElement) {
 			document.exitFullscreen();
 		}
+	};
+
+	const handleOpenFolder = async () => {
+		const port = await getCurrentPort();
+		const settings = await fetch(`http://localhost:${port}/config`).then((res) =>
+			res.json(),
+		);
+		const sanitizedName = data.name.replace(/\s+/g, "-");
+		window.electron.ipcRenderer.invoke("open-dir", `${settings.defaultInstallFolder}/apps/${sanitizedName}`);
 	};
 
 	useEffect(() => {
@@ -131,8 +142,8 @@ export default function IframeComponent({
 				transition={{ duration: 0.4 }}
 				className="w-full flex items-center justify-between gap-2 rounded-lg mt-6	"
 			>
-				<div className="flex items-center">
-					<div className="flex items-center border border-white/10 bg-white/5 rounded-md group overflow-hidden">
+				<div className="flex items-center gap-2">
+					<div className="flex items-center border border-white/10 bg-white/5 rounded-md group relative">
 						<div className="flex items-center pl-2 pr-1.5 py-1 gap-2">
 							<span className="text-sm text-neutral-300">
 								{currentPort || "3000"}
@@ -141,15 +152,26 @@ export default function IframeComponent({
 						<button
 							type="button"
 							onClick={handleOpenInBrowser}
-							className="p-1.5 hover:bg-white/10 border-l border-white/10 transition-colors rounded-r-md cursor-pointer relative group"
+							className="p-1.5 hover:bg-white/10 border-l border-white/10 transition-colors rounded-r-md cursor-pointer group"
 							title="Open in browser"
 						>
 							<Icon name="Open" className="w-4 h-4" />
-							<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 bg-black/80 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
+							<div className="absolute z-50 -top-9 -translate-x-1/2 px-1 py-0.5 bg-black/80 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
 								Open in Browser
 							</div>
 						</button>
 					</div>
+					<button
+							type="button"
+							onClick={handleOpenFolder}
+							className="p-1.5 hover:bg-white/10 border border-white/10 transition-colors rounded cursor-pointer relative group"
+							title="Open folder"
+						>
+							<Icon name="Folder" className="w-4 h-4" />
+							<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 bg-black/80 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
+								Open folder
+							</div>
+						</button>
 				</div>
 
 				<div className="flex gap-1 justify-center items-center flex-1">
