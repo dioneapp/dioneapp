@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import type { JSX } from "react";
 import Icon from "../icons/icon";
+import { useMemo } from "react";
 
 interface LogsProps {
 	statusLog: { status: string; content: string };
@@ -19,6 +20,14 @@ export default function LogsComponent({
 	iframeAvailable,
 	setShow,
 }: LogsProps) {
+
+	const Spinner = useMemo(() => {
+		if (statusLog.status === "pending" || !statusLog.status) {
+			return <Icon name="Pending" className="h-4 w-4 animate-spin" />;
+		}
+		return null;
+	}, [statusLog.status]);
+
 	return (
 		<motion.div
 			className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden"
@@ -33,9 +42,7 @@ export default function LogsComponent({
 					<p
 						className={`text-xs ${statusLog.status === "success" ? "text-green-400" : statusLog.status === "error" ? "text-red-400" : statusLog.status === "pending" || !statusLog.status ? "text-orange-400" : "text-neutral-200"} flex items-center gap-2`}
 					>
-						{(statusLog.status === "pending" || !statusLog.status) && (
-							<Icon name="Pending" className="h-4 w-4 animate-spin" />
-						)}
+						{Spinner}
 						{statusLog.status === "success" && (
 							<Icon name="Success" className="h-4 w-4" />
 						)}
@@ -73,7 +80,6 @@ export default function LogsComponent({
 						}
 
 						return (
-							// biome-ignore lint/suspicious/noArrayIndexKey: in this case, only can use index
 							<p key={index} className={`text-xs flex ${textColor} my-1`}>
 								<span className="flex justify-center gap-2 items-center">
 									<span
@@ -84,6 +90,7 @@ export default function LogsComponent({
 										)}
 									</span>
 									{log
+										// biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
 										.replace(/\x1B\[[0-9;]*m/g, "") // remove ascii codes
 										.replace(/^(ERROR:|WARN:|INFO:|OUT:)\s*/g, "") // remove prefix
 										.replace(/\[[^\]]*\]\s*/g, "") // remove blocks like [stderr-info] or dates
