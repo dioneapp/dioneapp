@@ -3,6 +3,7 @@ import { execSync } from "node:child_process";
 import acceptedDependencies from "./acceptedDependencies.json";
 import logger from "../utils/logger";
 import semver from "semver";
+import os from "node:os";
 
 export interface Command {
 	name: string;
@@ -25,9 +26,9 @@ interface DependencyConfig {
 		versionRegex?: string;
 		parseVersion?: (output: string) => string;
 		installCommand?: {
-			windows: string;
-			macos: string;
-			linux: string;
+			windows?: string;
+			macos?: string;
+			linux?: string;
 		};
 	};
 }
@@ -77,6 +78,16 @@ async function isDependencyInstalled(
 	}
 }
 
+export function isDepForCurrentOS(dep: any): boolean {
+	const depOS = dep.platform;
+	const currentOS = os.platform();
+	if (!depOS) return true;
+	if (depOS === "windows" && currentOS === "win32") return true;
+	if (depOS === "macos" && currentOS === "darwin") return true;
+	if (depOS === "linux" && currentOS === "linux") return true;
+	return false;
+}
+
 export async function checkDependencies(dioneFile: string): Promise<{
 	success: boolean;
 	missing: { name: string; installed: boolean; reason: string }[];
@@ -115,6 +126,11 @@ export async function checkDependencies(dioneFile: string): Promise<{
 		}
 
 		for (const [dependency, details] of Object.entries(config.dependencies)) {
+			// skip dep if not for current os
+			if (!isDepForCurrentOS(details)) {
+				continue;
+			}
+
 			const isInstalled = await isDependencyInstalled(
 				dependency,
 				details.version,
