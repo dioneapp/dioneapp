@@ -111,30 +111,52 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	// sidebar
 	const [apps, setApps] = useState<any[]>([]);
 
-	const isLocalAvailable = async (port) => {
-		try {
-			const response = await fetch(`http://localhost:${port}`);
-			if (response.status !== 200) {
-				return false;
+	const isLocalAvailable = async (port: number) => {
+		const socket = io(`http://localhost:${port}`);
+		return new Promise<boolean>((resolve) => {
+			if (stopCheckingRef.current === true) {
+				socket.disconnect();
 			}
-			return true;
-		} catch (error) {
-			return false;
-		}
-	};
-	const stopCheckingRef = useRef(false);
-	const loadIframe = async (localPort) => {
-		stopCheckingRef.current = false;
-
+			socket.on("connect", () => {
+				console.log("connected");
+				resolve(true);
+				socket.disconnect();
+			});
+			socket.on("connect_error", () => {
+				console.log("connect error");
+				resolve(true);
+				socket.disconnect();
+			});
+			socket.on("disconnect", () => {
+				console.log("disconnect");
+				resolve(false);
+				socket.disconnect();
+			});
+			socket.on("error", (error) => {
+				console.log("error:", error);
+				resolve(false);
+			});
+			socket.on("disconnect", () => {
+				console.log("disconnect");
+			});
+		});
+	  };
+	  
+	const stopCheckingRef = useRef(true);
+	const loadIframe = async (localPort: number) => {
 		let isAvailable = false;
-		while (!isAvailable && !stopCheckingRef.current) {
+		while (!isAvailable) {
 			isAvailable = await isLocalAvailable(localPort);
-			if (!isAvailable && !stopCheckingRef.current) {
+			if (!isAvailable) {
+				if (stopCheckingRef.current === true) {
+					break;
+				}
 				await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
 		}
 
-		if (isAvailable && !stopCheckingRef.current) {
+		if (isAvailable) {
+			stopCheckingRef.current = true;
 			setIframeSrc(`http://localhost:${localPort}`);
 			setShow("iframe");
 			setIframeAvailable(true);
@@ -184,14 +206,17 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 						}
 						// launch iframe if server is running
 						if (
-							(type === "log" &&
-								content.toLowerCase().includes("started server")) ||
-							content.toLowerCase().includes("http") ||
-							content.toLowerCase().includes("127.0.0.1") ||
-							content.toLowerCase().includes("localhost") ||
-							content.toLowerCase().includes("0.0.0.0")
-						) {
-							loadIframe(Number.parseInt(content));
+							(type === "log" || type === "info") &&
+							(content.toLowerCase().includes("started server") ||
+							  content.toLowerCase().includes("http") ||
+							  content.toLowerCase().includes("127.0.0.1") ||
+							  content.toLowerCase().includes("localhost") ||
+							  content.toLowerCase().includes("0.0.0.0"))
+						  ) {
+							const match = content.match(/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i);
+							if (match) {
+								loadIframe(Number.parseInt(match[1]));
+							}
 						}
 						if (type === "log") {
 							setLogs((prevLogs) => [...prevLogs, content]);
@@ -213,16 +238,17 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 							}
 						}
 						if (type === "catch") {
+							stopCheckingRef.current = false;
 							setIframeAvailable(false);
-							loadIframe(Number.parseInt(content));
+							// loadIframe(Number.parseInt(content));
 							setCatchPort(Number.parseInt(content));
 						}
 
 						if (content === "Script killed successfully" && !errorRef.current) {
-							console.log("Redirecting...");
+							stopCheckingRef.current = true;
 							showToast(
 								"success",
-								`${data.name || "Script"} exited successfully.`,
+								`${data?.name || "Script"} exited successfully.`,
 							);
 						}
 					},
