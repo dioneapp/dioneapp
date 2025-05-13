@@ -51,6 +51,7 @@ export default async function executeInstallation(
 						type: "log",
 						content: `INFO: Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					});
+					logger.info(`Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`);
 
 					// create virtual environment and execute commands inside it
 					const envCommands = createVirtualEnvCommands(
@@ -137,6 +138,8 @@ export async function executeStartup(pathname: string, io: Server) {
 						content: `INFO: Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					});
 
+					logger.info(`Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`);
+
 					// create virtual environment and execute commands inside it
 					const envCommands = createVirtualEnvCommands(
 						envName,
@@ -199,15 +202,28 @@ function createVirtualEnvCommands(
 	envName,
 	commands,
 	baseDir,
-	pythonVersion = "",
+	pythonVersion,
 ) {
 	const isWindows = process.platform === "win32";
 	const envPath = path.join(baseDir, envName);
 
 	// ensure commands is an array of strings without empty strings
 	const commandStrings = Array.isArray(commands)
-		? commands.filter((cmd) => typeof cmd === "string" && cmd.trim())
-		: [];
+	? commands.flatMap((cmd) => {
+		if (typeof cmd === "string" && cmd.trim()) {
+			return [cmd.trim()];
+		}
+		if (
+			cmd &&
+			typeof cmd === "object" &&
+			typeof cmd.command === "string" &&
+			cmd.command.trim()
+		) {
+			return [cmd.command.trim()];
+		}
+		return [];
+	})
+	: [];
 
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
@@ -220,7 +236,8 @@ function createVirtualEnvCommands(
 			: "";
 		return [
 			`if not exist "${envPath}" (uv venv ${pythonFlag} ${envName})`,
-			`call "${activateScript}" ${middle} && deactivate`,
+			`call "${activateScript}" ${middle}`,
+			`${envPath}\\Scripts\\deactivate.bat`
 		];
 	}
 
@@ -231,6 +248,7 @@ function createVirtualEnvCommands(
 		: "";
 	return [
 		`if [ ! -d "${envPath}" ]; then uv venv ${pythonFlag} ${envName}; fi`,
-		`source "${activateScript}" ${middle} && deactivate`,
+		`source "${activateScript}" ${middle}`,
+		`${envPath}\\Scripts\\deactivate.bat`
 	];
 }
