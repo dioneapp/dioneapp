@@ -64,7 +64,7 @@ function createWindow() {
 	mainWindow.removeMenu();
 
 	mainWindow.once("ready-to-show", () => {
-		autoUpdater.forceDevUpdateConfig = true;
+		// autoUpdater.forceDevUpdateConfig = true;
 		autoUpdater.logger = logger;
 		autoUpdater.autoDownload = true;
 		autoUpdater.autoInstallOnAppQuit = true;
