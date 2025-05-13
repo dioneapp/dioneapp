@@ -53,6 +53,7 @@ export default function MissingDepsModal({ data, set, onFinish }: props) {
 	async function install() {
 		setPage(1);
 		setLogs([]); // clean logs
+		setLogs(["Loading..."]);
 
 		try {
 			const port = await getCurrentPort();
