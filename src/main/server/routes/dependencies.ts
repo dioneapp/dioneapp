@@ -11,19 +11,9 @@ export const createDependenciesRouter = (io: Server) => {
 	const router = express.Router();
 	router.use(express.json());
 
-	const defaultDependencies = [
-		"uv",
-		"node",
-		"npm",
-		"python",
-		"git",
-		"curl",
-		"wget",
-	];
-
 	router.get("/check", async (req, res) => {
 		try {
-			const dependencies = req.headers.dependencies || defaultDependencies;
+			const dependencies = req.headers.dependencies;
 			logger.info(`Checking dependencies: ${dependencies.join(", ")}`);
 			const response = await checkDependencies(dependencies);
 			res.send(response).status(200);
