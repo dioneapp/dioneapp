@@ -234,7 +234,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 								!errorRef.current
 							) {
 								console.log("Redirecting...");
-								// window.location.reload();
+								window.location.reload();
 							}
 						}
 						if (type === "catch") {
