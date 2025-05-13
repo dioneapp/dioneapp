@@ -57,13 +57,14 @@
 		"directories": {
 			"buildResources": "resources"
 		},
-		"publish": {
+		"publish": [
+		{
 			"provider": "github",
 			"owner": "dioneapp",
 			"repo": "dioneapp",
-			"releaseType": "release",
-			"releaseNotes": "CHANGELOG.md"
-		},
+			"releaseType": "release"
+		}
+		],
 		"releaseInfo": {
 			"releaseNotesFile": "CHANGELOG.md"
 		}
