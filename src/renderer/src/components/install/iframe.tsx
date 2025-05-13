@@ -153,7 +153,8 @@ export default function IframeComponent({
 				</div>
 
 				<div className="flex gap-1 justify-center items-center flex-1">
-					<UsageIndicator label="CPU" percentage={systemUsage.cpu} />
+					{/* WIP */}
+					{/* <UsageIndicator label="CPU" percentage={systemUsage.cpu} />
 					<UsageIndicator
 						label="RAM"
 						percentage={systemUsage.ram.percent}
@@ -168,7 +169,7 @@ export default function IframeComponent({
 						label="DISK"
 						percentage={systemUsage.disk.percent}
 						absoluteValue={`${systemUsage.disk.usedGB.toFixed(1)}G`}
-					/>
+					/> */}
 				</div>
 
 				<div className="flex gap-1">

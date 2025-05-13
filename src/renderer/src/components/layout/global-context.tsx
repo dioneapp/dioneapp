@@ -47,6 +47,8 @@ interface AppContextType {
 	setCatchPort: React.Dispatch<React.SetStateAction<number | undefined>>;
 	exitRef: boolean;
 	setExitRef: React.Dispatch<React.SetStateAction<boolean>>;
+	apps: any[];
+	setApps: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -105,6 +107,9 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	const [data, setData] = useState<any | undefined>(undefined);
 	// show
 	const [show, setShow] = useState("actions");
+
+	// sidebar
+	const [apps, setApps] = useState<any[]>([]);
 
 	const isLocalAvailable = async (port) => {
 		try {
@@ -204,7 +209,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 								!errorRef.current
 							) {
 								console.log("Redirecting...");
-								window.location.reload();
+								// window.location.reload();
 							}
 						}
 						if (type === "catch") {
@@ -282,6 +287,8 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 				setCatchPort,
 				exitRef,
 				setExitRef,
+				apps,
+				setApps,
 			}}
 		>
 			{children}

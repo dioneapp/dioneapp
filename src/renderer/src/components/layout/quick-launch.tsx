@@ -8,8 +8,7 @@ import { useAppContext } from "./global-context";
 export default function QuickLaunch({
 	compactMode,
 }: { compactMode?: boolean }) {
-	const { installedApps, setInstalledApps } = useAppContext();
-	const [apps, setApps] = useState<any[]>([]);
+	const { installedApps, setInstalledApps, apps, setApps } = useAppContext();
 	const [showAppList, setShowAppList] = useState<boolean>(false);
 	const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
 	const [availableApps, setAvailableApps] = useState<any[]>([]);

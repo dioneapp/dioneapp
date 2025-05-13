@@ -102,7 +102,7 @@ export default function ActionsComponent({
 											className="hover:underline cursor-pointer"
 											onClick={() => openLink(`${data?.author_url}`)}
 										>
-											@{data?.author}
+											{data?.author}
 										</span>
 									</p>
 									<p className="text-xs text-neutral-400 mb-4 mt-2 line-clamp-3">

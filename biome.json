@@ -20,11 +20,13 @@
 		"enabled": true,
 		"rules": {
 			"a11y": {
-				"noLabelWithoutControl": "off"
+				"noLabelWithoutControl": "off",
+				"useKeyWithClickEvents": "off"
 			},
 			"recommended": true,
 			"suspicious": {
-				"noExplicitAny": "off"
+				"noExplicitAny": "off",
+				"noArrayIndexKey": "off"
 			},
 			"correctness": {
 				"noSelfAssign": "off",

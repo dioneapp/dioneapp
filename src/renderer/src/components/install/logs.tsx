@@ -91,7 +91,7 @@ export default function LogsComponent({
 					})}
 				</div>
 				<div className="h-px w-full bg-white/10 my-4" />
-				<div className="text-xs text-neutral-500 mt-4 mb-2 text-center">
+				<div className="text-xs text-neutral-500 mt-4 mb-2 text-center max-w-sm mx-auto justify-center items-center flex">
 					Logs shown are from the app itself. If you see an error, please report
 					it to the original app's developers first.
 				</div>

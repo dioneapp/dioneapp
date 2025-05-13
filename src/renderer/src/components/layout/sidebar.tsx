@@ -289,7 +289,7 @@ export default function Sidebar() {
 							className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-6 py-4 bg-black/90 text-white text-xs shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all backdrop-blur-3xl duration-200"
 							style={{ whiteSpace: "pre-line" }}
 						>
-							New update available, please restart the app to update.
+							New update available, please restart Dione to update.
 						</div>
 					</motion.div>
 				)}
@@ -336,11 +336,12 @@ export default function Sidebar() {
 						className={`w-full flex items-center gap-2 ${config?.compactMode ? "justify-center" : "justify-start"}`}
 					>
 						{!loading && logged && dbUser && (
-							<Link
-								className={`hover:bg-white/10 overflow-hidden flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"} relative ${!dbUser[0]?.avatar_url && "border border-white/20"}`}
-								to="/account"
-								onMouseEnter={() => setHoveredTooltip("account")}
-								onMouseLeave={() => setHoveredTooltip(null)}
+							// biome-ignore lint/a11y/useValidAnchor: <explanation>
+							<a
+								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"} relative ${!dbUser[0]?.avatar_url && "border border-white/20"}`}
+								// to="/account"
+								// onMouseEnter={() => setHoveredTooltip("account")}
+								// onMouseLeave={() => setHoveredTooltip(null)}
 							>
 								{dbUser[0]?.avatar_url &&
 								dbUser[0]?.avatar_url !== "" &&
@@ -359,7 +360,7 @@ export default function Sidebar() {
 										Account
 									</div>
 								)}
-							</Link>
+							</a>
 						)}
 					</div>
 					{!loading && !config?.compactMode && (
