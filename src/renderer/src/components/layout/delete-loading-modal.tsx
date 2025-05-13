@@ -36,6 +36,8 @@ export default function DeleteLoadingModal({
                 }
             };
         }
+        
+        return () => {};
     }, [status]);
 
 	return (

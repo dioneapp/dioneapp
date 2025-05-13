@@ -24,7 +24,7 @@ export default function IframeComponent({
 	currentPort,
 	setShow,
 }: IframeProps) {
-	const [systemUsage, setSystemUsage] = useState<SystemUsage>({
+	const [_systemUsage, setSystemUsage] = useState<SystemUsage>({
 		cpu: 0,
 		ram: { percent: 0, usedGB: 0 },
 		gpu: { percent: 0, vramGB: 0 },
@@ -85,43 +85,43 @@ export default function IframeComponent({
 		};
 	}, []);
 
-	const UsageIndicator = ({
-		label,
-		percentage,
-		absoluteValue,
-	}: {
-		label: string;
-		percentage: number;
-		absoluteValue?: string;
-	}) => {
-		const [isHovered, setIsHovered] = useState(false);
+	// const UsageIndicator = ({
+	// 	label,
+	// 	percentage,
+	// 	absoluteValue,
+	// }: {
+	// 	label: string;
+	// 	percentage: number;
+	// 	absoluteValue?: string;
+	// }) => {
+	// 	const [isHovered, setIsHovered] = useState(false);
 
-		return (
-			<div
-				className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded-md cursor-pointer flex-shrink-0 relative"
-				onMouseEnter={() => setIsHovered(true)}
-				onMouseLeave={() => setIsHovered(false)}
-			>
-				<span className="text-xs text-neutral-300 font-medium">{label}</span>
-				<div className="w-20 h-2 bg-white/10 rounded-full overflow-hidden">
-					<motion.div
-						className="h-full bg-gradient-to-r from-[#A395D9] to-[#C1B8E3] shadow-lg"
-						style={{ width: `${percentage}%` }}
-						animate={{
-							scale: isHovered ? 1.05 : 1,
-							filter: isHovered ? "brightness(1.3)" : "brightness(1)",
-						}}
-						transition={{ duration: 0.3 }}
-					/>
-				</div>
-				<span className="text-xs text-neutral-300 text-right w-6">
-					{isHovered && absoluteValue
-						? absoluteValue
-						: `${Math.round(percentage)}%`}
-				</span>
-			</div>
-		);
-	};
+	// 	return (
+	// 		<div
+	// 			className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded-md cursor-pointer flex-shrink-0 relative"
+	// 			onMouseEnter={() => setIsHovered(true)}
+	// 			onMouseLeave={() => setIsHovered(false)}
+	// 		>
+	// 			<span className="text-xs text-neutral-300 font-medium">{label}</span>
+	// 			<div className="w-20 h-2 bg-white/10 rounded-full overflow-hidden">
+	// 				<motion.div
+	// 					className="h-full bg-gradient-to-r from-[#A395D9] to-[#C1B8E3] shadow-lg"
+	// 					style={{ width: `${percentage}%` }}
+	// 					animate={{
+	// 						scale: isHovered ? 1.05 : 1,
+	// 						filter: isHovered ? "brightness(1.3)" : "brightness(1)",
+	// 					}}
+	// 					transition={{ duration: 0.3 }}
+	// 				/>
+	// 			</div>
+	// 			<span className="text-xs text-neutral-300 text-right w-6">
+	// 				{isHovered && absoluteValue
+	// 					? absoluteValue
+	// 					: `${Math.round(percentage)}%`}
+	// 			</span>
+	// 		</div>
+	// 	);
+	// };
 
 	return (
 		<div className="w-full h-full flex flex-col gap-2">

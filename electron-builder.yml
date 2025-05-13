@@ -36,6 +36,9 @@ linux:
     - deb
   maintainer: AI Hispano
   category: Utility
+  mimeTypes: [x-scheme-handler/dione]
+  desktop:
+    exec: dione %u
 appImage:
   artifactName: ${name}-${version}.${ext}
 npmRebuild: false
