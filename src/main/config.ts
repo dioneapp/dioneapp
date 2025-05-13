@@ -7,10 +7,11 @@ export interface AppConfig {
 	firstLaunch: boolean;
 	theme: "light" | "dark";
 	language: string;
-	defaultLogsPath: string;
 	enableDesktopNotifications: boolean;
 	notifyOnInstallComplete: boolean;
 	defaultInstallFolder: string;
+	defaultLogsPath: string;
+	compactMode: boolean;
 }
 
 // default config
@@ -18,10 +19,11 @@ export const defaultConfig: AppConfig = {
 	firstLaunch: false,
 	theme: "dark",
 	language: "en",
-	defaultLogsPath: path.join(app.getPath("userData"), "logs"),
 	enableDesktopNotifications: true,
 	notifyOnInstallComplete: true,
-	defaultInstallFolder: path.join(path.dirname(app.getPath("exe"))),
+	defaultInstallFolder: app.isPackaged ? path.join(path.dirname(app.getPath("exe"))) : path.join(process.cwd(), "apps"),
+	defaultLogsPath: path.join(app.getPath("userData"), "logs"),
+	compactMode: false,
 };
 // get config file
 export const getConfigPath = () => {

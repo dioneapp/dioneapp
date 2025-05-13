@@ -96,7 +96,7 @@ export default function Settings() {
 					<div>
 						<div className="flex flex-col space-y-4 h-full">
 							{config && (
-								<div className="flex flex-col space-y-4 h-full z-50 mb-12">
+								<div className="flex flex-col space-y-7 h-full z-50 mb-12">
 									<div className="flex flex-col">
 										{/* Apps */}
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
@@ -113,7 +113,7 @@ export default function Settings() {
 												</p>
 											</div>
 											<div className="flex gap-2 items-center justify-end w-full">
-												<input onClick={handleSaveDir} type="text" placeholder="Select folder" readOnly value={config.defaultInstallFolder} className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[14rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors" />
+												<input onClick={handleSaveDir} type="text" placeholder="Select folder" readOnly value={`${config.defaultInstallFolder}\\apps`} className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[14rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors" />
 											</div>
 										</div>
 										</div>

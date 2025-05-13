@@ -345,6 +345,7 @@ export default function Install({ id }: { id?: string }) {
 									handleReloadIframe={handleReloadIframe}
 									currentPort={catchPort as number}
 									setShow={setShow}
+									data={data}
 								/>
 							)}{" "}
 							{show === "logs" && (
