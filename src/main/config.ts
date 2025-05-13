@@ -21,7 +21,7 @@ export const defaultConfig: AppConfig = {
 	defaultLogsPath: path.join(app.getPath("userData"), "logs"),
 	enableDesktopNotifications: true,
 	notifyOnInstallComplete: true,
-	defaultInstallFolder: path.join(app.getAppPath(), "apps"),
+	defaultInstallFolder: path.join(path.dirname(app.getPath("exe"))),
 };
 // get config file
 export const getConfigPath = () => {
