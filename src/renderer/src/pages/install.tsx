@@ -139,6 +139,7 @@ export default function Install({ id }: { id?: string }) {
 
 	async function start() {
 		try {
+			if (!data.name) return;
 			setIsServerRunning(true);
 			const port = await getCurrentPort();
 			window.electron.ipcRenderer.invoke(
@@ -146,7 +147,7 @@ export default function Install({ id }: { id?: string }) {
 				"Starting...",
 				`Starting ${data.name}`,
 			);
-			await fetch(`http://localhost:${port}/scripts/start/${data.name}`, {
+			await fetch(`http://localhost:${port}/scripts/start/${data?.name}`, {
 				method: "GET",
 			});
 		} catch (error) {
@@ -277,6 +278,7 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	const handleStop = async () => {
+		stopCheckingRef.current = true;
 		await stop();
 	};
 
@@ -289,13 +291,6 @@ export default function Install({ id }: { id?: string }) {
 		showToast("default", `Reconnecting ${data.name}...`);
 		setShow("logs");
 	};
-
-	useEffect(() => {
-		return () => {
-			stopCheckingRef.current = true;
-		};
-	}, []);
-
 	const handleReloadIframe = async () => {
 		const iframe = document.getElementById("iframe") as HTMLIFrameElement;
 		iframe.src = iframe.src;
