@@ -121,7 +121,7 @@ export default function QuickLaunch({
 					removeApp(index);
 				}}
 			>
-				{app.logo_url.startsWith("http") ? (
+				{app.logo_url?.startsWith("http") ? (
 					<img
 						src={app.logo_url}
 						alt={app.name}
