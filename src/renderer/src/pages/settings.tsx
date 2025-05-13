@@ -112,8 +112,8 @@ export default function Settings() {
 													Select the folder where applications will be installed
 												</p>
 											</div>
-											<div className="flex gap-2 items-center">
-												<input onClick={handleSaveDir} type="text" placeholder="Select folder" readOnly value={config.defaultInstallFolder} className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-72 min-w-48 w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors" />
+											<div className="flex gap-2 items-center justify-end w-full">
+												<input onClick={handleSaveDir} type="text" placeholder="Select folder" readOnly value={config.defaultInstallFolder} className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[14rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors" />
 											</div>
 										</div>
 										</div>
@@ -138,7 +138,7 @@ export default function Settings() {
 												onChange={(e) =>
 													handleUpdate({ language: e.target.value })
 												}
-												className="bg-white/10 border border-white/5 text-neutral-200 h-10 px-2 pr-8 w-72 rounded-full text-sm focus:outline-none hover:bg-white/20 backdrop-blur-sm cursor-pointer transition-colors duration-400"
+												className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-2 pl-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 backdrop-blur-sm cursor-pointer transition-colors duration-400"
 											>
 												<option value="en">English</option>
 											</select>
@@ -270,7 +270,7 @@ export default function Settings() {
 												<input
 													required
 													readOnly
-													className="text-xs font-mono text-right text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full w-fit max-w-1/2 min-w-80 truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
+													className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-24rem)] min-w-[24rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
 													type="text"
 													value={config.defaultLogsPath}
 													onChange={(e) => {
