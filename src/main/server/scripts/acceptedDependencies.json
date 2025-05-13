@@ -1,4 +1,11 @@
 {
+	"build_tools": {
+		"checkCommand": "msbuild -version",
+		"versionRegex": "\\d+\\.\\d+\\.\\d+",
+		"installCommand": {
+			"windows": "curl -LO https://aka.ms/vs/17/release/vs_BuildTools.exe && vs_BuildTools.exe --quiet --wait --norestart --nocache --installPath \"C:\\\\BuildTools\" --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools && setx PATH \"%%PATH%%;C:\\\\BuildTools\\\\MSBuild\\\\Current\\\\Bin\""
+		}
+	},
 	"python": {
 	  "checkCommand": "python --version",
 	  "versionRegex": "Python (\\d+\\.\\d+\\.\\d+)",
