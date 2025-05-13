@@ -8,6 +8,7 @@ import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentPort } from "../utils/getPort";
+import DeleteLoadingModal from "@renderer/components/layout/delete-loading-modal";
 
 export default function Install({ id }: { id?: string }) {
 	const {
@@ -31,6 +32,8 @@ export default function Install({ id }: { id?: string }) {
 		iframeSrc,
 		catchPort,
 		exitRef,
+		setApps,
+		installedApps
 	} = useAppContext();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
@@ -39,6 +42,8 @@ export default function Install({ id }: { id?: string }) {
 	const [installed, setInstalled] = useState<boolean>(false);
 	// navigation stuff
 	const navigate = useNavigate();
+	// delete 
+	const [deleteStatus, setDeleteStatus] = useState<string>("");
 
 	// fetch script data
 	useEffect(() => {
@@ -122,7 +127,9 @@ export default function Install({ id }: { id?: string }) {
 			await fetch(`http://localhost:${port}/scripts/download/${id}`, {
 				method: "GET",
 			});
-			setInstalledApps((prevApps) => [...prevApps, data.name]);
+			if (!installedApps.includes(data.name)) {
+				setInstalledApps((prevApps) => [...prevApps, data.name]);
+			}
 		} catch (error) {
 			showToast("error", `Error initiating download: ${error}`);
 			setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
@@ -192,6 +199,7 @@ export default function Install({ id }: { id?: string }) {
 
 	async function uninstall() {
 		try {
+			setDeleteStatus("deleting");
 			const port = await getCurrentPort();
 			const response = await fetch(
 				`http://localhost:${port}/scripts/delete/${data.name}`,
@@ -200,6 +208,7 @@ export default function Install({ id }: { id?: string }) {
 				},
 			);
 			if (response.status === 200) {
+				setDeleteStatus("deleted");
 				window.electron.ipcRenderer.invoke(
 					"notify",
 					"Uninstalling...",
@@ -208,10 +217,10 @@ export default function Install({ id }: { id?: string }) {
 				showToast("success", `${data.name} uninstalled successfully.`);
 				setInstalled(false);
 				await fetchIfDownloaded();
-				setInstalledApps((prevApps) =>
-					prevApps.filter((app) => app !== data.name),
-				);
+				setInstalledApps((prevApps) => prevApps.filter((app) => app !== data.name));
+				setApps((prevApps) => prevApps.filter((app) => app?.name !== data.name));
 			} else {
+				setDeleteStatus("error");
 				window.electron.ipcRenderer.invoke(
 					"notify",
 					"Error...",
@@ -299,8 +308,13 @@ export default function Install({ id }: { id?: string }) {
 		handleDownload();
 	}
 
+	function handleCloseDeleteModal() {
+		setDeleteStatus("");
+	}
+
 	return (
 		<>
+			{deleteStatus !== "" && <DeleteLoadingModal status={deleteStatus} onClose={handleCloseDeleteModal} />}
 			{missingDependencies && (
 				<MissingDepsModal
 					data={missingDependencies}
