@@ -25,7 +25,7 @@ export default function IframeComponent({
 	currentPort,
 	setShow,
 	data,
-	}: IframeProps) {
+}: IframeProps) {
 	const [_systemUsage, setSystemUsage] = useState<SystemUsage>({
 		cpu: 0,
 		ram: { percent: 0, usedGB: 0 },
@@ -142,8 +142,30 @@ export default function IframeComponent({
 				transition={{ duration: 0.4 }}
 				className="w-full flex items-center justify-between gap-2 rounded-lg mt-6	"
 			>
-				<div className="flex items-center gap-2">
+				<div className="flex items-center gap-1">
+					<button
+						type="button"
+						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						onClick={() => setShow("logs")}
+					>
+						<Icon name="Back" className="w-4 h-4 " />
+						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+							Back
+						</div>
+					</button>
+					<button
+						type="button"
+						onClick={handleOpenFolder}
+						className="p-1.5 hover:bg-white/10 border border-white/10 transition-colors rounded-md cursor-pointer relative group"
+						title="Open folder"
+					>
+						<Icon name="Folder" className="w-4 h-4" />
+						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+							Open folder
+						</div>
+					</button>
 					<div className="flex items-center border border-white/10 bg-white/5 rounded-md group relative">
+
 						<div className="flex items-center pl-2 pr-1.5 py-1 gap-2">
 							<span className="text-sm text-neutral-300">
 								{currentPort || "3000"}
@@ -156,22 +178,11 @@ export default function IframeComponent({
 							title="Open in browser"
 						>
 							<Icon name="Open" className="w-4 h-4" />
-							<div className="absolute z-50 -top-9 -translate-x-1/2 px-1 py-0.5 bg-black/80 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
+							<div className="absolute z-50 -top-9 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
 								Open in Browser
 							</div>
 						</button>
 					</div>
-					<button
-							type="button"
-							onClick={handleOpenFolder}
-							className="p-1.5 hover:bg-white/10 border border-white/10 transition-colors rounded cursor-pointer relative group"
-							title="Open folder"
-						>
-							<Icon name="Folder" className="w-4 h-4" />
-							<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 bg-black/80 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
-								Open folder
-							</div>
-						</button>
 				</div>
 
 				<div className="flex gap-1 justify-center items-center flex-1">
@@ -197,27 +208,24 @@ export default function IframeComponent({
 				<div className="flex gap-1">
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
-						onClick={() => setShow("logs")}
-					>
-						<Icon name="Back" className="w-4 h-4 " />
-					</motion.button>
-					<motion.button
-						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={
 							isFullscreen ? handleExitFullscreen : handleEnterFullscreen
 						}
-						title={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
 					>
 						<Icon
-							name={isFullscreen ? "Minus" : "Maximize"}
+							name="Maximize"
 							className="w-4 h-4"
 						/>
+						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+							Fullscreen
+						</div>
 					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleStop}
 					>
 						<Icon name="Stop" className="w-4 h-4 " />
+
 					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
