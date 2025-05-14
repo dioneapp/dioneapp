@@ -103,9 +103,10 @@ function createWindow() {
 				logger.error("No url received");
 				return;
 			}
-			const cleanUrl = url.replace(/^dione:\/\//, "");
-			const params = new URLSearchParams(cleanUrl);
 			
+			const queryString = `?${url.replace(/^dione:\/\//, "")}`;
+			const params = new URLSearchParams(queryString);
+	
 			const authToken = params.get("auth");
 			if (authToken) {
 				mainWindow.webContents.send("auth-token", authToken);
@@ -131,6 +132,7 @@ function createWindow() {
 			logger.error("Error handling deep link:", error);
 		}
 	};
+	
 	
 	app.on("open-url", (event, url) => {
 		event.preventDefault();
