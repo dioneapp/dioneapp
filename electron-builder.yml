@@ -12,8 +12,16 @@ files:
   - '!node_modules/@tailwindcss/oxide-android-arm64/**'
 asarUnpack:
   - resources/**
+protocols:
+  - name: dione
+    schemes:
+      - dione
 win:
   executableName: Dione
+  protocols:
+    - name: dione
+      schemes:
+        - dione
 nsis:
   artifactName: ${name}-${version}-setup.${ext}
   shortcutName: ${productName}

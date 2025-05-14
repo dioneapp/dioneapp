@@ -22,16 +22,17 @@ import logger from "./server/utils/logger";
 // load env variables
 dotenv.config();
 
-// set default protocol client
-if (process.defaultApp) {
-	if (process.argv.length >= 2) {
-		app.setAsDefaultProtocolClient("dione", process.execPath, [
-			path.resolve(process.argv[1]),
-		]);
-	} else {
-		app.setAsDefaultProtocolClient("dione");
-	}
-}
+// remove so we can register each time as we run the app. 
+app.removeAsDefaultProtocolClient('dione');
+
+// If we are running a non-packaged version of the app && on windows
+if(process.env.NODE_ENV === 'development' && process.platform === 'win32') {
+  // Set the path of electron.exe and your app.
+  // These two additional parameters are only available on windows.
+  app.setAsDefaultProtocolClient('dione', process.execPath, [path.resolve(process.argv[1])]);        
+} else {
+  app.setAsDefaultProtocolClient('dione');
+}	
 
 // define main window
 let mainWindow;
@@ -285,6 +286,9 @@ app.whenReady().then(() => {
 
 	// Create the main application window
 	createWindow();
+
+	// handle protocols
+	app.setAsDefaultProtocolClient("dione");
 
 	// Handle reactivation of the app (e.g., clicking the dock icon on macOS)
 	app.on("activate", () => {
