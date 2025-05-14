@@ -27,15 +27,18 @@ app.removeAsDefaultProtocolClient('dione');
 
 // If we are running a non-packaged version of the app && on windows
 if(process.env.NODE_ENV === 'development' && process.platform === 'win32') {
-  // Set the path of electron.exe and your app.
-  // These two additional parameters are only available on windows.
-  app.setAsDefaultProtocolClient('dione', process.execPath, [path.resolve(process.argv[1])]);        
+  // set the path of the app on node_modules/electron/electron.exe
+  if (process.argv.length >= 2) {	
+	app.setAsDefaultProtocolClient('dione', process.execPath, [path.resolve(process.argv[1])]);
+  } else {
+	app.setAsDefaultProtocolClient('dione');
+  }	
 } else {
-  app.setAsDefaultProtocolClient('dione');
-}	
+	app.setAsDefaultProtocolClient('dione');
+}
 
 // define main window
-let mainWindow;
+let mainWindow: BrowserWindow;
 // Creates the main application window with specific configurations.
 function createWindow() {
 	mainWindow = new BrowserWindow({
@@ -75,7 +78,7 @@ function createWindow() {
 			owner: "dioneapp",
 			repo: "dioneapp",
 			private: true,
-			token: process.env.GITHUB_TOKEN,
+			token: process.env.GH_TOKEN,
 		});
 		autoUpdater.checkForUpdatesAndNotify();
 	});
@@ -93,37 +96,46 @@ function createWindow() {
 
 	if (process.platform === "linux") app.commandLine.appendSwitch("no-sandbox");
 
-	const handleDeepLink = (url) => {
+	const handleDeepLink = (url: string | undefined) => {
 		try {
+			if (!url) {
+				alert("Not found any data for login, please report this error.");
+				logger.error("No url received");
+				return;
+			}
 			const cleanUrl = url.replace(/^dione:\/\//, "");
-			const authMatch = cleanUrl.match(/auth=([^&]+)/);
-			if (authMatch) {
-				const authToken = authMatch[1];
+			const params = new URLSearchParams(cleanUrl);
+			
+			const authToken = params.get("auth");
+			if (authToken) {
 				mainWindow.webContents.send("auth-token", authToken);
 			} else {
-				console.error("Not found auth token in deep link");
+				logger.error("Not found auth token in deep link");
 			}
-			const refreshMatch = cleanUrl.match(/refresh=([^&]+)/);
-			if (refreshMatch) {
-				const refreshToken = refreshMatch[1];
+	
+			const refreshToken = params.get("refresh");
+			if (refreshToken) {
 				mainWindow.webContents.send("refresh-token", refreshToken);
 			} else {
-				console.error("Not found refresh token in deep link");
+				logger.error("Not found refresh token in deep link");
 			}
-
-			const downloadMatch = cleanUrl.match(/download=([^&]+)/);
-			if (downloadMatch) {
-				const downloadUrl = downloadMatch[1];
+	
+			const downloadUrl = params.get("download");
+			if (downloadUrl) {
 				mainWindow.webContents.send("download", downloadUrl);
 			} else {
-				console.error("Not found download in deep link");
+				logger.error("No download param in deep link");
 			}
 		} catch (error) {
+			alert("Error handling deep link, please report this error.");
 			logger.error("Error handling deep link:", error);
 		}
 	};
-
-	app.on("open-url", handleDeepLink);
+	
+	app.on("open-url", (event, url) => {
+		event.preventDefault();
+		handleDeepLink(url);
+	});
 
 	const gotTheLock = app.requestSingleInstanceLock();
 	if (!gotTheLock) {
@@ -141,8 +153,8 @@ function createWindow() {
 	}
 
 	// Load renderer content (URL in development, HTML file in production)
-	if (is.dev && process.env["ELECTRON_RENDERER_URL"]) {
-		mainWindow.loadURL(process.env["ELECTRON_RENDERER_URL"]);
+	if (is.dev && process.env.ELECTRON_RENDERER_URL) {
+		mainWindow.loadURL(process.env.ELECTRON_RENDERER_URL);
 	} else {
 		mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
 	}
@@ -196,10 +208,9 @@ app.whenReady().then(() => {
 			logger.warn("First time using Dione");
 			writeConfig(defaultConfig);
 			return true;
-		} else {
+		}
 			config = readConfig();
 			return false;
-		}
 	});
 
 	ipcMain.on("socket-ready", () => {
@@ -288,7 +299,9 @@ app.whenReady().then(() => {
 	createWindow();
 
 	// handle protocols
-	app.setAsDefaultProtocolClient("dione");
+	if(process.env.NODE_ENV !== 'development') {
+		app.setAsDefaultProtocolClient('dione');
+	}
 
 	// Handle reactivation of the app (e.g., clicking the dock icon on macOS)
 	app.on("activate", () => {
