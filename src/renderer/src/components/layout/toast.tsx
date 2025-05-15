@@ -34,7 +34,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 			<div
 				style={{ zIndex: 1000 }}
 				ref={ref}
-				className={`pointer-events-auto px-2 flex w-full max-w-md ${button ? "flex-col rounded-2xl backdrop-filter backdrop-blur-3xl p-4 px-6 pb-0 gap-2" : "gap-4 rounded-full backdrop-filter backdrop-blur-3xl justify-between items-center"} transition-all duration-300 ease-in-out ${variantClasses[variant]} ${className} overflow-hidden`}
+				className={`pointer-events-auto p-2 flex w-full max-w-md ${button ? "flex-col rounded-xl backdrop-filter backdrop-blur-3xl p-4 px-6 pb-0 gap-2" : "gap-4 rounded-xl backdrop-filter backdrop-blur-3xl justify-between items-center"} transition-all duration-300 ease-in-out ${variantClasses[variant]} ${className} overflow-hidden`}
 				{...props}
 			>
 				<div

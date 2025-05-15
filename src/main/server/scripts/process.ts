@@ -82,10 +82,11 @@ export const executeCommand = async (
 	command: string,
 	io: Server,
 	workingDir: string,
-	logs = "installUpdate",
+	logs?,
 ): Promise<string> => {
 	let stdoutData = "";
 	let stderrData = "";
+	if (!logs) { logs = "installUpdate";}
 	try {
 		// if active process exists, kill it
 		await stopActiveProcess(io);
@@ -150,11 +151,11 @@ export const executeCommand = async (
 					io.emit(logs, { type: "log", content: `ERROR: ${text}` });
 					logger.error(`[stderr-error] ${text}`);
 					killProcess(activeProcess, io);
-					io.emit("installUpdate", {
+					io.emit(logs, {
 						type: "log",
 						content: `"${command}": ${text}`,
 					});
-					io.emit("installUpdate", {
+					io.emit(logs, {
 						type: "status",
 						status: "error",
 						content: "Error detected",
@@ -189,7 +190,7 @@ export const executeCommand = async (
 						status: "error",
 						content: "Error detected",
 					});
-					io.emit("installUpdate", {
+					io.emit(logs, {
 						type: "log",
 						content: `ERROR: ${errorMsg}`,
 					});

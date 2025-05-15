@@ -4,6 +4,9 @@ import semver from "semver";
 import logger from "../utils/logger";
 import acceptedDependencies from "./acceptedDependencies.json";
 import os from "node:os";
+import { executeCommand } from "./process";
+import type { Server } from "socket.io";
+import path from "node:path";
 
 export interface Command {
 	name: string;
@@ -20,12 +23,17 @@ export interface DioneConfig {
 	};
 	installation: Command[];
 }
-interface DependencyConfig {
+export interface DependencyConfig {
 	[key: string]: {
 		checkCommand: string;
 		versionRegex?: string;
 		parseVersion?: (output: string) => string;
 		installCommand?: {
+			windows?: string;
+			macos?: string;
+			linux?: string;
+		};
+		uninstallCommand?: {
 			windows?: string;
 			macos?: string;
 			linux?: string;
@@ -168,4 +176,92 @@ export async function checkDependencies(dioneFile: string): Promise<{
 			missing: [],
 		};
 	}
+}
+
+function getPlatformKey() {
+	const platform = os.platform();
+	if (platform === "win32") return "windows";
+	if (platform === "darwin") return "macos";
+	return "linux";
+}
+
+export async function inUseDependencies(dioneFile: string) {
+	// should change this later, for now if app uses a dependency, else if its not installed, gonna try to delete it
+	const config = await readDioneConfig(dioneFile);
+	return config.dependencies;
+}
+
+export async function uninstallDependency(dioneFile: string, io: Server) {
+	const config = await readDioneConfig(dioneFile);
+	const workingDir = path.dirname(dioneFile);
+	if (!config.dependencies) {
+		logger.warn("No dependencies found in dione.json");
+		return { success: false, missing: [], error: true, reasons: ["no-dependencies"] };
+	}
+
+	const results = [] as Array<{
+        success: boolean;
+        missing: string[];
+        error: boolean;
+        reason?: string;
+    }>;
+	for (const [dependency, details] of Object.entries(config.dependencies)) {
+		let reason: string | undefined;
+		const depConfig = acceptedDependencies[dependency];
+		const isInstalled = await isDependencyInstalled(
+			dependency,
+			details.version,
+			acceptedDependencies,
+		);
+
+		if (!isInstalled.isValid) {
+			logger.error(`Dependency "${dependency}" is not installed`);
+			results.push({ success: false, missing: [], error: true, reason: "not-installed" });
+			continue;
+		}
+
+		let uninstallCommand = depConfig.uninstallCommand;
+		if (!uninstallCommand) {
+			logger.error(`No uninstall command found for ${dependency}`);
+			results.push({ success: false, missing: [], error: true, reason: "no-uninstall-command" });
+			continue;
+		}
+
+		if (typeof uninstallCommand === "object" && !Array.isArray(uninstallCommand)) {
+			const platformKey = getPlatformKey();
+			uninstallCommand = uninstallCommand[platformKey];
+		}
+
+		if (!uninstallCommand) {
+			logger.error(`No uninstall command found for platform for ${dependency}`);
+			results.push({ success: false, missing: [], error: true, reason: "no-uninstall-command-platform" });
+			continue;
+		}
+
+		const uninstallCommands = Array.isArray(uninstallCommand)
+			? uninstallCommand
+			: [uninstallCommand.toString()];
+
+		let success = true;
+		for (const cmd of uninstallCommands) {
+			const command = cmd.replace(/\s+/g, " ");
+			logger.info(`Executing uninstall command: ${command}`);
+			const result = await executeCommand(command, io, workingDir, "deleteUpdate");
+			if (result.toString().trim() !== "") {
+				logger.error(`Error executing uninstall command for ${dependency}: ${result.toString().trim()}`);
+				success = false;
+				break;
+			}
+			logger.info(`Successfully uninstalled ${dependency}.`);
+		}
+
+		results.push({ success, missing: [], error: !success, reason });
+	}
+
+	return {
+		success: results.every(r => r.success),
+		missing: [],
+		error: results.some(r => r.error),
+		reasons: results.filter(r => r.error).map(r => r.reason),
+	};
 }

@@ -7,9 +7,10 @@ interface props {
 	data: any;
 	set: React.Dispatch<React.SetStateAction<any>>;
 	onFinish: () => void;
+	workingDir: string;
 }
 
-export default function MissingDepsModal({ data, set, onFinish }: props) {
+export default function MissingDepsModal({ data, set, onFinish, workingDir }: props) {
 	const [page, setPage] = useState(0);
 	const [logs, setLogs] = useState<string[]>([]);
 
@@ -57,6 +58,7 @@ export default function MissingDepsModal({ data, set, onFinish }: props) {
 
 		try {
 			const port = await getCurrentPort();
+			const nameFolder = workingDir.replace(/\s+/g, "-");
 
 			const missingDeps = data
 				.filter((dep) => !dep.installed)
@@ -73,7 +75,7 @@ export default function MissingDepsModal({ data, set, onFinish }: props) {
 			const response = await fetch(`http://localhost:${port}/deps/install`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ dependencies: missingDeps }),
+				body: JSON.stringify({ dependencies: missingDeps, nameFolder }),
 			});
 
 			if (!response.ok) {

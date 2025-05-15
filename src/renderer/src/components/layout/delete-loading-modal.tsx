@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import Icon from "../icons/icon";
 import { motion } from "framer-motion";
+import { useAppContext } from "./global-context";
 
 export default function DeleteLoadingModal({
 	status,
@@ -9,8 +10,9 @@ export default function DeleteLoadingModal({
 	status: string;
     onClose: () => void;
 }) {
-
+    const { deleteLogs } = useAppContext();
     const countdownRef = useRef<HTMLDivElement>(null);
+
 
     useEffect(() => {
         if (status === "deleted") {
@@ -56,24 +58,29 @@ export default function DeleteLoadingModal({
             >
                 <Icon name="Close" className="h-4 w-4" />
             </button>
-			{status === "deleting" && (
+			{status === "deleting" || status === "deleting_deps" && (
 				<div className="flex flex-col gap-14 justify-center items-center ">
                     <span><Icon name="Pending" className="h-24 w-24 animate-spin" /></span>
-                    <span><h1 className="font-medium text-3xl">Uninstalling...</h1></span>
-				</div>
+                    <h1 className="font-medium text-3xl">{status === "deleting_deps" ? "Uninstalling dependencies" : "Uninstalling"} <span className="text-neutral-300">please wait...</span></h1>
+                    <span className="flex flex-col gap-2 text-xs items-start justify-center p-4 border border-white/20 rounded max-h-24 max-w-2/4 overflow-auto">
+                    {deleteLogs.map((log, index) => (
+                        <p key={index}>{log.content}</p>
+                    ))}
+                    </span>
+                </div>
 			)}
 			{status === "deleted" && (
 				<div className="flex flex-col gap-2 justify-center items-center ">
                 <span><Icon name="Success" className="h-24 w-24" /></span>
-                <span><h1 className="font-medium text-3xl mt-12">Uninstalled <span className="text-green-500">successfully</span></h1></span>
-                <span><h2 className="text-sm text-neutral-400">Closing this modal in <span ref={countdownRef} className="text-neutral-300">5</span> seconds...</h2></span>
+                <h1 className="font-medium text-3xl mt-12">Uninstalled <span className="text-green-500">successfully</span></h1>
+                <h2 className="text-sm text-neutral-400">Closing this modal in <span ref={countdownRef} className="text-neutral-300">5</span> seconds...</h2>
             </div>
 			)}
-            {status === "error"  && (
+            {status === "error" || status === "error_deps" && (
 				<div className="flex flex-col gap-2 justify-center items-center ">
                 <span><Icon name="Error" className="h-24 w-24 text-red-500" /></span>
-                <span><h1 className="font-medium text-3xl mt-10">An unexpected <span className="text-red-500">error</span> has ocurred</h1></span>
-                <span><h2 className="text-sm text-neutral-400">Please try again later or check the logs for more information.</h2></span>
+                <h1 className="font-medium text-3xl mt-10">An unexpected <span className="text-red-500">error</span> has ocurred</h1>
+                <h2 className="text-sm text-neutral-400">{status === "error_deps" ? "Dione has not been able to remove any dependency, please do it manually." : "Please try again later or check the logs for more information."}</h2>
             </div>
 			)}
 		</motion.div>
