@@ -152,7 +152,7 @@ export default function FirstTime() {
 						account to get started.
 					</h2>
 				</div>
-				<div className="mt-8 flex flex-col gap-4">
+				<div className="mt-4 flex flex-col gap-4">
 					<button
 						type="button"
 						className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
@@ -181,7 +181,7 @@ export default function FirstTime() {
 				<div className="flex flex-col gap-4 justify-center items-center">
 					<h1 className="text-6xl font-semibold">Logging in...</h1>
 				</div>
-				<div className="mt-8 flex flex-col gap-4">
+				<div className="mt-6 flex flex-col gap-4">
 					<div className="flex flex-col gap-2 items-center justify-center">
 						<h3 className="text-white/50 text-xs">Could not authenticate?</h3>
 						<button
@@ -211,11 +211,11 @@ export default function FirstTime() {
 						!
 					</h2>
 				</div>
-				<div className="mt-8 flex flex-col gap-4">
-					<div className="flex flex-col gap-2 items-center justify-center">
+				<div className="mt-4 flex flex-col gap-4">
+					<div className="flex flex-col items-center justify-center">
 						<Link
 							to="/?loginFinished=true"
-							className="bg-white/20 transition-all duration-400 w-28 rounded-full p-2 text-sm text-neutral-200 cursor-pointer hover:bg-white/30"
+							className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
 						>
 							<span className="text-center w-full flex items-center justify-center">
 								Finish
