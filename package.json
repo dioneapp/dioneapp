@@ -34,7 +34,9 @@
 		"appId": "dione",
 		"productName": "Dione",
 		"win": {
-			"target": ["nsis"],
+			"target": [
+				"nsis"
+			],
 			"icon": "./resources/icon.ico"
 		},
 		"nsis": {
@@ -58,12 +60,12 @@
 			"buildResources": "resources"
 		},
 		"publish": [
-		{
-			"provider": "github",
-			"owner": "dioneapp",
-			"repo": "dioneapp",
-			"releaseType": "release"
-		}
+			{
+				"provider": "github",
+				"owner": "dioneapp",
+				"repo": "dioneapp",
+				"releaseType": "release"
+			}
 		],
 		"releaseInfo": {
 			"releaseNotesFile": "CHANGELOG.md"
