@@ -297,6 +297,11 @@ app.whenReady().then(() => {
 		autoUpdater.quitAndInstall();
 	});
 
+	ipcMain.on("restart", () => {
+		app.relaunch();
+		app.exit();
+	});
+
 	// Create the main application window
 	createWindow();
 

@@ -203,7 +203,7 @@ export default function Sidebar() {
 		localStorage.removeItem("dbUser");
 		setLogged(false);
 		// remove this after beta
-		window.location.href = "/first-time";
+		navigate("/first-time");
 	}
 
 	return (
