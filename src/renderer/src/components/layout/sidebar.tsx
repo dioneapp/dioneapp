@@ -17,7 +17,7 @@ export default function Sidebar() {
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
 	const { isServerRunning } = useAppContext();
-
+	
 	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);
 

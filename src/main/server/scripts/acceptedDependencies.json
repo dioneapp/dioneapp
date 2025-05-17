@@ -22,6 +22,11 @@
 		"windows": "powershell -ExecutionPolicy ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\"",
 		"macos": "curl -LsSf https://astral.sh/uv/install.sh | sh",
 		"linux": "curl -LsSf https://astral.sh/uv/install.sh | sh"
+	  },
+	  "uninstallCommand": {
+		"windows": "uv cache clean && del \"%USERPROFILE%\\.local\\bin\\uv.exe\" && del \"%USERPROFILE%\\.local\\bin\\uvx.exe\"",
+		"macos": "uv cache clean && rm ~/.local/bin/uv ~/.local/bin/uvx",
+		"linux": "uv cache clean && rm ~/.local/bin/uv ~/.local/bin/uvx"
 	  }
 	},
 	"node": {

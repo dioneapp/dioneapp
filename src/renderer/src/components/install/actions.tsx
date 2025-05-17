@@ -12,6 +12,7 @@ interface ActionsProps {
 	handleDownload: any;
 	isServerRunning: boolean;
 	handleReconnect: any;
+	handleDeleteDeps: any;
 }
 
 export default function ActionsComponent({
@@ -23,6 +24,7 @@ export default function ActionsComponent({
 	handleDownload,
 	isServerRunning,
 	handleReconnect,
+	handleDeleteDeps,
 }: ActionsProps) {
 	return (
 		<>
@@ -133,7 +135,7 @@ export default function ActionsComponent({
 											</button>
 											<button
 												type="button"
-												onClick={handleUninstall}
+												onClick={handleDeleteDeps}
 												className="bg-red-500/50 hover:bg-red-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
 											>
 												Uninstall
