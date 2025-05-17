@@ -96,7 +96,31 @@ router.get("/set-session", async (req, res) => {
 			);
 			res.send(error);
 		} else {
-			res.send(data);
+			logger.info(`Session established successfully: ${data.user?.id}`);
+			const userId = data.user?.id;
+			const now = new Date().toISOString();
+			console.log(`Attempting to update user with ID: ${userId}`);
+			
+			if (!userId) {
+				logger.error('User ID is missing from session');
+				res.status(400).send({ error: 'Missing user ID' });
+				return;
+			}
+
+			const { error: updateError } = await supabase
+				.from("users")
+				.update({ last_login: now })
+				.eq("id", userId)
+				.select();
+
+			if (updateError) {
+				logger.error(
+					`Unable to update user: [ (${updateError.code || "No code"}) ${updateError.message || "No details"} ]`,
+				);
+				res.send(updateError);
+			} else {
+				res.send(data);
+			}
 		}
 	} catch (error: any) {
 		logger.error(
