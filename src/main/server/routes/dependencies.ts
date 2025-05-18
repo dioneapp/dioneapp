@@ -244,7 +244,7 @@ export const createDependenciesRouter = (io: Server) => {
 		const settings = readConfig()
 		const dioneFile = `${path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName, "dione.json")}`;
 		const result = await inUseDependencies(dioneFile);
-		res.json(result);
+		res.json({result: result});
 	});
 
 	return router;

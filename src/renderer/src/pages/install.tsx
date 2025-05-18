@@ -236,6 +236,7 @@ export default function Install({ id }: { id?: string }) {
 				await uninstallApp(port);
 			}
 		} catch (error) {
+			setDeleteStatus("error");
 			showToast("error", `Error uninstalling ${data.name}: ${error}`);
 			setLogs((prevLogs) => [...prevLogs, `Error uninstalling ${data.name}`]);
 		}
@@ -365,7 +366,7 @@ export default function Install({ id }: { id?: string }) {
 				body: JSON.stringify({ dioneFile: data?.name }),
 			});
 			const result = await response.json();
-			const depsArray = Object.keys(result);
+			const depsArray = Object.keys(result.result);
 			setInUseDeps(depsArray);
 		}
 
@@ -411,7 +412,7 @@ export default function Install({ id }: { id?: string }) {
 							<div className="flex items-center gap-4 mt-12">
 								<button
 									type="button"
-									onClick={() => {setDeleteDepsModal(false); handleUninstall()}}
+									onClick={() => {setDeleteDepsModal(false); handleUninstall(false)}}
 									className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
 								>
 									<span className="font-semibold">No</span>

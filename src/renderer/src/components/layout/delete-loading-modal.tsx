@@ -83,6 +83,14 @@ export default function DeleteLoadingModal({
                 <h2 className="text-sm text-neutral-400">{status === "error_deps" ? "Dione has not been able to remove any dependency, please do it manually." : "Please try again later or check the logs for more information."}</h2>
             </div>
 			)}
+
+            {!status || status === "" && (
+                <div className="flex flex-col gap-2 justify-center items-center ">
+                <span><Icon name="Pending" className="h-24 w-24 animate-spin" /></span>
+                <h1 className="font-medium text-3xl mt-10 text-neutral-300">Loading...</h1>
+                <h2 className="text-sm text-neutral-400">Please wait...</h2>
+            </div>
+            )}
 		</motion.div>
 	);
 }

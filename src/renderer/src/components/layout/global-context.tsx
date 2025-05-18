@@ -225,7 +225,8 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 						  content.toLowerCase().includes("localhost") ||
 						  content.toLowerCase().includes("0.0.0.0"))
 					  ) {
-						const match = content.match(/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i);
+						const match = content.replace(/\x1b\[[0-9;]*m/g, '').match(/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i);
+						console.log(match);
 						if (match) {
 							loadIframe(Number.parseInt(match[1]));
 						}
@@ -241,12 +242,10 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 					}
 					if (type === "status") {
 						setStatusLog({ status: status || "pending", content });
-						if (
-							content.toLowerCase().includes("actions executed") &&
-							!errorRef.current
-						) {
+						if (content.toLowerCase().includes("actions executed")) {
 							console.log("Redirecting...");
-							window.location.reload();
+							stopCheckingRef.current = true;
+							setShow("actions");
 						}
 					}
 					if (type === "catch") {
