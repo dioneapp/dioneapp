@@ -33,7 +33,9 @@ export default function Install({ id }: { id?: string }) {
 		catchPort,
 		exitRef,
 		setApps,
-		installedApps
+		installedApps,
+		setupSocket,
+		handleReloadQuickLaunch,
 	} = useAppContext();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
@@ -44,6 +46,10 @@ export default function Install({ id }: { id?: string }) {
 	const navigate = useNavigate();
 	// delete 
 	const [deleteStatus, setDeleteStatus] = useState<string>("");
+	const [deleteDepsModal, setDeleteDepsModal] = useState<boolean>(false);
+	const [inUseDeps, setInUseDeps] = useState<any>([]);
+	// config
+	const [config, setConfig] = useState<any>(null);
 
 	// fetch script data
 	useEffect(() => {
@@ -88,6 +94,24 @@ export default function Install({ id }: { id?: string }) {
 		}
 	}, [exitRef]);
 
+	// get settings
+	useEffect(() => {
+		async function getSettings() {
+			const port = await getCurrentPort();
+			const response = await fetch(`http://localhost:${port}/config`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			if (response.ok) {
+				const config = await response.json();
+				setConfig(config);
+			}
+		}
+		getSettings();
+	}, []);
+
 	async function fetchIfDownloaded() {
 		if (data?.name) {
 			const port = await getCurrentPort();
@@ -114,7 +138,14 @@ export default function Install({ id }: { id?: string }) {
 		fetchIfDownloaded();
 	}, [data]);
 
+	useEffect(() => {
+		if (show === "actions") {
+			fetchIfDownloaded();
+		}
+	}, [show]);
+
 	async function download() {
+		setLogs([]); // clear logs
 		setIsServerRunning(true);
 		setShow("logs");
 		try {
@@ -130,11 +161,13 @@ export default function Install({ id }: { id?: string }) {
 			if (!installedApps.includes(data.name)) {
 				setInstalledApps((prevApps) => [...prevApps, data.name]);
 			}
+			setIsServerRunning(false);
 		} catch (error) {
 			showToast("error", `Error initiating download: ${error}`);
 			setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
 			setIsServerRunning(false);
 		}
+		handleReloadQuickLaunch();
 	}
 
 	async function start() {
@@ -198,43 +231,77 @@ export default function Install({ id }: { id?: string }) {
 		}
 	}
 
-	async function uninstall() {
+	async function uninstall(deleteDeps?: boolean) {
 		try {
-			setDeleteStatus("deleting");
 			const port = await getCurrentPort();
-			const response = await fetch(
-				`http://localhost:${port}/scripts/delete/${data.name}`,
-				{
-					method: "GET",
-				},
-			);
-			if (response.status === 200) {
-				setDeleteStatus("deleted");
-				window.electron.ipcRenderer.invoke(
-					"notify",
-					"Uninstalling...",
-					`${data.name} uninstalled successfully.`,
-				);
-				showToast("success", `${data.name} uninstalled successfully.`);
-				setInstalled(false);
-				await fetchIfDownloaded();
-				setInstalledApps((prevApps) => prevApps.filter((app) => app !== data.name));
-				setApps((prevApps) => prevApps.filter((app) => app?.name !== data.name));
+			setDeleteStatus("deleting");
+			console.log('should uninstall deps', deleteDeps);
+			if (deleteDeps && inUseDeps.length > 0) {
+				setDeleteStatus("deleting_deps");
+				const response = await fetch(`http://localhost:${port}/deps/uninstall`, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ dioneFile: data.name, dependency: data.name }),
+				});
+				const result = await response.json();
+				console.log("result", result);
+				if (result.success) {
+					await uninstallApp(port);
+				} else {
+					setDeleteStatus("error_deps");
+					window.electron.ipcRenderer.invoke(
+						"notify",
+						"Error...",
+						`Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}.`,
+					);
+					showToast(
+						"error",
+						`Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}.`,
+					);
+					setLogs((prevLogs) => [...prevLogs, `Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}`]);
+				}
 			} else {
-				setDeleteStatus("error");
-				window.electron.ipcRenderer.invoke(
-					"notify",
-					"Error...",
-					`Error uninstalling ${data.name}: Error ${response.status}`,
-				);
-				showToast(
-					"error",
-					`Error uninstalling ${data.name}, please try again later or do it manually.`,
-				);
+				await uninstallApp(port);
 			}
 		} catch (error) {
+			setDeleteStatus("error");
 			showToast("error", `Error uninstalling ${data.name}: ${error}`);
 			setLogs((prevLogs) => [...prevLogs, `Error uninstalling ${data.name}`]);
+		}
+
+		handleReloadQuickLaunch();
+	}
+
+	async function uninstallApp(port: number) {
+		const response = await fetch(
+			`http://localhost:${port}/scripts/delete/${data.name}`,
+			{
+				method: "GET",
+			},
+		);
+		if (response.status === 200) {
+			setDeleteStatus("deleted");
+			window.electron.ipcRenderer.invoke(
+				"notify",
+				"Uninstalling...",
+				`${data.name} uninstalled successfully.`,
+			);
+			showToast("success", `${data.name} uninstalled successfully.`);
+			setInstalled(false);
+			await fetchIfDownloaded();
+			setInstalledApps((prevApps) => prevApps.filter((app) => app !== data.name));
+			setApps((prevApps) => prevApps.filter((app) => app?.name !== data.name));
+		} else {
+			setDeleteStatus("error");
+			window.electron.ipcRenderer.invoke(
+				"notify",
+				"Error...",
+				`Error uninstalling ${data.name}: Error ${response.status}`,
+			);
+			showToast(
+				"error",
+				`Error uninstalling ${data.name}, please try again later or do it manually.`,
+			);
 		}
 	}
 
@@ -282,9 +349,17 @@ export default function Install({ id }: { id?: string }) {
 		await stop();
 	};
 
-	const handleUninstall = async () => {
+	const handleUninstall = async (deleteDeps?: boolean) => {
 		showToast("default", `Uninstalling ${data.name}...`);
-		await uninstall();
+		await uninstall(deleteDeps);
+	};
+
+	const handleDeleteDeps = async () => {
+		if (config?.alwaysUninstallDependencies) {
+			await uninstall(true);
+		} else {
+			setDeleteDepsModal(!deleteDepsModal);
+		}
 	};
 
 	const handleReconnect = async () => {
@@ -297,15 +372,40 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	async function onFinishInstallDeps() {
-		setMissingDependencies(null);
-		setLogs([]);
-		setError(false);
-		handleDownload();
+		setMissingDependencies(null); // clear missing deps
+		showToast("success", "Dependencies installed successfully.");
+		setLogs([]); // clear logs
+		setError(false); // clear error
+		setShow("logs");
+		// setIsServerRunning(false);
+		showToast("default", `Trying to install ${data.name} again...`);
+		setupSocket();
+		await handleStop();
+		await handleDownload();
 	}
 
 	function handleCloseDeleteModal() {
 		setDeleteStatus("");
 	}
+
+
+	useEffect(() => {
+		if (!deleteDepsModal) return;
+		if (!data.name) return;
+		async function checkInUse() {
+			const port = await getCurrentPort();
+			const response = await fetch(`http://localhost:${port}/deps/in-use`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ dioneFile: data?.name }),
+			});
+			const result = await response.json();
+			const depsArray = Object.keys(result.result);
+			setInUseDeps(depsArray);
+		}
+
+		checkInUse();
+	}, [deleteDepsModal]);
 
 	return (
 		<>
@@ -315,7 +415,53 @@ export default function Install({ id }: { id?: string }) {
 					data={missingDependencies}
 					set={setMissingDependencies}
 					onFinish={onFinishInstallDeps}
+					workingDir={data?.name}
 				/>
+			)}
+			{deleteDepsModal && (
+				<div className="absolute inset-0 flex items-center justify-center bg-black/80 p-4 backdrop-blur-3xl" style={{ zIndex: 100 }}>
+					<div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl max-h-3/4 h-full w-full backdrop-blur-md">
+						<button type="button" className="absolute right-8 top-8 cursor-pointer" onClick={() => setDeleteDepsModal(false)}><Icon name="Close" className="h-4 w-4" /></button>
+						<div className="flex flex-col gap-6 justify-center w-full h-full items-center">
+							<h2 className="font-semibold text-lg flex items-center justify-center">
+								Should Dione uninstall dependencies?
+							</h2>
+							<div className="w-full max-w-sm">
+								{inUseDeps ? (
+								<div className="w-full h-44 flex flex-col gap-2 justify-center items-center overflow-auto">
+									<ul className="overflow-auto border border-white/50 w-full rounded p-6 gap-2 flex flex-col">
+										{inUseDeps?.map((dep, index) => (
+											<div key={index} className="w-full gap-4 flex flex-col text-sm text-neutral-300">
+												<li className="border border-white/50 rounded w-full p-2" key={index}>{dep}</li>
+											</div>
+										))}
+									</ul>
+								</div>
+								) : (
+									<p className="text-xs text-neutral-400">
+										No dependencies are currently in use.
+									</p>
+								)}
+							</div>
+							<div className="flex items-center gap-4 mt-12">
+								<button
+									type="button"
+									onClick={() => {setDeleteDepsModal(false); handleUninstall(false)}}
+									className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
+								>
+									<span className="font-semibold">No</span>
+								</button>
+								<button
+									type="button"
+									onClick={() => {setDeleteDepsModal(false); handleUninstall(true)}}
+									className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
+								>
+									<span className="font-semibold">Yes</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
 			)}
 			<div className="relative w-full h-full overflow-auto">
 				{show === "actions" && (
@@ -363,6 +509,7 @@ export default function Install({ id }: { id?: string }) {
 									handleDownload={handleDownload}
 									handleStart={handleStart}
 									handleUninstall={handleUninstall}
+									handleDeleteDeps={handleDeleteDeps}
 								/>
 							)}
 						</AnimatePresence>

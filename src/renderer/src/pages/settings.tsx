@@ -96,7 +96,7 @@ export default function Settings() {
 					<div>
 						<div className="flex flex-col space-y-4 h-full">
 							{config && (
-								<div className="flex flex-col space-y-7 h-full z-50 mb-12">
+								<div className="flex flex-col space-y-8 h-full z-50 mb-12">
 									<div className="flex flex-col">
 										{/* Apps */}
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
@@ -108,7 +108,7 @@ export default function Settings() {
 												<label className="text-neutral-200 font-medium">
 													Default install folder
 												</label>
-												<p className="text-xs text-neutral-400">
+												<p className="text-xs text-neutral-400 w-80">
 													Select the folder where applications will be installed
 												</p>
 											</div>
@@ -116,6 +116,38 @@ export default function Settings() {
 												<input onClick={handleSaveDir} type="text" placeholder="Select folder" readOnly value={`${config.defaultInstallFolder}\\apps`} className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[14rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors" />
 											</div>
 										</div>
+										<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
+														Always uninstall dependencies
+													</label>
+													<p className="text-xs text-neutral-400">
+														Always uninstall all dependencies when uninstalling an application
+													</p>
+												</div>
+												<button
+													type="button"
+													onClick={() =>
+														handleUpdate({
+															alwaysUninstallDependencies:
+																!config.alwaysUninstallDependencies,
+														})
+													}
+													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
+														config.alwaysUninstallDependencies
+															? "bg-green-500/30"
+															: "bg-red-500/30"
+													}`}
+												>
+													<span
+														className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+															config.alwaysUninstallDependencies
+																? "translate-x-6"
+																: "translate-x-0"
+														}`}
+													/>
+												</button>
+											</div>
 										</div>
 									</div>
 									<div className="flex flex-col">

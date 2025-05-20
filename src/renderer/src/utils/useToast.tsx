@@ -27,7 +27,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 		if (toast.fixed === "false" || toast.fixed === undefined) {
 			setTimeout(() => {
 				removeToast(id);
-			}, 5000); // Remove toast after 5000ms
+			}, 3000); // Remove toast after 3s
 		}
 	}, []);
 
