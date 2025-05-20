@@ -196,15 +196,20 @@ export async function uninstallDependency(dioneFile: string, io: Server) {
 	const workingDir = path.dirname(dioneFile);
 	if (!config.dependencies) {
 		logger.warn("No dependencies found in dione.json");
-		return { success: false, missing: [], error: true, reasons: ["no-dependencies"] };
+		return {
+			success: false,
+			missing: [],
+			error: true,
+			reasons: ["no-dependencies"],
+		};
 	}
 
 	const results = [] as Array<{
-        success: boolean;
-        missing: string[];
-        error: boolean;
-        reason?: string;
-    }>;
+		success: boolean;
+		missing: string[];
+		error: boolean;
+		reason?: string;
+	}>;
 	for (const [dependency, details] of Object.entries(config.dependencies)) {
 		let reason: string | undefined;
 		const depConfig = acceptedDependencies[dependency];
@@ -216,25 +221,43 @@ export async function uninstallDependency(dioneFile: string, io: Server) {
 
 		if (!isInstalled.isValid) {
 			logger.error(`Dependency "${dependency}" is not installed`);
-			results.push({ success: false, missing: [], error: true, reason: "not-installed" });
+			results.push({
+				success: false,
+				missing: [],
+				error: true,
+				reason: "not-installed",
+			});
 			continue;
 		}
 
 		let uninstallCommand = depConfig.uninstallCommand;
 		if (!uninstallCommand) {
 			logger.error(`No uninstall command found for ${dependency}`);
-			results.push({ success: false, missing: [], error: true, reason: "no-uninstall-command" });
+			results.push({
+				success: false,
+				missing: [],
+				error: true,
+				reason: "no-uninstall-command",
+			});
 			continue;
 		}
 
-		if (typeof uninstallCommand === "object" && !Array.isArray(uninstallCommand)) {
+		if (
+			typeof uninstallCommand === "object" &&
+			!Array.isArray(uninstallCommand)
+		) {
 			const platformKey = getPlatformKey();
 			uninstallCommand = uninstallCommand[platformKey];
 		}
 
 		if (!uninstallCommand) {
 			logger.error(`No uninstall command found for platform for ${dependency}`);
-			results.push({ success: false, missing: [], error: true, reason: "no-uninstall-command-platform" });
+			results.push({
+				success: false,
+				missing: [],
+				error: true,
+				reason: "no-uninstall-command-platform",
+			});
 			continue;
 		}
 
@@ -246,9 +269,16 @@ export async function uninstallDependency(dioneFile: string, io: Server) {
 		for (const cmd of uninstallCommands) {
 			const command = cmd.replace(/\s+/g, " ");
 			logger.info(`Executing uninstall command: ${command}`);
-			const result = await executeCommand(command, io, workingDir, "deleteUpdate");
+			const result = await executeCommand(
+				command,
+				io,
+				workingDir,
+				"deleteUpdate",
+			);
 			if (result.toString().trim() !== "") {
-				logger.error(`Error executing uninstall command for ${dependency}: ${result.toString().trim()}`);
+				logger.error(
+					`Error executing uninstall command for ${dependency}: ${result.toString().trim()}`,
+				);
 				success = false;
 				break;
 			}
@@ -259,9 +289,9 @@ export async function uninstallDependency(dioneFile: string, io: Server) {
 	}
 
 	return {
-		success: results.every(r => r.success),
+		success: results.every((r) => r.success),
 		missing: [],
-		error: results.some(r => r.error),
-		reasons: results.filter(r => r.error).map(r => r.reason),
+		error: results.some((r) => r.error),
+		reasons: results.filter((r) => r.error).map((r) => r.reason),
 	};
 }

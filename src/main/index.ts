@@ -22,19 +22,21 @@ import logger from "./server/utils/logger";
 // load env variables
 dotenv.config();
 
-// remove so we can register each time as we run the app. 
-app.removeAsDefaultProtocolClient('dione');
+// remove so we can register each time as we run the app.
+app.removeAsDefaultProtocolClient("dione");
 
 // If we are running a non-packaged version of the app && on windows
-if(process.env.NODE_ENV === 'development' && process.platform === 'win32') {
-  // set the path of the app on node_modules/electron/electron.exe
-  if (process.argv.length >= 2) {	
-	app.setAsDefaultProtocolClient('dione', process.execPath, [path.resolve(process.argv[1])]);
-  } else {
-	app.setAsDefaultProtocolClient('dione');
-  }	
+if (process.env.NODE_ENV === "development" && process.platform === "win32") {
+	// set the path of the app on node_modules/electron/electron.exe
+	if (process.argv.length >= 2) {
+		app.setAsDefaultProtocolClient("dione", process.execPath, [
+			path.resolve(process.argv[1]),
+		]);
+	} else {
+		app.setAsDefaultProtocolClient("dione");
+	}
 } else {
-	app.setAsDefaultProtocolClient('dione');
+	app.setAsDefaultProtocolClient("dione");
 }
 
 // define main window
@@ -103,24 +105,24 @@ function createWindow() {
 				logger.error("No url received");
 				return;
 			}
-			
+
 			const queryString = `?${url.replace(/^dione:\/\//, "")}`;
 			const params = new URLSearchParams(queryString);
-	
+
 			const authToken = params.get("auth");
 			if (authToken) {
 				mainWindow.webContents.send("auth-token", authToken);
 			} else {
 				logger.error("Not found auth token in deep link");
 			}
-	
+
 			const refreshToken = params.get("refresh");
 			if (refreshToken) {
 				mainWindow.webContents.send("refresh-token", refreshToken);
 			} else {
 				logger.error("Not found refresh token in deep link");
 			}
-	
+
 			const downloadUrl = params.get("download");
 			if (downloadUrl) {
 				mainWindow.webContents.send("download", downloadUrl);
@@ -132,8 +134,7 @@ function createWindow() {
 			logger.error("Error handling deep link:", error);
 		}
 	};
-	
-	
+
 	app.on("open-url", (event, url) => {
 		event.preventDefault();
 		handleDeepLink(url);
@@ -211,8 +212,8 @@ app.whenReady().then(() => {
 			writeConfig(defaultConfig);
 			return true;
 		}
-			config = readConfig();
-			return false;
+		config = readConfig();
+		return false;
 	});
 
 	ipcMain.on("socket-ready", () => {
@@ -261,7 +262,7 @@ app.whenReady().then(() => {
 	);
 
 	// save dir
-	ipcMain.handle("save-dir", async (_event, path: string,) => {
+	ipcMain.handle("save-dir", async (_event, path: string) => {
 		const result = await dialog.showOpenDialog({
 			defaultPath: path,
 			properties: ["openDirectory"],
@@ -269,14 +270,14 @@ app.whenReady().then(() => {
 			message: "Select a directory",
 			securityScopedBookmarks: true,
 		});
-	
+
 		return result;
-	  })
+	});
 
 	// open dir
 	ipcMain.handle("open-dir", async (_event, path: string) => {
 		await shell.openPath(path);
-	})
+	});
 
 	// Retrieve the current port
 	ipcMain.handle("get-current-port", async () => {
@@ -306,8 +307,8 @@ app.whenReady().then(() => {
 	createWindow();
 
 	// handle protocols
-	if(process.env.NODE_ENV !== 'development') {
-		app.setAsDefaultProtocolClient('dione');
+	if (process.env.NODE_ENV !== "development") {
+		app.setAsDefaultProtocolClient("dione");
 	}
 
 	// Handle reactivation of the app (e.g., clicking the dock icon on macOS)

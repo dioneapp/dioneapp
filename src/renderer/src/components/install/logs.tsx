@@ -20,7 +20,6 @@ export default function LogsComponent({
 	iframeAvailable,
 	setShow,
 }: LogsProps) {
-
 	const Spinner = useMemo(() => {
 		if (statusLog.status === "pending" || !statusLog.status) {
 			return <Icon name="Pending" className="h-4 w-4 animate-spin" />;
@@ -94,8 +93,7 @@ export default function LogsComponent({
 										.replace(/\x1B\[[0-9;]*m/g, "") // remove ascii codes
 										.replace(/^(ERROR:|WARN:|INFO:|OUT:)\s*/g, "") // remove prefix
 										.replace(/\[[^\]]*\]\s*/g, "") // remove blocks like [stderr-info] or dates
-										.trim() || "Loading..."
-									}
+										.trim() || "Loading..."}
 								</span>
 							</p>
 						);

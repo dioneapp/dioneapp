@@ -7,7 +7,10 @@ import { killProcess } from "../scripts/process";
 import path from "node:path";
 import fs from "node:fs";
 import { readConfig } from "../../config";
-import { inUseDependencies, uninstallDependency } from "../scripts/dependencies";
+import {
+	inUseDependencies,
+	uninstallDependency,
+} from "../scripts/dependencies";
 
 export const createDependenciesRouter = (io: Server) => {
 	const router = express.Router();
@@ -39,7 +42,11 @@ export const createDependenciesRouter = (io: Server) => {
 			}
 		};
 
-		const executeCommand = (command: string, name: string, workingDir: string): Promise<void> => {
+		const executeCommand = (
+			command: string,
+			name: string,
+			workingDir: string,
+		): Promise<void> => {
 			return new Promise((resolve, reject) => {
 				// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
 				let installProcess;
@@ -60,7 +67,6 @@ export const createDependenciesRouter = (io: Server) => {
 						PYTHONIOENCODING: "UTF-8",
 					},
 				};
-
 
 				if (osType === "windows") {
 					installProcess = spawn("cmd.exe", ["/S", "/C", command], {
@@ -122,7 +128,9 @@ export const createDependenciesRouter = (io: Server) => {
 		};
 
 		try {
-			const dependencies = Array.isArray(req.body?.dependencies) ? req.body.dependencies : [];
+			const dependencies = Array.isArray(req.body?.dependencies)
+				? req.body.dependencies
+				: [];
 			if (!dependencies) {
 				return res
 					.status(400)
@@ -130,13 +138,15 @@ export const createDependenciesRouter = (io: Server) => {
 			}
 			const nameFolder = req.body?.nameFolder;
 			if (!nameFolder) {
-				return res
-					.status(400)
-					.send({ error: "Name folder not provided" });
+				return res.status(400).send({ error: "Name folder not provided" });
 			}
 			const root = process.cwd();
-			const config = readConfig()
-			const workingDir = path.join(config?.defaultInstallFolder || root, "apps", nameFolder);
+			const config = readConfig();
+			const workingDir = path.join(
+				config?.defaultInstallFolder || root,
+				"apps",
+				nameFolder,
+			);
 
 			const osType = getOS();
 			if (!osType) {
@@ -225,7 +235,7 @@ export const createDependenciesRouter = (io: Server) => {
 	router.post("/uninstall", async (req, res) => {
 		const root = process.cwd();
 		const sanitizedName = req.body.dioneFile.replace(/\s+/g, "-");
-		const settings = readConfig()
+		const settings = readConfig();
 		const dioneFile = `${path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName, "dione.json")}`;
 		const result = await uninstallDependency(dioneFile, io);
 		if (result.success) {
@@ -238,10 +248,10 @@ export const createDependenciesRouter = (io: Server) => {
 	router.post("/in-use", async (req, res) => {
 		const root = process.cwd();
 		const sanitizedName = req.body.dioneFile.replace(/\s+/g, "-");
-		const settings = readConfig()
+		const settings = readConfig();
 		const dioneFile = `${path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName, "dione.json")}`;
 		const result = await inUseDependencies(dioneFile);
-		res.json({result: result});
+		res.json({ result: result });
 	});
 
 	return router;

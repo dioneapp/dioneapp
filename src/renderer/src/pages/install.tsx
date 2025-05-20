@@ -44,7 +44,7 @@ export default function Install({ id }: { id?: string }) {
 	const [installed, setInstalled] = useState<boolean>(false);
 	// navigation stuff
 	const navigate = useNavigate();
-	// delete 
+	// delete
 	const [deleteStatus, setDeleteStatus] = useState<string>("");
 	const [deleteDepsModal, setDeleteDepsModal] = useState<boolean>(false);
 	const [inUseDeps, setInUseDeps] = useState<any>([]);
@@ -235,14 +235,20 @@ export default function Install({ id }: { id?: string }) {
 		try {
 			const port = await getCurrentPort();
 			setDeleteStatus("deleting");
-			console.log('should uninstall deps', deleteDeps);
+			console.log("should uninstall deps", deleteDeps);
 			if (deleteDeps && inUseDeps.length > 0) {
 				setDeleteStatus("deleting_deps");
-				const response = await fetch(`http://localhost:${port}/deps/uninstall`, {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ dioneFile: data.name, dependency: data.name }),
-				});
+				const response = await fetch(
+					`http://localhost:${port}/deps/uninstall`,
+					{
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							dioneFile: data.name,
+							dependency: data.name,
+						}),
+					},
+				);
 				const result = await response.json();
 				console.log("result", result);
 				if (result.success) {
@@ -258,7 +264,10 @@ export default function Install({ id }: { id?: string }) {
 						"error",
 						`Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}.`,
 					);
-					setLogs((prevLogs) => [...prevLogs, `Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}`]);
+					setLogs((prevLogs) => [
+						...prevLogs,
+						`Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}`,
+					]);
 				}
 			} else {
 				await uninstallApp(port);
@@ -289,7 +298,9 @@ export default function Install({ id }: { id?: string }) {
 			showToast("success", `${data.name} uninstalled successfully.`);
 			setInstalled(false);
 			await fetchIfDownloaded();
-			setInstalledApps((prevApps) => prevApps.filter((app) => app !== data.name));
+			setInstalledApps((prevApps) =>
+				prevApps.filter((app) => app !== data.name),
+			);
 			setApps((prevApps) => prevApps.filter((app) => app?.name !== data.name));
 		} else {
 			setDeleteStatus("error");
@@ -388,7 +399,6 @@ export default function Install({ id }: { id?: string }) {
 		setDeleteStatus("");
 	}
 
-
 	useEffect(() => {
 		if (!deleteDepsModal) return;
 		if (!data.name) return;
@@ -409,7 +419,12 @@ export default function Install({ id }: { id?: string }) {
 
 	return (
 		<>
-			{deleteStatus !== "" && <DeleteLoadingModal status={deleteStatus} onClose={handleCloseDeleteModal} />}
+			{deleteStatus !== "" && (
+				<DeleteLoadingModal
+					status={deleteStatus}
+					onClose={handleCloseDeleteModal}
+				/>
+			)}
 			{missingDependencies && (
 				<MissingDepsModal
 					data={missingDependencies}
@@ -419,24 +434,41 @@ export default function Install({ id }: { id?: string }) {
 				/>
 			)}
 			{deleteDepsModal && (
-				<div className="absolute inset-0 flex items-center justify-center bg-black/80 p-4 backdrop-blur-3xl" style={{ zIndex: 100 }}>
+				<div
+					className="absolute inset-0 flex items-center justify-center bg-black/80 p-4 backdrop-blur-3xl"
+					style={{ zIndex: 100 }}
+				>
 					<div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl max-h-3/4 h-full w-full backdrop-blur-md">
-						<button type="button" className="absolute right-8 top-8 cursor-pointer" onClick={() => setDeleteDepsModal(false)}><Icon name="Close" className="h-4 w-4" /></button>
+						<button
+							type="button"
+							className="absolute right-8 top-8 cursor-pointer"
+							onClick={() => setDeleteDepsModal(false)}
+						>
+							<Icon name="Close" className="h-4 w-4" />
+						</button>
 						<div className="flex flex-col gap-6 justify-center w-full h-full items-center">
 							<h2 className="font-semibold text-lg flex items-center justify-center">
 								Should Dione uninstall dependencies?
 							</h2>
 							<div className="w-full max-w-sm">
 								{inUseDeps ? (
-								<div className="w-full h-44 flex flex-col gap-2 justify-center items-center overflow-auto">
-									<ul className="overflow-auto border border-white/50 w-full rounded p-6 gap-2 flex flex-col">
-										{inUseDeps?.map((dep, index) => (
-											<div key={index} className="w-full gap-4 flex flex-col text-sm text-neutral-300">
-												<li className="border border-white/50 rounded w-full p-2" key={index}>{dep}</li>
-											</div>
-										))}
-									</ul>
-								</div>
+									<div className="w-full h-44 flex flex-col gap-2 justify-center items-center overflow-auto">
+										<ul className="overflow-auto border border-white/50 w-full rounded p-6 gap-2 flex flex-col">
+											{inUseDeps?.map((dep, index) => (
+												<div
+													key={index}
+													className="w-full gap-4 flex flex-col text-sm text-neutral-300"
+												>
+													<li
+														className="border border-white/50 rounded w-full p-2"
+														key={index}
+													>
+														{dep}
+													</li>
+												</div>
+											))}
+										</ul>
+									</div>
 								) : (
 									<p className="text-xs text-neutral-400">
 										No dependencies are currently in use.
@@ -446,14 +478,20 @@ export default function Install({ id }: { id?: string }) {
 							<div className="flex items-center gap-4 mt-12">
 								<button
 									type="button"
-									onClick={() => {setDeleteDepsModal(false); handleUninstall(false)}}
+									onClick={() => {
+										setDeleteDepsModal(false);
+										handleUninstall(false);
+									}}
 									className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
 								>
 									<span className="font-semibold">No</span>
 								</button>
 								<button
 									type="button"
-									onClick={() => {setDeleteDepsModal(false); handleUninstall(true)}}
+									onClick={() => {
+										setDeleteDepsModal(false);
+										handleUninstall(true);
+									}}
 									className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
 								>
 									<span className="font-semibold">Yes</span>

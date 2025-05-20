@@ -10,7 +10,7 @@ export async function deleteScript(name: string, res: Response) {
 
 		// delete script dirs
 		const root = process.cwd();
-		const config = readConfig()
+		const config = readConfig();
 		const appsDir = path.join(config?.defaultInstallFolder || root, "apps");
 		const appDir = path.join(appsDir, sanitizedName);
 

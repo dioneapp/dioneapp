@@ -151,7 +151,10 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			setApps(
 				results
 					.flat()
-					.filter((app) => !removedApps.find((removedApp) => removedApp.id === app.id))
+					.filter(
+						(app) =>
+							!removedApps.find((removedApp) => removedApp.id === app.id),
+					)
 					.slice(0, 6),
 			);
 			// setApps(results.flat().slice(0, 6));
@@ -190,8 +193,8 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 				console.log("disconnect");
 			});
 		});
-	  };
-	  
+	};
+
 	const stopCheckingRef = useRef(true);
 	const loadIframe = async (localPort: number) => {
 		let isAvailable = false;
@@ -219,13 +222,12 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 		}
 	};
 
-
 	async function setupSocket() {
 		try {
 			if (socketRef.current) {
 				socketRef.current.disconnect();
 				socketRef.current.removeAllListeners();
-				console.log('socketRef.current', socketRef.current);
+				console.log("socketRef.current", socketRef.current);
 			}
 
 			const port = await getCurrentPort();
@@ -262,12 +264,16 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 					if (
 						(type === "log" || type === "info") &&
 						(content.toLowerCase().includes("started server") ||
-						  content.toLowerCase().includes("http") ||
-						  content.toLowerCase().includes("127.0.0.1") ||
-						  content.toLowerCase().includes("localhost") ||
-						  content.toLowerCase().includes("0.0.0.0"))
-					  ) {
-						const match = content.replace(/\x1b\[[0-9;]*m/g, '').match(/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i);
+							content.toLowerCase().includes("http") ||
+							content.toLowerCase().includes("127.0.0.1") ||
+							content.toLowerCase().includes("localhost") ||
+							content.toLowerCase().includes("0.0.0.0"))
+					) {
+						const match = content
+							.replace(/\x1b\[[0-9;]*m/g, "")
+							.match(
+								/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i,
+							);
 						console.log(match);
 						if (match) {
 							loadIframe(Number.parseInt(match[1]));

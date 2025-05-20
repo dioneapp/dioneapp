@@ -80,8 +80,11 @@ export default function Settings() {
 	};
 
 	async function handleSaveDir() {
-		const result = await window.electron.ipcRenderer.invoke("save-dir", config.defaultInstallFolder);
-		console.log('result', result)
+		const result = await window.electron.ipcRenderer.invoke(
+			"save-dir",
+			config.defaultInstallFolder,
+		);
+		console.log("result", result);
 		if (!result.canceled && result.filePaths[0]) {
 			handleUpdate({ defaultInstallFolder: result.filePaths[0] });
 		}
@@ -103,26 +106,35 @@ export default function Settings() {
 											Applications
 										</h2>
 										<div className="flex flex-col gap-2">
-										<div className="flex justify-between w-full items-center h-full space-y-2">
-											<div className="h-full flex items-start justify-center flex-col mt-auto">
-												<label className="text-neutral-200 font-medium">
-													Default install folder
-												</label>
-												<p className="text-xs text-neutral-400 w-80">
-													Select the folder where applications will be installed
-												</p>
+											<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
+														Default install folder
+													</label>
+													<p className="text-xs text-neutral-400 w-80">
+														Select the folder where applications will be
+														installed
+													</p>
+												</div>
+												<div className="flex gap-2 items-center justify-end w-full">
+													<input
+														onClick={handleSaveDir}
+														type="text"
+														placeholder="Select folder"
+														readOnly
+														value={`${config.defaultInstallFolder}\\apps`}
+														className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[14rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
+													/>
+												</div>
 											</div>
-											<div className="flex gap-2 items-center justify-end w-full">
-												<input onClick={handleSaveDir} type="text" placeholder="Select folder" readOnly value={`${config.defaultInstallFolder}\\apps`} className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[14rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors" />
-											</div>
-										</div>
-										<div className="flex justify-between w-full items-center h-full space-y-2">
+											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
 														Always uninstall dependencies
 													</label>
 													<p className="text-xs text-neutral-400">
-														Always uninstall all dependencies when uninstalling an application
+														Always uninstall all dependencies when uninstalling
+														an application
 													</p>
 												</div>
 												<button

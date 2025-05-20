@@ -86,7 +86,9 @@ export const executeCommand = async (
 ): Promise<string> => {
 	let stdoutData = "";
 	let stderrData = "";
-	if (!logs) { logs = "installUpdate";}
+	if (!logs) {
+		logs = "installUpdate";
+	}
 	try {
 		// if active process exists, kill it
 		await stopActiveProcess(io);

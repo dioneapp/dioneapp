@@ -10,7 +10,12 @@ interface props {
 	workingDir: string;
 }
 
-export default function MissingDepsModal({ data, set, onFinish, workingDir }: props) {
+export default function MissingDepsModal({
+	data,
+	set,
+	onFinish,
+	workingDir,
+}: props) {
 	const [page, setPage] = useState(0);
 	const [logs, setLogs] = useState<string[]>([]);
 

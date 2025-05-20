@@ -7,7 +7,15 @@ import { useAppContext } from "./global-context";
 export default function QuickLaunch({
 	compactMode,
 }: { compactMode?: boolean }) {
-	const { apps, setApps, handleReloadQuickLaunch, installedApps, setRemovedApps, availableApps, removedApps } = useAppContext(); // change "apps" later
+	const {
+		apps,
+		setApps,
+		handleReloadQuickLaunch,
+		installedApps,
+		setRemovedApps,
+		availableApps,
+		removedApps,
+	} = useAppContext(); // change "apps" later
 	const [showAppList, setShowAppList] = useState<boolean>(false);
 	const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
 	const maxApps = 6;
@@ -65,8 +73,8 @@ export default function QuickLaunch({
 		setApps(newApps);
 		setShowAppList(false);
 		setSelectedSlot(null);
-		setRemovedApps((prevRemoved) => 
-			prevRemoved.filter(removedApp => removedApp.id !== app.id)
+		setRemovedApps((prevRemoved) =>
+			prevRemoved.filter((removedApp) => removedApp.id !== app.id),
 		);
 	}
 
@@ -116,7 +124,9 @@ export default function QuickLaunch({
 				type="button"
 				onClick={() => showAppSelector(index)}
 				className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-				disabled={availableApps.length === 0 || availableApps.length === apps.length}
+				disabled={
+					availableApps.length === 0 || availableApps.length === apps.length
+				}
 			>
 				<Icon name="Plus" className="h-10 w-10" />
 			</button>

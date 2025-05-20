@@ -79,11 +79,14 @@ export default function IframeComponent({
 
 	const handleOpenFolder = async () => {
 		const port = await getCurrentPort();
-		const settings = await fetch(`http://localhost:${port}/config`).then((res) =>
-			res.json(),
+		const settings = await fetch(`http://localhost:${port}/config`).then(
+			(res) => res.json(),
 		);
 		const sanitizedName = data.name.replace(/\s+/g, "-");
-		window.electron.ipcRenderer.invoke("open-dir", `${settings.defaultInstallFolder}/apps/${sanitizedName}`);
+		window.electron.ipcRenderer.invoke(
+			"open-dir",
+			`${settings.defaultInstallFolder}/apps/${sanitizedName}`,
+		);
 	};
 
 	useEffect(() => {
@@ -165,7 +168,6 @@ export default function IframeComponent({
 						</div>
 					</button>
 					<div className="flex items-center border border-white/10 bg-white/5 rounded-md group relative">
-
 						<div className="flex items-center pl-2 pr-1.5 py-1 gap-2">
 							<span className="text-sm text-neutral-300">
 								{currentPort || "3000"}
@@ -212,10 +214,7 @@ export default function IframeComponent({
 							isFullscreen ? handleExitFullscreen : handleEnterFullscreen
 						}
 					>
-						<Icon
-							name="Maximize"
-							className="w-4 h-4"
-						/>
+						<Icon name="Maximize" className="w-4 h-4" />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							Fullscreen
 						</div>
@@ -225,7 +224,6 @@ export default function IframeComponent({
 						onClick={handleStop}
 					>
 						<Icon name="Stop" className="w-4 h-4 " />
-
 					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"

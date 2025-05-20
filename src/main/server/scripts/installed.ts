@@ -5,7 +5,7 @@ import { readConfig } from "../../config";
 
 export default async function getAllScripts() {
 	const root = process.cwd();
-	const config = readConfig()
+	const config = readConfig();
 	const scriptsDir = path.join(config?.defaultInstallFolder || root, "apps");
 
 	try {
@@ -33,9 +33,13 @@ export default async function getAllScripts() {
 
 export async function getInstalledScript(name: string) {
 	const root = process.cwd();
-	const config = readConfig()
+	const config = readConfig();
 	const sanitizedName = name.replace(/\s+/g, "-");
-	const scriptDir = path.join(config?.defaultInstallFolder || root, "apps", sanitizedName);
+	const scriptDir = path.join(
+		config?.defaultInstallFolder || root,
+		"apps",
+		sanitizedName,
+	);
 	console.log("script dir", scriptDir);
 	try {
 		await fs.promises.readdir(scriptDir);

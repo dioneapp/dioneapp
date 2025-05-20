@@ -74,8 +74,12 @@ export function createScriptRouter(io: Server) {
 		const { name } = req.params;
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const root = process.cwd();
-		const config = readConfig()
-		const workingDir = path.join(config?.defaultInstallFolder || root, "apps", sanitizedName);
+		const config = readConfig();
+		const workingDir = path.join(
+			config?.defaultInstallFolder || root,
+			"apps",
+			sanitizedName,
+		);
 		logger.info(`Stopping script '${sanitizedName}' on '${workingDir}'`);
 		try {
 			const success = await stopActiveProcess(io);
@@ -96,8 +100,12 @@ export function createScriptRouter(io: Server) {
 		const { name } = req.params;
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const root = process.cwd();
-		const config = readConfig()
-		const workingDir = path.join(config?.defaultInstallFolder || root, "apps", sanitizedName);
+		const config = readConfig();
+		const workingDir = path.join(
+			config?.defaultInstallFolder || root,
+			"apps",
+			sanitizedName,
+		);
 		logger.info(`Starting script '${sanitizedName}' on '${workingDir}'`);
 		io.emit("installUpdate", {
 			type: "log",

@@ -22,7 +22,9 @@ export const defaultConfig: AppConfig = {
 	language: "en",
 	enableDesktopNotifications: true,
 	notifyOnInstallComplete: true,
-	defaultInstallFolder: app.isPackaged ? path.join(path.dirname(app.getPath("exe"))) : path.join(process.cwd()),
+	defaultInstallFolder: app.isPackaged
+		? path.join(path.dirname(app.getPath("exe")))
+		: path.join(process.cwd()),
 	defaultLogsPath: path.join(app.getPath("userData"), "logs"),
 	compactMode: false,
 	alwaysUninstallDependencies: false,

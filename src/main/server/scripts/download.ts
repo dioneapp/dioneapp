@@ -30,8 +30,12 @@ export async function getScripts(id: string, io: Server) {
 
 		const root = process.cwd();
 		const sanitizedName = data.name.replace(/\s+/g, "-");
-		const settings = readConfig()
-		const saveDirectory = path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName);
+		const settings = readConfig();
+		const saveDirectory = path.join(
+			settings?.defaultInstallFolder || root,
+			"apps",
+			sanitizedName,
+		);
 		const script_url = data.script_url;
 
 		try {
