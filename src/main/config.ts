@@ -12,6 +12,7 @@ export interface AppConfig {
 	defaultInstallFolder: string;
 	defaultLogsPath: string;
 	compactMode: boolean;
+	alwaysUninstallDependencies: boolean;
 }
 
 // default config
@@ -24,6 +25,7 @@ export const defaultConfig: AppConfig = {
 	defaultInstallFolder: app.isPackaged ? path.join(path.dirname(app.getPath("exe"))) : path.join(process.cwd()),
 	defaultLogsPath: path.join(app.getPath("userData"), "logs"),
 	compactMode: false,
+	alwaysUninstallDependencies: false,
 };
 // get config file
 export const getConfigPath = () => {

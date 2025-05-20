@@ -35,6 +35,7 @@ export default function Install({ id }: { id?: string }) {
 		setApps,
 		installedApps,
 		setupSocket,
+		handleReloadQuickLaunch,
 	} = useAppContext();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
@@ -47,6 +48,8 @@ export default function Install({ id }: { id?: string }) {
 	const [deleteStatus, setDeleteStatus] = useState<string>("");
 	const [deleteDepsModal, setDeleteDepsModal] = useState<boolean>(false);
 	const [inUseDeps, setInUseDeps] = useState<any>([]);
+	// config
+	const [config, setConfig] = useState<any>(null);
 
 	// fetch script data
 	useEffect(() => {
@@ -90,6 +93,24 @@ export default function Install({ id }: { id?: string }) {
 			stopApps();
 		}
 	}, [exitRef]);
+
+	// get settings
+	useEffect(() => {
+		async function getSettings() {
+			const port = await getCurrentPort();
+			const response = await fetch(`http://localhost:${port}/config`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+			if (response.ok) {
+				const config = await response.json();
+				setConfig(config);
+			}
+		}
+		getSettings();
+	}, []);
 
 	async function fetchIfDownloaded() {
 		if (data?.name) {
@@ -146,6 +167,7 @@ export default function Install({ id }: { id?: string }) {
 			setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
 			setIsServerRunning(false);
 		}
+		handleReloadQuickLaunch();
 	}
 
 	async function start() {
@@ -246,6 +268,8 @@ export default function Install({ id }: { id?: string }) {
 			showToast("error", `Error uninstalling ${data.name}: ${error}`);
 			setLogs((prevLogs) => [...prevLogs, `Error uninstalling ${data.name}`]);
 		}
+
+		handleReloadQuickLaunch();
 	}
 
 	async function uninstallApp(port: number) {
@@ -331,7 +355,11 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	const handleDeleteDeps = async () => {
-		setDeleteDepsModal(!deleteDepsModal);
+		if (config?.alwaysUninstallDependencies) {
+			await uninstall(true);
+		} else {
+			setDeleteDepsModal(!deleteDepsModal);
+		}
 	};
 
 	const handleReconnect = async () => {
