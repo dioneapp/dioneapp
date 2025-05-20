@@ -1,10 +1,13 @@
 {
 	"build_tools": {
-		"checkCommand": "msbuild -version",
-		"versionRegex": "\\d+\\.\\d+\\.\\d+",
-		"installCommand": {
-			"windows": "curl -LO https://aka.ms/vs/17/release/vs_BuildTools.exe && vs_BuildTools.exe --quiet --wait --norestart --nocache --installPath \"C:\\\\BuildTools\" --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools && setx PATH \"%%PATH%%;C:\\\\BuildTools\\\\MSBuild\\\\Current\\\\Bin\""
-		}
+	  "checkCommand": "msbuild -version",
+	  "versionRegex": "\\d+\\.\\d+\\.\\d+",
+	  "installCommand": {
+		"windows": "curl -LO https://aka.ms/vs/17/release/vs_BuildTools.exe && vs_BuildTools.exe --quiet --wait --norestart --nocache --installPath \"C:\\\\BuildTools\" --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools && setx PATH \"%%PATH%%;C:\\\\BuildTools\\\\MSBuild\\\\Current\\\\Bin\""
+	  },
+	  "uninstallCommand": {
+		"windows": "\"C:\\\\BuildTools\\\\Installer\\\\vs_installer.exe\" uninstall --quiet --norestart --installPath \"C:\\\\BuildTools\""
+	  }
 	},
 	"python": {
 	  "checkCommand": "python --version",
@@ -13,6 +16,11 @@
 		"windows": "curl -o python-installer.exe https://www.python.org/ftp/python/3.10.7/python-3.10.7-amd64.exe && python-installer.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0",
 		"linux": "sudo apt update && sudo apt install -y python3 python3-pip",
 		"macos": "brew install python"
+	  },
+	  "uninstallCommand": {
+		"windows": "wmic product where \"name like 'Python%%'\" call uninstall /nointeractive",
+		"linux": "sudo apt remove -y python3 python3-pip",
+		"macos": "brew uninstall python"
 	  }
 	},
 	"uv": {
@@ -36,6 +44,11 @@
 		"windows": "powershell -ExecutionPolicy Bypass -Command \"iwr https://nodejs.org/dist/v20.11.1/node-v20.11.1-x64.msi -OutFile node.msi; Start-Process msiexec.exe -Wait -ArgumentList '/i node.msi /quiet'\"",
 		"linux": "curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - && sudo apt install -y nodejs",
 		"macos": "brew install node"
+	  },
+	  "uninstallCommand": {
+		"windows": "wmic product where \"name like 'Node.js%%'\" call uninstall /nointeractive",
+		"linux": "sudo apt remove -y nodejs",
+		"macos": "brew uninstall node"
 	  }
 	},
 	"npm": {
@@ -45,6 +58,11 @@
 		"windows": "npm install -g npm",
 		"linux": "sudo apt install -y npm",
 		"macos": "brew install npm"
+	  },
+	  "uninstallCommand": {
+		"windows": "npm uninstall -g npm",
+		"linux": "sudo apt remove -y npm",
+		"macos": "brew uninstall npm"
 	  }
 	},
 	"pnpm": {
@@ -54,6 +72,11 @@
 		"windows": "npm install -g pnpm",
 		"linux": "npm install -g pnpm",
 		"macos": "npm install -g pnpm"
+	  },
+	  "uninstallCommand": {
+		"windows": "npm uninstall -g pnpm",
+		"linux": "npm uninstall -g pnpm",
+		"macos": "npm uninstall -g pnpm"
 	  }
 	},
 	"git": {
@@ -63,6 +86,11 @@
 		"windows": "winget install --id Git.Git -e --source winget",
 		"linux": "sudo apt update && sudo apt install -y git",
 		"macos": "brew install git"
+	  },
+	  "uninstallCommand": {
+		"windows": "winget uninstall --id Git.Git -e",
+		"linux": "sudo apt remove -y git",
+		"macos": "brew uninstall git"
 	  }
 	},
 	"docker": {
@@ -72,6 +100,11 @@
 		"windows": "winget install -e --id Docker.DockerDesktop",
 		"linux": "curl -fsSL https://get.docker.com | sudo sh",
 		"macos": "brew install --cask docker"
+	  },
+	  "uninstallCommand": {
+		"windows": "winget uninstall -e --id Docker.DockerDesktop",
+		"linux": "sudo apt remove -y docker-ce docker-ce-cli containerd.io",
+		"macos": "brew uninstall --cask docker"
 	  }
 	},
 	"npx": {
@@ -81,6 +114,11 @@
 		"windows": "npm install -g npx",
 		"linux": "npm install -g npx",
 		"macos": "npm install -g npx"
+	  },
+	  "uninstallCommand": {
+		"windows": "npm uninstall -g npx",
+		"linux": "npm uninstall -g npx",
+		"macos": "npm uninstall -g npx"
 	  }
 	},
 	"yarn": {
@@ -90,6 +128,11 @@
 		"windows": "npm install -g yarn",
 		"linux": "npm install -g yarn",
 		"macos": "brew install yarn"
+	  },
+	  "uninstallCommand": {
+		"windows": "npm uninstall -g yarn",
+		"linux": "npm uninstall -g yarn",
+		"macos": "brew uninstall yarn"
 	  }
 	},
 	"curl": {
@@ -99,6 +142,11 @@
 		"windows": "winget install -e --id Curl.Curl",
 		"linux": "sudo apt update && sudo apt install -y curl",
 		"macos": "brew install curl"
+	  },
+	  "uninstallCommand": {
+		"windows": "winget uninstall -e --id Curl.Curl",
+		"linux": "sudo apt remove -y curl",
+		"macos": "brew uninstall curl"
 	  }
 	},
 	"wget": {
@@ -108,14 +156,22 @@
 		"windows": "winget install -e --id GNU.Wget",
 		"linux": "sudo apt update && sudo apt install -y wget",
 		"macos": "brew install wget"
+	  },
+	  "uninstallCommand": {
+		"windows": "winget uninstall -e --id GNU.Wget",
+		"linux": "sudo apt remove -y wget",
+		"macos": "brew uninstall wget"
 	  }
 	},
 	"unzip": {
-		"checkCommand": "unzip --version",
-		"versionRegex": "unzip (\\d+\\.\\d+\\.\\d+)",
-		"installCommand": {
-			"linux": "sudo apt update && sudo apt install -y unzip"
-		}
+	  "checkCommand": "unzip --version",
+	  "versionRegex": "unzip (\\d+\\.\\d+\\.\\d+)",
+	  "installCommand": {
+		"linux": "sudo apt update && sudo apt install -y unzip"
+	  },
+	  "uninstallCommand": {
+		"linux": "sudo apt remove -y unzip"
+	  }
 	}
   }
   
