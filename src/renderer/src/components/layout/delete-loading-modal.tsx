@@ -63,11 +63,13 @@ export default function DeleteLoadingModal({
                     <Icon name="Pending" className="h-24 w-24 animate-spin" />
                     <h1 className="font-medium text-3xl flex flex-col gap-2">
                         {status === "deleting_deps" ? "Uninstalling dependencies" : "Uninstalling"} 
-                        <span className="text-neutral-400 text-sm">please wait...</span>
+                        <span className="text-neutral-400 text-sm text-center">please wait...</span>
                     </h1>
-                    <div className="flex flex-col gap-2 p-4 border border-white/20 rounded max-h-24 max-w-1/2 overflow-auto">
-                        {deleteLogs.map((log, i) => <p key={i} className="text-xs">{log.content}</p>)}
-                    </div>
+                    {deleteLogs.length > 0 && (
+                        <div className="flex flex-col gap-2 p-4 border border-white/20 rounded max-h-24 max-w-1/2 overflow-auto">
+                            {deleteLogs.map((log, i) => <p key={i} className="text-xs">{log.content}</p>)}
+                        </div>
+                    )}
                 </div>
 			) : status === "deleted" ? (
 				<div className="flex flex-col gap-2 items-center">
@@ -89,7 +91,7 @@ export default function DeleteLoadingModal({
                 <div className="flex flex-col gap-2 items-center">
                     <Icon name="Pending" className="h-24 w-24 animate-spin" />
                     <h1 className="font-medium text-3xl mt-10 text-neutral-300">Loading...</h1>
-                    <h2 className="text-sm text-neutral-400">Please wait...</h2>
+                    <h2 className="text-sm text-neutral-400 text-center">Please wait...</h2>
                 </div>
             )}
 		</motion.div>
