@@ -117,6 +117,12 @@ export default function Install({ id }: { id?: string }) {
 		fetchIfDownloaded();
 	}, [data]);
 
+	useEffect(() => {
+		if (show === "actions") {
+			fetchIfDownloaded();
+		}
+	}, [show]);
+
 	async function download() {
 		setLogs([]); // clear logs
 		setIsServerRunning(true);
@@ -208,7 +214,7 @@ export default function Install({ id }: { id?: string }) {
 			const port = await getCurrentPort();
 			setDeleteStatus("deleting");
 			console.log('should uninstall deps', deleteDeps);
-			if (deleteDeps) {
+			if (deleteDeps && inUseDeps.length > 0) {
 				setDeleteStatus("deleting_deps");
 				const response = await fetch(`http://localhost:${port}/deps/uninstall`, {
 					method: "POST",
@@ -343,7 +349,7 @@ export default function Install({ id }: { id?: string }) {
 		setLogs([]); // clear logs
 		setError(false); // clear error
 		setShow("logs");
-		setIsServerRunning(false);
+		// setIsServerRunning(false);
 		showToast("default", `Trying to install ${data.name} again...`);
 		setupSocket();
 		await handleStop();
