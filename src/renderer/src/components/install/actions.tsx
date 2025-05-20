@@ -20,7 +20,7 @@ export default function ActionsComponent({
 	setImgLoading,
 	installed,
 	handleStart,
-	handleUninstall,
+	// handleUninstall,
 	handleDownload,
 	isServerRunning,
 	handleReconnect,
