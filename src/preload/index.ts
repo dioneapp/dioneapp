@@ -2,7 +2,15 @@ import { electronAPI } from "@electron-toolkit/preload";
 import { contextBridge } from "electron";
 
 // Custom APIs for renderer
-const api = {};
+const api = {
+	updateDiscordPresence: (details: string, state: string) => {
+		return (window as any).electron.ipcRenderer.invoke(
+			"update-discord-presence",
+			details,
+			state,
+		);
+	},
+};
 
 // Use `contextBridge` APIs to expose Electron APIs to
 // renderer only if context isolation is enabled, otherwise

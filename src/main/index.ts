@@ -18,6 +18,7 @@ import { defaultConfig, readConfig, writeConfig } from "./config";
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger from "./server/utils/logger";
+import { initializeDiscordPresence, updatePresence, clearPresence, destroyPresence } from "./discord/presence";
 
 // load env variables
 dotenv.config();
@@ -164,8 +165,11 @@ function createWindow() {
 }
 
 // Sets up the application when ready.
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
 	logger.info("Starting app...");
+
+	// Initialize Discord presence
+	await initializeDiscordPresence();
 
 	// Set up tray icon
 	app.setName("Dione");
@@ -226,7 +230,8 @@ app.whenReady().then(() => {
 
 	ipcMain.on("ping", () => console.log("pong"));
 
-	ipcMain.handle("app:close", () => {
+	ipcMain.handle("app:close", async () => {
+		await destroyPresence();
 		stopServer();
 		app.quit();
 		logger.info("App stopped successfully");
@@ -234,6 +239,11 @@ app.whenReady().then(() => {
 
 	ipcMain.handle("app:minimize", () => {
 		BrowserWindow.getFocusedWindow()?.minimize();
+	});
+
+	// Add Discord presence update handler
+	ipcMain.handle("update-discord-presence", (_event, details: string, state: string) => {
+		updatePresence(details, state);
 	});
 
 	// notifications
@@ -318,7 +328,8 @@ app.whenReady().then(() => {
 });
 
 // Quit the application when all windows are closed, except on macOS.
-app.on("window-all-closed", () => {
+app.on("window-all-closed", async () => {
+	await destroyPresence();
 	if (process.platform !== "darwin") {
 		app.quit();
 	}
