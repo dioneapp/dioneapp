@@ -11,7 +11,6 @@ export default function QuickLaunch({
 		apps,
 		setApps,
 		handleReloadQuickLaunch,
-		installedApps,
 		setRemovedApps,
 		availableApps,
 		removedApps,
