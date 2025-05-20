@@ -5,8 +5,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 
 interface AppContextType {
-	setInstalledApps: React.Dispatch<React.SetStateAction<string[]>>;
-	installedApps: string[];
+	setInstalledApps: React.Dispatch<React.SetStateAction<any[]>>;
+	installedApps: any[];
 	socket: any;
 	logs: string[];
 	setLogs: React.Dispatch<React.SetStateAction<string[]>>;
@@ -52,6 +52,11 @@ interface AppContextType {
 	setupSocket: () => Promise<void>;
 	socketRef: any;
 	deleteLogs: any[];
+	handleReloadQuickLaunch: () => Promise<void>;
+	removedApps: any[];
+	setRemovedApps: React.Dispatch<React.SetStateAction<any[]>>;
+	availableApps: any[];
+	setAvailableApps: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -112,12 +117,49 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	const [data, setData] = useState<any | undefined>(undefined);
 	// show
 	const [show, setShow] = useState("actions");
-
 	// sidebar
 	const [apps, setApps] = useState<any[]>([]);
-
 	// delete logs
 	const [deleteLogs, setDeleteLogs] = useState<any[]>([]);
+
+	const [removedApps, setRemovedApps] = useState<any[]>([]);
+	const [availableApps, setAvailableApps] = useState<any[]>([]);
+	const handleReloadQuickLaunch = async () => {
+		try {
+			const port = await getCurrentPort();
+			// get installed apps
+			const response = await fetch(
+				`http://localhost:${port}/scripts/installed`,
+			);
+			if (!response.ok) throw new Error("Failed to fetch installed apps");
+			const data = await response.json();
+			setInstalledApps(data.apps);
+
+			// search data for installed apps
+			const results = await Promise.all(
+				data.apps
+					.slice(0, 6) // maxApps is 6
+					.map((app: string) =>
+						fetch(`http://localhost:${port}/db/search/name/${app}`).then(
+							(res) => (res.ok ? res.json() : []),
+						),
+					),
+			);
+			// set available apps
+			setAvailableApps(results.flat());
+			// set apps
+			setApps(
+				results
+					.flat()
+					.filter((app) => !removedApps.find((removedApp) => removedApp.id === app.id))
+					.slice(0, 6),
+			);
+			// setApps(results.flat().slice(0, 6));
+		} catch (error) {
+			console.error("Error in handleReloadQuickLaunch:", error);
+			showToast("error", "Failed to reload quick launch apps");
+		}
+	};
 
 	const isLocalAvailable = async (port: number) => {
 		const socket = io(`http://localhost:${port}`);
@@ -336,6 +378,11 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 				setupSocket,
 				socketRef,
 				deleteLogs,
+				handleReloadQuickLaunch,
+				removedApps,
+				setRemovedApps,
+				availableApps,
+				setAvailableApps,
 			}}
 		>
 			{children}

@@ -1,4 +1,3 @@
-import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -8,10 +7,9 @@ import { useAppContext } from "./global-context";
 export default function QuickLaunch({
 	compactMode,
 }: { compactMode?: boolean }) {
-	const { installedApps, setInstalledApps, apps, setApps } = useAppContext(); // change "apps" later
+	const { apps, setApps, handleReloadQuickLaunch, installedApps, setRemovedApps, availableApps, removedApps } = useAppContext(); // change "apps" later
 	const [showAppList, setShowAppList] = useState<boolean>(false);
 	const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
-	const [availableApps, setAvailableApps] = useState<any[]>([]);
 	const maxApps = 6;
 
 	const backdropVariants = {
@@ -39,48 +37,15 @@ export default function QuickLaunch({
 	};
 
 	useEffect(() => {
-		async function getInstalledApps() {
-			try {
-				const port = await getCurrentPort();
-				const response = await fetch(
-					`http://localhost:${port}/scripts/installed`,
-				);
-				if (!response.ok) throw new Error("Failed to fetch installed apps");
-				const data = await response.json();
-				setInstalledApps(data.apps);
-			} catch (error) {
-				console.error("Error fetching installed apps:", error);
-			}
-		}
-
-		getInstalledApps();
+		handleReloadQuickLaunch();
 	}, []);
 
-	async function loadQuickLaunchApps() {
-		try {
-			const port = await getCurrentPort();
-			const results = await Promise.all(
-				installedApps
-					.slice(0, maxApps)
-					.map((app) =>
-						fetch(`http://localhost:${port}/db/search/name/${app}`).then(
-							(res) => (res.ok ? res.json() : []),
-						),
-					),
-			);
-			setApps(results.flat().slice(0, maxApps));
-		} catch (error) {
-			console.error("Error loading apps:", error);
-		}
-	}
-
 	useEffect(() => {
-		loadQuickLaunchApps();
-	}, [installedApps]);
+		handleReloadQuickLaunch();
+	}, [removedApps]);
 
 	async function showAppSelector(index: number) {
 		try {
-			setAvailableApps(apps);
 			setSelectedSlot(index);
 			setShowAppList(true);
 		} catch (error) {
@@ -100,14 +65,16 @@ export default function QuickLaunch({
 		setApps(newApps);
 		setShowAppList(false);
 		setSelectedSlot(null);
-		window.location.reload(); // should change this
+		setRemovedApps((prevRemoved) => 
+			prevRemoved.filter(removedApp => removedApp.id !== app.id)
+		);
 	}
 
 	const removeApp = (index: number) => {
 		const newApps = [...apps];
 		newApps.splice(index, 1);
 		setApps(newApps);
-		window.location.reload(); // should change this
+		setRemovedApps((prevApps) => [...prevApps, apps[index]]);
 	};
 
 	const renderAppButton = (app: any, index: number) => (
@@ -149,7 +116,7 @@ export default function QuickLaunch({
 				type="button"
 				onClick={() => showAppSelector(index)}
 				className="h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-				disabled={installedApps.length === 0}
+				disabled={availableApps.length === 0 || availableApps.length === apps.length}
 			>
 				<Icon name="Plus" className="h-10 w-10" />
 			</button>
