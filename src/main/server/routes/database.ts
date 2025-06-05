@@ -133,40 +133,35 @@ router.get("/set-session", async (req, res) => {
 // tables
 router.get("/featured", (_req, res) => {
 	async function getData() {
-		const { data: featuredScripts, error: featuredScriptsError } =
-			await supabase
-				.from("scripts")
-				.select("*")
-				.eq("featured", true)
-				.order("order", { ascending: true })
-				.limit(4);
-
-		if (featuredScriptsError) {
+		const response = await fetch(
+			"https://api.getdione.app/v1/scripts?limit=4&order_type=desc&featured=true",
+		);
+		const data = await response.json();
+		if (response.status !== 200) {
 			logger.error(
-				`Unable to obtain the scripts: [ (${featuredScriptsError.code || "No code"}) ${featuredScriptsError.details} ]`,
+				`Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
 			);
-			res.send(featuredScriptsError);
+			res.send(response.statusText);
 			return;
 		}
 
-		const data = [...featuredScripts];
-		res.send(data);
+		const filteredData = data.filter((script: { featured: boolean }) => script.featured);
+		res.send(filteredData);
 	}
 	getData();
 });
 
 router.get("/explore", (_req, res) => {
 	async function getData() {
-		const { data, error } = await supabase
-			.from("scripts")
-			.select("*")
-			.order("created_at", { ascending: false });
-
-		if (error) {
+		const response = await fetch(
+			"https://api.getdione.app/v1/scripts?order_type=desc",
+		);
+		const data = await response.json();
+		if (response.status !== 200) {
 			logger.error(
-				`Unable to obtain the scripts: [ (${error.code || "No code"}) ${error.details} ]`,
+				`Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
 			);
-			res.send(error);
+			res.send(response.statusText);
 			return;
 		}
 
@@ -191,25 +186,27 @@ router.get("/explore", (_req, res) => {
 router.get("/search/:id", (req, res) => {
 	async function getData() {
 		logger.info(`Searching script with ID: "${req.params.id}"`);
-		const { data, error } = await supabase
-			.from("scripts")
-			.select("*")
-			.eq("id", req.params.id);
-		if (error) {
+		const response = await fetch(
+			`https://api.getdione.app/v1/scripts?id=${req.params.id}&limit=1`,
+		);
+		const data = await response.json();
+		if (response.status !== 200) {
 			logger.error(
-				`No database connection established: [ (${error.code || "No code"}) ${error.details} ]`,
+				`Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
 			);
-			res.status(500).send(error);
-		} else {
-			if (
-				data[0].logo_url === null ||
-				data[0].logo_url === undefined ||
-				data[0].logo_url === ""
-			) {
-				data[0].logo_url = generateGradient(data[0].name);
-			}
-			res.send(data);
+			res.send(response.statusText);
+			return;
 		}
+		const script = data[0];
+		if (
+			script.logo_url === null ||
+			script.logo_url === undefined ||
+			script.logo_url === ""
+		) {
+			script.logo_url = generateGradient(script.name);
+		}
+		res.send(script);
+		return;
 	}
 	getData();
 });
@@ -223,25 +220,30 @@ router.get("/search/name/:name", async (req, res) => {
 			.replace(/\s+/g, " ")
 			.trim();
 		if (sanitizedName) {
-			const { data, error } = await supabase
-				.from("scripts")
-				.select("*")
-				.eq("name", sanitizedName)
-				.range(0, 1)
-				.single();
-			if (error) {
-				logger.error(`Not found an script named: "${sanitizedName}"`);
-				res.send(error);
-			} else {
-				if (
-					data.logo_url === null ||
-					data.logo_url === undefined ||
-					data.logo_url === ""
-				) {
-					data.logo_url = generateGradient(data.name);
-				}
-				res.send(data);
+			const response = await fetch(
+				`https://api.getdione.app/v1/scripts?name=${sanitizedName}`,
+			);
+			const data = await response.json();
+			if (response.status !== 200) {
+				logger.error(
+					`Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
+				);
+				res.send(response.statusText);
+				return;
 			}
+
+			const scripts = data.map((script) => {
+				if (
+					script.logo_url === null ||
+					script.logo_url === undefined ||
+					script.logo_url === ""
+				) {
+					script.logo_url = generateGradient(script.name);
+				}
+				return script;
+			});
+
+			res.send(scripts);
 		}
 	}
 	getData();
@@ -252,28 +254,32 @@ router.get("/search/type/:type", async (req, res) => {
 	if (req.params.type.length === 0) return;
 	async function getData() {
 		const type = req.params.type;
-		if (type) {
-			const { data, error } = await supabase
-				.from("scripts")
-				.select("*")
-				.ilike("tags", type);
-			if (error) {
-				console.log("No found scripts with TAG", type, error);
-				res.send(error);
-			} else {
-				data.map((script) => {
-					if (
-						script.logo_url === null ||
-						script.logo_url === undefined ||
-						script.logo_url === ""
-					) {
-						script.logo_url = generateGradient(script.name);
-					}
-					return script;
-				});
-				res.send(data);
-			}
+
+		const response = await fetch(
+			`https://api.getdione.app/v1/scripts?tags=${type}`,
+		);
+		const data = await response.json();
+		if (response.status !== 200) {
+			logger.error(
+				`Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
+			);
+			res.send(response.statusText);
+			return;
 		}
+
+		const scripts = data.map((script) => {
+			if (
+				script.logo_url === null ||
+				script.logo_url === undefined ||
+				script.logo_url === ""
+			) {
+				script.logo_url = generateGradient(script.name);
+			}
+			return script;
+		});
+
+		res.send(scripts);
+		return;
 	}
 	getData();
 });

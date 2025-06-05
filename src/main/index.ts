@@ -18,7 +18,7 @@ import { defaultConfig, readConfig, writeConfig } from "./config";
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger from "./server/utils/logger";
-import { initializeDiscordPresence, updatePresence, clearPresence, destroyPresence } from "./discord/presence";
+import { initializeDiscordPresence, updatePresence, destroyPresence } from "./discord/presence";
 
 // load env variables
 dotenv.config();
@@ -89,6 +89,7 @@ function createWindow() {
 	// Show the window when ready
 	mainWindow.webContents.once("did-finish-load", () => {
 		mainWindow.show();
+		mainWindow.focus();
 	});
 
 	// Prevent opening new windows and handle external links

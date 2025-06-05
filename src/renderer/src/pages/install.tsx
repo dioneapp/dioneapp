@@ -67,7 +67,7 @@ export default function Install({ id }: { id?: string }) {
 				);
 				if (response.ok) {
 					const script = await response.json();
-					setData(script[0]);
+					setData(script);
 				} else {
 					throw new Error("Failed to fetch data");
 				}
