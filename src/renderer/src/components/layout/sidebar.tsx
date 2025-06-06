@@ -77,12 +77,28 @@ export default function Sidebar() {
 		if (!session) return;
 		const data = JSON.parse(session);
 		if (data.expires_at * 1000 < new Date().getTime()) {
-			localStorage.removeItem("session");
-			localStorage.removeItem("user");
-			localStorage.removeItem("dbUser");
-			setLogged(false);
+			// when session expires, auto-renew a new session and update all user data from db
+			refreshSession(data.refresh_token);
 		}
 	}, []);
+
+	async function refreshSession(token: string) {
+		const port = await getCurrentPort();
+		const response = await fetch(
+			`http://localhost:${port}/db/refresh-token`,
+			{
+				headers: {
+					accessToken: token,
+				},
+			},
+		);
+		const data = await response.json();
+		if (data.session) {
+			setSession(data.session);
+			setUser(data.user);
+			setLogged(true);
+		}
+	}
 
 	useEffect(() => {
 		const session = localStorage.getItem("session");
@@ -337,11 +353,11 @@ export default function Sidebar() {
 					>
 						{!loading && logged && dbUser && (
 							// biome-ignore lint/a11y/useValidAnchor: <explanation>
-							<a
+							<Link
 								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"} relative ${!dbUser[0]?.avatar_url && "border border-white/20"}`}
-								// to="/account"
-								// onMouseEnter={() => setHoveredTooltip("account")}
-								// onMouseLeave={() => setHoveredTooltip(null)}
+								to="/account"
+								onMouseEnter={() => setHoveredTooltip("account")}
+								onMouseLeave={() => setHoveredTooltip(null)}
 							>
 								{dbUser[0]?.avatar_url &&
 								dbUser[0]?.avatar_url !== "" &&
@@ -360,7 +376,7 @@ export default function Sidebar() {
 										Account
 									</div>
 								)}
-							</a>
+							</Link>
 						)}
 					</div>
 					{!loading && !config?.compactMode && (

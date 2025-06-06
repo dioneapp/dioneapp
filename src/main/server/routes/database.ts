@@ -82,6 +82,34 @@ router.get("/user/:id", async (req, res) => {
 //     }
 // });
 
+// this refresh all user data (session, user, etc) from db
+router.get('/refresh-token', async (req, res) => {
+    try {
+		const token = req.get("accessToken");
+		if (!token) {
+			logger.error("No access token provided");
+			res.status(400).send("No access token provided");
+			return;
+		}
+        const { data, error } = await supabase.auth.refreshSession({
+			refresh_token: token,
+		});
+        if (error) {
+            logger.error(
+                `Unable to refresh session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+            );
+            res.send(error);
+        } else {
+            res.send(data);
+        }
+    } catch (error: any) {
+        logger.error(
+            `Unable to refresh session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+        );
+        res.status(500).send("An error occurred while processing your request.");
+    }
+})
+
 router.get("/set-session", async (req, res) => {
 	const accessToken = req.get("accessToken");
 	const refreshToken = req.get("refreshToken");
