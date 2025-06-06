@@ -153,7 +153,7 @@ function createWindow() {
 				mainWindow.focus();
 			}
 
-			handleDeepLink(commandLine.pop());
+			handleDeepLink(commandLine.pop()?.replace(/\/$/, ''));
 		});
 	}
 
