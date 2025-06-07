@@ -103,6 +103,9 @@ export default function FirstTime() {
 				);
 				const data = await response.json();
 				if (data.session) {
+					window.electron.ipcRenderer.send("start-session", {
+						user: data.user,
+					});
 					setSession(data.session);
 					setUser(data.user);
 					setLogged(true);

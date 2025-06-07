@@ -312,4 +312,42 @@ router.get("/search/type/:type", async (req, res) => {
 	getData();
 });
 
+// events
+router.post("/events", async (req, res) => {
+	const update = req.headers.update;
+	if (update) {
+		const { data, error } = await supabase.from("events").update({
+			finished_at: new Date().toISOString(),
+		}).eq("id", req.headers.id).select().single();
+		if (error) {
+			logger.error(
+				`Unable to update the event: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+			);
+			res.send(error);
+		} else {
+			logger.info(`Event updated successfully: ${data}`);
+			res.send(data);
+		}
+		return;
+	}
+
+	const { data, error } = await supabase.from("events").insert({
+		created_at: new Date().toISOString(),
+		user_id: req.headers.user,
+		type: req.headers.type,
+		event: req.headers.event,
+		started_at: req.headers.started_at || "",
+		finished_at: req.headers.finished_at || null,
+	}).select().single();
+	if (error) {
+		logger.error(
+			`Unable to obtain the events: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+		);
+		res.send(error);
+	} else {
+		logger.info(`Event created successfully: ${data}`);
+		res.send(data);
+	}
+});
+
 export default router;
