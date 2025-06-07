@@ -42,6 +42,8 @@ if (process.env.NODE_ENV === "development" && process.platform === "win32") {
 
 // define main window
 let mainWindow: BrowserWindow;
+let port: number;
+let sessionId: string;
 // Creates the main application window with specific configurations.
 function createWindow() {
 	mainWindow = new BrowserWindow({
@@ -194,7 +196,7 @@ app.whenReady().then(async () => {
 	appIcon.setToolTip("Dione");
 
 	// Start the server
-	startServer();
+	port = await startServer();
 
 	// Register global shortcuts
 	globalShortcut.register("Control+R", () => {
@@ -232,8 +234,10 @@ app.whenReady().then(async () => {
 	ipcMain.on("ping", () => console.log("pong"));
 
 	ipcMain.handle("app:close", async () => {
+		mainWindow.hide();
 		await destroyPresence();
-		stopServer();
+		await handleEndSession();
+		await stopServer();
 		app.quit();
 		logger.info("App stopped successfully");
 	});
@@ -312,6 +316,60 @@ app.whenReady().then(async () => {
 	ipcMain.on("restart", () => {
 		app.relaunch();
 		app.exit();
+	});
+
+	async function handleStartSession({user}: {user: any}) {
+		if (user) {
+			logger.info("User is logged");
+			const response = await fetch(`http://localhost:${port}/db/events`, {
+				method: "POST",
+				headers: {
+					user: user.id,
+					type: "event",
+					event: "session",
+					started_at: new Date().toISOString()
+				},
+			});
+			if (response.ok) {
+				const data = await response.json();
+				logger.info(`Session started with ID: ${data.id}`);
+				sessionId = data.id;
+			} else {
+				logger.error("Failed to start session");
+				logger.error(response.statusText);
+			}
+		}
+		logger.info("User is not logged");
+	}
+
+	async function handleEndSession() {
+		if (sessionId) {
+			logger.info(`Ending session with ID: ${sessionId}`);
+			const response = await fetch(`http://localhost:${port}/db/events`, {
+				method: "POST",
+				headers: {
+					id: sessionId,
+					update: "true"
+				},
+			});
+			if (response.ok) {
+				logger.info("Session ended successfully");
+				return true;
+			}
+			logger.error("Failed to end session");
+			logger.error(response.statusText);
+			return false;
+		}
+		logger.info("No session to end");
+		return false;
+	}
+
+	ipcMain.on("start-session", (_event, {user}) => {
+		handleStartSession({user});
+	});
+	ipcMain.handle("end-session", async () => {
+		const result = await handleEndSession();
+		return result;
 	});
 
 	// Create the main application window
