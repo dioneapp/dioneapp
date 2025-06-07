@@ -352,7 +352,6 @@ export default function Sidebar() {
 						className={`w-full flex items-center gap-2 ${config?.compactMode ? "justify-center" : "justify-start"}`}
 					>
 						{!loading && logged && dbUser && (
-							// biome-ignore lint/a11y/useValidAnchor: <explanation>
 							<Link
 								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"} relative ${!dbUser[0]?.avatar_url && "border border-white/20"}`}
 								to="/account"
