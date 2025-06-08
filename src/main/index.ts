@@ -319,8 +319,9 @@ app.whenReady().then(async () => {
 	});
 
 	async function handleStartSession({user}: {user: any}) {
+		if (!port) return;
+		if (sessionId) return;
 		if (user) {
-			logger.info("User is logged");
 			const response = await fetch(`http://localhost:${port}/db/events`, {
 				method: "POST",
 				headers: {
@@ -330,7 +331,7 @@ app.whenReady().then(async () => {
 					started_at: new Date().toISOString()
 				},
 			});
-			if (response.ok) {
+			if (response.ok && response.status === 200) {
 				const data = await response.json();
 				logger.info(`Session started with ID: ${data.id}`);
 				sessionId = data.id;
@@ -339,7 +340,6 @@ app.whenReady().then(async () => {
 				logger.error(response.statusText);
 			}
 		}
-		logger.info("User is not logged");
 	}
 
 	async function handleEndSession() {
