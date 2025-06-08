@@ -1,5 +1,4 @@
 name: Format Code with Biome
-
 on:
   push:
     branches: ["**"]
@@ -11,18 +10,21 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run Biome format
         run: npx biome format --write ./src
@@ -30,18 +32,38 @@ jobs:
       - name: Check for uncommitted changes
         id: check_diff
         run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           if [[ -n "$(git status --porcelain)" ]]; then
             echo "changes=true" >> $GITHUB_OUTPUT
+            echo "Files changed:"
+            git status --porcelain
           else
             echo "changes=false" >> $GITHUB_OUTPUT
+            echo "No formatting changes needed"
           fi
 
-      - name: Commit and create PR if formatting is needed
+      - name: Create Pull Request for formatting changes
         if: steps.check_diff.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: format code with Biome"
-          title: "chore: format code with Biome"
-          body: "This PR formats code using Biome."
-          branch: biome/code-format
+          title: "🎨 Auto-format code with Biome"
+          body: |
+            ## 🤖 Automated Code Formatting
+            
+            This PR contains automatic code formatting changes applied by Biome.
+            
+            ### Changes made:
+            - Applied Biome formatting rules to source files
+            - No functional changes to the code
+            
+            **This PR was created automatically by GitHub Actions.**
+          branch: biome/format-${{ github.run_number }}
+          branch-suffix: timestamp
           delete-branch: true
+          labels: |
+            automated
+            formatting
+            biome
