@@ -21,7 +21,8 @@ export class ErrorBoundary extends React.Component<
 		this.state = { hasError: false, error: null, errorInfo: null };
 	}
 
-	static getDerivedStateFromError(_: Error): ErrorBoundaryState { // _ is the error argument
+	static getDerivedStateFromError(_: Error): ErrorBoundaryState {
+		// _ is the error argument
 		// Return a new state object to indicate an error has occurred
 		return { hasError: true, error: null, errorInfo: null }; // error and errorInfo are set in componentDidCatch
 	}
@@ -37,7 +38,9 @@ export class ErrorBoundary extends React.Component<
 		if (this.state.hasError) {
 			// Pass the error and errorInfo to ErrorPage
 			// @ts-expect-error ErrorPage will be updated later to accept these props
-			return <ErrorPage error={this.state.error} errorInfo={this.state.errorInfo} />;
+			return (
+				<ErrorPage error={this.state.error} errorInfo={this.state.errorInfo} />
+			);
 		}
 
 		return this.props.children;

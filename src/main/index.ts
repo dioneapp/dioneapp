@@ -211,17 +211,21 @@ app.whenReady().then(async () => {
 		}
 	});
 
-	globalShortcut.register('CommandOrControl+Shift+R', () => {
-		logger.info('Global shortcut CommandOrControl+Shift+R triggered for reporting an issue.');
+	globalShortcut.register("CommandOrControl+Shift+R", () => {
+		logger.info(
+			"Global shortcut CommandOrControl+Shift+R triggered for reporting an issue.",
+		);
 		if (mainWindow) {
 			// Focus the main window
 			if (mainWindow.isMinimized()) mainWindow.restore();
 			mainWindow.focus();
 
 			// Send IPC message to renderer to open the report dialog/page
-			mainWindow.webContents.send('open-report-page');
+			mainWindow.webContents.send("open-report-page");
 		} else {
-			logger.warn('Main window not available to open report page via shortcut.');
+			logger.warn(
+				"Main window not available to open report page via shortcut.",
+			);
 		}
 	});
 
@@ -394,11 +398,11 @@ app.whenReady().then(async () => {
 		return result;
 	});
 
-	ipcMain.handle('manual-report-error', async (_event, reportPayload) => {
-		logger.info('Received manual error report from renderer:', reportPayload);
+	ipcMain.handle("manual-report-error", async (_event, reportPayload) => {
+		logger.info("Received manual error report from renderer:", reportPayload);
 
-		const error = new Error(reportPayload.message || 'User reported an issue.');
-		error.name = reportPayload.name || 'ManualReport';
+		const error = new Error(reportPayload.message || "User reported an issue.");
+		error.name = reportPayload.name || "ManualReport";
 		if (reportPayload.stack) {
 			error.stack = reportPayload.stack;
 		}
@@ -412,14 +416,18 @@ ${reportPayload.componentStack}
 			: undefined;
 
 		try {
-			await sendErrorToDiscord(error, additionalInfo, reportPayload.userDescription);
+			await sendErrorToDiscord(
+				error,
+				additionalInfo,
+				reportPayload.userDescription,
+			);
 			return { success: true };
 		} catch (e) {
-			logger.error('Failed to send manual report to Discord:', e);
+			logger.error("Failed to send manual report to Discord:", e);
 			// It's important to throw an error here if the renderer is awaiting a response
 			// and needs to know if the operation failed.
 			// The invoke call in the renderer will catch this rejection.
-			throw new Error('Failed to send report to Discord.');
+			throw new Error("Failed to send report to Discord.");
 		}
 	});
 
@@ -445,7 +453,7 @@ app.on("window-all-closed", async () => {
 	}
 });
 
-app.on('will-quit', () => {
+app.on("will-quit", () => {
 	globalShortcut.unregisterAll();
 });
 
@@ -457,18 +465,24 @@ autoUpdater.on("update-downloaded", () => {
 });
 
 // Global error handlers
-process.on('uncaughtException', (error) => {
-  logger.error('Uncaught Exception:', error);
-  sendErrorToDiscord(error, 'Unhandled Synchronous Error (Uncaught Exception)');
-  // It's generally recommended to restart the process after an uncaught exception
-  // For now, we'll just log and send to Discord. Consider process.exit(1) in production.
+process.on("uncaughtException", (error) => {
+	logger.error("Uncaught Exception:", error);
+	sendErrorToDiscord(error, "Unhandled Synchronous Error (Uncaught Exception)");
+	// It's generally recommended to restart the process after an uncaught exception
+	// For now, we'll just log and send to Discord. Consider process.exit(1) in production.
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
-  if (reason instanceof Error) {
-    sendErrorToDiscord(reason, 'Unhandled Asynchronous Error (Unhandled Rejection)');
-  } else {
-    sendErrorToDiscord(new Error(String(reason)), 'Unhandled Asynchronous Error (Unhandled Rejection - Non-Error Reason)');
-  }
+process.on("unhandledRejection", (reason, promise) => {
+	logger.error("Unhandled Rejection at:", promise, "reason:", reason);
+	if (reason instanceof Error) {
+		sendErrorToDiscord(
+			reason,
+			"Unhandled Asynchronous Error (Unhandled Rejection)",
+		);
+	} else {
+		sendErrorToDiscord(
+			new Error(String(reason)),
+			"Unhandled Asynchronous Error (Unhandled Rejection - Non-Error Reason)",
+		);
+	}
 });

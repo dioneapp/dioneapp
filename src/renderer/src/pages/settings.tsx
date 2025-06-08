@@ -342,7 +342,8 @@ export default function Settings() {
 														Report an Issue
 													</label>
 													<p className="text-xs text-neutral-400 w-80">
-														If you encounter any problems or have suggestions, please let us know.
+														If you encounter any problems or have suggestions,
+														please let us know.
 													</p>
 												</div>
 												<button
