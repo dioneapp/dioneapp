@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-import logger from "../utils/logger";
 import { readConfig } from "../../config";
+import logger from "../utils/logger";
 
 export default async function getAllScripts() {
 	const root = process.cwd();

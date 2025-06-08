@@ -83,32 +83,32 @@ router.get("/user/:id", async (req, res) => {
 // });
 
 // this refresh all user data (session, user, etc) from db
-router.get('/refresh-token', async (req, res) => {
-    try {
+router.get("/refresh-token", async (req, res) => {
+	try {
 		const token = req.get("accessToken");
 		if (!token) {
 			logger.error("No access token provided");
 			res.status(400).send("No access token provided");
 			return;
 		}
-        const { data, error } = await supabase.auth.refreshSession({
+		const { data, error } = await supabase.auth.refreshSession({
 			refresh_token: token,
 		});
-        if (error) {
-            logger.error(
-                `Unable to refresh session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
-            );
-            res.send(error);
-        } else {
-            res.send(data);
-        }
-    } catch (error: any) {
-        logger.error(
-            `Unable to refresh session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
-        );
-        res.status(500).send("An error occurred while processing your request.");
-    }
-})
+		if (error) {
+			logger.error(
+				`Unable to refresh session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+			);
+			res.send(error);
+		} else {
+			res.send(data);
+		}
+	} catch (error: any) {
+		logger.error(
+			`Unable to refresh session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+		);
+		res.status(500).send("An error occurred while processing your request.");
+	}
+});
 
 router.get("/set-session", async (req, res) => {
 	const accessToken = req.get("accessToken");
@@ -173,7 +173,9 @@ router.get("/featured", (_req, res) => {
 			return;
 		}
 
-		const filteredData = data.filter((script: { featured: boolean }) => script.featured);
+		const filteredData = data.filter(
+			(script: { featured: boolean }) => script.featured,
+		);
 		res.send(filteredData);
 	}
 	getData();
@@ -337,7 +339,7 @@ router.get("/events", async (req, res) => {
 	// basic stats processing
 	const stats = {
 		total: events.length,
-		sessions: events.filter(e => e.event === "session"),
+		sessions: events.filter((e) => e.event === "session"),
 	};
 
 	logger.info(`Stats generated for user ${user}`);
@@ -347,9 +349,14 @@ router.get("/events", async (req, res) => {
 router.post("/events", async (req, res) => {
 	const update = req.headers.update;
 	if (update) {
-		const { data, error } = await supabase.from("events").update({
-			finished_at: new Date().toISOString(),
-		}).eq("id", req.headers.id).select().single();
+		const { data, error } = await supabase
+			.from("events")
+			.update({
+				finished_at: new Date().toISOString(),
+			})
+			.eq("id", req.headers.id)
+			.select()
+			.single();
 		if (error) {
 			logger.error(
 				`Unable to update the event: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
@@ -362,14 +369,18 @@ router.post("/events", async (req, res) => {
 		return;
 	}
 
-	const { data, error } = await supabase.from("events").insert({
-		created_at: new Date().toISOString(),
-		user_id: req.headers.user,
-		type: req.headers.type,
-		event: req.headers.event,
-		started_at: req.headers.started_at || null,
-		finished_at: req.headers.finished_at || null,
-	}).select().single();
+	const { data, error } = await supabase
+		.from("events")
+		.insert({
+			created_at: new Date().toISOString(),
+			user_id: req.headers.user,
+			type: req.headers.type,
+			event: req.headers.event,
+			started_at: req.headers.started_at || null,
+			finished_at: req.headers.finished_at || null,
+		})
+		.select()
+		.single();
 	if (error) {
 		logger.error(
 			`Unable to obtain the events: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,

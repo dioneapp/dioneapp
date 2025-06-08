@@ -2,13 +2,13 @@ import Icon from "@renderer/components/icons/icon";
 import ActionsComponent from "@renderer/components/install/actions";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
+import DeleteLoadingModal from "@renderer/components/layout/delete-loading-modal";
 import { useAppContext } from "@renderer/components/layout/global-context";
 import MissingDepsModal from "@renderer/components/layout/missing-deps-modal";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentPort } from "../utils/getPort";
-import DeleteLoadingModal from "@renderer/components/layout/delete-loading-modal";
 
 export default function Install({ id }: { id?: string }) {
 	const {

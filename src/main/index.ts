@@ -15,10 +15,14 @@ import { Notification } from "electron";
 import { autoUpdater } from "electron-updater";
 import icon from "../../resources/icon.ico?asset";
 import { defaultConfig, readConfig, writeConfig } from "./config";
+import {
+	destroyPresence,
+	initializeDiscordPresence,
+	updatePresence,
+} from "./discord/presence";
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger from "./server/utils/logger";
-import { initializeDiscordPresence, updatePresence, destroyPresence } from "./discord/presence";
 
 // load env variables
 dotenv.config();
@@ -155,7 +159,7 @@ function createWindow() {
 				mainWindow.focus();
 			}
 
-			handleDeepLink(commandLine.pop()?.replace(/\/$/, ''));
+			handleDeepLink(commandLine.pop()?.replace(/\/$/, ""));
 		});
 	}
 
@@ -247,9 +251,12 @@ app.whenReady().then(async () => {
 	});
 
 	// Add Discord presence update handler
-	ipcMain.handle("update-discord-presence", (_event, details: string, state: string) => {
-		updatePresence(details, state);
-	});
+	ipcMain.handle(
+		"update-discord-presence",
+		(_event, details: string, state: string) => {
+			updatePresence(details, state);
+		},
+	);
 
 	// notifications
 	ipcMain.handle(
@@ -318,7 +325,7 @@ app.whenReady().then(async () => {
 		app.exit();
 	});
 
-	async function handleStartSession({user}: {user: any}) {
+	async function handleStartSession({ user }: { user: any }) {
 		if (!port) return;
 		if (sessionId) return;
 		if (user) {
@@ -328,7 +335,7 @@ app.whenReady().then(async () => {
 					user: user.id,
 					type: "event",
 					event: "session",
-					started_at: new Date().toISOString()
+					started_at: new Date().toISOString(),
 				},
 			});
 			if (response.ok && response.status === 200) {
@@ -349,7 +356,7 @@ app.whenReady().then(async () => {
 				method: "POST",
 				headers: {
 					id: sessionId,
-					update: "true"
+					update: "true",
 				},
 			});
 			if (response.ok) {
@@ -364,8 +371,8 @@ app.whenReady().then(async () => {
 		return false;
 	}
 
-	ipcMain.on("start-session", (_event, {user}) => {
-		handleStartSession({user});
+	ipcMain.on("start-session", (_event, { user }) => {
+		handleStartSession({ user });
 	});
 	ipcMain.handle("end-session", async () => {
 		const result = await handleEndSession();

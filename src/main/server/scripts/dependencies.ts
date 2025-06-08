@@ -1,12 +1,12 @@
 import { execSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import semver from "semver";
+import type { Server } from "socket.io";
 import logger from "../utils/logger";
 import acceptedDependencies from "./acceptedDependencies.json";
-import os from "node:os";
 import { executeCommand } from "./process";
-import type { Server } from "socket.io";
-import path from "node:path";
 
 export interface Command {
 	name: string;

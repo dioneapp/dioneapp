@@ -1,7 +1,7 @@
+import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Icon from "../icons/icon";
-import { getCurrentPort } from "@renderer/utils/getPort";
 interface IframeProps {
 	iframeSrc: string;
 	handleStop: () => void;
