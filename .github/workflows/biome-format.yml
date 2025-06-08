@@ -31,40 +31,28 @@ jobs:
       - name: Run Biome format and lint
         run: biome check --write ./src || true
 
-      - name: Check for uncommitted changes
-        id: check_diff
+      - name: Commit changes
+        id: commitback
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           if [[ -n "$(git status --porcelain)" ]]; then
-            echo "changes=true" >> $GITHUB_OUTPUT
-            echo "Files changed:"
-            git status --porcelain
+            git add .
+            git commit -m "chore(format): run biome on ${{github.ref_name}}"
+            echo "committed=true" >> $GITHUB_OUTPUT
+            echo "Files formatted and committed"
           else
-            echo "changes=false" >> $GITHUB_OUTPUT
+            echo "committed=false" >> $GITHUB_OUTPUT
             echo "No formatting changes needed"
           fi
 
-      - name: Create Pull Request for formatting changes
-        if: steps.check_diff.outputs.changes == 'true'
+      - name: Create Pull Request
+        if: steps.commitback.outputs.committed == 'true'
+        continue-on-error: true
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: "chore: format code with Biome"
-          title: "🎨 Auto-format code with Biome"
-          body: |
-            ## 🤖 Automated Code Formatting
-            
-            This PR contains automatic code formatting changes applied by Biome.
-            
-            ### Changes made:
-            - Applied Biome formatting rules to source files
-            - No functional changes to the code
-            
-            **This PR was created automatically by GitHub Actions.**
-          branch: biome/format-${{ github.run_number }}
-          branch-suffix: timestamp
           delete-branch: true
-          labels: |
-            automated
-            formatting
-            biome
+          body: "🤖 Automatically apply Biome code formatter changes"
+          title: "chore(format): run biome on ${{github.ref_name}}"
+          commit-message: "chore(format): run biome on ${{github.ref_name}}"
+          branch: formatter/${{github.ref_name}}
