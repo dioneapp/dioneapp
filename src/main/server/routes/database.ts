@@ -313,6 +313,37 @@ router.get("/search/type/:type", async (req, res) => {
 });
 
 // events
+
+router.get("/events", async (req, res) => {
+	const user = req.headers.user;
+	if (!user) {
+		return res.status(400).send("No user ID provided");
+	}
+
+	const date = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(); // last seven days
+
+	// fetch all user events on last seven days
+	const { data: events, error } = await supabase
+		.from("events")
+		.select("*")
+		.eq("user_id", user)
+		.gte("created_at", date);
+
+	if (error) {
+		logger.error(`Error fetching stats: ${error.message}`);
+		return res.status(500).send(error);
+	}
+
+	// basic stats processing
+	const stats = {
+		total: events.length,
+		sessions: events.filter(e => e.event === "session"),
+	};
+
+	logger.info(`Stats generated for user ${user}`);
+	res.send(stats);
+});
+
 router.post("/events", async (req, res) => {
 	const update = req.headers.update;
 	if (update) {
@@ -336,17 +367,17 @@ router.post("/events", async (req, res) => {
 		user_id: req.headers.user,
 		type: req.headers.type,
 		event: req.headers.event,
-		started_at: req.headers.started_at || "",
+		started_at: req.headers.started_at || null,
 		finished_at: req.headers.finished_at || null,
 	}).select().single();
 	if (error) {
 		logger.error(
 			`Unable to obtain the events: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
 		);
-		res.send(error);
+		res.status(500).send(error);
 	} else {
-		logger.info(`Event created successfully: ${data}`);
-		res.send(data);
+		logger.info(`Event created successfully with id: ${data.id}`);
+		res.send(data, 200);
 	}
 });
 
