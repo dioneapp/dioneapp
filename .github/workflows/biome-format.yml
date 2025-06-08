@@ -6,7 +6,7 @@ on:
 
 jobs:
   biome-format:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     permissions:
       contents: write
       pull-requests: write
@@ -15,7 +15,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,30 +23,32 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          npm install --optional
 
       - name: Run Biome format
-        run: npx biome format --write ./src
+        run: npx --yes @biomejs/biome format --write ./src
 
       - name: Check for uncommitted changes
         id: check_diff
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          if [[ -n "$(git status --porcelain)" ]]; then
-            echo "changes=true" >> $GITHUB_OUTPUT
+          $changes = git status --porcelain
+          if ($changes) {
+            echo "changes=true" >> $env:GITHUB_OUTPUT
             echo "Files changed:"
             git status --porcelain
-          else
-            echo "changes=false" >> $GITHUB_OUTPUT
+          } else {
+            echo "changes=false" >> $env:GITHUB_OUTPUT
             echo "No formatting changes needed"
-          fi
+          }
 
       - name: Create Pull Request for formatting changes
         if: steps.check_diff.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: format code with Biome"
           title: "🎨 Auto-format code with Biome"
           body: |
