@@ -1,0 +1,126 @@
+name: Bug report
+description: Report a problem you encountered
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity Level
+      description: How critical is this bug?
+      options:
+        - Critical (System crash, data loss)
+        - High (Major functionality broken)
+        - Medium (Minor functionality affected)
+        - Low (Cosmetic or non-critical)
+    validations:
+      required: true
+  - type: input
+    id: project
+    attributes:
+      label: Project Version
+      description: Which project versions are affected? (e.g., 3.2.1, 3.2.2)
+      placeholder: "3.2.1"
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Platform and OS Version
+      description: Which platforms or operating systems are affected? Include specific versions
+      placeholder: "Windows 10 64-bit (21H2), macOS Monterey 12.3"
+    validations:
+      required: true
+  - type: input
+    id: devices
+    attributes:
+      label: Affected Devices
+      description: Does this only occur on specific devices? Include model numbers if applicable
+      placeholder: "MacBook Pro 2021 M1, Dell XPS 15"
+    validations:
+      required: true
+  - type: input
+    id: existing-issues
+    attributes:
+      label: Existing Issues
+      description: Are there any similar existing issues? Link them here
+      placeholder: "#69, #70"
+    validations:
+      required: false
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Clearly and concisely describe the bug. Include any error messages
+      placeholder: |
+        - What were you trying to do?
+        - What actually happened?
+        - Any error messages or unexpected behavior?
+    validations:
+      required: true
+  - type: textarea
+    id: repro-steps
+    attributes:
+      label: Steps to reproduce
+      description: Provide clear, numbered steps to reproduce the issue
+      value: |
+        1. 
+        2. 
+        3. 
+        ...
+      placeholder: |
+        Example:
+        1. Open the application
+        2. Navigate to Settings
+        3. Click on Profile
+        4. Observe the error
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: What should have happened? Be specific
+      placeholder: |
+        - What was the expected outcome?
+        - How should the feature work?
+    validations:
+      required: true
+  - type: textarea
+    id: attachments
+    attributes:
+      label: Attachments
+      description: Please include code snippets, stack traces, or compiler errors. Use code blocks for better readability
+      placeholder: |
+        ```python
+        # paste code here
+        ```
+        
+        ```
+        # paste stack trace here
+        ```
+    validations:
+      required: false
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Videos
+      description: Add screenshots, gifs, or videos to help explain your problem. Include before/after if applicable
+      placeholder: |
+        - Screenshot of the error
+        - Video demonstrating the issue
+        - Before/after comparison
+    validations:
+      required: false
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Add any other useful information about the problem here
+      placeholder: |
+        - Workarounds you've tried
+        - Related configuration
+        - Environment variables
+        - Dependencies
+    validations:
+      required: false
