@@ -1,9 +1,16 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams, useRouteError } from "react-router-dom";
+import {
+	useLocation,
+	useNavigate,
+	useParams,
+	useRouteError,
+} from "react-router-dom";
+import { ErrorBoundary } from "./components/layout/error-handler";
 import Sidebar from "./components/layout/sidebar";
 import Titlebar from "./components/layout/titlebar";
 import Account from "./pages/account";
+import ErrorPage from "./pages/error";
 import FirstTime from "./pages/first-time";
 import Home from "./pages/home";
 import Install from "./pages/install";
@@ -11,8 +18,6 @@ import Library from "./pages/library";
 import Loading from "./pages/loading";
 import NoAccess from "./pages/no-access";
 import Settings from "./pages/settings";
-import ErrorPage from "./pages/error";
-import { ErrorBoundary } from "./components/layout/error-handler";
 
 // transition animation config
 const pageTransition = {

@@ -26,27 +26,29 @@ export default function ErrorPage() {
 						sorry for the inconvenience.
 					</p>
 					<div className="flex gap-2">
-					{/* <button
+						{/* <button
 						onClick={restart}
 						type="button"
 						className="mt-6 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
 					>
 						Restart
 					</button> */}
-					<button
-						onClick={goHome}
-						type="button"
-						className="mt-6 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
-					>
-						Return
-					</button>
-					<button
-						onClick={() => openLink("https://github.com/dioneapp/dioneapp/issues")}
-						type="button"
-						className="mt-6 px-4 border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-300 font-medium py-1 text-center cursor-pointer"
-					>
-						Report to team
-					</button>
+						<button
+							onClick={goHome}
+							type="button"
+							className="mt-6 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
+						>
+							Return
+						</button>
+						<button
+							onClick={() =>
+								openLink("https://github.com/dioneapp/dioneapp/issues")
+							}
+							type="button"
+							className="mt-6 px-4 border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-300 font-medium py-1 text-center cursor-pointer"
+						>
+							Report to team
+						</button>
 					</div>
 				</main>
 			</div>

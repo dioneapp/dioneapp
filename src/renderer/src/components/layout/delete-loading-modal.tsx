@@ -1,6 +1,6 @@
+import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import Icon from "../icons/icon";
-import { motion } from "framer-motion";
 import { useAppContext } from "./global-context";
 
 export default function DeleteLoadingModal({

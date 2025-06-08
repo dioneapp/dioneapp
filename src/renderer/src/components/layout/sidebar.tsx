@@ -84,14 +84,11 @@ export default function Sidebar() {
 
 	async function refreshSession(token: string) {
 		const port = await getCurrentPort();
-		const response = await fetch(
-			`http://localhost:${port}/db/refresh-token`,
-			{
-				headers: {
-					accessToken: token,
-				},
+		const response = await fetch(`http://localhost:${port}/db/refresh-token`, {
+			headers: {
+				accessToken: token,
 			},
-		);
+		});
 		const data = await response.json();
 		if (data.session) {
 			setSession(data.session);

@@ -1,16 +1,16 @@
 import { spawn } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 import express from "express";
 import type { Server } from "socket.io";
-import acceptedDependencies from "../scripts/acceptedDependencies.json";
-import logger from "../utils/logger";
-import { killProcess } from "../scripts/process";
-import path from "node:path";
-import fs from "node:fs";
 import { readConfig } from "../../config";
+import acceptedDependencies from "../scripts/acceptedDependencies.json";
 import {
 	inUseDependencies,
 	uninstallDependency,
 } from "../scripts/dependencies";
+import { killProcess } from "../scripts/process";
+import logger from "../utils/logger";
 
 export const createDependenciesRouter = (io: Server) => {
 	const router = express.Router();

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import type { JSX } from "react";
-import Icon from "../icons/icon";
 import { useMemo } from "react";
+import Icon from "../icons/icon";
 
 interface LogsProps {
 	statusLog: { status: string; content: string };
