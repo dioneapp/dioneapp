@@ -1,0 +1,47 @@
+name: Format Code with Biome
+
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  biome-format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Biome format
+        run: npx biome format --write ./src
+
+      - name: Check for uncommitted changes
+        id: check_diff
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and create PR if formatting is needed
+        if: steps.check_diff.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore: format code with Biome"
+          title: "chore: format code with Biome"
+          body: "This PR formats code using Biome."
+          branch: biome/code-format
+          delete-branch: true
