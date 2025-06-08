@@ -91,7 +91,8 @@
 		"socket.io": "^4.8.1",
 		"socket.io-client": "^4.8.1",
 		"tailwindcss": "^4.1.6",
-		"winston": "^3.17.0"
+		"winston": "^3.17.0",
+		"node-fetch": "^3.3.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",

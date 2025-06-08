@@ -88,7 +88,21 @@ function App() {
 
 		// start session
 		handleStartSession();
-	}, []);
+
+
+	// Listener for global shortcut to open report page
+	const handleOpenReportPage = () => {
+		console.log('Received open-report-page IPC message.');
+		navigate('/error');
+	};
+
+	window.electron.ipcRenderer.on('open-report-page', handleOpenReportPage);
+
+	// Cleanup listener on component unmount
+	return () => {
+		window.electron.ipcRenderer.removeListener('open-report-page', handleOpenReportPage);
+	};
+	}, [navigate]); // Added navigate to dependency array
 
 	async function handleStartSession() {
 		const user = JSON.parse(localStorage.getItem("user") || "{}");

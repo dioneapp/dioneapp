@@ -1,8 +1,10 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
+	const navigate = useNavigate();
 	const [port, setPort] = useState<number | null>(null);
 	const [versions] = useState(window.electron.process.versions);
 	const [config, setConfig] = useState<any | null>(null);
@@ -324,6 +326,32 @@ export default function Settings() {
 														}
 													}}
 												/>
+											</div>
+										</div>
+									</div>
+									{/* NEW SUPPORT SECTION */}
+									<div className="flex flex-col">
+										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
+										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
+											Support
+										</h2>
+										<div className="flex flex-col gap-2">
+											<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
+														Report an Issue
+													</label>
+													<p className="text-xs text-neutral-400 w-80">
+														If you encounter any problems or have suggestions, please let us know.
+													</p>
+												</div>
+												<button
+													type="button"
+													onClick={() => navigate("/error")} // Using navigate directly for simplicity, or call handleReportIssue
+													className="text-xs text-center text-neutral-300 px-6 rounded-full h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
+												>
+													Create Report
+												</button>
 											</div>
 										</div>
 									</div>
