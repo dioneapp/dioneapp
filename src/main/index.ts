@@ -338,11 +338,15 @@ app.whenReady().then(async () => {
 					started_at: new Date().toISOString(),
 				},
 			});
+			const data = await response.json();
 			if (response.ok && response.status === 200) {
-				const data = await response.json();
 				logger.info(`Session started with ID: ${data.id}`);
 				sessionId = data.id;
 			} else {
+				if (data.error === "Database connection not available") {
+					logger.error("Database connection not available, please check your environment variables and your connection.");
+					return;
+				}
 				logger.error("Failed to start session");
 				logger.error(response.statusText);
 			}

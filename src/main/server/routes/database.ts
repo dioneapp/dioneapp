@@ -40,6 +40,12 @@ function generateGradient(input: string): string {
 
 // auth
 router.get("/user/:id", async (req, res) => {
+
+	if (!supabase) {
+		logger.error("Supabase client is not initialized");
+		return res.status(500).json({ error: "Database connection not available" });
+	}
+
 	try {
 		const { data, error } = await supabase
 			.from("users")
@@ -62,28 +68,14 @@ router.get("/user/:id", async (req, res) => {
 	}
 });
 
-// unused
-// router.get("/get-session", async (_req, res) => {
-//     try {
-//         const { data, error } = await supabase.auth.getSession();
-//         if (error) {
-//             logger.error(
-//                 `Unable to get session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
-//             );
-//             res.send(error);
-//         } else {
-//             res.send(data);
-//         }
-//     } catch (error: any) {
-//         logger.error(
-//             `Unable to get session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
-//         );
-//         res.status(500).send("An error occurred while processing your request.");
-//     }
-// });
-
 // this refresh all user data (session, user, etc) from db
 router.get("/refresh-token", async (req, res) => {
+
+	if (!supabase) {
+		logger.error("Supabase client is not initialized");
+		return res.status(500).json({ error: "Database connection not available" });
+	}
+
 	try {
 		const token = req.get("accessToken");
 		if (!token) {
@@ -113,6 +105,12 @@ router.get("/refresh-token", async (req, res) => {
 router.get("/set-session", async (req, res) => {
 	const accessToken = req.get("accessToken");
 	const refreshToken = req.get("refreshToken");
+
+	if (!supabase) {
+		logger.error("Supabase client is not initialized");
+		return res.status(500).json({ error: "Database connection not available" });
+	}
+
 	try {
 		const { data, error } = await supabase.auth.setSession({
 			access_token: accessToken,
@@ -322,6 +320,11 @@ router.get("/events", async (req, res) => {
 		return res.status(400).send("No user ID provided");
 	}
 
+	if (!supabase) {
+		logger.error("Supabase client is not initialized");
+		return res.status(500).json({ error: "Database connection not available" });
+	}
+
 	const date = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(); // last seven days
 
 	// fetch all user events on last seven days
@@ -348,6 +351,12 @@ router.get("/events", async (req, res) => {
 
 router.post("/events", async (req, res) => {
 	const update = req.headers.update;
+
+	if (!supabase) {
+		logger.error("Supabase client is not initialized");
+		return res.status(500).json({ error: "Database connection not available" });
+	}
+
 	if (update) {
 		const { data, error } = await supabase
 			.from("events")
