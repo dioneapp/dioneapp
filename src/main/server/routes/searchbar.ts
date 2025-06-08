@@ -1,11 +1,19 @@
 import express from "express";
-import { supabase } from "../utils/database";
+import { supabase, isSupabaseConfigured } from "../utils/database";
 import logger from "../utils/logger";
 
 const router = express.Router();
 router.use(express.json());
 
-router.get("/type/:name/:type", async (req, res) => {
+// check if Supabase is configured
+const requireSupabase = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+	if (!isSupabaseConfigured()) {
+		return res.status(503).json({ error: "Database is not configured" });
+	}
+	next();
+};
+
+router.get("/type/:name/:type", requireSupabase, async (req, res) => {
 	const name = req.params.name;
 	const type = req.params.type;
 	try {
@@ -31,7 +39,7 @@ router.get("/type/:name/:type", async (req, res) => {
 	}
 });
 
-router.get("/name/:name", async (req, res) => {
+router.get("/name/:name", requireSupabase, async (req, res) => {
 	const { name } = req.params;
 	try {
 		const { data, error } = await supabase

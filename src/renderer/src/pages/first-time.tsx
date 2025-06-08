@@ -92,24 +92,46 @@ export default function FirstTime() {
 		if (authToken && refreshToken) {
 			async function setSessionAPI(token: string, refreshToken: string) {
 				const port = await getCurrentPort();
-				const response = await fetch(
-					`http://localhost:${port}/db/set-session`,
-					{
-						headers: {
-							accessToken: token,
-							refreshToken: refreshToken,
+				try {
+					const response = await fetch(
+						`http://localhost:${port}/db/set-session`,
+						{
+							headers: {
+								accessToken: token,
+								refreshToken: refreshToken,
+							},
 						},
-					},
-				);
-				const data = await response.json();
-				if (data.session) {
-					window.electron.ipcRenderer.send("start-session", {
-						user: data.user,
-					});
-					setSession(data.session);
-					setUser(data.user);
-					setLogged(true);
-					changeLevel(3);
+					);
+					const data = await response.json();
+					if (data.session) {
+						window.electron.ipcRenderer.send("start-session", {
+							user: data.user,
+						});
+						setSession(data.session);
+						setUser(data.user);
+						setLogged(true);
+						changeLevel(3);
+					}
+				} catch (error) {
+					// in dev mode, create a mock session
+					if (process.env.NODE_ENV === "development") {
+						const mockSession = {
+							access_token: token,
+							refresh_token: refreshToken,
+							expires_at: Math.floor(Date.now() / 1000) + 3600, // 1 hour from now
+						};
+						const mockUser = {
+							id: "dev-user",
+							email: "dev@example.com",
+							user_metadata: {
+								name: "Developer",
+							},
+						};
+						setSession(mockSession);
+						setUser(mockUser);
+						setLogged(true);
+						changeLevel(3);
+					}
 				}
 			}
 

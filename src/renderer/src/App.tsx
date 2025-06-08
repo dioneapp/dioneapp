@@ -46,6 +46,25 @@ function App() {
 			setIsLogged(true);
 			// if have a session, check access
 			checkAccess();
+		} else if (process.env.NODE_ENV === "development") {
+			// in dev mode, create a mock session
+			console.log("Development mode: creating mock session");
+			const mockSession = {
+				access_token: "dev-token",
+				refresh_token: "dev-refresh-token",
+				expires_at: Math.floor(Date.now() / 1000) + 3600,
+			};
+			const mockUser = {
+				id: "dev-user",
+				email: "dev@example.com",
+				user_metadata: {
+					name: "Developer",
+				},
+			};
+			localStorage.setItem("session", JSON.stringify(mockSession));
+			localStorage.setItem("user", JSON.stringify(mockUser));
+			setIsLogged(true);
+			checkAccess();
 		} else {
 			console.log("User is not logged");
 			setIsLogged(false);
@@ -57,10 +76,16 @@ function App() {
 
 	async function checkAccess() {
 		if (haveAccess) return;
+		if (process.env.NODE_ENV === "development") {
+			// In development mode, grant access without checking Supabase
+			console.log("Development mode: granting access");
+			setHaveAccess(true);
+			return;
+		}
 		const dbUser = await localStorage.getItem("dbUser");
 		if (dbUser) {
 			const dbUserObj = JSON.parse(dbUser);
-			if (dbUserObj[0].tester === true) {
+			if (dbUserObj[0]?.tester === true) {
 				console.log("User its a tester");
 				setHaveAccess(true);
 			} else {

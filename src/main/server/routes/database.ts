@@ -1,9 +1,17 @@
 import express from "express";
-import { supabase } from "../utils/database";
+import { supabase, isSupabaseConfigured, safeSupabaseOperation } from "../utils/database";
 import logger from "../utils/logger";
 
 const router = express.Router();
 router.use(express.json());
+
+// check if Supabase is configured
+const requireSupabase = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+	if (!isSupabaseConfigured()) {
+		return res.status(503).json({ error: "Database is not configured" });
+	}
+	next();
+};
 
 // generate gradients for logo if is null
 const darkColors = [
@@ -39,7 +47,7 @@ function generateGradient(input: string): string {
 }
 
 // auth
-router.get("/user/:id", async (req, res) => {
+router.get("/user/:id", requireSupabase, async (req, res) => {
 	try {
 		const { data, error } = await supabase
 			.from("users")
@@ -83,7 +91,7 @@ router.get("/user/:id", async (req, res) => {
 // });
 
 // this refresh all user data (session, user, etc) from db
-router.get('/refresh-token', async (req, res) => {
+router.get('/refresh-token', requireSupabase, async (req, res) => {
     try {
 		const token = req.get("accessToken");
 		if (!token) {
@@ -110,7 +118,7 @@ router.get('/refresh-token', async (req, res) => {
     }
 })
 
-router.get("/set-session", async (req, res) => {
+router.get("/set-session", requireSupabase, async (req, res) => {
 	const accessToken = req.get("accessToken");
 	const refreshToken = req.get("refreshToken");
 	try {
@@ -314,7 +322,7 @@ router.get("/search/type/:type", async (req, res) => {
 
 // events
 
-router.get("/events", async (req, res) => {
+router.get("/events", requireSupabase, async (req, res) => {
 	const user = req.headers.user;
 	if (!user) {
 		return res.status(400).send("No user ID provided");
@@ -344,7 +352,7 @@ router.get("/events", async (req, res) => {
 	res.send(stats);
 });
 
-router.post("/events", async (req, res) => {
+router.post("/events", requireSupabase, async (req, res) => {
 	const update = req.headers.update;
 	if (update) {
 		const { data, error } = await supabase.from("events").update({

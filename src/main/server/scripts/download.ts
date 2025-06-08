@@ -2,7 +2,7 @@ import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
 import type { Server } from "socket.io";
-import { supabase } from "../utils/database";
+import { supabase, isSupabaseConfigured } from "../utils/database";
 import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies";
 import executeInstallation from "./execute";
@@ -10,6 +10,19 @@ import { readConfig } from "../../config";
 
 export async function getScripts(id: string, io: Server) {
 	try {
+		if (!isSupabaseConfigured()) {
+			io.emit("installUpdate", {
+				type: "log",
+				content: "ERROR: Database is not configured",
+			});
+			io.emit("installUpdate", {
+				type: "status",
+				status: "error",
+				content: "Database configuration required",
+			});
+			return null;
+		}
+
 		const { data, error } = await supabase
 			.from("scripts")
 			.select("*")

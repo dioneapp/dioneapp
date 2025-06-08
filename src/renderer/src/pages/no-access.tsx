@@ -7,9 +7,11 @@ export default function NoAccess() {
 			const user = localStorage.getItem("dbUser");
 			if (user) {
 				const dbUser = JSON.parse(user);
-				if (dbUser[0].tester === true) {
+				if (dbUser[0]?.tester === true) {
 					window.location.href = "/";
 				}
+			} else if (process.env.NODE_ENV === "development") {
+				window.location.href = "/";
 			} else {
 				window.location.href = "/first-time";
 			}
