@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams, useRouteError } from "react-router-dom";
 import Sidebar from "./components/layout/sidebar";
 import Titlebar from "./components/layout/titlebar";
 import Account from "./pages/account";
@@ -12,6 +12,7 @@ import Loading from "./pages/loading";
 import NoAccess from "./pages/no-access";
 import Settings from "./pages/settings";
 import ErrorPage from "./pages/error";
+import { ErrorBoundary } from "./components/layout/error-handler";
 
 // transition animation config
 const pageTransition = {
@@ -79,7 +80,18 @@ function App() {
 			checkSession();
 			setIsLoading(false);
 		});
+
+		// start session
+		handleStartSession();
 	}, []);
+
+	async function handleStartSession() {
+		const user = JSON.parse(localStorage.getItem("user") || "{}");
+		if (!user || user.id === "") return;
+		window.electron.ipcRenderer.send("start-session", {
+			user: user,
+		});
+	}
 
 	const routes = {
 		"*": ErrorPage,
@@ -117,7 +129,9 @@ function App() {
 							{...pageTransition}
 							className="w-full h-full"
 						>
-							<PageComponent />
+							<ErrorBoundary>
+								<PageComponent />
+							</ErrorBoundary>
 						</motion.div>
 					</AnimatePresence>
 				</div>

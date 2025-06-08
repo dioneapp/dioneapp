@@ -1,8 +1,16 @@
 import Icon from "@renderer/components/icons/icon";
+import { openLink } from "@renderer/utils/openLink";
+import { useNavigate } from "react-router-dom";
 
 export default function ErrorPage() {
+	const navigate = useNavigate();
+
 	const restart = () => {
 		window.electron.ipcRenderer.send("restart");
+	};
+
+	const goHome = () => {
+		navigate("/");
 	};
 
 	return (
@@ -15,16 +23,31 @@ export default function ErrorPage() {
 					</h1>
 					<p className="text-neutral-400 text-xs max-w-sm text-center text-pretty">
 						We have detected an unexpected error in the application, we are
-						sorry for the inconvenience. You can restart the application by
-						clicking on the button below.
+						sorry for the inconvenience.
 					</p>
-					<button
+					<div className="flex gap-2">
+					{/* <button
 						onClick={restart}
 						type="button"
 						className="mt-6 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
 					>
 						Restart
+					</button> */}
+					<button
+						onClick={goHome}
+						type="button"
+						className="mt-6 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
+					>
+						Return
 					</button>
+					<button
+						onClick={() => openLink("https://github.com/dioneapp/dioneapp/issues")}
+						type="button"
+						className="mt-6 px-4 border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-300 font-medium py-1 text-center cursor-pointer"
+					>
+						Report to team
+					</button>
+					</div>
 				</main>
 			</div>
 		</div>
