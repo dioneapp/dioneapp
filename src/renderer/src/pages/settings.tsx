@@ -75,7 +75,10 @@ export default function Settings() {
 			if (config.enableSessions !== updatedConfig.enableSessions) {
 				if (updatedConfig.enableSessions) {
 					const user = JSON.parse(localStorage.getItem("user") || "{}");
-					window.electron.ipcRenderer.send("start-session", { user: user, force: true });
+					window.electron.ipcRenderer.send("start-session", {
+						user: user,
+						force: true,
+					});
 				} else {
 					window.electron.ipcRenderer.invoke("end-session", { force: true });
 				}
@@ -321,15 +324,23 @@ export default function Settings() {
 															Share sessions
 														</label>
 														<p className="text-xs text-neutral-400 max-w-lg">
-															Sessions allow us to show you information about the time you spend on Dione. Deactivating them will disable the <Link to="/account" className="text-white/80 hover:underline">account section</Link>.
+															Sessions allow us to show you information about
+															the time you spend on Dione. Deactivating them
+															will disable the{" "}
+															<Link
+																to="/account"
+																className="text-white/80 hover:underline"
+															>
+																account section
+															</Link>
+															.
 														</p>
 													</div>
 													<button
 														type="button"
 														onClick={() =>
 															handleUpdate({
-																enableSessions:
-																	!config.enableSessions,
+																enableSessions: !config.enableSessions,
 															})
 														}
 														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
