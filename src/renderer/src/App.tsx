@@ -17,8 +17,8 @@ import Install from "./pages/install";
 import Library from "./pages/library";
 import Loading from "./pages/loading";
 import NoAccess from "./pages/no-access";
-import Settings from "./pages/settings";
 import Report from "./pages/report";
+import Settings from "./pages/settings";
 
 // transition animation config
 const pageTransition = {

@@ -106,7 +106,7 @@ export default function Settings() {
 	}
 
 	const handleReportError = (error?: Error | string) => {
-		navigate('/report', { state: { error } });
+		navigate("/report", { state: { error } });
 	};
 
 	return (
@@ -431,7 +431,7 @@ export default function Settings() {
 								</div>
 								<div className="text-right">
 									<p>
-										Port {" "}
+										Port{" "}
 										<button
 											type="button"
 											onClick={() => openLink(`http://localhost:${port}`)}
