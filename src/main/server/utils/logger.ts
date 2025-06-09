@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import path from "path";
+import path from "node:path";
 import { app } from "electron";
 import winston from "winston";
 
@@ -8,8 +8,6 @@ const logsDir = path.join(app.getPath("logs"));
 if (!fs.existsSync(logsDir)) {
 	fs.mkdirSync(logsDir);
 }
-
-console.log("logs dir", logsDir);
 
 const logger = winston.createLogger({
 	level: "info",
@@ -31,5 +29,7 @@ const logger = winston.createLogger({
 		}),
 	],
 });
+
+logger.info(`Saving logs to ${logsDir}`);
 
 export default logger;

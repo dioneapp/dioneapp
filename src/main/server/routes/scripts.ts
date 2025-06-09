@@ -45,7 +45,6 @@ export function createScriptRouter(io: Server) {
 	router.get("/installed", async (_req, res) => {
 		try {
 			const data = await getAllScripts();
-			console.log("installed scripts", data);
 			res.send(data);
 		} catch (error: any) {
 			logger.error(
