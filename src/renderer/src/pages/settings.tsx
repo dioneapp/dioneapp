@@ -1,11 +1,13 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function Settings() {
 	const [port, setPort] = useState<number | null>(null);
 	const [versions] = useState(window.electron.process.versions);
 	const [config, setConfig] = useState<any | null>(null);
+	const logged = JSON.parse(localStorage.getItem("user") || "{}");
 
 	useEffect(() => {
 		// get actual port
@@ -68,6 +70,15 @@ export default function Settings() {
 					"You will receive notifications for important events.",
 					xml as string,
 				);
+			}
+
+			if (config.enableSessions !== updatedConfig.enableSessions) {
+				if (updatedConfig.enableSessions) {
+					const user = JSON.parse(localStorage.getItem("user") || "{}");
+					window.electron.ipcRenderer.send("start-session", { user: user, force: true });
+				} else {
+					window.electron.ipcRenderer.invoke("end-session", { force: true });
+				}
 			}
 
 			setConfig(updatedConfig);
@@ -222,7 +233,7 @@ export default function Settings() {
 									</div>
 									{/*  */}
 									<div className="flex flex-col">
-										{/* Notifications */}
+										{/* Account */}
 										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
 											Notifications
@@ -293,6 +304,51 @@ export default function Settings() {
 												</button>
 											</div>
 										</div>
+									</div>
+									{/*  */}
+									<div className="flex flex-col">
+										{/* Privacy */}
+										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
+										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
+											Privacy
+										</h2>
+										{/* show setting only if user is logged */}
+										{logged.id !== "" && (
+											<div className="flex flex-col gap-2">
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															Share sessions
+														</label>
+														<p className="text-xs text-neutral-400 max-w-lg">
+															Sessions allow us to show you information about the time you spend on Dione. Deactivating them will disable the <Link to="/account" className="text-white/80 hover:underline">account section</Link>.
+														</p>
+													</div>
+													<button
+														type="button"
+														onClick={() =>
+															handleUpdate({
+																enableSessions:
+																	!config.enableSessions,
+															})
+														}
+														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
+															config.enableSessions
+																? "bg-green-500/30"
+																: "bg-red-500/30"
+														}`}
+													>
+														<span
+															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+																config.enableSessions
+																	? "translate-x-6"
+																	: "translate-x-0"
+															}`}
+														/>
+													</button>
+												</div>
+											</div>
+										)}
 									</div>
 									{/*  */}
 									<div className="flex flex-col">

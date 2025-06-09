@@ -1,11 +1,13 @@
 import Icon from "@renderer/components/icons/icon";
 import { useEffect, useState } from "react";
 import { getCurrentPort } from "../utils/getPort";
+import { Link } from "react-router-dom";
 
 export default function Account() {
 	const [data, setData] = useState<any>(null);
 	const [hoursInApp, setHoursInApp] = useState(0);
 	const [consecutiveDays, setConsecutiveDays] = useState(0);
+	const settings = JSON.parse(localStorage.getItem("config") || "{}");
 
 	useEffect(() => {
 		async function getData() {
@@ -28,8 +30,10 @@ export default function Account() {
 				console.error("Failed to fetch data");
 			}
 		}
-		getData();
-	}, []);
+		if (settings.enableSessions) {
+			getData();
+		}
+	}, [settings.enableSessions]);
 
 	function getHoursInApp(data: any) {
 		if (!data?.sessions?.length) {
@@ -40,13 +44,13 @@ export default function Account() {
 		let totalSeconds = 0;
 		const now = new Date();
 
-		data.sessions.forEach((session: any) => {
+		for (const session of data.sessions) {
 			const start = new Date(session.started_at);
 			const end = session.finished_at ? new Date(session.finished_at) : now;
 
 			const durationSeconds = (end.getTime() - start.getTime()) / 1000;
 			totalSeconds += durationSeconds;
-		});
+		}
 		const hours = totalSeconds / 3600;
 		setHoursInApp(hours);
 	}
@@ -97,11 +101,12 @@ export default function Account() {
 	return (
 		<div className="min-h-screen bg-background pt-4">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
-				<main className="flex flex-col gap-6 py-5">
-					<h1 className="text-2xl sm:text-3xl font-semibold mb-4">Account</h1>
-					<p className="text-xs text-neutral-400">WIP</p>
-					{data && (
-						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full">
+				{settings.enableSessions && (
+					<main className="flex flex-col gap-6 py-5">
+						<h1 className="text-2xl sm:text-3xl font-semibold mb-4">Account</h1>
+						<p className="text-xs text-neutral-400">WIP</p>
+						{data && (
+							<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full">
 							<div className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2 bg-white/10 rounded-xl p-8 h-auto flex flex-col">
 								<div className="flex flex-col items-start overflow-hidden rounded-lg h-full">
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
@@ -157,7 +162,7 @@ export default function Account() {
 								</div>
 							</div>
 							<div className="group relative col-span-2 sm:col-span-1 md:col-span-full bg-white/10 rounded-xl p-8 h-auto flex flex-col">
-								<div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-100 rounded-xl"></div>
+								<div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-100 rounded-xl" />
 								<div className="group relative flex flex-col items-start overflow-hidden">
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
 										<div className="flex items-center justify-between w-full">
@@ -183,7 +188,7 @@ export default function Account() {
 											<div
 												key={day}
 												className={`h-1.5 flex-1 rounded-full ${day <= consecutiveDays ? "bg-white" : "bg-neutral-700"}`}
-											></div>
+											/>
 										))}
 									</div>
 								</div>
@@ -191,6 +196,26 @@ export default function Account() {
 						</div>
 					)}
 				</main>
+				)}
+				{!settings.enableSessions && (
+				<main className="text-center flex flex-col gap-8 justify-center items-center mt-12">
+					<Icon
+						name="DioDead"
+						className="w-24 h-24 opacity-80 hover:opacity-50 transition-opacity duration-1000"
+					/>
+					<div className="text-center items-center justify-center flex flex-col text-balance">
+						<h3 className="text-neutral-400 text-sm">
+							Sessions are disabled
+						</h3>
+						<Link
+							to="/settings"
+							className="text-sm text-neutral-200 mt-2 hover:underline underline-offset-4"
+						>
+							Enable sessions in settings
+						</Link>
+					</div>
+				</main>
+				)}
 			</div>
 		</div>
 	);

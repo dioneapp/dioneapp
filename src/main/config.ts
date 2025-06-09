@@ -13,6 +13,7 @@ export interface AppConfig {
 	defaultLogsPath: string;
 	compactMode: boolean;
 	alwaysUninstallDependencies: boolean;
+	enableSessions: boolean;
 }
 
 // default config
@@ -28,6 +29,7 @@ export const defaultConfig: AppConfig = {
 	defaultLogsPath: path.join(app.getPath("userData"), "logs"),
 	compactMode: false,
 	alwaysUninstallDependencies: false,
+	enableSessions: process.env.NODE_ENV !== "development",
 };
 // get config file
 export const getConfigPath = () => {

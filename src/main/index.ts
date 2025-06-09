@@ -240,7 +240,7 @@ app.whenReady().then(async () => {
 	ipcMain.handle("app:close", async () => {
 		mainWindow.hide();
 		await destroyPresence();
-		await handleEndSession();
+		await handleEndSession({ force: false });
 		await stopServer();
 		app.quit();
 		logger.info("App stopped successfully");
@@ -325,9 +325,13 @@ app.whenReady().then(async () => {
 		app.exit();
 	});
 
-	async function handleStartSession({ user }: { user: any }) {
+	async function handleStartSession({ user, force }: { user: any; force?: boolean }) {
 		if (!port) return;
 		if (sessionId) return;
+
+		const config = readConfig();
+		if (!config?.enableSessions && !force) return;
+
 		if (user) {
 			const response = await fetch(`http://localhost:${port}/db/events`, {
 				method: "POST",
@@ -353,8 +357,11 @@ app.whenReady().then(async () => {
 		}
 	}
 
-	async function handleEndSession() {
+	async function handleEndSession({ force }: { force?: boolean }) {
 		if (sessionId) {
+			const config = readConfig();
+			if (!config?.enableSessions && !force) return;
+
 			logger.info(`Ending session with ID: ${sessionId}`);
 			const response = await fetch(`http://localhost:${port}/db/events`, {
 				method: "POST",
@@ -375,11 +382,11 @@ app.whenReady().then(async () => {
 		return false;
 	}
 
-	ipcMain.on("start-session", (_event, { user }) => {
-		handleStartSession({ user });
+	ipcMain.on("start-session", (_event, { user, force = false }) => {
+		handleStartSession({ user, force });
 	});
-	ipcMain.handle("end-session", async () => {
-		const result = await handleEndSession();
+	ipcMain.handle("end-session", async (_event, { force = false }) => {
+		const result = await handleEndSession({ force });
 		return result;
 	});
 
