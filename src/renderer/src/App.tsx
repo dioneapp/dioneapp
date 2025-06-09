@@ -39,6 +39,19 @@ function App() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			// check for ctrl+shift+r
+			if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'r') {
+				e.preventDefault(); // prevent browser refresh
+				navigate('/report');
+			}
+		};
+
+		document.addEventListener('keydown', handleKeyDown);
+		return () => document.removeEventListener('keydown', handleKeyDown);
+	}, [navigate]);
+
+	useEffect(() => {
 		if (loginFinished) {
 			setIsLogged(true);
 		}
