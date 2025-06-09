@@ -40,7 +40,6 @@ function generateGradient(input: string): string {
 
 // auth
 router.get("/user/:id", async (req, res) => {
-
 	if (!supabase) {
 		logger.error("Supabase client is not initialized");
 		return res.status(500).json({ error: "Database connection not available" });
@@ -70,7 +69,6 @@ router.get("/user/:id", async (req, res) => {
 
 // this refresh all user data (session, user, etc) from db
 router.get("/refresh-token", async (req, res) => {
-
 	if (!supabase) {
 		logger.error("Supabase client is not initialized");
 		return res.status(500).json({ error: "Database connection not available" });

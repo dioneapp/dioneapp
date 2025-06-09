@@ -325,7 +325,10 @@ app.whenReady().then(async () => {
 		app.exit();
 	});
 
-	async function handleStartSession({ user, force }: { user: any; force?: boolean }) {
+	async function handleStartSession({
+		user,
+		force,
+	}: { user: any; force?: boolean }) {
 		if (!port) return;
 		if (sessionId) return;
 
@@ -348,7 +351,9 @@ app.whenReady().then(async () => {
 				sessionId = data.id;
 			} else {
 				if (data.error === "Database connection not available") {
-					logger.error("Database connection not available, please check your environment variables and your connection.");
+					logger.error(
+						"Database connection not available, please check your environment variables and your connection.",
+					);
 					return;
 				}
 				logger.error("Failed to start session");
