@@ -1,13 +1,14 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Settings() {
 	const [port, setPort] = useState<number | null>(null);
 	const [versions] = useState(window.electron.process.versions);
 	const [config, setConfig] = useState<any | null>(null);
 	const logged = JSON.parse(localStorage.getItem("user") || "{}");
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		// get actual port
@@ -103,6 +104,10 @@ export default function Settings() {
 			handleUpdate({ defaultInstallFolder: result.filePaths[0] });
 		}
 	}
+
+	const handleReportError = (error?: Error | string) => {
+		navigate('/report', { state: { error } });
+	};
 
 	return (
 		<div className="min-h-screen bg-background pt-4">
@@ -391,6 +396,22 @@ export default function Settings() {
 														}
 													}}
 												/>
+											</div>
+											<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
+														Report an Issue
+													</label>
+													<p className="text-xs text-neutral-400">
+														Send a report about any issues you encounter
+													</p>
+												</div>
+												<button
+													onClick={() => handleReportError()}
+													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+												>
+													Send Report
+												</button>
 											</div>
 										</div>
 									</div>

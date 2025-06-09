@@ -18,6 +18,7 @@ import Library from "./pages/library";
 import Loading from "./pages/loading";
 import NoAccess from "./pages/no-access";
 import Settings from "./pages/settings";
+import Report from "./pages/report";
 
 // transition animation config
 const pageTransition = {
@@ -107,6 +108,7 @@ function App() {
 		"/library": Library,
 		"/no_access": NoAccess,
 		"/account": Account,
+		"/report": Report,
 	};
 
 	const getPage = () => {

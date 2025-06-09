@@ -407,6 +407,32 @@ app.whenReady().then(async () => {
 	app.on("activate", () => {
 		if (BrowserWindow.getAllWindows().length === 0) createWindow();
 	});
+
+	ipcMain.handle('send-discord-report', async (_, data) => {
+		try {
+			const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+			if (!webhookUrl) {
+				throw new Error('Discord webhook URL not configured');
+			}
+
+			const response = await fetch(webhookUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data),
+			});
+
+			if (!response.ok) {
+				throw new Error(`Failed to send report: ${response.statusText}`);
+			}
+
+			return true;
+		} catch (err) {
+			console.error('Failed to send Discord report:', err);
+			return false;
+		}
+	});
 });
 
 // Quit the application when all windows are closed, except on macOS.
