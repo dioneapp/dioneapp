@@ -408,17 +408,17 @@ app.whenReady().then(async () => {
 		if (BrowserWindow.getAllWindows().length === 0) createWindow();
 	});
 
-	ipcMain.handle('send-discord-report', async (_, data) => {
+	ipcMain.handle("send-discord-report", async (_, data) => {
 		try {
 			const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 			if (!webhookUrl) {
-				throw new Error('Discord webhook URL not configured');
+				throw new Error("Discord webhook URL not configured");
 			}
 
 			const response = await fetch(webhookUrl, {
-				method: 'POST',
+				method: "POST",
 				headers: {
-					'Content-Type': 'application/json',
+					"Content-Type": "application/json",
 				},
 				body: JSON.stringify(data),
 			});
@@ -429,7 +429,7 @@ app.whenReady().then(async () => {
 
 			return true;
 		} catch (err) {
-			console.error('Failed to send Discord report:', err);
+			console.error("Failed to send Discord report:", err);
 			return false;
 		}
 	});
