@@ -96,7 +96,7 @@ export default function Settings() {
 	async function handleSaveDir() {
 		const result = await window.electron.ipcRenderer.invoke(
 			"save-dir",
-			config.defaultInstallFolder,
+			config.defaultInstallFolder + "\\apps",
 		);
 		console.log("result", result);
 		if (!result.canceled && result.filePaths[0]) {
@@ -137,7 +137,7 @@ export default function Settings() {
 														placeholder="Select folder"
 														readOnly
 														value={`${config.defaultInstallFolder}\\apps`}
-														className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[14rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
+														className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
 													/>
 												</div>
 											</div>
@@ -159,7 +159,7 @@ export default function Settings() {
 																!config.alwaysUninstallDependencies,
 														})
 													}
-													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
+													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
 														config.alwaysUninstallDependencies
 															? "bg-green-500/30"
 															: "bg-red-500/30"
@@ -218,7 +218,7 @@ export default function Settings() {
 												onClick={() =>
 													handleUpdate({ compactMode: !config.compactMode })
 												}
-												className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
+												className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
 													config.compactMode
 														? "bg-green-500/30"
 														: "bg-red-500/30"
@@ -259,7 +259,7 @@ export default function Settings() {
 																!config.enableDesktopNotifications,
 														})
 													}
-													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
+													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
 														config.enableDesktopNotifications
 															? "bg-green-500/30"
 															: "bg-red-500/30"
@@ -291,7 +291,7 @@ export default function Settings() {
 																!config.notifyOnInstallComplete,
 														})
 													}
-													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
+													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
 														config.notifyOnInstallComplete
 															? "bg-green-500/30"
 															: "bg-red-500/30"
@@ -343,7 +343,7 @@ export default function Settings() {
 																enableSessions: !config.enableSessions,
 															})
 														}
-														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 ${
+														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
 															config.enableSessions
 																? "bg-green-500/30"
 																: "bg-red-500/30"
@@ -381,7 +381,7 @@ export default function Settings() {
 												<input
 													required
 													readOnly
-													className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-24rem)] min-w-[24rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
+													className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
 													type="text"
 													value={config.defaultLogsPath}
 													onChange={(e) => {
@@ -402,7 +402,7 @@ export default function Settings() {
 										href="https://getdione.app"
 										target="_blank"
 										rel="noopener noreferrer"
-										className="hover:underline cursor-alias"
+										className="hover:underline cursor-pointer"
 									>
 										getdione.app
 									</a>
@@ -410,11 +410,11 @@ export default function Settings() {
 								</div>
 								<div className="text-right">
 									<p>
-										API{" "}
+										Port {" "}
 										<button
 											type="button"
 											onClick={() => openLink(`http://localhost:${port}`)}
-											className="hover:underline cursor-alias"
+											className="hover:underline cursor-pointer"
 										>
 											{port}
 										</button>
