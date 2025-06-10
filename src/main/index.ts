@@ -325,9 +325,7 @@ app.whenReady().then(async () => {
 		app.exit();
 	});
 
-	async function handleStartSession({
-		user,
-	}: { user: any }) {
+	async function handleStartSession({ user }: { user: any }) {
 		if (!port) return;
 		if (sessionId) return;
 		if (!app.isPackaged) return;

@@ -20,7 +20,7 @@ export default function ReportPage() {
 		try {
 			const success = await sendDiscordReport("User Report", {
 				UserDescription: description,
-				UserReport: true
+				UserReport: true,
 			});
 
 			setSubmitStatus(success ? "success" : "error");
@@ -55,7 +55,7 @@ export default function ReportPage() {
 							className="mt-6 w-full max-h-54 min-h-48 px-4 py-3 bg-white/5 rounded-xl focus:outline-none focus:ring-1 transition-all duration-200 focus:ring-white/10 border border-white/10 text-base"
 							placeholder="Example: I was trying to install an application when this error occurred..."
 							required
-							style={{resize: 'none'}}
+							style={{ resize: "none" }}
 						/>
 					</div>
 
@@ -110,7 +110,10 @@ export default function ReportPage() {
 							>
 								{isSubmitting ? (
 									<span className="flex items-center">
-										<Icon name="Pending" className="w-5 h-5 mr-2 animate-spin" />
+										<Icon
+											name="Pending"
+											className="w-5 h-5 mr-2 animate-spin"
+										/>
 										Sending...
 									</span>
 								) : (
