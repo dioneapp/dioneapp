@@ -214,6 +214,8 @@ export default function Sidebar() {
 		localStorage.removeItem("session");
 		localStorage.removeItem("user");
 		localStorage.removeItem("dbUser");
+		// terminate session
+		window.electron.ipcRenderer.send("end-session");
 		setLogged(false);
 		// remove this after beta
 		navigate("/first-time");
