@@ -1,17 +1,32 @@
 import Icon from "@renderer/components/icons/icon";
+import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { openLink } from "@renderer/utils/openLink";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function ErrorPage() {
+export default function ErrorPage({ error }: { error?: Error }) {
 	const navigate = useNavigate();
+	const [reportStatus, setReportStatus] = useState<"idle" | "pending" | "success" | "error">("idle");
+	const settings = JSON.parse(localStorage.getItem("config") || "{}");
 
-	const restart = () => {
-		window.electron.ipcRenderer.send("restart");
-	};
+	useEffect(() => {
+		if (error && settings.sendAnonymousReports) {
+			handleReportError();
+		}
+	}, [error]);
 
-	const goHome = () => {
-		navigate("/");
-	};
+	async function handleReportError() {
+		setReportStatus("pending");
+		const errorToSend = `${error?.message?.charAt(0).toUpperCase()}${error?.message?.slice(1)} \n\n [${error?.stack?.substring(0, 200)}]`;
+		const success = await sendDiscordReport(errorToSend, {
+			userReport: false,
+		});
+		if (success) {
+			setReportStatus("success");
+		} else {
+			setReportStatus("error");
+		}
+	}
 
 	return (
 		<div className="min-h-screen pt-4 overflow-hidden">
@@ -25,30 +40,48 @@ export default function ErrorPage() {
 						We have detected an unexpected error in the application, we are
 						sorry for the inconvenience.
 					</p>
-					<div className="flex gap-2">
-						{/* <button
-						onClick={restart}
-						type="button"
-						className="mt-6 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
-					>
-						Restart
-					</button> */}
+					<div className={`gap-2 flex justify-center items-center mt-6 ${settings.sendAnonymousReports ? "flex-col" : "flex"}`}>
+					{(!settings.sendAnonymousReports || reportStatus === "success" || reportStatus === "error") && (
 						<button
-							onClick={goHome}
+							onClick={() => navigate(-1)}
 							type="button"
-							className="mt-6 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
+							className=" py-1 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold text-center cursor-pointer"
 						>
 							Return
 						</button>
-						<button
-							onClick={() =>
-								openLink("https://github.com/dioneapp/dioneapp/issues")
-							}
-							type="button"
-							className="mt-6 px-4 border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-300 font-medium py-1 text-center cursor-pointer"
-						>
-							Report to team
-						</button>
+						)}
+					{(settings.sendAnonymousReports || reportStatus !== "idle") && (
+						<div className="absolute bottom-6 shadow-xl">
+							<button
+								onClick={() =>
+									openLink("https://github.com/dioneapp/dioneapp/issues")
+								}
+								type="button"
+								className="px-4 border border-white/10 active:hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-300 py-1 text-center active:cursor-pointer flex gap-2"
+								disabled
+							>
+								<span
+									className="text-center py-1"
+								>
+									{reportStatus === "pending" && <Icon name="Pending" className="w-5 h-5 animate-spin text-orange-500" />}
+									{reportStatus === "success" && <Icon name="Success" className="w-5 h-5 text-green-500" />}
+									{reportStatus === "error" && <Icon name="Error" className="w-5 h-5 text-red-500" />}
+							</span>
+								<span className={`flex text-sm items-center gap-2 ${reportStatus === "pending" ? "text-orange-500" : ""} ${reportStatus === "success" ? "text-green-500" : ""} ${reportStatus === "error" ? "text-red-500" : ""}`}>
+									<p className="opacity-80">{reportStatus === "pending" ? "Sending report..." : reportStatus === "success" ? "Report sent!" : "Failed to send report"}</p>
+								</span>
+							</button>
+						</div>
+						)}
+						{!settings.sendAnonymousReports && reportStatus === "idle" && (
+							<button
+								onClick={() => handleReportError()}
+								type="button"
+								className="px-4 bg-white/10 hover:bg-white/20 transition-colors duration-400 rounded-full text-center cursor-pointer py-1"
+							>
+								Report to team
+							</button>
+						)}
 					</div>
 				</main>
 			</div>

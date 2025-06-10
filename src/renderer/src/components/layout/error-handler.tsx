@@ -8,6 +8,7 @@ interface ErrorBoundaryProps {
 
 interface ErrorBoundaryState {
 	hasError: boolean;
+	error?: Error;
 }
 
 export class ErrorBoundary extends React.Component<
@@ -25,11 +26,12 @@ export class ErrorBoundary extends React.Component<
 
 	componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
 		console.error("ErrorBoundary caught an error:", error, errorInfo);
+		this.setState({ error });
 	}
 
 	render() {
 		if (this.state.hasError) {
-			return <ErrorPage />;
+			return <ErrorPage error={this.state.error} />;
 		}
 
 		return this.props.children;
