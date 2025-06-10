@@ -20,13 +20,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Setup Biome
         uses: biomejs/setup-biome@v2
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Run Biome format and lint
         run: biome check --write ./src || true
