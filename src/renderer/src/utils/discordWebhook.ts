@@ -19,7 +19,6 @@ export async function sendDiscordReport(
 	error: Error | string,
 	additionalInfo?: Record<string, any>,
 ) {
-
 	// get logs
 	const logs = (await window.electron.ipcRenderer.invoke("get-logs")) || "";
 	const truncatedLogs = logs.length > 882 ? `...${logs.slice(-882)}` : logs;

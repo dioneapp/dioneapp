@@ -315,15 +315,16 @@ export default function Settings() {
 														Send anonymous reports
 													</label>
 													<p className="text-xs text-neutral-400">
-														Send anonymous reports on case of error to help us improve Dione.
+														Send anonymous reports on case of error to help us
+														improve Dione.
 													</p>
 												</div>
 												<button
 													type="button"
 													onClick={() =>
 														handleUpdate({
-														sendAnonymousReports:
-															!config.sendAnonymousReports,
+															sendAnonymousReports:
+																!config.sendAnonymousReports,
 														})
 													}
 													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${

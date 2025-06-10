@@ -6,7 +6,9 @@ import { useNavigate } from "react-router-dom";
 
 export default function ErrorPage({ error }: { error?: Error }) {
 	const navigate = useNavigate();
-	const [reportStatus, setReportStatus] = useState<"idle" | "pending" | "success" | "error">("idle");
+	const [reportStatus, setReportStatus] = useState<
+		"idle" | "pending" | "success" | "error"
+	>("idle");
 	const settings = JSON.parse(localStorage.getItem("config") || "{}");
 
 	useEffect(() => {
@@ -40,38 +42,57 @@ export default function ErrorPage({ error }: { error?: Error }) {
 						We have detected an unexpected error in the application, we are
 						sorry for the inconvenience.
 					</p>
-					<div className={`gap-2 flex justify-center items-center mt-6 ${settings.sendAnonymousReports ? "flex-col" : "flex"}`}>
-					{(!settings.sendAnonymousReports || reportStatus === "success" || reportStatus === "error") && (
-						<button
-							onClick={() => navigate(-1)}
-							type="button"
-							className=" py-1 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold text-center cursor-pointer"
-						>
-							Return
-						</button>
-						)}
-					{(settings.sendAnonymousReports || reportStatus !== "idle") && (
-						<div className="absolute bottom-6 shadow-xl">
+					<div
+						className={`gap-2 flex justify-center items-center mt-6 ${settings.sendAnonymousReports ? "flex-col" : "flex"}`}
+					>
+						{(!settings.sendAnonymousReports ||
+							reportStatus === "success" ||
+							reportStatus === "error") && (
 							<button
-								onClick={() =>
-									openLink("https://github.com/dioneapp/dioneapp/issues")
-								}
+								onClick={() => navigate(-1)}
 								type="button"
-								className="px-4 border border-white/10 active:hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-300 py-1 text-center active:cursor-pointer flex gap-2"
-								disabled
+								className=" py-1 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold text-center cursor-pointer"
 							>
-								<span
-									className="text-center py-1"
-								>
-									{reportStatus === "pending" && <Icon name="Pending" className="w-5 h-5 animate-spin text-orange-500" />}
-									{reportStatus === "success" && <Icon name="Success" className="w-5 h-5 text-green-500" />}
-									{reportStatus === "error" && <Icon name="Error" className="w-5 h-5 text-red-500" />}
-							</span>
-								<span className={`flex text-sm items-center gap-2 ${reportStatus === "pending" ? "text-orange-500" : ""} ${reportStatus === "success" ? "text-green-500" : ""} ${reportStatus === "error" ? "text-red-500" : ""}`}>
-									<p className="opacity-80">{reportStatus === "pending" ? "Sending report..." : reportStatus === "success" ? "Report sent!" : "Failed to send report"}</p>
-								</span>
+								Return
 							</button>
-						</div>
+						)}
+						{(settings.sendAnonymousReports || reportStatus !== "idle") && (
+							<div className="absolute bottom-6 shadow-xl">
+								<button
+									onClick={() =>
+										openLink("https://github.com/dioneapp/dioneapp/issues")
+									}
+									type="button"
+									className="px-4 border border-white/10 active:hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-300 py-1 text-center active:cursor-pointer flex gap-2"
+									disabled
+								>
+									<span className="text-center py-1">
+										{reportStatus === "pending" && (
+											<Icon
+												name="Pending"
+												className="w-5 h-5 animate-spin text-orange-500"
+											/>
+										)}
+										{reportStatus === "success" && (
+											<Icon name="Success" className="w-5 h-5 text-green-500" />
+										)}
+										{reportStatus === "error" && (
+											<Icon name="Error" className="w-5 h-5 text-red-500" />
+										)}
+									</span>
+									<span
+										className={`flex text-sm items-center gap-2 ${reportStatus === "pending" ? "text-orange-500" : ""} ${reportStatus === "success" ? "text-green-500" : ""} ${reportStatus === "error" ? "text-red-500" : ""}`}
+									>
+										<p className="opacity-80">
+											{reportStatus === "pending"
+												? "Sending report..."
+												: reportStatus === "success"
+													? "Report sent!"
+													: "Failed to send report"}
+										</p>
+									</span>
+								</button>
+							</div>
 						)}
 						{!settings.sendAnonymousReports && reportStatus === "idle" && (
 							<button
