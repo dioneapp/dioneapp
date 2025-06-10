@@ -63,10 +63,10 @@ export default function ReportPage() {
 					<div className="bg-white/5 p-6 rounded-xl border border-white/10">
 						<h3 className="text-lg font-medium">System Information</h3>
 						<p className="text-sm text-neutral-400 mb-4">
-							The following system information and an anonymous ID will be included with your report.
+							The following system information and an anonymous ID will be
+							included with your report.
 						</p>
 						<div className="grid grid-cols-2 gap-4 text-sm">
-
 							<div>
 								<span className="text-neutral-400">OS:</span>
 								<span className="ml-2">{window.electron.process.platform}</span>

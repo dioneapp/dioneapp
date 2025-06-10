@@ -17,7 +17,7 @@ interface DiscordMessage {
 
 // get hardware id
 async function getComputerId(): Promise<string> {
-	const hwid = await window.electron.ipcRenderer.invoke('get-hwid');
+	const hwid = await window.electron.ipcRenderer.invoke("get-hwid");
 	return hwid;
 }
 
