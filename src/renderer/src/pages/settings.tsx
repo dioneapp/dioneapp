@@ -1,11 +1,19 @@
+import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Icon from "@renderer/components/icons/icon";
 
 // custom dropdown component
-const CustomSelect = ({ value, onChange, options }: { value: string; onChange: (value: string) => void; options: { value: string; label: string }[] }) => {
+const CustomSelect = ({
+	value,
+	onChange,
+	options,
+}: {
+	value: string;
+	onChange: (value: string) => void;
+	options: { value: string; label: string }[];
+}) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -15,8 +23,8 @@ const CustomSelect = ({ value, onChange, options }: { value: string; onChange: (
 				onClick={() => setIsOpen(!isOpen)}
 				className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 backdrop-blur-sm cursor-pointer transition-colors duration-400 flex items-center justify-between"
 			>
-				<span>{options.find(opt => opt.value === value)?.label}</span>
-				<span className="ml-2">{isOpen ? '▲' : '▼'}</span>
+				<span>{options.find((opt) => opt.value === value)?.label}</span>
+				<span className="ml-2">{isOpen ? "▲" : "▼"}</span>
 			</button>
 			{isOpen && (
 				<div className="absolute z-50 mt-1 w-44 rounded-xl bg-[#1a1a1a] border border-white/5 shadow-lg backdrop-blur-xl">
@@ -28,9 +36,13 @@ const CustomSelect = ({ value, onChange, options }: { value: string; onChange: (
 								setIsOpen(false);
 							}}
 							className={`w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors duration-200 ${
-								option.value === value ? 'text-white bg-white/20' : 'text-neutral-300'
-							} ${option.value === options[0].value ? 'rounded-t-xl' : ''} ${
-								option.value === options[options.length - 1].value ? 'rounded-b-xl' : ''
+								option.value === value
+									? "text-white bg-white/20"
+									: "text-neutral-300"
+							} ${option.value === options[0].value ? "rounded-t-xl" : ""} ${
+								option.value === options[options.length - 1].value
+									? "rounded-b-xl"
+									: ""
 							}`}
 						>
 							{option.label}
@@ -158,7 +170,8 @@ export default function Settings() {
 														Installation Directory
 													</label>
 													<p className="text-xs text-neutral-400 w-80">
-														Choose where new applications will be installed by default
+														Choose where new applications will be installed by
+														default
 													</p>
 												</div>
 												<div className="flex gap-2 items-center justify-end w-full">
@@ -172,7 +185,10 @@ export default function Settings() {
 															className="text-xs font-mono text-center text-neutral-300 pl-6 pr-12 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
 														/>
 														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-															<Icon name="Folder" className="w-4 h-4 text-neutral-400" />
+															<Icon
+																name="Folder"
+																className="w-4 h-4 text-neutral-400"
+															/>
 														</div>
 													</div>
 												</div>
@@ -183,7 +199,8 @@ export default function Settings() {
 														Clean Uninstall
 													</label>
 													<p className="text-xs text-neutral-400">
-														Remove all related dependencies when uninstalling applications
+														Remove all related dependencies when uninstalling
+														applications
 													</p>
 												</div>
 												<button
@@ -229,15 +246,13 @@ export default function Settings() {
 											<CustomSelect
 												value={config.language}
 												onChange={(value) => handleUpdate({ language: value })}
-												options={[
-													{ value: "en", label: "English" }
-												]}
+												options={[{ value: "en", label: "English" }]}
 											/>
 										</div>
 										<div className="mt-1">
-											<a 
-												href="https://github.com/dioneapp/dioneapp" 
-												target="_blank" 
+											<a
+												href="https://github.com/dioneapp/dioneapp"
+												target="_blank"
 												rel="noopener noreferrer"
 												className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-2 py-0.5 rounded-xl bg-white/10"
 											>
@@ -252,7 +267,8 @@ export default function Settings() {
 													Compact View
 												</label>
 												<p className="text-xs text-neutral-400">
-													Use a more condensed layout to fit more content on screen
+													Use a more condensed layout to fit more content on
+													screen
 												</p>
 											</div>
 											<button
@@ -364,7 +380,8 @@ export default function Settings() {
 														Error Reporting
 													</label>
 													<p className="text-xs text-neutral-400">
-														Help improve Dione by sending anonymous error reports
+														Help improve Dione by sending anonymous error
+														reports
 													</p>
 												</div>
 												<button
@@ -425,7 +442,10 @@ export default function Settings() {
 															}}
 														/>
 														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-															<Icon name="Folder" className="w-4 h-4 text-neutral-400" />
+															<Icon
+																name="Folder"
+																className="w-4 h-4 text-neutral-400"
+															/>
 														</div>
 													</div>
 												</div>
