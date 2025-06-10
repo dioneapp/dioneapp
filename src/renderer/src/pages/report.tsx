@@ -20,7 +20,7 @@ export default function ReportPage() {
 		try {
 			const success = await sendDiscordReport("User Report", {
 				UserDescription: description,
-				UserReport: true,
+				UserReport: true
 			});
 
 			setSubmitStatus(success ? "success" : "error");
