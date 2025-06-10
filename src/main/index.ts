@@ -13,6 +13,7 @@ import {
 } from "electron";
 import { Notification } from "electron";
 import { autoUpdater } from "electron-updater";
+import { machineIdSync } from "node-machine-id";
 import icon from "../../resources/icon.ico?asset";
 import { defaultConfig, readConfig, writeConfig } from "./config";
 import {
@@ -48,6 +49,7 @@ if (process.env.NODE_ENV === "development" && process.platform === "win32") {
 let mainWindow: BrowserWindow;
 let port: number;
 let sessionId: string;
+
 // Creates the main application window with specific configurations.
 function createWindow() {
 	mainWindow = new BrowserWindow({
@@ -430,6 +432,11 @@ app.whenReady().then(async () => {
 
 	ipcMain.handle("get-logs", async () => {
 		return getLogs();
+	});
+
+	// Set up IPC handlers
+	ipcMain.handle("get-hwid", () => {
+		return machineIdSync(true); // true for hashed version
 	});
 });
 

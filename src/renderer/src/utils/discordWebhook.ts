@@ -15,6 +15,12 @@ interface DiscordMessage {
 	embeds?: DiscordEmbed[];
 }
 
+// get hardware id
+async function getComputerId(): Promise<string> {
+	const hwid = await window.electron.ipcRenderer.invoke('get-hwid');
+	return hwid;
+}
+
 export async function sendDiscordReport(
 	error: Error | string,
 	additionalInfo?: Record<string, any>,
@@ -63,7 +69,7 @@ export async function sendDiscordReport(
 	// add system info
 	embed.fields?.push({
 		name: "System Info",
-		value: `OS: ${window.electron.process.platform}\nNode: ${window.electron.process.versions.node}\nElectron: ${window.electron.process.versions.electron}`,
+		value: `Computer ID: ${await getComputerId()}\nOS: ${window.electron.process.platform}\nNode: ${window.electron.process.versions.node}\nElectron: ${window.electron.process.versions.electron}`,
 		inline: false,
 	});
 

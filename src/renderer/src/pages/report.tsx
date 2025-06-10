@@ -39,7 +39,7 @@ export default function ReportPage() {
 	return (
 		<div className="min-h-screen bg-background p-6 flex items-center justify-center">
 			<div className="max-w-3xl w-full">
-				<form onSubmit={handleSubmit} className="space-y-4">
+				<form onSubmit={handleSubmit} className="space-y-2">
 					{/* description input */}
 					<div className="space-y-2">
 						<label className="block text-xl font-semibold">
@@ -52,7 +52,7 @@ export default function ReportPage() {
 						<textarea
 							value={description}
 							onChange={(e) => setDescription(e.target.value)}
-							className="mt-6 w-full max-h-54 min-h-48 px-4 py-3 bg-white/5 rounded-xl focus:outline-none focus:ring-1 transition-all duration-200 focus:ring-white/10 border border-white/10 text-base"
+							className="mt-4 w-full max-h-54 min-h-48 px-4 py-3 bg-white/5 rounded-xl focus:outline-none focus:ring-1 transition-all duration-200 focus:ring-white/10 border border-white/10 text-base"
 							placeholder="Example: I was trying to install an application when this error occurred..."
 							required
 							style={{ resize: "none" }}
@@ -61,8 +61,12 @@ export default function ReportPage() {
 
 					{/* system info */}
 					<div className="bg-white/5 p-6 rounded-xl border border-white/10">
-						<h3 className="text-lg font-medium mb-2">System Information</h3>
+						<h3 className="text-lg font-medium">System Information</h3>
+						<p className="text-sm text-neutral-400 mb-4">
+							The following system information and an anonymous ID will be included with your report.
+						</p>
 						<div className="grid grid-cols-2 gap-4 text-sm">
+
 							<div>
 								<span className="text-neutral-400">OS:</span>
 								<span className="ml-2">{window.electron.process.platform}</span>
@@ -102,7 +106,7 @@ export default function ReportPage() {
 								Failed to send report. Please try again.
 							</p>
 						)}
-						<div className="flex gap-3">
+						<div className="flex gap-3 mt-2">
 							<button
 								type="submit"
 								disabled={isSubmitting}
@@ -123,7 +127,7 @@ export default function ReportPage() {
 							<button
 								type="button"
 								onClick={() => navigate(-1)}
-								className="px-6 py-2 text-sm font-medium bg-white/10 text-white rounded-full hover:bg-white/20 cursor-pointer transition-colors"
+								className="px-5 py-2 text-sm font-medium bg-white/10 text-white rounded-full hover:bg-white/20 cursor-pointer transition-colors"
 							>
 								Cancel
 							</button>
