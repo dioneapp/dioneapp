@@ -13,6 +13,7 @@ export interface AppConfig {
 	defaultLogsPath: string;
 	compactMode: boolean;
 	alwaysUninstallDependencies: boolean;
+	sendAnonymousReports: boolean;
 }
 
 // default config
@@ -27,7 +28,8 @@ export const defaultConfig: AppConfig = {
 		: path.join(process.cwd()),
 	defaultLogsPath: path.join(app.getPath("userData"), "logs"),
 	compactMode: false,
-	alwaysUninstallDependencies: false
+	alwaysUninstallDependencies: false,
+	sendAnonymousReports: true,
 };
 // get config file
 export const getConfigPath = () => {

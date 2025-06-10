@@ -1,13 +1,13 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Settings() {
 	const [port, setPort] = useState<number | null>(null);
 	const [versions] = useState(window.electron.process.versions);
 	const [config, setConfig] = useState<any | null>(null);
-	const logged = JSON.parse(localStorage.getItem("user") || "{}");
+	// const logged = JSON.parse(localStorage.getItem("user") || "{}");
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -308,6 +308,40 @@ export default function Settings() {
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
 											Privacy
 										</h2>
+										<div className="flex flex-col gap-2">
+											<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
+														Send anonymous reports
+													</label>
+													<p className="text-xs text-neutral-400">
+														Send anonymous reports on case of error to help us improve Dione.
+													</p>
+												</div>
+												<button
+													type="button"
+													onClick={() =>
+														handleUpdate({
+														sendAnonymousReports:
+															!config.sendAnonymousReports,
+														})
+													}
+													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
+														config.sendAnonymousReports
+															? "bg-green-500/30"
+															: "bg-red-500/30"
+													}`}
+												>
+													<span
+														className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+															config.sendAnonymousReports
+																? "translate-x-6"
+																: "translate-x-0"
+														}`}
+													/>
+												</button>
+											</div>
+										</div>
 									</div>
 									{/*  */}
 									<div className="flex flex-col">
