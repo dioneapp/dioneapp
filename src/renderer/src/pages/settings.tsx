@@ -73,18 +73,6 @@ export default function Settings() {
 				);
 			}
 
-			if (config.enableSessions !== updatedConfig.enableSessions) {
-				if (updatedConfig.enableSessions) {
-					const user = JSON.parse(localStorage.getItem("user") || "{}");
-					window.electron.ipcRenderer.send("start-session", {
-						user: user,
-						force: true,
-					});
-				} else {
-					window.electron.ipcRenderer.invoke("end-session", { force: true });
-				}
-			}
-
 			setConfig(updatedConfig);
 			// update local storage
 			localStorage.setItem("config", JSON.stringify(updatedConfig));
@@ -97,7 +85,7 @@ export default function Settings() {
 	async function handleSaveDir() {
 		const result = await window.electron.ipcRenderer.invoke(
 			"save-dir",
-			config.defaultInstallFolder + "\\apps",
+			`${config.defaultInstallFolder}\\apps`,
 		);
 		console.log("result", result);
 		if (!result.canceled && result.filePaths[0]) {
@@ -320,51 +308,6 @@ export default function Settings() {
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
 											Privacy
 										</h2>
-										{/* show setting only if user is logged */}
-										{logged.id !== "" && (
-											<div className="flex flex-col gap-2">
-												<div className="flex justify-between w-full items-center h-full space-y-2">
-													<div className="h-full flex items-start justify-center flex-col mt-auto">
-														<label className="text-neutral-200 font-medium">
-															Share sessions
-														</label>
-														<p className="text-xs text-neutral-400 max-w-lg">
-															Sessions allow us to show you information about
-															the time you spend on Dione. Deactivating them
-															will disable the{" "}
-															<Link
-																to="/account"
-																className="text-white/80 hover:underline"
-															>
-																account section
-															</Link>
-															.
-														</p>
-													</div>
-													<button
-														type="button"
-														onClick={() =>
-															handleUpdate({
-																enableSessions: !config.enableSessions,
-															})
-														}
-														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
-															config.enableSessions
-																? "bg-green-500/30"
-																: "bg-red-500/30"
-														}`}
-													>
-														<span
-															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-																config.enableSessions
-																	? "translate-x-6"
-																	: "translate-x-0"
-															}`}
-														/>
-													</button>
-												</div>
-											</div>
-										)}
 									</div>
 									{/*  */}
 									<div className="flex flex-col">
@@ -409,6 +352,7 @@ export default function Settings() {
 												<button
 													onClick={() => handleReportError()}
 													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+													type="button"
 												>
 													Send Report
 												</button>
