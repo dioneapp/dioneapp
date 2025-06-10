@@ -22,7 +22,7 @@ export default function FirstTime() {
 	};
 
 	const copyToClipboard = () => {
-		navigator.clipboard.writeText("https://getdione.app/auth/login");
+		navigator.clipboard.writeText("https://getdione.app/auth/login?app=true");
 		showToast(
 			"success",
 			"Copied to the clipboard correctly, now paste it in your browser!",
@@ -161,7 +161,7 @@ export default function FirstTime() {
 						className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
 						onClick={() => {
 							changeLevel(2);
-							openLink("https://getdione.app/auth/login");
+							openLink("https://getdione.app/auth/login?app=true");
 						}}
 					>
 						Log in
