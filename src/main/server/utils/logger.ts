@@ -30,6 +30,10 @@ const logger = winston.createLogger({
 	],
 });
 
+export const getLogs = () => {
+	return fs.readFileSync(path.join(logsDir, "error.log"), "utf-8");
+};
+
 logger.info(`Saving logs to ${logsDir}`);
 
 export default logger;

@@ -22,7 +22,7 @@ import {
 } from "./discord/presence";
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
-import logger from "./server/utils/logger";
+import logger, { getLogs } from "./server/utils/logger";
 
 // load env variables
 dotenv.config();
@@ -428,6 +428,10 @@ app.whenReady().then(async () => {
 			console.error("Failed to send Discord report:", err);
 			return false;
 		}
+	});
+
+	ipcMain.handle("get-logs", async () => {
+		return getLogs();
 	});
 });
 
