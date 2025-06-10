@@ -1,3 +1,4 @@
+import Icon from "@renderer/components/icons/icon";
 import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -38,7 +39,7 @@ export default function ReportPage() {
 	return (
 		<div className="min-h-screen bg-background p-6 flex items-center justify-center">
 			<div className="max-w-3xl w-full">
-				<form onSubmit={handleSubmit} className="space-y-6">
+				<form onSubmit={handleSubmit} className="space-y-4">
 					{/* description input */}
 					<div className="space-y-2">
 						<label className="block text-xl font-semibold">
@@ -51,9 +52,10 @@ export default function ReportPage() {
 						<textarea
 							value={description}
 							onChange={(e) => setDescription(e.target.value)}
-							className="w-full h-48 px-4 py-3 bg-white/5 rounded-xl focus:outline-none focus:ring-1 transition-all duration-200 focus:ring-white/10 border border-white/10 text-base"
+							className="mt-6 w-full max-h-54 min-h-48 px-4 py-3 bg-white/5 rounded-xl focus:outline-none focus:ring-1 transition-all duration-200 focus:ring-white/10 border border-white/10 text-base"
 							placeholder="Example: I was trying to install an application when this error occurred..."
 							required
+							style={{resize: 'none'}}
 						/>
 					</div>
 
@@ -90,37 +92,13 @@ export default function ReportPage() {
 					<div className="flex items-center justify-between">
 						{submitStatus === "success" && (
 							<p className="text-green-500 flex items-center">
-								<svg
-									className="w-5 h-5 mr-2"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
+								<Icon name="Success" className="w-5 h-5 mr-2" />
 								Report sent successfully!
 							</p>
 						)}
 						{submitStatus === "error" && (
 							<p className="text-red-500 flex items-center">
-								<svg
-									className="w-5 h-5 mr-2"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M6 18L18 6M6 6l12 12"
-									/>
-								</svg>
+								<Icon name="Error" className="w-5 h-5 mr-2" />
 								Failed to send report. Please try again.
 							</p>
 						)}
@@ -132,25 +110,7 @@ export default function ReportPage() {
 							>
 								{isSubmitting ? (
 									<span className="flex items-center">
-										<svg
-											className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-											fill="none"
-											viewBox="0 0 24 24"
-										>
-											<circle
-												className="opacity-25"
-												cx="12"
-												cy="12"
-												r="10"
-												stroke="currentColor"
-												strokeWidth="4"
-											/>
-											<path
-												className="opacity-75"
-												fill="currentColor"
-												d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-											/>
-										</svg>
+										<Icon name="Pending" className="w-5 h-5 mr-2 animate-spin" />
 										Sending...
 									</span>
 								) : (
