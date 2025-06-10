@@ -2,6 +2,45 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Icon from "@renderer/components/icons/icon";
+
+// custom dropdown component
+const CustomSelect = ({ value, onChange, options }: { value: string; onChange: (value: string) => void; options: { value: string; label: string }[] }) => {
+	const [isOpen, setIsOpen] = useState(false);
+
+	return (
+		<div className="relative">
+			<button
+				type="button"
+				onClick={() => setIsOpen(!isOpen)}
+				className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 backdrop-blur-sm cursor-pointer transition-colors duration-400 flex items-center justify-between"
+			>
+				<span>{options.find(opt => opt.value === value)?.label}</span>
+				<span className="ml-2">{isOpen ? '▲' : '▼'}</span>
+			</button>
+			{isOpen && (
+				<div className="absolute z-50 mt-1 w-44 rounded-xl bg-[#1a1a1a] border border-white/5 shadow-lg backdrop-blur-xl">
+					{options.map((option) => (
+						<button
+							key={option.value}
+							onClick={() => {
+								onChange(option.value);
+								setIsOpen(false);
+							}}
+							className={`w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors duration-200 ${
+								option.value === value ? 'text-white bg-white/20' : 'text-neutral-300'
+							} ${option.value === options[0].value ? 'rounded-t-xl' : ''} ${
+								option.value === options[options.length - 1].value ? 'rounded-b-xl' : ''
+							}`}
+						>
+							{option.label}
+						</button>
+					))}
+				</div>
+			)}
+		</div>
+	);
+};
 
 export default function Settings() {
 	const [port, setPort] = useState<number | null>(null);
@@ -116,32 +155,35 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Default install folder
+														Installation Directory
 													</label>
 													<p className="text-xs text-neutral-400 w-80">
-														Select the folder where applications will be
-														installed
+														Choose where new applications will be installed by default
 													</p>
 												</div>
 												<div className="flex gap-2 items-center justify-end w-full">
-													<input
-														onClick={handleSaveDir}
-														type="text"
-														placeholder="Select folder"
-														readOnly
-														value={`${config.defaultInstallFolder}\\apps`}
-														className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
-													/>
+													<div className="relative">
+														<input
+															onClick={handleSaveDir}
+															type="text"
+															placeholder="Select folder"
+															readOnly
+															value={`${config.defaultInstallFolder}\\apps`}
+															className="text-xs font-mono text-center text-neutral-300 pl-6 pr-12 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
+														/>
+														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+															<Icon name="Folder" className="w-4 h-4 text-neutral-400" />
+														</div>
+													</div>
 												</div>
 											</div>
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Always uninstall dependencies
+														Clean Uninstall
 													</label>
 													<p className="text-xs text-neutral-400">
-														Always uninstall all dependencies when uninstalling
-														an application
+														Remove all related dependencies when uninstalling applications
 													</p>
 												</div>
 												<button
@@ -178,32 +220,39 @@ export default function Settings() {
 										<div className="flex justify-between w-full items-center h-full space-y-2">
 											<div className="h-full flex items-start justify-center flex-col mt-auto">
 												<label className="text-neutral-200 font-medium">
-													Language
+													Display Language
 												</label>
 												<p className="text-xs text-neutral-400">
-													Select your language
+													Choose your preferred interface language
 												</p>
 											</div>
-											<select
+											<CustomSelect
 												value={config.language}
-												onChange={(e) =>
-													handleUpdate({ language: e.target.value })
-												}
-												className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-2 pl-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 backdrop-blur-sm cursor-pointer transition-colors duration-400"
+												onChange={(value) => handleUpdate({ language: value })}
+												options={[
+													{ value: "en", label: "English" }
+												]}
+											/>
+										</div>
+										<div className="mt-1">
+											<a 
+												href="https://github.com/dioneapp/dioneapp" 
+												target="_blank" 
+												rel="noopener noreferrer"
+												className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-2 py-0.5 rounded-xl bg-white/10"
 											>
-												<option value="en">English</option>
-											</select>
+												🤔 Not seeing your language? Help us add more!
+											</a>
 										</div>
 									</div>
 									<div className="flex flex-col space-y-4">
 										<div className="flex justify-between w-full items-center h-full space-y-2">
 											<div className="h-full flex items-start justify-center flex-col mt-auto">
 												<label className="text-neutral-200 font-medium">
-													Compact mode
+													Compact View
 												</label>
 												<p className="text-xs text-neutral-400">
-													Enable compact mode to reduce the space taken by the
-													interface
+													Use a more condensed layout to fit more content on screen
 												</p>
 											</div>
 											<button
@@ -238,10 +287,10 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Enable notifications
+														System Notifications
 													</label>
 													<p className="text-xs text-neutral-400">
-														Enables native system notifications.
+														Show desktop notifications for important events
 													</p>
 												</div>
 												<button
@@ -270,10 +319,10 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Notify on install complete
+														Installation Alerts
 													</label>
 													<p className="text-xs text-neutral-400">
-														Notifies at the end of an installation.
+														Get notified when application installations complete
 													</p>
 												</div>
 												<button
@@ -312,11 +361,10 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Send anonymous reports
+														Error Reporting
 													</label>
 													<p className="text-xs text-neutral-400">
-														Send anonymous reports on case of error to help us
-														improve Dione.
+														Help improve Dione by sending anonymous error reports
 													</p>
 												</div>
 												<button
@@ -355,33 +403,40 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Default logs path
+														Logs Directory
 													</label>
 													<p className="text-xs text-neutral-400">
-														Default folder to save logs.
+														Location where application logs are stored
 													</p>
 												</div>
-												<input
-													required
-													readOnly
-													className="text-xs font-mono text-center text-neutral-300 px-6 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
-													type="text"
-													value={config.defaultLogsPath}
-													onChange={(e) => {
-														const value = e.target.value;
-														if (value !== null && value.trim() !== "") {
-															handleUpdate({ defaultLogsPath: value });
-														}
-													}}
-												/>
+												<div className="flex gap-2 items-center justify-end w-full">
+													<div className="relative">
+														<input
+															required
+															readOnly
+															className="text-xs font-mono text-center text-neutral-300 pl-6 pr-12 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
+															type="text"
+															value={config.defaultLogsPath}
+															onChange={(e) => {
+																const value = e.target.value;
+																if (value !== null && value.trim() !== "") {
+																	handleUpdate({ defaultLogsPath: value });
+																}
+															}}
+														/>
+														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+															<Icon name="Folder" className="w-4 h-4 text-neutral-400" />
+														</div>
+													</div>
+												</div>
 											</div>
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Report an Issue
+														Submit Feedback
 													</label>
 													<p className="text-xs text-neutral-400">
-														Send a report about any issues you encounter
+														Report any issues or problems you encounter
 													</p>
 												</div>
 												<button
