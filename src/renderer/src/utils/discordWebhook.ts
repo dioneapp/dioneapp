@@ -19,9 +19,14 @@ export async function sendDiscordReport(
 	error: Error | string,
 	additionalInfo?: Record<string, any>,
 ) {
+
+	// get logs
+	const logs = (await window.electron.ipcRenderer.invoke("get-logs")) || "";
+	const truncatedLogs = logs.length > 882 ? `...${logs.slice(-882)}` : logs;
+
 	// create embed
 	const embed: DiscordEmbed = {
-		title: "Error Report",
+		title: additionalInfo?.userReport ? "User Report" : "Error Report",
 		color: 0xff0000,
 		timestamp: new Date().toISOString(),
 		fields: [
@@ -37,14 +42,14 @@ export async function sendDiscordReport(
 	if (error instanceof Error && error.stack) {
 		embed.fields?.push({
 			name: "Stack Trace",
-			value: "```" + error.stack + "```",
+			value: `\`\`\`${error.stack}\`\`\``,
 			inline: false,
 		});
 	}
 
 	// add additional info if provided
 	if (additionalInfo) {
-		Object.entries(additionalInfo).forEach(([key, value]) => {
+		for (const [key, value] of Object.entries(additionalInfo)) {
 			embed.fields?.push({
 				name: key,
 				value:
@@ -53,13 +58,20 @@ export async function sendDiscordReport(
 						: String(value),
 				inline: true,
 			});
-		});
+		}
 	}
 
 	// add system info
 	embed.fields?.push({
 		name: "System Info",
 		value: `OS: ${window.electron.process.platform}\nNode: ${window.electron.process.versions.node}\nElectron: ${window.electron.process.versions.electron}`,
+		inline: false,
+	});
+
+	// add last error log
+	embed.fields?.push({
+		name: "Last logs",
+		value: `\`\`\`${truncatedLogs || "No logs available"}\`\`\``,
 		inline: false,
 	});
 
@@ -73,6 +85,7 @@ export async function sendDiscordReport(
 			"send-discord-report",
 			message,
 		);
+		console.log("Discord report sent successfully");
 		return success;
 	} catch (err) {
 		console.error("Failed to send Discord report:", err);
