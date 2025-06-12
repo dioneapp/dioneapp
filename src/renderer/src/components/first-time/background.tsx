@@ -2,7 +2,11 @@ import { motion } from "framer-motion";
 
 export default function Background() {
 	return (
-		<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 2, delay: 0.5 }}>
+		<motion.div
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			transition={{ duration: 2, delay: 0.5 }}
+		>
 			<motion.div
 				className="absolute left-1/4 -top-18 w-32 h-32 bg-[#BCB1E7] rounded-full blur-3xl z-10"
 				animate={{

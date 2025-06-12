@@ -37,7 +37,10 @@ const CustomSelect = ({
 			<AnimatePresence>
 				{isOpen && (
 					<>
-						<div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+						<div
+							className="fixed inset-0 z-40"
+							onClick={() => setIsOpen(false)}
+						/>
 						<motion.div
 							key="dropdown"
 							initial={{ opacity: 0, y: 10 }}
@@ -276,7 +279,10 @@ export default function Settings() {
 											<CustomSelect
 												value={config.language}
 												onChange={(value) => handleUpdate({ language: value })}
-												options={[{ value: "en", label: "English" }, { value: "es", label: "Spanish" }]}
+												options={[
+													{ value: "en", label: "English" },
+													{ value: "es", label: "Spanish" },
+												]}
 											/>
 										</div>
 										<div>
@@ -503,7 +509,8 @@ export default function Settings() {
 														Show onboarding
 													</label>
 													<p className="text-xs text-neutral-400">
-														Reset Dione to its initial state and show again the onboarding for reconfiguration
+														Reset Dione to its initial state and show again the
+														onboarding for reconfiguration
 													</p>
 												</div>
 												<button

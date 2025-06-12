@@ -358,7 +358,8 @@ export default function Sidebar() {
 								onMouseEnter={() => setHoveredTooltip("account")}
 								onMouseLeave={() => setHoveredTooltip(null)}
 							>
-								{!avatarError && dbUser[0]?.avatar_url &&
+								{!avatarError &&
+								dbUser[0]?.avatar_url &&
 								dbUser[0]?.avatar_url !== "" &&
 								dbUser[0]?.avatar_url !== null &&
 								dbUser[0]?.avatar_url !== undefined ? (
@@ -372,7 +373,11 @@ export default function Sidebar() {
 									/>
 								) : (
 									<span className="h-full w-full flex justify-center items-center border border-white/20 rounded-full bg-white/10">
-										<span>{dbUser[0]?.username.charAt(0).toUpperCase() || <Icon name="User" className="h-5 w-5" />}</span>
+										<span>
+											{dbUser[0]?.username.charAt(0).toUpperCase() || (
+												<Icon name="User" className="h-5 w-5" />
+											)}
+										</span>
 									</span>
 								)}
 								{hoveredTooltip === "account" && (
