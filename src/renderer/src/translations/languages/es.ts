@@ -86,26 +86,26 @@ export const es = {
 	toast: {
 		close: "Cerrar",
 		install: {
-		  downloading: "Descargando %s...",
-		  starting: "Iniciando %s...",
-		  uninstalling: "Desinstalando %s...",
-		  reconnecting: "Reconectando %s...",
-		  retrying: "Intentando instalar %s de nuevo...",
-		  success: {
-			stopped: "%s detenido correctamente.",
-			uninstalled: "%s desinstalado correctamente.",
-			logsCopied: "Registros copiados al portapapeles correctamente.",
-			depsInstalled: "Dependencias instaladas correctamente."
-		  },
-		  error: {
-			download: "Error al iniciar la descarga: %s",
-			start: "Error al iniciar %s: %s",
-			stop: "Error al detener %s: %s",
-			uninstall: "Error al desinstalar %s: %s",
-			serverRunning: "El servidor ya está en ejecución."
-		  }
-		}
-	  },
+			downloading: "Descargando %s...",
+			starting: "Iniciando %s...",
+			uninstalling: "Desinstalando %s...",
+			reconnecting: "Reconectando %s...",
+			retrying: "Intentando instalar %s de nuevo...",
+			success: {
+				stopped: "%s detenido correctamente.",
+				uninstalled: "%s desinstalado correctamente.",
+				logsCopied: "Registros copiados al portapapeles correctamente.",
+				depsInstalled: "Dependencias instaladas correctamente.",
+			},
+			error: {
+				download: "Error al iniciar la descarga: %s",
+				start: "Error al iniciar %s: %s",
+				stop: "Error al detener %s: %s",
+				uninstall: "Error al desinstalar %s: %s",
+				serverRunning: "El servidor ya está en ejecución.",
+			},
+		},
+	},
 
 	// titlebar component
 	titlebar: {

@@ -164,7 +164,10 @@ export default function Install({ id }: { id?: string }) {
 			}
 			setIsServerRunning(false);
 		} catch (error) {
-			showToast("error", t('toast.install.error.download').replace('%s', String(error)));
+			showToast(
+				"error",
+				t("toast.install.error.download").replace("%s", String(error)),
+			);
 			setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
 			setIsServerRunning(false);
 		}
@@ -185,7 +188,12 @@ export default function Install({ id }: { id?: string }) {
 				method: "GET",
 			});
 		} catch (error) {
-			showToast("error", t('toast.install.error.start').replace('%s', data.name).replace('%s', String(error)));
+			showToast(
+				"error",
+				t("toast.install.error.start")
+					.replace("%s", data.name)
+					.replace("%s", String(error)),
+			);
 			setLogs((prevLogs) => [...prevLogs, `Error initiating ${data.name}`]);
 			setIsServerRunning(false);
 		}
@@ -208,7 +216,10 @@ export default function Install({ id }: { id?: string }) {
 					"Stopping...",
 					`${data.name} stopped successfully.`,
 				);
-				showToast("success", t('toast.install.success.stopped').replace('%s', data.name));
+				showToast(
+					"success",
+					t("toast.install.success.stopped").replace("%s", data.name),
+				);
 				setLogs([]); // clear logs
 				await fetchIfDownloaded();
 				setIsServerRunning(false);
@@ -218,11 +229,18 @@ export default function Install({ id }: { id?: string }) {
 			} else {
 				showToast(
 					"error",
-					t('toast.install.error.stop').replace('%s', data.name).replace('%s', String(response.status)),
+					t("toast.install.error.stop")
+						.replace("%s", data.name)
+						.replace("%s", String(response.status)),
 				);
 			}
 		} catch (error) {
-			showToast("error", t('toast.install.error.stop').replace('%s', data.name).replace('%s', String(error)));
+			showToast(
+				"error",
+				t("toast.install.error.stop")
+					.replace("%s", data.name)
+					.replace("%s", String(error)),
+			);
 			window.electron.ipcRenderer.invoke(
 				"notify",
 				"Error...",
@@ -275,7 +293,12 @@ export default function Install({ id }: { id?: string }) {
 			}
 		} catch (error) {
 			setDeleteStatus("error");
-			showToast("error", t('toast.install.error.uninstall').replace('%s', data.name).replace('%s', String(error)));
+			showToast(
+				"error",
+				t("toast.install.error.uninstall")
+					.replace("%s", data.name)
+					.replace("%s", String(error)),
+			);
 			setLogs((prevLogs) => [...prevLogs, `Error uninstalling ${data.name}`]);
 		}
 
@@ -296,7 +319,10 @@ export default function Install({ id }: { id?: string }) {
 				"Uninstalling...",
 				`${data.name} uninstalled successfully.`,
 			);
-			showToast("success", t('toast.install.success.uninstalled').replace('%s', data.name));
+			showToast(
+				"success",
+				t("toast.install.success.uninstalled").replace("%s", data.name),
+			);
 			setInstalled(false);
 			await fetchIfDownloaded();
 			setInstalledApps((prevApps) =>
@@ -312,13 +338,15 @@ export default function Install({ id }: { id?: string }) {
 			);
 			showToast(
 				"error",
-				t('toast.install.error.uninstall').replace('%s', data.name).replace('%s', String(response.status)),
+				t("toast.install.error.uninstall")
+					.replace("%s", data.name)
+					.replace("%s", String(response.status)),
 			);
 		}
 	}
 
 	const copyLogsToClipboard = () => {
-		showToast("success", t('toast.install.success.logsCopied'));
+		showToast("success", t("toast.install.success.logsCopied"));
 		const logsText = logs.join("\n");
 		navigator.clipboard.writeText(logsText);
 	};
@@ -327,7 +355,7 @@ export default function Install({ id }: { id?: string }) {
 		if (isServerRunning) {
 			showToast(
 				"error",
-				t('toast.install.error.serverRunning'),
+				t("toast.install.error.serverRunning"),
 				undefined,
 				true,
 				"Stop",
@@ -335,7 +363,10 @@ export default function Install({ id }: { id?: string }) {
 			);
 			return;
 		}
-		showToast("default", t('toast.install.downloading').replace('%s', data.name));
+		showToast(
+			"default",
+			t("toast.install.downloading").replace("%s", data.name),
+		);
 		await download();
 	};
 
@@ -343,7 +374,7 @@ export default function Install({ id }: { id?: string }) {
 		if (isServerRunning) {
 			showToast(
 				"error",
-				t('toast.install.error.serverRunning'),
+				t("toast.install.error.serverRunning"),
 				undefined,
 				true,
 				"Stop",
@@ -351,7 +382,7 @@ export default function Install({ id }: { id?: string }) {
 			);
 			return;
 		}
-		showToast("default", t('toast.install.starting').replace('%s', data.name));
+		showToast("default", t("toast.install.starting").replace("%s", data.name));
 		setShow("logs");
 		await start();
 	};
@@ -362,7 +393,10 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	const handleUninstall = async (deleteDeps?: boolean) => {
-		showToast("default", t('toast.install.uninstalling').replace('%s', data.name));
+		showToast(
+			"default",
+			t("toast.install.uninstalling").replace("%s", data.name),
+		);
 		await uninstall(deleteDeps);
 	};
 
@@ -375,7 +409,10 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	const handleReconnect = async () => {
-		showToast("default", t('toast.install.reconnecting').replace('%s', data.name));
+		showToast(
+			"default",
+			t("toast.install.reconnecting").replace("%s", data.name),
+		);
 		setShow("logs");
 	};
 	const handleReloadIframe = async () => {
@@ -385,12 +422,12 @@ export default function Install({ id }: { id?: string }) {
 
 	async function onFinishInstallDeps() {
 		setMissingDependencies(null); // clear missing deps
-		showToast("success", t('toast.install.success.depsInstalled'));
+		showToast("success", t("toast.install.success.depsInstalled"));
 		setLogs([]); // clear logs
 		setError(false); // clear error
 		setShow("logs");
 		// setIsServerRunning(false);
-		showToast("default", t('toast.install.retrying').replace('%s', data.name));
+		showToast("default", t("toast.install.retrying").replace("%s", data.name));
 		setupSocket();
 		await handleStop();
 		await handleDownload();
