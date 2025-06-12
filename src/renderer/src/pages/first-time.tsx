@@ -1,12 +1,12 @@
 import Background from "@renderer/components/first-time/background";
+import ExecuteSound from "@renderer/components/first-time/sound";
 import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
 import { useToast } from "@renderer/utils/useToast";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import ExecuteSound from "@renderer/components/first-time/sound";
-import { motion } from "framer-motion";
 
 export default function FirstTime() {
 	const firstLaunch = localStorage.getItem("firstLaunch");
@@ -146,13 +146,19 @@ export default function FirstTime() {
 			{/* background stuff */}
 			<Background />
 			<ExecuteSound firstLaunch={"true"} />
-			<motion.div 
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			transition={{ duration: 2 }}
-			className="absolute blur-3xl bg-[#BCB1E7]/5 h-full w-full"/>
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 2 }}
+				className="absolute blur-3xl bg-[#BCB1E7]/5 h-full w-full"
+			/>
 			{/* 1 - welcome */}
-			<motion.div initial={{ opacity: 0, y: 200, filter: "blur(30px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: 0.8, delay: 4 }} className={getContainerClasses(1)}>
+			<motion.div
+				initial={{ opacity: 0, y: 200, filter: "blur(30px)" }}
+				animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+				transition={{ duration: 0.8, delay: 4 }}
+				className={getContainerClasses(1)}
+			>
 				<div className="flex flex-col gap-4 justify-center items-center transition-all duration-500">
 					<Icon name="Dio" className="w-20 h-20 mb-2" />
 					<h1 className="text-6xl font-semibold">
@@ -166,7 +172,12 @@ export default function FirstTime() {
 						account to get started.
 					</h2>
 				</div>
-				<motion.div initial={{ opacity: 0, filter: "blur(20px)", y: 100 }} animate={{ opacity: 1, filter: "blur(0px)", y: 0 }} transition={{ duration: 0.5, delay: 5 }} className="mt-4 flex flex-col gap-4">
+				<motion.div
+					initial={{ opacity: 0, filter: "blur(20px)", y: 100 }}
+					animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+					transition={{ duration: 0.5, delay: 5 }}
+					className="mt-4 flex flex-col gap-4"
+				>
 					<button
 						type="button"
 						className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
