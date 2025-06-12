@@ -7,7 +7,7 @@ import { useToast } from "@renderer/utils/useToast";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useTranslation } from '../translations/translationContext';
+import { useTranslation } from "../translations/translationContext";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
@@ -31,10 +31,7 @@ export default function FirstTime() {
 
 	const copyToClipboard = () => {
 		navigator.clipboard.writeText("https://getdione.app/auth/login?app=true");
-		showToast(
-			"success",
-			t("firstTime.clipboard.success"),
-		);
+		showToast("success", t("firstTime.clipboard.success"));
 	};
 
 	// auth stuff
@@ -205,11 +202,15 @@ export default function FirstTime() {
 			{/* 2 - logging in */}
 			<div className={getContainerClasses(2)}>
 				<div className="flex flex-col gap-4 justify-center items-center">
-					<h1 className="text-6xl font-semibold">{t("firstTime.loggingIn.title")}</h1>
+					<h1 className="text-6xl font-semibold">
+						{t("firstTime.loggingIn.title")}
+					</h1>
 				</div>
 				<div className="mt-6 flex flex-col gap-4">
 					<div className="flex flex-col gap-2 items-center justify-center">
-						<h3 className="text-white/50 text-xs">{t("firstTime.loggingIn.authError")}</h3>
+						<h3 className="text-white/50 text-xs">
+							{t("firstTime.loggingIn.authError")}
+						</h3>
 						<button
 							type="button"
 							className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
@@ -227,7 +228,9 @@ export default function FirstTime() {
 			<div className={getContainerClasses(3)}>
 				<div className="flex flex-col gap-4 justify-center items-center">
 					<Icon name="Dio" className="w-20 h-20 mb-2" />
-					<h1 className="text-6xl font-semibold">{t("firstTime.ready.title")}</h1>
+					<h1 className="text-6xl font-semibold">
+						{t("firstTime.ready.title")}
+					</h1>
 					<h2 className="text-neutral-400 text-balance text-center max-w-xl">
 						{t("firstTime.ready.subtitle")}{" "}
 						{

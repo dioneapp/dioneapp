@@ -1,11 +1,11 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
 import { useAppContext } from "../layout/global-context";
 import ScriptCard from "./feed/card";
 import Loading from "./loading-skeleton";
-import { useTranslation } from "../../translations/translationContext";
 
 export default function Installed() {
 	const { t } = useTranslation();
@@ -57,7 +57,9 @@ export default function Installed() {
 
 	return (
 		<>
-			<h1 className="text-2xl sm:text-3xl font-semibold mb-4">{t("installed.title")}</h1>
+			<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
+				{t("installed.title")}
+			</h1>
 			{apps.length > 0 ? (
 				loading ? (
 					<Loading />

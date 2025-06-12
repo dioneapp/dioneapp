@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
+import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
-import { useTranslation } from '../../translations/translationContext';
 
 export default function DeleteLoadingModal({
 	status,
@@ -85,7 +85,9 @@ export default function DeleteLoadingModal({
 					<Icon name="Success" className="h-24 w-24 text-green-500" />
 					<h1 className="font-medium text-3xl mt-12">
 						{t("deleteLoading.success.title")}{" "}
-						<span className="text-green-500">{t("deleteLoading.success.subtitle")}</span>
+						<span className="text-green-500">
+							{t("deleteLoading.success.subtitle")}
+						</span>
 					</h1>
 					<h2 className="text-sm text-neutral-400">
 						{t("deleteLoading.success.closing")}{" "}
@@ -100,7 +102,9 @@ export default function DeleteLoadingModal({
 					<Icon name="Error" className="h-24 w-24 text-red-500" />
 					<h1 className="font-medium text-3xl mt-10">
 						{t("deleteLoading.error.title")}{" "}
-						<span className="text-red-500">{t("deleteLoading.error.subtitle")}</span>{" "}
+						<span className="text-red-500">
+							{t("deleteLoading.error.subtitle")}
+						</span>{" "}
 						{t("deleteLoading.error.hasOccurred")}
 					</h1>
 					<h2 className="text-sm text-neutral-400">

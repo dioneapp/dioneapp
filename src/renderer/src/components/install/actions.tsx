@@ -1,8 +1,8 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
+import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
 import Loading from "./loading-skeleton";
-import { useTranslation } from "../../translations/translationContext";
 
 interface ActionsProps {
 	data: any;

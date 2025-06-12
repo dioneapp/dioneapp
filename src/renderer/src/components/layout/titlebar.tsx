@@ -1,7 +1,7 @@
 import { useState } from "react";
+import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
 import { useAppContext } from "../layout/global-context";
-import { useTranslation } from '../../translations/translationContext';
 
 export default function Titlebar() {
 	const { t } = useTranslation();

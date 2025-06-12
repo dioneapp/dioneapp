@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useTranslation } from '../../translations/translationContext';
+import { useTranslation } from "../../translations/translationContext";
 
 export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
 	variant: "default" | "success" | "error" | "warning";

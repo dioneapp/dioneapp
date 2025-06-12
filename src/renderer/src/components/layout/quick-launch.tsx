@@ -1,9 +1,9 @@
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { AnimatePresence, type Variants, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
-import { useTranslation } from '../../translations/translationContext';
 
 export default function QuickLaunch({
 	compactMode,
@@ -132,7 +132,9 @@ export default function QuickLaunch({
 				<Icon name="Plus" className="h-10 w-10" />
 			</button>
 			<div className="max-w-18 overflow-hidden flex justify-center items-center">
-				<p className="text-[12px] text-neutral-400 truncate w-full">{t("quickLaunch.addApp")}</p>
+				<p className="text-[12px] text-neutral-400 truncate w-full">
+					{t("quickLaunch.addApp")}
+				</p>
 			</div>
 		</div>
 	);
@@ -142,7 +144,9 @@ export default function QuickLaunch({
 			className={compactMode ? "mb-auto" : "flex mt-auto w-full h-64 max-w-64"}
 		>
 			<div className="w-full">
-				{!compactMode && <h2 className="font-semibold">{t("quickLaunch.title")}</h2>}
+				{!compactMode && (
+					<h2 className="font-semibold">{t("quickLaunch.title")}</h2>
+				)}
 				<div
 					className={
 						compactMode
@@ -194,9 +198,13 @@ export default function QuickLaunch({
 							<div className="relative z-10">
 								<div className="flex justify-between items-center mb-2">
 									<div className="flex-col gap-2 items-center">
-										<h3 className="text-lg font-semibold">{t("quickLaunch.selectApp.title")}</h3>
+										<h3 className="text-lg font-semibold">
+											{t("quickLaunch.selectApp.title")}
+										</h3>
 										<p className="text-xs text-neutral-400">
-											{t("quickLaunch.selectApp.description").replace("{count}", availableApps.length.toString()).replace("{max}", maxApps.toString())}
+											{t("quickLaunch.selectApp.description")
+												.replace("{count}", availableApps.length.toString())
+												.replace("{max}", maxApps.toString())}
 										</p>
 									</div>
 

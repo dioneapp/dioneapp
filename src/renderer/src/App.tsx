@@ -141,7 +141,9 @@ function App() {
 			<div className="h-screen w-screen overflow-hidden" id="main">
 				<Titlebar />
 				<div className="flex h-[calc(100%)]">
-					{pathname !== "/first-time" && pathname !== "/no_access" && <Sidebar />}
+					{pathname !== "/first-time" && pathname !== "/no_access" && (
+						<Sidebar />
+					)}
 					<div
 						className="flex-1 overflow-x-hidden"
 						id={pathname === "/settings" ? "settings" : "view"}

@@ -3,7 +3,7 @@ import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { openLink } from "@renderer/utils/openLink";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from '../translations/translationContext';
+import { useTranslation } from "../translations/translationContext";
 
 export default function ErrorPage({ error }: { error?: Error }) {
 	const { t } = useTranslation();

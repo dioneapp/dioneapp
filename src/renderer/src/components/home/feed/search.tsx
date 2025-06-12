@@ -1,7 +1,7 @@
 import Icon from "@renderer/components/icons/icon";
 import { useState } from "react";
-import ScriptList from "../feed";
 import { useTranslation } from "../../../translations/translationContext";
+import ScriptList from "../feed";
 
 export default function SearchBar() {
 	const { t } = useTranslation();

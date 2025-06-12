@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import type { JSX } from "react";
 import { useMemo } from "react";
+import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
-import { useTranslation } from '../../translations/translationContext';
 
 interface LogsProps {
 	statusLog: { status: string; content: string };
