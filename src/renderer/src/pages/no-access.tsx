@@ -1,6 +1,6 @@
 import { openLink } from "@renderer/utils/openLink";
 import { useEffect } from "react";
-import { useTranslation } from '../translations/translationContext';
+import { useTranslation } from "../translations/translationContext";
 
 export default function NoAccess() {
 	const { t } = useTranslation();

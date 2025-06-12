@@ -86,7 +86,6 @@ export default function Settings() {
 	// const logged = JSON.parse(localStorage.getItem("user") || "{}");
 	const navigate = useNavigate();
 
-
 	useEffect(() => {
 		// get actual port
 		const fetchPort = async () => {
@@ -202,16 +201,20 @@ export default function Settings() {
 									<div className="flex flex-col">
 										{/* Apps */}
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											{t('settings.applications.title')}
+											{t("settings.applications.title")}
 										</h2>
 										<div className="flex flex-col gap-2">
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														{t('settings.applications.installationDirectory.label')}
+														{t(
+															"settings.applications.installationDirectory.label",
+														)}
 													</label>
 													<p className="text-xs text-neutral-400 w-80">
-														{t('settings.applications.installationDirectory.description')}
+														{t(
+															"settings.applications.installationDirectory.description",
+														)}
 													</p>
 												</div>
 												<div className="flex gap-2 items-center justify-end w-full">
@@ -236,10 +239,12 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														{t('settings.applications.cleanUninstall.label')}
+														{t("settings.applications.cleanUninstall.label")}
 													</label>
 													<p className="text-xs text-neutral-400">
-														{t('settings.applications.cleanUninstall.description')}
+														{t(
+															"settings.applications.cleanUninstall.description",
+														)}
 													</p>
 												</div>
 												<button
@@ -271,15 +276,15 @@ export default function Settings() {
 										{/* Interface */}
 										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											{t('settings.interface.title')}
+											{t("settings.interface.title")}
 										</h2>
 										<div className="flex justify-between w-full items-center h-full space-y-2">
 											<div className="h-full flex items-start justify-center flex-col mt-auto">
 												<label className="text-neutral-200 font-medium">
-													{t('settings.interface.displayLanguage.label')}
+													{t("settings.interface.displayLanguage.label")}
 												</label>
 												<p className="text-xs text-neutral-400">
-													{t('settings.interface.displayLanguage.description')}
+													{t("settings.interface.displayLanguage.description")}
 												</p>
 											</div>
 											<CustomSelect
@@ -298,7 +303,7 @@ export default function Settings() {
 												rel="noopener noreferrer"
 												className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-2 py-0.5 rounded-xl bg-white/10"
 											>
-												{t('settings.interface.helpTranslate')}
+												{t("settings.interface.helpTranslate")}
 											</a>
 										</div>
 									</div>
@@ -306,10 +311,10 @@ export default function Settings() {
 										<div className="flex justify-between w-full items-center h-full space-y-2">
 											<div className="h-full flex items-start justify-center flex-col mt-auto">
 												<label className="text-neutral-200 font-medium">
-													{t('settings.interface.compactView.label')}
+													{t("settings.interface.compactView.label")}
 												</label>
 												<p className="text-xs text-neutral-400">
-													{t('settings.interface.compactView.description')}
+													{t("settings.interface.compactView.description")}
 												</p>
 											</div>
 											<button
@@ -338,16 +343,20 @@ export default function Settings() {
 										{/* Account */}
 										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											{t('settings.notifications.title')}
+											{t("settings.notifications.title")}
 										</h2>
 										<div className="flex flex-col gap-2">
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														{t('settings.notifications.systemNotifications.label')}
+														{t(
+															"settings.notifications.systemNotifications.label",
+														)}
 													</label>
 													<p className="text-xs text-neutral-400">
-														{t('settings.notifications.systemNotifications.description')}
+														{t(
+															"settings.notifications.systemNotifications.description",
+														)}
 													</p>
 												</div>
 												<button
@@ -376,10 +385,14 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														{t('settings.notifications.installationAlerts.label')}
+														{t(
+															"settings.notifications.installationAlerts.label",
+														)}
 													</label>
 													<p className="text-xs text-neutral-400">
-														{t('settings.notifications.installationAlerts.description')}
+														{t(
+															"settings.notifications.installationAlerts.description",
+														)}
 													</p>
 												</div>
 												<button
@@ -412,16 +425,16 @@ export default function Settings() {
 										{/* Privacy */}
 										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											{t('settings.privacy.title')}
+											{t("settings.privacy.title")}
 										</h2>
 										<div className="flex flex-col gap-2">
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														{t('settings.privacy.errorReporting.label')}
+														{t("settings.privacy.errorReporting.label")}
 													</label>
 													<p className="text-xs text-neutral-400">
-														{t('settings.privacy.errorReporting.description')}
+														{t("settings.privacy.errorReporting.description")}
 													</p>
 												</div>
 												<button
@@ -454,16 +467,16 @@ export default function Settings() {
 										{/* Other */}
 										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											{t('settings.other.title')}
+											{t("settings.other.title")}
 										</h2>
 										<div className="flex flex-col gap-2">
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														{t('settings.other.logsDirectory.label')}
+														{t("settings.other.logsDirectory.label")}
 													</label>
 													<p className="text-xs text-neutral-400">
-														{t('settings.other.logsDirectory.description')}
+														{t("settings.other.logsDirectory.description")}
 													</p>
 												</div>
 												<div className="flex gap-2 items-center justify-end w-full">
@@ -493,10 +506,10 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														{t('settings.other.submitFeedback.label')}
+														{t("settings.other.submitFeedback.label")}
 													</label>
 													<p className="text-xs text-neutral-400">
-														{t('settings.other.submitFeedback.description')}
+														{t("settings.other.submitFeedback.description")}
 													</p>
 												</div>
 												<button
@@ -504,16 +517,16 @@ export default function Settings() {
 													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
 													type="button"
 												>
-													{t('settings.other.submitFeedback.button')}
+													{t("settings.other.submitFeedback.button")}
 												</button>
 											</div>
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														{t('settings.other.showOnboarding.label')}
+														{t("settings.other.showOnboarding.label")}
 													</label>
 													<p className="text-xs text-neutral-400">
-														{t('settings.other.showOnboarding.description')}
+														{t("settings.other.showOnboarding.description")}
 													</p>
 												</div>
 												<button
@@ -521,7 +534,7 @@ export default function Settings() {
 													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
 													type="button"
 												>
-													{t('settings.other.showOnboarding.button')}
+													{t("settings.other.showOnboarding.button")}
 												</button>
 											</div>
 										</div>

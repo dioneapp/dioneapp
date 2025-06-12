@@ -1,8 +1,8 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
-import { useTranslation } from '../../translations/translationContext';
 
 interface props {
 	data: any;
@@ -41,11 +41,17 @@ export default function MissingDepsModal({
 
 				socket.on("disconnect", () => {
 					console.log("Socket disconnected");
-					setLogs((prevLogs) => [...prevLogs, t("missingDeps.logs.disconnected")]);
+					setLogs((prevLogs) => [
+						...prevLogs,
+						t("missingDeps.logs.disconnected"),
+					]);
 				});
 			} catch (error) {
 				console.error("Error setting up socket:", error);
-				setLogs((prevLogs) => [...prevLogs, t("missingDeps.logs.error.socket")]);
+				setLogs((prevLogs) => [
+					...prevLogs,
+					t("missingDeps.logs.error.socket"),
+				]);
 			}
 		}
 
@@ -93,7 +99,10 @@ export default function MissingDepsModal({
 		} catch (error: any) {
 			setLogs((prevLogs) => [
 				...prevLogs,
-				t("missingDeps.logs.error.install").replace("{error}", error?.message || error?.toString() || "Unknown error"),
+				t("missingDeps.logs.error.install").replace(
+					"{error}",
+					error?.message || error?.toString() || "Unknown error",
+				),
 			]);
 		}
 	}

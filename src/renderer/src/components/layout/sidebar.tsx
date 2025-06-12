@@ -2,11 +2,11 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "../../translations/translationContext";
 import { openLink } from "../../utils/openLink";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
 import QuickLaunch from "./quick-launch";
-import { useTranslation } from '../../translations/translationContext';
 
 export default function Sidebar() {
 	const { t } = useTranslation();

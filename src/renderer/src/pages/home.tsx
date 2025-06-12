@@ -1,6 +1,6 @@
 import Explore from "../components/home/explore";
 import Featured from "../components/home/featured";
-import { useTranslation } from '../translations/translationContext';
+import { useTranslation } from "../translations/translationContext";
 
 export default function Home() {
 	const { t } = useTranslation();
@@ -19,7 +19,9 @@ export default function Home() {
 						</div>
 					</section>
 					<section className="relative mt-2">
-						<h1 className="text-2xl sm:text-3xl font-semibold mb-4">{t("home.explore")}</h1>
+						<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
+							{t("home.explore")}
+						</h1>
 						<div className="w-full">
 							<Explore />
 						</div>

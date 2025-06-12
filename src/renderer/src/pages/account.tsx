@@ -1,7 +1,7 @@
 import Icon from "@renderer/components/icons/icon";
 import { useEffect, useState } from "react";
+import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
-import { useTranslation } from '../translations/translationContext';
 
 const SkeletonCard = ({ className = "" }) => (
 	<div className={`bg-white/5 rounded-xl p-8 animate-pulse ${className}`}>
@@ -111,7 +111,9 @@ export default function Account() {
 		<div className="min-h-screen bg-background pt-4">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
 				<main className="flex flex-col gap-6 py-5">
-					<h1 className="text-2xl sm:text-3xl font-semibold mb-4">{t("account.title")}</h1>
+					<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
+						{t("account.title")}
+					</h1>
 					<p className="text-xs text-neutral-400">{t("account.wip")}</p>
 					{data && !loading ? (
 						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full">

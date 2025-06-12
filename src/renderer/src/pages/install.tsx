@@ -8,9 +8,8 @@ import MissingDepsModal from "@renderer/components/layout/missing-deps-modal";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
-import { useTranslation } from '../translations/translationContext';
-
 
 export default function Install({ id }: { id?: string }) {
 	const {
