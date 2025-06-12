@@ -22,10 +22,10 @@ import Settings from "./pages/settings";
 
 // transition animation config
 const pageTransition = {
-	initial: { opacity: 0, filter: "blur(4px)" },
-	animate: { opacity: 1, filter: "blur(0px)" },
-	exit: { opacity: 0, filter: "blur(4px)" },
-	transition: { duration: 0.2, ease: "easeInOut" },
+	initial: { opacity: 0.3, scale: 0.99, filter: "blur(5px)" },
+	animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
+	exit: { opacity: 0.3, scale: 0.99, filter: "blur(5px)" },
+	transition: { duration: 0.22, ease: "easeInOut" }
 };
 
 function App() {

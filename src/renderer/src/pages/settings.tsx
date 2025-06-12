@@ -1,6 +1,7 @@
 import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,35 +22,54 @@ const CustomSelect = ({
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
-				className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 backdrop-blur-sm cursor-pointer transition-colors duration-400 flex items-center justify-between"
+				className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-400 flex items-center justify-between"
 			>
 				<span>{options.find((opt) => opt.value === value)?.label}</span>
-				<span className="ml-2">{isOpen ? "▲" : "▼"}</span>
+				<motion.span
+					animate={{ rotate: isOpen ? 180 : 0 }}
+					transition={{ duration: 0.35 }}
+					className="ml-2"
+				>
+					▲
+				</motion.span>
 			</button>
-			{isOpen && (
-				<div className="absolute z-50 mt-1 w-44 rounded-xl bg-[#1a1a1a] border border-white/5 shadow-lg backdrop-blur-xl">
-					{options.map((option) => (
-						<button
-							key={option.value}
-							onClick={() => {
-								onChange(option.value);
-								setIsOpen(false);
-							}}
-							className={`w-full text-left px-4 py-2 text-sm hover:bg-white/10 transition-colors duration-200 ${
-								option.value === value
-									? "text-white bg-white/20"
-									: "text-neutral-300"
-							} ${option.value === options[0].value ? "rounded-t-xl" : ""} ${
-								option.value === options[options.length - 1].value
-									? "rounded-b-xl"
-									: ""
-							}`}
+
+			<AnimatePresence>
+				{isOpen && (
+					<>
+						<div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+						<motion.div
+							key="dropdown"
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: 10 }}
+							transition={{ duration: 0.22 }}
+							className="backdrop-blur-md backdrop-filter absolute z-50 mt-2 w-44 p-2 rounded-[10px] border border-white/5 shadow-lg bg-[#2e2d32]/90"
 						>
-							{option.label}
-						</button>
-					))}
-				</div>
-			)}
+							<div className="flex flex-col gap-1">
+								{options.map((option) => (
+									<button
+										type="button"
+										key={option.value}
+										onClick={() => {
+											onChange(option.value);
+											setIsOpen(false);
+										}}
+										className={`w-full text-left rounded-full px-4 py-2 text-sm transition-colors duration-200 
+											${
+												option.value !== value
+													? "hover:bg-white/20 cursor-pointer text-neutral-300 hover:text-white"
+													: "bg-white/20 text-white"
+											}`}
+									>
+										{option.label}
+									</button>
+								))}
+							</div>
+						</motion.div>
+					</>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 };
@@ -246,10 +266,10 @@ export default function Settings() {
 											<CustomSelect
 												value={config.language}
 												onChange={(value) => handleUpdate({ language: value })}
-												options={[{ value: "en", label: "English" }]}
+												options={[{ value: "en", label: "English" }, { value: "es", label: "Spanish" }]}
 											/>
 										</div>
-										<div className="mt-1">
+										<div>
 											<a
 												href="https://github.com/dioneapp/dioneapp"
 												target="_blank"
@@ -276,14 +296,14 @@ export default function Settings() {
 												onClick={() =>
 													handleUpdate({ compactMode: !config.compactMode })
 												}
-												className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
+												className={`relative w-12 h-6 flex items-center rounded-full p-1 duration-300 border border-white/5 cursor-pointer ${
 													config.compactMode
 														? "bg-green-500/30"
 														: "bg-red-500/30"
 												}`}
 											>
 												<span
-													className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+													className={`bg-white w-4 h-4 rounded-full shadow-md duration-300 ${
 														config.compactMode
 															? "translate-x-6"
 															: "translate-x-0"

@@ -187,7 +187,7 @@ export default function FeaturedCarousel() {
 									className="absolute inset-0 w-full h-full scale-150"
 									initial={{ opacity: 0 }}
 									animate={{ opacity: 0.2 }}
-									transition={{ duration: 0.8 }}
+									transition={{ duration: 0.4 }}
 									exit={{ opacity: 0 }}
 								/>
 								{/* content */}
