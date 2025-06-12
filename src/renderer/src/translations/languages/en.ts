@@ -85,7 +85,27 @@ export const en = {
 	// toast notifications
 	toast: {
 		close: "Close",
-	},
+		install: {
+		  downloading: "Downloading %s...",
+		  starting: "Starting %s...",
+		  uninstalling: "Uninstalling %s...",
+		  reconnecting: "Reconnecting %s...",
+		  retrying: "Trying to install %s again...",
+		  success: {
+			stopped: "%s stopped successfully.",
+			uninstalled: "%s uninstalled successfully.",
+			logsCopied: "Logs successfully copied to clipboard.",
+			depsInstalled: "Dependencies installed successfully."
+		  },
+		  error: {
+			download: "Error initiating download: %s",
+			start: "Error initiating %s: %s",
+			stop: "Error stopping %s: %s",
+			uninstall: "Error uninstalling %s: %s",
+			serverRunning: "Server is already running."
+		  }
+		}
+	  },
 
 	// titlebar component
 	titlebar: {

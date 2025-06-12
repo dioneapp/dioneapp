@@ -164,7 +164,7 @@ export default function Install({ id }: { id?: string }) {
 			}
 			setIsServerRunning(false);
 		} catch (error) {
-			showToast("error", `Error initiating download: ${error}`);
+			showToast("error", t('toast.install.error.download').replace('%s', String(error)));
 			setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
 			setIsServerRunning(false);
 		}
@@ -185,7 +185,7 @@ export default function Install({ id }: { id?: string }) {
 				method: "GET",
 			});
 		} catch (error) {
-			showToast("error", `Error initiating ${data.name}: ${error}`);
+			showToast("error", t('toast.install.error.start').replace('%s', data.name).replace('%s', String(error)));
 			setLogs((prevLogs) => [...prevLogs, `Error initiating ${data.name}`]);
 			setIsServerRunning(false);
 		}
@@ -208,7 +208,7 @@ export default function Install({ id }: { id?: string }) {
 					"Stopping...",
 					`${data.name} stopped successfully.`,
 				);
-				showToast("success", `${data.name} stopped successfully.`);
+				showToast("success", t('toast.install.success.stopped').replace('%s', data.name));
 				setLogs([]); // clear logs
 				await fetchIfDownloaded();
 				setIsServerRunning(false);
@@ -218,11 +218,11 @@ export default function Install({ id }: { id?: string }) {
 			} else {
 				showToast(
 					"error",
-					`Error stopping ${data.name}: Error ${response.status}`,
+					t('toast.install.error.stop').replace('%s', data.name).replace('%s', String(response.status)),
 				);
 			}
 		} catch (error) {
-			showToast("error", `Error stopping ${data.name}: ${error}`);
+			showToast("error", t('toast.install.error.stop').replace('%s', data.name).replace('%s', String(error)));
 			window.electron.ipcRenderer.invoke(
 				"notify",
 				"Error...",
@@ -275,7 +275,7 @@ export default function Install({ id }: { id?: string }) {
 			}
 		} catch (error) {
 			setDeleteStatus("error");
-			showToast("error", `Error uninstalling ${data.name}: ${error}`);
+			showToast("error", t('toast.install.error.uninstall').replace('%s', data.name).replace('%s', String(error)));
 			setLogs((prevLogs) => [...prevLogs, `Error uninstalling ${data.name}`]);
 		}
 
@@ -296,7 +296,7 @@ export default function Install({ id }: { id?: string }) {
 				"Uninstalling...",
 				`${data.name} uninstalled successfully.`,
 			);
-			showToast("success", `${data.name} uninstalled successfully.`);
+			showToast("success", t('toast.install.success.uninstalled').replace('%s', data.name));
 			setInstalled(false);
 			await fetchIfDownloaded();
 			setInstalledApps((prevApps) =>
@@ -312,13 +312,13 @@ export default function Install({ id }: { id?: string }) {
 			);
 			showToast(
 				"error",
-				`Error uninstalling ${data.name}, please try again later or do it manually.`,
+				t('toast.install.error.uninstall').replace('%s', data.name).replace('%s', String(response.status)),
 			);
 		}
 	}
 
 	const copyLogsToClipboard = () => {
-		showToast("success", "Logs successfully copied to clipboard.");
+		showToast("success", t('toast.install.success.logsCopied'));
 		const logsText = logs.join("\n");
 		navigator.clipboard.writeText(logsText);
 	};
@@ -327,7 +327,7 @@ export default function Install({ id }: { id?: string }) {
 		if (isServerRunning) {
 			showToast(
 				"error",
-				"Server is already running.",
+				t('toast.install.error.serverRunning'),
 				undefined,
 				true,
 				"Stop",
@@ -335,7 +335,7 @@ export default function Install({ id }: { id?: string }) {
 			);
 			return;
 		}
-		showToast("default", `Downloading ${data.name}...`);
+		showToast("default", t('toast.install.downloading').replace('%s', data.name));
 		await download();
 	};
 
@@ -343,7 +343,7 @@ export default function Install({ id }: { id?: string }) {
 		if (isServerRunning) {
 			showToast(
 				"error",
-				"Server is already running.",
+				t('toast.install.error.serverRunning'),
 				undefined,
 				true,
 				"Stop",
@@ -351,7 +351,7 @@ export default function Install({ id }: { id?: string }) {
 			);
 			return;
 		}
-		showToast("default", `Starting ${data.name}...`);
+		showToast("default", t('toast.install.starting').replace('%s', data.name));
 		setShow("logs");
 		await start();
 	};
@@ -362,7 +362,7 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	const handleUninstall = async (deleteDeps?: boolean) => {
-		showToast("default", `Uninstalling ${data.name}...`);
+		showToast("default", t('toast.install.uninstalling').replace('%s', data.name));
 		await uninstall(deleteDeps);
 	};
 
@@ -375,7 +375,7 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	const handleReconnect = async () => {
-		showToast("default", `Reconnecting ${data.name}...`);
+		showToast("default", t('toast.install.reconnecting').replace('%s', data.name));
 		setShow("logs");
 	};
 	const handleReloadIframe = async () => {
@@ -385,12 +385,12 @@ export default function Install({ id }: { id?: string }) {
 
 	async function onFinishInstallDeps() {
 		setMissingDependencies(null); // clear missing deps
-		showToast("success", "Dependencies installed successfully.");
+		showToast("success", t('toast.install.success.depsInstalled'));
 		setLogs([]); // clear logs
 		setError(false); // clear error
 		setShow("logs");
 		// setIsServerRunning(false);
-		showToast("default", `Trying to install ${data.name} again...`);
+		showToast("default", t('toast.install.retrying').replace('%s', data.name));
 		setupSocket();
 		await handleStop();
 		await handleDownload();
