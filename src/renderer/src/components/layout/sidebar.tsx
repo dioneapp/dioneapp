@@ -6,8 +6,10 @@ import { openLink } from "../../utils/openLink";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
 import QuickLaunch from "./quick-launch";
+import { useTranslation } from '../../translations/translationContext';
 
 export default function Sidebar() {
+	const { t } = useTranslation();
 	const [authToken, setAuthToken] = useState<string | null>(null);
 	const [refreshToken, setRefreshToken] = useState<string | null>(null);
 	const [logged, setLogged] = useState<boolean>(false);
@@ -246,7 +248,7 @@ export default function Sidebar() {
 					</Link>
 					{!config?.compactMode && (
 						<p className="text-xs text-neutral-400 px-0.5">
-							Explore, Install, Innovate — in 1 Click.
+							{t("sidebar.tagline")}
 						</p>
 					)}
 					{!config?.compactMode && (
@@ -282,11 +284,10 @@ export default function Sidebar() {
 					>
 						<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
 							<h1 className="font-semibold text-xl text-neutral-200">
-								Update Available
+								{t("sidebar.update.title")}
 							</h1>
 							<h2 className="text-[10px] text-neutral-300 text-balance">
-								A new version of Dione is available, please restart the app to
-								update.
+								{t("sidebar.update.description")}
 							</h2>
 						</div>
 					</motion.div>
@@ -305,7 +306,7 @@ export default function Sidebar() {
 							className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-6 py-4 bg-black/90 text-white text-xs shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all backdrop-blur-3xl duration-200"
 							style={{ whiteSpace: "pre-line" }}
 						>
-							New update available, please restart Dione to update.
+							{t("sidebar.update.tooltip")}
 						</div>
 					</motion.div>
 				)}
@@ -328,7 +329,7 @@ export default function Sidebar() {
 									<Icon name="Library" className="h-5 w-5" />
 									{hoveredTooltip === "library" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
-											Library
+											{t("sidebar.tooltips.library")}
 										</div>
 									)}
 								</Link>
@@ -341,7 +342,7 @@ export default function Sidebar() {
 									<Icon name="Settings" className="h-5 w-5" />
 									{hoveredTooltip === "settings" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
-											Settings
+											{t("sidebar.tooltips.settings")}
 										</div>
 									)}
 								</Link>
@@ -382,7 +383,7 @@ export default function Sidebar() {
 								)}
 								{hoveredTooltip === "account" && (
 									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap bg-black/90 backdrop-blur-3xl">
-										Account
+										{t("sidebar.tooltips.account")}
 									</div>
 								)}
 							</Link>
@@ -401,7 +402,7 @@ export default function Sidebar() {
 									<Icon name="Logout" className="h-5 w-5" />
 									{hoveredTooltip === "logout" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
-											Logout
+											{t("sidebar.tooltips.logout")}
 										</div>
 									)}
 								</button>
@@ -416,7 +417,7 @@ export default function Sidebar() {
 									<Icon name="Login" className="h-5 w-5" />
 									{hoveredTooltip === "login" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
-											Login
+											{t("sidebar.tooltips.login")}
 										</div>
 									)}
 								</button>
@@ -434,7 +435,7 @@ export default function Sidebar() {
 								<Icon name="Library" className="h-5 w-5" />
 								{hoveredTooltip === "library" && (
 									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
-										Library
+										{t("sidebar.tooltips.library")}
 									</div>
 								)}
 							</Link>
@@ -447,7 +448,7 @@ export default function Sidebar() {
 								<Icon name="Settings" className="h-5 w-5" />
 								{hoveredTooltip === "settings" && (
 									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
-										Settings
+										{t("sidebar.tooltips.settings")}
 									</div>
 								)}
 							</Link>

@@ -4,6 +4,7 @@ import { openLink } from "@renderer/utils/openLink";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "../translations/translationContext";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -81,8 +82,10 @@ export default function Settings() {
 	const [port, setPort] = useState<number | null>(null);
 	const [versions] = useState(window.electron.process.versions);
 	const [config, setConfig] = useState<any | null>(null);
+	const { setLanguage, t } = useTranslation();
 	// const logged = JSON.parse(localStorage.getItem("user") || "{}");
 	const navigate = useNavigate();
+
 
 	useEffect(() => {
 		// get actual port
@@ -120,6 +123,11 @@ export default function Settings() {
 
 			if (!response.ok) throw new Error("Failed to update config");
 			const updatedConfig = await response.json();
+
+			// update language in translation context if language changed
+			if (newConfig.language && newConfig.language !== config.language) {
+				setLanguage(newConfig.language);
+			}
 
 			if (
 				updatedConfig.enableDesktopNotifications === true &&
@@ -194,17 +202,16 @@ export default function Settings() {
 									<div className="flex flex-col">
 										{/* Apps */}
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											Applications
+											{t('settings.applications.title')}
 										</h2>
 										<div className="flex flex-col gap-2">
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Installation Directory
+														{t('settings.applications.installationDirectory.label')}
 													</label>
 													<p className="text-xs text-neutral-400 w-80">
-														Choose where new applications will be installed by
-														default
+														{t('settings.applications.installationDirectory.description')}
 													</p>
 												</div>
 												<div className="flex gap-2 items-center justify-end w-full">
@@ -229,11 +236,10 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Clean Uninstall
+														{t('settings.applications.cleanUninstall.label')}
 													</label>
 													<p className="text-xs text-neutral-400">
-														Remove all related dependencies when uninstalling
-														applications
+														{t('settings.applications.cleanUninstall.description')}
 													</p>
 												</div>
 												<button
@@ -265,15 +271,15 @@ export default function Settings() {
 										{/* Interface */}
 										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											Interface
+											{t('settings.interface.title')}
 										</h2>
 										<div className="flex justify-between w-full items-center h-full space-y-2">
 											<div className="h-full flex items-start justify-center flex-col mt-auto">
 												<label className="text-neutral-200 font-medium">
-													Display Language
+													{t('settings.interface.displayLanguage.label')}
 												</label>
 												<p className="text-xs text-neutral-400">
-													Choose your preferred interface language
+													{t('settings.interface.displayLanguage.description')}
 												</p>
 											</div>
 											<CustomSelect
@@ -292,7 +298,7 @@ export default function Settings() {
 												rel="noopener noreferrer"
 												className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-2 py-0.5 rounded-xl bg-white/10"
 											>
-												🤔 Not seeing your language? Help us add more!
+												{t('settings.interface.helpTranslate')}
 											</a>
 										</div>
 									</div>
@@ -300,11 +306,10 @@ export default function Settings() {
 										<div className="flex justify-between w-full items-center h-full space-y-2">
 											<div className="h-full flex items-start justify-center flex-col mt-auto">
 												<label className="text-neutral-200 font-medium">
-													Compact View
+													{t('settings.interface.compactView.label')}
 												</label>
 												<p className="text-xs text-neutral-400">
-													Use a more condensed layout to fit more content on
-													screen
+													{t('settings.interface.compactView.description')}
 												</p>
 											</div>
 											<button
@@ -333,16 +338,16 @@ export default function Settings() {
 										{/* Account */}
 										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											Notifications
+											{t('settings.notifications.title')}
 										</h2>
 										<div className="flex flex-col gap-2">
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														System Notifications
+														{t('settings.notifications.systemNotifications.label')}
 													</label>
 													<p className="text-xs text-neutral-400">
-														Show desktop notifications for important events
+														{t('settings.notifications.systemNotifications.description')}
 													</p>
 												</div>
 												<button
@@ -371,10 +376,10 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Installation Alerts
+														{t('settings.notifications.installationAlerts.label')}
 													</label>
 													<p className="text-xs text-neutral-400">
-														Get notified when application installations complete
+														{t('settings.notifications.installationAlerts.description')}
 													</p>
 												</div>
 												<button
@@ -407,17 +412,16 @@ export default function Settings() {
 										{/* Privacy */}
 										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											Privacy
+											{t('settings.privacy.title')}
 										</h2>
 										<div className="flex flex-col gap-2">
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Error Reporting
+														{t('settings.privacy.errorReporting.label')}
 													</label>
 													<p className="text-xs text-neutral-400">
-														Help improve Dione by sending anonymous error
-														reports
+														{t('settings.privacy.errorReporting.description')}
 													</p>
 												</div>
 												<button
@@ -450,16 +454,16 @@ export default function Settings() {
 										{/* Other */}
 										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											Other
+											{t('settings.other.title')}
 										</h2>
 										<div className="flex flex-col gap-2">
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Logs Directory
+														{t('settings.other.logsDirectory.label')}
 													</label>
 													<p className="text-xs text-neutral-400">
-														Location where application logs are stored
+														{t('settings.other.logsDirectory.description')}
 													</p>
 												</div>
 												<div className="flex gap-2 items-center justify-end w-full">
@@ -489,10 +493,10 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Submit Feedback
+														{t('settings.other.submitFeedback.label')}
 													</label>
 													<p className="text-xs text-neutral-400">
-														Report any issues or problems you encounter
+														{t('settings.other.submitFeedback.description')}
 													</p>
 												</div>
 												<button
@@ -500,17 +504,16 @@ export default function Settings() {
 													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
 													type="button"
 												>
-													Send Report
+													{t('settings.other.submitFeedback.button')}
 												</button>
 											</div>
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														Show onboarding
+														{t('settings.other.showOnboarding.label')}
 													</label>
 													<p className="text-xs text-neutral-400">
-														Reset Dione to its initial state and show again the
-														onboarding for reconfiguration
+														{t('settings.other.showOnboarding.description')}
 													</p>
 												</div>
 												<button
@@ -518,7 +521,7 @@ export default function Settings() {
 													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
 													type="button"
 												>
-													Reset
+													{t('settings.other.showOnboarding.button')}
 												</button>
 											</div>
 										</div>

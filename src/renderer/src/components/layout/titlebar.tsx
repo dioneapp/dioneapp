@@ -1,8 +1,10 @@
 import { useState } from "react";
 import Icon from "../icons/icon";
 import { useAppContext } from "../layout/global-context";
+import { useTranslation } from '../../translations/translationContext';
 
 export default function Titlebar() {
+	const { t } = useTranslation();
 	const { isServerRunning, setExitRef } = useAppContext();
 	const [showModal, setShowModal] = useState(false);
 
@@ -28,11 +30,10 @@ export default function Titlebar() {
 				>
 					<div className="flex flex-col items-center justify-center h-full w-full">
 						<h1 className="text-4xl font-semibold mb-4">
-							Stopping applications...
+							{t("titlebar.closing.title")}
 						</h1>
 						<p className="text-neutral-400 text-balance text-center max-w-xl">
-							Dione will close automatically after closing all open
-							applications.
+							{t("titlebar.closing.description")}
 						</p>
 					</div>
 				</div>

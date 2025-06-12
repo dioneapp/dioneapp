@@ -3,8 +3,10 @@ import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { openLink } from "@renderer/utils/openLink";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from '../translations/translationContext';
 
 export default function ErrorPage({ error }: { error?: Error }) {
+	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [reportStatus, setReportStatus] = useState<
 		"idle" | "pending" | "success" | "error"
@@ -36,11 +38,10 @@ export default function ErrorPage({ error }: { error?: Error }) {
 				<main className="flex flex-col h-full justify-center items-center pb-24">
 					<Icon name="DioDead" className="h-44 w-44 mb-12" />
 					<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
-						Unexpected error occurred
+						{t("error.title")}
 					</h1>
 					<p className="text-neutral-400 text-xs max-w-sm text-center text-pretty">
-						We have detected an unexpected error in the application, we are
-						sorry for the inconvenience.
+						{t("error.description")}
 					</p>
 					<div
 						className={`gap-2 flex justify-center items-center mt-6 ${settings.sendAnonymousReports ? "flex-col" : "flex"}`}
@@ -53,7 +54,7 @@ export default function ErrorPage({ error }: { error?: Error }) {
 								type="button"
 								className=" py-1 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold text-center cursor-pointer"
 							>
-								Return
+								{t("error.return")}
 							</button>
 						)}
 						{(settings.sendAnonymousReports || reportStatus !== "idle") && (
@@ -85,10 +86,10 @@ export default function ErrorPage({ error }: { error?: Error }) {
 									>
 										<p className="opacity-80">
 											{reportStatus === "pending"
-												? "Sending report..."
+												? t("error.report.sending")
 												: reportStatus === "success"
-													? "Report sent!"
-													: "Failed to send report"}
+													? t("error.report.success")
+													: t("error.report.failed")}
 										</p>
 									</span>
 								</button>
@@ -100,7 +101,7 @@ export default function ErrorPage({ error }: { error?: Error }) {
 								type="button"
 								className="px-4 bg-white/10 hover:bg-white/20 transition-colors duration-400 rounded-full text-center cursor-pointer py-1"
 							>
-								Report to team
+								{t("error.report.toTeam")}
 							</button>
 						)}
 					</div>

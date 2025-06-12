@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useTranslation } from '../../translations/translationContext';
 
 export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
 	variant: "default" | "success" | "error" | "warning";
@@ -30,6 +31,8 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 		},
 		ref,
 	) => {
+		const { t } = useTranslation();
+
 		return (
 			<div
 				style={{ zIndex: 1000 }}
@@ -54,7 +57,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 					>
 						{button && (
 							<span className="text-xs bg-neutral-800 rounded-full border border-white/10 px-4 py-1 z-50 cursor-pointer hover:bg-neutral-700 transition-colors duration-300">
-								Close
+								{t("toast.close")}
 							</span>
 						)}
 						{!button && (

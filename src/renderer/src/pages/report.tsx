@@ -2,6 +2,7 @@ import Icon from "@renderer/components/icons/icon";
 import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from '../translations/translationContext';
 
 export default function ReportPage() {
 	const navigate = useNavigate();
@@ -10,13 +11,15 @@ export default function ReportPage() {
 	const [submitStatus, setSubmitStatus] = useState<
 		"idle" | "success" | "error"
 	>("idle");
+	const { t } = useTranslation();
+
 
 	// handle form submission
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSubmitting(true);
 		setSubmitStatus("idle");
-
+		
 		try {
 			const success = await sendDiscordReport("User Report", {
 				UserDescription: description,
@@ -43,17 +46,16 @@ export default function ReportPage() {
 					{/* description input */}
 					<div className="space-y-2">
 						<label className="block text-xl font-semibold">
-							Describe the Issue
+							{t('report.title')}
 						</label>
 						<p className="text-sm text-neutral-400">
-							Please provide details about what happened and what you were
-							trying to do.
+							{t('report.description')}
 						</p>
 						<textarea
 							value={description}
 							onChange={(e) => setDescription(e.target.value)}
 							className="mt-4 w-full max-h-54 min-h-48 px-4 py-3 bg-white/5 rounded-xl focus:outline-none focus:ring-1 transition-all duration-200 focus:ring-white/10 border border-white/10 text-base"
-							placeholder="Example: I was trying to install an application when this error occurred..."
+							placeholder={t('report.placeholder')}
 							required
 							style={{ resize: "none" }}
 						/>
@@ -61,10 +63,9 @@ export default function ReportPage() {
 
 					{/* system info */}
 					<div className="bg-white/5 p-6 rounded-xl border border-white/10">
-						<h3 className="text-lg font-medium">System Information</h3>
+						<h3 className="text-lg font-medium">{t("report.systemInformationTitle")}</h3>
 						<p className="text-sm text-neutral-400 mb-4">
-							The following system information and an anonymous ID will be
-							included with your report.
+						{t('report.disclaimer')}
 						</p>
 						<div className="grid grid-cols-2 gap-4 text-sm">
 							<div>
@@ -97,13 +98,13 @@ export default function ReportPage() {
 						{submitStatus === "success" && (
 							<p className="text-green-500 flex items-center">
 								<Icon name="Success" className="w-5 h-5 mr-2" />
-								Report sent successfully!
+								{t('report.success')}
 							</p>
 						)}
 						{submitStatus === "error" && (
 							<p className="text-red-500 flex items-center">
 								<Icon name="Error" className="w-5 h-5 mr-2" />
-								Failed to send report. Please try again.
+								{t('report.error')}
 							</p>
 						)}
 						<div className="flex gap-3 mt-2">
@@ -118,10 +119,10 @@ export default function ReportPage() {
 											name="Pending"
 											className="w-5 h-5 mr-2 animate-spin"
 										/>
-										Sending...
+										{t('report.sending')}
 									</span>
 								) : (
-									"Send Report"
+									<span>{t('report.send')}</span>
 								)}
 							</button>
 							<button
@@ -129,7 +130,7 @@ export default function ReportPage() {
 								onClick={() => navigate(-1)}
 								className="px-5 py-2 text-sm font-medium bg-white/10 text-white rounded-full hover:bg-white/20 cursor-pointer transition-colors"
 							>
-								Cancel
+							{t('common.cancel')}
 							</button>
 						</div>
 					</div>

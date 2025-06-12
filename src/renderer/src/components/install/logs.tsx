@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import type { JSX } from "react";
 import { useMemo } from "react";
 import Icon from "../icons/icon";
+import { useTranslation } from '../../translations/translationContext';
 
 interface LogsProps {
 	statusLog: { status: string; content: string };
@@ -20,6 +21,7 @@ export default function LogsComponent({
 	iframeAvailable,
 	setShow,
 }: LogsProps) {
+	const { t } = useTranslation();
 	const Spinner = useMemo(() => {
 		if (statusLog.status === "pending" || !statusLog.status) {
 			return <Icon name="Pending" className="h-4 w-4 animate-spin" />;
@@ -48,7 +50,7 @@ export default function LogsComponent({
 						{statusLog.status === "error" && (
 							<Icon name="Error" className="h-4 w-4" />
 						)}
-						{statusLog.content ? `${statusLog.content}` : "Loading..."}
+						{statusLog.content ? `${statusLog.content}` : t("logs.loading")}
 					</p>
 				</div>
 			</div>
@@ -93,7 +95,7 @@ export default function LogsComponent({
 										.replace(/\x1B\[[0-9;]*m/g, "") // remove ascii codes
 										.replace(/^(ERROR:|WARN:|INFO:|OUT:)\s*/g, "") // remove prefix
 										.replace(/\[[^\]]*\]\s*/g, "") // remove blocks like [stderr-info] or dates
-										.trim() || "Loading..."}
+										.trim() || t("common.loading")}
 								</span>
 							</p>
 						);
@@ -101,8 +103,7 @@ export default function LogsComponent({
 				</div>
 				<div className="h-px w-full bg-white/10 my-4" />
 				<div className="text-xs text-neutral-500 mt-4 mb-2 text-center max-w-sm mx-auto justify-center items-center flex">
-					Logs shown are from the app itself. If you see an error, please report
-					it to the original app's developers first.
+					{t("logs.disclaimer")}
 				</div>
 				<div className="absolute bottom-2 right-2">
 					<div className="flex gap-1.5">

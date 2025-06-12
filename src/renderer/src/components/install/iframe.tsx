@@ -2,6 +2,8 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Icon from "../icons/icon";
+import { useTranslation } from "../../translations/translationContext";
+
 interface IframeProps {
 	iframeSrc: string;
 	handleStop: () => void;
@@ -26,6 +28,7 @@ export default function IframeComponent({
 	setShow,
 	data,
 }: IframeProps) {
+	const { t } = useTranslation();
 	const [_systemUsage, setSystemUsage] = useState<SystemUsage>({
 		cpu: 0,
 		ram: { percent: 0, usedGB: 0 },
@@ -153,18 +156,18 @@ export default function IframeComponent({
 					>
 						<Icon name="Back" className="w-4 h-4 " />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
-							Back
+							{t("iframe.back")}
 						</div>
 					</button>
 					<button
 						type="button"
 						onClick={handleOpenFolder}
 						className="p-1.5 hover:bg-white/10 border border-white/10 transition-colors rounded-md cursor-pointer relative group"
-						title="Open folder"
+						title={t("iframe.openFolder")}
 					>
 						<Icon name="Folder" className="w-4 h-4" />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
-							Open folder
+							{t("iframe.openFolder")}
 						</div>
 					</button>
 					<div className="flex items-center border border-white/10 bg-white/5 rounded-md group relative">
@@ -177,11 +180,11 @@ export default function IframeComponent({
 							type="button"
 							onClick={handleOpenInBrowser}
 							className="p-1.5 hover:bg-white/10 border-l border-white/10 transition-colors rounded-r-md cursor-pointer group"
-							title="Open in browser"
+							title={t("iframe.openInBrowser")}
 						>
 							<Icon name="Open" className="w-4 h-4" />
 							<div className="absolute z-50 -top-9 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
-								Open in Browser
+								{t("iframe.openInBrowser")}
 							</div>
 						</button>
 					</div>
@@ -216,18 +219,20 @@ export default function IframeComponent({
 					>
 						<Icon name="Maximize" className="w-4 h-4" />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
-							Fullscreen
+							{t("iframe.fullscreen")}
 						</div>
 					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleStop}
+						title={t("iframe.stop")}
 					>
 						<Icon name="Stop" className="w-4 h-4 " />
 					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleReloadIframe}
+						title={t("iframe.reload")}
 					>
 						<Icon name="Reload" className="w-4 h-4" />
 					</motion.button>

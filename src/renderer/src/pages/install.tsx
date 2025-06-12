@@ -9,6 +9,8 @@ import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCurrentPort } from "../utils/getPort";
+import { useTranslation } from '../translations/translationContext';
+
 
 export default function Install({ id }: { id?: string }) {
 	const {
@@ -417,6 +419,8 @@ export default function Install({ id }: { id?: string }) {
 		checkInUse();
 	}, [deleteDepsModal]);
 
+	const { t } = useTranslation();
+
 	return (
 		<>
 			{deleteStatus !== "" && (
@@ -510,7 +514,7 @@ export default function Install({ id }: { id?: string }) {
 							className="flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 py-2 px-4 text-center cursor-pointer"
 						>
 							<Icon name="Back" className="h-4 w-4" />
-							<span className="font-semibold">Back</span>
+							<span className="font-semibold">{t("common.back")}</span>
 						</button>
 					</div>
 				)}

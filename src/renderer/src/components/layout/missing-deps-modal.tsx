@@ -2,6 +2,7 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import Icon from "../icons/icon";
+import { useTranslation } from '../../translations/translationContext';
 
 interface props {
 	data: any;
@@ -16,6 +17,7 @@ export default function MissingDepsModal({
 	onFinish,
 	workingDir,
 }: props) {
+	const { t } = useTranslation();
 	const [page, setPage] = useState(0);
 	const [logs, setLogs] = useState<string[]>([]);
 
@@ -34,20 +36,20 @@ export default function MissingDepsModal({
 
 				socket.on("connect", () => {
 					console.log("Connected to socket:", socket.id);
-					setLogs((prevLogs) => [...prevLogs, "Connected to server"]);
+					setLogs((prevLogs) => [...prevLogs, t("missingDeps.logs.connected")]);
 				});
 
 				socket.on("disconnect", () => {
 					console.log("Socket disconnected");
-					setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
+					setLogs((prevLogs) => [...prevLogs, t("missingDeps.logs.disconnected")]);
 				});
 			} catch (error) {
 				console.error("Error setting up socket:", error);
-				setLogs((prevLogs) => [...prevLogs, "Error setting up socket"]);
+				setLogs((prevLogs) => [...prevLogs, t("missingDeps.logs.error.socket")]);
 			}
 		}
 
-		setLogs(["Initializing dependency download..."]);
+		setLogs([t("missingDeps.logs.initializing")]);
 		setupSocket();
 		return () => {
 			if (socket) {
@@ -59,7 +61,7 @@ export default function MissingDepsModal({
 	async function install() {
 		setPage(1);
 		setLogs([]); // clean logs
-		setLogs(["Loading..."]);
+		setLogs([t("missingDeps.logs.loading")]);
 
 		try {
 			const port = await getCurrentPort();
@@ -72,7 +74,7 @@ export default function MissingDepsModal({
 			if (missingDeps.length === 0) {
 				setLogs((prevLogs) => [
 					...prevLogs,
-					"All dependencies are already installed.",
+					t("missingDeps.logs.allInstalled"),
 				]);
 				return;
 			}
@@ -88,10 +90,10 @@ export default function MissingDepsModal({
 			}
 
 			await onFinish();
-		} catch (error) {
+		} catch (error: any) {
 			setLogs((prevLogs) => [
 				...prevLogs,
-				`❌ Error installing dependencies: ${error}`,
+				t("missingDeps.logs.error.install").replace("{error}", error?.message || error?.toString() || "Unknown error"),
 			]);
 		}
 	}
@@ -105,7 +107,7 @@ export default function MissingDepsModal({
 				<div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl max-h-2/4 h-full w-full backdrop-blur-md">
 					<div className="flex justify-between w-full items-center">
 						<h2 className="font-semibold text-lg flex items-center justify-center">
-							Some dependencies are missing!
+							{t("missingDeps.title")}
 						</h2>
 						<button
 							className="cursor-pointer z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-full"
@@ -158,7 +160,7 @@ export default function MissingDepsModal({
 								type="button"
 								className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
 							>
-								Install
+								{t("missingDeps.install")}
 							</button>
 						</div>
 					</div>
@@ -168,7 +170,7 @@ export default function MissingDepsModal({
 				<div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl max-h-2/4 h-full w-full backdrop-blur-md">
 					<div className="flex justify-between w-full items-center">
 						<h2 className="font-semibold text-lg flex items-center justify-center">
-							Installing dependencies...
+							{t("missingDeps.installing")}
 						</h2>
 						<button
 							className="cursor-pointer z-50 flex items-center justify-center p-2 bg-white/10 rounded-full"
@@ -185,7 +187,7 @@ export default function MissingDepsModal({
 									className={`text-xs select-text whitespace-pre-wrap text-wrap ${log.startsWith("ERROR") || log.includes("error") ? "text-red-400" : log.startsWith("WARN:") ? "text-yellow-400" : log.startsWith("INFO:") ? "text-blue-400" : "text-neutral-300"}`}
 									key={log}
 								>
-									{log || "Loading..."}
+									{log || t("missingDeps.logs.loading")}
 								</p>
 							))}
 						</div>

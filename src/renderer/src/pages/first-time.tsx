@@ -7,8 +7,10 @@ import { useToast } from "@renderer/utils/useToast";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from '../translations/translationContext';
 
 export default function FirstTime() {
+	const { t } = useTranslation();
 	const firstLaunch = localStorage.getItem("firstLaunch");
 
 	console.log("firstLaunch", firstLaunch);
@@ -31,7 +33,7 @@ export default function FirstTime() {
 		navigator.clipboard.writeText("https://getdione.app/auth/login?app=true");
 		showToast(
 			"success",
-			"Copied to the clipboard correctly, now paste it in your browser!",
+			t("firstTime.clipboard.success"),
 		);
 	};
 
@@ -162,14 +164,13 @@ export default function FirstTime() {
 				<div className="flex flex-col gap-4 justify-center items-center transition-all duration-500">
 					<Icon name="Dio" className="w-20 h-20 mb-2" />
 					<h1 className="text-6xl font-semibold">
-						Welcome to{" "}
+						{t("firstTime.welcome.title")}{" "}
 						<span className="bg-clip-text text-transparent bg-gradient-to-t from-white via-[#BCB1E7] to-[#BCB1E7]">
 							Dione
 						</span>
 					</h1>
 					<h2 className="text-neutral-400 text-balance text-center max-w-xl">
-						Thank you for joining us early on this journey. Log into your
-						account to get started.
+						{t("firstTime.welcome.subtitle")}
 					</h2>
 				</div>
 				<motion.div
@@ -186,7 +187,7 @@ export default function FirstTime() {
 							openLink("https://getdione.app/auth/login?app=true");
 						}}
 					>
-						Log in
+						{t("firstTime.welcome.login")}
 					</button>
 					<button
 						type="button"
@@ -196,7 +197,7 @@ export default function FirstTime() {
 						<span>
 							<Icon name="Link" className="w-4 h-4" />
 						</span>
-						<span>Copy Link</span>
+						<span>{t("firstTime.welcome.copyLink")}</span>
 					</button>
 				</motion.div>
 			</motion.div>
@@ -204,11 +205,11 @@ export default function FirstTime() {
 			{/* 2 - logging in */}
 			<div className={getContainerClasses(2)}>
 				<div className="flex flex-col gap-4 justify-center items-center">
-					<h1 className="text-6xl font-semibold">Logging in...</h1>
+					<h1 className="text-6xl font-semibold">{t("firstTime.loggingIn.title")}</h1>
 				</div>
 				<div className="mt-6 flex flex-col gap-4">
 					<div className="flex flex-col gap-2 items-center justify-center">
-						<h3 className="text-white/50 text-xs">Could not authenticate?</h3>
+						<h3 className="text-white/50 text-xs">{t("firstTime.loggingIn.authError")}</h3>
 						<button
 							type="button"
 							className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
@@ -216,7 +217,7 @@ export default function FirstTime() {
 								changeLevel(1);
 							}}
 						>
-							Go back
+							{t("firstTime.loggingIn.goBack")}
 						</button>
 					</div>
 				</div>
@@ -226,9 +227,9 @@ export default function FirstTime() {
 			<div className={getContainerClasses(3)}>
 				<div className="flex flex-col gap-4 justify-center items-center">
 					<Icon name="Dio" className="w-20 h-20 mb-2" />
-					<h1 className="text-6xl font-semibold">You are ready!</h1>
+					<h1 className="text-6xl font-semibold">{t("firstTime.ready.title")}</h1>
 					<h2 className="text-neutral-400 text-balance text-center max-w-xl">
-						We are glad to have you here{" "}
+						{t("firstTime.ready.subtitle")}{" "}
 						{
 							JSON.parse(localStorage.getItem("user") || "{}").user_metadata
 								?.name
@@ -243,7 +244,7 @@ export default function FirstTime() {
 							className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
 						>
 							<span className="text-center w-full flex items-center justify-center">
-								Finish
+								{t("firstTime.ready.finish")}
 							</span>
 						</Link>
 					</div>

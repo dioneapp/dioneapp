@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
+import { useTranslation } from '../../translations/translationContext';
 
 export default function DeleteLoadingModal({
 	status,
@@ -10,6 +11,7 @@ export default function DeleteLoadingModal({
 	status: string;
 	onClose: () => void;
 }) {
+	const { t } = useTranslation();
 	const { deleteLogs } = useAppContext();
 	const countdownRef = useRef<HTMLDivElement>(null);
 
@@ -62,10 +64,10 @@ export default function DeleteLoadingModal({
 					<Icon name="Pending" className="h-24 w-24 animate-spin" />
 					<h1 className="font-medium text-3xl flex flex-col gap-2">
 						{status === "deleting_deps"
-							? "Uninstalling dependencies"
-							: "Uninstalling"}
+							? t("deleteLoading.uninstalling.deps")
+							: t("deleteLoading.uninstalling.title")}
 						<span className="text-neutral-400 text-sm text-center">
-							please wait...
+							{t("deleteLoading.uninstalling.wait")}
 						</span>
 					</h1>
 					{deleteLogs.length > 0 && (
@@ -82,37 +84,39 @@ export default function DeleteLoadingModal({
 				<div className="flex flex-col gap-2 items-center">
 					<Icon name="Success" className="h-24 w-24 text-green-500" />
 					<h1 className="font-medium text-3xl mt-12">
-						Uninstalled <span className="text-green-500">successfully</span>
+						{t("deleteLoading.success.title")}{" "}
+						<span className="text-green-500">{t("deleteLoading.success.subtitle")}</span>
 					</h1>
 					<h2 className="text-sm text-neutral-400">
-						Closing this modal in{" "}
+						{t("deleteLoading.success.closing")}{" "}
 						<span ref={countdownRef} className="text-neutral-300">
 							5
 						</span>{" "}
-						seconds...
+						{t("deleteLoading.success.seconds")}
 					</h2>
 				</div>
 			) : status?.startsWith("error") ? (
 				<div className="flex flex-col gap-2 items-center">
 					<Icon name="Error" className="h-24 w-24 text-red-500" />
 					<h1 className="font-medium text-3xl mt-10">
-						An unexpected <span className="text-red-500">error</span> has
-						occurred
+						{t("deleteLoading.error.title")}{" "}
+						<span className="text-red-500">{t("deleteLoading.error.subtitle")}</span>{" "}
+						{t("deleteLoading.error.hasOccurred")}
 					</h1>
 					<h2 className="text-sm text-neutral-400">
 						{status === "error_deps"
-							? "Dione has not been able to remove any dependency, please do it manually."
-							: "Please try again later or check the logs for more information."}
+							? t("deleteLoading.error.deps")
+							: t("deleteLoading.error.general")}
 					</h2>
 				</div>
 			) : (
 				<div className="flex flex-col gap-2 items-center">
 					<Icon name="Pending" className="h-24 w-24 animate-spin" />
 					<h1 className="font-medium text-3xl mt-10 text-neutral-300">
-						Loading...
+						{t("deleteLoading.loading.title")}
 					</h1>
 					<h2 className="text-sm text-neutral-400 text-center">
-						Please wait...
+						{t("deleteLoading.loading.wait")}
 					</h2>
 				</div>
 			)}

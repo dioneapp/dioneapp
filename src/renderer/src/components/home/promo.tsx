@@ -1,6 +1,9 @@
 import { openLink } from "../../utils/openLink";
+import { useTranslation } from "../../translations/translationContext";
 
 export default function PromoBanner() {
+	const { t } = useTranslation();
+
 	return (
 		<div className="mt-6 w-full rounded-xl border border-white/5 bg-[#080808]/50 overflow-hidden">
 			<div className="relative w-full p-4">
@@ -11,10 +14,10 @@ export default function PromoBanner() {
 				<div className="relative flex flex-row items-center justify-between px-6 z-10">
 					<div className="flex flex-col space-y-1">
 						<h3 className="text-md font-semibold text-white">
-							Want to be featured here?
+							{t("promo.title")}
 						</h3>
 						<p className="text-[13px] text-neutral-300/80">
-							Showcase your tool to our community
+							{t("promo.description")}
 						</p>
 					</div>
 					<button
@@ -22,7 +25,7 @@ export default function PromoBanner() {
 						onClick={() => openLink("https://getdione.app/featured/join")}
 						className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
 					>
-						Get Featured
+						{t("promo.button")}
 					</button>
 				</div>
 			</div>

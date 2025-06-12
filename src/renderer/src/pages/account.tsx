@@ -1,6 +1,7 @@
 import Icon from "@renderer/components/icons/icon";
 import { useEffect, useState } from "react";
 import { getCurrentPort } from "../utils/getPort";
+import { useTranslation } from '../translations/translationContext';
 
 const SkeletonCard = ({ className = "" }) => (
 	<div className={`bg-white/5 rounded-xl p-8 animate-pulse ${className}`}>
@@ -11,6 +12,7 @@ const SkeletonCard = ({ className = "" }) => (
 );
 
 export default function Account() {
+	const { t } = useTranslation();
 	const [data, setData] = useState<any>(null);
 	const [hoursInApp, setHoursInApp] = useState(0);
 	const [consecutiveDays, setConsecutiveDays] = useState(0);
@@ -109,8 +111,8 @@ export default function Account() {
 		<div className="min-h-screen bg-background pt-4">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
 				<main className="flex flex-col gap-6 py-5">
-					<h1 className="text-2xl sm:text-3xl font-semibold mb-4">Account</h1>
-					<p className="text-xs text-neutral-400">WIP</p>
+					<h1 className="text-2xl sm:text-3xl font-semibold mb-4">{t("account.title")}</h1>
+					<p className="text-xs text-neutral-400">{t("account.wip")}</p>
 					{data && !loading ? (
 						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full">
 							<div className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2 bg-white/10 rounded-xl p-8 h-auto flex flex-col">
@@ -118,12 +120,12 @@ export default function Account() {
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
 										<div className="flex items-center justify-between w-full">
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
-												Time spent
+												{t("account.stats.timeSpent.title")}
 											</h3>
 											<Icon name="Time" className="w-6 h-6 opacity-80" />
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
-											in last 7 days
+											{t("account.stats.timeSpent.subtitle")}
 										</h5>
 									</span>
 									<h4 className="z-10 text-3xl font-medium text-white flex justify-end mt-auto">
@@ -136,12 +138,12 @@ export default function Account() {
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
 										<div className="flex items-center justify-between w-full">
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
-												Sessions
+												{t("account.stats.sessions.title")}
 											</h3>
 											<Icon name="Sessions" className="w-6 h-6 opacity-80" />
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
-											in last 7 days
+											{t("account.stats.sessions.subtitle")}
 										</h5>
 									</span>
 									<h4 className="z-10 text-3xl font-medium text-white">
@@ -154,12 +156,12 @@ export default function Account() {
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
 										<div className="flex items-center justify-between w-full">
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
-												Events
+												{t("account.stats.events.title")}
 											</h3>
 											<Icon name="Events" className="w-6 h-6 opacity-80" />
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
-											in last 7 days
+											{t("account.stats.events.subtitle")}
 										</h5>
 									</span>
 									<h4 className="z-10 text-3xl font-medium text-white">
@@ -173,12 +175,12 @@ export default function Account() {
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
 										<div className="flex items-center justify-between w-full">
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
-												Streak
+												{t("account.stats.streak.title")}
 											</h3>
 											<Icon name="Streak" className="w-6 h-6 opacity-80" />
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
-											consecutive days
+											{t("account.stats.streak.subtitle")}
 										</h5>
 									</span>
 									<span className="flex items-end gap-1 mb-3">
@@ -186,7 +188,7 @@ export default function Account() {
 											{consecutiveDays}
 										</h4>
 										<h5 className="z-10 text-xs font-medium text-neutral-400 pb-1">
-											days
+											{t("account.stats.streak.days")}
 										</h5>
 									</span>
 									<div className="flex gap-1 w-full">

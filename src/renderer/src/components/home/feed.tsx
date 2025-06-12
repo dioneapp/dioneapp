@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import ScriptCard from "./feed/card";
 import type { Script } from "./feed/types";
 import Loading from "./loading-skeleton";
+import { useTranslation } from "../../translations/translationContext";
 
 interface ScriptListProps {
 	endpoint: string;
@@ -15,6 +16,7 @@ export default function List({
 	type,
 	className = "",
 }: ScriptListProps) {
+	const { t } = useTranslation();
 	const [scripts, setScripts] = useState<Script[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [_error, setError] = useState<string | null>(null);
@@ -40,18 +42,18 @@ export default function List({
 				if (Array.isArray(data)) {
 					setScripts(data);
 				} else {
-					setError("Fetched data is not an array");
+					setError(t("feed.errors.notArray"));
 				}
 			} catch (err) {
 				console.error(err);
-				setError("Failed to fetch scripts");
+				setError(t("feed.errors.fetchFailed"));
 			} finally {
 				setLoading(false);
 			}
 		};
 
 		fetchScripts();
-	}, [endpoint]);
+	}, [endpoint, t]);
 
 	if (loading) {
 		return <Loading />;
@@ -67,7 +69,7 @@ export default function List({
 
 			{scripts.length === 0 && type !== "featured" && (
 				<div className="text-center text-neutral-500 text-sm mt-4">
-					No scripts found
+					{t("feed.noScripts")}
 				</div>
 			)}
 		</div>

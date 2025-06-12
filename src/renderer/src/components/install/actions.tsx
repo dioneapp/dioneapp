@@ -2,6 +2,7 @@ import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
 import Icon from "../icons/icon";
 import Loading from "./loading-skeleton";
+import { useTranslation } from "../../translations/translationContext";
 
 interface ActionsProps {
 	data: any;
@@ -26,6 +27,8 @@ export default function ActionsComponent({
 	handleReconnect,
 	handleDeleteDeps,
 }: ActionsProps) {
+	const { t } = useTranslation();
+
 	return (
 		<>
 			<motion.div
@@ -99,7 +102,7 @@ export default function ActionsComponent({
 										<span className="w-fit h-full flex items-center">
 											<Icon name="User" />
 										</span>
-										Published by{" "}
+										{t("actions.publishedBy")}{" "}
 										<span
 											className="hover:underline cursor-pointer"
 											onClick={() => openLink(`${data?.author_url}`)}
@@ -120,7 +123,7 @@ export default function ActionsComponent({
 										onClick={handleReconnect}
 										className="bg-neutral-500/80 hover:bg-neutral-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
 									>
-										Reconnect
+										{t("actions.reconnect")}
 									</button>
 								)}
 								{!isServerRunning &&
@@ -131,14 +134,14 @@ export default function ActionsComponent({
 												onClick={handleStart}
 												className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
 											>
-												Start
+												{t("actions.start")}
 											</button>
 											<button
 												type="button"
 												onClick={handleDeleteDeps}
 												className="bg-red-500/50 hover:bg-red-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
 											>
-												Uninstall
+												{t("actions.uninstall")}
 											</button>
 										</div>
 									) : (
@@ -147,7 +150,7 @@ export default function ActionsComponent({
 											onClick={handleDownload}
 											className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
 										>
-											Install
+											{t("actions.install")}
 										</button>
 									))}
 							</div>

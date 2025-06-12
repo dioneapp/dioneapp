@@ -5,8 +5,10 @@ import Icon from "../icons/icon";
 import { useAppContext } from "../layout/global-context";
 import ScriptCard from "./feed/card";
 import Loading from "./loading-skeleton";
+import { useTranslation } from "../../translations/translationContext";
 
 export default function Installed() {
+	const { t } = useTranslation();
 	const { installedApps } = useAppContext();
 	const [apps, setApps] = useState<any[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -55,7 +57,7 @@ export default function Installed() {
 
 	return (
 		<>
-			<h1 className="text-2xl sm:text-3xl font-semibold mb-4">Your library</h1>
+			<h1 className="text-2xl sm:text-3xl font-semibold mb-4">{t("installed.title")}</h1>
 			{apps.length > 0 ? (
 				loading ? (
 					<Loading />
@@ -78,13 +80,13 @@ export default function Installed() {
 					/>
 					<div className="text-center items-center justify-center flex flex-col text-balance">
 						<h3 className="text-neutral-400 text-sm">
-							You do not have any applications installed
+							{t("installed.empty.title")}
 						</h3>
 						<Link
 							to="/home"
 							className="text-sm text-neutral-200 mt-2 hover:underline underline-offset-4"
 						>
-							Install one now
+							{t("installed.empty.action")}
 						</Link>
 					</div>
 				</div>

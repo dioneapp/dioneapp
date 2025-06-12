@@ -19,6 +19,7 @@ import Loading from "./pages/loading";
 import NoAccess from "./pages/no-access";
 import Report from "./pages/report";
 import Settings from "./pages/settings";
+import { TranslationProvider } from "./translations/translationContext";
 
 // transition animation config
 const pageTransition = {
@@ -136,28 +137,30 @@ function App() {
 
 	const PageComponent = getPage();
 	return (
-		<div className="h-screen w-screen overflow-hidden" id="main">
-			<Titlebar />
-			<div className="flex h-[calc(100%)]">
-				{pathname !== "/first-time" && pathname !== "/no_access" && <Sidebar />}
-				<div
-					className="flex-1 overflow-x-hidden"
-					id={pathname === "/settings" ? "settings" : "view"}
-				>
-					<AnimatePresence mode="wait">
-						<motion.div
-							key={pathname}
-							{...pageTransition}
-							className="w-full h-full"
-						>
-							<ErrorBoundary>
-								<PageComponent />
-							</ErrorBoundary>
-						</motion.div>
-					</AnimatePresence>
+		<TranslationProvider>
+			<div className="h-screen w-screen overflow-hidden" id="main">
+				<Titlebar />
+				<div className="flex h-[calc(100%)]">
+					{pathname !== "/first-time" && pathname !== "/no_access" && <Sidebar />}
+					<div
+						className="flex-1 overflow-x-hidden"
+						id={pathname === "/settings" ? "settings" : "view"}
+					>
+						<AnimatePresence mode="wait">
+							<motion.div
+								key={pathname}
+								{...pageTransition}
+								className="w-full h-full"
+							>
+								<ErrorBoundary>
+									<PageComponent />
+								</ErrorBoundary>
+							</motion.div>
+						</AnimatePresence>
+					</div>
 				</div>
 			</div>
-		</div>
+		</TranslationProvider>
 	);
 }
 
