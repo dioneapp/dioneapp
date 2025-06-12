@@ -69,3 +69,8 @@ export const updateConfig = (newSettings: Partial<AppConfig>) => {
 
 	writeConfig(updatedConfig);
 };
+
+export const deleteConfig = () => {
+	const path = getConfigPath();
+	fs.unlinkSync(path);
+};

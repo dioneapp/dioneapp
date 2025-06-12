@@ -96,6 +96,7 @@ function App() {
 		window.electron.ipcRenderer.invoke("check-first-launch").then((result) => {
 			console.log("is first launch?", result);
 			setIsFirstLaunch(result);
+			localStorage.setItem("firstLaunch", result.toString());
 			checkSession();
 			setIsLoading(false);
 		});

@@ -5,8 +5,14 @@ import { openLink } from "@renderer/utils/openLink";
 import { useToast } from "@renderer/utils/useToast";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import ExecuteSound from "@renderer/components/first-time/sound";
+import { motion } from "framer-motion";
 
 export default function FirstTime() {
+	const firstLaunch = localStorage.getItem("firstLaunch");
+
+	console.log("firstLaunch", firstLaunch);
+
 	// toast stuff
 	const { addToast } = useToast();
 	const showToast = (
@@ -126,7 +132,7 @@ export default function FirstTime() {
 
 	// transition classes for elements
 	const getContainerClasses = (levelNumber) => {
-		return `w-full h-full flex flex-col items-center justify-center transition-all duration-500 ease-in-out ${
+		return `w-full h-full flex flex-col items-center justify-center ${
 			level === levelNumber && !isTransitioning
 				? "opacity-100 translate-y-0"
 				: prevLevel === levelNumber && isTransitioning
@@ -139,9 +145,14 @@ export default function FirstTime() {
 		<div className="absolute w-screen h-screen inset-0 z-50 bg-[#080808]/5 overflow-hidden">
 			{/* background stuff */}
 			<Background />
-
+			<ExecuteSound firstLaunch={"true"} />
+			<motion.div 
+			initial={{ opacity: 0 }}
+			animate={{ opacity: 1 }}
+			transition={{ duration: 2 }}
+			className="absolute blur-3xl bg-[#BCB1E7]/5 h-full w-full"/>
 			{/* 1 - welcome */}
-			<div className={getContainerClasses(1)}>
+			<motion.div initial={{ opacity: 0, y: 200, filter: "blur(30px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: 0.8, delay: 4 }} className={getContainerClasses(1)}>
 				<div className="flex flex-col gap-4 justify-center items-center transition-all duration-500">
 					<Icon name="Dio" className="w-20 h-20 mb-2" />
 					<h1 className="text-6xl font-semibold">
@@ -155,7 +166,7 @@ export default function FirstTime() {
 						account to get started.
 					</h2>
 				</div>
-				<div className="mt-4 flex flex-col gap-4">
+				<motion.div initial={{ opacity: 0, filter: "blur(20px)", y: 100 }} animate={{ opacity: 1, filter: "blur(0px)", y: 0 }} transition={{ duration: 0.5, delay: 5 }} className="mt-4 flex flex-col gap-4">
 					<button
 						type="button"
 						className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
@@ -176,8 +187,8 @@ export default function FirstTime() {
 						</span>
 						<span>Copy Link</span>
 					</button>
-				</div>
-			</div>
+				</motion.div>
+			</motion.div>
 
 			{/* 2 - logging in */}
 			<div className={getContainerClasses(2)}>

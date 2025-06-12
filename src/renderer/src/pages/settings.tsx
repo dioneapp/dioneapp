@@ -168,6 +168,16 @@ export default function Settings() {
 		navigate("/report", { state: { error } });
 	};
 
+	async function handleResetSettings() {
+		await window.electron.ipcRenderer.invoke("delete-config");
+		localStorage.removeItem("session");
+		localStorage.removeItem("user");
+		localStorage.removeItem("dbUser");
+		// terminate session
+		window.electron.ipcRenderer.send("end-session");
+		navigate("/first-time");
+	}
+
 	return (
 		<div className="min-h-screen bg-background pt-4">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -431,10 +441,10 @@ export default function Settings() {
 									</div>
 									{/*  */}
 									<div className="flex flex-col">
-										{/* Logs */}
+										{/* Other */}
 										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											Logs
+											Other
 										</h2>
 										<div className="flex flex-col gap-2">
 											<div className="flex justify-between w-full items-center h-full space-y-2">
@@ -485,6 +495,23 @@ export default function Settings() {
 													type="button"
 												>
 													Send Report
+												</button>
+											</div>
+											<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
+														Show onboarding
+													</label>
+													<p className="text-xs text-neutral-400">
+														Reset Dione to its initial state and show again the onboarding for reconfiguration
+													</p>
+												</div>
+												<button
+													onClick={() => handleResetSettings()}
+													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+													type="button"
+												>
+													Reset
 												</button>
 											</div>
 										</div>

@@ -15,7 +15,7 @@ import { Notification } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
 import icon from "../../resources/icon.ico?asset";
-import { defaultConfig, readConfig, writeConfig } from "./config";
+import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
 import {
 	destroyPresence,
 	initializeDiscordPresence,
@@ -227,6 +227,10 @@ app.whenReady().then(async () => {
 		}
 		config = readConfig();
 		return false;
+	});
+
+	ipcMain.handle("delete-config", () => {
+		deleteConfig();
 	});
 
 	ipcMain.on("socket-ready", () => {
