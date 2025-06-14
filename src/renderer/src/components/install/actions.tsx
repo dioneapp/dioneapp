@@ -54,7 +54,7 @@ export default function ActionsComponent({
 							stiffness: 100,
 							damping: 20,
 						}}
-						className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-auto max-w-xl w-full bg-[#080808]"
+						className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-auto max-w-xl w-full bg-[#080808]/60 backdrop-filter backdrop-blur-sm"
 					>
 						{/* background effects */}
 						<div className="absolute top-0 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-50" />
