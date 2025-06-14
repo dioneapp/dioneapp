@@ -96,6 +96,7 @@ export const es = {
 				uninstalled: "%s desinstalado correctamente.",
 				logsCopied: "Registros copiados al portapapeles correctamente.",
 				depsInstalled: "Dependencias instaladas correctamente.",
+				shared: "Enlace de descarga copiado al portapapeles!",
 			},
 			error: {
 				download: "Error al iniciar la descarga: %s",

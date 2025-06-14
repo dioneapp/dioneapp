@@ -341,6 +341,7 @@ router.get("/events", async (req, res) => {
 	const stats = {
 		total: events.length,
 		sessions: events.filter((e) => e.event === "session"),
+		shared: events.filter((e) => e.event === "share"),
 	};
 
 	logger.info(`Stats generated for user ${user}`);
@@ -348,7 +349,8 @@ router.get("/events", async (req, res) => {
 });
 
 router.post("/events", async (req, res) => {
-	const update = req.headers.update;
+	const update = req.headers.update || null;
+	const updateData = req.headers.updatedata || null;
 
 	if (!supabase) {
 		logger.error("Supabase client is not initialized");
@@ -376,6 +378,36 @@ router.post("/events", async (req, res) => {
 		return;
 	}
 
+	if (updateData) {
+		const updateFields = {
+			...(req.headers.id && { id: req.headers.id }),
+			...(req.headers.user && { user_id: req.headers.user }),
+			...(req.headers.type && { type: req.headers.type }),
+			...(req.headers.event && { event: req.headers.event }),
+			...(req.headers.app_id && { app_id: req.headers.app_id }),
+			...(req.headers.app_name && { app_name: req.headers.app_name }),
+			...(req.headers.started_at && { started_at: req.headers.started_at }),
+			...(req.headers.finished_at && { finished_at: req.headers.finished_at }),
+		};
+		const { data, error } = await supabase
+			.from("events")
+			.update(updateFields)
+			.eq("id", req.headers.id)
+			.select()
+			.single();
+		if (error) {
+			logger.error(
+				`Unable to update the event: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+			);
+			res.send(error).status(500);
+		} else {
+			console.log('data', data)
+			logger.info(`Event updated successfully: ${data.id}`);
+			res.send(data).status(200);
+		}
+		return;
+	}
+
 	const { data, error } = await supabase
 		.from("events")
 		.insert({
@@ -383,6 +415,8 @@ router.post("/events", async (req, res) => {
 			user_id: req.headers.user,
 			type: req.headers.type,
 			event: req.headers.event,
+			app_id: req.headers.app_id || null,
+			app_name: req.headers.app_name || null,
 			started_at: req.headers.started_at || null,
 			finished_at: req.headers.finished_at || null,
 		})

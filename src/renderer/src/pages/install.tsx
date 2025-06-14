@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
+import sendEvent from "@renderer/utils/events";
+import { useAuthContext } from "../components/contexts/AuthContext";
 
 export default function Install({ id }: { id?: string }) {
 	const {
@@ -51,10 +53,16 @@ export default function Install({ id }: { id?: string }) {
 	const [inUseDeps, setInUseDeps] = useState<any>([]);
 	// config
 	const [config, setConfig] = useState<any>(null);
+	// user
+	const { user } = useAuthContext();
+	const [saved, setSaved] = useState(false);
+	const savedApps = JSON.parse(localStorage.getItem("savedApps") || "[]");
 
 	// fetch script data
 	useEffect(() => {
 		async function getData() {
+			if (!id) return;
+			if (data) return;
 			try {
 				const port = await getCurrentPort();
 				const response = await fetch(
@@ -457,6 +465,61 @@ export default function Install({ id }: { id?: string }) {
 
 	const { t } = useTranslation();
 
+	async function handleShare() {
+		if (user.id && user !== undefined && user !== null) {
+			await sendEvent({
+				user: user.id,
+				type: "event",
+				event: "share",
+				app_id: data?.id,
+				app_name: data?.name,
+			});
+		}
+		navigator.clipboard.writeText(`dione://download=${data?.id}`);
+		showToast("success", t("toast.install.success.shared"));
+	}
+
+	async function handleSave() {
+		if (!saved) {
+			if (!user.id) return;
+			if (user.id && user !== undefined && user !== null) {
+				const result = await sendEvent({
+					user: user.id,
+					type: "event",
+					event: "save_app",
+					app_id: data?.id,
+					app_name: data?.name,
+				});
+
+				if (result === "error") return;
+                const newSaved = { eventId: result.id, appId: data?.id };
+                localStorage.setItem("savedApps", JSON.stringify([...savedApps, newSaved]));
+				setSaved(true);
+			}
+		} else {
+			if (!user.id) return;
+			if (user.id && user !== undefined && user !== null) {
+				const eventId = savedApps.find((app) => app.appId === data?.id)?.eventId;
+				console.log('eventId', eventId);
+				if (!eventId) return;
+				const result = await sendEvent({
+					id: eventId,
+					event: "unsave_app",
+					updatedata: "true"
+				});
+				if (result === "error") return;
+				localStorage.setItem("savedApps", JSON.stringify(savedApps.filter((app) => app.appId !== data?.id)));
+				setSaved(false);
+			}
+		}
+	}
+
+	useEffect(() => {
+		if (savedApps.find((app) => app.appId === data?.id)) {
+			setSaved(true);
+		}
+	}, [savedApps]);
+
 	return (
 		<>
 			{deleteStatus !== "" && (
@@ -543,6 +606,7 @@ export default function Install({ id }: { id?: string }) {
 			)}
 			<div className="relative w-full h-full overflow-auto">
 				{show === "actions" && (
+					<>
 					<div className="p-12 z-50 absolute">
 						<button
 							type="button"
@@ -553,6 +617,27 @@ export default function Install({ id }: { id?: string }) {
 							<span className="font-semibold">{t("common.back")}</span>
 						</button>
 					</div>
+					<div className="p-12 z-50 absolute right-0">
+					{user && (
+					<div className="flex items-center gap-2">
+						<button
+							type="button"
+							onClick={() => handleShare()}
+							className="flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 p-2 text-center cursor-pointer"
+						>
+							<Icon name="Share" className="h-4 w-4" />
+						</button>
+						<button
+							type="button"
+							onClick={() => handleSave()}
+							className={`flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-red-400/40 transition-colors duration-400 rounded-full text-neutral-400 p-2 text-center cursor-pointer ${saved ? "bg-red-400/20" : ""}`}
+						>
+							<Icon name="Save" className="h-4 w-4" />
+						</button>
+					</div>
+					)}
+					</div>
+					</>
 				)}
 				<div className="absolute inset-0 flex items-center justify-center p-4">
 					<div className="w-full h-full flex justify-center items-center">

@@ -70,8 +70,8 @@ export const en = {
 				title: "Sessions",
 				subtitle: "in last 7 days",
 			},
-			events: {
-				title: "Events",
+			shared: {
+				title: "Shared",
 				subtitle: "in last 7 days",
 			},
 			streak: {
@@ -96,6 +96,7 @@ export const en = {
 				uninstalled: "%s uninstalled successfully.",
 				logsCopied: "Logs successfully copied to clipboard.",
 				depsInstalled: "Dependencies installed successfully.",
+				shared: "Download link copied to clipboard!",
 			},
 			error: {
 				download: "Error initiating download: %s",
