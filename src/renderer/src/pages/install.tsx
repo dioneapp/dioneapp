@@ -428,15 +428,28 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	async function onFinishInstallDeps() {
-		setMissingDependencies(null); // clear missing deps
+		// remove app from installed apps
+		setInstalledApps((prevApps) =>
+			prevApps.filter((app) => app !== data.name),
+		);
+		setApps((prevApps) => prevApps.filter((app) => app?.name !== data.name));
+		// restart backend
+		await window.electron.ipcRenderer.invoke("restart-backend"); 
+		// clear missing deps
+		setMissingDependencies(null); 
+		// show success toast
 		showToast("success", t("toast.install.success.depsInstalled"));
-		setLogs([]); // clear logs
-		setError(false); // clear error
+		// clear logs
+		setLogs([]); 
+		// clear errors
+		setError(false); 
+		// show logs
 		setShow("logs");
 		// setIsServerRunning(false);
-		showToast("default", t("toast.install.retrying").replace("%s", data.name));
-		setupSocket();
+		showToast("default", t("toast.install.retrying").replace("%s", data.name))
 		await handleStop();
+		// setup socket again
+		setupSocket();
 		await handleDownload();
 	}
 

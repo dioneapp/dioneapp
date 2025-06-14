@@ -456,6 +456,21 @@ app.whenReady().then(async () => {
 	ipcMain.handle('secure-token:delete', () => {
 		return deleteToken();
 	});
+
+	// restart backend
+	ipcMain.handle("restart-backend", async () => {
+		try {
+			logger.info("Restarting backend...");
+			await stopServer();
+			const port = await startServer();
+			logger.info(`Backend restarted successfully on port ${port}`);
+			return port;
+		} catch (error) {
+			logger.error("Error restarting backend:", error);
+			throw error;
+		}
+	});
+	
 });
 
 // Quit the application when all windows are closed, except on macOS.
