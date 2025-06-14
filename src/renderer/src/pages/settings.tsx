@@ -83,7 +83,6 @@ export default function Settings() {
 	const [versions] = useState(window.electron.process.versions);
 	const [config, setConfig] = useState<any | null>(null);
 	const { setLanguage, t } = useTranslation();
-	// const logged = JSON.parse(localStorage.getItem("user") || "{}");
 	const navigate = useNavigate();
 
 	useEffect(() => {

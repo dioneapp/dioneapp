@@ -169,12 +169,9 @@ export default function FeaturedCarousel() {
 			<div className="relative h-70">
 				<AnimatePresence initial={false} mode="wait">
 					{scripts.length > 0 && activeIndex ? (
-						<motion.div
+						<div
 							key={activeIndex}
 							className="absolute w-full h-full"
-							initial={{ opacity: 1 }}
-							animate={{ opacity: 1 }}
-							exit={{ opacity: 1 }}
 						>
 							<Link
 								to={`/install/${activeIndex}`}
@@ -182,16 +179,13 @@ export default function FeaturedCarousel() {
 							>
 								{/* background */}
 								<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
-								<motion.img
+								<img
+									alt={scripts.find((script) => script.id === activeIndex)?.name}
 									style={{ background: gradients[activeIndex] || "#000000E6" }}
-									className="absolute inset-0 w-full h-full scale-150"
-									initial={{ opacity: 0 }}
-									animate={{ opacity: 0.2 }}
-									transition={{ duration: 0.4 }}
-									exit={{ opacity: 0 }}
+									className="absolute inset-0 w-full h-full scale-150 opacity-20"
 								/>
 								{/* content */}
-								<motion.div className="z-50 absolute inset-0 p-10 transition-all duration-500 group-hover:bg-black/20">
+								<div className="z-50 absolute inset-0 p-10 transition-all duration-500 group-hover:bg-black/20">
 									<div className="flex w-full h-full flex-col justify-start items-center">
 										{/* logo */}
 										<div className="w-full h-full flex justify-end">
@@ -240,9 +234,9 @@ export default function FeaturedCarousel() {
 											/>
 										))}
 									</div>
-								</motion.div>
+								</div>
 							</Link>
-						</motion.div>
+						</div>
 					) : (
 						<CarrouselSkeleton />
 					)}

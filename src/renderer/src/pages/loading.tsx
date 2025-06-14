@@ -13,7 +13,7 @@ export default function Loading() {
 				<div className="flex flex-col items-center justify-center h-full w-full">
 					<Icon name="Icon" className="h-80 w-80" />
 					<div className="loader w-40">
-						<div className="loaderBar"></div>
+						<div className="loaderBar" />
 					</div>
 				</div>
 			</div>

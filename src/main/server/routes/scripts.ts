@@ -32,7 +32,6 @@ export function createScriptRouter(io: Server) {
 		const { name } = req.params;
 		try {
 			const isInstalled = await getInstalledScript(name);
-			console.log("is installed", isInstalled);
 			res.send(isInstalled);
 		} catch (error: any) {
 			logger.error(
