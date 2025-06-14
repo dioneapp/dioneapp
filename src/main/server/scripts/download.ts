@@ -21,12 +21,12 @@ export async function getScripts(id: string, io: Server) {
 		return;
 	}
 	try {
-		const { data, error } = await supabase
-			.from("scripts")
-			.select("*")
-			.eq("id", id)
-			.single<ScriptsData>();
-		if (!data || error) {
+		const response = await fetch(
+			`https://api.getdione.app/v1/scripts?id=${id}&limit=1`,
+		);
+		const json = await response.json();
+		const data = json[0];
+		if (!data || data.length === 0) {
 			io.emit("installUpdate", {
 				type: "log",
 				content: "ERROR: Script not found",

@@ -247,7 +247,7 @@ router.get("/search/name/:name", async (req, res) => {
 			.trim();
 		if (sanitizedName) {
 			const response = await fetch(
-				`https://api.getdione.app/v1/scripts?name=${sanitizedName}`,
+				`https://api.getdione.app/v1/scripts?q=${sanitizedName}`,
 			);
 			const data = await response.json();
 			if (response.status !== 200) {
