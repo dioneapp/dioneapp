@@ -4,14 +4,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { openLink } from "../../utils/openLink";
+import { useAuthContext } from "../contexts/AuthContext";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
 import QuickLaunch from "./quick-launch";
-import { useAuthContext } from "../contexts/AuthContext";
 
 export default function Sidebar() {
 	const { t } = useTranslation();
-	const { user, logout, loading } = useAuthContext();	
+	const { user, logout, loading } = useAuthContext();
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
 	const { isServerRunning } = useAppContext();
@@ -239,28 +239,26 @@ export default function Sidebar() {
 						<div className="flex gap-2 items-center justify-end w-full h-full">
 							{user ? (
 								<>
-								{loading ? (
-									<div
-									className="w-9.5 h-9.5 border border-white/10 rounded-full bg-white/5 animate-pulse flex items-center justify-center relative"
-								>
-									<div className="w-5 h-5 bg-white/20 rounded" />
-								</div>
-								) : (
-									<button
-									type="button"
-									className="w-9.5 h-9.5 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer relative"
-									onClick={logout}
-									onMouseEnter={() => setHoveredTooltip("logout")}
-									onMouseLeave={() => setHoveredTooltip(null)}
-								>
-									<Icon name="Logout" className="h-5 w-5" />
-									{hoveredTooltip === "logout" && (
-										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
-											{t("sidebar.tooltips.logout")}
+									{loading ? (
+										<div className="w-9.5 h-9.5 border border-white/10 rounded-full bg-white/5 animate-pulse flex items-center justify-center relative">
+											<div className="w-5 h-5 bg-white/20 rounded" />
 										</div>
+									) : (
+										<button
+											type="button"
+											className="w-9.5 h-9.5 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer relative"
+											onClick={logout}
+											onMouseEnter={() => setHoveredTooltip("logout")}
+											onMouseLeave={() => setHoveredTooltip(null)}
+										>
+											<Icon name="Logout" className="h-5 w-5" />
+											{hoveredTooltip === "logout" && (
+												<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
+													{t("sidebar.tooltips.logout")}
+												</div>
+											)}
+										</button>
 									)}
-								</button>
-								)}
 								</>
 							) : (
 								<button

@@ -1,8 +1,8 @@
 import Icon from "@renderer/components/icons/icon";
 import { useEffect, useState } from "react";
+import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
-import { useAuthContext } from "../components/contexts/AuthContext";
 
 const SkeletonCard = ({ className = "" }) => (
 	<div className={`bg-white/5 rounded-xl p-8 animate-pulse ${className}`}>
