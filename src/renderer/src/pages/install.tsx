@@ -62,7 +62,6 @@ export default function Install({ id }: { id?: string }) {
 	useEffect(() => {
 		async function getData() {
 			if (!id) return;
-			if (data) return;
 			try {
 				const port = await getCurrentPort();
 				const response = await fetch(
