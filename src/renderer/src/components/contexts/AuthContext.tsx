@@ -1,7 +1,11 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
+import {
+	deleteRefreshToken,
+	getRefreshToken,
+	saveRefreshToken,
+} from "@renderer/utils/secure-tokens";
 import { createContext, useContext, useEffect, useState } from "react";
-import { deleteRefreshToken, getRefreshToken, saveRefreshToken } from "@renderer/utils/secure-tokens";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface AuthContextType {
 	user: any;
@@ -18,10 +22,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthContextProvider({ children }: { children: React.ReactNode }) {
+export function AuthContextProvider({
+	children,
+}: { children: React.ReactNode }) {
 	const [user, setUser] = useState<any>(null);
-	const [session_expiresAt, setSession_expiresAt] = useState<number | null>(null);
-	const [refreshSessionToken, setRefreshSessionToken] = useState<string | null>(null);
+	const [session_expiresAt, setSession_expiresAt] = useState<number | null>(
+		null,
+	);
+	const [refreshSessionToken, setRefreshSessionToken] = useState<string | null>(
+		null,
+	);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
 	const { pathname } = useLocation();
@@ -40,7 +50,7 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
 		(async () => {
 			const storedToken = await getRefreshToken();
 			if (!storedToken) return;
-	
+
 			// refresh token if session expires
 			if (!session_expiresAt || session_expiresAt * 1000 < Date.now()) {
 				await refreshSession(storedToken);
@@ -50,7 +60,6 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
 			}
 		})();
 	}, []);
-	
 
 	async function refreshSession(token: string) {
 		const port = await getCurrentPort();
@@ -65,7 +74,9 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
 			setSession_expiresAt(data.session.expires_at);
 			setRefreshSessionToken(data.session.refresh_token);
 			saveRefreshToken(data.session.refresh_token);
-			const response = await fetch(`http://localhost:${port}/db/user/${data.session.user.id}`);
+			const response = await fetch(
+				`http://localhost:${port}/db/user/${data.session.user.id}`,
+			);
 			const userData = await response.json();
 			setUser(userData[0]);
 			setLoading(false);
@@ -112,7 +123,20 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
 	}
 
 	return (
-		<AuthContext.Provider value={{ user, setUser, session_expiresAt, setSession_expiresAt, refreshSessionToken, setRefreshSessionToken, logout, checkSession, checkAccess, loading }}>
+		<AuthContext.Provider
+			value={{
+				user,
+				setUser,
+				session_expiresAt,
+				setSession_expiresAt,
+				refreshSessionToken,
+				setRefreshSessionToken,
+				logout,
+				checkSession,
+				checkAccess,
+				loading,
+			}}
+		>
 			{children}
 		</AuthContext.Provider>
 	);
@@ -121,7 +145,9 @@ export function AuthContextProvider({ children }: { children: React.ReactNode })
 export function useAuthContext() {
 	const context = useContext(AuthContext);
 	if (!context) {
-		throw new Error("useAuthContext must be used within an AuthContextProvider");
+		throw new Error(
+			"useAuthContext must be used within an AuthContextProvider",
+		);
 	}
 	return context;
 }

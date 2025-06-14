@@ -169,10 +169,7 @@ export default function FeaturedCarousel() {
 			<div className="relative h-70">
 				<AnimatePresence initial={false} mode="wait">
 					{scripts.length > 0 && activeIndex ? (
-						<div
-							key={activeIndex}
-							className="absolute w-full h-full"
-						>
+						<div key={activeIndex} className="absolute w-full h-full">
 							<Link
 								to={`/install/${activeIndex}`}
 								className="w-full h-72 flex transition-all duration-200 cursor-pointer rounded-xl relative overflow-hidden group border border-white/5 "
@@ -180,7 +177,9 @@ export default function FeaturedCarousel() {
 								{/* background */}
 								<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
 								<img
-									alt={scripts.find((script) => script.id === activeIndex)?.name}
+									alt={
+										scripts.find((script) => script.id === activeIndex)?.name
+									}
 									style={{ background: gradients[activeIndex] || "#000000E6" }}
 									className="absolute inset-0 w-full h-full scale-150 opacity-20"
 								/>
