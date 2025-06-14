@@ -81,7 +81,7 @@ export default function FeaturedCarousel() {
 
 		await Promise.all(
 			scripts.map(async (script) => {
-				if (script.banner_url) {				
+				if (script.banner_url) {
 					return;
 				}
 				if (script.logo_url) {
@@ -180,8 +180,13 @@ export default function FeaturedCarousel() {
 								{/* background */}
 								<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
 								<img
-									alt={scripts.find((script) => script.id === activeIndex)?.name}
-									src={scripts.find((script) => script.id === activeIndex)?.banner_url || ""}
+									alt={
+										scripts.find((script) => script.id === activeIndex)?.name
+									}
+									src={
+										scripts.find((script) => script.id === activeIndex)
+											?.banner_url || ""
+									}
 									style={{ background: gradients[activeIndex] || "#000000E6" }}
 									className={`absolute inset-0 w-full h-full bg-black/5 ${scripts.find((script) => script.id === activeIndex)?.banner_url ? "opacity-50" : "opacity-20 scale-150"}`}
 								/>
