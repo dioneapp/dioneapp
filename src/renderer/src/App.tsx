@@ -1,10 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import {
-	useLocation,
-	useNavigate,
-	useParams,
-} from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useAuthContext } from "./components/contexts/AuthContext";
 import { ErrorBoundary } from "./components/layout/error-handler";
 import Sidebar from "./components/layout/sidebar";
 import Titlebar from "./components/layout/titlebar";
@@ -19,7 +16,6 @@ import NoAccess from "./pages/no-access";
 import Report from "./pages/report";
 import Settings from "./pages/settings";
 import { TranslationProvider } from "./translations/translationContext";
-import { useAuthContext } from "./components/contexts/AuthContext";
 
 // transition animation config
 const pageTransition = {

@@ -401,7 +401,7 @@ router.post("/events", async (req, res) => {
 			);
 			res.send(error).status(500);
 		} else {
-			console.log('data', data)
+			console.log("data", data);
 			logger.info(`Event updated successfully: ${data.id}`);
 			res.send(data).status(200);
 		}

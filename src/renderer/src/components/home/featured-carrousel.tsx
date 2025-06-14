@@ -172,10 +172,7 @@ export default function FeaturedCarousel() {
 			<div className="relative h-70">
 				<AnimatePresence initial={false} mode="wait">
 					{scripts.length > 0 && activeIndex ? (
-						<div
-							key={activeIndex}
-							className="absolute w-full h-full"
-						>
+						<div key={activeIndex} className="absolute w-full h-full">
 							<Link
 								to={`/install/${activeIndex}`}
 								className="w-full h-72 flex transition-all duration-200 cursor-pointer rounded-xl relative overflow-hidden group border border-white/5 "
