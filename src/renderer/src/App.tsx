@@ -4,7 +4,6 @@ import {
 	useLocation,
 	useNavigate,
 	useParams,
-	useRouteError,
 } from "react-router-dom";
 import { ErrorBoundary } from "./components/layout/error-handler";
 import Sidebar from "./components/layout/sidebar";

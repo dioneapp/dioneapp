@@ -8,13 +8,24 @@ import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies";
 import executeInstallation from "./execute";
 
+interface ScriptsData {
+	id: string;
+	name: string;
+	script_url: string;
+	tags: string[];
+}
+
 export async function getScripts(id: string, io: Server) {
+	if (!supabase) {
+		logger.error("Supabase client is not initialized");
+		return;
+	}
 	try {
 		const { data, error } = await supabase
 			.from("scripts")
 			.select("*")
 			.eq("id", id)
-			.single();
+			.single<ScriptsData>();
 		if (!data || error) {
 			io.emit("installUpdate", {
 				type: "log",

@@ -8,6 +8,11 @@ router.use(express.json());
 router.get("/type/:name/:type", async (req, res) => {
 	const name = req.params.name;
 	const type = req.params.type;
+
+	if (!supabase) {
+		logger.error("Supabase client is not initialized");
+		return res.status(500).json({ error: "Database connection not available" });
+	}
 	try {
 		const { data, error } = await supabase
 			.from("scripts")
@@ -33,6 +38,11 @@ router.get("/type/:name/:type", async (req, res) => {
 
 router.get("/name/:name", async (req, res) => {
 	const { name } = req.params;
+
+	if (!supabase) {
+		logger.error("Supabase client is not initialized");
+		return res.status(500).json({ error: "Database connection not available" });
+	}
 	try {
 		const { data, error } = await supabase
 			.from("scripts")
