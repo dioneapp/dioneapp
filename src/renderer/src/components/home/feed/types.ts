@@ -6,4 +6,5 @@ export interface Script {
 	likes: number;
 	tags: string[];
 	downloads: number;
+	banner_url?: string;
 }
