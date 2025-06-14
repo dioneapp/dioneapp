@@ -1,4 +1,4 @@
-import type http from "http";
+import type http from "node:http";
 import { ipcMain } from "electron";
 import { Server } from "socket.io";
 import logger from "../server/utils/logger";

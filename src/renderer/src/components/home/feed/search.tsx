@@ -27,7 +27,7 @@ export default function SearchBar() {
 						placeholder={t("search.placeholder")}
 						className="w-full h-10 text-sm text-white 
                         bg-gradient-to-r from-[#BCB1E7]/5 to-[#080808]/10
-                        border border-white/5 hover:border-white/20 rounded-lg pl-4 pr-4 transition-colors duration-200 hover:shadow-lg
+                        border border-white/5 hover:border-white/20 rounded-lg px-4 transition-colors duration-200 hover:shadow-lg
                         placeholder:text-neutral-400 
                         focus:outline-none focus:border-white/20
                         active:border-white/20 active:outline-none"
@@ -41,7 +41,7 @@ export default function SearchBar() {
 					<button
 						onClick={() => handleType("audio")}
 						type="button"
-						className={`w-full h-full rounded-full border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "audio" ? "bg-white/5" : ""}`}
+						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "audio" ? "bg-white/5" : ""}`}
 					>
 						<Icon name="Audio" className="w-4 h-4" />
 						{t("search.filters.audio")}
@@ -49,7 +49,7 @@ export default function SearchBar() {
 					<button
 						onClick={() => handleType("image")}
 						type="button"
-						className={`w-full h-full rounded-full border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "image" ? "bg-white/5" : ""}`}
+						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "image" ? "bg-white/5" : ""}`}
 					>
 						<Icon name="Image" className="w-4 h-4" />
 						{t("search.filters.image")}
@@ -57,7 +57,7 @@ export default function SearchBar() {
 					<button
 						onClick={() => handleType("video")}
 						type="button"
-						className={`w-full h-full rounded-full border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "video" ? "bg-white/5" : ""}`}
+						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "video" ? "bg-white/5" : ""}`}
 					>
 						<Icon name="Video" className="w-4 h-4" />
 						{t("search.filters.video")}
@@ -65,7 +65,7 @@ export default function SearchBar() {
 					<button
 						onClick={() => handleType("chat")}
 						type="button"
-						className={`w-full h-full rounded-full border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "chat" ? "bg-white/5" : ""}`}
+						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "chat" ? "bg-white/5" : ""}`}
 					>
 						<Icon name="Chat" className="w-4 h-4" />
 						{t("search.filters.chat")}
