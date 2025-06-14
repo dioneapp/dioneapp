@@ -24,6 +24,7 @@ import {
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
+import { deleteToken, getToken, saveToken } from "./security/secure-tokens";
 
 // load env variables
 dotenv.config();
@@ -441,6 +442,19 @@ app.whenReady().then(async () => {
 	// Set up IPC handlers
 	ipcMain.handle("get-hwid", () => {
 		return machineIdSync(true); // true for hashed version
+	});
+
+	// handle secure token
+	ipcMain.handle('secure-token:save', (_event, token: string) => {
+		return saveToken(token);
+	});
+	
+	ipcMain.handle('secure-token:get', () => {
+		return getToken();
+	});
+	
+	ipcMain.handle('secure-token:delete', () => {
+		return deleteToken();
 	});
 });
 

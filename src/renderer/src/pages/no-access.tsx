@@ -1,30 +1,27 @@
 import { openLink } from "@renderer/utils/openLink";
 import { useEffect } from "react";
 import { useTranslation } from "../translations/translationContext";
+import { useAuthContext } from "@renderer/components/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function NoAccess() {
 	const { t } = useTranslation();
+	const { user, logout } = useAuthContext();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		function checkAccess() {
-			const user = localStorage.getItem("dbUser");
 			if (user) {
-				const dbUser = JSON.parse(user);
-				if (dbUser[0].tester === true) {
-					window.location.href = "/";
+				if (user.tester === true) {
+					navigate("/");
 				}
 			} else {
-				window.location.href = "/first-time";
+				navigate("/first-time");
 			}
 		}
 
 		checkAccess();
 	}, []);
-
-	function logout() {
-		localStorage.clear();
-		window.location.reload();
-	}
 
 	return (
 		<section className="absolute w-screen h-screen inset-0 z-50 bg-[#080808] overflow-hidden">

@@ -19,6 +19,7 @@ import NoAccess from "./pages/no-access";
 import Report from "./pages/report";
 import Settings from "./pages/settings";
 import { TranslationProvider } from "./translations/translationContext";
+import { useAuthContext } from "./components/contexts/AuthContext";
 
 // transition animation config
 const pageTransition = {
@@ -29,13 +30,11 @@ const pageTransition = {
 };
 
 function App() {
-	const { loginFinished } = useParams();
+	const { user, checkSession } = useAuthContext();
 	const location = useLocation();
 	const { pathname } = location;
 	const [_isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 	const [_isLoading, setIsLoading] = useState(true);
-	const [isLogged, setIsLogged] = useState<boolean>(false);
-	const [haveAccess, setHaveAccess] = useState<boolean>(false);
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -52,53 +51,14 @@ function App() {
 	}, [navigate]);
 
 	useEffect(() => {
-		if (loginFinished) {
-			setIsLogged(true);
-		}
-	}, [loginFinished]);
-
-	async function checkSession() {
-		if (isLogged) checkAccess();
-		const session = localStorage.getItem("session");
-		if (session) {
-			console.log("User is logged");
-			setIsLogged(true);
-			// if have a session, check access
-			checkAccess();
-		} else {
-			console.log("User is not logged");
-			setIsLogged(false);
-			if (pathname !== "/first-time") {
-				navigate("/first-time");
-			}
-		}
-	}
-
-	async function checkAccess() {
-		if (haveAccess) return;
-		const dbUser = await localStorage.getItem("dbUser");
-		if (dbUser) {
-			const dbUserObj = JSON.parse(dbUser);
-			if (dbUserObj[0].tester === true) {
-				console.log("User its a tester");
-				setHaveAccess(true);
-			} else {
-				console.log("User is not a tester");
-				setHaveAccess(false);
-				if (pathname !== "/no_access") {
-					navigate("/no_access");
-				}
-			}
-		}
-	}
-
-	useEffect(() => {
 		window.electron.ipcRenderer.invoke("check-first-launch").then((result) => {
 			console.log("is first launch?", result);
 			setIsFirstLaunch(result);
 			localStorage.setItem("firstLaunch", result.toString());
-			checkSession();
 			setIsLoading(false);
+			if (result === true) {
+				checkSession();
+			}
 		});
 
 		// start session
@@ -106,7 +66,6 @@ function App() {
 	}, []);
 
 	async function handleStartSession() {
-		const user = JSON.parse(localStorage.getItem("user") || "{}");
 		if (!user || user.id === "") return;
 		window.electron.ipcRenderer.send("start-session", {
 			user: user,

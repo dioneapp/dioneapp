@@ -2,6 +2,7 @@ import Icon from "@renderer/components/icons/icon";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
+import { useAuthContext } from "../components/contexts/AuthContext";
 
 const SkeletonCard = ({ className = "" }) => (
 	<div className={`bg-white/5 rounded-xl p-8 animate-pulse ${className}`}>
@@ -13,6 +14,7 @@ const SkeletonCard = ({ className = "" }) => (
 
 export default function Account() {
 	const { t } = useTranslation();
+	const { user } = useAuthContext();
 	const [data, setData] = useState<any>(null);
 	const [hoursInApp, setHoursInApp] = useState(0);
 	const [consecutiveDays, setConsecutiveDays] = useState(0);
@@ -22,7 +24,6 @@ export default function Account() {
 	useEffect(() => {
 		async function getData() {
 			const port = await getCurrentPort();
-			const user = JSON.parse(localStorage.getItem("user") || "{}");
 			if (!user) return;
 			const response = await fetch(`http://localhost:${port}/db/events`, {
 				method: "GET",
@@ -32,7 +33,6 @@ export default function Account() {
 			});
 			if (response.ok) {
 				const data = await response.json();
-				console.log(data);
 				setData(data);
 				getHoursInApp(data);
 				getConsecutiveDays(data);
@@ -158,16 +158,16 @@ export default function Account() {
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
 										<div className="flex items-center justify-between w-full">
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
-												{t("account.stats.events.title")}
+												{t("account.stats.shared.title")}
 											</h3>
-											<Icon name="Events" className="w-6 h-6 opacity-80" />
+											<Icon name="Share" className="w-6 h-6 opacity-80" />
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
-											{t("account.stats.events.subtitle")}
+											{t("account.stats.shared.subtitle")}
 										</h5>
 									</span>
 									<h4 className="z-10 text-3xl font-medium text-white">
-										{data.total}
+										{data.shared.length}
 									</h4>
 								</div>
 							</div>

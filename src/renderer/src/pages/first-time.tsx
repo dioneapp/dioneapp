@@ -8,12 +8,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../translations/translationContext";
+import { useAuthContext } from "../components/contexts/AuthContext";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
+	const { user, setUser, setSession_expiresAt, setRefreshSessionToken } = useAuthContext();
 	const firstLaunch = localStorage.getItem("firstLaunch");
-
-	console.log("firstLaunch", firstLaunch);
 
 	// toast stuff
 	const { addToast } = useToast();
@@ -34,10 +34,9 @@ export default function FirstTime() {
 		showToast("success", t("firstTime.clipboard.success"));
 	};
 
-	// auth stuff
+	// auth
 	const [authToken, setAuthToken] = useState<string | null>(null);
 	const [refreshToken, setRefreshToken] = useState<string | null>(null);
-	const [_logged, setLogged] = useState<boolean>(false);
 
 	// levels
 	const [level, setLevel] = useState(1);
@@ -58,24 +57,11 @@ export default function FirstTime() {
 
 	useEffect(() => {
 		function shouldRedirect() {
-			const session = localStorage.getItem("session");
-			const user = localStorage.getItem("user");
-			if (session && user) {
-				setLogged(true);
+			if (user) {
 				changeLevel(3);
 			}
 		}
 		shouldRedirect();
-	}, []);
-
-	useEffect(() => {
-		const session = localStorage.getItem("session");
-		const user = localStorage.getItem("user");
-		if (session && user) {
-			setLogged(true);
-		} else {
-			setLogged(false);
-		}
 	}, []);
 
 	useEffect(() => {
@@ -111,9 +97,9 @@ export default function FirstTime() {
 					window.electron.ipcRenderer.send("start-session", {
 						user: data.user,
 					});
-					setSession(data.session);
-					setUser(data.user);
-					setLogged(true);
+					setSession_expiresAt(data.session.expires_at);
+					setRefreshSessionToken(data.session.refresh_token);
+					getUser(data.user.id);
 					changeLevel(3);
 				}
 			}
@@ -122,11 +108,11 @@ export default function FirstTime() {
 		}
 	}, [authToken, refreshToken]);
 
-	async function setSession(session: any) {
-		localStorage.setItem("session", JSON.stringify(session));
-	}
-	async function setUser(user: any) {
-		localStorage.setItem("user", JSON.stringify(user));
+	async function getUser(id: string) {
+		const port = await getCurrentPort();
+		const response = await fetch(`http://localhost:${port}/db/user/${id}`);
+		const data = await response.json();
+		setUser(data[0]);
 	}
 
 	const getContainerClasses = () => {
@@ -248,10 +234,7 @@ export default function FirstTime() {
 					</h1>
 					<h2 className="text-neutral-400 text-balance text-center max-w-xl">
 						{t("firstTime.ready.subtitle")}{" "}
-						{
-							JSON.parse(localStorage.getItem("user") || "{}").user_metadata
-								?.name
-						}
+						{user.username}
 						!
 					</h2>
 				</div>

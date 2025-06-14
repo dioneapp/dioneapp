@@ -1,21 +1,17 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { openLink } from "../../utils/openLink";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
 import QuickLaunch from "./quick-launch";
+import { useAuthContext } from "../contexts/AuthContext";
 
 export default function Sidebar() {
 	const { t } = useTranslation();
-	const [authToken, setAuthToken] = useState<string | null>(null);
-	const [refreshToken, setRefreshToken] = useState<string | null>(null);
-	const [logged, setLogged] = useState<boolean>(false);
-	const [loading, setLoading] = useState(true);
-	const navigate = useNavigate();
-	const [dbUser, setDbUser] = useState<any>(null);
+	const { user, logout, loading } = useAuthContext();	
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
 	const { isServerRunning } = useAppContext();
@@ -73,156 +69,6 @@ export default function Sidebar() {
 		};
 		fetchConfig();
 	}, []);
-
-	// this is basically for security, in web, we can add a option to persist a session
-	useEffect(() => {
-		const session = localStorage.getItem("session");
-		if (!session) return;
-		const data = JSON.parse(session);
-		if (data.expires_at * 1000 < new Date().getTime()) {
-			// when session expires, auto-renew a new session and update all user data from db
-			refreshSession(data.refresh_token);
-		}
-	}, []);
-
-	async function refreshSession(token: string) {
-		const port = await getCurrentPort();
-		const response = await fetch(`http://localhost:${port}/db/refresh-token`, {
-			headers: {
-				accessToken: token,
-			},
-		});
-		const data = await response.json();
-		if (data.session) {
-			setSession(data.session);
-			setUser(data.user);
-			setLogged(true);
-		}
-	}
-
-	useEffect(() => {
-		const session = localStorage.getItem("session");
-		const user = localStorage.getItem("user");
-		const dbUser = localStorage.getItem("dbUser");
-		if (session && user) {
-			setLogged(true);
-		} else {
-			setLogged(false);
-		}
-		if (dbUser) {
-			setDbUser(JSON.parse(dbUser));
-		}
-		setLoading(false);
-	}, []);
-
-	useEffect(() => {
-		const listenForAuthToken = () => {
-			window.electron.ipcRenderer.on("auth-token", (_event, authToken) => {
-				setAuthToken(authToken);
-			});
-			window.electron.ipcRenderer.on(
-				"refresh-token",
-				(_event, refreshToken) => {
-					setRefreshToken(refreshToken);
-				},
-			);
-		};
-
-		const listenForDownloadToken = () => {
-			window.electron.ipcRenderer.on("download", (_event, downloadID) => {
-				console.log("go to download", downloadID);
-				navigate(`/install/${downloadID}`);
-			});
-		};
-
-		listenForAuthToken();
-		listenForDownloadToken();
-	}, []);
-
-	useEffect(() => {
-		if (authToken && refreshToken) {
-			async function setSessionAPI(token: string, refreshToken: string) {
-				const port = await getCurrentPort();
-				const response = await fetch(
-					`http://localhost:${port}/db/set-session`,
-					{
-						headers: {
-							accessToken: token,
-							refreshToken: refreshToken,
-						},
-					},
-				);
-				const data = await response.json();
-				if (data.session) {
-					setSession(data.session);
-					setUser(data.user);
-					setLogged(true);
-				}
-			}
-
-			setSessionAPI(authToken, refreshToken);
-		}
-	}, [authToken, refreshToken]);
-
-	useEffect(() => {
-		getUser();
-	}, [logged]);
-
-	async function setSession(session: any) {
-		localStorage.setItem("session", JSON.stringify(session));
-	}
-	async function setUser(user: any) {
-		localStorage.setItem("user", JSON.stringify(user));
-	}
-	async function getUser() {
-		if (dbUser) return;
-		const dbUserStr = localStorage.getItem("dbUser");
-		if (dbUserStr && JSON.parse(dbUserStr).length !== 0) return;
-
-		const userStr = localStorage.getItem("user");
-		if (!userStr) return;
-
-		const user = JSON.parse(userStr);
-		const port = await getCurrentPort();
-
-		try {
-			const response = await fetch(
-				`http://localhost:${port}/db/user/${user.id}`,
-			);
-			if (!response.ok) console.error("Error getting user:", response.status);
-
-			const data = await response.json();
-			checkAccess(data);
-
-			setDbUser(data);
-		} catch (error) {
-			console.error("Error getting user:", error);
-			setDbUser(null);
-		}
-	}
-
-	async function checkAccess(user: any) {
-		if (!user[0].tester) {
-			navigate("/no_access");
-		}
-	}
-
-	useEffect(() => {
-		if (dbUser) {
-			localStorage.setItem("dbUser", JSON.stringify(dbUser));
-		}
-	}, [dbUser]);
-
-	async function logout() {
-		localStorage.removeItem("session");
-		localStorage.removeItem("user");
-		localStorage.removeItem("dbUser");
-		// terminate session
-		window.electron.ipcRenderer.send("end-session");
-		setLogged(false);
-		// remove this after beta
-		navigate("/first-time");
-	}
 
 	return (
 		<div className="flex flex-col items-center justify-center h-screen border-r border-white/10 overflow-hidden">
@@ -352,20 +198,20 @@ export default function Sidebar() {
 					<div
 						className={`w-full flex items-center gap-2 ${config?.compactMode ? "justify-center" : "justify-start"}`}
 					>
-						{!loading && logged && dbUser && (
+						{user && (
 							<Link
-								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"} relative ${!dbUser[0]?.avatar_url && "border border-white/20"}`}
+								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"} relative ${!user?.avatar_url && "border border-white/20"}`}
 								to="/account"
 								onMouseEnter={() => setHoveredTooltip("account")}
 								onMouseLeave={() => setHoveredTooltip(null)}
 							>
 								{!avatarError &&
-								dbUser[0]?.avatar_url &&
-								dbUser[0]?.avatar_url !== "" &&
-								dbUser[0]?.avatar_url !== null &&
-								dbUser[0]?.avatar_url !== undefined ? (
+								user?.avatar_url &&
+								user?.avatar_url !== "" &&
+								user?.avatar_url !== null &&
+								user?.avatar_url !== undefined ? (
 									<img
-										src={dbUser[0]?.avatar_url}
+										src={user?.avatar_url}
 										alt="user avatar"
 										className="h-full w-full object-cover object-center"
 										onError={() => {
@@ -375,7 +221,7 @@ export default function Sidebar() {
 								) : (
 									<span className="h-full w-full flex justify-center items-center border border-white/20 rounded-full bg-white/10">
 										<span>
-											{dbUser[0]?.username.charAt(0).toUpperCase() || (
+											{user?.username.charAt(0).toUpperCase() || (
 												<Icon name="User" className="h-5 w-5" />
 											)}
 										</span>
@@ -389,10 +235,18 @@ export default function Sidebar() {
 							</Link>
 						)}
 					</div>
-					{!loading && !config?.compactMode && (
+					{!config?.compactMode && (
 						<div className="flex gap-2 items-center justify-end w-full h-full">
-							{logged ? (
-								<button
+							{user ? (
+								<>
+								{loading ? (
+									<div
+									className="w-9.5 h-9.5 border border-white/10 rounded-full bg-white/5 animate-pulse flex items-center justify-center relative"
+								>
+									<div className="w-5 h-5 bg-white/20 rounded" />
+								</div>
+								) : (
+									<button
 									type="button"
 									className="w-9.5 h-9.5 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer relative"
 									onClick={logout}
@@ -406,6 +260,8 @@ export default function Sidebar() {
 										</div>
 									)}
 								</button>
+								)}
+								</>
 							) : (
 								<button
 									type="button"
