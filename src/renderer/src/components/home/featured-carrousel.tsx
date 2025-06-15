@@ -180,8 +180,9 @@ export default function FeaturedCarousel() {
 								{/* background */}
 								<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
 								<img
+									aria-hidden
 									alt={scripts.find((script) => script.id === activeIndex)?.name}
-									src={scripts.find((script) => script.id === activeIndex)?.banner_url || ""}
+									{...scripts.find((script) => script.id === activeIndex)?.banner_url ? { src: scripts.find((script) => script.id === activeIndex)?.banner_url } : {}}
 									style={{ background: gradients[activeIndex] || "#000000E6" }}
 									className={`absolute inset-0 w-full h-full bg-black/5 ${scripts.find((script) => script.id === activeIndex)?.banner_url ? "opacity-50" : "opacity-20 scale-150"}`}
 								/>

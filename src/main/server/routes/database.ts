@@ -159,6 +159,11 @@ router.get("/featured", (_req, res) => {
 	async function getData() {
 		const response = await fetch(
 			"https://api.getdione.app/v1/scripts?limit=4&order_type=desc&featured=true",
+			{
+				headers: {
+					"Authorization": `Bearer ${process.env.API_KEY}`
+				}
+			}
 		);
 		const data = await response.json();
 		if (response.status !== 200) {
@@ -181,6 +186,11 @@ router.get("/explore", (_req, res) => {
 	async function getData() {
 		const response = await fetch(
 			"https://api.getdione.app/v1/scripts?order_type=desc",
+			{
+				headers: {
+					"Authorization": `Bearer ${process.env.API_KEY}`
+				}
+			}
 		);
 		const data = await response.json();
 		if (response.status !== 200) {
@@ -214,6 +224,11 @@ router.get("/search/:id", (req, res) => {
 		logger.info(`Searching script with ID: "${req.params.id}"`);
 		const response = await fetch(
 			`https://api.getdione.app/v1/scripts?id=${req.params.id}&limit=1`,
+			{
+				headers: {
+					"Authorization": `Bearer ${process.env.API_KEY}`
+				}
+			}
 		);
 		const data = await response.json();
 		if (response.status !== 200) {
@@ -248,6 +263,11 @@ router.get("/search/name/:name", async (req, res) => {
 		if (sanitizedName) {
 			const response = await fetch(
 				`https://api.getdione.app/v1/scripts?q=${sanitizedName}`,
+				{
+					headers: {
+						"Authorization": `Bearer ${process.env.API_KEY}`
+					}
+				}
 			);
 			const data = await response.json();
 			if (response.status !== 200) {
@@ -283,6 +303,11 @@ router.get("/search/type/:type", async (req, res) => {
 
 		const response = await fetch(
 			`https://api.getdione.app/v1/scripts?tags=${type}`,
+			{
+				headers: {
+					"Authorization": `Bearer ${process.env.API_KEY}`
+				}
+			}
 		);
 		const data = await response.json();
 		if (response.status !== 200) {
