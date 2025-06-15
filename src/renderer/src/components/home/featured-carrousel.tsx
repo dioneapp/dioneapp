@@ -81,7 +81,7 @@ export default function FeaturedCarousel() {
 
 		await Promise.all(
 			scripts.map(async (script) => {
-				if (script.banner_url) {				
+				if (script.banner_url) {
 					return;
 				}
 				if (script.logo_url) {

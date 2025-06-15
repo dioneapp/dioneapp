@@ -1,14 +1,14 @@
 import http from "node:http";
 import cors from "cors";
 import express from "express";
+import type { Server as SocketIOServer } from "socket.io";
 import { start as setupSocket } from "../socket/socket";
 import { setupRoutes } from "./routes/setup";
 import { getAvailablePort } from "./utils/getPort";
 import logger from "./utils/logger";
-import type { Server as SocketIOServer } from "socket.io";
 
 let httpServer: http.Server | null = null;
-let io: SocketIOServer | null = null; 
+let io: SocketIOServer | null = null;
 
 export const start = async (): Promise<number> => {
 	logger.info("Starting server...");
@@ -51,7 +51,8 @@ export const stop = async () => {
 		});
 		httpServer = null;
 	} else {
-		logger.warn("Server was already stopped or never started (httpServer is null)");
+		logger.warn(
+			"Server was already stopped or never started (httpServer is null)",
+		);
 	}
 };
-

@@ -470,7 +470,6 @@ app.whenReady().then(async () => {
 			throw error;
 		}
 	});
-	
 });
 
 // Quit the application when all windows are closed, except on macOS.
