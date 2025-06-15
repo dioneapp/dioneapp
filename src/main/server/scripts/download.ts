@@ -25,9 +25,9 @@ export async function getScripts(id: string, io: Server) {
 			`https://api.getdione.app/v1/scripts?id=${id}&limit=1`,
 			{
 				headers: {
-					"Authorization": `Bearer ${process.env.API_KEY}`
-				}
-			}
+					Authorization: `Bearer ${process.env.API_KEY}`,
+				},
+			},
 		);
 		const json = await response.json();
 		const data = json[0];
