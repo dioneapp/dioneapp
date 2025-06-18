@@ -9,11 +9,11 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
+import { saveExpiresAt, saveRefreshToken } from "@renderer/utils/secure-tokens";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
-	const { user, setUser, setSession_expiresAt, setRefreshSessionToken } =
-		useAuthContext();
+	const { user, setUser, setRefreshSessionToken } = useAuthContext();
 	const firstLaunch = localStorage.getItem("firstLaunch");
 
 	// toast stuff
@@ -98,7 +98,8 @@ export default function FirstTime() {
 					window.electron.ipcRenderer.send("start-session", {
 						user: data.user,
 					});
-					setSession_expiresAt(data.session.expires_at);
+					await saveExpiresAt(data.session.expires_at);
+					await saveRefreshToken(data.session.refresh_token);
 					setRefreshSessionToken(data.session.refresh_token);
 					getUser(data.user.id);
 					changeLevel(3);

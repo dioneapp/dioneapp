@@ -21,7 +21,7 @@ import {
 	initializeDiscordPresence,
 	updatePresence,
 } from "./discord/presence";
-import { deleteToken, getToken, saveToken } from "./security/secure-tokens";
+import { deleteExpiresAt, deleteToken, getExpiresAt, getToken, saveExpiresAt, saveToken } from "./security/secure-tokens";
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
@@ -455,6 +455,18 @@ app.whenReady().then(async () => {
 
 	ipcMain.handle("secure-token:delete", () => {
 		return deleteToken();
+	});
+
+	ipcMain.handle("secure-token:save-expiresAt", (_event, expiresAt: number) => {
+		return saveExpiresAt(expiresAt);
+	});
+
+	ipcMain.handle("secure-token:get-expiresAt", () => {
+		return getExpiresAt();
+	});
+
+	ipcMain.handle("secure-token:delete-expiresAt", () => {
+		return deleteExpiresAt();
 	});
 
 	// restart backend

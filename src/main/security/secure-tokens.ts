@@ -18,3 +18,18 @@ export function getToken(): string | null {
 export function deleteToken() {
 	if (fs.existsSync(SESSION_FILE)) fs.unlinkSync(SESSION_FILE);
 }
+
+export function saveExpiresAt(expiresAt: number) {
+	const encrypted = safeStorage.encryptString(expiresAt.toString());
+	fs.writeFileSync(SESSION_FILE, encrypted);
+}
+
+export function getExpiresAt(): string | null {
+	if (!fs.existsSync(SESSION_FILE)) return null;
+	const encrypted = fs.readFileSync(SESSION_FILE);
+	return safeStorage.decryptString(encrypted);
+}
+
+export function deleteExpiresAt() {
+	if (fs.existsSync(SESSION_FILE)) fs.unlinkSync(SESSION_FILE);
+}
