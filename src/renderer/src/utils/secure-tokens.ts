@@ -10,9 +10,11 @@ export async function deleteRefreshToken() {
 	return await window.electron.ipcRenderer.invoke("secure-token:delete");
 }
 
-
 export async function saveExpiresAt(expiresAt: number) {
-	return await window.electron.ipcRenderer.invoke("secure-token:save-expiresAt", expiresAt);
+	return await window.electron.ipcRenderer.invoke(
+		"secure-token:save-expiresAt",
+		expiresAt,
+	);
 }
 
 export async function getExpiresAt(): Promise<number | null> {
@@ -20,5 +22,7 @@ export async function getExpiresAt(): Promise<number | null> {
 }
 
 export async function deleteExpiresAt() {
-	return await window.electron.ipcRenderer.invoke("secure-token:delete-expiresAt");
+	return await window.electron.ipcRenderer.invoke(
+		"secure-token:delete-expiresAt",
+	);
 }

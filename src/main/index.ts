@@ -21,7 +21,14 @@ import {
 	initializeDiscordPresence,
 	updatePresence,
 } from "./discord/presence";
-import { deleteExpiresAt, deleteToken, getExpiresAt, getToken, saveExpiresAt, saveToken } from "./security/secure-tokens";
+import {
+	deleteExpiresAt,
+	deleteToken,
+	getExpiresAt,
+	getToken,
+	saveExpiresAt,
+	saveToken,
+} from "./security/secure-tokens";
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
