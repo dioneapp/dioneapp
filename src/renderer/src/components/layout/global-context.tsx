@@ -1,25 +1,18 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { useToast } from "@renderer/utils/useToast";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { io } from "socket.io-client";
+import { io, type Socket } from "socket.io-client";
+import { setupSocket } from "../contexts/scripts/setupSocket";
 
 interface AppContextType {
 	setInstalledApps: React.Dispatch<React.SetStateAction<any[]>>;
 	installedApps: any[];
 	socket: any;
-	logs: string[];
-	setLogs: React.Dispatch<React.SetStateAction<string[]>>;
-	statusLog: {
-		status: string;
-		content: string;
-	};
-	setStatusLog: React.Dispatch<
-		React.SetStateAction<{
-			status: string;
-			content: string;
-		}>
-	>;
+	logs: Record<string, string[]>;
+	setLogs: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
+	statusLog: Record<string, { status: string; content: string }>;
+	setStatusLog: React.Dispatch<React.SetStateAction<Record<string, { status: string; content: string }>>>;
 	isServerRunning: boolean;
 	setIsServerRunning: React.Dispatch<React.SetStateAction<boolean>>;
 	setData: React.Dispatch<React.SetStateAction<any>>;
@@ -30,8 +23,8 @@ interface AppContextType {
 	iframeAvailable: boolean;
 	setMissingDependencies: React.Dispatch<React.SetStateAction<any>>;
 	missingDependencies: any;
-	setShow: React.Dispatch<React.SetStateAction<string>>;
-	show: string;
+	show: Record<string, string>;
+	setShow: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 	showToast: (
 		variant: "default" | "success" | "error" | "warning",
 		message: string,
@@ -49,7 +42,6 @@ interface AppContextType {
 	setExitRef: React.Dispatch<React.SetStateAction<boolean>>;
 	apps: any[];
 	setApps: React.Dispatch<React.SetStateAction<any[]>>;
-	setupSocket: () => Promise<void>;
 	socketRef: any;
 	deleteLogs: any[];
 	handleReloadQuickLaunch: () => Promise<void>;
@@ -57,22 +49,31 @@ interface AppContextType {
 	setRemovedApps: React.Dispatch<React.SetStateAction<any[]>>;
 	availableApps: any[];
 	setAvailableApps: React.Dispatch<React.SetStateAction<any[]>>;
-}
+	connectApp: (appId: string) => void;
+	disconnectApp: (appId: string) => void;
+	sockets: Record<string, Socket>;
+	activeApps: any[];
+	handleStopApp: (appId: string, appName: string) => void;
+	addLog: (appId: string, message: string) => void;
+	clearLogs: (appId: string) => void;
+	getAllAppLogs: () => string[];
+	appFinished: Record<string, boolean>;
+	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	}
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export function GlobalContext({ children }: { children: React.ReactNode }) {
 	// socket ref
+	const [sockets, setSockets] = useState<Record<string, Socket>>({}); // multiple sockets
+	const socketsRef = useRef<{ [key: string]: Socket }>({});
 	const socketRef = useRef<any>(null);
 	const [exitRef, setExitRef] = useState<boolean>(false);
 	const pathname = useLocation().pathname;
 	const [installedApps, setInstalledApps] = useState<string[]>([]);
 	const [socket] = useState<any>(null);
-	const [logs, setLogs] = useState<string[]>([]);
-	const [statusLog, setStatusLog] = useState<{
-		status: string;
-		content: string;
-	}>({ status: "", content: "" });
+	const [logs, setLogs] = useState<Record<string, string[]>>({});
+	const [statusLog, setStatusLog] = useState<Record<string, { status: string; content: string }>>({});
 	const [isServerRunning, setIsServerRunning] = useState<boolean>(false);
 	// toast stuff
 	const { addToast } = useToast();
@@ -116,14 +117,34 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	// data stuff
 	const [data, setData] = useState<any | undefined>(undefined);
 	// show
-	const [show, setShow] = useState("actions");
+	const [show, setShow] = useState<Record<string, string>>({});
 	// sidebar
 	const [apps, setApps] = useState<any[]>([]);
 	// delete logs
 	const [deleteLogs, setDeleteLogs] = useState<any[]>([]);
-
+	// active apps
+	const [activeApps, setActiveApps] = useState<any[]>([]);
 	const [removedApps, setRemovedApps] = useState<any[]>([]);
 	const [availableApps, setAvailableApps] = useState<any[]>([]);
+	const [appFinished, setAppFinished] = useState<{ [key: string]: boolean }>({});
+
+
+	useEffect(() => {
+		setData(null);
+	}, [pathname]);
+
+	// if app is active show logs instead of actions
+	useEffect(() => {
+		if (!data?.id || !Array.isArray(activeApps)) return;
+	
+		const isActive = activeApps.some(app => app.appId === data.id);
+		console.log("app is active?:", isActive);
+	
+		if (isActive) {
+			setShow({ [data?.id]: "logs" });
+		}
+	}, [activeApps, data?.id]);
+
 	const handleReloadQuickLaunch = async () => {
 		try {
 			const port = await getCurrentPort();
@@ -211,7 +232,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 		if (isAvailable) {
 			stopCheckingRef.current = true;
 			setIframeSrc(`http://localhost:${localPort}`);
-			setShow("iframe");
+			setShow({ [data?.id]: "iframe" });
 			setIframeAvailable(true);
 			showToast("default", `${data.name} has opened a preview.`);
 			window.electron.ipcRenderer.invoke(
@@ -222,117 +243,176 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 		}
 	};
 
-	async function setupSocket() {
-		try {
-			if (socketRef.current) {
-				socketRef.current.disconnect();
-				socketRef.current.removeAllListeners();
-				console.log("socketRef.current", socketRef.current);
-			}
+	// async function setupSocket() {
+	// 	try {
+	// 		if (socketRef.current) {
+	// 			socketRef.current.disconnect();
+	// 			socketRef.current.removeAllListeners();
+	// 			console.log("socketRef.current", socketRef.current);
+	// 		}
 
-			const port = await getCurrentPort();
-			socketRef.current = io(`http://localhost:${port}`);
+	// 		const port = await getCurrentPort();
+	// 		socketRef.current = io(`http://localhost:${port}`);
 
-			socketRef.current.on("clientUpdate", (message: string) => {
-				console.log("Received log:", message);
-				setLogs((prevLogs) => [...prevLogs, message]);
-			});
+	// 		socketRef.current.on("clientUpdate", (message: string) => {
+	// 			console.log("Received log:", message);
+	// 			setLogs((prevLogs) => [...prevLogs, message]);
+	// 		});
 
-			socketRef.current.on("connect", () => {
-				console.log("Connected to socket:", socketRef.current?.id);
-				setLogs((prevLogs) => [...prevLogs, "Connected to server"]);
-			});
+	// 		socketRef.current.on("connect", () => {
+	// 			console.log("Connected to socket:", socketRef.current?.id);
+	// 			setLogs((prevLogs) => [...prevLogs, "Connected to server"]);
+	// 		});
 
-			socketRef.current.on("disconnect", () => {
-				console.log("Socket disconnected");
-				setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
-			});
+	// 		socketRef.current.on("disconnect", () => {
+	// 			console.log("Socket disconnected");
+	// 			setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
+	// 		});
 
-			socketRef.current.on("missingDeps", (data) => {
-				setMissingDependencies(data);
-			});
+	// 		socketRef.current.on("missingDeps", (data) => {
+	// 			setMissingDependencies(data);
+	// 		});
 
-			socketRef.current.on(
-				"installUpdate",
-				(message: { type: string; content: string; status: string }) => {
-					const { type, status, content } = message;
-					console.log("Received log:", message);
-					if (content.toLowerCase().includes("error") || status === "error") {
-						errorRef.current = true;
-					}
-					// launch iframe if server is running
-					if (
-						(type === "log" || type === "info") &&
-						(content.toLowerCase().includes("started server") ||
-							content.toLowerCase().includes("http") ||
-							content.toLowerCase().includes("127.0.0.1") ||
-							content.toLowerCase().includes("localhost") ||
-							content.toLowerCase().includes("0.0.0.0"))
-					) {
-						const match = content
-							.replace(/\x1b\[[0-9;]*m/g, "")
-							.match(
-								/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i,
-							);
-						console.log(match);
-						if (match) {
-							loadIframe(Number.parseInt(match[1]));
-						}
-					}
-					if (type === "log") {
-						setLogs((prevLogs) => [...prevLogs, content]);
-						if (content.includes("Cant kill process")) {
-							showToast(
-								"error",
-								"Error stopping script, please try again later or do it manually.",
-							);
-						}
-					}
-					if (type === "status") {
-						setStatusLog({ status: status || "pending", content });
-						if (content.toLowerCase().includes("actions executed")) {
-							console.log("Redirecting...");
-							stopCheckingRef.current = true;
-							setShow("actions");
-						}
-					}
-					if (type === "catch") {
-						stopCheckingRef.current = false;
-						setIframeAvailable(false);
-						// loadIframe(Number.parseInt(content));
-						setCatchPort(Number.parseInt(content));
-					}
+	// 		socketRef.current.on(
+	// 			"installUpdate",
+	// 			(message: { type: string; content: string; status: string }) => {
+	// 				const { type, status, content } = message;
+	// 				console.log("Received log:", message);
+	// 				if (content.toLowerCase().includes("error") || status === "error") {
+	// 					errorRef.current = true;
+	// 				}
+	// 				// launch iframe if server is running
+	// 				if (
+	// 					(type === "log" || type === "info") &&
+	// 					(content.toLowerCase().includes("started server") ||
+	// 						content.toLowerCase().includes("http") ||
+	// 						content.toLowerCase().includes("127.0.0.1") ||
+	// 						content.toLowerCase().includes("localhost") ||
+	// 						content.toLowerCase().includes("0.0.0.0"))
+	// 				) {
+	// 					const match = content
+	// 						.replace(/\x1b\[[0-9;]*m/g, "")
+	// 						.match(
+	// 							/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i,
+	// 						);
+	// 					console.log(match);
+	// 					if (match) {
+	// 						loadIframe(Number.parseInt(match[1]));
+	// 					}
+	// 				}
+	// 				if (type === "log") {
+	// 					setLogs((prevLogs) => [...prevLogs, content]);
+	// 					if (content.includes("Cant kill process")) {
+	// 						showToast(
+	// 							"error",
+	// 							"Error stopping script, please try again later or do it manually.",
+	// 						);
+	// 					}
+	// 				}
+	// 				if (type === "status") {
+	// 					setStatusLog({ status: status || "pending", content });
+	// 					if (content.toLowerCase().includes("actions executed")) {
+	// 						console.log("Redirecting...");
+	// 						stopCheckingRef.current = true;
+	// 						setShow("actions");
+	// 					}
+	// 				}
+	// 				if (type === "catch") {
+	// 					stopCheckingRef.current = false;
+	// 					setIframeAvailable(false);
+	// 					// loadIframe(Number.parseInt(content));
+	// 					setCatchPort(Number.parseInt(content));
+	// 				}
 
-					if (content === "Script killed successfully" && !errorRef.current) {
-						stopCheckingRef.current = true;
-						showToast(
-							"success",
-							`${data?.name || "Script"} exited successfully.`,
-						);
-					}
-				},
-			);
+	// 				if (content === "Script killed successfully" && !errorRef.current) {
+	// 					stopCheckingRef.current = true;
+	// 					showToast(
+	// 						"success",
+	// 						`${data?.name || "Script"} exited successfully.`,
+	// 					);
+	// 				}
+	// 			},
+	// 		);
 
-			socketRef.current.on("deleteUpdate", (message: string) => {
-				console.log("Received log:", message);
-				setDeleteLogs((prevLogs) => [...prevLogs, message]);
-			});
-		} catch (error) {
-			setError(true);
-			console.error("Error setting up socket:", error);
-			setLogs((prevLogs) => [...prevLogs, "Error setting up socket"]);
-		}
-	}
+	// 		socketRef.current.on("deleteUpdate", (message: string) => {
+	// 			console.log("Received log:", message);
+	// 			setDeleteLogs((prevLogs) => [...prevLogs, message]);
+	// 		});
+	// 	} catch (error) {
+	// 		setError(true);
+	// 		console.error("Error setting up socket:", error);
+	// 		setLogs((prevLogs) => [...prevLogs, "Error setting up socket"]);
+	// 	}
+	// }
 
-	useEffect(() => {
-		setupSocket();
-		return () => {
-			if (socketRef.current) {
-				socketRef.current.disconnect();
-				socketRef.current.removeAllListeners();
-			}
-		};
+	async function connectApp(appId: string) {
+		if (socketsRef.current[appId]) return;
+	  
+		const port = await getCurrentPort();
+		const newSocket = setupSocket({appId, addLog, port, setShow, setMissingDependencies, setIframeAvailable, setCatchPort, loadIframe, setIframeSrc, errorRef, showToast, stopCheckingRef, statusLog, setStatusLog, setDeleteLogs, data, socketsRef, setAppFinished});
+		socketsRef.current[appId] = newSocket;
+		setSockets({ ...socketsRef.current });
+	  }
+	  
+
+	  function disconnectApp(appId: string) {
+		const socketToClose = socketsRef.current[appId];
+		if (!socketToClose) return;
+	  
+		socketToClose.disconnect();
+		delete socketsRef.current[appId];
+		setSockets({ ...socketsRef.current });
+	  
+		setActiveApps((prev) => {
+		  const filtered = prev.filter((app) => app.appId !== appId);
+		  return filtered;
+		});
+	  }
+	  
+	// multiple logs
+	const addLog = useCallback((appId: string, message: string) => {
+		setLogs(prevLogs => ({
+		  ...prevLogs,
+		  [appId]: [...(prevLogs[appId] || []), message]
+		}));
+	  }, []);
+	  
+	const clearLogs = useCallback((appId: string) => {
+		setLogs(prevLogs => ({ ...prevLogs, [appId]: [] }));
 	}, []);
+
+	const getAllAppLogs = useCallback(() => {
+		return Object.values(logs).flat();
+	}, [logs]);
+
+	// get info about active apps
+	useEffect(() => {
+		async function fetchAppInfo() {
+			const appIds = Object.keys(sockets);
+			if (appIds.length === 0) return;
+			const port = await getCurrentPort();
+		
+			// get app info
+			Promise.all(
+			appIds.map((appId) =>
+				fetch(`http://localhost:${port}/db/search/${encodeURIComponent(appId)}`)
+				.then((res) => {
+					if (!res.ok) throw new Error(`Error getting app info ${appId}`);
+					return res.json();
+				})
+				.then((data) => ({ appId, data }))
+				.catch((error) => {
+					console.error(error);
+					return { appId, data: null };
+				})
+			)
+			).then((results) => {
+				console.log(results);
+				setActiveApps(results);
+			});
+		}
+		fetchAppInfo();
+	  }, [sockets]);
 
 	useEffect(() => {
 		if (!pathname.includes("/install") && isServerRunning) {
@@ -348,6 +428,53 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			);
 		}
 	}, [pathname.includes("/install"), isServerRunning]);
+
+	
+	const handleStopApp = async (appId: string, appName: string) => {
+		try {
+		 console.log(appId, appName);
+		  const port = await getCurrentPort();
+		  const response = await fetch(
+			`http://localhost:${port}/scripts/stop/${appName}/${appId}`,
+			{
+			  method: "GET",
+			},
+		  );
+	
+		  if (response.status === 200) {
+			setShow({ [appId]: "actions" });
+			window.electron.ipcRenderer.invoke(
+			  "notify",
+			  "Stopping...",
+			  `${appName} stopped successfully.`,
+			);
+			showToast(
+			  "success",
+			  `Successfully stopped ${appName}`,
+			);
+			clearLogs(appId);
+			setIsServerRunning(false);
+		  } else {
+			showToast(
+			  "error",
+			  `Error stopping ${appName}: ${response.status}`,
+			);
+		  }
+		} catch (error) {
+		  showToast(
+			"error",
+			`Error stopping ${appName}: ${error}`,
+		  );
+		  window.electron.ipcRenderer.invoke(
+			"notify",
+			"Error...",
+			`Error stopping ${appName}: ${error}`,
+		  );
+		  addLog(appId, `Error stopping ${appName}: ${error}`);	
+		} finally {
+		 disconnectApp(appId);
+		}
+	  };
 
 	return (
 		<AppContext.Provider
@@ -381,7 +508,6 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 				setExitRef,
 				apps,
 				setApps,
-				setupSocket,
 				socketRef,
 				deleteLogs,
 				handleReloadQuickLaunch,
@@ -389,6 +515,16 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 				setRemovedApps,
 				availableApps,
 				setAvailableApps,
+				connectApp,
+				disconnectApp,
+				sockets,
+				activeApps,
+				handleStopApp,
+				addLog,
+				clearLogs,
+				getAllAppLogs,
+				appFinished,
+				setAppFinished,
 			}}
 		>
 			{children}

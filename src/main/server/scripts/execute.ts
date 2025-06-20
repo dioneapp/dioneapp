@@ -11,12 +11,13 @@ async function readConfig(pathname: string) {
 export default async function executeInstallation(
 	pathname: string,
 	io: Server,
+	id: string,
 ) {
 	const config = await readConfig(pathname);
 	const configDir = path.dirname(pathname);
 	const installation = config.installation || [];
 
-	io.emit("installUpdate", {
+	io.to(id).emit("installUpdate", {
 		type: "log",
 		content: `INFO: Found ${installation.length} installation steps to execute`,
 	});
@@ -24,11 +25,11 @@ export default async function executeInstallation(
 	// process installation steps sequentially
 	try {
 		for (const step of installation) {
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: `INFO: Starting step "${step.name}"`,
 			});
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "status",
 				status: "pending",
 				content: `${step.name}`,
@@ -47,7 +48,7 @@ export default async function executeInstallation(
 						typeof step.env === "object" && "version" in step.env
 							? step.env.version
 							: "";
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `INFO: Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					});
@@ -62,17 +63,17 @@ export default async function executeInstallation(
 						configDir,
 						pythonVersion,
 					);
-					await executeCommands(envCommands, configDir, io);
+					await executeCommands(envCommands, configDir, io, id);
 				} else {
 					// execute commands normally
-					await executeCommands(commandsArray, configDir, io);
+					await executeCommands(commandsArray, configDir, io, id);
 				}
 
-				io.emit("installUpdate", {
+				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: `INFO: Completed step "${step.name}"`,
 				});
-				io.emit("installUpdate", {
+				io.to(id).emit("installUpdate", {
 					type: "status",
 					status: "success",
 					content: `${step.name}`,
@@ -80,7 +81,7 @@ export default async function executeInstallation(
 			}
 		}
 		// emit log to reload frontend after all actions are executed
-		io.emit("installUpdate", {
+		io.to(id).emit("installUpdate", {
 			type: "status",
 			status: "success",
 			content: "Actions executed",
@@ -90,12 +91,12 @@ export default async function executeInstallation(
 	}
 }
 
-export async function executeStartup(pathname: string, io: Server) {
+export async function executeStartup(pathname: string, io: Server, id: string) {
 	const config = await readConfig(path.join(pathname, "dione.json"));
 	const configDir = pathname;
 	const start = config.start || [];
 
-	io.emit("installUpdate", {
+	io.to(id).emit("installUpdate", {
 		type: "log",
 		content: `INFO: Found ${start.length} start steps to execute`,
 	});
@@ -104,11 +105,11 @@ export async function executeStartup(pathname: string, io: Server) {
 	try {
 		let response;
 		for (const step of start) {
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: `INFO: Starting step "${step.name}"`,
 			});
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "status",
 				status: "pending",
 				content: `${step.name}`,
@@ -120,8 +121,8 @@ export async function executeStartup(pathname: string, io: Server) {
 					: [step.commands.toString()];
 
 				if (step.catch) {
-					io.emit("installUpdate", { type: "catch", content: step.catch });
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", { type: "catch", content: step.catch });
+					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `Watching port ${step.catch}`,
 					});
@@ -135,7 +136,7 @@ export async function executeStartup(pathname: string, io: Server) {
 						typeof step.env === "object" && "version" in step.env
 							? step.env.version
 							: "";
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `INFO: Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					});
@@ -151,18 +152,18 @@ export async function executeStartup(pathname: string, io: Server) {
 						configDir,
 						pythonVersion,
 					);
-					response = await executeCommands(envCommands, configDir, io);
+					response = await executeCommands(envCommands, configDir, io, id);
 				} else {
 					// execute commands normally
-					response = await executeCommands(commandsArray, configDir, io);
+					response = await executeCommands(commandsArray, configDir, io, id);
 				}
 
 				if (response.error) {
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `ERROR: Failed in step "${step.name}": ${response.error}`,
 					});
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", {
 						type: "status",
 						status: "error",
 						content: "Error detected",
@@ -170,11 +171,11 @@ export async function executeStartup(pathname: string, io: Server) {
 					throw new Error(response.error);
 				}
 
-				io.emit("installUpdate", {
+				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: `INFO: Completed step "${step.name}"`,
 				});
-				io.emit("installUpdate", {
+				io.to(id).emit("installUpdate", {
 					type: "status",
 					status: "success",
 					content: `${step.name}`,
@@ -182,17 +183,17 @@ export async function executeStartup(pathname: string, io: Server) {
 			}
 		}
 		// emit log to reload frontend after all actions are executed
-		io.emit("installUpdate", {
+		io.to(id).emit("installUpdate", {
 			type: "status",
 			status: "success",
 			content: "Actions executed",
 		});
 	} catch (error) {
-		io.emit("installUpdate", {
+		io.to(id).emit("installUpdate", {
 			type: "log",
 			content: `ERROR: Failed in step: ${error}`,
 		});
-		io.emit("installUpdate", {
+		io.to(id).emit("installUpdate", {
 			type: "status",
 			status: "error",
 			content: "Error detected",

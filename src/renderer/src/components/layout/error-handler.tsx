@@ -1,6 +1,8 @@
 // src/components/ErrorBoundary.tsx
 import ErrorPage from "@renderer/pages/error";
 import React from "react";
+import { useAppContext } from "./global-context";
+import { getCurrentPort } from "@renderer/utils/getPort";
 
 interface ErrorBoundaryProps {
 	children: React.ReactNode;
@@ -24,6 +26,13 @@ export class ErrorBoundary extends React.Component<
 		return { hasError: true };
 	}
 
+	async stopApps() {
+		const { activeApps, handleStopApp } = useAppContext();
+		for (const app of activeApps) {
+			handleStopApp(app.id, app.name);
+		}
+	}
+
 	componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
 		console.error("ErrorBoundary caught an error:", error, errorInfo);
 		this.setState({ error });
@@ -31,6 +40,7 @@ export class ErrorBoundary extends React.Component<
 
 	render() {
 		if (this.state.hasError) {
+			this.stopApps();
 			return <ErrorPage error={this.state.error} />;
 		}
 

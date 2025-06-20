@@ -8,13 +8,6 @@ import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies";
 import executeInstallation from "./execute";
 
-interface ScriptsData {
-	id: string;
-	name: string;
-	script_url: string;
-	tags: string[];
-}
-
 export async function getScripts(id: string, io: Server) {
 	if (!supabase) {
 		logger.error("Supabase client is not initialized");
@@ -32,11 +25,11 @@ export async function getScripts(id: string, io: Server) {
 		const json = await response.json();
 		const data = json[0];
 		if (!data || data.length === 0) {
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: "ERROR: Script not found",
 			});
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "status",
 				status: "error",
 				content: "Error detected",
@@ -59,13 +52,13 @@ export async function getScripts(id: string, io: Server) {
 			await fs.promises.mkdir(saveDirectory, { recursive: true });
 			const outputFilePath = path.join(saveDirectory, "dione.json");
 			// download dione.json
-			await downloadFile(script_url, outputFilePath, io);
+			await downloadFile(script_url, outputFilePath, io, id);
 		} catch (error) {
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: `ERROR: Error creating apps directory: ${error}`,
 			});
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "status",
 				status: "error",
 				content: "Error detected",
@@ -73,11 +66,11 @@ export async function getScripts(id: string, io: Server) {
 			logger.error("Error creating apps directory:", error);
 		}
 	} catch (error) {
-		io.emit("installUpdate", {
+		io.to(id).emit("installUpdate", {
 			type: "log",
 			content: `ERROR: ${error}`,
 		});
-		io.emit("installUpdate", {
+		io.to(id).emit("installUpdate", {
 			type: "status",
 			status: "error",
 			content: "Error detected",
@@ -123,12 +116,13 @@ export function downloadFile(
 	GITHUB_URL: string,
 	FILE_PATH: string,
 	io: Server,
+	id: string,
 ) {
-	io.emit("installUpdate", {
+	io.to(id).emit("installUpdate", {
 		type: "log",
 		content: `Downloading script from ${GITHUB_URL}`,
 	});
-	io.emit("installUpdate", {
+	io.to(id).emit("installUpdate", {
 		type: "status",
 		status: "pending",
 		content: "Downloading script...",
@@ -147,11 +141,11 @@ export function downloadFile(
 				url = `https://raw.githubusercontent.com/${repoInfo.repo}/main/dione.json`;
 			}
 		} catch (error: any) {
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: `ERROR: Invalid GitHub URL: ${error.message}`,
 			});
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "status",
 				status: "error",
 				content: "Error detected",
@@ -169,11 +163,11 @@ export function downloadFile(
 				response.pipe(file);
 				file.on("finish", async () => {
 					file.close();
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: "Script downloaded successfully.",
 					});
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", {
 						type: "status",
 						status: "success",
 						content: "Script downloaded",
@@ -181,38 +175,38 @@ export function downloadFile(
 					// download finished, now checking dependencies
 					const result = await checkDependencies(FILE_PATH);
 					if (result.success) {
-						io.emit("installUpdate", {
+						io.to(id).emit("installUpdate", {
 							type: "log",
 							content: "All required dependencies are installed.",
 						});
-						io.emit("installUpdate", {
+						io.to(id).emit("installUpdate", {
 							type: "status",
 							status: "success",
 							content: "Dependencies installed",
 						});
 						// checking dependencies finished, now executing installation
-						await executeInstallation(FILE_PATH, io).catch((error) => {
+						await executeInstallation(FILE_PATH, io, id).catch((error) => {
 							console.error(`Unhandled error: ${error.message}`);
 							process.exit(1);
 						});
 					} else if (result.error) {
-						io.emit("installUpdate", {
+						io.to(id).emit("installUpdate", {
 							type: "log",
 							content:
 								"We have not been able to read the configuration file due to an error, check that Dione.json is well formulated as JSON.",
 						});
-						io.emit("installUpdate", {
+						io.to(id).emit("installUpdate", {
 							type: "status",
 							status: "error",
 							content: "Error detected",
 						});
 					} else {
-						io.emit("missingDeps", result.missing);
-						io.emit("installUpdate", {
+						io.to(id).emit("missingDeps", result.missing);
+						io.to(id).emit("installUpdate", {
 							type: "log",
 							content: `ERROR: Some dependencies are missing: ${result.missing.map((dep) => dep.name).join(", ")}`,
 						});
-						io.emit("installUpdate", {
+						io.to(id).emit("installUpdate", {
 							type: "status",
 							status: "error",
 							content: "Error detected",
@@ -228,11 +222,11 @@ export function downloadFile(
 				file.close();
 				fs.unlinkSync(FILE_PATH);
 				logger.error(`Error downloading script: ${response.statusCode}`);
-				io.emit("installUpdate", {
+				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: `ERROR: Error downloading script, status code: ${response.statusCode}`,
 				});
-				io.emit("installUpdate", {
+				io.to(id).emit("installUpdate", {
 					type: "status",
 					status: "error",
 					content: "Error detected",
@@ -243,11 +237,11 @@ export function downloadFile(
 			file.close();
 			fs.unlinkSync(FILE_PATH);
 			logger.error("Error in request:", error);
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: `ERROR: Error in request: ${error.message}`,
 			});
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "status",
 				status: "error",
 				content: "Error detected",
