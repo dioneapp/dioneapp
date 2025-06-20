@@ -104,7 +104,8 @@ export const es = {
 				stop: "Error al detener %s: %s",
 				uninstall: "Error al desinstalar %s: %s",
 				serverRunning: "El servidor ya está en ejecución.",
-				tooManyApps: "¡Más despacio! Ya tienes 6 aplicaciones funcionando al mismo tiempo."
+				tooManyApps:
+					"¡Más despacio! Ya tienes 6 aplicaciones funcionando al mismo tiempo.",
 			},
 		},
 	},
