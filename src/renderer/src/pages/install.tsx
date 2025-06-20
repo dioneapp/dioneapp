@@ -63,27 +63,26 @@ export default function Install({ id }: { id?: string }) {
 	const savedApps = JSON.parse(localStorage.getItem("savedApps") || "[]");
 	// max apps limit (default 6)
 	const maxApps = 6;
-	
+
 	// connect to server
 	useEffect(() => {
 		if (!isServerRunning || !data?.id) return;
 		connectApp(data?.id);
-
 	}, [isServerRunning]);
 
 	// stop server and show actions if installation finish
 	useEffect(() => {
 		async function stopApp() {
-		  if (!data?.id) return; 
-		  
-		  console.log("appFinished", appFinished[data.id]);
-		  if (appFinished[data.id] === true) {
-			await handleStopApp(data.id, data.name);
-			setShow({ [data.id]: "actions" });
-		  }
+			if (!data?.id) return;
+
+			console.log("appFinished", appFinished[data.id]);
+			if (appFinished[data.id] === true) {
+				await handleStopApp(data.id, data.name);
+				setShow({ [data.id]: "actions" });
+			}
 		}
 		stopApp();
-	  }, [appFinished, data?.id]);
+	}, [appFinished, data?.id]);
 
 	useEffect(() => {
 		setData(null);
@@ -92,7 +91,7 @@ export default function Install({ id }: { id?: string }) {
 		return () => {
 			setData(null);
 			setSaved(false);
-		}
+		};
 	}, []);
 
 	// fetch script data
@@ -202,7 +201,7 @@ export default function Install({ id }: { id?: string }) {
 		setIsServerRunning(true);
 		setShow({ [data?.id]: "logs" });
 		if (!data?.id) return;
-	
+
 		try {
 			const port = await getCurrentPort();
 			window.electron.ipcRenderer.invoke(
@@ -210,11 +209,11 @@ export default function Install({ id }: { id?: string }) {
 				"Downloading...",
 				`Starting download of ${data.name}`,
 			);
-	
+
 			await fetch(`http://localhost:${port}/scripts/download/${id}`, {
 				method: "GET",
 			});
-	
+
 			if (!installedApps.includes(data.name)) {
 				setInstalledApps((prevApps) => [...prevApps, data.name]);
 			}
@@ -229,7 +228,7 @@ export default function Install({ id }: { id?: string }) {
 		}
 		handleReloadQuickLaunch();
 	}
-	
+
 	async function start() {
 		const tooMuchApps = activeApps.length >= maxApps;
 		if (tooMuchApps) {
@@ -248,9 +247,12 @@ export default function Install({ id }: { id?: string }) {
 				"Starting...",
 				`Starting ${data.name}`,
 			);
-			await fetch(`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}`, {
-				method: "GET",
-			});
+			await fetch(
+				`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}`,
+				{
+					method: "GET",
+				},
+			);
 		} catch (error) {
 			showToast(
 				"error",
@@ -265,7 +267,7 @@ export default function Install({ id }: { id?: string }) {
 
 	async function stop(type?: string) {
 		try {
-			console.log('stopping...')
+			console.log("stopping...");
 			const port = await getCurrentPort();
 			const response = await fetch(
 				`http://localhost:${port}/scripts/stop/${data.name}/${data.id}`,
@@ -348,7 +350,10 @@ export default function Install({ id }: { id?: string }) {
 						"error",
 						`Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}.`,
 					);
-					addLog(data?.id, `Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}`);
+					addLog(
+						data?.id,
+						`Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}`,
+					);
 				}
 			} else {
 				await uninstallApp(port);
@@ -561,10 +566,13 @@ export default function Install({ id }: { id?: string }) {
 	}
 
 	useEffect(() => {
-		if (savedApps.some(app => app.appId === data?.id)) {
-			console.log('appid', data?.id);
-			console.log('savedApps', savedApps);
-			console.log("saved", savedApps.some(app => app.appId === data?.id));
+		if (savedApps.some((app) => app.appId === data?.id)) {
+			console.log("appid", data?.id);
+			console.log("savedApps", savedApps);
+			console.log(
+				"saved",
+				savedApps.some((app) => app.appId === data?.id),
+			);
 			setSaved(true);
 		}
 	}, [savedApps, data]);
