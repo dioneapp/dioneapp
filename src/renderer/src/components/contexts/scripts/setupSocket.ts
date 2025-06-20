@@ -1,4 +1,4 @@
-import { io as clientIO, type Socket } from "socket.io-client";
+import { type Socket, io as clientIO } from "socket.io-client";
 
 interface SetupSocketProps {
 	appId: string;
@@ -21,7 +21,9 @@ interface SetupSocketProps {
 	) => void;
 	stopCheckingRef: React.MutableRefObject<boolean>;
 	statusLog: Record<string, { status: string; content: string }>;
-	setStatusLog: React.Dispatch<React.SetStateAction<Record<string, { status: string; content: string }>>>;
+	setStatusLog: React.Dispatch<
+		React.SetStateAction<Record<string, { status: string; content: string }>>
+	>;
 	setDeleteLogs: React.Dispatch<React.SetStateAction<string[]>>;
 	data: any;
 	socketsRef: React.MutableRefObject<Record<string, Socket>>;
@@ -44,9 +46,8 @@ export function setupSocket({
 	setDeleteLogs,
 	data,
 	socketsRef,
-	setAppFinished
+	setAppFinished,
 }: SetupSocketProps): Socket {
-
 	if (socketsRef.current[appId]) {
 		console.log(`Socket [${appId}] already exists`);
 		return socketsRef.current[appId];
@@ -112,7 +113,11 @@ export function setupSocket({
 			if (type === "status") {
 				setStatusLog({ [appId]: { status: status || "pending", content } });
 				if (content.toLowerCase().includes("actions executed")) {
-					window.electron.ipcRenderer.invoke("notify", "Actions executed", `${data.name} has finished successfully.`);
+					window.electron.ipcRenderer.invoke(
+						"notify",
+						"Actions executed",
+						`${data.name} has finished successfully.`,
+					);
 					stopCheckingRef.current = true;
 					setAppFinished({ [appId]: true });
 				}
@@ -126,10 +131,7 @@ export function setupSocket({
 
 			if (content === "Script killed successfully" && !errorRef.current) {
 				stopCheckingRef.current = true;
-				showToast(
-					"success",
-					`${data?.name || "Script"} exited successfully.`,
-				);
+				showToast("success", `${data?.name || "Script"} exited successfully.`);
 			}
 		},
 	);

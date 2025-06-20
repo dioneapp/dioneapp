@@ -52,7 +52,9 @@ export default function LogsComponent({
 						{statusLog[appId]?.status === "error" && (
 							<Icon name="Error" className="h-4 w-4" />
 						)}
-						{statusLog[appId]?.content ? `${statusLog[appId]?.content}` : t("logs.loading")}
+						{statusLog[appId]?.content
+							? `${statusLog[appId]?.content}`
+							: t("logs.loading")}
 					</p>
 				</div>
 			</div>

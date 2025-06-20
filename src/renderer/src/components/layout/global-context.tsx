@@ -1,8 +1,15 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { useToast } from "@renderer/utils/useToast";
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { io, type Socket } from "socket.io-client";
+import { type Socket, io } from "socket.io-client";
 import { setupSocket } from "../contexts/scripts/setupSocket";
 
 interface AppContextType {
@@ -12,7 +19,9 @@ interface AppContextType {
 	logs: Record<string, string[]>;
 	setLogs: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
 	statusLog: Record<string, { status: string; content: string }>;
-	setStatusLog: React.Dispatch<React.SetStateAction<Record<string, { status: string; content: string }>>>;
+	setStatusLog: React.Dispatch<
+		React.SetStateAction<Record<string, { status: string; content: string }>>
+	>;
 	isServerRunning: boolean;
 	setIsServerRunning: React.Dispatch<React.SetStateAction<boolean>>;
 	setData: React.Dispatch<React.SetStateAction<any>>;
@@ -59,7 +68,7 @@ interface AppContextType {
 	getAllAppLogs: () => string[];
 	appFinished: Record<string, boolean>;
 	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-	}
+}
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -73,7 +82,9 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	const [installedApps, setInstalledApps] = useState<string[]>([]);
 	const [socket] = useState<any>(null);
 	const [logs, setLogs] = useState<Record<string, string[]>>({});
-	const [statusLog, setStatusLog] = useState<Record<string, { status: string; content: string }>>({});
+	const [statusLog, setStatusLog] = useState<
+		Record<string, { status: string; content: string }>
+	>({});
 	const [isServerRunning, setIsServerRunning] = useState<boolean>(false);
 	// toast stuff
 	const { addToast } = useToast();
@@ -126,8 +137,9 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	const [activeApps, setActiveApps] = useState<any[]>([]);
 	const [removedApps, setRemovedApps] = useState<any[]>([]);
 	const [availableApps, setAvailableApps] = useState<any[]>([]);
-	const [appFinished, setAppFinished] = useState<{ [key: string]: boolean }>({});
-
+	const [appFinished, setAppFinished] = useState<{ [key: string]: boolean }>(
+		{},
+	);
 
 	useEffect(() => {
 		setData(null);
@@ -136,10 +148,10 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	// if app is active show logs instead of actions
 	useEffect(() => {
 		if (!data?.id || !Array.isArray(activeApps)) return;
-	
-		const isActive = activeApps.some(app => app.appId === data.id);
+
+		const isActive = activeApps.some((app) => app.appId === data.id);
 		console.log("app is active?:", isActive);
-	
+
 		if (isActive) {
 			setShow({ [data?.id]: "logs" });
 		}
@@ -347,38 +359,56 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 
 	async function connectApp(appId: string) {
 		if (socketsRef.current[appId]) return;
-	  
+
 		const port = await getCurrentPort();
-		const newSocket = setupSocket({appId, addLog, port, setShow, setMissingDependencies, setIframeAvailable, setCatchPort, loadIframe, setIframeSrc, errorRef, showToast, stopCheckingRef, statusLog, setStatusLog, setDeleteLogs, data, socketsRef, setAppFinished});
+		const newSocket = setupSocket({
+			appId,
+			addLog,
+			port,
+			setShow,
+			setMissingDependencies,
+			setIframeAvailable,
+			setCatchPort,
+			loadIframe,
+			setIframeSrc,
+			errorRef,
+			showToast,
+			stopCheckingRef,
+			statusLog,
+			setStatusLog,
+			setDeleteLogs,
+			data,
+			socketsRef,
+			setAppFinished,
+		});
 		socketsRef.current[appId] = newSocket;
 		setSockets({ ...socketsRef.current });
-	  }
-	  
+	}
 
-	  function disconnectApp(appId: string) {
+	function disconnectApp(appId: string) {
 		const socketToClose = socketsRef.current[appId];
 		if (!socketToClose) return;
-	  
+
 		socketToClose.disconnect();
 		delete socketsRef.current[appId];
 		setSockets({ ...socketsRef.current });
-	  
+
 		setActiveApps((prev) => {
-		  const filtered = prev.filter((app) => app.appId !== appId);
-		  return filtered;
+			const filtered = prev.filter((app) => app.appId !== appId);
+			return filtered;
 		});
-	  }
-	  
+	}
+
 	// multiple logs
 	const addLog = useCallback((appId: string, message: string) => {
-		setLogs(prevLogs => ({
-		  ...prevLogs,
-		  [appId]: [...(prevLogs[appId] || []), message]
+		setLogs((prevLogs) => ({
+			...prevLogs,
+			[appId]: [...(prevLogs[appId] || []), message],
 		}));
-	  }, []);
-	  
+	}, []);
+
 	const clearLogs = useCallback((appId: string) => {
-		setLogs(prevLogs => ({ ...prevLogs, [appId]: [] }));
+		setLogs((prevLogs) => ({ ...prevLogs, [appId]: [] }));
 	}, []);
 
 	const getAllAppLogs = useCallback(() => {
@@ -391,28 +421,30 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			const appIds = Object.keys(sockets);
 			if (appIds.length === 0) return;
 			const port = await getCurrentPort();
-		
+
 			// get app info
 			Promise.all(
-			appIds.map((appId) =>
-				fetch(`http://localhost:${port}/db/search/${encodeURIComponent(appId)}`)
-				.then((res) => {
-					if (!res.ok) throw new Error(`Error getting app info ${appId}`);
-					return res.json();
-				})
-				.then((data) => ({ appId, data }))
-				.catch((error) => {
-					console.error(error);
-					return { appId, data: null };
-				})
-			)
+				appIds.map((appId) =>
+					fetch(
+						`http://localhost:${port}/db/search/${encodeURIComponent(appId)}`,
+					)
+						.then((res) => {
+							if (!res.ok) throw new Error(`Error getting app info ${appId}`);
+							return res.json();
+						})
+						.then((data) => ({ appId, data }))
+						.catch((error) => {
+							console.error(error);
+							return { appId, data: null };
+						}),
+				),
 			).then((results) => {
 				console.log(results);
 				setActiveApps(results);
 			});
 		}
 		fetchAppInfo();
-	  }, [sockets]);
+	}, [sockets]);
 
 	useEffect(() => {
 		if (!pathname.includes("/install") && isServerRunning) {
@@ -429,52 +461,42 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 		}
 	}, [pathname.includes("/install"), isServerRunning]);
 
-	
 	const handleStopApp = async (appId: string, appName: string) => {
 		try {
-		 console.log(appId, appName);
-		  const port = await getCurrentPort();
-		  const response = await fetch(
-			`http://localhost:${port}/scripts/stop/${appName}/${appId}`,
-			{
-			  method: "GET",
-			},
-		  );
-	
-		  if (response.status === 200) {
-			setShow({ [appId]: "actions" });
-			window.electron.ipcRenderer.invoke(
-			  "notify",
-			  "Stopping...",
-			  `${appName} stopped successfully.`,
+			console.log(appId, appName);
+			const port = await getCurrentPort();
+			const response = await fetch(
+				`http://localhost:${port}/scripts/stop/${appName}/${appId}`,
+				{
+					method: "GET",
+				},
 			);
-			showToast(
-			  "success",
-			  `Successfully stopped ${appName}`,
-			);
-			clearLogs(appId);
-			setIsServerRunning(false);
-		  } else {
-			showToast(
-			  "error",
-			  `Error stopping ${appName}: ${response.status}`,
-			);
-		  }
+
+			if (response.status === 200) {
+				setShow({ [appId]: "actions" });
+				window.electron.ipcRenderer.invoke(
+					"notify",
+					"Stopping...",
+					`${appName} stopped successfully.`,
+				);
+				showToast("success", `Successfully stopped ${appName}`);
+				clearLogs(appId);
+				setIsServerRunning(false);
+			} else {
+				showToast("error", `Error stopping ${appName}: ${response.status}`);
+			}
 		} catch (error) {
-		  showToast(
-			"error",
-			`Error stopping ${appName}: ${error}`,
-		  );
-		  window.electron.ipcRenderer.invoke(
-			"notify",
-			"Error...",
-			`Error stopping ${appName}: ${error}`,
-		  );
-		  addLog(appId, `Error stopping ${appName}: ${error}`);	
+			showToast("error", `Error stopping ${appName}: ${error}`);
+			window.electron.ipcRenderer.invoke(
+				"notify",
+				"Error...",
+				`Error stopping ${appName}: ${error}`,
+			);
+			addLog(appId, `Error stopping ${appName}: ${error}`);
 		} finally {
-		 disconnectApp(appId);
+			disconnectApp(appId);
 		}
-	  };
+	};
 
 	return (
 		<AppContext.Provider

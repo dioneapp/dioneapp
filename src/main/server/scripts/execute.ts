@@ -121,7 +121,10 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 					: [step.commands.toString()];
 
 				if (step.catch) {
-					io.to(id).emit("installUpdate", { type: "catch", content: step.catch });
+					io.to(id).emit("installUpdate", {
+						type: "catch",
+						content: step.catch,
+					});
 					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `Watching port ${step.catch}`,

@@ -88,11 +88,14 @@ export default function MissingDepsModal({
 				return;
 			}
 
-			const response = await fetch(`http://localhost:${port}/deps/install/${appId}`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ dependencies: missingDeps, nameFolder }),
-			});
+			const response = await fetch(
+				`http://localhost:${port}/deps/install/${appId}`,
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ dependencies: missingDeps, nameFolder }),
+				},
+			);
 
 			if (!response.ok) {
 				throw new Error(response.statusText);
