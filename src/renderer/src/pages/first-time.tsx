@@ -3,13 +3,13 @@ import ExecuteSound from "@renderer/components/first-time/sound";
 import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
+import { saveExpiresAt, saveRefreshToken } from "@renderer/utils/secure-tokens";
 import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
-import { saveExpiresAt, saveRefreshToken } from "@renderer/utils/secure-tokens";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
