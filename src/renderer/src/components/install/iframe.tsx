@@ -9,7 +9,7 @@ interface IframeProps {
 	handleStop: () => void;
 	handleReloadIframe: () => void;
 	currentPort: number;
-	setShow: React.Dispatch<React.SetStateAction<string>>;
+	setShow: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 	data: any;
 }
 
@@ -152,7 +152,7 @@ export default function IframeComponent({
 					<button
 						type="button"
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
-						onClick={() => setShow("logs")}
+						onClick={() => setShow({ [data.id]: "logs" })}
 					>
 						<Icon name="Back" className="w-4 h-4 " />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">

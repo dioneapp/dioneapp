@@ -68,8 +68,8 @@ export function createScriptRouter(io: Server) {
 		}
 	});
 	// stop a script by name
-	router.get("/stop/:name", async (req, res) => {
-		const { name } = req.params;
+	router.get("/stop/:name/:id", async (req, res) => {
+		const { name, id } = req.params;
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const root = process.cwd();
 		const config = readConfig();
@@ -80,7 +80,7 @@ export function createScriptRouter(io: Server) {
 		);
 		logger.info(`Stopping script '${sanitizedName}' on '${workingDir}'`);
 		try {
-			const success = await stopActiveProcess(io);
+			const success = await stopActiveProcess(io, id);
 			if (success) {
 				res.status(200).send({ message: "Process stopped successfully" });
 			} else {
@@ -94,8 +94,8 @@ export function createScriptRouter(io: Server) {
 		}
 	});
 	// start a script by name
-	router.get("/start/:name", async (req, res) => {
-		const { name } = req.params;
+	router.get("/start/:name/:id", async (req, res) => {
+		const { name, id } = req.params;
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const root = process.cwd();
 		const config = readConfig();
@@ -105,12 +105,12 @@ export function createScriptRouter(io: Server) {
 			sanitizedName,
 		);
 		logger.info(`Starting script '${sanitizedName}' on '${workingDir}'`);
-		io.emit("installUpdate", {
+		io.to(id).emit("installUpdate", {
 			type: "log",
 			content: `Starting script '${sanitizedName}' on '${workingDir}'`,
 		});
 		try {
-			await executeStartup(workingDir, io);
+			await executeStartup(workingDir, io, id);
 		} catch (error: any) {
 			logger.error(
 				`Error handling start request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,

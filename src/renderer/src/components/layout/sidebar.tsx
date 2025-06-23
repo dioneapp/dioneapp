@@ -1,7 +1,7 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { openLink } from "../../utils/openLink";
 import { useAuthContext } from "../contexts/AuthContext";
@@ -14,8 +14,9 @@ export default function Sidebar() {
 	const { user, logout, loading } = useAuthContext();
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
-	const { isServerRunning } = useAppContext();
+	const { isServerRunning, activeApps, handleStopApp } = useAppContext();
 	const [avatarError, setAvatarError] = useState(false);
+	const navigate = useNavigate();
 
 	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -70,8 +71,14 @@ export default function Sidebar() {
 		fetchConfig();
 	}, []);
 
+	function stopApp(appId: string, appName: string) {
+		handleStopApp(appId, appName);
+	}
+
 	return (
-		<div className="flex flex-col items-center justify-center h-screen border-r border-white/10 overflow-hidden">
+		<div
+			className={`flex flex-col items-center justify-center border-r border-white/10 overflow-hidden ${config?.compactMode ? "max-w-24 w-24" : "max-w-70 w-70"}`}
+		>
 			<div className="absolute -top-10 -left-14 bg-[#BCB1E7] blur-3xl max-w-64 w-full h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" />
 			<div className="flex flex-col items-center justify-start h-full w-full p-4 z-50 px-6">
 				<div
@@ -79,7 +86,7 @@ export default function Sidebar() {
 				>
 					<Link
 						to={"/"}
-						className="flex gap-2 hover:opacity-80 transition-opacity justify-center items-center"
+						className="flex gap-2 hover:opacity-80 transition-opacity justify-center items-center mt-6"
 					>
 						{config?.compactMode && <Icon name="Dio" className="h-12 w-12" />}
 						{!config?.compactMode && <Icon name="Dio" className="h-8 w-8" />}
@@ -121,12 +128,53 @@ export default function Sidebar() {
 						</div>
 					)}
 				</div>
+				<div
+					className={
+						"mb-auto h-full mt-6 w-full flex flex-col justify-start items-start gap-2"
+					}
+				>
+					<div
+						className={`${config?.compactMode ? "flex flex-col gap-4 justify-start items-center m-auto w-full h-full" : "grid grid-cols-3 grid-rows-2 h-28 gap-2 w-full"}`}
+					>
+						{activeApps?.slice(0, 6).map((app) => (
+							<div
+								key={app.appId}
+								className={`flex justify-start items-start hover:[&_button]:opacity-100 hover:[&_button]:blur-none hover:[&_button]:-mt-3 [&_button]:mt-0 w-full rounded-xl backdrop-blur-sm ${config?.compactMode ? "" : "h-full w-full "}`}
+							>
+								<button
+									type="button"
+									onClick={() => stopApp(app.appId, app.data.name)}
+									className={`absolute hover:bg-red-600/60 p-2 rounded-full opacity-0 transition-all duration-200 blur-md backdrop-blur-3xl bg-red-800/50 ${config?.compactMode ? "-right-2 top-0" : "h-6 w-6 -right-2 top-0"}`}
+								>
+									<Icon name="Close" className="h-2 w-2" />
+								</button>
+								<Link
+									to={`/install/${app.appId}`}
+									className="border border-white/10 hover:opacity-80 transition-opacity duration-300 rounded-xl flex items-center justify-center overflow-hidden w-full h-full"
+								>
+									{app.data.logo_url?.startsWith("linear-gradient") ? (
+										<div
+											style={{ backgroundImage: app.data.logo_url }}
+											className={`bg-cover bg-center ${!config?.compactMode ? "h-6 w-6" : "h-12 w-12"}`}
+										/>
+									) : (
+										<img
+											src={app.data.logo_url}
+											alt={app.data.name}
+											className={`${!config?.compactMode ? "h-6 w-6" : "h-12 w-12"}`}
+										/>
+									)}
+								</Link>
+							</div>
+						))}
+					</div>
+				</div>
 				{updateAvailable && !config?.compactMode && (
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ duration: 0.2 }}
-						className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56"
+						className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56 mt-6"
 					>
 						<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
 							<h1 className="font-semibold text-xl text-neutral-200">
@@ -156,9 +204,11 @@ export default function Sidebar() {
 						</div>
 					</motion.div>
 				)}
-				<QuickLaunch compactMode={config?.compactMode} />
+				{!config?.compactMode && (
+					<QuickLaunch compactMode={config?.compactMode} />
+				)}
 				<div
-					className={`h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l ${!config?.compactMode ? "mb-4" : ""}`}
+					className={`mt-auto h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l ${!config?.compactMode ? "mb-4" : ""}`}
 				/>
 				<div
 					className={`mb-4 flex gap-2 items-center justify-center w-full h-fit group transition-all duration-500 hover:[&_div_div]:opacity-100 hover:[&_div_div]:blur-none [&_div_div]:-mt-24 hover:[&_div_div]:mt-0 [&_div_div]:opacity-0 [&_div_div]:blur-lg ${config?.compactMode ? "flex-col" : ""}`}
@@ -196,7 +246,7 @@ export default function Sidebar() {
 						</div>
 					)}
 					<div
-						className={`w-fit flex items-center gap-2 ${config?.compactMode ? "justify-center" : "justify-start"}`}
+						className={`mt-auto w-fit flex items-center gap-2 ${config?.compactMode ? "justify-center" : "justify-start"}`}
 					>
 						{user && (
 							<Link

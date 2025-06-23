@@ -17,7 +17,6 @@ export default function Install({ id }: { id?: string }) {
 	const {
 		setInstalledApps,
 		logs,
-		setLogs,
 		statusLog,
 		isServerRunning,
 		setIsServerRunning,
@@ -31,14 +30,19 @@ export default function Install({ id }: { id?: string }) {
 		setShow,
 		show,
 		showToast,
-		stopCheckingRef,
 		iframeSrc,
 		catchPort,
 		exitRef,
 		setApps,
 		installedApps,
-		setupSocket,
+		connectApp,
 		handleReloadQuickLaunch,
+		handleStopApp,
+		addLog,
+		clearLogs,
+		getAllAppLogs,
+		activeApps,
+		appFinished,
 	} = useAppContext();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
@@ -57,6 +61,38 @@ export default function Install({ id }: { id?: string }) {
 	const { user } = useAuthContext();
 	const [saved, setSaved] = useState(false);
 	const savedApps = JSON.parse(localStorage.getItem("savedApps") || "[]");
+	// max apps limit (default 6)
+	const maxApps = 6;
+
+	// connect to server
+	useEffect(() => {
+		if (!isServerRunning || !data?.id) return;
+		connectApp(data?.id);
+	}, [isServerRunning]);
+
+	// stop server and show actions if installation finish
+	useEffect(() => {
+		async function stopApp() {
+			if (!data?.id) return;
+
+			console.log("appFinished", appFinished[data.id]);
+			if (appFinished[data.id] === true) {
+				await handleStopApp(data.id, data.name);
+				setShow({ [data.id]: "actions" });
+			}
+		}
+		stopApp();
+	}, [appFinished, data?.id]);
+
+	useEffect(() => {
+		setData(null);
+		setSaved(false);
+
+		return () => {
+			setData(null);
+			setSaved(false);
+		};
+	}, []);
 
 	// fetch script data
 	useEffect(() => {
@@ -82,7 +118,7 @@ export default function Install({ id }: { id?: string }) {
 			} catch (error) {
 				setError(true);
 				console.error("Error fetching data:", error);
-				setLogs((prevLogs) => [...prevLogs, "Error fetching script data"]);
+				addLog(data?.id, "Error fetching script data");
 			} finally {
 				setLoading(false);
 			}
@@ -147,15 +183,25 @@ export default function Install({ id }: { id?: string }) {
 	}, [data]);
 
 	useEffect(() => {
-		if (show === "actions") {
+		if (show[data?.id] === "actions") {
 			fetchIfDownloaded();
 		}
 	}, [show]);
 
 	async function download() {
-		setLogs([]); // clear logs
+		const tooMuchApps = activeApps.length >= maxApps;
+		if (tooMuchApps) {
+			showToast(
+				"error",
+				t("toast.install.error.tooManyApps").replace("%s", String(maxApps)),
+			);
+			return;
+		}
+		clearLogs(data?.id);
 		setIsServerRunning(true);
-		setShow("logs");
+		setShow({ [data?.id]: "logs" });
+		if (!data?.id) return;
+
 		try {
 			const port = await getCurrentPort();
 			window.electron.ipcRenderer.invoke(
@@ -163,9 +209,11 @@ export default function Install({ id }: { id?: string }) {
 				"Downloading...",
 				`Starting download of ${data.name}`,
 			);
+
 			await fetch(`http://localhost:${port}/scripts/download/${id}`, {
 				method: "GET",
 			});
+
 			if (!installedApps.includes(data.name)) {
 				setInstalledApps((prevApps) => [...prevApps, data.name]);
 			}
@@ -175,13 +223,21 @@ export default function Install({ id }: { id?: string }) {
 				"error",
 				t("toast.install.error.download").replace("%s", String(error)),
 			);
-			setLogs((prevLogs) => [...prevLogs, "Error initiating download"]);
+			addLog(data?.id, "Error initiating download");
 			setIsServerRunning(false);
 		}
 		handleReloadQuickLaunch();
 	}
 
 	async function start() {
+		const tooMuchApps = activeApps.length >= maxApps;
+		if (tooMuchApps) {
+			showToast(
+				"error",
+				t("toast.install.error.tooManyApps").replace("%s", String(maxApps)),
+			);
+			return;
+		}
 		try {
 			if (!data.name) return;
 			setIsServerRunning(true);
@@ -191,9 +247,12 @@ export default function Install({ id }: { id?: string }) {
 				"Starting...",
 				`Starting ${data.name}`,
 			);
-			await fetch(`http://localhost:${port}/scripts/start/${data?.name}`, {
-				method: "GET",
-			});
+			await fetch(
+				`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}`,
+				{
+					method: "GET",
+				},
+			);
 		} catch (error) {
 			showToast(
 				"error",
@@ -201,22 +260,23 @@ export default function Install({ id }: { id?: string }) {
 					.replace("%s", data.name)
 					.replace("%s", String(error)),
 			);
-			setLogs((prevLogs) => [...prevLogs, `Error initiating ${data.name}`]);
+			addLog(data?.id, `Error initiating ${data.name}`);
 			setIsServerRunning(false);
 		}
 	}
 
 	async function stop(type?: string) {
 		try {
+			console.log("stopping...");
 			const port = await getCurrentPort();
 			const response = await fetch(
-				`http://localhost:${port}/scripts/stop/${data.name}`,
+				`http://localhost:${port}/scripts/stop/${data.name}/${data.id}`,
 				{
 					method: "GET",
 				},
 			);
 			if (response.status === 200) {
-				setShow("actions");
+				setShow({ [data?.id]: "actions" });
 				setInstalled(true);
 				window.electron.ipcRenderer.invoke(
 					"notify",
@@ -227,7 +287,7 @@ export default function Install({ id }: { id?: string }) {
 					"success",
 					t("toast.install.success.stopped").replace("%s", data.name),
 				);
-				setLogs([]); // clear logs
+				clearLogs(data?.id);
 				await fetchIfDownloaded();
 				setIsServerRunning(false);
 				if (type === "exit") {
@@ -237,7 +297,7 @@ export default function Install({ id }: { id?: string }) {
 				showToast(
 					"error",
 					t("toast.install.error.stop")
-						.replace("%s", data.name)
+						.replace("%s", data?.name || "app")
 						.replace("%s", String(response.status)),
 				);
 			}
@@ -245,7 +305,7 @@ export default function Install({ id }: { id?: string }) {
 			showToast(
 				"error",
 				t("toast.install.error.stop")
-					.replace("%s", data.name)
+					.replace("%s", data?.name)
 					.replace("%s", String(error)),
 			);
 			window.electron.ipcRenderer.invoke(
@@ -253,7 +313,7 @@ export default function Install({ id }: { id?: string }) {
 				"Error...",
 				`Error stopping ${data.name}: ${error}`,
 			);
-			setLogs((prevLogs) => [...prevLogs, `Error stopping ${data.name}`]);
+			addLog(data?.id, `Error stopping ${data.name}`);
 		}
 	}
 
@@ -290,10 +350,10 @@ export default function Install({ id }: { id?: string }) {
 						"error",
 						`Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}.`,
 					);
-					setLogs((prevLogs) => [
-						...prevLogs,
+					addLog(
+						data?.id,
 						`Error uninstalling dependencies: ${result.reasons?.join(", ") || result.error || "Unknown error"}`,
-					]);
+					);
 				}
 			} else {
 				await uninstallApp(port);
@@ -306,9 +366,9 @@ export default function Install({ id }: { id?: string }) {
 					.replace("%s", data.name)
 					.replace("%s", String(error)),
 			);
-			setLogs((prevLogs) => [...prevLogs, `Error uninstalling ${data.name}`]);
+			addLog(data?.id, `Error uninstalling ${data.name}`);
 		}
-
+		await handleStopApp(data?.id, data?.name);
 		handleReloadQuickLaunch();
 	}
 
@@ -354,22 +414,11 @@ export default function Install({ id }: { id?: string }) {
 
 	const copyLogsToClipboard = () => {
 		showToast("success", t("toast.install.success.logsCopied"));
-		const logsText = logs.join("\n");
+		const logsText = getAllAppLogs().join("\n");
 		navigator.clipboard.writeText(logsText);
 	};
 
 	const handleDownload = async () => {
-		if (isServerRunning) {
-			showToast(
-				"error",
-				t("toast.install.error.serverRunning"),
-				undefined,
-				true,
-				"Stop",
-				handleStop,
-			);
-			return;
-		}
 		showToast(
 			"default",
 			t("toast.install.downloading").replace("%s", data.name),
@@ -378,25 +427,9 @@ export default function Install({ id }: { id?: string }) {
 	};
 
 	const handleStart = async () => {
-		if (isServerRunning) {
-			showToast(
-				"error",
-				t("toast.install.error.serverRunning"),
-				undefined,
-				true,
-				"Stop",
-				handleStop,
-			);
-			return;
-		}
 		showToast("default", t("toast.install.starting").replace("%s", data.name));
-		setShow("logs");
+		setShow({ [data?.id]: "logs" });
 		await start();
-	};
-
-	const handleStop = async () => {
-		stopCheckingRef.current = true;
-		await stop();
 	};
 
 	const handleUninstall = async (deleteDeps?: boolean) => {
@@ -420,7 +453,7 @@ export default function Install({ id }: { id?: string }) {
 			"default",
 			t("toast.install.reconnecting").replace("%s", data.name),
 		);
-		setShow("logs");
+		setShow({ [data?.id]: "logs" });
 	};
 	const handleReloadIframe = async () => {
 		const iframe = document.getElementById("iframe") as HTMLIFrameElement;
@@ -438,16 +471,16 @@ export default function Install({ id }: { id?: string }) {
 		// show success toast
 		showToast("success", t("toast.install.success.depsInstalled"));
 		// clear logs
-		setLogs([]);
+		clearLogs(data?.id);
 		// clear errors
 		setError(false);
 		// show logs
-		setShow("logs");
+		setShow({ [data?.id]: "logs" });
 		// setIsServerRunning(false);
 		showToast("default", t("toast.install.retrying").replace("%s", data.name));
-		await handleStop();
+		await handleStopApp(data?.id, data?.name);
 		// setup socket again
-		setupSocket();
+		connectApp(data?.id);
 		await handleDownload();
 	}
 
@@ -533,10 +566,27 @@ export default function Install({ id }: { id?: string }) {
 	}
 
 	useEffect(() => {
-		if (savedApps.find((app) => app.appId === data?.id)) {
+		if (savedApps.some((app) => app.appId === data?.id)) {
+			console.log("appid", data?.id);
+			console.log("savedApps", savedApps);
+			console.log(
+				"saved",
+				savedApps.some((app) => app.appId === data?.id),
+			);
 			setSaved(true);
 		}
-	}, [savedApps]);
+	}, [savedApps, data]);
+
+	const stopApp = async () => {
+		await fetchIfDownloaded();
+		await handleStopApp(data.id, data.name);
+	};
+
+	useEffect(() => {
+		if (data) {
+			setShow({ [data.id]: "actions" });
+		}
+	}, [data]);
 
 	return (
 		<>
@@ -552,6 +602,7 @@ export default function Install({ id }: { id?: string }) {
 					set={setMissingDependencies}
 					onFinish={onFinishInstallDeps}
 					workingDir={data?.name}
+					appId={data?.id}
 				/>
 			)}
 			{deleteDepsModal && (
@@ -623,12 +674,12 @@ export default function Install({ id }: { id?: string }) {
 				</div>
 			)}
 			<div className="relative w-full h-full overflow-auto">
-				{show === "actions" && (
+				{show[data?.id] === "actions" && (
 					<>
 						<div className="p-12 z-50 absolute">
 							<button
 								type="button"
-								onClick={() => navigate(-1)}
+								onClick={() => navigate("/")}
 								className="flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 py-2 px-4 text-center cursor-pointer"
 							>
 								<Icon name="Back" className="h-4 w-4" />
@@ -660,27 +711,27 @@ export default function Install({ id }: { id?: string }) {
 				<div className="absolute inset-0 flex items-center justify-center p-4">
 					<div className="w-full h-full flex justify-center items-center">
 						<AnimatePresence mode="wait">
-							{show === "iframe" && (
+							{show[data?.id] === "iframe" && (
 								<IframeComponent
 									iframeSrc={iframeSrc}
-									handleStop={handleStop}
+									handleStop={() => stopApp()}
 									handleReloadIframe={handleReloadIframe}
 									currentPort={catchPort as number}
 									setShow={setShow}
 									data={data}
 								/>
 							)}{" "}
-							{show === "logs" && (
+							{show[data?.id] === "logs" && (
 								<LogsComponent
-									statusLog={statusLog}
 									logs={logs}
 									copyLogsToClipboard={copyLogsToClipboard}
-									handleStop={handleStop}
+									handleStop={() => stopApp()}
 									iframeAvailable={iframeAvailable}
 									setShow={setShow}
+									appId={data?.id}
 								/>
 							)}{" "}
-							{show === "actions" && (
+							{show[data?.id] === "actions" && (
 								<ActionsComponent
 									handleReconnect={handleReconnect}
 									isServerRunning={isServerRunning}

@@ -1,33 +1,35 @@
 import { motion } from "framer-motion";
 import type { JSX } from "react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
+import { useAppContext } from "../layout/global-context";
 
 interface LogsProps {
-	statusLog: { status: string; content: string };
-	logs: string[];
+	logs: Record<string, string[]>;
 	copyLogsToClipboard: () => void;
 	handleStop: () => void;
 	iframeAvailable: boolean;
-	setShow: React.Dispatch<React.SetStateAction<string>>;
+	setShow: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+	appId: string;
 }
 
 export default function LogsComponent({
-	statusLog,
 	logs,
 	copyLogsToClipboard,
 	handleStop,
 	iframeAvailable,
 	setShow,
+	appId,
 }: LogsProps) {
+	const { statusLog } = useAppContext();
 	const { t } = useTranslation();
 	const Spinner = useMemo(() => {
-		if (statusLog.status === "pending" || !statusLog.status) {
+		if (statusLog[appId]?.status === "pending" || !statusLog[appId]?.status) {
 			return <Icon name="Pending" className="h-4 w-4 animate-spin" />;
 		}
 		return null;
-	}, [statusLog.status]);
+	}, [statusLog[appId]?.status]);
 
 	return (
 		<motion.div
@@ -41,16 +43,18 @@ export default function LogsComponent({
 			<div className="w-full justify-end flex items-end mx-auto overflow-hidden">
 				<div className="w-52 h-12 rounded-t-xl border border-b-0 border-white/10 p-2 flex items-center justify-center">
 					<p
-						className={`text-xs ${statusLog.status === "success" ? "text-green-400" : statusLog.status === "error" ? "text-red-400" : statusLog.status === "pending" || !statusLog.status ? "text-orange-400" : "text-neutral-200"} flex items-center gap-2`}
+						className={`text-xs ${statusLog[appId]?.status === "success" ? "text-green-400" : statusLog[appId]?.status === "error" ? "text-red-400" : statusLog[appId]?.status === "pending" || !statusLog[appId]?.status ? "text-orange-400" : "text-neutral-200"} flex items-center gap-2`}
 					>
 						{Spinner}
-						{statusLog.status === "success" && (
+						{statusLog[appId]?.status === "success" && (
 							<Icon name="Success" className="h-4 w-4" />
 						)}
-						{statusLog.status === "error" && (
+						{statusLog[appId]?.status === "error" && (
 							<Icon name="Error" className="h-4 w-4" />
 						)}
-						{statusLog.content ? `${statusLog.content}` : t("logs.loading")}
+						{statusLog[appId]?.content
+							? `${statusLog[appId]?.content}`
+							: t("logs.loading")}
 					</p>
 				</div>
 			</div>
@@ -63,7 +67,7 @@ export default function LogsComponent({
 						}
 					}}
 				>
-					{logs.map((log, index) => {
+					{(logs?.[appId] || []).map((log, index) => {
 						const lowerLog = log.toLowerCase();
 						let textColor = "text-neutral-400";
 						let icon: JSX.Element | null = null;
@@ -111,7 +115,7 @@ export default function LogsComponent({
 							<button
 								type="button"
 								className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
-								onClick={() => setShow("iframe")}
+								onClick={() => setShow({ [appId]: "iframe" })}
 							>
 								<Icon name="Iframe" className="h-4 w-4" />
 							</button>

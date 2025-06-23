@@ -104,6 +104,8 @@ export const en = {
 				stop: "Error stopping %s: %s",
 				uninstall: "Error uninstalling %s: %s",
 				serverRunning: "Server is already running.",
+				tooManyApps:
+					"Slow down! You already have 6 apps running at the same time.",
 			},
 		},
 	},

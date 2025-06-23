@@ -28,7 +28,8 @@ export const createDependenciesRouter = (io: Server) => {
 	// 	}
 	// });
 
-	router.post("/install", async (req, res) => {
+	router.post("/install/:id", async (req, res) => {
+		const { id } = req.params;
 		const getOS = (): "windows" | "macos" | "linux" | null => {
 			switch (process.platform) {
 				case "win32":
@@ -46,6 +47,7 @@ export const createDependenciesRouter = (io: Server) => {
 			command: string,
 			name: string,
 			workingDir: string,
+			id: string,
 		): Promise<void> => {
 			return new Promise((resolve, reject) => {
 				// biome-ignore lint/suspicious/noImplicitAnyLet: <explanation>
@@ -84,7 +86,7 @@ export const createDependenciesRouter = (io: Server) => {
 					const text = data.toString("utf8").trim();
 					if (text) {
 						stdoutData += `${text}\n`;
-						io.emit("installDep", { name, output: text });
+						io.to(id).emit("installDep", { name, output: text });
 						logger.info(`[stdout] ${text}`);
 					}
 				});
@@ -93,14 +95,14 @@ export const createDependenciesRouter = (io: Server) => {
 					if (text) {
 						stderrData += `${text}\n`;
 						if (text.match(/error|fatal|unexpected/i)) {
-							io.emit("installDep", { name, error: text });
+							io.to(id).emit("installDep", { name, error: text });
 							logger.error(`[stderr-error] ${text}`);
-							killProcess(installProcess, io);
-							io.emit("installUpdate", {
+							killProcess(installProcess, io, id);
+							io.to(id).emit("installUpdate", {
 								type: "log",
 								content: `"${command}": ${text}`,
 							});
-							io.emit("installUpdate", {
+							io.to(id).emit("installUpdate", {
 								type: "status",
 								status: "error",
 								content: "Error detected",
@@ -108,10 +110,10 @@ export const createDependenciesRouter = (io: Server) => {
 							return;
 						}
 						if (text.match(/warning|warn|deprecated/i)) {
-							io.emit("installDep", { name, output: `WARN: ${text}` });
+							io.to(id).emit("installDep", { name, output: `WARN: ${text}` });
 							logger.warn(`[stderr-warn] ${text}`);
 						} else {
-							io.emit("installDep", { name, output: `OUT: ${text}` });
+							io.to(id).emit("installDep", { name, output: `OUT: ${text}` });
 							logger.info(`[stderr-info] ${text}`);
 						}
 					}
@@ -159,7 +161,7 @@ export const createDependenciesRouter = (io: Server) => {
 			for (const dep of dependencies) {
 				if (typeof dep !== "string") {
 					console.error(`❌ Invalid dependency format: ${JSON.stringify(dep)}`);
-					io.emit("installDep", {
+					io.to(id).emit("installDep", {
 						name: "unknown",
 						output: `❌ Invalid dependency format: ${JSON.stringify(dep)}`,
 					});
@@ -170,30 +172,30 @@ export const createDependenciesRouter = (io: Server) => {
 					acceptedDependencies[dep]?.installCommand?.[osType];
 				if (!installCommand) {
 					res.write(`No installation command found for ${dep}\n`);
-					io.emit("installDep", {
+					io.to(id).emit("installDep", {
 						name: dep,
 						output: `❌ No installation command found for ${dep}`,
 					});
 				}
 
-				await executeCommand(installCommand, dep, workingDir);
+				await executeCommand(installCommand, dep, workingDir, id);
 			}
 
 			fs.rm(workingDir, { recursive: true }, (err) => {
 				if (err) {
 					console.error(`Error deleting directory: ${err}`);
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `Error deleting directory: ${err}`,
 					});
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", {
 						type: "status",
 						status: "error",
 						content: "Error detected",
 					});
 				}
 				res.end("\nInstallation completed successfully.\n");
-				io.emit("installDep", {
+				io.to(id).emit("installDep", {
 					name: "all",
 					output: "🎉 Installation completed successfully!",
 				});
@@ -201,7 +203,7 @@ export const createDependenciesRouter = (io: Server) => {
 		} catch (error) {
 			console.error("Server error:", error);
 			res.write(`❌ Server error: ${(error as Error).message}\n`);
-			io.emit("installDep", {
+			io.to(id).emit("installDep", {
 				name: "all",
 				output: `❌ Server error: ${(error as Error).message}`,
 			});

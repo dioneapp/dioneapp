@@ -16,6 +16,13 @@ export const start = (httpServer: http.Server) => {
 		io.on("connection", (socket) => {
 			logger.info(`A user has connected to the server with ID: "${socket.id}"`);
 
+			socket.on("registerApp", (appId) => {
+				if (appId) {
+					socket.join(appId);
+					logger.info(`Socket ${socket.id} joined room: ${appId}`);
+				}
+			});
+
 			socket.on("connect_error", (err) => {
 				logger.error(`Connection error: ${err.message}`);
 			});

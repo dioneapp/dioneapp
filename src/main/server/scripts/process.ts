@@ -10,14 +10,14 @@ let activeProcess: any = null;
 let activePID: number | null = null;
 
 // kill process and its children
-export const killProcess = async (pid: number, io: Server) => {
+export const killProcess = async (pid: number, io: Server, id: string) => {
 	try {
 		const currentPlatform = getPlatform();
 		if (currentPlatform === "win32") {
 			const taskkill = spawn("taskkill", ["/PID", pid.toString(), "/T", "/F"]);
 			taskkill.on("close", (code) => {
 				if (code === 0) {
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: "Script killed successfully",
 					});
@@ -34,10 +34,11 @@ export const killProcess = async (pid: number, io: Server) => {
 			}
 			process.kill(pid, "SIGKILL");
 		}
-		io.emit("installUpdate", {
+		io.to(id).emit("installUpdate", {
 			type: "log",
 			content: "Script killed successfully",
 		});
+		logger.info("Script killed successfully");
 		return true;
 	} catch (error) {
 		logger.error(`Can't kill process with PID ${pid}: ${error}`);
@@ -46,7 +47,7 @@ export const killProcess = async (pid: number, io: Server) => {
 };
 
 // is active process running?
-export const stopActiveProcess = async (io: Server) => {
+export const stopActiveProcess = async (io: Server, id: string) => {
 	if (!activeProcess || !activePID) {
 		return true;
 	}
@@ -54,7 +55,7 @@ export const stopActiveProcess = async (io: Server) => {
 	logger.warn(`Stopping process ${activePID} and its children`);
 
 	try {
-		const killSuccess = await killProcess(activePID, io);
+		const killSuccess = await killProcess(activePID, io, id);
 
 		// ait active process finish
 		await Promise.race([
@@ -82,16 +83,15 @@ export const executeCommand = async (
 	command: string,
 	io: Server,
 	workingDir: string,
-	logs?,
+	id: string,
+	logsType?: string,
 ): Promise<string> => {
 	let stdoutData = "";
 	let stderrData = "";
-	if (!logs) {
-		logs = "installUpdate";
-	}
+	const logs = logsType || "installUpdate";
 	try {
-		// if active process exists, kill it
-		await stopActiveProcess(io);
+		// // if active process exists, kill it (disabled for multiple apps)
+		// await stopActiveProcess(io, id);
 
 		const currentPlatform = getPlatform();
 		const isWindows = currentPlatform === "win32";
@@ -132,7 +132,7 @@ export const executeCommand = async (
 
 		activePID = activeProcess.pid;
 		logger.info(`Started process (PID: ${activePID}): ${command}`);
-		io.emit(logs, {
+		io.to(id).emit(logs, {
 			type: "log",
 			content: `Executing: ${command}`,
 		});
@@ -141,7 +141,7 @@ export const executeCommand = async (
 			const text = data.toString("utf8").trim();
 			if (text) {
 				stdoutData += `${text}\n`;
-				io.emit(logs, { type: "log", content: text });
+				io.to(id).emit(logs, { type: "log", content: text });
 				logger.info(`[stdout] ${text}`);
 			}
 		});
@@ -150,14 +150,14 @@ export const executeCommand = async (
 			if (text) {
 				stderrData += `${text}\n`;
 				if (text.match(/error|fatal|unexpected/i)) {
-					io.emit(logs, { type: "log", content: `ERROR: ${text}` });
+					io.to(id).emit(logs, { type: "log", content: `ERROR: ${text}` });
 					logger.error(`[stderr-error] ${text}`);
-					killProcess(activeProcess, io);
-					io.emit(logs, {
+					killProcess(activeProcess, io, id);
+					io.to(id).emit(logs, {
 						type: "log",
 						content: `"${command}": ${text}`,
 					});
-					io.emit(logs, {
+					io.to(id).emit(logs, {
 						type: "status",
 						status: "error",
 						content: "Error detected",
@@ -165,10 +165,10 @@ export const executeCommand = async (
 					return;
 				}
 				if (text.match(/warning|warn|deprecated/i)) {
-					io.emit(logs, { type: "log", content: `WARN: ${text}` });
+					io.to(id).emit(logs, { type: "log", content: `WARN: ${text}` });
 					logger.warn(`[stderr-warn] ${text}`);
 				} else {
-					io.emit(logs, { type: "log", content: `OUT: ${text}` });
+					io.to(id).emit(logs, { type: "log", content: `OUT: ${text}` });
 					logger.info(`[stderr-info] ${text}`);
 				}
 			}
@@ -187,12 +187,12 @@ export const executeCommand = async (
 				} else {
 					const errorMsg = `Process (PID: ${oldPid}) failed with exit code ${code}`;
 					logger.error(errorMsg);
-					io.emit(logs, {
+					io.to(id).emit(logs, {
 						type: "status",
 						status: "error",
 						content: "Error detected",
 					});
-					io.emit(logs, {
+					io.to(id).emit(logs, {
 						type: "log",
 						content: `ERROR: ${errorMsg}`,
 					});
@@ -203,11 +203,11 @@ export const executeCommand = async (
 			activeProcess.on("error", (error) => {
 				const errorMsg = `Failed to start command: ${error.message}`;
 				logger.error(errorMsg);
-				io.emit(logs, {
+				io.to(id).emit(logs, {
 					type: "log",
 					content: `ERROR: ${errorMsg}`,
 				});
-				io.emit(logs, {
+				io.to(id).emit(logs, {
 					type: "status",
 					status: "error",
 					content: "Failed to start process",
@@ -221,12 +221,12 @@ export const executeCommand = async (
 	} catch (error: any) {
 		const errorMsg = `Exception executing command: ${error.message}`;
 		logger.error(errorMsg);
-		io.emit(logs, {
+		io.to(id).emit(logs, {
 			type: "status",
 			status: "error",
 			content: "Error detected",
 		});
-		io.emit(logs, {
+		io.to(id).emit(logs, {
 			type: "log",
 			content: `ERROR: ${errorMsg}`,
 		});
@@ -238,6 +238,7 @@ export const executeCommands = async (
 	commands: any[],
 	workingDir: string,
 	io: Server,
+	id: string,
 ) => {
 	let currentWorkingDir = workingDir;
 	const currentPlatform = getPlatform(); // "win32", "linux", "darwin"
@@ -264,7 +265,7 @@ export const executeCommands = async (
 					logger.info(
 						`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
 					);
-					io.emit("installUpdate", {
+					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `INFO: Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
 					});
@@ -277,7 +278,7 @@ export const executeCommands = async (
 				command = cmd.command;
 			} else {
 				logger.error(`Invalid command object: ${JSON.stringify(cmd)}`);
-				io.emit("installUpdate", {
+				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: `ERROR: Invalid command object: ${JSON.stringify(cmd)}`,
 				});
@@ -296,11 +297,11 @@ export const executeCommands = async (
 			currentWorkingDir = path.join(currentWorkingDir, targetDir);
 			if (!fs.existsSync(currentWorkingDir)) {
 				logger.error(`Directory does not exist: ${currentWorkingDir}`);
-				io.emit("installUpdate", {
+				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: `ERROR: Directory does not exist: ${currentWorkingDir}`,
 				});
-				io.emit("installUpdate", {
+				io.to(id).emit("installUpdate", {
 					type: "status",
 					status: "error",
 					content: "Error detected",
@@ -308,12 +309,12 @@ export const executeCommands = async (
 				continue;
 			}
 			logger.info(`Changed working directory to: ${currentWorkingDir}`);
-			io.emit("installUpdate", {
+			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: `INFO: Changed working directory to: ${currentWorkingDir}`,
 			});
 		} else {
-			const response = await executeCommand(command, io, currentWorkingDir);
+			const response = await executeCommand(command, io, currentWorkingDir, id);
 			if (response.toLowerCase().includes("error")) {
 				throw new Error(response);
 			}

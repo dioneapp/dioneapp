@@ -9,6 +9,7 @@ interface props {
 	set: React.Dispatch<React.SetStateAction<any>>;
 	onFinish: () => void;
 	workingDir: string;
+	appId: string;
 }
 
 export default function MissingDepsModal({
@@ -16,6 +17,7 @@ export default function MissingDepsModal({
 	set,
 	onFinish,
 	workingDir,
+	appId,
 }: props) {
 	const { t } = useTranslation();
 	const [page, setPage] = useState(0);
@@ -36,6 +38,7 @@ export default function MissingDepsModal({
 
 				socket.on("connect", () => {
 					console.log("Connected to socket:", socket.id);
+					socket.emit("registerApp", appId);
 					setLogs((prevLogs) => [...prevLogs, t("missingDeps.logs.connected")]);
 				});
 
@@ -85,11 +88,14 @@ export default function MissingDepsModal({
 				return;
 			}
 
-			const response = await fetch(`http://localhost:${port}/deps/install`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ dependencies: missingDeps, nameFolder }),
-			});
+			const response = await fetch(
+				`http://localhost:${port}/deps/install/${appId}`,
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ dependencies: missingDeps, nameFolder }),
+				},
+			);
 
 			if (!response.ok) {
 				throw new Error(response.statusText);
