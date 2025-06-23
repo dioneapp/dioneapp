@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "./components/contexts/AuthContext";
 import { ErrorBoundary } from "./components/layout/error-handler";
 import Sidebar from "./components/layout/sidebar";
@@ -16,14 +16,6 @@ import NoAccess from "./pages/no-access";
 import Report from "./pages/report";
 import Settings from "./pages/settings";
 import { TranslationProvider } from "./translations/translationContext";
-
-// transition animation config
-const pageTransition = {
-	initial: { opacity: 0.3, scale: 0.99, filter: "blur(5px)" },
-	animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
-	exit: { opacity: 0.3, scale: 0.99, filter: "blur(5px)" },
-	transition: { duration: 0.22, ease: "easeInOut" },
-};
 
 function App() {
 	const { user, checkSession } = useAuthContext();
@@ -104,9 +96,12 @@ function App() {
 					>
 						<AnimatePresence mode="wait">
 							<motion.div
-								key={pathname}
-								{...pageTransition}
-								className="w-full h-full"
+								className="page"
+								initial={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
+								animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+								exit={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
+								transition={{ duration: 0.3, ease: [0.42, 0, 0.58, 1] }}
+								key={location.pathname}
 							>
 								<ErrorBoundary>
 									<PageComponent />

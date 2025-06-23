@@ -5,7 +5,6 @@ interface SetupSocketProps {
 	addLog: (appId: string, log: string) => void;
 	port: number;
 	setMissingDependencies: React.Dispatch<React.SetStateAction<any>>;
-	setShow: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 	setIframeAvailable: React.Dispatch<React.SetStateAction<boolean>>;
 	setCatchPort: React.Dispatch<React.SetStateAction<number | undefined>>;
 	loadIframe: (port: number) => void;
@@ -35,7 +34,6 @@ export function setupSocket({
 	addLog,
 	port,
 	setMissingDependencies,
-	setShow,
 	setIframeAvailable,
 	setCatchPort,
 	loadIframe,

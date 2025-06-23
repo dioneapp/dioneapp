@@ -1,5 +1,5 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import CarrouselSkeleton from "./carrousel-skeleton";

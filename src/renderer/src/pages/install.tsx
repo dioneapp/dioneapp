@@ -17,7 +17,6 @@ export default function Install({ id }: { id?: string }) {
 	const {
 		setInstalledApps,
 		logs,
-		statusLog,
 		isServerRunning,
 		setIsServerRunning,
 		setData,

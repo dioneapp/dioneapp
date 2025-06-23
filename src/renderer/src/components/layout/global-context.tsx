@@ -365,7 +365,6 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			appId,
 			addLog,
 			port,
-			setShow,
 			setMissingDependencies,
 			setIframeAvailable,
 			setCatchPort,

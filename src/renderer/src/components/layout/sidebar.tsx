@@ -1,7 +1,7 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { openLink } from "../../utils/openLink";
 import { useAuthContext } from "../contexts/AuthContext";
@@ -16,7 +16,6 @@ export default function Sidebar() {
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
 	const { isServerRunning, activeApps, handleStopApp } = useAppContext();
 	const [avatarError, setAvatarError] = useState(false);
-	const navigate = useNavigate();
 
 	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);

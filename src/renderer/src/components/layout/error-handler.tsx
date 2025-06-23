@@ -1,6 +1,5 @@
 // src/components/ErrorBoundary.tsx
 import ErrorPage from "@renderer/pages/error";
-import { getCurrentPort } from "@renderer/utils/getPort";
 import React from "react";
 import { useAppContext } from "./global-context";
 
