@@ -318,11 +318,22 @@ router.get("/search/type/:type", async (req, res) => {
 			return;
 		}
 
+		if (data.length === 0) {
+			res.send([]);
+			return;
+		}
+
+		if (!data || !Array.isArray(data)) {
+			logger.error("Invalid data format from API, probably no scripts found.");
+			res.send([]);
+			return;
+		}
+
 		const scripts = data.map((script) => {
 			if (
-				script.logo_url === null ||
-				script.logo_url === undefined ||
-				script.logo_url === ""
+				script?.logo_url === null ||
+				script?.logo_url === undefined ||
+				script?.logo_url === ""
 			) {
 				script.logo_url = generateGradient(script.name);
 			}
