@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import type { JSX } from "react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
 import { useAppContext } from "../layout/global-context";
@@ -30,6 +30,16 @@ export default function LogsComponent({
 		}
 		return null;
 	}, [statusLog[appId]?.status]);
+
+	function cleanLogLine(log: string): string {
+		return log
+			.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, "")
+			.replace(/[\u0000-\u001F\u007F-\u009F]/g, "")
+			.replace(/\[[^\]]*\]\s*/g, "")
+			.replace(/^(ERROR:|WARN:|INFO:|OUT:)\s*/i, "")
+			.trim();
+	}
+	
 
 	return (
 		<motion.div
@@ -69,6 +79,7 @@ export default function LogsComponent({
 				>
 					{(logs?.[appId] || []).map((log, index) => {
 						const lowerLog = log.toLowerCase();
+						const cleanedLog = cleanLogLine(log);
 						let textColor = "text-neutral-400";
 						let icon: JSX.Element | null = null;
 
@@ -90,16 +101,9 @@ export default function LogsComponent({
 									<span
 										className={`w-4 h-4 flex justify-start items-center ${lowerLog.includes("error") && "mr-4"}`}
 									>
-										{icon || (
-											<span className="flex justify-start w-4 h-4">-</span>
-										)}
+										{icon || <span className="flex justify-start w-4 h-4">-</span>}
 									</span>
-									{log
-										// biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
-										.replace(/\x1B\[[0-9;]*m/g, "") // remove ascii codes
-										.replace(/^(ERROR:|WARN:|INFO:|OUT:)\s*/g, "") // remove prefix
-										.replace(/\[[^\]]*\]\s*/g, "") // remove blocks like [stderr-info] or dates
-										.trim() || t("common.loading")}
+									{cleanedLog || t("common.loading")}
 								</span>
 							</p>
 						);

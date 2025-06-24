@@ -257,9 +257,9 @@ router.get("/search/name/:name", async (req, res) => {
 	if (req.params.name.length === 0) return;
 	async function getData() {
 		const sanitizedName = req.params.name
-			.replace(/-/g, " ")
-			.replace(/\s+/g, " ")
-			.trim();
+		.replace(/-/g, " ")
+		.replace(/\s+/g, " ")
+		.trim();
 		if (sanitizedName) {
 			const response = await fetch(
 				`https://api.getdione.app/v1/scripts?q=${sanitizedName}`,
@@ -275,6 +275,17 @@ router.get("/search/name/:name", async (req, res) => {
 					`Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
 				);
 				res.send(response.statusText);
+				return;
+			}
+
+			if (data.length === 0) {
+				res.send([]);
+				return;
+			}
+	
+			if (!data || !Array.isArray(data)) {
+				logger.error(`Invalid data format from API, probably no scripts found (${sanitizedName}).`);
+				res.send([]);
 				return;
 			}
 

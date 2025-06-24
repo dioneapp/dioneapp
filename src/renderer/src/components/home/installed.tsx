@@ -30,7 +30,7 @@ export default function Installed() {
 				if (appsToFetch.length > 0) {
 					await Promise.all(
 						appsToFetch.map((app) =>
-							fetch(`http://localhost:${port}/db/search/name/${app}`)
+							fetch(`http://localhost:${port}/db/search/name/${encodeURIComponent(app)}`)
 								.then((res) => (res.ok ? res.json() : []))
 								.then((data) => {
 									cachedData[app] = data;
