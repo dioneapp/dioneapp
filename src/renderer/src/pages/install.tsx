@@ -22,7 +22,6 @@ export default function Install({ id }: { id?: string }) {
 		setData,
 		data,
 		setError,
-		setIframeAvailable,
 		iframeAvailable,
 		setMissingDependencies,
 		missingDependencies,

@@ -1,5 +1,4 @@
 import * as React from "react";
-import { useTranslation } from "../../translations/translationContext";
 
 export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
 	variant: "default" | "success" | "error" | "warning";
@@ -33,7 +32,6 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 		},
 		ref,
 	) => {
-		const { t } = useTranslation();
 
 		return (
 			<div

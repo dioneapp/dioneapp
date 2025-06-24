@@ -9,7 +9,7 @@ import {
 	useState,
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { type Socket, io } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 import { setupSocket } from "../contexts/scripts/setupSocket";
 
 interface AppContextType {
@@ -203,7 +203,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 
 	const isLocalAvailable = async (port: number): Promise<boolean> => {
 		try {
-			const response = await fetch(`http://localhost:${port}`, {
+			await fetch(`http://localhost:${port}`, {
 				method: "GET",
 				mode: "no-cors", 
 			});
