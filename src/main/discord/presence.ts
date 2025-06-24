@@ -39,7 +39,7 @@ export const updatePresence = async (details?: string, state?: string) => {
 					url: "https://getdione.app",
 				},
 			],
-			type: ActivityType.Watching,
+			type: ActivityType.Playing,
 		});
 	} catch (error) {
 		logger.error("Failed to update Discord presence:", error);
