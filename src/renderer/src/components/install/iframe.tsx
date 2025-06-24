@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
+import { useNavigate } from "react-router-dom";
 
 interface IframeProps {
 	iframeSrc: string;
@@ -28,6 +29,7 @@ export default function IframeComponent({
 	setShow,
 	data,
 }: IframeProps) {
+	const navigate = useNavigate();
 	const { t } = useTranslation();
 	const [_systemUsage, setSystemUsage] = useState<SystemUsage>({
 		cpu: 0,
@@ -141,7 +143,7 @@ export default function IframeComponent({
 	// };
 
 	return (
-		<div className="w-full h-full flex flex-col gap-2">
+		<div className="w-full h-full flex flex-col gap-2 p-6">
 			<motion.div
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -152,11 +154,21 @@ export default function IframeComponent({
 					<button
 						type="button"
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
-						onClick={() => setShow({ [data.id]: "logs" })}
+						onClick={() => navigate("/")}
 					>
 						<Icon name="Back" className="w-4 h-4 " />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.back")}
+						</div>
+					</button>
+					<button
+						type="button"
+						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						onClick={() => setShow({ [data.id]: "logs" })}
+					>
+						<Icon name="Logs" className="w-4 h-4 " />
+						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+							{t("iframe.logs")}
 						</div>
 					</button>
 					<button
@@ -272,7 +284,7 @@ export default function IframeComponent({
 					title="Script screen"
 					id="iframe"
 					src={iframeSrc}
-					className="w-full h-full bg-neutral-900"
+					className="w-full h-full bg-neutral-900 z-50"
 					style={{ border: 0, overflow: "hidden" }}
 					sandbox="allow-scripts allow-same-origin allow-forms"
 				/>
