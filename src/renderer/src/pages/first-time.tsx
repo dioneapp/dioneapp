@@ -138,16 +138,17 @@ export default function FirstTime() {
 				{level === 1 && (
 					<motion.div
 						key={1}
-						initial={{ opacity: 0, y: 200, filter: "blur(30px)" }}
+						initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
 						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
 						exit={{
 							opacity: 0,
+							y: 200,
 							filter: "blur(30px)",
 							transition: { duration: 0.4 },
 						}}
 						transition={{
 							duration: 0.6,
-							delay: firstLaunch === "true" ? 3.6 : 0.4,
+							delay: firstLaunch === "true" ? 3.2 : 0.4,
 						}}
 						className={getContainerClasses()}
 					>
@@ -167,8 +168,8 @@ export default function FirstTime() {
 							initial={{ opacity: 0, filter: "blur(20px)", y: 100 }}
 							animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
 							transition={{
-								duration: 0.8,
-								delay: firstLaunch === "true" ? 5 : 2,
+								duration: 0.7,
+								delay: firstLaunch === "true" ? 4 : 2,
 							}}
 							className="mt-4 flex flex-col gap-4"
 						>
@@ -199,14 +200,15 @@ export default function FirstTime() {
 				{level === 2 && (
 					<motion.div
 						key={2}
-						initial={{ opacity: 0, filter: "blur(20px)" }}
-						animate={{ opacity: 1, filter: "blur(0px)" }}
+						initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
+						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
 						exit={{
 							opacity: 0,
-							filter: "blur(20px)",
+							y: 200,
+							filter: "blur(30px)",
 							transition: { duration: 0.4 },
 						}}
-						transition={{ duration: 0.2 }}
+						transition={{ duration: 0.6 }}
 						className={getContainerClasses()}
 					>
 						<div className="flex flex-col gap-4 justify-center items-center">
@@ -236,12 +238,12 @@ export default function FirstTime() {
 				{level === 3 && (
 					<motion.div
 						key={3}
-						initial={{ opacity: 0, filter: "blur(20px)" }}
-						animate={{ opacity: 1, filter: "blur(0px)" }}
+						initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
+						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
 						exit={{
 							opacity: 0,
-							y: -200,
-							filter: "blur(20px)",
+							y: 200,
+							filter: "blur(30px)",
 							transition: { duration: 0.4 },
 						}}
 						transition={{ duration: 0.6 }}
