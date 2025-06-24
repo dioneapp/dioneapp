@@ -74,7 +74,7 @@ export default function LogsComponent({
 
 						if (lowerLog.includes("error")) {
 							textColor =
-								"bg-red-500/10 border border-white/5 mt-12 mb-6 backdrop-filter backdrop-blur-xl p-4 rounded-xl text-neutral-300 text-pretty";
+								"select-all bg-red-500/10 font-mono border border-white/5 my-4 backdrop-filter backdrop-blur-xl p-4 rounded-xl text-neutral-300 text-pretty";
 							icon = <Icon name="NotInstalled" className="w-6 h-6" />;
 						} else if (lowerLog.includes("warning")) {
 							textColor = "text-yellow-400";

@@ -1,5 +1,5 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
@@ -22,6 +22,15 @@ export default function MissingDepsModal({
 	const { t } = useTranslation();
 	const [page, setPage] = useState(0);
 	const [logs, setLogs] = useState<string[]>([]);
+	const logContainerRef = useRef<HTMLDivElement>(null);
+	const [error, setError] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (logContainerRef.current) {
+			logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
+		}
+	}, [logs]);
+	
 
 	useEffect(() => {
 		let socket: any = null;
@@ -33,7 +42,14 @@ export default function MissingDepsModal({
 
 				socket.on("installDep", (message: { name: string; output: string }) => {
 					console.log("Received log:", message);
-					setLogs((prevLogs) => [...prevLogs, message.output]);
+					const newLines = formatLog(message.output);
+					if (newLines.length > 0) {
+						setLogs((prevLogs) => [...prevLogs, ...newLines]);
+					}
+					if (message.output.toLowerCase().includes("error")) {
+						setLogs((prevLogs) => [...prevLogs, `ERROR: ${message.output}`]);
+						setError(message.output);
+					}
 				});
 
 				socket.on("connect", () => {
@@ -101,7 +117,9 @@ export default function MissingDepsModal({
 				throw new Error(response.statusText);
 			}
 
-			await onFinish();
+			if (!error) {
+				await onFinish();
+			}
 		} catch (error: any) {
 			setLogs((prevLogs) => [
 				...prevLogs,
@@ -112,6 +130,16 @@ export default function MissingDepsModal({
 			]);
 		}
 	}
+
+	function formatLog(output: string): string[] {
+		const trimmed = output.trim();
+		// ignore spinners
+		if (/^[-\\|\/]$/.test(trimmed)) return [];
+		const lines = trimmed.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+		
+		return lines;
+	}
+	
 
 	return (
 		<div
@@ -196,7 +224,7 @@ export default function MissingDepsModal({
 						</button>
 					</div>
 					<div className="py-6 w-full h-full flex flex-col">
-						<div className="flex flex-col gap-4 w-full max-h-60 overflow-auto border border-white/10 rounded p-4">
+						<div ref={logContainerRef} className="flex flex-col gap-4 w-full max-h-60 overflow-auto border border-white/10 rounded p-4">
 							{logs.map((log) => (
 								<p
 									className={`text-xs select-text whitespace-pre-wrap text-wrap ${log.startsWith("ERROR") || log.includes("error") ? "text-red-400" : log.startsWith("WARN:") ? "text-yellow-400" : log.startsWith("INFO:") ? "text-blue-400" : "text-neutral-300"}`}
