@@ -30,7 +30,6 @@ export default function MissingDepsModal({
 			logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight;
 		}
 	}, [logs]);
-	
 
 	useEffect(() => {
 		let socket: any = null;
@@ -135,11 +134,13 @@ export default function MissingDepsModal({
 		const trimmed = output.trim();
 		// ignore spinners
 		if (/^[-\\|\/]$/.test(trimmed)) return [];
-		const lines = trimmed.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-		
+		const lines = trimmed
+			.split(/\r?\n/)
+			.map((l) => l.trim())
+			.filter(Boolean);
+
 		return lines;
 	}
-	
 
 	return (
 		<div
@@ -224,7 +225,10 @@ export default function MissingDepsModal({
 						</button>
 					</div>
 					<div className="py-6 w-full h-full flex flex-col">
-						<div ref={logContainerRef} className="flex flex-col gap-4 w-full max-h-60 overflow-auto border border-white/10 rounded p-4">
+						<div
+							ref={logContainerRef}
+							className="flex flex-col gap-4 w-full max-h-60 overflow-auto border border-white/10 rounded p-4"
+						>
 							{logs.map((log) => (
 								<p
 									className={`text-xs select-text whitespace-pre-wrap text-wrap ${log.startsWith("ERROR") || log.includes("error") ? "text-red-400" : log.startsWith("WARN:") ? "text-yellow-400" : log.startsWith("INFO:") ? "text-blue-400" : "text-neutral-300"}`}
