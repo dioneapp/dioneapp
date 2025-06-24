@@ -1,5 +1,5 @@
 
-![Banner](https://i.imgur.com/FCovqqX.png)
+![Banner](https://i.imgur.com/EN5bI35.png)
 
 
 # Dione - Explore, Install, Innovate — in 1 Click.
@@ -7,12 +7,11 @@ We are creating Dione so that **any user can install complex applications** in a
 
 ## Demo
 
-[comment]: <> (btw change this later to a real demo)
-![Demo](https://i.imgur.com/hLu5ZXu.png)
+![Demo](https://i.imgur.com/tyLbRIe.png)
 
 
 ## Documentation
-Learn how to develop scripts for dione in our [documentation](https://getdione-app.pages.dev/docs).
+Learn how to develop scripts for dione in our [documentation](https://docs.getdione.app).
 
 
 ## Run Locally
@@ -32,10 +31,10 @@ You need [Node.js](https://nodejs.org/en/download/) on your system, plus a packa
   npm install
 ```
 
-#### Start the server
+#### Start Dione in development mode
 
 ```bash
-  npm run start
+  npm run dev
 ```
 
 #### Build project
@@ -47,13 +46,6 @@ You need [Node.js](https://nodejs.org/en/download/) on your system, plus a packa
 
 ## Support
 
-We are happy to help you on our support channel, [join our discord here](https://getdione-app.pages.dev/discord).
+We are happy to help you on our support channel, [join our discord here](https://getdione.app/discord).
 
 If you have found a security breach please contact us at [contact@getdione.app](mailto:contact@getdione.app)
-
-## Used By
-
-This project is used by the following organizations:
-
-- [Applio](https://applio.org)
-
