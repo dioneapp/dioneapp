@@ -304,6 +304,7 @@ export const en = {
 		fullscreen: "Fullscreen",
 		stop: "Stop",
 		reload: "Reload",
+		logs: "Logs",
 	},
 
 	// actions component

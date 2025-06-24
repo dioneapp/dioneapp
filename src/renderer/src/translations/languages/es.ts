@@ -312,6 +312,7 @@ export const es = {
 		fullscreen: "Pantalla completa",
 		stop: "Detener",
 		reload: "Recargar",
+		logs: "Registros",
 	},
 
 	// actions component
