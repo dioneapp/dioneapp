@@ -1,4 +1,4 @@
-import { Client } from "discord-rpc";
+import { ActivityType, Client } from "minimal-discord-rpc";
 import logger from "../server/utils/logger";
 
 const clientId = "1374430697024000112";
@@ -6,14 +6,14 @@ let rpc: Client | null = null;
 
 export const initializeDiscordPresence = async () => {
 	try {
-		rpc = new Client({ transport: "ipc" });
+		rpc = new Client({ clientId });
 
 		rpc.on("ready", () => {
 			logger.info("Discord RPC connected");
 			updatePresence();
 		});
 
-		await rpc.login({ clientId });
+		await rpc.login();
 	} catch (error) {
 		logger.error("Failed to initialize Discord presence:", error);
 	}
@@ -26,10 +26,20 @@ export const updatePresence = async (details?: string, state?: string) => {
 		await rpc.setActivity({
 			details: details || "Explore and Install Open-Source AI Apps in 1 Click",
 			state: state || "Discovering new apps...",
-			startTimestamp: Date.now(),
-			largeImageKey: "dione",
-			largeImageText: "Dione",
-			instance: false,
+			timestamps: {
+				start: Date.now(),
+			},
+			assets: {
+				large_image: "dione",
+				large_text: "Dione",
+			},
+			buttons: [
+				{
+					label: "Get Dione",
+					url: "https://getdione.app",
+				},
+			],
+			type: ActivityType.Watching,
 		});
 	} catch (error) {
 		logger.error("Failed to update Discord presence:", error);
