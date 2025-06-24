@@ -1,9 +1,9 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
-import { useNavigate } from "react-router-dom";
 
 interface IframeProps {
 	iframeSrc: string;

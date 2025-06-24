@@ -321,21 +321,23 @@ export default function Sidebar() {
 								</button>
 							) : (
 								<>
-								<button
-									type="button"
-									className="p-2 bg-white text-black border rounded-full border-white/10 hover:bg-white/80 transition-colors flex gap-1 items-center justify-start cursor-pointer relative"
-									onClick={() => openLink("https://getdione.app/auth/login?app=true")}
-									onMouseEnter={() => setHoveredTooltip("login")}
-									onMouseLeave={() => setHoveredTooltip(null)}
-								>
-									<Icon name="Login" className="h-5 w-5" />
-									{/* {hoveredTooltip === "login" && (
+									<button
+										type="button"
+										className="p-2 bg-white text-black border rounded-full border-white/10 hover:bg-white/80 transition-colors flex gap-1 items-center justify-start cursor-pointer relative"
+										onClick={() =>
+											openLink("https://getdione.app/auth/login?app=true")
+										}
+										onMouseEnter={() => setHoveredTooltip("login")}
+										onMouseLeave={() => setHoveredTooltip(null)}
+									>
+										<Icon name="Login" className="h-5 w-5" />
+										{/* {hoveredTooltip === "login" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 											{t("sidebar.tooltips.login")}
 										</div>
 									)} */}
-									<span className="text-sm px-2 font-semibold">Login</span>
-								</button>
+										<span className="text-sm px-2 font-semibold">Login</span>
+									</button>
 								</>
 							)}
 						</div>
