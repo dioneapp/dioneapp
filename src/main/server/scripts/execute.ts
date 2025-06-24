@@ -44,16 +44,20 @@ export default async function executeInstallation(
 				if (step.env) {
 					const envName =
 						typeof step.env === "string" ? step.env : step.env.name;
+					const envType =
+						typeof step.env === "object" && "type" in step.env
+							? step.env.type
+							: "uv";
 					const pythonVersion =
 						typeof step.env === "object" && "version" in step.env
 							? step.env.version
 							: "";
 					io.to(id).emit("installUpdate", {
 						type: "log",
-						content: `INFO: Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
+						content: `INFO: Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					});
 					logger.info(
-						`Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
+						`Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					);
 
 					// create virtual environment and execute commands inside it
@@ -62,6 +66,7 @@ export default async function executeInstallation(
 						commandsArray,
 						configDir,
 						pythonVersion,
+						envType,
 					);
 					await executeCommands(envCommands, configDir, io, id);
 				} else {
@@ -135,17 +140,21 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 				if (step.env) {
 					const envName =
 						typeof step.env === "string" ? step.env : step.env.name;
+					const envType =
+						typeof step.env === "object" && "type" in step.env
+							? step.env.type
+							: "uv";
 					const pythonVersion =
 						typeof step.env === "object" && "version" in step.env
 							? step.env.version
 							: "";
 					io.to(id).emit("installUpdate", {
 						type: "log",
-						content: `INFO: Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
+						content: `INFO: Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					});
 
 					logger.info(
-						`Creating/using virtual environment: ${envName}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
+						`Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					);
 
 					// create virtual environment and execute commands inside it
@@ -154,6 +163,7 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 						commandsArray,
 						configDir,
 						pythonVersion,
+						envType,
 					);
 					response = await executeCommands(envCommands, configDir, io, id);
 				} else {
@@ -206,7 +216,13 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 }
 
 // commands to create virtual environment
-function createVirtualEnvCommands(envName, commands, baseDir, pythonVersion) {
+function createVirtualEnvCommands(
+	envName,
+	commands,
+	baseDir,
+	pythonVersion,
+	envType = "uv",
+) {
 	const isWindows = process.platform === "win32";
 	const envPath = path.join(baseDir, envName);
 
@@ -230,28 +246,39 @@ function createVirtualEnvCommands(envName, commands, baseDir, pythonVersion) {
 
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
+	const middle = commandStrings.length
+		? `&& ${commandStrings.join(" && ")}`
+		: "";
 
+	if (envType === "conda") {
+		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
+		if (isWindows) {
+			return [
+				`if not exist "${envPath}" (conda create -p "${envPath}" ${pythonArg} -y)`,
+				`call conda activate "${envPath}" ${middle} && call conda deactivate`,
+			];
+		}
+		// for linux and mac
+		return [
+			`if [ ! -d "${envPath}" ]; then conda create -p "${envPath}" ${pythonArg} -y; fi`,
+			`source activate "${envPath}" ${middle} && conda deactivate`,
+		];
+	}
+
+	// default uv env
 	if (isWindows) {
 		const activateScript = path.join(envPath, "Scripts", "activate");
-		// add && only if there are commands to execute
-		const middle = commandStrings.length
-			? `&& ${commandStrings.join(" && ")}`
-			: "";
+		const deactivateScript = path.join(envPath, "Scripts", "deactivate.bat");
 		return [
-			`if not exist "${envPath}" (uv venv ${pythonFlag} ${envName})`,
-			`call "${activateScript}" ${middle}`,
-			`${envPath}\\Scripts\\deactivate.bat`,
+			`if not exist "${envPath}" (uv venv ${pythonFlag} "${envName}")`,
+			`call "${activateScript}" ${middle} && call "${deactivateScript}"`,
 		];
 	}
 
 	// for linux and mac
 	const activateScript = path.join(envPath, "bin", "activate");
-	const middle = commandStrings.length
-		? `&& ${commandStrings.join(" && ")}`
-		: "";
 	return [
-		`if [ ! -d "${envPath}" ]; then uv venv ${pythonFlag} ${envName}; fi`,
-		`source "${activateScript}" ${middle}`,
-		`${envPath}\\Scripts\\deactivate.bat`,
+		`if [ ! -d "${envPath}" ]; then uv venv ${pythonFlag} "${envName}"; fi`,
+		`source "${activateScript}" ${middle} && deactivate`,
 	];
 }

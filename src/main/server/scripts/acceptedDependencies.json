@@ -37,6 +37,34 @@
 			"linux": "uv cache clean && rm ~/.local/bin/uv ~/.local/bin/uvx"
 		}
 	},
+	"conda": {
+		"checkCommand": "conda --version",
+		"versionRegex": "conda (\\d+\\.\\d+\\.\\d+)",
+		"installCommand": {
+			"windows": "winget install -e --id Anaconda.Miniconda3 --override AddToPath=1 --silent",
+			"linux": "sudo apt install -y conda",
+			"macos": "brew install conda"
+		},
+		"uninstallCommand": {
+			"windows": "winget uninstall -e --id Anaconda.Anaconda3",
+			"linux": "sudo apt remove -y conda",
+			"macos": "brew uninstall conda"
+		}
+	},
+	"ffmpeg": {
+		"checkCommand": "ffmpeg -version",
+		"versionRegex": "ffmpeg version (\\d+\\.\\d+\\.\\d+)",
+		"installCommand": {
+			"windows": "winget install -e --id Gyan.FFmpeg",
+			"linux": "sudo apt install -y ffmpeg",
+			"macos": "brew install ffmpeg"
+		},
+		"uninstallCommand": {
+			"windows": "winget uninstall -e --id Gyan.FFmpeg",
+			"linux": "sudo apt remove -y ffmpeg",
+			"macos": "brew uninstall ffmpeg"
+		}
+	},
 	"node": {
 		"checkCommand": "node --version",
 		"versionRegex": "v(\\d+\\.\\d+\\.\\d+)",
