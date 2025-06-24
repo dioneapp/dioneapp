@@ -253,20 +253,22 @@ app.whenReady().then(async () => {
 
 	ipcMain.handle("app:close", async () => {
 		mainWindow.hide();
-		
+
 		try {
-		  await Promise.race([
-			destroyPresence(),
-			handleEndSession(),
-			stopServer(),
-			new Promise((_, reject) => setTimeout(reject, 10000, new Error("Server stop timeout")))
-		  ]);
+			await Promise.race([
+				destroyPresence(),
+				handleEndSession(),
+				stopServer(),
+				new Promise((_, reject) =>
+					setTimeout(reject, 10000, new Error("Server stop timeout")),
+				),
+			]);
 		} catch (error) {
 			logger.error("Error during shutdown:", error);
 		} finally {
-		  app.quit();
+			app.quit();
 		}
-	  });
+	});
 
 	ipcMain.handle("app:minimize", () => {
 		BrowserWindow.getFocusedWindow()?.minimize();

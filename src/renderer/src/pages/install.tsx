@@ -719,7 +719,6 @@ export default function Install({ id }: { id?: string }) {
 				)}
 				<div className="flex h-screen w-full">
 					<div className="w-full h-full flex justify-center items-center">
-						
 						<AnimatePresence mode="wait">
 							{show[data?.id] === "iframe" && (
 								<IframeComponent

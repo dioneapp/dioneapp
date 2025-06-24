@@ -37,38 +37,38 @@ export const start = async (): Promise<number> => {
 
 export const stop = async () => {
 	if (io) {
-	  io.sockets.disconnectSockets(true); // force disconnect
-	  io.close();
-	  io = null;
+		io.sockets.disconnectSockets(true); // force disconnect
+		io.close();
+		io = null;
 	}
-  
+
 	if (httpServer) {
-	  // close all socket connections
-	  const forceClose = () => {
-		if (httpServer) {
-		  httpServer.closeAllConnections?.();
-		  httpServer.closeIdleConnections?.();
-		}
-	  };
-  
-	  // timeout to avoid blocking
-	  const timeout = setTimeout(() => {
-		logger.warn("Forcing server closure");
-		forceClose();
-	  }, 5000);
-  
-	  await new Promise<void>((resolve) => {
-		httpServer?.close(() => {
-		  clearTimeout(timeout);
-		  logger.info("Server stopped gracefully");
-		  resolve();
+		// close all socket connections
+		const forceClose = () => {
+			if (httpServer) {
+				httpServer.closeAllConnections?.();
+				httpServer.closeIdleConnections?.();
+			}
+		};
+
+		// timeout to avoid blocking
+		const timeout = setTimeout(() => {
+			logger.warn("Forcing server closure");
+			forceClose();
+		}, 5000);
+
+		await new Promise<void>((resolve) => {
+			httpServer?.close(() => {
+				clearTimeout(timeout);
+				logger.info("Server stopped gracefully");
+				resolve();
+			});
+
+			httpServer?.once("close", resolve);
 		});
-		
-		httpServer?.once('close', resolve);
-	  });
-	  
-	  httpServer = null;
+
+		httpServer = null;
 	} else {
-	  logger.warn("Server already stopped");
+		logger.warn("Server already stopped");
 	}
-  };
+};
