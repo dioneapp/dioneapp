@@ -37,22 +37,38 @@ export const start = async (): Promise<number> => {
 
 export const stop = async () => {
 	if (io) {
-		io.close();
-		io = null;
+	  io.sockets.disconnectSockets(true); // force disconnect
+	  io.close();
+	  io = null;
 	}
-
+  
 	if (httpServer) {
-		await new Promise<void>((resolve, reject) => {
-			httpServer?.close((err) => {
-				if (err) return reject(err);
-				logger.info("Server stopped");
-				resolve();
-			});
+	  // close all socket connections
+	  const forceClose = () => {
+		if (httpServer) {
+		  httpServer.closeAllConnections?.();
+		  httpServer.closeIdleConnections?.();
+		}
+	  };
+  
+	  // timeout to avoid blocking
+	  const timeout = setTimeout(() => {
+		logger.warn("Forcing server closure");
+		forceClose();
+	  }, 5000);
+  
+	  await new Promise<void>((resolve) => {
+		httpServer?.close(() => {
+		  clearTimeout(timeout);
+		  logger.info("Server stopped gracefully");
+		  resolve();
 		});
-		httpServer = null;
+		
+		httpServer?.once('close', resolve);
+	  });
+	  
+	  httpServer = null;
 	} else {
-		logger.warn(
-			"Server was already stopped or never started (httpServer is null)",
-		);
+	  logger.warn("Server already stopped");
 	}
-};
+  };
