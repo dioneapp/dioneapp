@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import type { JSX } from "react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
 import { useAppContext } from "../layout/global-context";
