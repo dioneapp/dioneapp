@@ -1,4 +1,4 @@
-import { Clock, Calendar, Share2, Flame } from "lucide-react";
+import { Clock, Calendar, Share2, Flame, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAuthContext } from "../components/contexts/AuthContext";
@@ -15,7 +15,7 @@ const SkeletonCard = ({ className = "" }) => (
 
 export default function Account() {
 	const { t } = useTranslation();
-	const { user } = useAuthContext();
+	const { user, logout } = useAuthContext();
 	const [data, setData] = useState<any>(null);
 	const [hoursInApp, setHoursInApp] = useState(0);
 	const [consecutiveDays, setConsecutiveDays] = useState(0);
@@ -122,7 +122,7 @@ export default function Account() {
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ duration: 0.5 }}
 					>
-						<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
+						<h1 className="text-2xl sm:text-3xl font-semibold">
 							{t("account.title")}
 						</h1>
 					</motion.div>
@@ -300,6 +300,22 @@ export default function Account() {
 							</motion.div>
 						</motion.div>
 					)}
+					
+					{/* Logout button aligned with cards */}
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.6, duration: 0.3 }}
+						className="flex justify-end"
+					>
+						<motion.button
+							onClick={logout}
+							className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 rounded-lg transition-all duration-300 text-red-400 hover:text-red-300 backdrop-blur-sm cursor-pointer"
+						>
+							<LogOut className="w-4 h-4" />
+							<span className="text-sm font-medium">{t("account.logout")}</span>
+						</motion.button>
+					</motion.div>
 				</main>
 			</div>
 		</div>

@@ -8,11 +8,11 @@ import { useAuthContext } from "../contexts/AuthContext";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
 import QuickLaunch from "./quick-launch";
-import { X, AlertTriangle, Library, Settings, User, LogOut, LogIn } from "lucide-react";
+import { X, AlertTriangle, Library, Settings, User, LogIn } from "lucide-react";
 
 export default function Sidebar() {
 	const { t } = useTranslation();
-	const { user, logout, loading } = useAuthContext();
+	const { user, loading } = useAuthContext();
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
 	const { isServerRunning, activeApps, handleStopApp } = useAppContext();
@@ -250,7 +250,7 @@ export default function Sidebar() {
 					>
 						{user && (
 							<Link
-								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${loading ? "cursor-auto" : ""} h-9.5 w-9.5 rounded-full ${!user?.avatar_url && "border border-white/20"}`}
+								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${loading ? "cursor-auto" : ""} h-9 w-9 rounded-full ${!user?.avatar_url && "border border-white/20"}`}
 								to="/account"
 								onMouseEnter={
 									!loading ? () => setHoveredTooltip("account") : undefined
@@ -305,41 +305,19 @@ export default function Sidebar() {
 					</div>
 					{!config?.compactMode && (
 						<div className="flex gap-2 items-center justify-start w-full h-full">
-							{user ? (
+							{!user && (
 								<button
 									type="button"
-									className="w-9.5 h-9.5 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer relative"
-									onClick={logout}
-									onMouseEnter={() => setHoveredTooltip("logout")}
+									className="p-2 bg-white text-black border rounded-full border-white/10 hover:bg-white/80 transition-colors flex gap-1 items-center justify-start cursor-pointer relative"
+									onClick={() =>
+										openLink("https://getdione.app/auth/login?app=true")
+									}
+									onMouseEnter={() => setHoveredTooltip("login")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
-									<LogOut className="h-5 w-5" />
-									{hoveredTooltip === "logout" && (
-										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
-											{t("sidebar.tooltips.logout")}
-										</div>
-									)}
+									<LogIn className="h-5 w-5" />
+									<span className="text-sm px-2 font-semibold">Login</span>
 								</button>
-							) : (
-								<>
-									<button
-										type="button"
-										className="p-2 bg-white text-black border rounded-full border-white/10 hover:bg-white/80 transition-colors flex gap-1 items-center justify-start cursor-pointer relative"
-										onClick={() =>
-											openLink("https://getdione.app/auth/login?app=true")
-										}
-										onMouseEnter={() => setHoveredTooltip("login")}
-										onMouseLeave={() => setHoveredTooltip(null)}
-									>
-										<LogIn className="h-5 w-5" />
-										{/* {hoveredTooltip === "login" && (
-										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
-											{t("sidebar.tooltips.login")}
-										</div>
-									)} */}
-										<span className="text-sm px-2 font-semibold">Login</span>
-									</button>
-								</>
 							)}
 						</div>
 					)}

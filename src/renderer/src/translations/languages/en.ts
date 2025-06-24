@@ -60,6 +60,7 @@ export const en = {
 	// account related
 	account: {
 		title: "Account",
+		logout: "Logout",
 		stats: {
 			timeSpent: {
 				title: "Time spent",
