@@ -251,44 +251,51 @@ export default function Sidebar() {
 							<Link
 								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${loading ? "cursor-auto" : ""} h-9.5 w-9.5 rounded-full ${!user?.avatar_url && "border border-white/20"}`}
 								to="/account"
-								onMouseEnter={!loading ? () => setHoveredTooltip("account") : undefined}
-								onMouseLeave={!loading ? () => setHoveredTooltip(null) : undefined}
+								onMouseEnter={
+									!loading ? () => setHoveredTooltip("account") : undefined
+								}
+								onMouseLeave={
+									!loading ? () => setHoveredTooltip(null) : undefined
+								}
 							>
 								{loading ? (
-									<div className="w-full h-full border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer"
-									onMouseEnter={() => setHoveredTooltip("account")}
-									onMouseLeave={() => setHoveredTooltip(null)}>
+									<div
+										className="w-full h-full border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer"
+										onMouseEnter={() => setHoveredTooltip("account")}
+										onMouseLeave={() => setHoveredTooltip(null)}
+									>
 										<Icon name="Profile" className="h-5 w-5" />
 									</div>
-									
 								) : (
 									<>
-									{!avatarError &&
-									user?.avatar_url &&
-									user?.avatar_url !== "" &&
-									user?.avatar_url !== null &&
-									user?.avatar_url !== undefined ? (
-										<img
-											src={user?.avatar_url}
-											alt="user avatar"
-											className="h-full w-full object-cover object-center"
-											onError={() => {
-												setAvatarError(true);
-											}}
-										/>
-									) : (
-										<span className="h-full w-full flex justify-center items-center border border-white/20 rounded-full bg-white/10">
-											<span>
-												{user?.username.charAt(0).toUpperCase() || (
-													<Icon name="User" className="h-5 w-5" />
-												)}
+										{!avatarError &&
+										user?.avatar_url &&
+										user?.avatar_url !== "" &&
+										user?.avatar_url !== null &&
+										user?.avatar_url !== undefined ? (
+											<img
+												src={user?.avatar_url}
+												alt="user avatar"
+												className="h-full w-full object-cover object-center"
+												onError={() => {
+													setAvatarError(true);
+												}}
+											/>
+										) : (
+											<span className="h-full w-full flex justify-center items-center border border-white/20 rounded-full bg-white/10">
+												<span>
+													{user?.username.charAt(0).toUpperCase() || (
+														<Icon name="User" className="h-5 w-5" />
+													)}
+												</span>
 											</span>
-										</span>
-									)}
+										)}
 									</>
 								)}
 								{hoveredTooltip === "account" && (
-									<div className={`${config?.compactMode ? "absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap" : "absolute left-1/2 -translate-x-1/2 top-full z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap"}`}>
+									<div
+										className={`${config?.compactMode ? "absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap" : "absolute left-1/2 -translate-x-1/2 top-full z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap"}`}
+									>
 										{t("sidebar.tooltips.account")}
 									</div>
 								)}
@@ -298,20 +305,20 @@ export default function Sidebar() {
 					{!config?.compactMode && (
 						<div className="flex gap-2 items-center justify-start w-full h-full">
 							{user ? (
-										<button
-											type="button"
-											className="w-9.5 h-9.5 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer relative"
-											onClick={logout}
-											onMouseEnter={() => setHoveredTooltip("logout")}
-											onMouseLeave={() => setHoveredTooltip(null)}
-										>
-											<Icon name="Logout" className="h-5 w-5" />
-											{hoveredTooltip === "logout" && (
-												<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
-													{t("sidebar.tooltips.logout")}
-												</div>
-											)}
-										</button>
+								<button
+									type="button"
+									className="w-9.5 h-9.5 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer relative"
+									onClick={logout}
+									onMouseEnter={() => setHoveredTooltip("logout")}
+									onMouseLeave={() => setHoveredTooltip(null)}
+								>
+									<Icon name="Logout" className="h-5 w-5" />
+									{hoveredTooltip === "logout" && (
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
+											{t("sidebar.tooltips.logout")}
+										</div>
+									)}
+								</button>
 							) : (
 								<button
 									type="button"
