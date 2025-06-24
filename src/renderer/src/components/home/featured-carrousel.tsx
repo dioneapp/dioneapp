@@ -79,89 +79,35 @@ export default function FeaturedCarousel() {
 	const generateGradients = async (scripts: Script[]) => {
 		const newGradients: Record<string, string> = {};
 
+		// app's consistent color palette
+		const gradients = [
+			"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, #BCB1E7 100%)",
+			"linear-gradient(135deg, #2c2c3a 0%, #3b3b4f 50%, #BCB1E7 100%)",
+			"linear-gradient(135deg, #1f2937 0%, #374151 50%, #BCB1E7 100%)",
+			"linear-gradient(135deg, #111827 0%, #2d3748 50%, #BCB1E7 100%)",
+			"linear-gradient(135deg, #080808 0%, #1e1e2f 50%, #BCB1E7 100%)",
+			"linear-gradient(135deg, #2e2d32 0%, #3b3b4f 50%, #BCB1E7 100%)",
+		];
+
 		await Promise.all(
 			scripts.map(async (script) => {
 				if (script.banner_url) {
 					return;
 				}
-				if (script.logo_url) {
-					try {
-						const githubRawUrl = script.logo_url
-							.replace("github.com", "raw.githubusercontent.com")
-							.replace("/blob/", "/");
-
-						const colors = await getColorPaletteFromImage(githubRawUrl);
-						if (colors.vibrant && colors.lightVibrant) {
-							newGradients[script.id] =
-								`linear-gradient(${Math.floor(Math.random() * 360)}deg, ${colors.vibrant}, ${colors.lightVibrant})`;
-						}
-					} catch (error) {
-						console.error("Error extracting colors:", error);
-					}
-				} else {
-					newGradients[script.id] = "linear-gradient(to top, #000000, #434343)";
+				
+				// use consistent gradient based on script id hash
+				let hash = 0;
+				for (let i = 0; i < script.id.length; i++) {
+					hash = script.id.charCodeAt(i) + ((hash << 5) - hash);
 				}
+				hash = Math.abs(hash);
+				const gradientIndex = hash % gradients.length;
+				newGradients[script.id] = gradients[gradientIndex];
 			}),
 		);
 
 		setGradients(newGradients);
 	};
-
-	// get color palette from image
-	const getColorPaletteFromImage = (
-		imageUrl: string,
-	): Promise<{ vibrant: string; lightVibrant: string }> => {
-		return new Promise((resolve, reject) => {
-			const img = new Image();
-			img.crossOrigin = "anonymous";
-			img.onload = () => {
-				const canvas = document.createElement("canvas");
-				canvas.width = img.width;
-				canvas.height = img.height;
-				const ctx = canvas.getContext("2d");
-				if (!ctx) return reject(new Error("Could not get canvas context"));
-				ctx.drawImage(img, 0, 0);
-				const imageData = ctx.getImageData(0, 0, img.width, img.height).data;
-				const colorCounts: { [key: string]: number } = {};
-
-				for (let i = 0; i < imageData.length; i += 4) {
-					if (imageData[i + 3] < 200) continue;
-					const hex = rgbToHex(
-						imageData[i],
-						imageData[i + 1],
-						imageData[i + 2],
-					);
-					colorCounts[hex] = (colorCounts[hex] || 0) + 1;
-				}
-
-				const sortedColors = Object.entries(colorCounts).sort(
-					(a, b) => b[1] - a[1],
-				);
-				const vibrant = sortedColors[0]?.[0] || "#000000E6";
-				let lightVibrant = sortedColors[2]?.[0] || vibrant;
-
-				if (areColorsSimilar(vibrant, lightVibrant))
-					lightVibrant = sortedColors[2]?.[0] || vibrant;
-
-				resolve({ vibrant, lightVibrant });
-			};
-			img.onerror = reject;
-			img.src = imageUrl;
-		});
-	};
-
-	const rgbToHex = (r: number, g: number, b: number): string =>
-		`#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1).toUpperCase()}`;
-	const areColorsSimilar = (color1: string, color2: string): boolean => {
-		const [r1, g1, b1] = hexToRgb(color1);
-		const [r2, g2, b2] = hexToRgb(color2);
-		return Math.abs(r1 - r2) + Math.abs(g1 - g2) + Math.abs(b1 - b2) < 50;
-	};
-	const hexToRgb = (hex: string): [number, number, number] => [
-		Number.parseInt(hex.slice(1, 3), 16),
-		Number.parseInt(hex.slice(3, 5), 16),
-		Number.parseInt(hex.slice(5, 7), 16),
-	];
 
 	if (loading) {
 		return <CarrouselSkeleton />;
@@ -191,7 +137,7 @@ export default function FeaturedCarousel() {
 													?.banner_url,
 											}
 										: {})}
-									style={{ background: gradients[activeIndex] || "#000000E6" }}
+									style={{ background: gradients[activeIndex] || "linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, #BCB1E7 100%)" }}
 									className={`absolute inset-0 w-full h-full bg-black/5 ${scripts.find((script) => script.id === activeIndex)?.banner_url ? "opacity-50" : "opacity-20 scale-150"}`}
 								/>
 								{/* content */}
