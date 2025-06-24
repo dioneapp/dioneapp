@@ -36,38 +36,62 @@ export default function SearchBar() {
 						className="absolute right-1.5 bottom-1.5 w-5 h-5 pointer-events-none"
 					/>
 				</div>
-				<div className="flex gap-4 h-8">
+				<div className="flex gap-3">
 					<button
 						onClick={() => handleType("audio")}
 						type="button"
-						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "audio" ? "bg-white/5" : ""}`}
+						className={`flex-1 px-6 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
+							type === "audio" 
+								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg" 
+								: "border border-white/10 text-neutral-400 hover:bg-gradient-to-r hover:from-[#BCB1E7]/10 hover:to-[#BCB1E7]/5 hover:border-[#BCB1E7]/20 hover:text-[#BCB1E7]"
+						}`}
 					>
-						<Volume2 className="w-4 h-4" />
-						{t("search.filters.audio")}
+						<div className="flex items-center gap-2 justify-center">
+							<Volume2 className="w-4 h-4" />
+							{t("search.filters.audio")}
+						</div>
 					</button>
 					<button
 						onClick={() => handleType("image")}
 						type="button"
-						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "image" ? "bg-white/5" : ""}`}
+						className={`flex-1 px-6 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
+							type === "image" 
+								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg" 
+								: "border border-white/10 text-neutral-400 hover:bg-gradient-to-r hover:from-[#BCB1E7]/10 hover:to-[#BCB1E7]/5 hover:border-[#BCB1E7]/20 hover:text-[#BCB1E7]"
+						}`}
 					>
-						<Image className="w-4 h-4" />
-						{t("search.filters.image")}
+						<div className="flex items-center gap-2 justify-center">
+							<Image className="w-4 h-4" />
+							{t("search.filters.image")}
+						</div>
 					</button>
 					<button
 						onClick={() => handleType("video")}
 						type="button"
-						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "video" ? "bg-white/5" : ""}`}
+						className={`flex-1 px-6 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
+							type === "video" 
+								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg" 
+								: "border border-white/10 text-neutral-400 hover:bg-gradient-to-r hover:from-[#BCB1E7]/10 hover:to-[#BCB1E7]/5 hover:border-[#BCB1E7]/20 hover:text-[#BCB1E7]"
+						}`}
 					>
-						<Video className="w-4 h-4" />
-						{t("search.filters.video")}
+						<div className="flex items-center gap-2 justify-center">
+							<Video className="w-4 h-4" />
+							{t("search.filters.video")}
+						</div>
 					</button>
 					<button
 						onClick={() => handleType("chat")}
 						type="button"
-						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "chat" ? "bg-white/5" : ""}`}
+						className={`flex-1 px-6 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
+							type === "chat" 
+								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg" 
+								: "border border-white/10 text-neutral-400 hover:bg-gradient-to-r hover:from-[#BCB1E7]/10 hover:to-[#BCB1E7]/5 hover:border-[#BCB1E7]/20 hover:text-[#BCB1E7]"
+						}`}
 					>
-						<MessageCircle className="w-4 h-4" />
-						{t("search.filters.chat")}
+						<div className="flex items-center gap-2 justify-center">
+							<MessageCircle className="w-4 h-4" />
+							{t("search.filters.chat")}
+						</div>
 					</button>
 				</div>
 			</div>

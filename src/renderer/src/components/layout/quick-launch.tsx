@@ -47,10 +47,6 @@ export default function QuickLaunch({
 
 	useEffect(() => {
 		handleReloadQuickLaunch();
-	}, []);
-
-	useEffect(() => {
-		handleReloadQuickLaunch();
 	}, [removedApps]);
 
 	async function showAppSelector(index: number) {
