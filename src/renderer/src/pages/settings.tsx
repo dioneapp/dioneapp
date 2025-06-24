@@ -1,10 +1,10 @@
-import Icon from "@renderer/components/icons/icon";
-import { getCurrentPort } from "@renderer/utils/getPort";
-import { openLink } from "@renderer/utils/openLink";
-import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../translations/translationContext";
+import { openLink } from "../utils/openLink";
+import { Folder, ChevronDown } from "lucide-react";
+import { getCurrentPort } from "@renderer/utils/getPort";
+import { AnimatePresence, motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -26,13 +26,13 @@ const CustomSelect = ({
 				className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-400 flex items-center justify-between"
 			>
 				<span>{options.find((opt) => opt.value === value)?.label}</span>
-				<motion.span
+				<motion.div
 					animate={{ rotate: isOpen ? 180 : 0 }}
 					transition={{ duration: 0.35 }}
 					className="ml-2"
 				>
-					▲
-				</motion.span>
+					<ChevronDown className="w-4 h-4" />
+				</motion.div>
 			</button>
 
 			<AnimatePresence>
@@ -227,10 +227,7 @@ export default function Settings() {
 															className="text-xs font-mono text-center text-neutral-300 pl-6 pr-12 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
 														/>
 														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-															<Icon
-																name="Folder"
-																className="w-4 h-4 text-neutral-400"
-															/>
+															<Folder className="w-4 h-4 text-neutral-400" />
 														</div>
 													</div>
 												</div>
@@ -494,10 +491,7 @@ export default function Settings() {
 															}}
 														/>
 														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-															<Icon
-																name="Folder"
-																className="w-4 h-4 text-neutral-400"
-															/>
+															<Folder className="w-4 h-4 text-neutral-400" />
 														</div>
 													</div>
 												</div>

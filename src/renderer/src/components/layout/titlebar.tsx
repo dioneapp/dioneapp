@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import Icon from "../icons/icon";
+import { Minus, X } from "lucide-react";
 import { useAppContext } from "../layout/global-context";
 
 export default function Titlebar() {
@@ -51,7 +51,7 @@ export default function Titlebar() {
 							onClick={handleMinimize}
 							className="cursor-pointer p-2"
 						>
-							<Icon name="Minus" className="h-3 w-3" />
+							<Minus className="h-3 w-3" />
 						</button>
 						<button
 							type="button"
@@ -59,7 +59,7 @@ export default function Titlebar() {
 							onClick={handleClose}
 							className="cursor-pointer p-2"
 						>
-							<Icon name="Close" className="h-3 w-3" />
+							<X className="h-3 w-3" />
 						</button>
 					</div>
 				</div>

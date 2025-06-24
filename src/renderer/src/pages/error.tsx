@@ -1,3 +1,4 @@
+import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import Icon from "@renderer/components/icons/icon";
 import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { openLink } from "@renderer/utils/openLink";
@@ -69,16 +70,15 @@ export default function ErrorPage({ error }: { error?: Error }) {
 								>
 									<span className="text-center py-1">
 										{reportStatus === "pending" && (
-											<Icon
-												name="Pending"
+											<Loader2
 												className="w-5 h-5 animate-spin text-orange-500"
 											/>
 										)}
 										{reportStatus === "success" && (
-											<Icon name="Success" className="w-5 h-5 text-green-500" />
+											<CheckCircle className="w-5 h-5 text-green-500" />
 										)}
 										{reportStatus === "error" && (
-											<Icon name="Error" className="w-5 h-5 text-red-500" />
+											<XCircle className="w-5 h-5 text-red-500" />
 										)}
 									</span>
 									<span

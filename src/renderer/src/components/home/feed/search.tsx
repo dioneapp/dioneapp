@@ -1,4 +1,4 @@
-import Icon from "@renderer/components/icons/icon";
+import { Search, Volume2, Image, Video, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "../../../translations/translationContext";
 import ScriptList from "../feed";
@@ -32,8 +32,7 @@ export default function SearchBar() {
                         focus:outline-none focus:border-white/20
                         active:border-white/20 active:outline-none"
 					/>
-					<Icon
-						name="Search"
+					<Search
 						className="absolute right-1.5 bottom-1.5 w-5 h-5 pointer-events-none"
 					/>
 				</div>
@@ -43,7 +42,7 @@ export default function SearchBar() {
 						type="button"
 						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "audio" ? "bg-white/5" : ""}`}
 					>
-						<Icon name="Audio" className="w-4 h-4" />
+						<Volume2 className="w-4 h-4" />
 						{t("search.filters.audio")}
 					</button>
 					<button
@@ -51,7 +50,7 @@ export default function SearchBar() {
 						type="button"
 						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "image" ? "bg-white/5" : ""}`}
 					>
-						<Icon name="Image" className="w-4 h-4" />
+						<Image className="w-4 h-4" />
 						{t("search.filters.image")}
 					</button>
 					<button
@@ -59,7 +58,7 @@ export default function SearchBar() {
 						type="button"
 						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "video" ? "bg-white/5" : ""}`}
 					>
-						<Icon name="Video" className="w-4 h-4" />
+						<Video className="w-4 h-4" />
 						{t("search.filters.video")}
 					</button>
 					<button
@@ -67,7 +66,7 @@ export default function SearchBar() {
 						type="button"
 						className={`w-full h-full rounded-xl border border-white/5 text-xs text-neutral-300 flex gap-1 items-center justify-center hover:border-white/20 hover:shadow-lg cursor-pointer transition-all duration-300 ${type === "chat" ? "bg-white/5" : ""}`}
 					>
-						<Icon name="Chat" className="w-4 h-4" />
+						<MessageCircle className="w-4 h-4" />
 						{t("search.filters.chat")}
 					</button>
 				</div>

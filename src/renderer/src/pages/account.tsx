@@ -1,4 +1,4 @@
-import Icon from "@renderer/components/icons/icon";
+import { Clock, Calendar, Share2, Flame } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
@@ -124,7 +124,7 @@ export default function Account() {
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
 												{t("account.stats.timeSpent.title")}
 											</h3>
-											<Icon name="Time" className="w-6 h-6 opacity-80" />
+											<Clock className="w-6 h-6 opacity-80" />
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
 											{t("account.stats.timeSpent.subtitle")}
@@ -142,7 +142,7 @@ export default function Account() {
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
 												{t("account.stats.sessions.title")}
 											</h3>
-											<Icon name="Sessions" className="w-6 h-6 opacity-80" />
+											<Calendar className="w-6 h-6 opacity-80" />
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
 											{t("account.stats.sessions.subtitle")}
@@ -160,7 +160,7 @@ export default function Account() {
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
 												{t("account.stats.shared.title")}
 											</h3>
-											<Icon name="Share" className="w-6 h-6 opacity-80" />
+											<Share2 className="w-6 h-6 opacity-80" />
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
 											{t("account.stats.shared.subtitle")}
@@ -179,7 +179,7 @@ export default function Account() {
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
 												{t("account.stats.streak.title")}
 											</h3>
-											<Icon name="Streak" className="w-6 h-6 opacity-80" />
+											<Flame className="w-6 h-6 opacity-80" />
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
 											{t("account.stats.streak.subtitle")}

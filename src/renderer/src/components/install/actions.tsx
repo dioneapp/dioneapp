@@ -1,7 +1,7 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
 import { useTranslation } from "../../translations/translationContext";
-import Icon from "../icons/icon";
+import { BadgeCheck, User } from "lucide-react";
 import Loading from "./loading-skeleton";
 
 interface ActionsProps {
@@ -91,7 +91,7 @@ export default function ActionsComponent({
 										onClick={() => openLink(data?.script_url)}
 									>
 										<span className="w-fit h-full flex items-center justify-center">
-											<Icon name="Check" />
+											<BadgeCheck size={16} />
 										</span>
 										{data?.script_url.replace(
 											/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
@@ -100,7 +100,7 @@ export default function ActionsComponent({
 									</p>
 									<p className="text-xs text-[#BCB1E7] flex gap-1">
 										<span className="w-fit h-full flex items-center">
-											<Icon name="User" />
+											<User size={16} />
 										</span>
 										{t("actions.publishedBy")}{" "}
 										<span

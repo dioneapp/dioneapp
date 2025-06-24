@@ -1,4 +1,4 @@
-import Icon from "@renderer/components/icons/icon";
+import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -98,13 +98,13 @@ export default function ReportPage() {
 					<div className="flex items-center justify-between">
 						{submitStatus === "success" && (
 							<p className="text-green-500 flex items-center">
-								<Icon name="Success" className="w-5 h-5 mr-2" />
+								<CheckCircle className="w-5 h-5 mr-2" />
 								{t("report.success")}
 							</p>
 						)}
 						{submitStatus === "error" && (
 							<p className="text-red-500 flex items-center">
-								<Icon name="Error" className="w-5 h-5 mr-2" />
+								<XCircle className="w-5 h-5 mr-2" />
 								{t("report.error")}
 							</p>
 						)}
@@ -116,10 +116,7 @@ export default function ReportPage() {
 							>
 								{isSubmitting ? (
 									<span className="flex items-center">
-										<Icon
-											name="Pending"
-											className="w-5 h-5 mr-2 animate-spin"
-										/>
+										<Loader2 className="w-5 h-5 mr-2 animate-spin" />
 										{t("report.sending")}
 									</span>
 								) : (

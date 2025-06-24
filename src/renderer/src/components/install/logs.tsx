@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import type { JSX } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import Icon from "../icons/icon";
+import { Loader2, CheckCircle, XCircle, AlertCircle, AlertTriangle, Info, Copy, Square, ExternalLink } from "lucide-react";
 import { useAppContext } from "../layout/global-context";
 
 interface LogsProps {
@@ -26,7 +26,7 @@ export default function LogsComponent({
 	const { t } = useTranslation();
 	const Spinner = useMemo(() => {
 		if (statusLog[appId]?.status === "pending" || !statusLog[appId]?.status) {
-			return <Icon name="Pending" className="h-4 w-4 animate-spin" />;
+			return <Loader2 className="h-4 w-4 animate-spin" />;
 		}
 		return null;
 	}, [statusLog[appId]?.status]);
@@ -57,10 +57,10 @@ export default function LogsComponent({
 					>
 						{Spinner}
 						{statusLog[appId]?.status === "success" && (
-							<Icon name="Success" className="h-4 w-4" />
+							<CheckCircle className="h-4 w-4" />
 						)}
 						{statusLog[appId]?.status === "error" && (
-							<Icon name="Error" className="h-4 w-4" />
+							<XCircle className="h-4 w-4" />
 						)}
 						{statusLog[appId]?.content
 							? `${statusLog[appId]?.content}`
@@ -86,13 +86,13 @@ export default function LogsComponent({
 						if (lowerLog.includes("error")) {
 							textColor =
 								"select-all bg-red-500/10 font-mono border border-white/5 my-4 backdrop-filter backdrop-blur-xl p-4 rounded-xl text-neutral-300 text-pretty";
-							icon = <Icon name="NotInstalled" className="w-6 h-6" />;
+							icon = <AlertCircle className="w-6 h-6" />;
 						} else if (lowerLog.includes("warning")) {
 							textColor = "text-yellow-400";
-							icon = <Icon name="Warning" className="w-4 h-4" />;
+							icon = <AlertTriangle className="w-4 h-4" />;
 						} else if (lowerLog.includes("info")) {
 							textColor = "text-blue-400";
-							icon = <Icon name="Info" className="w-4 h-4" />;
+							icon = <Info className="w-4 h-4" />;
 						}
 
 						return (
@@ -121,7 +121,7 @@ export default function LogsComponent({
 								className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
 								onClick={() => setShow({ [appId]: "iframe" })}
 							>
-								<Icon name="Iframe" className="h-4 w-4" />
+								<ExternalLink className="h-4 w-4" />
 							</button>
 						)}
 						<button
@@ -129,14 +129,14 @@ export default function LogsComponent({
 							className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
 							onClick={copyLogsToClipboard}
 						>
-							<Icon name="Copy" className="h-4 w-4" />
+							<Copy className="h-4 w-4" />
 						</button>
 						<button
 							type="button"
 							className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
 							onClick={handleStop}
 						>
-							<Icon name="Stop" className="h-4 w-4" />
+							<Square className="h-4 w-4" />
 						</button>
 					</div>
 				</div>

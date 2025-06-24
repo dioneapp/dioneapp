@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import Icon from "../icons/icon";
+import { X, Loader2, CheckCircle, XCircle } from "lucide-react";
 import { useAppContext } from "./global-context";
 
 export default function DeleteLoadingModal({
@@ -57,11 +57,11 @@ export default function DeleteLoadingModal({
 				onClick={onClose}
 				className="absolute top-16 right-16 cursor-pointer"
 			>
-				<Icon name="Close" className="h-4 w-4" />
+				<X className="h-4 w-4" />
 			</button>
 			{status === "deleting" || status === "deleting_deps" ? (
 				<div className="flex flex-col gap-14 items-center">
-					<Icon name="Pending" className="h-24 w-24 animate-spin" />
+					<Loader2 className="h-24 w-24 animate-spin" />
 					<h1 className="font-medium text-3xl flex flex-col gap-2">
 						{status === "deleting_deps"
 							? t("deleteLoading.uninstalling.deps")
@@ -82,7 +82,7 @@ export default function DeleteLoadingModal({
 				</div>
 			) : status === "deleted" ? (
 				<div className="flex flex-col gap-2 items-center">
-					<Icon name="Success" className="h-24 w-24 text-green-500" />
+					<CheckCircle className="h-24 w-24 text-green-500" />
 					<h1 className="font-medium text-3xl mt-12">
 						{t("deleteLoading.success.title")}{" "}
 						<span className="text-green-500">
@@ -99,7 +99,7 @@ export default function DeleteLoadingModal({
 				</div>
 			) : status?.startsWith("error") ? (
 				<div className="flex flex-col gap-2 items-center">
-					<Icon name="Error" className="h-24 w-24 text-red-500" />
+					<XCircle className="h-24 w-24 text-red-500" />
 					<h1 className="font-medium text-3xl mt-10">
 						{t("deleteLoading.error.title")}{" "}
 						<span className="text-red-500">
@@ -115,7 +115,7 @@ export default function DeleteLoadingModal({
 				</div>
 			) : (
 				<div className="flex flex-col gap-2 items-center">
-					<Icon name="Pending" className="h-24 w-24 animate-spin" />
+					<Loader2 className="h-24 w-24 animate-spin" />
 					<h1 className="font-medium text-3xl mt-10 text-neutral-300">
 						{t("deleteLoading.loading.title")}
 					</h1>

@@ -8,6 +8,7 @@ import { useAuthContext } from "../contexts/AuthContext";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
 import QuickLaunch from "./quick-launch";
+import { X, AlertTriangle, Library, Settings, User, LogOut, LogIn } from "lucide-react";
 
 export default function Sidebar() {
 	const { t } = useTranslation();
@@ -145,7 +146,7 @@ export default function Sidebar() {
 									onClick={() => stopApp(app.appId, app.data.name)}
 									className={`absolute hover:bg-red-600/60 p-2 rounded-full opacity-0 transition-all duration-200 blur-md backdrop-blur-3xl bg-red-800/50 ${config?.compactMode ? "-right-2 top-0" : "h-6 w-6 -right-2 top-0"}`}
 								>
-									<Icon name="Close" className="h-2 w-2" />
+									<X className="h-2 w-2" />
 								</button>
 								<Link
 									to={`/install/${app.appId}`}
@@ -193,7 +194,7 @@ export default function Sidebar() {
 						className="h-fit border border-white/10 bg-neutral-800/40 rounded-full backdrop-blur-3xl w-full max-w-56 mb-4 group relative"
 					>
 						<div className="justify-center items-center py-3 flex flex-col gap-1">
-							<Icon name="Important" className="h-6 w-6" />
+							<AlertTriangle className="h-6 w-6" />
 						</div>
 						<div
 							className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-6 py-4 bg-black/90 text-white text-xs shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all backdrop-blur-3xl duration-200"
@@ -221,7 +222,7 @@ export default function Sidebar() {
 									onMouseEnter={() => setHoveredTooltip("library")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
-									<Icon name="Library" className="h-5 w-5" />
+									<Library className="h-5 w-5" />
 									{hoveredTooltip === "library" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
 											{t("sidebar.tooltips.library")}
@@ -234,7 +235,7 @@ export default function Sidebar() {
 									onMouseEnter={() => setHoveredTooltip("settings")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
-									<Icon name="Settings" className="h-5 w-5" />
+									<Settings className="h-5 w-5" />
 									{hoveredTooltip === "settings" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
 											{t("sidebar.tooltips.settings")}
@@ -264,7 +265,7 @@ export default function Sidebar() {
 										onMouseEnter={() => setHoveredTooltip("account")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
-										<Icon name="Profile" className="h-5 w-5" />
+										<User className="h-5 w-5" />
 									</div>
 								) : (
 									<>
@@ -285,7 +286,7 @@ export default function Sidebar() {
 											<span className="h-full w-full flex justify-center items-center border border-white/20 rounded-full bg-white/10">
 												<span>
 													{user?.username.charAt(0).toUpperCase() || (
-														<Icon name="User" className="h-5 w-5" />
+														<User className="h-5 w-5" />
 													)}
 												</span>
 											</span>
@@ -312,7 +313,7 @@ export default function Sidebar() {
 									onMouseEnter={() => setHoveredTooltip("logout")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
-									<Icon name="Logout" className="h-5 w-5" />
+									<LogOut className="h-5 w-5" />
 									{hoveredTooltip === "logout" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 											{t("sidebar.tooltips.logout")}
@@ -330,7 +331,7 @@ export default function Sidebar() {
 										onMouseEnter={() => setHoveredTooltip("login")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
-										<Icon name="Login" className="h-5 w-5" />
+										<LogIn className="h-5 w-5" />
 										{/* {hoveredTooltip === "login" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 											{t("sidebar.tooltips.login")}
@@ -350,7 +351,7 @@ export default function Sidebar() {
 								onMouseEnter={() => setHoveredTooltip("library")}
 								onMouseLeave={() => setHoveredTooltip(null)}
 							>
-								<Icon name="Library" className="h-5 w-5" />
+								<Library className="h-5 w-5" />
 								{hoveredTooltip === "library" && (
 									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 										{t("sidebar.tooltips.library")}
@@ -363,7 +364,7 @@ export default function Sidebar() {
 								onMouseEnter={() => setHoveredTooltip("settings")}
 								onMouseLeave={() => setHoveredTooltip(null)}
 							>
-								<Icon name="Settings" className="h-5 w-5" />
+								<Settings className="h-5 w-5" />
 								{hoveredTooltip === "settings" && (
 									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 										{t("sidebar.tooltips.settings")}
