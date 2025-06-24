@@ -32,7 +32,6 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 		},
 		ref,
 	) => {
-
 		return (
 			<div
 				style={{ zIndex: 1000 }}

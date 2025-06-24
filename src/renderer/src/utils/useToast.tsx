@@ -29,7 +29,7 @@ export const ToastProvider: React.FC<{
 		if (toast.fixed === "false" || toast.fixed === undefined) {
 			setTimeout(() => {
 				removeToast(id);
-			}, seconds); 
+			}, seconds);
 		}
 	}, []);
 

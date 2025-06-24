@@ -7,7 +7,7 @@ We are creating Dione so that **any user can install complex applications** in a
 
 ## Demo
 
-![Demo](https://i.imgur.com/tyLbRIe.png)
+![Demo](https://i.imgur.com/gUaV5qT.png)
 
 
 ## Documentation

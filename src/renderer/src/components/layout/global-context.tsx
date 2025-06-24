@@ -205,7 +205,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 		try {
 			await fetch(`http://localhost:${port}`, {
 				method: "GET",
-				mode: "no-cors", 
+				mode: "no-cors",
 			});
 			return true;
 		} catch (error) {
@@ -213,7 +213,6 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			return false;
 		}
 	};
-	
 
 	const stopCheckingRef = useRef(true);
 	const loadIframe = async (localPort: number) => {
@@ -396,7 +395,10 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 
 	const clearLogs = useCallback((appId: string) => {
 		setLogs((prevLogs) => ({ ...prevLogs, [appId]: [] }));
-		setStatusLog((prevStatusLog) => ({ ...prevStatusLog, [appId]: { status: "", content: "" } }));
+		setStatusLog((prevStatusLog) => ({
+			...prevStatusLog,
+			[appId]: { status: "", content: "" },
+		}));
 	}, []);
 
 	const getAllAppLogs = useCallback(() => {
