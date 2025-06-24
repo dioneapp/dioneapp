@@ -4,14 +4,16 @@ import type { Script } from "./types";
 
 interface ScriptCardProps {
 	script: Script;
+	innerRef?: React.Ref<HTMLDivElement>;
 }
 
-function ScriptCard({ script }: ScriptCardProps) {
+function ScriptCard({ script, innerRef }: ScriptCardProps) {
 	const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-		e.currentTarget.src = "/svgs/Icon.svg";
+		e.currentTarget.src = "/svgs/Profile.svg";
 	};
 
 	return (
+		<div ref={innerRef}>
 		<Link
 			to={`/install/${script.id}`}
 			className="group flex gap-4 h-auto min-h-[120px] border border-white/10 hover:border-white/20 
@@ -46,6 +48,7 @@ function ScriptCard({ script }: ScriptCardProps) {
 				</p>
 			</div>
 		</Link>
+		</div>
 	);
 }
 

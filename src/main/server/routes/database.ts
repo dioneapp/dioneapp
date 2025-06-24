@@ -182,41 +182,42 @@ router.get("/featured", (_req, res) => {
 	getData();
 });
 
-router.get("/explore", (_req, res) => {
+router.get("/explore", (req, res) => {
+	const page = req.query.page ? Number.parseInt(req.query.page as string) : 1;
+	const limit = req.query.limit ? Number.parseInt(req.query.limit as string) : 20;
+  
 	async function getData() {
+	  try {
 		const response = await fetch(
-			"https://api.getdione.app/v1/scripts?order_type=desc",
-			{
-				headers: {
-					Authorization: `Bearer ${process.env.API_KEY}`,
-				},
-			},
+		  `https://api.getdione.app/v1/scripts?order_type=desc&page=${page}&limit=${limit}`,
+		  {
+			headers: { Authorization: `Bearer ${process.env.API_KEY}` },
+		  }
 		);
-		const data = await response.json();
+		
 		if (response.status !== 200) {
-			logger.error(
-				`Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
-			);
-			res.send(response.statusText);
-			return;
+		  logger.error(`Fetch failed: [${response.status}] ${response.statusText}`);
+		  return res.status(response.status).json({
+			error: `Dione API error: ${response.statusText}`
+		  });
 		}
-
-		const scripts = data.map((script) => {
-			if (
-				script.logo_url === null ||
-				script.logo_url === undefined ||
-				script.logo_url === ""
-			) {
-				script.logo_url = generateGradient(script.name);
-			}
-			return script;
-		});
-
-		res.send(scripts);
+  
+		const data = await response.json();
+		
+		const scripts = data.map((script) => ({
+		  ...script,
+		  logo_url: script.logo_url || generateGradient(script.name)
+		}));
+  
+		res.json(scripts);
+	  } catch (error: any) {
+		logger.error(`Critical error: ${error.message}`);
+		res.status(500).json({ error: "Internal server error" });
+	  }
 	}
-
+  
 	getData();
-});
+  });
 
 // search
 router.get("/search/:id", (req, res) => {
