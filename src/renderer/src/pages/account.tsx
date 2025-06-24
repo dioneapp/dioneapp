@@ -1,11 +1,12 @@
 import { Clock, Calendar, Share2, Flame } from "lucide-react";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
 
 const SkeletonCard = ({ className = "" }) => (
-	<div className={`bg-white/5 rounded-xl p-8 animate-pulse ${className}`}>
+	<div className={`bg-white/5 rounded-xl p-8 animate-pulse border border-white/10 ${className}`}>
 		<div className="h-7 w-3/4 bg-white/10 rounded mb-6" />
 		<div className="h-4 w-1/2 bg-white/10 rounded mb-6" />
 		<div className="h-10 w-1/3 bg-white/10 rounded mt-auto" />
@@ -107,24 +108,51 @@ export default function Account() {
 		setConsecutiveDays(streak);
 	}
 
+	const cardVariants = {
+		hidden: { opacity: 0, y: 20 },
+		visible: { opacity: 1, y: 0 }
+	};
+
 	return (
 		<div className="min-h-screen bg-background pt-4">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
 				<main className="flex flex-col gap-6 py-5">
-					<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
-						{t("account.title")}
-					</h1>
-					<p className="text-xs text-neutral-400">{t("account.wip")}</p>
+					<motion.div
+						initial={{ opacity: 0, y: -20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ duration: 0.5 }}
+					>
+						<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
+							{t("account.title")}
+						</h1>
+					</motion.div>
+					
 					{data && !loading ? (
-						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full">
-							<div className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2 bg-white/10 rounded-xl p-8 h-auto flex flex-col">
+						<motion.div 
+							className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full"
+							initial="hidden"
+							animate="visible"
+							variants={{
+								visible: {
+									transition: {
+										staggerChildren: 0.1
+									}
+								}
+							}}
+						>
+							<motion.div 
+								variants={cardVariants}
+								className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2 bg-gradient-to-br from-[#BCB1E7]/10 to-[#080808]/20 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
+							>
 								<div className="flex flex-col items-start overflow-hidden rounded-lg h-full">
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
 										<div className="flex items-center justify-between w-full">
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
 												{t("account.stats.timeSpent.title")}
 											</h3>
-											<Clock className="w-6 h-6 opacity-80" />
+											<div className="p-2 bg-white/10 rounded-lg">
+												<Clock className="w-6 h-6 opacity-80" />
+											</div>
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
 											{t("account.stats.timeSpent.subtitle")}
@@ -134,15 +162,21 @@ export default function Account() {
 										{formatTimeSpent(hoursInApp)}
 									</h4>
 								</div>
-							</div>
-							<div className="col-span-2 sm:col-span-1 md:col-span-2 bg-white/10 rounded-xl p-8 h-auto flex flex-col">
-								<div className="group relative flex flex-col items-start overflow-hidden rounded-lg ">
+							</motion.div>
+							
+							<motion.div 
+								variants={cardVariants}
+								className="col-span-2 sm:col-span-1 md:col-span-2 bg-gradient-to-br from-[#BCB1E7]/10 to-[#080808]/20 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
+							>
+								<div className="flex flex-col items-start overflow-hidden rounded-lg">
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
 										<div className="flex items-center justify-between w-full">
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
 												{t("account.stats.sessions.title")}
 											</h3>
-											<Calendar className="w-6 h-6 opacity-80" />
+											<div className="p-2 bg-white/10 rounded-lg">
+												<Calendar className="w-6 h-6 opacity-80" />
+											</div>
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
 											{t("account.stats.sessions.subtitle")}
@@ -152,15 +186,21 @@ export default function Account() {
 										{data.sessions.length}
 									</h4>
 								</div>
-							</div>
-							<div className="col-span-2 sm:col-span-1 md:col-span-2 bg-white/10 rounded-xl p-8 h-auto flex flex-col">
-								<div className="group relative flex flex-col items-start overflow-hidden rounded-lg ">
+							</motion.div>
+							
+							<motion.div 
+								variants={cardVariants}
+								className="col-span-2 sm:col-span-1 md:col-span-2 bg-gradient-to-br from-[#BCB1E7]/10 to-[#080808]/20 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
+							>
+								<div className="flex flex-col items-start overflow-hidden rounded-lg">
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
 										<div className="flex items-center justify-between w-full">
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
 												{t("account.stats.shared.title")}
 											</h3>
-											<Share2 className="w-6 h-6 opacity-80" />
+											<div className="p-2 bg-white/10 rounded-lg">
+												<Share2 className="w-6 h-6 opacity-80" />
+											</div>
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
 											{t("account.stats.shared.subtitle")}
@@ -170,16 +210,22 @@ export default function Account() {
 										{data.shared.length}
 									</h4>
 								</div>
-							</div>
-							<div className="group relative col-span-2 sm:col-span-1 md:col-span-full bg-white/10 rounded-xl p-8 h-auto flex flex-col">
-								<div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-100 rounded-xl" />
-								<div className="group relative flex flex-col items-start overflow-hidden">
+							</motion.div>
+							
+							<motion.div 
+								variants={cardVariants}
+								className="group relative col-span-2 sm:col-span-1 md:col-span-full bg-gradient-to-br from-[#BCB1E7]/15 to-[#080808]/30 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
+							>
+								<div className="absolute inset-0 bg-gradient-to-br from-[#BCB1E7]/5 to-transparent opacity-100 rounded-xl" />
+								<div className="relative flex flex-col items-start overflow-hidden">
 									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
 										<div className="flex items-center justify-between w-full">
 											<h3 className="z-10 text-2xl font-medium text-white w-full">
 												{t("account.stats.streak.title")}
 											</h3>
-											<Flame className="w-6 h-6 opacity-80" />
+											<div className="p-2 bg-white/10 rounded-lg">
+												<Flame className="w-6 h-6 opacity-80" />
+											</div>
 										</div>
 										<h5 className="z-10 text-xs font-medium text-neutral-400">
 											{t("account.stats.streak.subtitle")}
@@ -195,38 +241,64 @@ export default function Account() {
 									</span>
 									<div className="flex gap-1 w-full">
 										{[1, 2, 3, 4, 5, 6, 7].map((day) => (
-											<div
+											<motion.div
 												key={day}
-												className={`h-1.5 flex-1 rounded-full ${day <= consecutiveDays ? "bg-white" : "bg-neutral-700"}`}
+												initial={{ scale: 0 }}
+												animate={{ scale: 1 }}
+												transition={{ delay: day * 0.1 }}
+												className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+													day <= consecutiveDays 
+														? "bg-gradient-to-r from-[#BCB1E7] to-white" 
+														: "bg-neutral-700"
+												}`}
 											/>
 										))}
 									</div>
 								</div>
-							</div>
-						</div>
+							</motion.div>
+						</motion.div>
 					) : (
-						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full">
-							<SkeletonCard className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2" />
-							<SkeletonCard className="col-span-2 sm:col-span-1 md:col-span-2" />
-							<SkeletonCard className="col-span-2 sm:col-span-1 md:col-span-2" />
-							<div className="group relative col-span-2 sm:col-span-1 md:col-span-full bg-white/5 rounded-xl p-8 h-auto flex flex-col">
-								<div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-100 rounded-xl" />
-								<div className="group relative flex flex-col items-start overflow-hidden">
-									<div className="h-7 w-3/4 bg-white/10 rounded mb-6" />
-									<div className="flex items-end gap-1 mb-3">
-										<div className="h-10 w-16 bg-white/10 rounded" />
-									</div>
-									<div className="flex gap-1 w-full">
-										{[1, 2, 3, 4, 5, 6, 7].map((day) => (
-											<div
-												key={day}
-												className="h-1.5 flex-1 rounded-full bg-white/10"
-											/>
-										))}
+						<motion.div 
+							className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full"
+							initial="hidden"
+							animate="visible"
+							variants={{
+								visible: {
+									transition: {
+										staggerChildren: 0.1
+									}
+								}
+							}}
+						>
+							<motion.div variants={cardVariants}>
+								<SkeletonCard className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2" />
+							</motion.div>
+							<motion.div variants={cardVariants}>
+								<SkeletonCard className="col-span-2 sm:col-span-1 md:col-span-2" />
+							</motion.div>
+							<motion.div variants={cardVariants}>
+								<SkeletonCard className="col-span-2 sm:col-span-1 md:col-span-2" />
+							</motion.div>
+							<motion.div variants={cardVariants}>
+								<div className="group relative col-span-2 sm:col-span-1 md:col-span-full bg-white/5 rounded-xl p-8 h-auto flex flex-col border border-white/10">
+									<div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-100 rounded-xl" />
+									<div className="relative flex flex-col items-start overflow-hidden">
+										<div className="h-7 w-3/4 bg-white/10 rounded mb-6" />
+										<div className="flex items-end gap-1 mb-3">
+											<div className="h-10 w-16 bg-white/10 rounded" />
+										</div>
+										<div className="flex gap-1 w-full">
+											{[1, 2, 3, 4, 5, 6, 7].map((day) => (
+												<div
+													key={day}
+													className="h-1.5 flex-1 rounded-full bg-white/10"
+												/>
+											))}
+										</div>
 									</div>
 								</div>
-							</div>
-						</div>
+							</motion.div>
+						</motion.div>
 					)}
 				</main>
 			</div>
