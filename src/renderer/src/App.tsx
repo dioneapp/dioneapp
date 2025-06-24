@@ -92,7 +92,13 @@ function App() {
 					)}
 					<div
 						className="flex-1 overflow-x-hidden"
-						id={pathname.includes("/install") ? "" : pathname === "/settings" ? "settings" : "view"}
+						id={
+							pathname.includes("/install")
+								? ""
+								: pathname === "/settings"
+									? "settings"
+									: "view"
+						}
 					>
 						<AnimatePresence mode="wait">
 							<motion.div
