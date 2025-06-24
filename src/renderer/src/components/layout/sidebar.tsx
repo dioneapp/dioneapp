@@ -320,10 +320,11 @@ export default function Sidebar() {
 									)}
 								</button>
 							) : (
+								<>
 								<button
 									type="button"
 									className="p-2 bg-white text-black border rounded-full border-white/10 hover:bg-white/80 transition-colors flex gap-1 items-center justify-start cursor-pointer relative"
-									onClick={() => openLink("https://getdione.app/auth/login")}
+									onClick={() => openLink("https://getdione.app/auth/login?app=true")}
 									onMouseEnter={() => setHoveredTooltip("login")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
@@ -335,6 +336,7 @@ export default function Sidebar() {
 									)} */}
 									<span className="text-sm px-2 font-semibold">Login</span>
 								</button>
+								</>
 							)}
 						</div>
 					)}

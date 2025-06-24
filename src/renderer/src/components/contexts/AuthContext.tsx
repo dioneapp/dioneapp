@@ -46,6 +46,7 @@ export function AuthContextProvider({
 
 	useEffect(() => {
 		(async () => {
+			setLoading(true);
 			const storedToken = await getRefreshToken();
 			const sessionExpiresAt = await getExpiresAt();
 			if (!storedToken) return;
@@ -75,8 +76,12 @@ export function AuthContextProvider({
 			const response = await fetch(
 				`http://localhost:${port}/db/user/${data.session.user.id}`,
 			);
-			const userData = await response.json();
-			setUser(userData[0]);
+			if (response.ok) {
+				const userData = await response.json();
+				setUser(userData[0]);
+			} else {
+				setUser(null);
+			}
 			setLoading(false);
 		} else {
 			checkSession();
