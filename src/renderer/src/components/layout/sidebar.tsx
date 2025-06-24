@@ -210,7 +210,7 @@ export default function Sidebar() {
 					className={`mt-auto h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l ${!config?.compactMode ? "mb-4" : ""}`}
 				/>
 				<div
-					className={`mb-4 flex gap-2 items-center justify-center w-full h-fit group transition-all duration-500 hover:[&_div_div]:opacity-100 hover:[&_div_div]:blur-none [&_div_div]:-mt-24 hover:[&_div_div]:mt-0 [&_div_div]:opacity-0 [&_div_div]:blur-lg ${config?.compactMode ? "flex-col" : ""}`}
+					className={`mb-4 flex gap-2 items-center justify-center w-full h-fit group transition-all duration-500 ${loading ? "[&_div_div]:opacity-100 [&_div_div]:blur-none [&_div_div]:mt-0" : "hover:[&_div_div]:opacity-100 hover:[&_div_div]:blur-none [&_div_div]:-mt-24 hover:[&_div_div]:mt-0 [&_div_div]:opacity-0 [&_div_div]:blur-lg"} ${config?.compactMode ? "flex-col" : ""}`}
 				>
 					{config?.compactMode && (
 						<div className="mt-4 items-center gap-2 justify-center mx-auto w-full h-full flex-col flex transition-all duration-500">
@@ -245,39 +245,50 @@ export default function Sidebar() {
 						</div>
 					)}
 					<div
-						className={`mt-auto w-fit flex items-center gap-2 ${config?.compactMode ? "justify-center" : "justify-start"}`}
+						className={`relative mt-auto w-fit flex items-center gap-2 ${config?.compactMode ? "justify-center" : "justify-start"}`}
 					>
 						{user && (
 							<Link
-								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${config?.compactMode ? "h-9 w-9 rounded-full" : "h-9 w-9 rounded-full"} relative ${!user?.avatar_url && "border border-white/20"}`}
+								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${loading ? "cursor-auto" : ""} h-9.5 w-9.5 rounded-full ${!user?.avatar_url && "border border-white/20"}`}
 								to="/account"
-								onMouseEnter={() => setHoveredTooltip("account")}
-								onMouseLeave={() => setHoveredTooltip(null)}
+								onMouseEnter={!loading ? () => setHoveredTooltip("account") : undefined}
+								onMouseLeave={!loading ? () => setHoveredTooltip(null) : undefined}
 							>
-								{!avatarError &&
-								user?.avatar_url &&
-								user?.avatar_url !== "" &&
-								user?.avatar_url !== null &&
-								user?.avatar_url !== undefined ? (
-									<img
-										src={user?.avatar_url}
-										alt="user avatar"
-										className="h-full w-full object-cover object-center"
-										onError={() => {
-											setAvatarError(true);
-										}}
-									/>
+								{loading ? (
+									<div className="w-full h-full border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer"
+									onMouseEnter={() => setHoveredTooltip("account")}
+									onMouseLeave={() => setHoveredTooltip(null)}>
+										<Icon name="Profile" className="h-5 w-5" />
+									</div>
+									
 								) : (
-									<span className="h-full w-full flex justify-center items-center border border-white/20 rounded-full bg-white/10">
-										<span>
-											{user?.username.charAt(0).toUpperCase() || (
-												<Icon name="User" className="h-5 w-5" />
-											)}
+									<>
+									{!avatarError &&
+									user?.avatar_url &&
+									user?.avatar_url !== "" &&
+									user?.avatar_url !== null &&
+									user?.avatar_url !== undefined ? (
+										<img
+											src={user?.avatar_url}
+											alt="user avatar"
+											className="h-full w-full object-cover object-center"
+											onError={() => {
+												setAvatarError(true);
+											}}
+										/>
+									) : (
+										<span className="h-full w-full flex justify-center items-center border border-white/20 rounded-full bg-white/10">
+											<span>
+												{user?.username.charAt(0).toUpperCase() || (
+													<Icon name="User" className="h-5 w-5" />
+												)}
+											</span>
 										</span>
-									</span>
+									)}
+									</>
 								)}
 								{hoveredTooltip === "account" && (
-									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap bg-black/90 backdrop-blur-3xl">
+									<div className={`${config?.compactMode ? "absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap" : "absolute left-1/2 -translate-x-1/2 top-full z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap"}`}>
 										{t("sidebar.tooltips.account")}
 									</div>
 								)}
@@ -287,12 +298,6 @@ export default function Sidebar() {
 					{!config?.compactMode && (
 						<div className="flex gap-2 items-center justify-start w-full h-full">
 							{user ? (
-								<>
-									{loading ? (
-										<div className="w-9.5 h-9.5 border border-white/10 rounded-full bg-white/5 animate-pulse flex items-center justify-center relative">
-											<div className="w-5 h-5 bg-white/20 rounded" />
-										</div>
-									) : (
 										<button
 											type="button"
 											className="w-9.5 h-9.5 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer relative"
@@ -307,8 +312,6 @@ export default function Sidebar() {
 												</div>
 											)}
 										</button>
-									)}
-								</>
 							) : (
 								<button
 									type="button"
