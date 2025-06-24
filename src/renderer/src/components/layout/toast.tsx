@@ -8,6 +8,7 @@ export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
 	button?: boolean;
 	buttonText?: string;
 	buttonAction?: () => void;
+	removeAfter?: number;
 }
 
 const variantClasses = {
@@ -27,6 +28,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 			button,
 			buttonText,
 			buttonAction,
+			removeAfter,
 			...props
 		},
 		ref,
@@ -55,11 +57,6 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 						onClick={onClose}
 						className={`flex  ${button ? "" : "items-center justify-center p-2 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"}`}
 					>
-						{button && (
-							<span className="text-xs bg-neutral-800 rounded-full border border-white/10 px-4 py-1 z-50 cursor-pointer hover:bg-neutral-700 transition-colors duration-300">
-								{t("toast.close")}
-							</span>
-						)}
 						{!button && (
 							<svg
 								aria-hidden="true"

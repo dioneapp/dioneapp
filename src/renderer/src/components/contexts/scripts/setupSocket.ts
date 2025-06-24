@@ -88,6 +88,7 @@ export function setupSocket({
 					content.toLowerCase().includes("localhost") ||
 					content.toLowerCase().includes("0.0.0.0"))
 			) {
+				console.log("loading iframe");
 				const match = content
 					// biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
 					.replace(/\x1b\[[0-9;]*m/g, "")
@@ -97,6 +98,7 @@ export function setupSocket({
 				console.log(match);
 				if (match) {
 					loadIframe(Number.parseInt(match[1]));
+					setIframeAvailable(true);
 				}
 			}
 			if (type === "log") {

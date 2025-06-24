@@ -41,6 +41,7 @@ interface AppContextType {
 		button?: boolean,
 		buttonText?: string,
 		buttonAction?: () => void,
+		removeAfter?: number,
 	) => void;
 	stopCheckingRef: React.MutableRefObject<boolean>;
 	iframeSrc: string;
@@ -68,6 +69,7 @@ interface AppContextType {
 	getAllAppLogs: () => string[];
 	appFinished: Record<string, boolean>;
 	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	loadIframe: (port: number) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -95,6 +97,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 		button?: boolean,
 		buttonText?: string,
 		buttonAction?: () => void,
+		removeAfter?: number,
 	) => {
 		addToast({
 			variant,
@@ -103,6 +106,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			button,
 			buttonText,
 			buttonAction,
+			removeAfter,
 		});
 	};
 	// navegation stuff
@@ -197,36 +201,19 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 		}
 	};
 
-	const isLocalAvailable = async (port: number) => {
-		const socket = io(`http://localhost:${port}`);
-		return new Promise<boolean>((resolve) => {
-			if (stopCheckingRef.current === true) {
-				socket.disconnect();
-			}
-			socket.on("connect", () => {
-				console.log("connected");
-				resolve(true);
-				socket.disconnect();
+	const isLocalAvailable = async (port: number): Promise<boolean> => {
+		try {
+			const response = await fetch(`http://localhost:${port}`, {
+				method: "GET",
+				mode: "no-cors", 
 			});
-			socket.on("connect_error", () => {
-				console.log("connect error");
-				resolve(true);
-				socket.disconnect();
-			});
-			socket.on("disconnect", () => {
-				console.log("disconnect");
-				resolve(false);
-				socket.disconnect();
-			});
-			socket.on("error", (error) => {
-				console.log("error:", error);
-				resolve(false);
-			});
-			socket.on("disconnect", () => {
-				console.log("disconnect");
-			});
-		});
+			return true;
+		} catch (error) {
+			console.log("Port is not available", error);
+			return false;
+		}
 	};
+	
 
 	const stopCheckingRef = useRef(true);
 	const loadIframe = async (localPort: number) => {
@@ -241,6 +228,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			}
 		}
 
+		console.log("isAvailable", isAvailable);
 		if (isAvailable) {
 			stopCheckingRef.current = true;
 			setIframeSrc(`http://localhost:${localPort}`);
@@ -408,6 +396,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 
 	const clearLogs = useCallback((appId: string) => {
 		setLogs((prevLogs) => ({ ...prevLogs, [appId]: [] }));
+		setStatusLog((prevStatusLog) => ({ ...prevStatusLog, [appId]: { status: "", content: "" } }));
 	}, []);
 
 	const getAllAppLogs = useCallback(() => {
@@ -450,12 +439,13 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			showToast(
 				"default",
 				"There is an application running in the background.",
-				"true",
+				"false",
 				true,
 				"Return",
 				() => {
 					navigate(`/install/${data.id} `);
 				},
+				5000,
 			);
 		}
 	}, [pathname.includes("/install"), isServerRunning]);
@@ -546,6 +536,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 				getAllAppLogs,
 				appFinished,
 				setAppFinished,
+				loadIframe,
 			}}
 		>
 			{children}

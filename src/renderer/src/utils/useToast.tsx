@@ -13,9 +13,11 @@ const ToastContext = React.createContext<ToastContextType | undefined>(
 	undefined,
 );
 
-export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
-	children,
-}) => {
+export const ToastProvider: React.FC<{
+	children: React.ReactNode;
+	removeAfter?: number;
+}> = ({ children, removeAfter }) => {
+	const seconds = removeAfter || 3000;
 	const [toasts, setToasts] = React.useState<(ToastType & { id: string })[]>(
 		[],
 	);
@@ -27,7 +29,7 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({
 		if (toast.fixed === "false" || toast.fixed === undefined) {
 			setTimeout(() => {
 				removeToast(id);
-			}, 3000); // Remove toast after 3s
+			}, seconds); 
 		}
 	}, []);
 

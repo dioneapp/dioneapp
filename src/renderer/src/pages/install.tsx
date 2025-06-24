@@ -42,6 +42,7 @@ export default function Install({ id }: { id?: string }) {
 		getAllAppLogs,
 		activeApps,
 		appFinished,
+		loadIframe,
 	} = useAppContext();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
@@ -74,7 +75,6 @@ export default function Install({ id }: { id?: string }) {
 		async function stopApp() {
 			if (!data?.id) return;
 
-			console.log("appFinished", appFinished[data.id]);
 			if (appFinished[data.id] === true) {
 				await handleStopApp(data.id, data.name);
 				setShow({ [data.id]: "actions" });
@@ -177,7 +177,6 @@ export default function Install({ id }: { id?: string }) {
 	}
 
 	useEffect(() => {
-		setIframeAvailable(false);
 		fetchIfDownloaded();
 	}, [data]);
 
@@ -240,6 +239,7 @@ export default function Install({ id }: { id?: string }) {
 		try {
 			if (!data.name) return;
 			setIsServerRunning(true);
+			addLog(data?.id, `Starting ${data.name}...`);
 			const port = await getCurrentPort();
 			window.electron.ipcRenderer.invoke(
 				"notify",
@@ -590,6 +590,12 @@ export default function Install({ id }: { id?: string }) {
 			setShow({ [data.id]: "actions" });
 		}
 	}, [data]);
+
+	useEffect(() => {
+		if (iframeAvailable) {
+			loadIframe(catchPort as number);
+		}
+	}, []);
 
 	return (
 		<>
