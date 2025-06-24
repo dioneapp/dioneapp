@@ -100,7 +100,7 @@ export default function QuickLaunch({
 					<img
 						src={app.logo_url}
 						alt={app.name}
-						className="h-full w-full object-cover"
+						className="h-full w-full object-cover bg-neutral-800/50"
 					/>
 				) : (
 					<div

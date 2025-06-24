@@ -14,12 +14,12 @@ interface IframeProps {
 	data: any;
 }
 
-interface SystemUsage {
-	cpu: number;
-	ram: { percent: number; usedGB: number };
-	gpu: { percent: number; vramGB: number };
-	disk: { percent: number; usedGB: number };
-}
+// interface SystemUsage {
+// 	cpu: number;
+// 	ram: { percent: number; usedGB: number };
+// 	gpu: { percent: number; vramGB: number };
+// 	disk: { percent: number; usedGB: number };
+// }
 
 export default function IframeComponent({
 	iframeSrc,
@@ -31,35 +31,35 @@ export default function IframeComponent({
 }: IframeProps) {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
-	const [_systemUsage, setSystemUsage] = useState<SystemUsage>({
-		cpu: 0,
-		ram: { percent: 0, usedGB: 0 },
-		gpu: { percent: 0, vramGB: 0 },
-		disk: { percent: 0, usedGB: 0 },
-	});
+	// const [systemUsage, setSystemUsage] = useState<SystemUsage>({
+	// 	cpu: 0,
+	// 	ram: { percent: 0, usedGB: 0 },
+	// 	gpu: { percent: 0, vramGB: 0 },
+	// 	disk: { percent: 0, usedGB: 0 },
+	// });
 	const [isFullscreen, setIsFullscreen] = useState(false);
 
-	useEffect(() => {
-		const interval = setInterval(() => {
-			setSystemUsage({
-				cpu: Math.random() * 100,
-				ram: {
-					percent: Math.random() * 100,
-					usedGB: Math.random() * 16,
-				},
-				gpu: {
-					percent: Math.random() * 100,
-					vramGB: Math.random() * 12,
-				},
-				disk: {
-					percent: Math.random() * 100,
-					usedGB: Math.random() * 1000,
-				},
-			});
-		}, 1000);
+	// useEffect(() => {
+	// 	const interval = setInterval(() => {
+	// 		setSystemUsage({
+	// 			cpu: Math.random() * 100,
+	// 			ram: {
+	// 				percent: Math.random() * 100,
+	// 				usedGB: Math.random() * 16,
+	// 			},
+	// 			gpu: {
+	// 				percent: Math.random() * 100,
+	// 				vramGB: Math.random() * 12,
+	// 			},
+	// 			disk: {
+	// 				percent: Math.random() * 100,
+	// 				usedGB: Math.random() * 1000,
+	// 			},
+	// 		});
+	// 	}, 1000);
 
-		return () => clearInterval(interval);
-	}, []);
+	// 	return () => clearInterval(interval);
+	// }, []);
 
 	const handleOpenInBrowser = () => {
 		window.open(`http://localhost:${currentPort || "3000"}`, "_blank");
@@ -285,8 +285,9 @@ export default function IframeComponent({
 					id="iframe"
 					src={iframeSrc}
 					className="w-full h-full bg-neutral-900 z-50"
-					style={{ border: 0, overflow: "hidden" }}
+					style={{ border: 0, overflow: "hidden",  }}
 					sandbox="allow-scripts allow-same-origin allow-forms"
+				
 				/>
 			</motion.div>
 		</div>
