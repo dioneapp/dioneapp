@@ -48,7 +48,7 @@ const CustomSelect = ({
 							animate={{ opacity: 1, y: 0 }}
 							exit={{ opacity: 0, y: 10 }}
 							transition={{ duration: 0.22 }}
-							className="backdrop-blur-md backdrop-filter absolute z-50 mt-2 w-44 p-2 rounded-[10px] border border-white/5 shadow-lg bg-[#2e2d32]/90"
+							className="backdrop-blur-md backdrop-filter absolute z-50 mt-2 w-44 p-2 rounded-xl border border-white/5 shadow-lg bg-[#2e2d32]/90"
 						>
 							<div className="flex flex-col gap-1">
 								{options.map((option) => (
@@ -59,7 +59,7 @@ const CustomSelect = ({
 											onChange(option.value);
 											setIsOpen(false);
 										}}
-										className={`w-full text-left rounded-full px-4 py-2 text-sm transition-colors duration-200 
+										className={`w-full text-left rounded-xl px-4 py-2 text-sm transition-colors duration-200 
 											${
 												option.value !== value
 													? "hover:bg-white/20 cursor-pointer text-neutral-300 hover:text-white"
@@ -170,6 +170,17 @@ export default function Settings() {
 		console.log("result", result);
 		if (!result.canceled && result.filePaths[0]) {
 			handleUpdate({ defaultInstallFolder: result.filePaths[0] });
+		}
+	}
+
+	async function handleLogsDir() {
+		const result = await window.electron.ipcRenderer.invoke(
+			"save-dir",
+			config.defaultLogsPath,
+		);
+		console.log("result", result);
+		if (!result.canceled && result.filePaths[0]) {
+			handleUpdate({ defaultLogsPath: result.filePaths[0] });
 		}
 	}
 
@@ -480,6 +491,7 @@ export default function Settings() {
 														<input
 															required
 															readOnly
+															onClick={handleLogsDir}
 															className="text-xs font-mono text-center text-neutral-300 pl-6 pr-12 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
 															type="text"
 															value={config.defaultLogsPath}
