@@ -12,6 +12,11 @@ export interface Command {
 	name: string;
 	commands: string[];
 	catch?: number;
+	env?: {
+		name?: string;
+		type?: string;
+		version?: string;
+	};
 	"not-required"?: boolean;
 }
 
@@ -22,6 +27,7 @@ export interface DioneConfig {
 		};
 	};
 	installation: Command[];
+	start: Command[];
 }
 export interface DependencyConfig {
 	[key: string]: {
@@ -69,6 +75,7 @@ async function isDependencyInstalled(
 		const config = dependencyConfig[dependency];
 		const output = await execSync(config.checkCommand);
 		const installedVersion = output.toString().trim();
+		console.log("dependency", dependency, "version", installedVersion);
 
 		if (requiredVersion === "latest") {
 			return { isValid: true, reason: "required-version" };
@@ -110,6 +117,7 @@ export async function checkDependencies(dioneFile: string): Promise<{
 			return { success: false, missing: [], error: true };
 		}
 		const needEnv = JSON.stringify(config).includes("env");
+		const envType = config.installation.find((dep) => dep.env?.type)?.env?.type;
 		const missing: {
 			name: string;
 			installed: boolean;
@@ -118,10 +126,19 @@ export async function checkDependencies(dioneFile: string): Promise<{
 		}[] = [];
 
 		// if use an env, add uv as dependency
-		if (needEnv && !config.dependencies?.uv) {
+		if (needEnv && envType === "uv" && !config.dependencies?.uv) {
 			config.dependencies = {
 				...config.dependencies,
 				uv: {
+					version: "latest",
+				},
+			};
+		}
+		// if use an env type conda, add conda as dependency
+		if (needEnv && envType === "conda" && !config.dependencies?.conda) {
+			config.dependencies = {
+				...config.dependencies,
+				conda: {
 					version: "latest",
 				},
 			};
