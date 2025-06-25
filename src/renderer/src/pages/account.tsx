@@ -114,9 +114,9 @@ export default function Account() {
 	};
 
 	return (
-		<div className="min-h-screen bg-background pt-4">
+		<div className="min-h-screen pt-4">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
-				<main className="flex flex-col gap-6 py-5">
+				<main className="flex flex-col gap-6 py-5 h-full">
 					<motion.div
 						initial={{ opacity: 0, y: -20 }}
 						animate={{ opacity: 1, y: 0 }}
@@ -259,7 +259,7 @@ export default function Account() {
 						</motion.div>
 					) : (
 						<motion.div 
-							className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full"
+							className="grid grid-cols-2 grid-rows-1 gap-4 h-fit"
 							initial="hidden"
 							animate="visible"
 							variants={{
@@ -270,34 +270,12 @@ export default function Account() {
 								}
 							}}
 						>
-							<motion.div variants={cardVariants}>
-								<SkeletonCard className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2" />
-							</motion.div>
-							<motion.div variants={cardVariants}>
-								<SkeletonCard className="col-span-2 sm:col-span-1 md:col-span-2" />
-							</motion.div>
-							<motion.div variants={cardVariants}>
-								<SkeletonCard className="col-span-2 sm:col-span-1 md:col-span-2" />
-							</motion.div>
-							<motion.div variants={cardVariants}>
-								<div className="group relative col-span-2 sm:col-span-1 md:col-span-full bg-white/5 rounded-xl p-8 h-auto flex flex-col border border-white/10">
-									<div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-100 rounded-xl" />
-									<div className="relative flex flex-col items-start overflow-hidden">
-										<div className="h-7 w-3/4 bg-white/10 rounded mb-6" />
-										<div className="flex items-end gap-1 mb-3">
-											<div className="h-10 w-16 bg-white/10 rounded" />
-										</div>
-										<div className="flex gap-1 w-full">
-											{[1, 2, 3, 4, 5, 6, 7].map((day) => (
-												<div
-													key={day}
-													className="h-1.5 flex-1 rounded-full bg-white/10"
-												/>
-											))}
-										</div>
-									</div>
-								</div>
-							</motion.div>
+							<SkeletonCard className="h-full"/>
+							<div className="flex flex-col gap-4">
+							<SkeletonCard />
+							<SkeletonCard />
+							</div>
+							<SkeletonCard className="col-span-2 h-fit"/>
 						</motion.div>
 					)}
 					
@@ -306,7 +284,7 @@ export default function Account() {
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: 0.6, duration: 0.3 }}
-						className="flex justify-end"
+						className="flex justify-end mb-auto"
 					>
 						<motion.button
 							onClick={logout}

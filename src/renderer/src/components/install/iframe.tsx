@@ -239,14 +239,14 @@ export default function IframeComponent({
 						onClick={handleStop}
 						title={t("iframe.stop")}
 					>
-						<Square className="w-4 h-4 " />
+						<Square className="w-4 h-4 text-black" />
 					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleReloadIframe}
 						title={t("iframe.reload")}
 					>
-						<RotateCcw className="w-4 h-4" />
+						<RotateCcw className="w-4 h-4 text-black" />
 					</motion.button>
 				</div>
 			</motion.div>

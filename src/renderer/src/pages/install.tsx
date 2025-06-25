@@ -709,7 +709,7 @@ export default function Install({ id }: { id?: string }) {
 									<button
 										type="button"
 										onClick={() => handleSave()}
-										className={`flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-red-400/40 transition-colors duration-400 rounded-full text-neutral-400 p-2 text-center cursor-pointer ${saved ? "bg-red-400/20" : ""}`}
+										className={`flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 p-2 text-center cursor-pointer ${saved ? "bg-white/10" : ""}`}
 									>
 										<Bookmark className="h-4 w-4" />
 									</button>
