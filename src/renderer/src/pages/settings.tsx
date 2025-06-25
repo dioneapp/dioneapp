@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { useTranslation } from "../translations/translationContext";
-import { openLink } from "../utils/openLink";
-import { Folder, ChevronDown } from "lucide-react";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, Folder } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "../translations/translationContext";
+import { openLink } from "../utils/openLink";
 
 // custom dropdown component
 const CustomSelect = ({

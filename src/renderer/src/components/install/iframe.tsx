@@ -1,9 +1,18 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
+import {
+	ArrowLeft,
+	ExternalLink,
+	FileText,
+	Folder,
+	Maximize2,
+	RotateCcw,
+	Square,
+	X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
-import { ArrowLeft, FileText, Folder, ExternalLink, Maximize2, Square, RotateCcw, X } from "lucide-react";
 
 interface IframeProps {
 	iframeSrc: string;
@@ -285,9 +294,8 @@ export default function IframeComponent({
 					id="iframe"
 					src={iframeSrc}
 					className="w-full h-full bg-neutral-900 z-50"
-					style={{ border: 0, overflow: "hidden",  }}
+					style={{ border: 0, overflow: "hidden" }}
 					sandbox="allow-scripts allow-same-origin allow-forms"
-				
 				/>
 			</motion.div>
 		</div>

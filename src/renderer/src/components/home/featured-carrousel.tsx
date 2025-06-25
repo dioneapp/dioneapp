@@ -94,7 +94,7 @@ export default function FeaturedCarousel() {
 				if (script.banner_url) {
 					return;
 				}
-				
+
 				// use consistent gradient based on script id hash
 				let hash = 0;
 				for (let i = 0; i < script.id.length; i++) {
@@ -137,7 +137,11 @@ export default function FeaturedCarousel() {
 													?.banner_url,
 											}
 										: {})}
-									style={{ background: gradients[activeIndex] || "linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, #BCB1E7 100%)" }}
+									style={{
+										background:
+											gradients[activeIndex] ||
+											"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, #BCB1E7 100%)",
+									}}
 									className={`absolute inset-0 w-full h-full bg-black/5 ${scripts.find((script) => script.id === activeIndex)?.banner_url ? "opacity-50" : "opacity-20 scale-150"}`}
 								/>
 								{/* content */}

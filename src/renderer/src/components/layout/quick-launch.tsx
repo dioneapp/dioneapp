@@ -1,8 +1,8 @@
 import { AnimatePresence, type Variants, motion } from "framer-motion";
+import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
-import { Plus, X } from "lucide-react";
 import { useAppContext } from "./global-context";
 
 export default function QuickLaunch({

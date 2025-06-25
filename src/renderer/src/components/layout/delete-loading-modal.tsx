@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
+import { CheckCircle, Loader2, X, XCircle } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import { X, Loader2, CheckCircle, XCircle } from "lucide-react";
 import { useAppContext } from "./global-context";
 
 export default function DeleteLoadingModal({

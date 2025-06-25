@@ -37,17 +37,17 @@ router.get("/type/:name/:type", async (req, res) => {
 });
 
 router.get("/name/:name", async (req, res) => {
-	const name = req.params.name
-		.replace(/-/g, " ")
-		.replace(/\s+/g, " ")
-		.trim();
+	const name = req.params.name.replace(/-/g, " ").replace(/\s+/g, " ").trim();
 
 	try {
-		const response = await fetch(`https://api.getdione.app/v1/scripts?q=${name}`, {
-			headers: {
-				Authorization: `Bearer ${process.env.API_KEY}`,
+		const response = await fetch(
+			`https://api.getdione.app/v1/scripts?q=${name}`,
+			{
+				headers: {
+					Authorization: `Bearer ${process.env.API_KEY}`,
+				},
 			},
-		});
+		);
 		const data = await response.json();
 		if (data.error === false && data.status === 404) {
 			res.send([]);

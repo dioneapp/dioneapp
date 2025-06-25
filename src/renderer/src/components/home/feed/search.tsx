@@ -1,4 +1,4 @@
-import { Search, Volume2, Image, Video, MessageCircle } from "lucide-react";
+import { Image, MessageCircle, Search, Video, Volume2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "../../../translations/translationContext";
 import ScriptList from "../feed";
@@ -32,17 +32,15 @@ export default function SearchBar() {
                         focus:outline-none focus:border-white/20
                         active:border-white/20 active:outline-none"
 					/>
-					<Search
-						className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none text-neutral-400"
-					/>
+					<Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none text-neutral-400" />
 				</div>
 				<div className="flex gap-3">
 					<button
 						onClick={() => handleType("audio")}
 						type="button"
 						className={`flex-1 px-6 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
-							type === "audio" 
-								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg" 
+							type === "audio"
+								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg"
 								: "border border-white/10 text-neutral-400 hover:bg-gradient-to-r hover:from-[#BCB1E7]/10 hover:to-[#BCB1E7]/5 hover:border-[#BCB1E7]/20 hover:text-[#BCB1E7]"
 						}`}
 					>
@@ -55,8 +53,8 @@ export default function SearchBar() {
 						onClick={() => handleType("image")}
 						type="button"
 						className={`flex-1 px-6 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
-							type === "image" 
-								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg" 
+							type === "image"
+								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg"
 								: "border border-white/10 text-neutral-400 hover:bg-gradient-to-r hover:from-[#BCB1E7]/10 hover:to-[#BCB1E7]/5 hover:border-[#BCB1E7]/20 hover:text-[#BCB1E7]"
 						}`}
 					>
@@ -69,8 +67,8 @@ export default function SearchBar() {
 						onClick={() => handleType("video")}
 						type="button"
 						className={`flex-1 px-6 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
-							type === "video" 
-								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg" 
+							type === "video"
+								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg"
 								: "border border-white/10 text-neutral-400 hover:bg-gradient-to-r hover:from-[#BCB1E7]/10 hover:to-[#BCB1E7]/5 hover:border-[#BCB1E7]/20 hover:text-[#BCB1E7]"
 						}`}
 					>
@@ -83,8 +81,8 @@ export default function SearchBar() {
 						onClick={() => handleType("chat")}
 						type="button"
 						className={`flex-1 px-6 py-1.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
-							type === "chat" 
-								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg" 
+							type === "chat"
+								? "bg-gradient-to-r from-[#BCB1E7]/20 to-[#BCB1E7]/10 border border-[#BCB1E7]/30 text-[#BCB1E7] shadow-lg"
 								: "border border-white/10 text-neutral-400 hover:bg-gradient-to-r hover:from-[#BCB1E7]/10 hover:to-[#BCB1E7]/5 hover:border-[#BCB1E7]/20 hover:text-[#BCB1E7]"
 						}`}
 					>

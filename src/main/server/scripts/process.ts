@@ -111,7 +111,7 @@ export const executeCommand = async (
 				NODE_NO_BUFFERING: "1",
 				FORCE_UNBUFFERED_OUTPUT: "1",
 				PYTHONIOENCODING: "UTF-8",
-				FORCE_COLOR: "1" 
+				FORCE_COLOR: "1",
 			},
 		};
 
@@ -127,7 +127,7 @@ export const executeCommand = async (
 		} else {
 			activeProcess = spawn(executable, args, {
 				...spawnOptions,
-				stdio: ["pipe", "pipe", "pipe"], 
+				stdio: ["pipe", "pipe", "pipe"],
 			});
 		}
 

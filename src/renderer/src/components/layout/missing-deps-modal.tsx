@@ -1,8 +1,14 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
+import {
+	AlertCircle,
+	AlertTriangle,
+	CheckCircle,
+	X,
+	XCircle,
+} from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { useTranslation } from "../../translations/translationContext";
-import { X, CheckCircle, XCircle, AlertTriangle, AlertCircle } from "lucide-react";
 import Icon from "../icons/icon";
 
 interface props {

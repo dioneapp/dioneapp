@@ -184,40 +184,44 @@ router.get("/featured", (_req, res) => {
 
 router.get("/explore", (req, res) => {
 	const page = req.query.page ? Number.parseInt(req.query.page as string) : 1;
-	const limit = req.query.limit ? Number.parseInt(req.query.limit as string) : 20;
-  
+	const limit = req.query.limit
+		? Number.parseInt(req.query.limit as string)
+		: 20;
+
 	async function getData() {
-	  try {
-		const response = await fetch(
-		  `https://api.getdione.app/v1/scripts?order_type=desc&page=${page}&limit=${limit}`,
-		  {
-			headers: { Authorization: `Bearer ${process.env.API_KEY}` },
-		  }
-		);
-		
-		if (response.status !== 200) {
-		  logger.error(`Fetch failed: [${response.status}] ${response.statusText}`);
-		  return res.status(response.status).json({
-			error: `Dione API error: ${response.statusText}`
-		  });
+		try {
+			const response = await fetch(
+				`https://api.getdione.app/v1/scripts?order_type=desc&page=${page}&limit=${limit}`,
+				{
+					headers: { Authorization: `Bearer ${process.env.API_KEY}` },
+				},
+			);
+
+			if (response.status !== 200) {
+				logger.error(
+					`Fetch failed: [${response.status}] ${response.statusText}`,
+				);
+				return res.status(response.status).json({
+					error: `Dione API error: ${response.statusText}`,
+				});
+			}
+
+			const data = await response.json();
+
+			const scripts = data.map((script) => ({
+				...script,
+				logo_url: script.logo_url || generateGradient(script.name),
+			}));
+
+			res.json(scripts);
+		} catch (error: any) {
+			logger.error(`Critical error: ${error.message}`);
+			res.status(500).json({ error: "Internal server error" });
 		}
-  
-		const data = await response.json();
-		
-		const scripts = data.map((script) => ({
-		  ...script,
-		  logo_url: script.logo_url || generateGradient(script.name)
-		}));
-  
-		res.json(scripts);
-	  } catch (error: any) {
-		logger.error(`Critical error: ${error.message}`);
-		res.status(500).json({ error: "Internal server error" });
-	  }
 	}
-  
+
 	getData();
-  });
+});
 
 // search
 router.get("/search/:id", (req, res) => {
@@ -258,9 +262,9 @@ router.get("/search/name/:name", async (req, res) => {
 	if (req.params.name.length === 0) return;
 	async function getData() {
 		const sanitizedName = req.params.name
-		.replace(/-/g, " ")
-		.replace(/\s+/g, " ")
-		.trim();
+			.replace(/-/g, " ")
+			.replace(/\s+/g, " ")
+			.trim();
 		if (sanitizedName) {
 			const response = await fetch(
 				`https://api.getdione.app/v1/scripts?q=${sanitizedName}`,
@@ -283,9 +287,11 @@ router.get("/search/name/:name", async (req, res) => {
 				res.send([]);
 				return;
 			}
-	
+
 			if (!data || !Array.isArray(data)) {
-				logger.error(`Invalid data format from API, probably no scripts found (${sanitizedName}).`);
+				logger.error(
+					`Invalid data format from API, probably no scripts found (${sanitizedName}).`,
+				);
 				res.send([]);
 				return;
 			}

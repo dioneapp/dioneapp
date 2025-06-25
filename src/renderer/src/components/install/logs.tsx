@@ -1,8 +1,18 @@
 import { motion } from "framer-motion";
+import {
+	AlertCircle,
+	AlertTriangle,
+	CheckCircle,
+	Copy,
+	ExternalLink,
+	Info,
+	Loader2,
+	Square,
+	XCircle,
+} from "lucide-react";
 import type { JSX } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import { Loader2, CheckCircle, XCircle, AlertCircle, AlertTriangle, Info, Copy, Square, ExternalLink } from "lucide-react";
 import { useAppContext } from "../layout/global-context";
 
 interface LogsProps {
@@ -40,7 +50,6 @@ export default function LogsComponent({
 			.replace(/^[-|\\/ ]+$/g, "")
 			.trim();
 	}
-	
 
 	return (
 		<motion.div
@@ -102,7 +111,9 @@ export default function LogsComponent({
 									<span
 										className={`w-4 h-4 flex justify-start items-center ${lowerLog.includes("error") && "mr-4"}`}
 									>
-										{icon || <span className="flex justify-start w-4 h-4">-</span>}
+										{icon || (
+											<span className="flex justify-start w-4 h-4">-</span>
+										)}
 									</span>
 									{cleanedLog || t("common.loading")}
 								</span>
