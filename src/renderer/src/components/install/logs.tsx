@@ -107,14 +107,14 @@ export default function LogsComponent({
 						}
 
 						return (
-						<div
-							key={index}
-							className={`text-xs ${textColor} my-0.5 flex items-center justify-start m-auto gap-4 whitespace-pre-wrap break-words w-full`}
-						>
-							<pre className="whitespace-pre-wrap break-words font-mono">
-								{cleanedLog}
-							</pre>
-						</div>
+							<div
+								key={index}
+								className={`text-xs ${textColor} my-0.5 flex items-center justify-start m-auto gap-4 whitespace-pre-wrap break-words w-full`}
+							>
+								<pre className="whitespace-pre-wrap break-words font-mono">
+									{cleanedLog}
+								</pre>
+							</div>
 						);
 					})}
 				</div>

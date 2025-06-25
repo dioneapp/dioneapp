@@ -447,9 +447,9 @@ export default function Install({ id }: { id?: string }) {
 			body: JSON.stringify({ dioneFile: data?.name }),
 		});
 		const result = await response.json();
-		console.log('result', result);
+		console.log("result", result);
 		const depsArray = Object.keys(result.result);
-		console.log('this scripts uses:', depsArray);
+		console.log("this scripts uses:", depsArray);
 		setInUseDeps(depsArray);
 		return depsArray;
 	}
