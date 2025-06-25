@@ -176,23 +176,27 @@ export default function MissingDepsModal({
 										className="flex items-center justify-between"
 										key={dep.name}
 									>
-										<p className="text-xs text-neutral-400">
+										<p className="text-xs text-neutral-400 flex items-center">
 											{dep.name}
-											{dep.version ? `@${dep.version}` : ""}
+											{dep.version && (
+												<span className="ml-2 px-2 py-0.5 rounded-full bg-neutral-700 text-white text-[10px] font-semibold border border-neutral-500">
+													{dep.version}
+												</span>
+											)}
 										</p>
 										<span>
 											{dep.installed || dep.reason === "installed" ? (
-												<CheckCircle className="h-4 w-4" />
+												<CheckCircle className="h-4 w-4 text-green-500" />
 											) : (
 												<>
 													{dep.reason === "not-accepted" && (
-														<XCircle className="h-4 w-4" />
+														<XCircle className="h-4 w-4 text-red-500" />
 													)}
 													{dep.reason === "version-not-satisfied" && (
-														<AlertTriangle className="h-4 w-4" />
+														<AlertTriangle className="h-4 w-4 text-yellow-400" />
 													)}
 													{dep.reason === "error" && (
-														<AlertCircle className="h-4 w-4" />
+														<AlertCircle className="h-4 w-4 text-red-500" />
 													)}
 												</>
 											)}
