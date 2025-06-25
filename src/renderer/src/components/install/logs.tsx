@@ -115,7 +115,7 @@ export default function LogsComponent({
 											<span className="flex justify-start w-4 h-4">-</span>
 										)}
 									</span>
-									{cleanedLog || t("common.loading")}
+									{cleanedLog}
 								</span>
 							</p>
 						);
