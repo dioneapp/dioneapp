@@ -44,7 +44,7 @@ export default function LogsComponent({
 	function cleanLogLine(log: string): string {
 		return log
 			.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, "")
-			.replace(/[\u0000-\u001F\u007F-\u009F]/g, "")
+			.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, "")
 			.replace(/\[[^\]]*\]\s*/g, "")
 			.replace(/^(ERROR:|WARN:|INFO:|OUT:)\s*/i, "")
 			.replace(/^[-|\\/ ]+$/g, "")
@@ -80,7 +80,8 @@ export default function LogsComponent({
 			</div>
 			<motion.div className="p-10 select-text rounded-tl-xl rounded-b-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/80 hide-scrollbar">
 				<div
-					className="max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text text-wrap"
+					id="logs"
+					className="flex flex-col mx-auto  max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text text-wrap"
 					ref={(el) => {
 						if (el) {
 							el.scrollTop = el.scrollHeight;
@@ -95,7 +96,7 @@ export default function LogsComponent({
 
 						if (lowerLog.includes("error")) {
 							textColor =
-								"select-all bg-red-500/10 font-mono border border-white/5 my-4 backdrop-filter backdrop-blur-xl p-4 rounded-xl text-neutral-300 text-pretty";
+								"select-all bg-red-500/10 font-mono border border-white/5 backdrop-filter backdrop-blur-xl p-4 text-neutral-300 text-pretty break-words whitespace-pre-wrap";
 							icon = <AlertCircle className="w-6 h-6" />;
 						} else if (lowerLog.includes("warning")) {
 							textColor = "text-yellow-400";
@@ -106,22 +107,18 @@ export default function LogsComponent({
 						}
 
 						return (
-							<p key={index} className={`text-xs flex ${textColor} my-1`}>
-								<span className="flex justify-center gap-2 items-center">
-									<span
-										className={`w-4 h-4 flex justify-start items-center ${lowerLog.includes("error") && "mr-4"}`}
-									>
-										{icon || (
-											<span className="flex justify-start w-4 h-4">-</span>
-										)}
-									</span>
-									{cleanedLog}
-								</span>
-							</p>
+						<div
+							key={index}
+							className={`text-xs ${textColor} my-0.5 flex items-center justify-start m-auto gap-4 whitespace-pre-wrap break-words w-full`}
+						>
+							<pre className="whitespace-pre-wrap break-words font-mono">
+								{cleanedLog}
+							</pre>
+						</div>
 						);
 					})}
 				</div>
-				<div className="h-px w-full bg-white/10 my-4" />
+				<div className="h-px w-full bg-white/10 mb-4 mt-2" />
 				<div className="text-xs text-neutral-500 mt-4 mb-2 text-center max-w-sm mx-auto justify-center items-center flex">
 					{t("logs.disclaimer")}
 				</div>

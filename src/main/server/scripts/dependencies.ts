@@ -205,6 +205,23 @@ function getPlatformKey() {
 export async function inUseDependencies(dioneFile: string) {
 	// should change this later, for now if app uses a dependency, else if its not installed, gonna try to delete it
 	const config = await readDioneConfig(dioneFile);
+	if (config.installation.find((dep) => dep.env?.type === "uv")) {
+		config.dependencies = {
+			...config.dependencies,
+			uv: {
+				version: "latest",
+			},
+		};
+	}
+
+	if (config.installation.find((dep) => dep.env?.type === "conda")) {
+		config.dependencies = {
+			...config.dependencies,
+			conda: {
+				version: "latest",
+			},
+		};
+	}
 	return config.dependencies;
 }
 
