@@ -26,7 +26,8 @@
 			"recommended": true,
 			"suspicious": {
 				"noExplicitAny": "off",
-				"noArrayIndexKey": "off"
+				"noArrayIndexKey": "off",
+				"noControlCharactersInRegex": "off"
 			},
 			"correctness": {
 				"noSelfAssign": "off",
