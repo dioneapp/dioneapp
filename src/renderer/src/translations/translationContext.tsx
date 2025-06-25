@@ -7,11 +7,27 @@ import {
 } from "react";
 import { en } from "./languages/en";
 import { es } from "./languages/es";
+import { ar } from "./languages/ar";
+import { bn } from "./languages/bn";
+import { fr } from "./languages/fr";
+import { hi } from "./languages/hi";
+import { id } from "./languages/id";
+import { pt } from "./languages/pt";
+import { ru } from "./languages/ru";
+import { zh } from "./languages/zh";
 
 // available languages
-const languages = {
+export const languages = {
 	en: "English",
 	es: "Spanish",
+	ar: "Arabic",
+	bn: "Bengali",
+	fr: "French",
+	hi: "Hindi",
+	id: "Indonesian",
+	pt: "Portuguese",
+	ru: "Russian",
+	zh: "Chinese",
 } as const;
 
 type Language = keyof typeof languages;
@@ -32,6 +48,14 @@ const TranslationContext = createContext<TranslationContextType | undefined>(
 const translations = {
 	en,
 	es,
+	ar,
+	bn,
+	fr,
+	hi,
+	id,
+	pt,
+	ru,
+	zh,
 } as const;
 
 // helper to get nested translation

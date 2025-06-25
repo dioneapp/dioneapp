@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Folder } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "../translations/translationContext";
+import { useTranslation, languages } from "../translations/translationContext";
 import { openLink } from "../utils/openLink";
 
 // custom dropdown component
@@ -297,10 +297,7 @@ export default function Settings() {
 											<CustomSelect
 												value={config.language}
 												onChange={(value) => handleUpdate({ language: value })}
-												options={[
-													{ value: "en", label: "English" },
-													{ value: "es", label: "Spanish" },
-												]}
+												options={Object.entries(languages).map(([value, label]) => ({ value, label }))}
 											/>
 										</div>
 										<div>
