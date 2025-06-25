@@ -258,7 +258,7 @@ export default function Sidebar() {
 									!loading ? () => setHoveredTooltip(null) : undefined
 								}
 							>
-								{loading ? (
+								{loading && !user ? (
 									<div
 										className="w-full h-full border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer"
 										onMouseEnter={() => setHoveredTooltip("account")}

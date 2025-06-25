@@ -37,6 +37,7 @@ export default function LogsComponent({
 			.replace(/[\u0000-\u001F\u007F-\u009F]/g, "")
 			.replace(/\[[^\]]*\]\s*/g, "")
 			.replace(/^(ERROR:|WARN:|INFO:|OUT:)\s*/i, "")
+			.replace(/^[-|\\/ ]+$/g, "")
 			.trim();
 	}
 	

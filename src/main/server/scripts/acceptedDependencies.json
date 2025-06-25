@@ -41,7 +41,7 @@
 		"checkCommand": "conda --version",
 		"versionRegex": "conda (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
-			"windows": "winget install -e --id Anaconda.Miniconda3 --override AddToPath=1 --silent",
+			"windows": "winget install -e --id Anaconda.Miniconda3 --override \"/S /AddToPath=1\" --silent --accept-package-agreements --accept-source-agreements --disable-interactivity",
 			"linux": "sudo apt install -y conda",
 			"macos": "brew install conda"
 		},

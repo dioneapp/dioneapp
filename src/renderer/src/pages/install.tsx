@@ -320,7 +320,7 @@ export default function Install({ id }: { id?: string }) {
 			const port = await getCurrentPort();
 			setDeleteStatus("deleting");
 			console.log("should uninstall deps", deleteDeps);
-			if (deleteDeps && inUseDeps.length > 0) {
+			if (deleteDeps) {
 				setDeleteStatus("deleting_deps");
 				const response = await fetch(
 					`http://localhost:${port}/deps/uninstall`,
@@ -491,9 +491,8 @@ export default function Install({ id }: { id?: string }) {
 	}
 
 	useEffect(() => {
-		if (!deleteDepsModal) return;
-		if (!data.name) return;
 		async function checkInUse() {
+			if (!data?.name) return;
 			const port = await getCurrentPort();
 			const response = await fetch(`http://localhost:${port}/deps/in-use`, {
 				method: "POST",
@@ -505,8 +504,11 @@ export default function Install({ id }: { id?: string }) {
 			setInUseDeps(depsArray);
 		}
 
-		checkInUse();
-	}, [deleteDepsModal]);
+		if (installedApps.some((app) => app === data?.name)) {
+			console.log("checking in use", installedApps);
+			checkInUse();
+		}
+	}, [installedApps]);
 
 	const { t } = useTranslation();
 

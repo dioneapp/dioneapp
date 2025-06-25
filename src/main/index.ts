@@ -490,7 +490,12 @@ app.whenReady().then(async () => {
 	ipcMain.handle("restart-backend", async () => {
 		try {
 			logger.info("Restarting backend...");
-			await stopServer();
+			await Promise.race([
+				stopServer(),
+				new Promise((_, reject) =>
+					setTimeout(reject, 10000, new Error("Server stop timeout")),
+				),
+			]);
 			const port = await startServer();
 			logger.info(`Backend restarted successfully on port ${port}`);
 			return port;

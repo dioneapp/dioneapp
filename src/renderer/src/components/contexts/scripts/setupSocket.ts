@@ -90,7 +90,6 @@ export function setupSocket({
 			) {
 				console.log("loading iframe");
 				const match = content
-					// biome-ignore lint/suspicious/noControlCharactersInRegex: <explanation>
 					.replace(/\x1b\[[0-9;]*m/g, "")
 					.match(
 						/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i,
