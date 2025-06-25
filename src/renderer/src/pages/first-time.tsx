@@ -8,6 +8,7 @@ import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Link as LinkIcon } from "lucide-react";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
 
@@ -189,7 +190,7 @@ export default function FirstTime() {
 								onClick={copyToClipboard}
 							>
 								<span>
-									<Icon name="Link" className="w-4 h-4" />
+									<LinkIcon className="w-4 h-4" />
 								</span>
 								<span>{t("firstTime.welcome.copyLink")}</span>
 							</button>

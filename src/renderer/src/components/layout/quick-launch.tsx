@@ -2,7 +2,7 @@ import { AnimatePresence, type Variants, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
-import Icon from "../icons/icon";
+import { Plus, X } from "lucide-react";
 import { useAppContext } from "./global-context";
 
 export default function QuickLaunch({
@@ -44,10 +44,6 @@ export default function QuickLaunch({
 			transition: { delay: i * 0.05 },
 		}),
 	};
-
-	useEffect(() => {
-		handleReloadQuickLaunch();
-	}, []);
 
 	useEffect(() => {
 		handleReloadQuickLaunch();
@@ -129,7 +125,7 @@ export default function QuickLaunch({
 					availableApps.length === 0 || availableApps.length === apps.length
 				}
 			>
-				<Icon name="Plus" className="h-10 w-10" />
+				<Plus className="h-10 w-10" />
 			</button>
 			<div className="max-w-18 overflow-hidden flex justify-center items-center">
 				<p className="text-[12px] text-neutral-400 truncate w-full">
@@ -213,7 +209,7 @@ export default function QuickLaunch({
 										type="button"
 										onClick={() => setShowAppList(false)}
 									>
-										<Icon name="Close" className="h-3 w-3" />
+										<X className="h-3 w-3" />
 									</button>
 								</div>
 								<div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto mt-4">

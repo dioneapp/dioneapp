@@ -2,6 +2,7 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { useTranslation } from "../../translations/translationContext";
+import { X, CheckCircle, XCircle, AlertTriangle, AlertCircle } from "lucide-react";
 import Icon from "../icons/icon";
 
 interface props {
@@ -158,7 +159,7 @@ export default function MissingDepsModal({
 							type="button"
 							onClick={() => set(null)}
 						>
-							<Icon name="Close" className="h-3 w-3" />
+							<X className="h-3 w-3" />
 						</button>
 					</div>
 					<div className="py-6 w-full h-full flex flex-col">
@@ -175,17 +176,17 @@ export default function MissingDepsModal({
 										</p>
 										<span>
 											{dep.installed || dep.reason === "installed" ? (
-												<Icon name="Installed" className="h-4 w-4" />
+												<CheckCircle className="h-4 w-4" />
 											) : (
 												<>
 													{dep.reason === "not-accepted" && (
-														<Icon name="NotAccepted" className="h-4 w-4" />
+														<XCircle className="h-4 w-4" />
 													)}
 													{dep.reason === "version-not-satisfied" && (
-														<Icon name="NotSatisfied" className="h-4 w-4" />
+														<AlertTriangle className="h-4 w-4" />
 													)}
 													{dep.reason === "error" && (
-														<Icon name="NotInstalled" className="h-4 w-4" />
+														<AlertCircle className="h-4 w-4" />
 													)}
 												</>
 											)}
@@ -221,7 +222,7 @@ export default function MissingDepsModal({
 							type="button"
 							onClick={() => set(null)}
 						>
-							<Icon name="Close" className="h-3 w-3" />
+							<X className="h-3 w-3" />
 						</button>
 					</div>
 					<div className="py-6 w-full h-full flex flex-col">

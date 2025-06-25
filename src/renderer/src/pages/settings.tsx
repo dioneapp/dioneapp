@@ -1,10 +1,10 @@
-import Icon from "@renderer/components/icons/icon";
-import { getCurrentPort } from "@renderer/utils/getPort";
-import { openLink } from "@renderer/utils/openLink";
-import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../translations/translationContext";
+import { openLink } from "../utils/openLink";
+import { Folder, ChevronDown } from "lucide-react";
+import { getCurrentPort } from "@renderer/utils/getPort";
+import { AnimatePresence, motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -26,13 +26,13 @@ const CustomSelect = ({
 				className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-400 flex items-center justify-between"
 			>
 				<span>{options.find((opt) => opt.value === value)?.label}</span>
-				<motion.span
+				<motion.div
 					animate={{ rotate: isOpen ? 180 : 0 }}
 					transition={{ duration: 0.35 }}
 					className="ml-2"
 				>
-					▲
-				</motion.span>
+					<ChevronDown className="w-4 h-4" />
+				</motion.div>
 			</button>
 
 			<AnimatePresence>
@@ -48,7 +48,7 @@ const CustomSelect = ({
 							animate={{ opacity: 1, y: 0 }}
 							exit={{ opacity: 0, y: 10 }}
 							transition={{ duration: 0.22 }}
-							className="backdrop-blur-md backdrop-filter absolute z-50 mt-2 w-44 p-2 rounded-[10px] border border-white/5 shadow-lg bg-[#2e2d32]/90"
+							className="backdrop-blur-md backdrop-filter absolute z-50 mt-2 w-44 p-2 rounded-xl border border-white/5 shadow-lg bg-[#2e2d32]/90"
 						>
 							<div className="flex flex-col gap-1">
 								{options.map((option) => (
@@ -59,7 +59,7 @@ const CustomSelect = ({
 											onChange(option.value);
 											setIsOpen(false);
 										}}
-										className={`w-full text-left rounded-full px-4 py-2 text-sm transition-colors duration-200 
+										className={`w-full text-left rounded-xl px-4 py-2 text-sm transition-colors duration-200 
 											${
 												option.value !== value
 													? "hover:bg-white/20 cursor-pointer text-neutral-300 hover:text-white"
@@ -173,6 +173,17 @@ export default function Settings() {
 		}
 	}
 
+	async function handleLogsDir() {
+		const result = await window.electron.ipcRenderer.invoke(
+			"save-dir",
+			config.defaultLogsPath,
+		);
+		console.log("result", result);
+		if (!result.canceled && result.filePaths[0]) {
+			handleUpdate({ defaultLogsPath: result.filePaths[0] });
+		}
+	}
+
 	const handleReportError = (error?: Error | string) => {
 		navigate("/report", { state: { error } });
 	};
@@ -224,13 +235,10 @@ export default function Settings() {
 															placeholder="Select folder"
 															readOnly
 															value={`${config.defaultInstallFolder}\\apps`}
-															className="text-xs font-mono text-center text-neutral-300 pl-6 pr-12 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
+															className="bg-white/10 border border-white/5 text-neutral-200 font-mono text-sm h-10 px-4 pr-12 rounded-full truncate max-w-[calc(100%-12rem)] min-w-[18rem] focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-200"
 														/>
 														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-															<Icon
-																name="Folder"
-																className="w-4 h-4 text-neutral-400"
-															/>
+															<Folder className="w-4 h-4 text-neutral-400" />
 														</div>
 													</div>
 												</div>
@@ -483,7 +491,8 @@ export default function Settings() {
 														<input
 															required
 															readOnly
-															className="text-xs font-mono text-center text-neutral-300 pl-6 pr-12 focus:outline-none focus:ring-none rounded-full max-w-[calc(100%-12rem)] min-w-[18rem] w-fit truncate h-10 bg-white/10 backdrop-blur-3xl cursor-pointer hover:bg-white/20 duration-200 transition-colors"
+															onClick={handleLogsDir}
+															className="bg-white/10 border border-white/5 text-neutral-200 font-mono text-sm h-10 px-4 pr-12 rounded-full truncate max-w-[calc(100%-12rem)] min-w-[18rem] focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-200"
 															type="text"
 															value={config.defaultLogsPath}
 															onChange={(e) => {
@@ -494,10 +503,7 @@ export default function Settings() {
 															}}
 														/>
 														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-															<Icon
-																name="Folder"
-																className="w-4 h-4 text-neutral-400"
-															/>
+															<Folder className="w-4 h-4 text-neutral-400" />
 														</div>
 													</div>
 												</div>

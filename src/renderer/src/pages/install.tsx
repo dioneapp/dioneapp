@@ -1,4 +1,4 @@
-import Icon from "@renderer/components/icons/icon";
+import { X, ArrowLeft, Share2, Bookmark } from "lucide-react";
 import ActionsComponent from "@renderer/components/install/actions";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
@@ -626,7 +626,7 @@ export default function Install({ id }: { id?: string }) {
 							className="absolute right-8 top-8 cursor-pointer"
 							onClick={() => setDeleteDepsModal(false)}
 						>
-							<Icon name="Close" className="h-4 w-4" />
+							<X className="h-4 w-4" />
 						</button>
 						<div className="flex flex-col gap-6 justify-center w-full h-full items-center">
 							<h2 className="font-semibold text-lg flex items-center justify-center">
@@ -692,7 +692,7 @@ export default function Install({ id }: { id?: string }) {
 								onClick={() => navigate("/")}
 								className="flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 py-2 px-4 text-center cursor-pointer"
 							>
-								<Icon name="Back" className="h-4 w-4" />
+								<ArrowLeft className="h-4 w-4" />
 								<span className="font-semibold">{t("common.back")}</span>
 							</button>
 						</div>
@@ -704,14 +704,14 @@ export default function Install({ id }: { id?: string }) {
 										onClick={() => handleShare()}
 										className="flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 p-2 text-center cursor-pointer"
 									>
-										<Icon name="Share" className="h-4 w-4" />
+										<Share2 className="h-4 w-4" />
 									</button>
 									<button
 										type="button"
 										onClick={() => handleSave()}
 										className={`flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-red-400/40 transition-colors duration-400 rounded-full text-neutral-400 p-2 text-center cursor-pointer ${saved ? "bg-red-400/20" : ""}`}
 									>
-										<Icon name="Save" className="h-4 w-4" />
+										<Bookmark className="h-4 w-4" />
 									</button>
 								</div>
 							)}

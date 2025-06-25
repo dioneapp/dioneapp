@@ -1,4 +1,4 @@
-import Icon from "@renderer/components/icons/icon";
+import { Loader2 } from "lucide-react";
 
 export default function Loading() {
 	return (
@@ -11,7 +11,7 @@ export default function Loading() {
 			{/* main loading content */}
 			<div className="flex flex-col items-center justify-center h-full w-full py-12">
 				<div className="flex flex-col items-center justify-center h-full w-full">
-					<Icon name="Icon" className="h-80 w-80" />
+					<Loader2 className="h-80 w-80 animate-spin" />
 					<div className="loader w-40">
 						<div className="loaderBar" />
 					</div>

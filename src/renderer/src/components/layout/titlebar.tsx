@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import Icon from "../icons/icon";
+import { Minus, X } from "lucide-react";
 import { useAppContext } from "../layout/global-context";
 
 export default function Titlebar() {
@@ -44,22 +44,22 @@ export default function Titlebar() {
 				style={{ zIndex: 100 }}
 			>
 				<div className="flex flex-row items-center justify-center h-10 w-full px-2">
-					<div className="flex gap-1 items-center justify-end h-full w-full">
+					<div className="flex gap-1.5 items-center justify-end h-full w-full">
 						<button
 							type="button"
 							id="minimize-button"
 							onClick={handleMinimize}
-							className="cursor-pointer p-2"
+							className="cursor-pointer p-1 hover:bg-white/10 rounded-full transition-colors duration-200"
 						>
-							<Icon name="Minus" className="h-3 w-3" />
+							<Minus className="h-5 w-5" />
 						</button>
 						<button
 							type="button"
 							id="close-button"
 							onClick={handleClose}
-							className="cursor-pointer p-2"
+							className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-full transition-colors duration-200"
 						>
-							<Icon name="Close" className="h-3 w-3" />
+							<X className="h-5 w-5" />
 						</button>
 					</div>
 				</div>

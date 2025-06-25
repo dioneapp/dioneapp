@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
-import Icon from "../icons/icon";
+import { ArrowLeft, FileText, Folder, ExternalLink, Maximize2, Square, RotateCcw, X } from "lucide-react";
 
 interface IframeProps {
 	iframeSrc: string;
@@ -156,7 +156,7 @@ export default function IframeComponent({
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={() => navigate("/")}
 					>
-						<Icon name="Back" className="w-4 h-4 " />
+						<ArrowLeft className="w-4 h-4 " />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.back")}
 						</div>
@@ -166,7 +166,7 @@ export default function IframeComponent({
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={() => setShow({ [data.id]: "logs" })}
 					>
-						<Icon name="Logs" className="w-4 h-4 " />
+						<FileText className="w-4 h-4 " />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.logs")}
 						</div>
@@ -177,7 +177,7 @@ export default function IframeComponent({
 						className="p-1.5 hover:bg-white/10 border border-white/10 transition-colors rounded-md cursor-pointer relative group"
 						title={t("iframe.openFolder")}
 					>
-						<Icon name="Folder" className="w-4 h-4" />
+						<Folder className="w-4 h-4" />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.openFolder")}
 						</div>
@@ -194,7 +194,7 @@ export default function IframeComponent({
 							className="p-1.5 hover:bg-white/10 border-l border-white/10 transition-colors rounded-r-md cursor-pointer group"
 							title={t("iframe.openInBrowser")}
 						>
-							<Icon name="Open" className="w-4 h-4" />
+							<ExternalLink className="w-4 h-4" />
 							<div className="absolute z-50 -top-9 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
 								{t("iframe.openInBrowser")}
 							</div>
@@ -229,7 +229,7 @@ export default function IframeComponent({
 							isFullscreen ? handleExitFullscreen : handleEnterFullscreen
 						}
 					>
-						<Icon name="Maximize" className="w-4 h-4" />
+						<Maximize2 className="w-4 h-4" />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.fullscreen")}
 						</div>
@@ -239,14 +239,14 @@ export default function IframeComponent({
 						onClick={handleStop}
 						title={t("iframe.stop")}
 					>
-						<Icon name="Stop" className="w-4 h-4 " />
+						<Square className="w-4 h-4 " />
 					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleReloadIframe}
 						title={t("iframe.reload")}
 					>
-						<Icon name="Reload" className="w-4 h-4" />
+						<RotateCcw className="w-4 h-4" />
 					</motion.button>
 				</div>
 			</motion.div>
@@ -276,7 +276,7 @@ export default function IframeComponent({
 						type="button"
 						onClick={handleExitFullscreen}
 					>
-						<Icon name="Close" className="h-3 w-3" />
+						<X className="h-3 w-3" />
 					</button>
 				)}
 
