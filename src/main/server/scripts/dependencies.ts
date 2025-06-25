@@ -225,7 +225,7 @@ export async function inUseDependencies(dioneFile: string) {
 	return config.dependencies;
 }
 
-export async function uninstallDependency(dioneFile: string, io: Server) {
+export async function uninstallDependency(selectedDeps: string[], dioneFile: string, io: Server) {
 	const config = await readDioneConfig(dioneFile);
 	const workingDir = path.dirname(dioneFile);
 	if (!config.dependencies) {
@@ -244,12 +244,12 @@ export async function uninstallDependency(dioneFile: string, io: Server) {
 		error: boolean;
 		reason?: string;
 	}>;
-	for (const [dependency, details] of Object.entries(config.dependencies)) {
+	for (const dependency of selectedDeps) {
 		let reason: string | undefined;
 		const depConfig = acceptedDependencies[dependency];
 		const isInstalled = await isDependencyInstalled(
 			dependency,
-			details.version,
+			config.dependencies[dependency]?.version || "latest",
 			acceptedDependencies,
 		);
 
@@ -309,9 +309,9 @@ export async function uninstallDependency(dioneFile: string, io: Server) {
 				workingDir,
 				"deleteUpdate",
 			);
-			if (result.toString().trim() !== "") {
+			if (result.stderr) {
 				logger.error(
-					`Error executing uninstall command for ${dependency}: ${result.toString().trim()}`,
+					`Error executing uninstall command for ${dependency}: ${result.stderr}`,
 				);
 				success = false;
 				break;

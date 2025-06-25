@@ -54,6 +54,7 @@ export default function Install({ id }: { id?: string }) {
 	const [deleteStatus, setDeleteStatus] = useState<string>("");
 	const [deleteDepsModal, setDeleteDepsModal] = useState<boolean>(false);
 	const [inUseDeps, setInUseDeps] = useState<any>([]);
+	const [selectedDeps, setSelectedDeps] = useState<any>([]);
 	// config
 	const [config, setConfig] = useState<any>(null);
 	// user
@@ -329,7 +330,7 @@ export default function Install({ id }: { id?: string }) {
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
 							dioneFile: data.name,
-							dependency: data.name,
+							selectedDeps: selectedDeps,
 						}),
 					},
 				);
@@ -451,6 +452,7 @@ export default function Install({ id }: { id?: string }) {
 		const depsArray = Object.keys(result.result);
 		console.log('this scripts uses:', depsArray);
 		setInUseDeps(depsArray);
+		setSelectedDeps(depsArray);
 		return depsArray;
 	}
 
@@ -595,6 +597,10 @@ export default function Install({ id }: { id?: string }) {
 		}
 	}, []);
 
+	useEffect(() => {
+		console.log("selectedDeps", selectedDeps);
+	}, [selectedDeps]);
+
 	return (
 		<>
 			{deleteStatus !== "" && (
@@ -623,7 +629,7 @@ export default function Install({ id }: { id?: string }) {
 							className="absolute right-8 top-8 cursor-pointer"
 							onClick={() => setDeleteDepsModal(false)}
 						>
-							<X className="h-4 w-4" />
+							<X className="h-8 w-8" />
 						</button>
 						<div className="flex flex-col gap-6 justify-center w-full h-full items-center">
 							<h2 className="font-semibold text-lg flex items-center justify-center">
@@ -632,19 +638,25 @@ export default function Install({ id }: { id?: string }) {
 							<div className="w-full max-w-sm">
 								{inUseDeps ? (
 									<div className="w-full h-44 flex flex-col gap-2 justify-center items-center overflow-auto">
-										<ul className="overflow-auto border border-white/50 w-full rounded p-6 gap-2 flex flex-col">
+										<ul className="overflow-auto w-full rounded p-6 gap-2 flex flex-col">
 											{inUseDeps?.map((dep, index) => (
-												<div
+												<label
 													key={index}
-													className="w-full gap-4 flex flex-col text-sm text-neutral-300"
+													className="cursor-pointer hover:bg-white/20 flex items-center gap-4 border p-2 border-white/20 w-full text-sm text-neutral-300"
 												>
-													<li
-														className="border border-white/50 rounded w-full p-2"
-														key={index}
-													>
-														{dep}
-													</li>
-												</div>
+													<input
+														type="checkbox"
+														checked={selectedDeps.includes(dep)}
+														onChange={() => setSelectedDeps((prev) => {
+															if (prev.includes(dep)) {
+																return prev.filter((d) => d !== dep);
+															}
+															return [...prev, dep];
+														})}
+														className="border border-white/50 rounded p-2"
+													/>
+													<span className="ml-2">{dep}</span>
+												</label>
 											))}
 										</ul>
 									</div>

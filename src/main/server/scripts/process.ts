@@ -85,7 +85,7 @@ export const executeCommand = async (
 	workingDir: string,
 	id: string,
 	logsType?: string,
-): Promise<string> => {
+): Promise<{ code: number; stdout: string; stderr: string }> => {
 	let stdoutData = "";
 	let stderrData = "";
 	const logs = logsType || "installUpdate";
@@ -175,49 +175,32 @@ export const executeCommand = async (
 			}
 		});
 
-		return new Promise<string>((resolve) => {
+		return new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
 			activeProcess.on("exit", (code: number) => {
-				// cleanup
 				const oldPid = activePID;
 				activeProcess = null;
 				activePID = null;
-
-				if (code === 0) {
-					logger.info(`Process (PID: ${oldPid}) completed successfully`);
-					resolve(stdoutData);
-				} else {
-					const errorMsg = `Process (PID: ${oldPid}) failed with exit code ${code}`;
-					logger.error(errorMsg);
-					io.to(id).emit(logs, {
-						type: "status",
-						status: "error",
-						content: "Error detected",
-					});
-					io.to(id).emit(logs, {
-						type: "log",
-						content: `ERROR: ${errorMsg}`,
-					});
-					resolve(`ERROR: ${errorMsg}\n${stderrData}`);
-				}
+			
+				logger.info(`Process (PID: ${oldPid}) finished with exit code ${code}`);
+				resolve({ code, stdout: stdoutData, stderr: stderrData });
 			});
 
 			activeProcess.on("error", (error) => {
 				const errorMsg = `Failed to start command: ${error.message}`;
 				logger.error(errorMsg);
 				io.to(id).emit(logs, {
-					type: "log",
-					content: `ERROR: ${errorMsg}`,
+				  type: "log",
+				  content: `ERROR: ${errorMsg}`,
 				});
 				io.to(id).emit(logs, {
-					type: "status",
-					status: "error",
-					content: "Failed to start process",
+				  type: "status",
+				  status: "error",
+				  content: "Failed to start process",
 				});
-				// cleanup
 				activeProcess = null;
 				activePID = null;
-				resolve(`ERROR: ${errorMsg}`);
-			});
+				resolve({ code: -1, stdout: "", stderr: errorMsg });
+			  });
 		});
 	} catch (error: any) {
 		const errorMsg = `Exception executing command: ${error.message}`;
@@ -231,7 +214,7 @@ export const executeCommand = async (
 			type: "log",
 			content: `ERROR: ${errorMsg}`,
 		});
-		return `ERROR: ${errorMsg}`;
+		return { code: -1, stdout: "", stderr: errorMsg };
 	}
 };
 
@@ -316,8 +299,8 @@ export const executeCommands = async (
 			});
 		} else {
 			const response = await executeCommand(command, io, currentWorkingDir, id);
-			if (response.toLowerCase().includes("error")) {
-				throw new Error(response);
+			if (response.stderr) {
+				throw new Error(response.stderr);
 			}
 		}
 	}

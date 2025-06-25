@@ -9,7 +9,6 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import { useTranslation } from "../../translations/translationContext";
-import Icon from "../icons/icon";
 
 interface props {
 	data: any;

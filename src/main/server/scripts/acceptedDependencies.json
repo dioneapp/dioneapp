@@ -46,7 +46,7 @@
 			"macos": "brew install conda"
 		},
 		"uninstallCommand": {
-			"windows": "winget uninstall -e --id Anaconda.Anaconda3",
+			"windows": "winget uninstall -e --id Anaconda.Miniconda3 --silent --accept-source-agreements --disable-interactivity",
 			"linux": "sudo apt remove -y conda",
 			"macos": "brew uninstall conda"
 		}

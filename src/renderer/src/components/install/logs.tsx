@@ -40,16 +40,19 @@ export default function LogsComponent({
 		}
 		return null;
 	}, [statusLog[appId]?.status]);
+	  
 
 	function cleanLogLine(log: string): string {
 		return log
-			.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, "")
-			.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, "")
-			.replace(/\[[^\]]*\]\s*/g, "")
-			.replace(/^(ERROR:|WARN:|INFO:|OUT:)\s*/i, "")
-			.replace(/^[-|\\/ ]+$/g, "")
+			.replace(/\s*\x1B\[[0-9;]*[a-zA-Z]\s*/g, "")
+			.replace(/\s*[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]\s*/g, "")
+			.replace(/\s*\[[^\]]*\]\s*/g, "")
+			.replace(/^\s*(ERROR:|WARN:|INFO:|OUT:)\s*/i, "")
+			.replace(/\s{2,}/g, " ")
 			.trim();
 	}
+	
+	  
 
 	return (
 		<motion.div
@@ -96,8 +99,8 @@ export default function LogsComponent({
 
 						if (lowerLog.includes("error")) {
 							textColor =
-								"select-all bg-red-500/10 font-mono border border-white/5 backdrop-filter backdrop-blur-xl p-4 text-neutral-300 text-pretty break-words whitespace-pre-wrap";
-							icon = <AlertCircle className="w-6 h-6" />;
+								"select-all bg-red-500/10 rounded-md font-mono border-tr-none border border-white/5 backdrop-filter backdrop-blur-xl p-4 text-neutral-300 text-pretty break-words whitespace-pre-wrap";
+							icon = <AlertCircle className="w-4 h-4" />;
 						} else if (lowerLog.includes("warning")) {
 							textColor = "text-yellow-400";
 							icon = <AlertTriangle className="w-4 h-4" />;
@@ -107,13 +110,21 @@ export default function LogsComponent({
 						}
 
 						return (
-						<div
-							key={index}
-							className={`text-xs ${textColor} my-0.5 flex items-center justify-start m-auto gap-4 whitespace-pre-wrap break-words w-full`}
-						>
-							<pre className="whitespace-pre-wrap break-words font-mono">
-								{cleanedLog}
+						<div key={index} className={`flex flex-col w-full h-full ${lowerLog.includes("error") && "my-2"}`}>
+							<div className="flex justify-end w-full">
+								{lowerLog.includes("error") && icon && (
+									<span className={"p-1 px-4 bg-red-500/10 rounded-t-md border border-white/5"}>
+										{icon}
+									</span>
+								)}
+							</div>
+							<div
+								className={`text-xs ${textColor} rounded-tr-none border-tr-none flex items-center justify-start m-auto gap-4 whitespace-pre-wrap break-words w-full`}
+							>
+								<pre className="whitespace-pre-wrap break-words font-mono">
+									{cleanedLog}
 							</pre>
+						</div>
 						</div>
 						);
 					})}

@@ -57,7 +57,7 @@ export default function DeleteLoadingModal({
 				onClick={onClose}
 				className="absolute top-16 right-16 cursor-pointer"
 			>
-				<X className="h-4 w-4" />
+				<X className="h-8 w-8" />
 			</button>
 			{status === "deleting" || status === "deleting_deps" ? (
 				<div className="flex flex-col gap-14 items-center">

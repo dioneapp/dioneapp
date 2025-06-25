@@ -238,12 +238,17 @@ export const createDependenciesRouter = (io: Server) => {
 		const root = process.cwd();
 		const sanitizedName = req.body.dioneFile.replace(/\s+/g, "-");
 		const settings = readConfig();
+		const selectedDeps = req.body.selectedDeps;
 		const dioneFile = `${path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName, "dione.json")}`;
-		const result = await uninstallDependency(dioneFile, io);
+		const result = await uninstallDependency(selectedDeps, dioneFile, io);
 		if (result.success) {
 			res.json({ success: true });
 		} else {
-			res.json({ success: false, reasons: result.reasons });
+			if (result.reasons.length === 1 && result.reasons[0] === "not-installed") {
+				res.json({ success: true });
+			} else {
+				res.json({ success: false, reasons: result.reasons });
+			}
 		}
 	});
 
