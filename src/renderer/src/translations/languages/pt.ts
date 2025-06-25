@@ -126,7 +126,8 @@ export const pt = {
 			title: "Atualização disponível",
 			description:
 				"Uma nova versão do Dione está disponível, por favor, reinicie o aplicativo para atualizar.",
-			tooltip: "Nova atualização disponível, por favor, reinicie o Dione para atualizar.",
+			tooltip:
+				"Nova atualização disponível, por favor, reinicie o Dione para atualizar.",
 		},
 		tooltips: {
 			library: "Biblioteca",
@@ -175,18 +176,21 @@ export const pt = {
 			title: "Notificações",
 			systemNotifications: {
 				label: "Notificações do sistema",
-				description: "Mostrar notificações da área de trabalho para eventos importantes",
+				description:
+					"Mostrar notificações da área de trabalho para eventos importantes",
 			},
 			installationAlerts: {
 				label: "Alertas de instalação",
-				description: "Seja notificado quando as instalações de aplicativos forem concluídas",
+				description:
+					"Seja notificado quando as instalações de aplicativos forem concluídas",
 			},
 		},
 		privacy: {
 			title: "Privacidade",
 			errorReporting: {
 				label: "Relatório de erros",
-				description: "Ajude a melhorar o Dione enviando relatórios de erros anônimos",
+				description:
+					"Ajude a melhorar o Dione enviando relatórios de erros anônimos",
 			},
 		},
 		other: {
@@ -197,7 +201,8 @@ export const pt = {
 			},
 			submitFeedback: {
 				label: "Enviar feedback",
-				description: "Relate quaisquer problemas ou dificuldades que você encontrar",
+				description:
+					"Relate quaisquer problemas ou dificuldades que você encontrar",
 				button: "Enviar Relatório",
 			},
 			showOnboarding: {
@@ -231,7 +236,8 @@ export const pt = {
 		addApp: "Adicionar aplicativo",
 		selectApp: {
 			title: "Selecione um aplicativo",
-			description: "{count} aplicativos estão disponíveis. Você pode escolher até {max}.",
+			description:
+				"{count} aplicativos estão disponíveis. Você pode escolher até {max}.",
 		},
 	},
 
@@ -271,7 +277,8 @@ export const pt = {
 			subtitle: "erro",
 			hasOccurred: "ocorreu",
 			deps: "Dione não conseguiu remover nenhuma dependência, por favor, faça isso manualmente.",
-			general: "Por favor, tente novamente mais tarde ou verifique os logs para mais informações.",
+			general:
+				"Por favor, tente novamente mais tarde ou verifique os logs para mais informações.",
 		},
 		loading: {
 			title: "Carregando...",

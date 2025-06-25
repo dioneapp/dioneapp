@@ -22,8 +22,7 @@ export const zh = {
 	firstTime: {
 		welcome: {
 			title: "欢迎来到",
-			subtitle:
-				"感谢您早日加入我们的旅程。登录您的账户即可开始使用。",
+			subtitle: "感谢您早日加入我们的旅程。登录您的账户即可开始使用。",
 			login: "登录",
 			copyLink: "复制链接",
 		},
@@ -38,8 +37,7 @@ export const zh = {
 			finish: "完成",
 		},
 		clipboard: {
-			success:
-				"已正确复制到剪贴板，现在将其粘贴到您的浏览器中！",
+			success: "已正确复制到剪贴板，现在将其粘贴到您的浏览器中！",
 		},
 	},
 
@@ -104,8 +102,7 @@ export const zh = {
 				stop: "停止 %s 时出错：%s",
 				uninstall: "卸载 %s 时出错：%s",
 				serverRunning: "服务器已在运行。",
-				tooManyApps:
-					"慢点！您已经同时运行了6个应用程序。",
+				tooManyApps: "慢点！您已经同时运行了6个应用程序。",
 			},
 		},
 	},
@@ -114,8 +111,7 @@ export const zh = {
 	titlebar: {
 		closing: {
 			title: "正在停止应用程序...",
-			description:
-				"Dione将在关闭所有打开的应用程序后自动关闭。",
+			description: "Dione将在关闭所有打开的应用程序后自动关闭。",
 		},
 	},
 
@@ -124,8 +120,7 @@ export const zh = {
 		tagline: "探索、安装、创新 — 一键完成。",
 		update: {
 			title: "有可用更新",
-			description:
-				"Dione 的新版本可用，请重新启动应用程序以进行更新。",
+			description: "Dione 的新版本可用，请重新启动应用程序以进行更新。",
 			tooltip: "有新更新可用，请重新启动 Dione 以进行更新。",
 		},
 		tooltips: {
@@ -149,13 +144,11 @@ export const zh = {
 			title: "应用程序",
 			installationDirectory: {
 				label: "安装目录",
-				description:
-					"选择新应用程序默认安装的位置",
+				description: "选择新应用程序默认安装的位置",
 			},
 			cleanUninstall: {
 				label: "清理卸载",
-				description:
-					"卸载应用程序时移除所有相关依赖项",
+				description: "卸载应用程序时移除所有相关依赖项",
 			},
 		},
 		interface: {
@@ -167,8 +160,7 @@ export const zh = {
 			helpTranslate: "🤔 找不到您的语言？帮助我们添加更多！",
 			compactView: {
 				label: "紧凑视图",
-				description:
-					"使用更紧凑的布局以在屏幕上显示更多内容",
+				description: "使用更紧凑的布局以在屏幕上显示更多内容",
 			},
 		},
 		notifications: {
@@ -202,8 +194,7 @@ export const zh = {
 			},
 			showOnboarding: {
 				label: "显示新手指引",
-				description:
-					"将Dione重置为初始状态并再次显示新手指引以重新配置",
+				description: "将Dione重置为初始状态并再次显示新手指引以重新配置",
 				button: "重置",
 			},
 		},
@@ -212,13 +203,10 @@ export const zh = {
 	// report form
 	report: {
 		title: "描述问题",
-		description:
-			"请提供发生的情况以及您尝试执行的操作的详细信息。",
-		placeholder:
-			"示例：我尝试安装应用程序时出现此错误...",
+		description: "请提供发生的情况以及您尝试执行的操作的详细信息。",
+		placeholder: "示例：我尝试安装应用程序时出现此错误...",
 		systemInformationTitle: "系统信息",
-		disclaimer:
-			"以下系统信息和匿名ID将包含在您的报告中。",
+		disclaimer: "以下系统信息和匿名ID将包含在您的报告中。",
 		success: "报告发送成功！",
 		error: "发送报告失败。请重试。",
 		send: "发送报告",
