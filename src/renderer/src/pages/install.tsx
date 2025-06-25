@@ -438,11 +438,28 @@ export default function Install({ id }: { id?: string }) {
 		await uninstall(deleteDeps);
 	};
 
+	async function checkInUse() {
+		if (!data?.name) return;
+		const port = await getCurrentPort();
+		const response = await fetch(`http://localhost:${port}/deps/in-use`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ dioneFile: data?.name }),
+		});
+		const result = await response.json();
+		console.log('result', result);
+		const depsArray = Object.keys(result.result);
+		console.log('this scripts uses:', depsArray);
+		setInUseDeps(depsArray);
+		return depsArray;
+	}
+
 	const handleDeleteDeps = async () => {
 		if (config?.alwaysUninstallDependencies) {
 			await uninstall(true);
 		} else {
-			if (inUseDeps.length > 0) {
+			const deps = await checkInUse();
+			if (deps && deps.length > 0) {
 				setDeleteDepsModal(!deleteDepsModal);
 			} else {
 				await uninstall(false);
@@ -489,26 +506,6 @@ export default function Install({ id }: { id?: string }) {
 	function handleCloseDeleteModal() {
 		setDeleteStatus("");
 	}
-
-	useEffect(() => {
-		async function checkInUse() {
-			if (!data?.name) return;
-			const port = await getCurrentPort();
-			const response = await fetch(`http://localhost:${port}/deps/in-use`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ dioneFile: data?.name }),
-			});
-			const result = await response.json();
-			const depsArray = Object.keys(result.result);
-			setInUseDeps(depsArray);
-		}
-
-		if (installedApps.some((app) => app === data?.name)) {
-			console.log("checking in use", installedApps);
-			checkInUse();
-		}
-	}, [installedApps]);
 
 	const { t } = useTranslation();
 

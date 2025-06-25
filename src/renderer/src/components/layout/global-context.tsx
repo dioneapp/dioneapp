@@ -486,6 +486,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			addLog(appId, `Error stopping ${appName}: ${error}`);
 		} finally {
 			disconnectApp(appId);
+			setAppFinished({ [appId]: false });
 		}
 	};
 
