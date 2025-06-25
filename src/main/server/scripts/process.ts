@@ -111,6 +111,7 @@ export const executeCommand = async (
 				NODE_NO_BUFFERING: "1",
 				FORCE_UNBUFFERED_OUTPUT: "1",
 				PYTHONIOENCODING: "UTF-8",
+				FORCE_COLOR: "1" 
 			},
 		};
 
@@ -126,7 +127,7 @@ export const executeCommand = async (
 		} else {
 			activeProcess = spawn(executable, args, {
 				...spawnOptions,
-				stdio: ["pipe", "pipe", "pipe"],
+				stdio: ["pipe", "pipe", "pipe"], 
 			});
 		}
 
@@ -150,19 +151,19 @@ export const executeCommand = async (
 			if (text) {
 				stderrData += `${text}\n`;
 				if (text.match(/error|fatal|unexpected/i)) {
-					io.to(id).emit(logs, { type: "log", content: `ERROR: ${text}` });
-					logger.error(`[stderr-error] ${text}`);
-					killProcess(activeProcess, io, id);
+					io.to(id).emit(logs, { type: "log", content: text });
+					// logger.error(`[stderr-error] ${text}`);
+					// killProcess(activeProcess, io, id);
 					io.to(id).emit(logs, {
 						type: "log",
 						content: `"${command}": ${text}`,
 					});
-					io.to(id).emit(logs, {
-						type: "status",
-						status: "error",
-						content: "Error detected",
-					});
-					return;
+					// io.to(id).emit(logs, {
+					// 	type: "status",
+					// 	status: "error",
+					// 	content: "Error detected",
+					// });
+					// return;
 				}
 				if (text.match(/warning|warn|deprecated/i)) {
 					io.to(id).emit(logs, { type: "log", content: `WARN: ${text}` });
