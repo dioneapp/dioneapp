@@ -1,7 +1,7 @@
-import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import Icon from "@renderer/components/icons/icon";
 import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { openLink } from "@renderer/utils/openLink";
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../translations/translationContext";
@@ -70,9 +70,7 @@ export default function ErrorPage({ error }: { error?: Error }) {
 								>
 									<span className="text-center py-1">
 										{reportStatus === "pending" && (
-											<Loader2
-												className="w-5 h-5 animate-spin text-orange-500"
-											/>
+											<Loader2 className="w-5 h-5 animate-spin text-orange-500" />
 										)}
 										{reportStatus === "success" && (
 											<CheckCircle className="w-5 h-5 text-green-500" />

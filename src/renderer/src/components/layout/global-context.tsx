@@ -177,9 +177,9 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 				data.apps
 					.slice(0, 6) // maxApps is 6
 					.map((app: string) =>
-						fetch(`http://localhost:${port}/db/search/name/${encodeURIComponent(app)}`).then(
-							(res) => (res.ok ? res.json() : []),
-						),
+						fetch(
+							`http://localhost:${port}/db/search/name/${encodeURIComponent(app)}`,
+						).then((res) => (res.ok ? res.json() : [])),
 					),
 			);
 			// set available apps

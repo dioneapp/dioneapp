@@ -1,5 +1,5 @@
-import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { sendDiscordReport } from "@renderer/utils/discordWebhook";
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../translations/translationContext";

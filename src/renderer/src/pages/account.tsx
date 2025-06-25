@@ -1,12 +1,14 @@
-import { Clock, Calendar, Share2, Flame, LogOut } from "lucide-react";
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Calendar, Clock, Flame, LogOut, Share2 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
 
 const SkeletonCard = ({ className = "" }) => (
-	<div className={`bg-white/5 rounded-xl p-8 animate-pulse border border-white/10 ${className}`}>
+	<div
+		className={`bg-white/5 rounded-xl p-8 animate-pulse border border-white/10 ${className}`}
+	>
 		<div className="h-7 w-3/4 bg-white/10 rounded mb-6" />
 		<div className="h-4 w-1/2 bg-white/10 rounded mb-6" />
 		<div className="h-10 w-1/3 bg-white/10 rounded mt-auto" />
@@ -110,7 +112,7 @@ export default function Account() {
 
 	const cardVariants = {
 		hidden: { opacity: 0, y: 20 },
-		visible: { opacity: 1, y: 0 }
+		visible: { opacity: 1, y: 0 },
 	};
 
 	return (
@@ -126,21 +128,21 @@ export default function Account() {
 							{t("account.title")}
 						</h1>
 					</motion.div>
-					
+
 					{data && !loading ? (
-						<motion.div 
+						<motion.div
 							className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full"
 							initial="hidden"
 							animate="visible"
 							variants={{
 								visible: {
 									transition: {
-										staggerChildren: 0.1
-									}
-								}
+										staggerChildren: 0.1,
+									},
+								},
 							}}
 						>
-							<motion.div 
+							<motion.div
 								variants={cardVariants}
 								className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2 bg-gradient-to-br from-[#BCB1E7]/10 to-[#080808]/20 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
 							>
@@ -163,8 +165,8 @@ export default function Account() {
 									</h4>
 								</div>
 							</motion.div>
-							
-							<motion.div 
+
+							<motion.div
 								variants={cardVariants}
 								className="col-span-2 sm:col-span-1 md:col-span-2 bg-gradient-to-br from-[#BCB1E7]/10 to-[#080808]/20 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
 							>
@@ -187,8 +189,8 @@ export default function Account() {
 									</h4>
 								</div>
 							</motion.div>
-							
-							<motion.div 
+
+							<motion.div
 								variants={cardVariants}
 								className="col-span-2 sm:col-span-1 md:col-span-2 bg-gradient-to-br from-[#BCB1E7]/10 to-[#080808]/20 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
 							>
@@ -211,8 +213,8 @@ export default function Account() {
 									</h4>
 								</div>
 							</motion.div>
-							
-							<motion.div 
+
+							<motion.div
 								variants={cardVariants}
 								className="group relative col-span-2 sm:col-span-1 md:col-span-full bg-gradient-to-br from-[#BCB1E7]/15 to-[#080808]/30 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
 							>
@@ -247,8 +249,8 @@ export default function Account() {
 												animate={{ scale: 1 }}
 												transition={{ delay: day * 0.1 }}
 												className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-													day <= consecutiveDays 
-														? "bg-gradient-to-r from-[#BCB1E7] to-white" 
+													day <= consecutiveDays
+														? "bg-gradient-to-r from-[#BCB1E7] to-white"
 														: "bg-neutral-700"
 												}`}
 											/>
@@ -258,27 +260,27 @@ export default function Account() {
 							</motion.div>
 						</motion.div>
 					) : (
-						<motion.div 
+						<motion.div
 							className="grid grid-cols-2 grid-rows-1 gap-4 h-fit"
 							initial="hidden"
 							animate="visible"
 							variants={{
 								visible: {
 									transition: {
-										staggerChildren: 0.1
-									}
-								}
+										staggerChildren: 0.1,
+									},
+								},
 							}}
 						>
-							<SkeletonCard className="h-full"/>
+							<SkeletonCard className="h-full" />
 							<div className="flex flex-col gap-4">
-							<SkeletonCard />
-							<SkeletonCard />
+								<SkeletonCard />
+								<SkeletonCard />
 							</div>
-							<SkeletonCard className="col-span-2 h-fit"/>
+							<SkeletonCard className="col-span-2 h-fit" />
 						</motion.div>
 					)}
-					
+
 					{/* Logout button aligned with cards */}
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}

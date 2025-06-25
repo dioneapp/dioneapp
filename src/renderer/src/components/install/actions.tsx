@@ -1,7 +1,7 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { useTranslation } from "../../translations/translationContext";
 import { BadgeCheck, User } from "lucide-react";
+import { useTranslation } from "../../translations/translationContext";
 import Loading from "./loading-skeleton";
 
 interface ActionsProps {

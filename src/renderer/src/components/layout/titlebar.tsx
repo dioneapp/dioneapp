@@ -1,6 +1,6 @@
+import { Minus, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import { Minus, X } from "lucide-react";
 import { useAppContext } from "../layout/global-context";
 
 export default function Titlebar() {

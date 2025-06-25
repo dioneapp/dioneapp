@@ -1,4 +1,3 @@
-import { X, ArrowLeft, Share2, Bookmark } from "lucide-react";
 import ActionsComponent from "@renderer/components/install/actions";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
@@ -7,6 +6,7 @@ import { useAppContext } from "@renderer/components/layout/global-context";
 import MissingDepsModal from "@renderer/components/layout/missing-deps-modal";
 import sendEvent from "@renderer/utils/events";
 import { AnimatePresence } from "framer-motion";
+import { ArrowLeft, Bookmark, Share2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";

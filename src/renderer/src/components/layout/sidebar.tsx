@@ -1,5 +1,6 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
+import { AlertTriangle, Library, LogIn, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
@@ -8,7 +9,6 @@ import { useAuthContext } from "../contexts/AuthContext";
 import Icon from "../icons/icon";
 import { useAppContext } from "./global-context";
 import QuickLaunch from "./quick-launch";
-import { X, AlertTriangle, Library, Settings, User, LogIn } from "lucide-react";
 
 export default function Sidebar() {
 	const { t } = useTranslation();

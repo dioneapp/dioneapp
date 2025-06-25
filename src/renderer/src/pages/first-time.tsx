@@ -6,9 +6,9 @@ import { openLink } from "@renderer/utils/openLink";
 import { saveExpiresAt, saveRefreshToken } from "@renderer/utils/secure-tokens";
 import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence, motion } from "framer-motion";
+import { Link as LinkIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Link as LinkIcon } from "lucide-react";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
 
