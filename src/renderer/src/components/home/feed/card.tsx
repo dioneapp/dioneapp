@@ -25,7 +25,7 @@ function ScriptCard({ script, innerRef }: ScriptCardProps) {
 						onError={handleImageError}
 						alt={`${script.name} icon`}
 						className="h-16 w-16 rounded-xl border border-white/10 object-cover 
-                 object-center group-hover:border-white/20 transition-all duration-200"
+                 object-center group-hover:border-white/20 transition-all duration-200 bg-neutral-800/50"
 					/>
 				) : (
 					<div
