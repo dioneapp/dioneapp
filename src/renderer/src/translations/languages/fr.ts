@@ -126,7 +126,8 @@ export const fr = {
 			title: "Mise à jour disponible",
 			description:
 				"Une nouvelle version de Dione est disponible, veuillez redémarrer l'application pour mettre à jour.",
-			tooltip: "Nouvelle mise à jour disponible, veuillez redémarrer Dione pour mettre à jour.",
+			tooltip:
+				"Nouvelle mise à jour disponible, veuillez redémarrer Dione pour mettre à jour.",
 		},
 		tooltips: {
 			library: "Bibliothèque",
@@ -164,7 +165,8 @@ export const fr = {
 				label: "Langue d'affichage",
 				description: "Choisissez votre langue d'interface préférée",
 			},
-			helpTranslate: "🤔 Votre langue n'apparaît pas ? Aidez-nous à en ajouter plus !",
+			helpTranslate:
+				"🤔 Votre langue n'apparaît pas ? Aidez-nous à en ajouter plus !",
 			compactView: {
 				label: "Vue compacte",
 				description:
@@ -175,18 +177,21 @@ export const fr = {
 			title: "Notifications",
 			systemNotifications: {
 				label: "Notifications système",
-				description: "Afficher les notifications de bureau pour les événements importants",
+				description:
+					"Afficher les notifications de bureau pour les événements importants",
 			},
 			installationAlerts: {
 				label: "Alertes d'installation",
-				description: "Recevoir une notification lorsque les installations d'applications sont terminées",
+				description:
+					"Recevoir une notification lorsque les installations d'applications sont terminées",
 			},
 		},
 		privacy: {
 			title: "Confidentialité",
 			errorReporting: {
 				label: "Rapports d'erreurs",
-				description: "Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes",
+				description:
+					"Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes",
 			},
 		},
 		other: {
@@ -231,7 +236,8 @@ export const fr = {
 		addApp: "Ajouter une application",
 		selectApp: {
 			title: "Sélectionner une application",
-			description: "{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
+			description:
+				"{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
 		},
 	},
 
@@ -271,7 +277,8 @@ export const fr = {
 			subtitle: "erreur",
 			hasOccurred: "est survenue",
 			deps: "Dione n'a pas pu supprimer les dépendances, veuillez le faire manuellement.",
-			general: "Veuillez réessayer plus tard ou consulter les journaux pour plus d'informations.",
+			general:
+				"Veuillez réessayer plus tard ou consulter les journaux pour plus d'informations.",
 		},
 		loading: {
 			title: "Chargement...",

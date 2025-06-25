@@ -126,7 +126,8 @@ export const id = {
 			title: "Pembaruan Tersedia",
 			description:
 				"Versi baru Dione tersedia, harap mulai ulang aplikasi untuk memperbarui.",
-			tooltip: "Pembaruan baru tersedia, harap mulai ulang Dione untuk memperbarui.",
+			tooltip:
+				"Pembaruan baru tersedia, harap mulai ulang Dione untuk memperbarui.",
 		},
 		tooltips: {
 			library: "Perpustakaan",
@@ -149,8 +150,7 @@ export const id = {
 			title: "Aplikasi",
 			installationDirectory: {
 				label: "Direktori Instalasi",
-				description:
-					"Pilih di mana aplikasi baru akan diinstal secara default",
+				description: "Pilih di mana aplikasi baru akan diinstal secara default",
 			},
 			cleanUninstall: {
 				label: "Copot Pemasangan Bersih",
@@ -164,7 +164,8 @@ export const id = {
 				label: "Bahasa Tampilan",
 				description: "Pilih bahasa antarmuka pilihan Anda",
 			},
-			helpTranslate: "🤔 Tidak melihat bahasa Anda? Bantu kami menambahkan lebih banyak!",
+			helpTranslate:
+				"🤔 Tidak melihat bahasa Anda? Bantu kami menambahkan lebih banyak!",
 			compactView: {
 				label: "Tampilan Ringkas",
 				description:
@@ -186,7 +187,8 @@ export const id = {
 			title: "Privasi",
 			errorReporting: {
 				label: "Pelaporan Kesalahan",
-				description: "Bantu tingkatkan Dione dengan mengirimkan laporan kesalahan anonim",
+				description:
+					"Bantu tingkatkan Dione dengan mengirimkan laporan kesalahan anonim",
 			},
 		},
 		other: {
@@ -231,7 +233,8 @@ export const id = {
 		addApp: "Tambah Aplikasi",
 		selectApp: {
 			title: "Pilih Aplikasi",
-			description: "{count} aplikasi tersedia. Anda dapat memilih hingga {max}.",
+			description:
+				"{count} aplikasi tersedia. Anda dapat memilih hingga {max}.",
 		},
 	},
 
@@ -271,7 +274,8 @@ export const id = {
 			subtitle: "kesalahan",
 			hasOccurred: "telah terjadi",
 			deps: "Dione belum bisa menghapus dependensi apa pun, harap lakukan secara manual.",
-			general: "Silakan coba lagi nanti atau periksa log untuk informasi lebih lanjut.",
+			general:
+				"Silakan coba lagi nanti atau periksa log untuk informasi lebih lanjut.",
 		},
 		loading: {
 			title: "Memuat...",
