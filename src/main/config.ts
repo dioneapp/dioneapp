@@ -69,6 +69,10 @@ export const updateConfig = (newSettings: Partial<AppConfig>) => {
 
 	writeConfig(updatedConfig);
 };
+// reset config to default
+export const resetConfig = () => {
+	writeConfig(defaultConfig);
+};
 
 export const deleteConfig = () => {
 	const path = getConfigPath();
