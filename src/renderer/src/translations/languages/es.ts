@@ -26,11 +26,15 @@ export const es = {
 				"Gracias por unirte a nosotros al principio de este viaje. Inicia sesión en tu cuenta para empezar.",
 			login: "Iniciar sesión",
 			copyLink: "Copiar enlace",
+			skipLogin: "Continuar sin iniciar sesión",
 		},
 		loggingIn: {
 			title: "Iniciando sesión...",
 			authError: "¿No se pudo autenticar?",
 			goBack: "Volver",
+		},
+		languageSelector: {
+			title: "Selecciona tu idioma",
 		},
 		ready: {
 			title: "¡Estás listo!",

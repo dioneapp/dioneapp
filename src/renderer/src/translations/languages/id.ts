@@ -26,11 +26,15 @@ export const id = {
 				"Terima kasih telah bergabung dengan kami di awal perjalanan ini. Masuk ke akun Anda untuk memulai.",
 			login: "Masuk",
 			copyLink: "Salin Tautan",
+			skipLogin: "Masuk tanpa login",
 		},
 		loggingIn: {
 			title: "Sedang masuk...",
 			authError: "Tidak dapat mengautentikasi?",
 			goBack: "Kembali",
+		},
+		languageSelector: {
+			title: "Pilih Bahasa",
 		},
 		ready: {
 			title: "Anda siap!",

@@ -26,11 +26,15 @@ export const pt = {
 				"Obrigado por se juntar a nós no início desta jornada. Faça login em sua conta para começar.",
 			login: "Fazer login",
 			copyLink: "Copiar link",
+			skipLogin: "Continuar sem login",
 		},
 		loggingIn: {
 			title: "Fazendo login...",
 			authError: "Não foi possível autenticar?",
 			goBack: "Voltar",
+		},
+		languageSelector: {
+			title: "Selecione seu idioma",
 		},
 		ready: {
 			title: "Você está pronto!",

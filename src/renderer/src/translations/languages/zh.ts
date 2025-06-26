@@ -25,11 +25,15 @@ export const zh = {
 			subtitle: "感谢您早日加入我们的旅程。登录您的账户即可开始使用。",
 			login: "登录",
 			copyLink: "复制链接",
+			skipLogin: "继续",
 		},
 		loggingIn: {
 			title: "正在登录...",
 			authError: "无法验证？",
 			goBack: "返回",
+		},
+		languageSelector: {
+			title: "选择语言",
 		},
 		ready: {
 			title: "您已准备就绪！",

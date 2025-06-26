@@ -26,11 +26,15 @@ export const en = {
 				"Thank you for joining us early on this journey. Log into your account to get started.",
 			login: "Log in",
 			copyLink: "Copy Link",
+			skipLogin: "Continue without login",
 		},
 		loggingIn: {
 			title: "Logging in...",
 			authError: "Could not authenticate?",
 			goBack: "Go back",
+		},
+		languageSelector: {
+			title: "Select your language",
 		},
 		ready: {
 			title: "You are ready!",

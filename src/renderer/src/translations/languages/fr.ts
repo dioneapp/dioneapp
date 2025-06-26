@@ -26,11 +26,15 @@ export const fr = {
 				"Merci de nous rejoindre tôt dans ce voyage. Connectez-vous à votre compte pour commencer.",
 			login: "Se connecter",
 			copyLink: "Copier le lien",
+			skipLogin: "Continuer sans login",
 		},
 		loggingIn: {
 			title: "Connexion en cours...",
 			authError: "Impossible de s'authentifier ?",
 			goBack: "Retourner",
+		},
+		languageSelector: {
+			title: "Sélectionnez votre langue",
 		},
 		ready: {
 			title: "Vous êtes prêt !",
