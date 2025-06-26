@@ -244,7 +244,10 @@ export const createDependenciesRouter = (io: Server) => {
 		if (result.success) {
 			res.json({ success: true });
 		} else {
-			if (result.reasons.length === 1 && result.reasons[0] === "not-installed") {
+			if (
+				result.reasons.length === 1 &&
+				result.reasons[0] === "not-installed"
+			) {
 				res.json({ success: true });
 			} else {
 				res.json({ success: false, reasons: result.reasons });

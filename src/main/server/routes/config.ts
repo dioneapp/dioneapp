@@ -1,5 +1,10 @@
 import express from "express";
-import { readConfig, resetConfig, updateConfig, deleteConfig } from "../../config";
+import {
+	deleteConfig,
+	readConfig,
+	resetConfig,
+	updateConfig,
+} from "../../config";
 
 const router = express.Router();
 router.use(express.json());
