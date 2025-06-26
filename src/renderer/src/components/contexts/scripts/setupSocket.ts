@@ -53,7 +53,7 @@ export function setupSocket({
 	}
 	const socket = clientIO(`http://localhost:${port}`);
 	const settings = JSON.parse(localStorage.getItem("config") || "{}");
-	
+
 	socket.on("connect", () => {
 		console.log(`Socket [${appId}] connected with ID: ${socket.id}`);
 		socket.emit("registerApp", appId);

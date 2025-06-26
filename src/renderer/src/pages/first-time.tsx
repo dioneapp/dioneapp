@@ -147,11 +147,11 @@ export default function FirstTime() {
 				{level === 1 && (
 					<motion.div
 						key={1}
-						initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
-						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+						initial={{ opacity: 0, x: 200, filter: "blur(30px)" }}
+						animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
 						exit={{
 							opacity: 0,
-							y: 200,
+							x: -200,
 							filter: "blur(30px)",
 							transition: { duration: 0.4 },
 						}}
@@ -174,11 +174,11 @@ export default function FirstTime() {
 							</h2>
 						</div>
 						<motion.div
-							initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
-							animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+							initial={{ opacity: 0, x: -200, filter: "blur(30px)" }}
+							animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
 							exit={{
 								opacity: 0,
-								y: 200,
+								x: 200,
 								filter: "blur(30px)",
 								transition: { duration: 0.4 },
 							}}
@@ -210,11 +210,11 @@ export default function FirstTime() {
 							</button>
 						</motion.div>
 						<motion.span
-							initial={{ opacity: 0, y: 200, filter: "blur(30px)" }}
-							animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+							initial={{ opacity: 0, x: 200, filter: "blur(30px)" }}
+							animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
 							exit={{
 								opacity: 0,
-								y: 200,
+								x: 200,
 								filter: "blur(30px)",
 								transition: { duration: 1 },
 							}}
@@ -239,11 +239,11 @@ export default function FirstTime() {
 				{level === 2 && (
 					<motion.div
 						key={2}
-						initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
-						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+						initial={{ opacity: 0, x: 200, filter: "blur(30px)" }}
+						animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
 						exit={{
 							opacity: 0,
-							y: 200,
+							x: -200,
 							filter: "blur(30px)",
 							transition: { duration: 0.4 },
 						}}
@@ -277,11 +277,11 @@ export default function FirstTime() {
 				{level === 3 && (
 					<motion.div
 						key={4}
-						initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
-						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+						initial={{ opacity: 0, x: 200, filter: "blur(30px)" }}
+						animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
 						exit={{
 							opacity: 0,
-							y: 200,
+							x: -200,
 							filter: "blur(30px)",
 							transition: { duration: 0.4 },
 						}}
@@ -297,11 +297,11 @@ export default function FirstTime() {
 				{level === 4 && (
 					<motion.div
 						key={4}
-						initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
-						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+						initial={{ opacity: 0, x: 200, filter: "blur(30px)" }}
+						animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
 						exit={{
 							opacity: 0,
-							y: 200,
+							x: -200,
 							filter: "blur(30px)",
 							transition: { duration: 0.4 },
 						}}
@@ -332,11 +332,11 @@ export default function FirstTime() {
 					</motion.div>
 				)}
 				<motion.div
-					initial={{ opacity: 0, y: 200, filter: "blur(30px)" }}
-					animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+					initial={{ opacity: 0, x: -200, filter: "blur(30px)" }}
+					animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
 					exit={{
 						opacity: 0,
-						y: 200,
+						x: -200,
 						filter: "blur(30px)",
 						transition: { duration: 0.4 },
 					}}
