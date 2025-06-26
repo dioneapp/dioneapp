@@ -225,7 +225,11 @@ export async function inUseDependencies(dioneFile: string) {
 	return config.dependencies;
 }
 
-export async function uninstallDependency(selectedDeps: string[], dioneFile: string, io: Server) {
+export async function uninstallDependency(
+	selectedDeps: string[],
+	dioneFile: string,
+	io: Server,
+) {
 	const config = await readDioneConfig(dioneFile);
 	const workingDir = path.dirname(dioneFile);
 	if (!config.dependencies) {

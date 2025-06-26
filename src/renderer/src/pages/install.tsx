@@ -647,12 +647,14 @@ export default function Install({ id }: { id?: string }) {
 													<input
 														type="checkbox"
 														checked={selectedDeps.includes(dep)}
-														onChange={() => setSelectedDeps((prev) => {
-															if (prev.includes(dep)) {
-																return prev.filter((d) => d !== dep);
-															}
-															return [...prev, dep];
-														})}
+														onChange={() =>
+															setSelectedDeps((prev) => {
+																if (prev.includes(dep)) {
+																	return prev.filter((d) => d !== dep);
+																}
+																return [...prev, dep];
+															})
+														}
 														className="border border-white/50 rounded p-2"
 													/>
 													<span className="ml-2">{dep}</span>

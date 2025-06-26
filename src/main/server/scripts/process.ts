@@ -175,33 +175,37 @@ export const executeCommand = async (
 			}
 		});
 
-		return new Promise<{ code: number; stdout: string; stderr: string }>((resolve) => {
-			activeProcess.on("exit", (code: number) => {
-				const oldPid = activePID;
-				activeProcess = null;
-				activePID = null;
-			
-				logger.info(`Process (PID: ${oldPid}) finished with exit code ${code}`);
-				resolve({ code, stdout: stdoutData, stderr: stderrData });
-			});
+		return new Promise<{ code: number; stdout: string; stderr: string }>(
+			(resolve) => {
+				activeProcess.on("exit", (code: number) => {
+					const oldPid = activePID;
+					activeProcess = null;
+					activePID = null;
 
-			activeProcess.on("error", (error) => {
-				const errorMsg = `Failed to start command: ${error.message}`;
-				logger.error(errorMsg);
-				io.to(id).emit(logs, {
-				  type: "log",
-				  content: `ERROR: ${errorMsg}`,
+					logger.info(
+						`Process (PID: ${oldPid}) finished with exit code ${code}`,
+					);
+					resolve({ code, stdout: stdoutData, stderr: stderrData });
 				});
-				io.to(id).emit(logs, {
-				  type: "status",
-				  status: "error",
-				  content: "Failed to start process",
+
+				activeProcess.on("error", (error) => {
+					const errorMsg = `Failed to start command: ${error.message}`;
+					logger.error(errorMsg);
+					io.to(id).emit(logs, {
+						type: "log",
+						content: `ERROR: ${errorMsg}`,
+					});
+					io.to(id).emit(logs, {
+						type: "status",
+						status: "error",
+						content: "Failed to start process",
+					});
+					activeProcess = null;
+					activePID = null;
+					resolve({ code: -1, stdout: "", stderr: errorMsg });
 				});
-				activeProcess = null;
-				activePID = null;
-				resolve({ code: -1, stdout: "", stderr: errorMsg });
-			  });
-		});
+			},
+		);
 	} catch (error: any) {
 		const errorMsg = `Exception executing command: ${error.message}`;
 		logger.error(errorMsg);

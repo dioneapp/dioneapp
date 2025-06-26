@@ -1,4 +1,5 @@
 import Background from "@renderer/components/first-time/background";
+import LanguageSelector from "@renderer/components/first-time/onboarding/language-selector";
 import ExecuteSound from "@renderer/components/first-time/sound";
 import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
@@ -11,7 +12,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
-import LanguageSelector from "@renderer/components/first-time/onboarding/language-selector";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
@@ -180,8 +180,8 @@ export default function FirstTime() {
 								opacity: 0,
 								y: 200,
 								filter: "blur(30px)",
-									transition: { duration: 0.4 },
-								}}
+								transition: { duration: 0.4 },
+							}}
 							transition={{
 								duration: 0.6,
 								delay: firstLaunch === "true" ? 3.2 : 1,
@@ -209,7 +209,7 @@ export default function FirstTime() {
 								<span>{t("firstTime.welcome.copyLink")}</span>
 							</button>
 						</motion.div>
-						<motion.span 
+						<motion.span
 							initial={{ opacity: 0, y: 200, filter: "blur(30px)" }}
 							animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
 							exit={{
@@ -218,7 +218,10 @@ export default function FirstTime() {
 								filter: "blur(30px)",
 								transition: { duration: 1 },
 							}}
-							transition={{ delay: firstLaunch === "true" ? 3.2 : 1.4, duration: 0.8 }}
+							transition={{
+								delay: firstLaunch === "true" ? 3.2 : 1.4,
+								duration: 0.8,
+							}}
 							onClick={() => {
 								if (firstLaunch === "true" || firstLaunch === null) {
 									changeLevel(3);
@@ -226,7 +229,8 @@ export default function FirstTime() {
 									changeLevel(4);
 								}
 							}}
-							className="absolute bottom-12 text-xs text-white/70 hover:text-white cursor-pointer">
+							className="absolute bottom-12 text-xs text-white/70 hover:text-white cursor-pointer"
+						>
 							{t("firstTime.welcome.skipLogin")}
 						</motion.span>
 					</motion.div>
@@ -288,7 +292,7 @@ export default function FirstTime() {
 							<LanguageSelector onSelectLanguage={onSelectLanguage} />
 						</div>
 					</motion.div>
-				)}	
+				)}
 				{/* 4 - ready */}
 				{level === 4 && (
 					<motion.div
@@ -327,21 +331,24 @@ export default function FirstTime() {
 						</div>
 					</motion.div>
 				)}
-				<motion.div 
-				initial={{ opacity: 0, y: 200, filter: "blur(30px)" }}
-				animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-				exit={{
-					opacity: 0,
-					y: 200,
-					filter: "blur(30px)",
-					transition: { duration: 0.4 },
-				}}
-				transition={{ duration: 0.6 }}
-				className="absolute bottom-4 left-1/2 translate-x-[-50%]">
+				<motion.div
+					initial={{ opacity: 0, y: 200, filter: "blur(30px)" }}
+					animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+					exit={{
+						opacity: 0,
+						y: 200,
+						filter: "blur(30px)",
+						transition: { duration: 0.4 },
+					}}
+					transition={{ duration: 0.6 }}
+					className="absolute bottom-4 left-1/2 translate-x-[-50%]"
+				>
 					<div className="flex gap-2">
 						{[1, 2, 3, 4].map((lvl) => (
 							<div key={lvl} className="py-1">
-								<div className={`w-6 h-1 rounded-full ${lvl === level ? "bg-[#BCB1E7] w-10" : "bg-white/20"}`} />
+								<div
+									className={`w-6 h-1 rounded-full ${lvl === level ? "bg-[#BCB1E7] w-10" : "bg-white/20"}`}
+								/>
 							</div>
 						))}
 					</div>
