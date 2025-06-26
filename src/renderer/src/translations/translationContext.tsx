@@ -1,3 +1,4 @@
+import { getCurrentPort } from "@renderer/utils/getPort";
 import {
 	type ReactNode,
 	createContext,
@@ -15,7 +16,6 @@ import { id } from "./languages/id";
 import { pt } from "./languages/pt";
 import { ru } from "./languages/ru";
 import { zh } from "./languages/zh";
-import { getCurrentPort } from "@renderer/utils/getPort";
 
 // available languages
 export const languages = {
@@ -117,20 +117,19 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({ ...config, ...newConfig }),
-		});	
+		});
 
 		if (!response.ok) throw new Error("Failed to update config");
 		const updatedConfig = await response.json();
 		setLanguage(updatedConfig.language);
 		localStorage.setItem("language", updatedConfig.language);
-	}
+	};
 
 	// save language preference
 	useEffect(() => {
 		if (language) {
 			handleUpdateSettings({ language: language });
 		}
-
 	}, [language]);
 
 	return (

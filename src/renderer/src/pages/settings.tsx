@@ -1,3 +1,4 @@
+import { useAuthContext } from "@renderer/components/contexts/AuthContext";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Folder } from "lucide-react";
@@ -5,7 +6,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
 import { openLink } from "../utils/openLink";
-import { useAuthContext } from "@renderer/components/contexts/AuthContext";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -86,7 +86,6 @@ export default function Settings() {
 	const { setLanguage, t } = useTranslation();
 	const { logout } = useAuthContext();
 	const navigate = useNavigate();
-	
 
 	useEffect(() => {
 		// get actual port
