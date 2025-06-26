@@ -2,6 +2,7 @@ import { languages } from "@renderer/translations/translationContext";
 import { useTranslation } from "@renderer/translations/translationContext";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface LanguageSelectorProps {
 	onSelectLanguage: () => void;
@@ -12,6 +13,7 @@ export default function LanguageSelector({
 }: LanguageSelectorProps) {
 	const { setLanguage, language, t } = useTranslation();
 	const [currentPage, setCurrentPage] = useState(0);
+	const [direction, setDirection] = useState(0);
 	const perPage = 8;
 
 	const languageEntries = useMemo(() => Object.entries(languages), []);
@@ -23,19 +25,26 @@ export default function LanguageSelector({
 	}, [currentPage, languageEntries]);
 
 	const goToNextPage = () => {
+		setDirection(1);
 		setCurrentPage((prev) => Math.min(prev + 1, totalPages - 1));
 	};
 
 	const goToPrevPage = () => {
+		setDirection(-1);
 		setCurrentPage((prev) => Math.max(prev - 1, 0));
 	};
 
 	return (
 		<section className="min-h-screen flex flex-col items-center justify-center px-4 py-10">
 			<div className="flex flex-col items-center justify-between h-full w-full max-w-screen-lg gap-8">
-				<h1 className="text-6xl font-semibold mt-10">
+				<motion.h1
+					className="text-5xl font-semibold mt-30 text-center"
+					initial={{ opacity: 0, y: -30 }}
+					animate={{ opacity: 1, y: 0 }}
+					transition={{ duration: 0.6, ease: [0.42, 0, 0.58, 1] }}
+				>
 					{t("firstTime.languageSelector.title")}
-				</h1>
+				</motion.h1>
 				<div className="flex flex-col items-center justify-center grow gap-6">
 					<div className="flex gap-8 items-center">
 						<button
@@ -46,41 +55,52 @@ export default function LanguageSelector({
 						>
 							<ChevronLeft className="w-6 h-6" />
 						</button>
-						<div className="grid grid-cols-4 grid-rows-2 w-full h-full place-items-center gap-4 max-w-2xl">
-							{currentLanguages.map(([key, value]) => (
-								<button
-									type="button"
-									key={key}
-									className={`cursor-pointer flex flex-col gap-2 items-center justify-center overflow-hidden hover:[&_span]:opacity-100 hover:[&_span]:bottom-0 hover:[&_span_div]:blur-none hover:[&_span_div]:mt-0 relative rounded ${language === key ? "[&_img]:opacity-50" : ""}`}
-									onClick={() => {
-										setLanguage(key as any);
-									}}
-								>
-									<img
-										src={
-											key === "ar"
-												? "https://flagcdn.com/eg.svg"
+						<AnimatePresence mode="wait" initial={false}>
+							<motion.div
+								key={currentPage}
+								className="grid grid-cols-4 grid-rows-2 w-full h-full place-items-center gap-4 max-w-2xl"
+								initial={{ x: direction > 0 ? -80 : 80, opacity: 0 }}
+								animate={{ x: 0, opacity: 1 }}
+								exit={{ x: direction > 0 ? 80 : -80, opacity: 0 }}
+								transition={{ duration: 0.35, ease: [0.42, 0, 0.58, 1] }}
+							>
+								{currentLanguages.map(([key, value]) => (
+									<motion.button
+										whileTap={{ scale: 0.95 }}
+										whileHover={{ scale: 1.06 }}
+										type="button"
+										key={key}
+										className={`group cursor-pointer flex flex-col gap-2 items-center justify-center overflow-hidden relative rounded transition-all duration-300 focus:outline-none ${language === key ? "scale-105 shadow-lg" : ""}`}
+										onClick={() => {
+											setLanguage(key as any);
+										}}
+									>
+										<img
+											src={
+												key === "ar"
+													? "https://flagcdn.com/eg.svg"
 												: key === "bn"
 													? "https://flagcdn.com/bd.svg"
-													: key === "en"
-														? "https://flagcdn.com/us.svg"
-														: key === "hi"
-															? "https://flagcdn.com/in.svg"
-															: key === "zh"
-																? "https://flagcdn.com/cn.svg"
-																: `https://flagcdn.com/${key}.svg`
-										}
-										alt={value}
-										className="w-full h-full object-cover object-center overflow-hidden rounded aspect-[5/3] transition-opacity duration-300"
-									/>
-									<span className="opacity-0 transition-all duration-300 absolute -bottom-4 left-0 px-2 bg-gradient-to-t from-[#080808] via-[#080808]/50 to-[#080808]/0 w-full h-10">
-										<div className="flex items-end mt-6 pb-2 font-medium justify-start h-full blur transition-all duration-400 text-sm">
-											{value}
-										</div>
-									</span>
-								</button>
-							))}
-						</div>
+												: key === "en"
+													? "https://flagcdn.com/us.svg"
+												: key === "hi"
+													? "https://flagcdn.com/in.svg"
+												: key === "zh"
+													? "https://flagcdn.com/cn.svg"
+												: `https://flagcdn.com/${key}.svg`
+											}
+											alt={value}
+											className="w-full h-full object-cover object-center overflow-hidden rounded aspect-[5/3] transition-opacity duration-300"
+										/>
+										<span className="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 absolute bottom-0 left-0 px-2 bg-gradient-to-t from-[#080808] via-[#080808]/50 to-[#080808]/0 w-full h-10 pointer-events-none">
+											<div className="flex items-end pb-2 font-medium justify-start h-full text-sm">
+												{value}
+											</div>
+										</span>
+									</motion.button>
+								))}
+							</motion.div>
+						</AnimatePresence>
 						<button
 							type="button"
 							onClick={goToNextPage}
@@ -89,6 +109,13 @@ export default function LanguageSelector({
 						>
 							<ChevronRight className="w-6 h-6" />
 						</button>
+					</div>
+					<div className="mt-2 text-base text-neutral-300 min-h-6">
+						{language && (
+							<span className="px-3 py-1 rounded-full bg-white/10 text-white/90 font-medium">
+								{languages[language]}
+							</span>
+						)}
 					</div>
 					<a
 						href="https://github.com/dioneapp/dioneapp"
