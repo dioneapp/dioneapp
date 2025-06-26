@@ -11,12 +11,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
+import LanguageSelector from "@renderer/components/first-time/onboarding/language-selector";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
 	const { user, setUser, setRefreshSessionToken } = useAuthContext();
 	const firstLaunch = localStorage.getItem("firstLaunch");
-
+	console.log('first launch?', firstLaunch);
 	// toast stuff
 	const { addToast } = useToast();
 	const showToast = (
@@ -60,7 +61,11 @@ export default function FirstTime() {
 	useEffect(() => {
 		function shouldRedirect() {
 			if (user) {
-				changeLevel(3);
+				if (firstLaunch === "true" || firstLaunch === null) {
+					changeLevel(4);
+				} else {
+					changeLevel(3);
+				}
 			}
 		}
 		shouldRedirect();
@@ -118,6 +123,10 @@ export default function FirstTime() {
 		setUser(data[0]);
 	}
 
+	function onSelectLanguage() {
+		changeLevel(4);
+	}
+
 	const getContainerClasses = () => {
 		return "w-full h-full flex flex-col items-center justify-center z-50";
 	};
@@ -151,7 +160,7 @@ export default function FirstTime() {
 							duration: 0.6,
 							delay: firstLaunch === "true" ? 3.2 : 0.4,
 						}}
-						className={getContainerClasses()}
+						className={`${getContainerClasses()} relative`}
 					>
 						<div className="flex flex-col gap-4 justify-center items-center transition-all duration-500">
 							<Icon name="Dio" className="w-20 h-20 mb-2" />
@@ -166,11 +175,17 @@ export default function FirstTime() {
 							</h2>
 						</div>
 						<motion.div
-							initial={{ opacity: 0, filter: "blur(20px)", y: 100 }}
-							animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+							initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
+							animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+							exit={{
+								opacity: 0,
+								y: 200,
+								filter: "blur(30px)",
+									transition: { duration: 0.4 },
+								}}
 							transition={{
-								duration: 0.7,
-								delay: firstLaunch === "true" ? 4 : 2,
+								duration: 0.6,
+								delay: firstLaunch === "true" ? 3.2 : 1,
 							}}
 							className="mt-4 flex flex-col gap-4"
 						>
@@ -195,6 +210,26 @@ export default function FirstTime() {
 								<span>{t("firstTime.welcome.copyLink")}</span>
 							</button>
 						</motion.div>
+						<motion.span 
+							initial={{ opacity: 0, y: 200, filter: "blur(30px)" }}
+							animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+							exit={{
+								opacity: 0,
+								y: 200,
+								filter: "blur(30px)",
+								transition: { duration: 1 },
+							}}
+							transition={{ delay: firstLaunch === "true" ? 3.2 : 1.4, duration: 0.8 }}
+							onClick={() => {
+								if (firstLaunch === "true" || firstLaunch === null) {
+									changeLevel(3);
+								} else {
+									changeLevel(4);
+								}
+							}}
+							className="absolute bottom-12 text-xs text-white/70 hover:text-white cursor-pointer">
+							Skip login
+						</motion.span>
 					</motion.div>
 				)}
 				{/* 2 - logging in */}
@@ -235,10 +270,30 @@ export default function FirstTime() {
 						</div>
 					</motion.div>
 				)}
-				{/* 3 - ready */}
+				{/* first time onboarding */}
 				{level === 3 && (
 					<motion.div
-						key={3}
+						key={4}
+						initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
+						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+						exit={{
+							opacity: 0,
+							y: 200,
+							filter: "blur(30px)",
+							transition: { duration: 0.4 },
+						}}
+						transition={{ duration: 0.6 }}
+						className={getContainerClasses()}
+					>
+						<div className="flex flex-col gap-4 justify-center items-center">
+							<LanguageSelector onSelectLanguage={onSelectLanguage} />
+						</div>
+					</motion.div>
+				)}	
+				{/* 4 - ready */}
+				{level === 4 && (
+					<motion.div
+						key={4}
 						initial={{ opacity: 0, y: -200, filter: "blur(30px)" }}
 						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
 						exit={{
@@ -256,7 +311,7 @@ export default function FirstTime() {
 								{t("firstTime.ready.title")}
 							</h1>
 							<h2 className="text-neutral-400 text-balance text-center max-w-xl">
-								{t("firstTime.ready.subtitle")} {user.username}!
+								{t("firstTime.ready.subtitle")} {user?.username}
 							</h2>
 						</div>
 						<div className="mt-4 flex flex-col gap-4">
@@ -273,6 +328,25 @@ export default function FirstTime() {
 						</div>
 					</motion.div>
 				)}
+				<motion.div 
+				initial={{ opacity: 0, y: 200, filter: "blur(30px)" }}
+				animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+				exit={{
+					opacity: 0,
+					y: 200,
+					filter: "blur(30px)",
+					transition: { duration: 0.4 },
+				}}
+				transition={{ duration: 0.6 }}
+				className="absolute bottom-4 left-1/2 translate-x-[-50%]">
+					<div className="flex gap-2">
+						{[1, 2, 3, 4].map((lvl) => (
+							<div key={lvl} className="py-1">
+								<div className={`w-6 h-1 rounded-full ${lvl === level ? "bg-[#BCB1E7] w-10" : "bg-white/20"}`} />
+							</div>
+						))}
+					</div>
+				</motion.div>
 			</AnimatePresence>
 		</div>
 	);
