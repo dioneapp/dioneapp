@@ -1,3 +1,4 @@
+import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { type Socket, io as clientIO } from "socket.io-client";
 
 interface SetupSocketProps {
@@ -51,7 +52,8 @@ export function setupSocket({
 		return socketsRef.current[appId];
 	}
 	const socket = clientIO(`http://localhost:${port}`);
-
+	const settings = JSON.parse(localStorage.getItem("config") || "{}");
+	
 	socket.on("connect", () => {
 		console.log(`Socket [${appId}] connected with ID: ${socket.id}`);
 		socket.emit("registerApp", appId);
@@ -78,6 +80,11 @@ export function setupSocket({
 			console.log(`[${appId}] LOG:`, message);
 			if (content.toLowerCase().includes("error") || status === "error") {
 				errorRef.current = true;
+				if (settings.sendAnonymousReports && content) {
+					sendDiscordReport(content, {
+						userReport: false,
+					});
+				}
 			}
 			// launch iframe if server is running
 			if (
@@ -88,13 +95,11 @@ export function setupSocket({
 					content.toLowerCase().includes("localhost") ||
 					content.toLowerCase().includes("0.0.0.0"))
 			) {
-				console.log("loading iframe");
 				const match = content
 					.replace(/\x1b\[[0-9;]*m/g, "")
 					.match(
 						/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i,
 					);
-				console.log(match);
 				if (match) {
 					loadIframe(Number.parseInt(match[1]));
 					setIframeAvailable(true);
