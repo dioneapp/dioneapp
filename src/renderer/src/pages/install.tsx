@@ -623,61 +623,70 @@ export default function Install({ id }: { id?: string }) {
 					className="absolute inset-0 flex items-center justify-center bg-black/80 p-4 backdrop-blur-3xl"
 					style={{ zIndex: 100 }}
 				>
-					<div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl max-h-3/4 h-full w-full backdrop-blur-md">
-						<button
-							type="button"
-							className="absolute right-8 top-8 cursor-pointer"
-							onClick={() => setDeleteDepsModal(false)}
-						>
-							<X className="h-8 w-8" />
-						</button>
-						<div className="flex flex-col gap-6 justify-center w-full h-full items-center">
+					<div
+						className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl w-full backdrop-blur-md"
+						style={{
+							height: inUseDeps && inUseDeps.length <= 3 ? undefined : '28rem',
+							minHeight: inUseDeps && inUseDeps.length <= 3 ? undefined : '16rem',
+							maxHeight: inUseDeps && inUseDeps.length > 3 ? '28rem' : undefined,
+						}}
+					>
+						<div className="flex justify-between w-full items-center">
 							<h2 className="font-semibold text-lg flex items-center justify-center">
-								Should Dione uninstall dependencies?
+								{t("deleteLoading.uninstalling.deps")}
 							</h2>
-							<div className="w-full max-w-sm">
-								{inUseDeps ? (
-									<div className="w-full h-44 flex flex-col gap-2 justify-center items-center overflow-auto">
-										<ul className="overflow-auto w-full rounded p-6 gap-2 flex flex-col">
-											{inUseDeps?.map((dep, index) => (
-												<label
-													key={index}
-													className="cursor-pointer hover:bg-white/20 flex items-center gap-4 border p-2 border-white/20 w-full text-sm text-neutral-300"
-												>
-													<input
-														type="checkbox"
-														checked={selectedDeps.includes(dep)}
-														onChange={() =>
-															setSelectedDeps((prev) => {
-																if (prev.includes(dep)) {
-																	return prev.filter((d) => d !== dep);
-																}
-																return [...prev, dep];
-															})
-														}
-														className="border border-white/50 rounded p-2"
-													/>
-													<span className="ml-2">{dep}</span>
-												</label>
-											))}
-										</ul>
-									</div>
+							<button
+								type="button"
+								className="cursor-pointer z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-full"
+								onClick={() => setDeleteDepsModal(false)}
+							>
+								<X className="h-3 w-3" />
+							</button>
+						</div>
+						<div className="pt-6 w-full h-full flex flex-col">
+							<div className="flex flex-col gap-2 w-full overflow-auto border border-white/10 rounded-xl p-4">
+								{inUseDeps && inUseDeps.length > 0 ? (
+									inUseDeps.map((dep, index) => {
+										const selected = selectedDeps.includes(dep);
+										return (
+											<label
+												key={index}
+												className={`flex items-center gap-3 py-2 cursor-pointer select-none`}
+												style={{ alignItems: 'flex-start' }}
+											>
+												<input
+													type="checkbox"
+													checked={selected}
+													onChange={() => {
+														setSelectedDeps((prev) =>
+															prev.includes(dep)
+																? prev.filter((d) => d !== dep)
+																: [...prev, dep]
+														);
+													}}
+													className="form-checkbox h-4 w-4 rounded border-white/30 bg-transparent checked:bg-[#BCB1E7] checked:border-[#BCB1E7] focus:ring-0 focus:outline-none mt-0.5"
+													style={{ accentColor: '#BCB1E7' }}
+												/>
+												<span className="text-xs text-neutral-300 font-medium">{dep}</span>
+											</label>
+										);
+									})
 								) : (
-									<p className="text-xs text-neutral-400">
-										No dependencies are currently in use.
+									<p className="text-xs text-neutral-400 text-center">
+										{t("deleteLoading.error.deps")}
 									</p>
 								)}
 							</div>
-							<div className="flex items-center gap-4 mt-12">
+							<div className="mt-4 flex items-center justify-end gap-3">
 								<button
 									type="button"
 									onClick={() => {
 										setDeleteDepsModal(false);
 										handleUninstall(false);
 									}}
-									className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
+									className="flex items-center justify-center gap-2 p-4 text-xs bg-white/10 hover:bg-white/20 transition-colors duration-400 rounded-full text-white font-semibold py-1 text-center cursor-pointer"
 								>
-									<span className="font-semibold">No</span>
+									{t("common.cancel")}
 								</button>
 								<button
 									type="button"
@@ -687,7 +696,7 @@ export default function Install({ id }: { id?: string }) {
 									}}
 									className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
 								>
-									<span className="font-semibold">Yes</span>
+									<span className="font-semibold">{t("actions.uninstall")}</span>
 								</button>
 							</div>
 						</div>
