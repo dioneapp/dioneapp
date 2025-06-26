@@ -427,6 +427,9 @@ app.whenReady().then(async () => {
 	});
 
 	ipcMain.handle("send-discord-report", async (_, data) => {
+		if (!app.isPackaged) {
+			return false;
+		}
 		try {
 			const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
 			if (!webhookUrl) {
