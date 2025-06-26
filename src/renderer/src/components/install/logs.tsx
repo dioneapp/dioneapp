@@ -9,6 +9,7 @@ import {
 	Loader2,
 	Square,
 	XCircle,
+	Dot,
 } from "lucide-react";
 import type { JSX } from "react";
 import { useMemo } from "react";
@@ -84,7 +85,7 @@ export default function LogsComponent({
 			<motion.div className="p-10 select-text rounded-tl-xl rounded-b-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/80 hide-scrollbar">
 				<div
 					id="logs"
-					className="flex flex-col mx-auto  max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text text-wrap"
+					className="flex flex-col mx-auto  max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text text-wrap pb-4"
 					ref={(el) => {
 						if (el) {
 							el.scrollTop = el.scrollHeight;
@@ -95,48 +96,45 @@ export default function LogsComponent({
 						const lowerLog = log.toLowerCase();
 						const cleanedLog = cleanLogLine(log);
 						let textColor = "text-neutral-400";
-						let icon: JSX.Element | null = null;
+						let symbol: JSX.Element | null = null;
+						let bg = "";
 
 						if (lowerLog.includes("error")) {
-							textColor =
-								"select-all bg-red-500/10 rounded-md font-mono border-tr-none border border-white/5 backdrop-filter backdrop-blur-xl p-4 text-neutral-300 text-pretty break-words whitespace-pre-wrap";
-							icon = <AlertCircle className="w-4 h-4" />;
+							textColor = "text-red-400";
+							symbol = <AlertCircle className="w-3 h-3" />;
+							bg = "bg-red-500/10";
 						} else if (lowerLog.includes("warning")) {
 							textColor = "text-yellow-400";
-							icon = <AlertTriangle className="w-4 h-4" />;
+							symbol = <AlertTriangle className="w-3 h-3" />;
+							bg = "bg-yellow-500/10";
+						} else if (lowerLog.includes("success")) {
+							textColor = "text-green-400";
+							symbol = <CheckCircle className="w-3 h-3" />;
+							bg = "bg-green-500/10";
 						} else if (lowerLog.includes("info")) {
 							textColor = "text-blue-400";
-							icon = <Info className="w-4 h-4" />;
+							symbol = <Info className="w-3 h-3" />;
+							bg = "bg-blue-500/10";
+						} else {
+							symbol = <Dot className="w-3 h-3" />;
 						}
 
+						const isLast = index === (logs?.[appId]?.length || 0) - 1;
+
 						return (
-							<div
-								key={index}
-								className={`flex flex-col w-full h-full ${lowerLog.includes("error") && "my-2"}`}
-							>
-								<div className="flex justify-end w-full">
-									{lowerLog.includes("error") && icon && (
-										<span
-											className={
-												"p-1 px-4 bg-red-500/10 rounded-t-md border border-white/5"
-											}
-										>
-											{icon}
-										</span>
-									)}
+							<div key={index} className="w-full">
+								<div className={`flex items-center gap-2 py-1 px-2 ${bg} rounded-md w-full relative`}>
+									<span className="flex items-center min-w-6">{symbol}</span>
+									<pre className={`whitespace-pre-wrap break-words font-mono text-xs ${textColor} flex-1`}>{cleanedLog}</pre>
 								</div>
-								<div
-									className={`text-xs ${textColor} rounded-tr-none border-tr-none flex items-center justify-start m-auto gap-4 whitespace-pre-wrap break-words w-full`}
-								>
-									<pre className="whitespace-pre-wrap break-words font-mono">
-										{cleanedLog}
-									</pre>
-								</div>
+								{!isLast && (
+									<div className="w-full h-px bg-white/5 my-1" />
+								)}
 							</div>
 						);
 					})}
 				</div>
-				<div className="h-px w-full bg-white/10 m-4" />
+				<div className="h-px w-full bg-white/10 mb-4" />
 				<div className="text-xs text-neutral-500 mt-4 mb-2 text-center max-w-sm mx-auto justify-center items-center flex">
 					{t("logs.disclaimer")}
 				</div>
