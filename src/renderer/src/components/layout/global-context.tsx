@@ -139,7 +139,10 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	const [deleteLogs, setDeleteLogs] = useState<any[]>([]);
 	// active apps
 	const [activeApps, setActiveApps] = useState<any[]>([]);
-	const [removedApps, setRemovedApps] = useState<any[]>([]);
+	const [removedApps, setRemovedApps] = useState<any[]>(() => {
+		const stored = localStorage.getItem("quickLaunchRemovedApps");
+		return stored ? JSON.parse(stored) : [];
+	});
 	const [availableApps, setAvailableApps] = useState<any[]>([]);
 	const [appFinished, setAppFinished] = useState<{ [key: string]: boolean }>(
 		{},
@@ -489,6 +492,10 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			setAppFinished({ [appId]: false });
 		}
 	};
+
+	useEffect(() => {
+		localStorage.setItem("quickLaunchRemovedApps", JSON.stringify(removedApps));
+	}, [removedApps]);
 
 	return (
 		<AppContext.Provider
