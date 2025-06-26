@@ -42,7 +42,7 @@ linux:
     - AppImage
     - snap
     - deb
-  maintainer: AI Hispano
+  maintainer: Dione Team
   category: Utility
   mimeTypes: [x-scheme-handler/dione]
   desktop:

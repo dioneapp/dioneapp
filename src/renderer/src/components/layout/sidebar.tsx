@@ -1,6 +1,6 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
-import { AlertTriangle, Library, LogIn, Settings, User, X } from "lucide-react";
+import { AlertTriangle, Library, LogIn, Monitor, MonitorDown, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
@@ -130,7 +130,7 @@ export default function Sidebar() {
 				</div>
 				<div
 					className={
-						"mb-auto h-full mt-6 w-full flex flex-col justify-start items-start gap-2"
+						"mb-auto h-full mt-6 w-full flex flex-col justify-start items-start gap-2 relative"
 					}
 				>
 					<div
@@ -174,7 +174,10 @@ export default function Sidebar() {
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ duration: 0.2 }}
-						className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56 mt-6"
+						className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56 my-6 cursor-pointer hover:bg-white/10 transition-colors duration-200"
+						onClick={() => {
+							window.electron.ipcRenderer.send("restart_app");
+						}}
 					>
 						<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
 							<h1 className="font-semibold text-xl text-neutral-200">
@@ -191,14 +194,12 @@ export default function Sidebar() {
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ duration: 0.2 }}
-						className="h-fit border border-white/10 bg-neutral-800/40 rounded-full backdrop-blur-3xl w-full max-w-56 mb-4 group relative"
+						className="w-9.5 h-9.5 bg-white hover:bg-white/80 transition-colors duration-200 rounded-full backdrop-blur-3xl mb-4 group cursor-pointer flex justify-center items-center p-2"
 					>
-						<div className="justify-center items-center py-3 flex flex-col gap-1">
-							<AlertTriangle className="h-6 w-6" />
-						</div>
+						<MonitorDown className="h-5 w-5 text-black" />
 						<div
-							className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-6 py-4 bg-black/90 text-white text-xs shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all backdrop-blur-3xl duration-200"
-							style={{ whiteSpace: "pre-line" }}
+							className="absolute left-1/2 -translate-x-1/2 bottom-0 my-16 px-6 py-4 bg-black backdrop-blur-3xl text-white text-xs shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200"
+							style={{ whiteSpace: "pre-line", zIndex: 99999 }}
 						>
 							{t("sidebar.update.tooltip")}
 						</div>
@@ -317,6 +318,23 @@ export default function Sidebar() {
 								>
 									<LogIn className="h-5 w-5" />
 									<span className="text-sm px-2 font-semibold">Login</span>
+								</button>
+							)}
+						</div>
+					)}
+					{config?.compactMode && (
+						<div className="flex gap-2 items-center justify-start w-9.5 h-9.5">
+							{!user && (
+								<button
+									type="button"
+									className="w-9.5 h-9.5 border bg-white text-black font-medium rounded-full transition-colors flex items-center justify-center cursor-pointer relative"
+									onClick={() =>
+										openLink("https://getdione.app/auth/login?app=true")
+									}
+									onMouseEnter={() => setHoveredTooltip("login")}
+									onMouseLeave={() => setHoveredTooltip(null)}
+								>
+									<LogIn className="h-4 w-4" />
 								</button>
 							)}
 						</div>
