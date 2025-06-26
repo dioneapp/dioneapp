@@ -40,7 +40,7 @@ export async function getInstalledScript(name: string) {
 		"apps",
 		sanitizedName,
 	);
-	console.log("script dir", scriptDir);
+
 	try {
 		await fs.promises.readdir(scriptDir);
 		return true;

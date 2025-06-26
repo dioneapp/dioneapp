@@ -17,7 +17,6 @@ export default function FirstTime() {
 	const { t } = useTranslation();
 	const { user, setUser, setRefreshSessionToken } = useAuthContext();
 	const firstLaunch = localStorage.getItem("firstLaunch");
-	console.log('first launch?', firstLaunch);
 	// toast stuff
 	const { addToast } = useToast();
 	const showToast = (
@@ -228,7 +227,7 @@ export default function FirstTime() {
 								}
 							}}
 							className="absolute bottom-12 text-xs text-white/70 hover:text-white cursor-pointer">
-							Skip login
+							{t("firstTime.welcome.skipLogin")}
 						</motion.span>
 					</motion.div>
 				)}

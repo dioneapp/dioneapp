@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
 import { openLink } from "../utils/openLink";
+import { useAuthContext } from "@renderer/components/contexts/AuthContext";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -83,7 +84,9 @@ export default function Settings() {
 	const [versions] = useState(window.electron.process.versions);
 	const [config, setConfig] = useState<any | null>(null);
 	const { setLanguage, t } = useTranslation();
+	const { logout } = useAuthContext();
 	const navigate = useNavigate();
+	
 
 	useEffect(() => {
 		// get actual port
@@ -189,10 +192,12 @@ export default function Settings() {
 	};
 
 	async function handleResetSettings() {
-		await window.electron.ipcRenderer.invoke("delete-config");
-		localStorage.removeItem("session");
-		localStorage.removeItem("user");
-		localStorage.removeItem("dbUser");
+		localStorage.clear();
+		await fetch(`http://localhost:${port}/config/delete`, {
+			method: "POST",
+		});
+		await window.electron.ipcRenderer.invoke("check-first-launch");
+		await logout();
 		// terminate session
 		window.electron.ipcRenderer.send("end-session");
 		navigate("/first-time");
@@ -296,7 +301,7 @@ export default function Settings() {
 											</div>
 											<CustomSelect
 												value={config.language}
-												onChange={(value) => handleUpdate({ language: value })}
+												onChange={(value) => setLanguage(value as any)}
 												options={Object.entries(languages).map(
 													([value, label]) => ({ value, label }),
 												)}
