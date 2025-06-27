@@ -60,7 +60,7 @@
 			"macos": "brew install ffmpeg"
 		},
 		"uninstallCommand": {
-			"windows": "winget uninstall -e --id Gyan.FFmpeg",
+			"windows": "winget uninstall -e FFmpeg",
 			"linux": "sudo apt remove -y ffmpeg",
 			"macos": "brew uninstall ffmpeg"
 		}
