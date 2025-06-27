@@ -304,7 +304,9 @@ export const executeCommands = async (
 		} else {
 			const response = await executeCommand(command, io, currentWorkingDir, id);
 			if (response.code !== 0) {
-				throw new Error(response.stderr || `Command failed with exit code ${response.code}`);
+				throw new Error(
+					response.stderr || `Command failed with exit code ${response.code}`,
+				);
 			}
 		}
 	}

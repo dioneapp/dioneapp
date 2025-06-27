@@ -4,12 +4,12 @@ import {
 	AlertTriangle,
 	CheckCircle,
 	Copy,
+	Dot,
 	ExternalLink,
 	Info,
 	Loader2,
 	Square,
 	XCircle,
-	Dot,
 } from "lucide-react";
 import type { JSX } from "react";
 import { useMemo } from "react";
@@ -123,13 +123,17 @@ export default function LogsComponent({
 
 						return (
 							<div key={index} className="w-full">
-								<div className={`flex items-center gap-2 py-1 px-2 ${bg} rounded-md w-full relative`}>
+								<div
+									className={`flex items-center gap-2 py-1 px-2 ${bg} rounded-md w-full relative`}
+								>
 									<span className="flex items-center min-w-6">{symbol}</span>
-									<pre className={`whitespace-pre-wrap break-words font-mono text-xs ${textColor} flex-1`}>{cleanedLog}</pre>
+									<pre
+										className={`whitespace-pre-wrap break-words font-mono text-xs ${textColor} flex-1`}
+									>
+										{cleanedLog}
+									</pre>
 								</div>
-								{!isLast && (
-									<div className="w-full h-px bg-white/5 my-1" />
-								)}
+								{!isLast && <div className="w-full h-px bg-white/5 my-1" />}
 							</div>
 						);
 					})}
