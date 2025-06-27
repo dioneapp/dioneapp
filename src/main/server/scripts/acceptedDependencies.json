@@ -41,12 +41,12 @@
 		"checkCommand": "conda --version",
 		"versionRegex": "conda (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
-			"windows": "winget install -e --id Anaconda.Miniconda3 --override \"/S /AddToPath=1\" --silent --accept-package-agreements --accept-source-agreements --disable-interactivity",
+			"windows": "curl -o %TEMP%\\Miniconda3.exe https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe && %TEMP%\\Miniconda3.exe /S /AddToPath=1 /D=%USERPROFILE%\\Miniconda3",
 			"linux": "sudo apt install -y conda",
 			"macos": "brew install conda"
 		},
 		"uninstallCommand": {
-			"windows": "winget uninstall -e --id Anaconda.Miniconda3 --silent --accept-source-agreements --disable-interactivity",
+			"windows": "start /wait %USERPROFILE%\\Miniconda3\\Uninstall-Miniconda3.exe /S /RemoveCaches=1 /RemoveConfigFiles=user /RemoveUserData=1",
 			"linux": "sudo apt remove -y conda",
 			"macos": "brew uninstall conda"
 		}
