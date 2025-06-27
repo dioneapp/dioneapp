@@ -1,6 +1,6 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
-import { AlertTriangle, Library, LogIn, Monitor, MonitorDown, Settings, User, X } from "lucide-react";
+import { Library, LogIn, MonitorDown, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
