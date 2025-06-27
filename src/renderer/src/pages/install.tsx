@@ -626,9 +626,11 @@ export default function Install({ id }: { id?: string }) {
 					<div
 						className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl w-full backdrop-blur-md"
 						style={{
-							height: inUseDeps && inUseDeps.length <= 3 ? undefined : '28rem',
-							minHeight: inUseDeps && inUseDeps.length <= 3 ? undefined : '16rem',
-							maxHeight: inUseDeps && inUseDeps.length > 3 ? '28rem' : undefined,
+							height: inUseDeps && inUseDeps.length <= 3 ? undefined : "28rem",
+							minHeight:
+								inUseDeps && inUseDeps.length <= 3 ? undefined : "16rem",
+							maxHeight:
+								inUseDeps && inUseDeps.length > 3 ? "28rem" : undefined,
 						}}
 					>
 						<div className="flex justify-between w-full items-center">
@@ -652,7 +654,7 @@ export default function Install({ id }: { id?: string }) {
 											<label
 												key={index}
 												className={`flex items-center gap-3 py-2 cursor-pointer select-none`}
-												style={{ alignItems: 'flex-start' }}
+												style={{ alignItems: "flex-start" }}
 											>
 												<input
 													type="checkbox"
@@ -661,13 +663,15 @@ export default function Install({ id }: { id?: string }) {
 														setSelectedDeps((prev) =>
 															prev.includes(dep)
 																? prev.filter((d) => d !== dep)
-																: [...prev, dep]
+																: [...prev, dep],
 														);
 													}}
 													className="form-checkbox h-4 w-4 rounded border-white/30 bg-transparent checked:bg-[#BCB1E7] checked:border-[#BCB1E7] focus:ring-0 focus:outline-none mt-0.5"
-													style={{ accentColor: '#BCB1E7' }}
+													style={{ accentColor: "#BCB1E7" }}
 												/>
-												<span className="text-xs text-neutral-300 font-medium">{dep}</span>
+												<span className="text-xs text-neutral-300 font-medium">
+													{dep}
+												</span>
 											</label>
 										);
 									})
@@ -696,7 +700,9 @@ export default function Install({ id }: { id?: string }) {
 									}}
 									className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
 								>
-									<span className="font-semibold">{t("actions.uninstall")}</span>
+									<span className="font-semibold">
+										{t("actions.uninstall")}
+									</span>
 								</button>
 							</div>
 						</div>
