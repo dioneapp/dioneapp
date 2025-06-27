@@ -1,8 +1,8 @@
 import { languages } from "@renderer/translations/translationContext";
 import { useTranslation } from "@renderer/translations/translationContext";
+import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 
 interface LanguageSelectorProps {
 	onSelectLanguage: () => void;
@@ -79,15 +79,15 @@ export default function LanguageSelector({
 											src={
 												key === "ar"
 													? "https://flagcdn.com/eg.svg"
-												: key === "bn"
-													? "https://flagcdn.com/bd.svg"
-												: key === "en"
-													? "https://flagcdn.com/us.svg"
-												: key === "hi"
-													? "https://flagcdn.com/in.svg"
-												: key === "zh"
-													? "https://flagcdn.com/cn.svg"
-												: `https://flagcdn.com/${key}.svg`
+													: key === "bn"
+														? "https://flagcdn.com/bd.svg"
+														: key === "en"
+															? "https://flagcdn.com/us.svg"
+															: key === "hi"
+																? "https://flagcdn.com/in.svg"
+																: key === "zh"
+																	? "https://flagcdn.com/cn.svg"
+																	: `https://flagcdn.com/${key}.svg`
 											}
 											alt={value}
 											className="w-full h-full object-cover object-center overflow-hidden rounded aspect-[5/3] transition-opacity duration-300"
