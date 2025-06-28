@@ -1,6 +1,6 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
-import { Library, LogIn, MonitorDown, Settings, User, X } from "lucide-react";
+import { LaptopIcon, Library, LogIn, MonitorDown, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
@@ -151,12 +151,15 @@ export default function Sidebar() {
 											<button
 												type="button"
 												onClick={() => stopApp(app.appId, app.data.name)}
-												className={`absolute -top-1 -right-1 h-5 w-5 bg-red-500/80 hover:bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex items-center justify-center backdrop-blur-sm`}
+												className={"absolute -top-1 -right-1 h-5 w-5 bg-red-500/80 hover:bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex items-center justify-center backdrop-blur-sm"}
 											>
 												<X className="h-3 w-3 text-white" />
 											</button>
 											<Link
-												to={`/install/${app.appId}`}
+												to={{
+													pathname: `/install/${app.isLocal ? app.data.name : app.appId}`,
+													search: `?isLocal=${app.isLocal}`,
+												}}
 												className={`${config?.compactMode ? "w-12 h-12 rounded-xl" : "w-full h-10 rounded-lg"} hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group`}
 											>
 												<div className={`${config?.compactMode ? "w-8 h-8" : "w-6 h-6"} overflow-hidden flex-shrink-0`}>
@@ -166,11 +169,18 @@ export default function Sidebar() {
 															className="w-full h-full bg-cover bg-center"
 														/>
 													) : (
-														<img
-															src={app.data.logo_url}
-															alt={app.data.name}
-															className="w-full h-full object-cover rounded-lg"
-														/>
+														!app.isLocal && (
+															<img
+																src={app.data.logo_url}
+																alt={app.data.name}
+																className="w-full h-full object-cover rounded-lg"
+															/>
+														)
+													)}
+													{app.isLocal && (
+														<div className="w-full h-full bg-cover bg-center flex justify-center items-center">
+															<LaptopIcon className="h-6 w-6 text-white/70" />
+														</div>
 													)}
 												</div>
 												{!config?.compactMode && (

@@ -5,7 +5,7 @@ import sendEvent from "@renderer/utils/events";
 import { AnimatePresence } from "framer-motion";
 import { ArrowLeft, Bookmark, Share2, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useScriptsContext } from "../components/contexts/ScriptsContext";
 import DeleteLoadingModal from "../components/modals/delete-loading";
@@ -13,7 +13,7 @@ import MissingDepsModal from "../components/modals/missing-deps";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
 
-export default function Install({ id }: { id?: string }) {
+export default function Install({ id, isLocal }: { id?: string, isLocal?: boolean }) {
 	const {
 		setInstalledApps,
 		logs,
@@ -42,6 +42,7 @@ export default function Install({ id }: { id?: string }) {
 		activeApps,
 		appFinished,
 		loadIframe,
+		setLocalApps,
 	} = useScriptsContext();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
@@ -67,7 +68,7 @@ export default function Install({ id }: { id?: string }) {
 	// connect to server
 	useEffect(() => {
 		if (!isServerRunning || !data?.id) return;
-		connectApp(data?.id);
+		connectApp(data?.id, isLocal);
 	}, [isServerRunning]);
 
 	// stop server and show actions if installation finish
@@ -97,6 +98,7 @@ export default function Install({ id }: { id?: string }) {
 	useEffect(() => {
 		async function getData() {
 			if (!id) return;
+			if (isLocal) return;
 			try {
 				const port = await getCurrentPort();
 				const response = await fetch(
@@ -123,8 +125,35 @@ export default function Install({ id }: { id?: string }) {
 			}
 		}
 
-		getData();
-	}, [id]);
+		async function getLocalData() {
+			if (!id) return;
+			if (!isLocal) return;
+			try {
+				const port = await getCurrentPort();
+				console.log('id', id);
+				const response = await fetch(`http://localhost:${port}/local/get/${encodeURIComponent(id)}`);
+				if (response.ok) {
+					const script = await response.json();
+					setData(script);
+				} else {
+					console.log('response', response);
+					throw new Error("Failed to fetch data");
+				}
+			} catch (error) {
+				setError(true);
+				console.error("Error fetching data:", error);
+				addLog(data?.id, "Error fetching script data");
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		if (isLocal) {
+			getLocalData();
+		} else {
+			getData();
+		}
+	}, [id, isLocal]);
 
 	// on get exitRef, stop apps
 	useEffect(() => {
@@ -158,15 +187,28 @@ export default function Install({ id }: { id?: string }) {
 	async function fetchIfDownloaded() {
 		if (data?.name) {
 			const port = await getCurrentPort();
-			const response = await fetch(
-				`http://localhost:${port}/scripts/installed/${data.name}`,
-				{
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
+			let response: Response;
+			if (isLocal) {
+				response = await fetch(
+					`http://localhost:${port}/local/installed/${encodeURIComponent(data.name)}`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
 					},
-				},
-			);
+				);
+			} else {
+				response = await fetch(
+					`http://localhost:${port}/scripts/installed/${data.name}`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					},
+				);
+			}
 			if (response.ok) {
 				const jsonData = await response.json();
 				setInstalled(jsonData);
@@ -178,7 +220,7 @@ export default function Install({ id }: { id?: string }) {
 
 	useEffect(() => {
 		fetchIfDownloaded();
-	}, [data]);
+	}, [data, isLocal]);
 
 	useEffect(() => {
 		if (show[data?.id] === "actions") {
@@ -208,9 +250,15 @@ export default function Install({ id }: { id?: string }) {
 				`Starting download of ${data.name}`,
 			);
 
-			await fetch(`http://localhost:${port}/scripts/download/${id}`, {
-				method: "GET",
-			});
+			if (isLocal) {
+				await fetch(`http://localhost:${port}/local/load/${data.name}`, {
+					method: "GET",
+				});
+			} else {
+				await fetch(`http://localhost:${port}/scripts/download/${id}`, {
+					method: "GET",
+				});
+			}
 
 			if (!installedApps.includes(data.name)) {
 				setInstalledApps((prevApps) => [...prevApps, data.name]);
@@ -320,7 +368,6 @@ export default function Install({ id }: { id?: string }) {
 		try {
 			const port = await getCurrentPort();
 			setDeleteStatus("deleting");
-			console.log("should uninstall deps", deleteDeps);
 			if (deleteDeps) {
 				setDeleteStatus("deleting_deps");
 				const response = await fetch(
@@ -329,7 +376,7 @@ export default function Install({ id }: { id?: string }) {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
-							dioneFile: data.name,
+							dioneFile: encodeURIComponent(data.name),
 							selectedDeps: selectedDeps,
 						}),
 					},
@@ -367,6 +414,7 @@ export default function Install({ id }: { id?: string }) {
 			addLog(data?.id, `Error uninstalling ${data.name}`);
 		}
 		await handleStopApp(data?.id, data?.name);
+		setLocalApps((prev) => prev.filter(app => app.name !== data.name));
 		handleReloadQuickLaunch();
 	}
 
@@ -498,7 +546,7 @@ export default function Install({ id }: { id?: string }) {
 		showToast("default", t("toast.install.retrying").replace("%s", data.name));
 		await handleStopApp(data?.id, data?.name);
 		// setup socket again
-		connectApp(data?.id);
+		connectApp(data?.id, isLocal);
 		await handleDownload();
 	}
 
@@ -711,7 +759,7 @@ export default function Install({ id }: { id?: string }) {
 							</button>
 						</div>
 						<div className="p-12 z-50 absolute right-0">
-							{user && (
+							{user && !isLocal && (
 								<div className="flex items-center gap-2">
 									<button
 										type="button"
@@ -766,6 +814,7 @@ export default function Install({ id }: { id?: string }) {
 									handleStart={handleStart}
 									handleUninstall={handleUninstall}
 									handleDeleteDeps={handleDeleteDeps}
+									isLocal={isLocal}
 								/>
 							)}
 						</AnimatePresence>

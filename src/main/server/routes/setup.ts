@@ -7,6 +7,7 @@ import databaseRouter from "./database";
 import { createDependenciesRouter } from "./dependencies";
 import { createScriptRouter } from "./scripts";
 import searchBarRouter from "./searchbar";
+import { createLocalScriptsRouter } from "./local";
 
 export const setupRoutes = (server: Express, io: Server) => {
 	server.get("/", (_req, res) => {
@@ -28,4 +29,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 
 	// dependencies stuff
 	server.use("/deps", createDependenciesRouter(io));
+
+	// local scripts stuff
+	server.use("/local", createLocalScriptsRouter(io));
 };
