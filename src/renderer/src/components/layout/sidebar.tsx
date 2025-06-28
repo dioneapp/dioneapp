@@ -159,17 +159,17 @@ export default function Sidebar() {
 												to={`/install/${app.appId}`}
 												className={`${config?.compactMode ? "w-12 h-12 rounded-xl" : "w-full h-10 rounded-lg"} hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group`}
 											>
-												<div className={`${config?.compactMode ? "w-8 h-8" : "w-6 h-6"} overflow-hidden flex-shrink-0`}>
+												<div className={`${config?.compactMode ? "w-8 h-8" : "w-6 h-6"} overflow-hidden flex-shrink-0 rounded-lg`}>
 													{app.data.logo_url?.startsWith("linear-gradient") ? (
 														<div
 															style={{ backgroundImage: app.data.logo_url }}
-															className="w-full h-full bg-cover bg-center"
+															className="w-full h-full bg-cover bg-center rounded-lg"
 														/>
 													) : (
 														<img
 															src={app.data.logo_url}
 															alt={app.data.name}
-															className="w-full h-full object-cover rounded-lg"
+															className="w-full h-full object-cover"
 														/>
 													)}
 												</div>
