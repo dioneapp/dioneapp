@@ -253,7 +253,7 @@ export default function Sidebar() {
 					>
 						{user && (
 							<Link
-								className={`overflow-hidden flex items-center justify-center transition-opacity duration-200 ${loading ? "cursor-auto" : ""} h-9 w-9 rounded-full ${!user?.avatar_url && "border border-white/20"}`}
+								className={`cursor-pointer overflow-hidden flex items-center justify-center transition-opacity duration-200 ${loading ? "cursor-auto" : ""} h-9 w-9 rounded-full ${!user?.avatar_url && "border border-white/20"}`}
 								to="/account"
 								onMouseEnter={
 									!loading ? () => setHoveredTooltip("account") : undefined
@@ -312,7 +312,7 @@ export default function Sidebar() {
 								<button
 									type="button"
 									className="p-2 bg-white text-black border rounded-full border-white/10 hover:bg-white/80 transition-colors flex gap-1 items-center justify-start cursor-pointer relative"
-									onClick={() => navigate("/first-time")}
+									onClick={() => navigate("/first-time?login=true")}
 									onMouseEnter={() => setHoveredTooltip("login")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
