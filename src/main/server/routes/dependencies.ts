@@ -236,7 +236,8 @@ export const createDependenciesRouter = (io: Server) => {
 
 	router.post("/uninstall", async (req, res) => {
 		const root = process.cwd();
-		const sanitizedName = req.body.dioneFile.replace(/\s+/g, "-");
+		const name = decodeURIComponent(req.body.dioneFile);
+		const sanitizedName = name.replace(/\s+/g, "-");
 		const settings = readConfig();
 		const selectedDeps = req.body.selectedDeps;
 		const dioneFile = `${path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName, "dione.json")}`;

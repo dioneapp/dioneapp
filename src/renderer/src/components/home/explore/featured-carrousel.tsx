@@ -2,7 +2,7 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import type { Script } from "./feed/types";
+import type { Script } from "../feed/types";
 
 export default function FeaturedCarousel() {
 	const [scripts, setScripts] = useState<Script[]>([]);

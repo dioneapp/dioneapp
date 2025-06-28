@@ -90,7 +90,12 @@ export async function sendDiscordReport(
 			"send-discord-report",
 			message,
 		);
-		console.log("Discord report sent successfully");
+		if (success === "true") {
+			console.log("Discord report sent successfully");
+		}
+		if (success === "dev-mode") {
+			console.log("Discord report are disabled in dev mode");
+		}
 		return success;
 	} catch (err) {
 		console.error("Failed to send Discord report:", err);
