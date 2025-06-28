@@ -122,6 +122,7 @@ export const zh = {
 	// sidebar component
 	sidebar: {
 		tagline: "探索、安装、创新 — 一键完成。",
+		activeApps: "活跃应用",
 		update: {
 			title: "有可用更新",
 			description: "Dione 的新版本可用，请重新启动应用程序以进行更新。",

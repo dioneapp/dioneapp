@@ -125,7 +125,8 @@ export const ru = {
 
 	// sidebar component
 	sidebar: {
-		tagline: "Исследуйте, устанавливайте, внедряйте инновации — в 1 клик.",
+		tagline: "Исследуйте, Устанавливайте, Инновации — в 1 Клик.",
+		activeApps: "Активные Приложения",
 		update: {
 			title: "Доступно обновление",
 			description:
