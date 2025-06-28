@@ -53,6 +53,5 @@ npmRebuild: false
 publish:
   provider: github
   token: {env.GITHUB_TOKEN}
-  releaseNotes: CHANGELOG.md
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

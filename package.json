@@ -66,10 +66,7 @@
 				"repo": "dioneapp",
 				"releaseType": "release"
 			}
-		],
-		"releaseInfo": {
-			"releaseNotesFile": "CHANGELOG.md"
-		}
+		]
 	},
 	"dependencies": {
 		"@electron-toolkit/preload": "^3.0.2",
