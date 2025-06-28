@@ -1,5 +1,6 @@
 import type { Socket } from "socket.io-client";
 
+// Auth context
 export interface AuthContextType {
 	user: any;
 	setUser: React.Dispatch<React.SetStateAction<any>>;
@@ -11,7 +12,8 @@ export interface AuthContextType {
 	checkAccess: () => void;
 }
 
-export interface AppContextType {
+// Scripts context
+export interface ScriptsContextType {
 	setInstalledApps: React.Dispatch<React.SetStateAction<any[]>>;
 	installedApps: any[];
 	socket: any;
@@ -69,4 +71,34 @@ export interface AppContextType {
 	appFinished: Record<string, boolean>;
 	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	loadIframe: (port: number) => void;
+}
+
+// Socket types
+export interface SetupSocketProps {
+	appId: string;
+	addLog: (appId: string, log: string) => void;
+	port: number;
+	setMissingDependencies: React.Dispatch<React.SetStateAction<any>>;
+	setIframeAvailable: React.Dispatch<React.SetStateAction<boolean>>;
+	setCatchPort: React.Dispatch<React.SetStateAction<number | undefined>>;
+	loadIframe: (port: number) => void;
+	setIframeSrc: React.Dispatch<React.SetStateAction<string>>;
+	errorRef: React.MutableRefObject<boolean>;
+	showToast: (
+		variant: "default" | "success" | "error" | "warning",
+		message: string,
+		fixed?: "true" | "false",
+		button?: boolean,
+		buttonText?: string,
+		buttonAction?: () => void,
+	) => void;
+	stopCheckingRef: React.MutableRefObject<boolean>;
+	statusLog: Record<string, { status: string; content: string }>;
+	setStatusLog: React.Dispatch<
+		React.SetStateAction<Record<string, { status: string; content: string }>>
+	>;
+	setDeleteLogs: React.Dispatch<React.SetStateAction<string[]>>;
+	data: any;
+	socketsRef: React.MutableRefObject<Record<string, Socket>>;
+	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 }
