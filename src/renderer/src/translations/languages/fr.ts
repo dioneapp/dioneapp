@@ -344,6 +344,12 @@ export const fr = {
 		},
 	},
 
+	// local component
+	local: {
+		title: "Scripts locaux",
+		upload: "Télécharger le script",
+	},
+
 	// feed component
 	feed: {
 		noScripts: "Aucun script trouvé",

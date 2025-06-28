@@ -341,6 +341,12 @@ export const id = {
 		},
 	},
 
+	// local component
+	local: {
+		title: "Skrip Lokal",
+		upload: "Unggah Skrip",
+	},
+
 	// feed component
 	feed: {
 		noScripts: "Tidak ada skrip ditemukan",

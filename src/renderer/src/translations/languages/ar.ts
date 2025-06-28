@@ -331,6 +331,12 @@ export const ar = {
 		},
 	},
 
+	// local component
+	local: {
+		title: "السلاسل المحلية",
+		upload: "تحميل السكربت",
+	},
+
 	// feed component
 	feed: {
 		noScripts: "لم يتم العثور على برامج نصية",

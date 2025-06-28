@@ -333,6 +333,12 @@ export const hi = {
 		},
 	},
 
+	// local component
+	local: {
+		title: "स्क्रिप्ट",
+		upload: "स्क्रिप्ट अपलोड",
+	},
+
 	// feed component
 	feed: {
 		noScripts: "कोई स्क्रिप्ट नहीं मिली",

@@ -333,6 +333,12 @@ export const bn = {
 		},
 	},
 
+	// local component
+	local: {
+		title: "লোকাল স্ক্রিপ্ট",
+		upload: "স্ক্রিপ্ট আপলোড করুন",
+	},
+
 	// feed component
 	feed: {
 		noScripts: "কোনো স্ক্রিপ্ট পাওয়া যায়নি",

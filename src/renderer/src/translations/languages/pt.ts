@@ -344,6 +344,12 @@ export const pt = {
 		},
 	},
 
+	// local component
+	local: {
+		title: "Scripts locais",
+		upload: "Carregar script",
+	},
+
 	// feed component
 	feed: {
 		noScripts: "Nenhum script encontrado",
