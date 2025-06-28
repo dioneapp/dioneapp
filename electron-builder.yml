@@ -22,8 +22,9 @@ win:
     - name: dione
       schemes:
         - dione
+  artifactName: Dione-${version}-Installer-Windows.${ext}
 nsis:
-  artifactName: ${name}-${version}-setup.${ext}
+  artifactName: Dione-${version}-Installer-Windows.${ext}
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
@@ -36,7 +37,7 @@ mac:
     - NSDownloadsFolderUsageDescription: Application requests access to the user's Downloads folder.
   notarize: false
 dmg:
-  artifactName: ${name}-${version}.${ext}
+  artifactName: Dione-${version}-Installer-macOS.${ext}
 linux:
   target:
     - AppImage
@@ -48,11 +49,14 @@ linux:
   desktop:
     exec: dione %u
 appImage:
-  artifactName: ${name}-${version}.${ext}
+  artifactName: Dione-${version}-Installer-Linux.${ext}
+deb:
+  artifactName: Dione-${version}-Installer-Linux.${ext}
+snap:
+  artifactName: Dione-${version}-Installer-Linux.${ext}
 npmRebuild: false
 publish:
   provider: github
   token: {env.GITHUB_TOKEN}
-  releaseNotes: CHANGELOG.md
 electronDownload:
   mirror: https://npmmirror.com/mirrors/electron/

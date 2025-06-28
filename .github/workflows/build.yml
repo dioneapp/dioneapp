@@ -1,0 +1,156 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.0)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build application
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            pnpm run build:mac
+          elif [ "$RUNNER_OS" = "Linux" ]; then
+            pnpm run build:linux
+          elif [ "$RUNNER_OS" = "Windows" ]; then
+            pnpm run build:win
+          fi
+
+      - name: List build outputs
+        shell: bash
+        run: |
+          echo "📁 Contents of current directory:"
+          ls -la
+          
+          echo "📁 Contents of dist/ directory:"
+          ls -la dist/ 2>/dev/null || echo "dist/ directory not found"
+          
+          echo "📁 Contents of out/ directory:"
+          ls -la out/ 2>/dev/null || echo "out/ directory not found"
+          
+          echo "🔍 Looking for any build artifacts:"
+          find . -name "*.exe" -o -name "*.dmg" -o -name "*.AppImage" -o -name "*.deb" -o -name "*.snap" -o -name "*.msi" -o -name "*.zip" 2>/dev/null || echo "No build artifacts found"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ runner.os }}-build
+          path: |
+            dist/Dione-*-Installer-*.exe
+            dist/Dione-*-Installer-*.dmg
+            dist/Dione-*-Installer-*.AppImage
+            dist/Dione-*-Installer-*.deb
+            dist/Dione-*-Installer-*.snap
+            dist/Dione-*-Installer-*.msi
+          retention-days: 30
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Prepare release files
+        run: |
+          mkdir -p release-files
+          
+          echo "🔍 Checking artifacts directory structure:"
+          find artifacts -type f -name "*" | head -20
+          
+          echo "📁 Contents of artifacts directory:"
+          ls -la artifacts/
+          
+          # copy macos files - check all subdirectories
+          echo "🍎 Looking for macOS files..."
+          find artifacts -name "*.dmg" -exec cp {} release-files/ \;
+          find artifacts -name "*.zip" -exec cp {} release-files/ \;
+          
+          # copy windows files - check all subdirectories  
+          echo "🪟 Looking for Windows files..."
+          find artifacts -name "*.exe" -exec cp {} release-files/ \;
+          find artifacts -name "*.msi" -exec cp {} release-files/ \;
+          
+          # copy linux files - check all subdirectories
+          echo "🐧 Looking for Linux files..."
+          find artifacts -name "*.AppImage" -exec cp {} release-files/ \;
+          find artifacts -name "*.deb" -exec cp {} release-files/ \;
+          find artifacts -name "*.snap" -exec cp {} release-files/ \;
+          find artifacts -name "*.rpm" -exec cp {} release-files/ \;
+          
+          echo "📦 Release files prepared:"
+          ls -la release-files/
+          
+          # check if any files were found
+          if [ -z "$(ls -A release-files/)" ]; then
+            echo "❌ No release files found!"
+            echo "🔍 Let's see what's actually in the artifacts:"
+            find artifacts -type f
+            exit 1
+          fi
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: Dione v${{ github.event.inputs.version }}
+          body: |
+            ## Downloads
+            
+            This release includes builds for:
+            - macOS (.dmg)
+            - Windows (.exe)
+            - Linux (.AppImage, .deb, .snap)
+            
+            ## Changes
+            
+            See the [changelog](https://github.com/dioneapp/dioneapp/blob/main/CHANGELOG.md) for detailed changes.
+          files: release-files/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show release info
+        run: |
+          echo "✅ Release v${{ github.event.inputs.version }} created successfully!"
+          echo "📦 Files uploaded:"
+          ls -la release-files/ 
