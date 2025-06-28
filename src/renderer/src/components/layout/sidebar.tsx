@@ -6,8 +6,8 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { openLink } from "../../utils/openLink";
 import { useAuthContext } from "../contexts/AuthContext";
-import Icon from "../icons/icon";
 import { useScriptsContext } from "../contexts/ScriptsContext";
+import Icon from "../icons/icon";
 import QuickLaunch from "./quick-launch";
 
 export default function Sidebar() {
