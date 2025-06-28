@@ -99,9 +99,6 @@ export function AuthContextProvider({
 				console.log("User its a tester");
 			} else {
 				console.log("User is not a tester");
-				if (pathname !== "/no_access") {
-					navigate("/no_access");
-				}
 			}
 		}
 	}

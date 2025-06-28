@@ -14,7 +14,6 @@ export default function SearchBar() {
 			return;
 		}
 		setType(name);
-		console.log("setting type to", name);
 	}
 
 	return (

@@ -169,7 +169,6 @@ export default function Settings() {
 			"save-dir",
 			`${config.defaultInstallFolder}\\apps`,
 		);
-		console.log("result", result);
 		if (!result.canceled && result.filePaths[0]) {
 			handleUpdate({ defaultInstallFolder: result.filePaths[0] });
 		}
@@ -180,7 +179,6 @@ export default function Settings() {
 			"save-dir",
 			config.defaultLogsPath,
 		);
-		console.log("result", result);
 		if (!result.canceled && result.filePaths[0]) {
 			handleUpdate({ defaultLogsPath: result.filePaths[0] });
 		}

@@ -123,7 +123,6 @@ router.get("/set-session", async (req, res) => {
 			logger.info(`Session established successfully: ${data.user?.id}`);
 			const userId = data.user?.id;
 			const now = new Date().toISOString();
-			console.log(`Attempting to update user with ID: ${userId}`);
 
 			if (!userId) {
 				logger.error("User ID is missing from session");
@@ -455,7 +454,6 @@ router.post("/events", async (req, res) => {
 			);
 			res.send(error).status(500);
 		} else {
-			console.log("data", data);
 			logger.info(`Event updated successfully: ${data.id}`);
 			res.send(data).status(200);
 		}

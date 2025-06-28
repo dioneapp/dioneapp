@@ -75,7 +75,6 @@ async function isDependencyInstalled(
 		const config = dependencyConfig[dependency];
 		const output = await execSync(config.checkCommand);
 		const installedVersion = output.toString().trim();
-		console.log("dependency", dependency, "version", installedVersion);
 
 		if (requiredVersion === "latest") {
 			return { isValid: true, reason: "required-version" };

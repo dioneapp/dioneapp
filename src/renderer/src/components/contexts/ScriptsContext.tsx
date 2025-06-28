@@ -269,7 +269,6 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 						}),
 				),
 			).then((results) => {
-				console.log(results);
 				setActiveApps(results);
 			});
 		}
@@ -294,7 +293,6 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	const handleStopApp = async (appId: string, appName: string) => {
 		try {
-			console.log(appId, appName);
 			const port = await getCurrentPort();
 			const response = await fetch(
 				`http://localhost:${port}/scripts/stop/${appName}/${appId}`,

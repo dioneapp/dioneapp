@@ -12,7 +12,6 @@ router.use(express.json());
 // read config
 router.get("/", (_req, res) => {
 	const config = readConfig();
-	console.log("sending config", config);
 	res.send(config);
 });
 

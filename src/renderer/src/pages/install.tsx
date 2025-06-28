@@ -335,7 +335,6 @@ export default function Install({ id }: { id?: string }) {
 					},
 				);
 				const result = await response.json();
-				console.log("result", result);
 				if (result.success) {
 					await uninstallApp(port);
 				} else {
@@ -448,9 +447,7 @@ export default function Install({ id }: { id?: string }) {
 			body: JSON.stringify({ dioneFile: data?.name }),
 		});
 		const result = await response.json();
-		console.log("result", result);
 		const depsArray = Object.keys(result.result);
-		console.log("this scripts uses:", depsArray);
 		setInUseDeps(depsArray);
 		setSelectedDeps(depsArray);
 		return depsArray;
@@ -551,7 +548,6 @@ export default function Install({ id }: { id?: string }) {
 				const eventId = savedApps.find(
 					(app) => app.appId === data?.id,
 				)?.eventId;
-				console.log("eventId", eventId);
 				if (!eventId) return;
 				const result = await sendEvent({
 					id: eventId,
@@ -570,12 +566,6 @@ export default function Install({ id }: { id?: string }) {
 
 	useEffect(() => {
 		if (savedApps.some((app) => app.appId === data?.id)) {
-			console.log("appid", data?.id);
-			console.log("savedApps", savedApps);
-			console.log(
-				"saved",
-				savedApps.some((app) => app.appId === data?.id),
-			);
 			setSaved(true);
 		}
 	}, [savedApps, data]);
@@ -596,10 +586,6 @@ export default function Install({ id }: { id?: string }) {
 			loadIframe(catchPort as number);
 		}
 	}, []);
-
-	useEffect(() => {
-		console.log("selectedDeps", selectedDeps);
-	}, [selectedDeps]);
 
 	return (
 		<>
