@@ -169,7 +169,7 @@ export default function Sidebar() {
 														<img
 															src={app.data.logo_url}
 															alt={app.data.name}
-															className="w-full h-full object-cover"
+															className="w-full h-full object-cover rounded-lg"
 														/>
 													)}
 												</div>
