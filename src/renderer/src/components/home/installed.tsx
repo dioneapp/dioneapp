@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import Icon from "../icons/icon";
-import { useAppContext } from "../layout/global-context";
 import ScriptCard from "./feed/card";
 import Loading from "./loading-skeleton";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function Installed() {
 	const { t } = useTranslation();
-	const { installedApps } = useAppContext();
+	const { installedApps } = useScriptsContext();
 	const [apps, setApps] = useState<any[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const CACHE_KEY = "appsCache";

@@ -14,7 +14,7 @@ import {
 import type { JSX } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import { useAppContext } from "../layout/global-context";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 
 interface LogsProps {
 	logs: Record<string, string[]>;
@@ -33,7 +33,7 @@ export default function LogsComponent({
 	setShow,
 	appId,
 }: LogsProps) {
-	const { statusLog } = useAppContext();
+	const { statusLog } = useScriptsContext();
 	const { t } = useTranslation();
 	const Spinner = useMemo(() => {
 		if (statusLog[appId]?.status === "pending" || !statusLog[appId]?.status) {

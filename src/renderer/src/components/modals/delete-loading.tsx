@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { CheckCircle, Loader2, X, XCircle } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import { useAppContext } from "./global-context";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function DeleteLoadingModal({
 	status,
@@ -12,7 +12,7 @@ export default function DeleteLoadingModal({
 	onClose: () => void;
 }) {
 	const { t } = useTranslation();
-	const { deleteLogs } = useAppContext();
+	const { deleteLogs } = useScriptsContext();
 	const countdownRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {

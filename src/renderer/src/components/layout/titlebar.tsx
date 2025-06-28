@@ -1,11 +1,11 @@
 import { Minus, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import { useAppContext } from "../layout/global-context";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function Titlebar() {
 	const { t } = useTranslation();
-	const { isServerRunning, setExitRef } = useAppContext();
+	const { isServerRunning, setExitRef } = useScriptsContext();
 	const [showModal, setShowModal] = useState(false);
 
 	const handleClose = async () => {

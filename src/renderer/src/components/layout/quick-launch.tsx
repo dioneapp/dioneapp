@@ -3,7 +3,7 @@ import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
-import { useAppContext } from "./global-context";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function QuickLaunch({
 	compactMode,
@@ -16,7 +16,7 @@ export default function QuickLaunch({
 		setRemovedApps,
 		availableApps,
 		removedApps,
-	} = useAppContext(); // change "apps" later
+	} = useScriptsContext(); // change "apps" later
 	const [showAppList, setShowAppList] = useState<boolean>(false);
 	const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
 	const maxApps = 6;

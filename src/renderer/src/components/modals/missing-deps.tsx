@@ -122,7 +122,7 @@ export default function MissingDepsModal({
 				throw new Error(response.statusText);
 			}
 
-			if (!error) {
+			if (!error && !logs.includes("error")) {
 				await onFinish();
 			}
 		} catch (error: any) {

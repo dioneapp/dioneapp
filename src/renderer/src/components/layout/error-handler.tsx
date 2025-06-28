@@ -1,7 +1,7 @@
 // src/components/ErrorBoundary.tsx
 import ErrorPage from "@renderer/pages/error";
 import React from "react";
-import { useAppContext } from "./global-context";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 
 interface ErrorBoundaryProps {
 	children: React.ReactNode;
@@ -26,7 +26,7 @@ export class ErrorBoundary extends React.Component<
 	}
 
 	async stopApps() {
-		const { activeApps, handleStopApp } = useAppContext();
+		const { activeApps, handleStopApp } = useScriptsContext();
 		for (const app of activeApps) {
 			handleStopApp(app.id, app.name);
 		}

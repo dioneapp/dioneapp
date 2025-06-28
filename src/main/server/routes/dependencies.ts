@@ -200,12 +200,12 @@ export const createDependenciesRouter = (io: Server) => {
 					output: "🎉 Installation completed successfully!",
 				});
 			});
-		} catch (error) {
+		} catch (error: any) {
 			console.error("Server error:", error);
-			res.write(`❌ Server error: ${(error as Error).message}\n`);
+			res.write(`❌ Server error: ${error.message}\n`);
 			io.to(id).emit("installDep", {
 				name: "all",
-				output: `❌ Server error: ${(error as Error).message}`,
+				output: `❌ Server error: ${error.message}`,
 			});
 			res.end();
 		}

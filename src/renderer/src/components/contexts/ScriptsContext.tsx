@@ -10,7 +10,7 @@ import {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Socket } from "socket.io-client";
-import { setupSocket } from "../contexts/scripts/setupSocket";
+import { setupSocket } from "./scripts/setupSocket";
 
 interface AppContextType {
 	setInstalledApps: React.Dispatch<React.SetStateAction<any[]>>;
@@ -74,7 +74,7 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export function GlobalContext({ children }: { children: React.ReactNode }) {
+export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	// socket ref
 	const [sockets, setSockets] = useState<Record<string, Socket>>({}); // multiple sockets
 	const socketsRef = useRef<{ [key: string]: Socket }>({});
@@ -229,8 +229,6 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 				await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
 		}
-
-		console.log("isAvailable", isAvailable);
 		if (isAvailable) {
 			stopCheckingRef.current = true;
 			setIframeSrc(`http://localhost:${localPort}`);
@@ -244,108 +242,6 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 			);
 		}
 	};
-
-	// async function setupSocket() {
-	// 	try {
-	// 		if (socketRef.current) {
-	// 			socketRef.current.disconnect();
-	// 			socketRef.current.removeAllListeners();
-	// 			console.log("socketRef.current", socketRef.current);
-	// 		}
-
-	// 		const port = await getCurrentPort();
-	// 		socketRef.current = io(`http://localhost:${port}`);
-
-	// 		socketRef.current.on("clientUpdate", (message: string) => {
-	// 			console.log("Received log:", message);
-	// 			setLogs((prevLogs) => [...prevLogs, message]);
-	// 		});
-
-	// 		socketRef.current.on("connect", () => {
-	// 			console.log("Connected to socket:", socketRef.current?.id);
-	// 			setLogs((prevLogs) => [...prevLogs, "Connected to server"]);
-	// 		});
-
-	// 		socketRef.current.on("disconnect", () => {
-	// 			console.log("Socket disconnected");
-	// 			setLogs((prevLogs) => [...prevLogs, "Disconnected from server"]);
-	// 		});
-
-	// 		socketRef.current.on("missingDeps", (data) => {
-	// 			setMissingDependencies(data);
-	// 		});
-
-	// 		socketRef.current.on(
-	// 			"installUpdate",
-	// 			(message: { type: string; content: string; status: string }) => {
-	// 				const { type, status, content } = message;
-	// 				console.log("Received log:", message);
-	// 				if (content.toLowerCase().includes("error") || status === "error") {
-	// 					errorRef.current = true;
-	// 				}
-	// 				// launch iframe if server is running
-	// 				if (
-	// 					(type === "log" || type === "info") &&
-	// 					(content.toLowerCase().includes("started server") ||
-	// 						content.toLowerCase().includes("http") ||
-	// 						content.toLowerCase().includes("127.0.0.1") ||
-	// 						content.toLowerCase().includes("localhost") ||
-	// 						content.toLowerCase().includes("0.0.0.0"))
-	// 				) {
-	// 					const match = content
-	// 						.replace(/\x1b\[[0-9;]*m/g, "")
-	// 						.match(
-	// 							/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i,
-	// 						);
-	// 					console.log(match);
-	// 					if (match) {
-	// 						loadIframe(Number.parseInt(match[1]));
-	// 					}
-	// 				}
-	// 				if (type === "log") {
-	// 					setLogs((prevLogs) => [...prevLogs, content]);
-	// 					if (content.includes("Cant kill process")) {
-	// 						showToast(
-	// 							"error",
-	// 							"Error stopping script, please try again later or do it manually.",
-	// 						);
-	// 					}
-	// 				}
-	// 				if (type === "status") {
-	// 					setStatusLog({ status: status || "pending", content });
-	// 					if (content.toLowerCase().includes("actions executed")) {
-	// 						console.log("Redirecting...");
-	// 						stopCheckingRef.current = true;
-	// 						setShow("actions");
-	// 					}
-	// 				}
-	// 				if (type === "catch") {
-	// 					stopCheckingRef.current = false;
-	// 					setIframeAvailable(false);
-	// 					// loadIframe(Number.parseInt(content));
-	// 					setCatchPort(Number.parseInt(content));
-	// 				}
-
-	// 				if (content === "Script killed successfully" && !errorRef.current) {
-	// 					stopCheckingRef.current = true;
-	// 					showToast(
-	// 						"success",
-	// 						`${data?.name || "Script"} exited successfully.`,
-	// 					);
-	// 				}
-	// 			},
-	// 		);
-
-	// 		socketRef.current.on("deleteUpdate", (message: string) => {
-	// 			console.log("Received log:", message);
-	// 			setDeleteLogs((prevLogs) => [...prevLogs, message]);
-	// 		});
-	// 	} catch (error) {
-	// 		setError(true);
-	// 		console.error("Error setting up socket:", error);
-	// 		setLogs((prevLogs) => [...prevLogs, "Error setting up socket"]);
-	// 	}
-	// }
 
 	async function connectApp(appId: string) {
 		if (socketsRef.current[appId]) return;
@@ -554,7 +450,7 @@ export function GlobalContext({ children }: { children: React.ReactNode }) {
 	);
 }
 
-export function useAppContext() {
+export function useScriptsContext() {
 	const context = useContext(AppContext);
 	if (!context) {
 		throw new Error("Context must be used within an provider");

@@ -3,7 +3,7 @@ import "@assets/main.css";
 import ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
 import App from "./App";
-import { GlobalContext } from "./components/layout/global-context";
+import { ScriptsContext } from "./components/contexts/ScriptsContext";
 import "./assets/main.css";
 import { AuthContextProvider } from "./components/contexts/AuthContext";
 import { TranslationProvider } from "./translations/translationContext";
@@ -14,9 +14,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 		<TranslationProvider>
 			<ToastProvider>
 				<AuthContextProvider>
-					<GlobalContext>
+					<ScriptsContext>
 						<App />
-					</GlobalContext>
+					</ScriptsContext>
 				</AuthContextProvider>
 			</ToastProvider>
 		</TranslationProvider>

@@ -7,7 +7,7 @@ import { useTranslation } from "../../translations/translationContext";
 import { openLink } from "../../utils/openLink";
 import { useAuthContext } from "../contexts/AuthContext";
 import Icon from "../icons/icon";
-import { useAppContext } from "./global-context";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 import QuickLaunch from "./quick-launch";
 
 export default function Sidebar() {
@@ -15,7 +15,7 @@ export default function Sidebar() {
 	const { user, loading } = useAuthContext();
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
-	const { isServerRunning, activeApps, handleStopApp } = useAppContext();
+	const { isServerRunning, activeApps, handleStopApp } = useScriptsContext();
 	const [avatarError, setAvatarError] = useState(false);
 
 	// updates
