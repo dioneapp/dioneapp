@@ -67,12 +67,8 @@ jobs:
         with:
           name: ${{ runner.os }}-build
           path: |
-            dist/Dione-*-Installer-*.exe
-            dist/Dione-*-Installer-*.dmg
-            dist/Dione-*-Installer-*.AppImage
-            dist/Dione-*-Installer-*.deb
-            dist/Dione-*-Installer-*.snap
-            dist/Dione-*-Installer-*.msi
+            dist/
+            out/
           retention-days: 30
 
   release:
@@ -131,17 +127,13 @@ jobs:
         with:
           tag_name: v${{ github.event.inputs.version }}
           name: Dione v${{ github.event.inputs.version }}
-          body: |
+          body: |  
             ## Downloads
             
             This release includes builds for:
             - macOS (.dmg)
             - Windows (.exe)
             - Linux (.AppImage, .deb, .snap)
-            
-            ## Changes
-            
-            See the [changelog](https://github.com/dioneapp/dioneapp/blob/main/CHANGELOG.md) for detailed changes.
           files: release-files/*
           draft: false
           prerelease: false
