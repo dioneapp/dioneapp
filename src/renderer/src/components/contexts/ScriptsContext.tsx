@@ -10,10 +10,10 @@ import {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Socket } from "socket.io-client";
-import { setupSocket } from "./scripts/setupSocket";
-import type { AppContextType } from "./types/context-types";
+import { setupSocket } from "./scripts/setup-socket";
+import type { ScriptsContextType } from "./types/context-types";
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const AppContext = createContext<ScriptsContextType | undefined>(undefined);
 
 export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	// socket ref
