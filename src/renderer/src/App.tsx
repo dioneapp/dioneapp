@@ -74,8 +74,10 @@ function App() {
 
 	const getPage = () => {
 		if (pathname.startsWith("/install/")) {
+			const searchParams = new URLSearchParams(location.search);
+			const isLocal = searchParams.get("isLocal");
 			const id = pathname.split("/")[2];
-			return () => <Install id={id} />;
+			return () => <Install id={id} isLocal={isLocal === "true"} />;
 		}
 
 		return routes[pathname as keyof typeof routes] || Home;
@@ -95,7 +97,8 @@ function App() {
 						id={
 							pathname.includes("/install") ||
 							pathname === "/account" ||
-							pathname === "/first-time"
+							pathname === "/first-time" ||
+							pathname === "/library"
 								? ""
 								: pathname === "/settings"
 									? "settings"
