@@ -44,14 +44,10 @@ export default function LogsComponent({
 
 	function cleanLogLine(log: string): string {
 		return log
-			.replace(/\s*\x1B\[[0-9;]*[a-zA-Z]\s*/g, "")
-			.replace(
-				/\s*[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]\s*/g,
-				"",
-			)
-			.replace(/\s*\[[^\]]*\]\s*/g, "")
+			.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, "")
+			.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, "")
+			.replace(/^\s*\[[^\]]*\]\s*/, "")
 			.replace(/^\s*(ERROR:|WARN:|INFO:|OUT:)\s*/i, "")
-			.replace(/\s{2,}/g, " ")
 			.trim();
 	}
 
