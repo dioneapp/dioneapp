@@ -74,7 +74,6 @@
 		"@supabase/supabase-js": "^2.49.4",
 		"@tailwindcss/vite": "^4.1.6",
 		"cors": "^2.8.5",
-		"dotenv": "^16.5.0",
 		"electron-store": "^10.0.1",
 		"electron-updater": "^6.6.2",
 		"express": "^5.1.0",
