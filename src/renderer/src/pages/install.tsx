@@ -13,7 +13,10 @@ import MissingDepsModal from "../components/modals/missing-deps";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
 
-export default function Install({ id, isLocal }: { id?: string, isLocal?: boolean }) {
+export default function Install({
+	id,
+	isLocal,
+}: { id?: string; isLocal?: boolean }) {
 	const {
 		setInstalledApps,
 		logs,
@@ -130,13 +133,15 @@ export default function Install({ id, isLocal }: { id?: string, isLocal?: boolea
 			if (!isLocal) return;
 			try {
 				const port = await getCurrentPort();
-				console.log('id', id);
-				const response = await fetch(`http://localhost:${port}/local/get/${encodeURIComponent(id)}`);
+				console.log("id", id);
+				const response = await fetch(
+					`http://localhost:${port}/local/get/${encodeURIComponent(id)}`,
+				);
 				if (response.ok) {
 					const script = await response.json();
 					setData(script);
 				} else {
-					console.log('response', response);
+					console.log("response", response);
 					throw new Error("Failed to fetch data");
 				}
 			} catch (error) {
@@ -414,7 +419,7 @@ export default function Install({ id, isLocal }: { id?: string, isLocal?: boolea
 			addLog(data?.id, `Error uninstalling ${data.name}`);
 		}
 		await handleStopApp(data?.id, data?.name);
-		setLocalApps((prev) => prev.filter(app => app.name !== data.name));
+		setLocalApps((prev) => prev.filter((app) => app.name !== data.name));
 		handleReloadQuickLaunch();
 	}
 

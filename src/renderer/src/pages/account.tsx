@@ -1,10 +1,10 @@
+import { StatCard } from "@renderer/components/account/stat-card";
 import { motion } from "framer-motion";
 import { Calendar, Clock, Flame, LogOut, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
-import { StatCard } from "@renderer/components/account/stat-card";
 
 export default function Account() {
 	const { t } = useTranslation();
@@ -138,18 +138,18 @@ export default function Account() {
 							/>
 							{/* Sessions and apps shared */}
 							<div className="col-span-2 gap-4 flex flex-col">
-							<StatCard
-								title={t("account.stats.sessions.title")}
-								subtitle={t("account.stats.sessions.subtitle")}
-								value={data.sessions.length}
-								icon={Calendar}
-							/>
-							<StatCard
-								title={t("account.stats.shared.title")}
-								subtitle={t("account.stats.shared.subtitle")}
-								value={data.shared.length}
-								icon={Share2}
-							/>
+								<StatCard
+									title={t("account.stats.sessions.title")}
+									subtitle={t("account.stats.sessions.subtitle")}
+									value={data.sessions.length}
+									icon={Calendar}
+								/>
+								<StatCard
+									title={t("account.stats.shared.title")}
+									subtitle={t("account.stats.shared.subtitle")}
+									value={data.shared.length}
+									icon={Share2}
+								/>
 							</div>
 							{/* Consecutive days */}
 							<StatCard
@@ -160,7 +160,7 @@ export default function Account() {
 								className="col-span-2 sm:col-span-1 md:col-span-full"
 								isStreak
 								streakDays={consecutiveDays}
-								>
+							>
 								{t("account.stats.streak.days")}
 							</StatCard>
 						</motion.div>
@@ -177,22 +177,22 @@ export default function Account() {
 const LogoutButton = ({ logout }: { logout: () => void }) => {
 	const { t } = useTranslation();
 	return (
-	<motion.div
-		initial={{ opacity: 0, y: 20 }}
-		animate={{ opacity: 1, y: 0 }}
-		transition={{ delay: 0.6, duration: 0.3 }}
-		className="flex justify-end mb-auto"
-	>
-		<motion.button
-			onClick={logout}
-			className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 rounded-lg transition-all duration-300 text-red-400 hover:text-red-300 backdrop-blur-sm cursor-pointer"
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			transition={{ delay: 0.6, duration: 0.3 }}
+			className="flex justify-end mb-auto"
 		>
-			<LogOut className="w-4 h-4" />
-			<span className="text-sm font-medium">{t("account.logout")}</span>
-		</motion.button>
-	</motion.div>
-	)
-}
+			<motion.button
+				onClick={logout}
+				className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 rounded-lg transition-all duration-300 text-red-400 hover:text-red-300 backdrop-blur-sm cursor-pointer"
+			>
+				<LogOut className="w-4 h-4" />
+				<span className="text-sm font-medium">{t("account.logout")}</span>
+			</motion.button>
+		</motion.div>
+	);
+};
 
 const SkeletonCard = ({ className = "" }) => (
 	<div
@@ -207,23 +207,23 @@ const SkeletonCard = ({ className = "" }) => (
 const Skeleton = () => {
 	return (
 		<motion.div
-		className="grid grid-cols-2 grid-rows-1 gap-4 h-fit"
-		initial="hidden"
-		animate="visible"
-		variants={{
-			visible: {
-				transition: {
-					staggerChildren: 0.1,
+			className="grid grid-cols-2 grid-rows-1 gap-4 h-fit"
+			initial="hidden"
+			animate="visible"
+			variants={{
+				visible: {
+					transition: {
+						staggerChildren: 0.1,
+					},
 				},
-			},
-		}}
-	>
-		<SkeletonCard className="h-full" />
-		<div className="flex flex-col gap-4">
-			<SkeletonCard />
-			<SkeletonCard />
-		</div>
-		<SkeletonCard className="col-span-2 h-fit" />
-	</motion.div>
-	)
-}
+			}}
+		>
+			<SkeletonCard className="h-full" />
+			<div className="flex flex-col gap-4">
+				<SkeletonCard />
+				<SkeletonCard />
+			</div>
+			<SkeletonCard className="col-span-2 h-fit" />
+		</motion.div>
+	);
+};

@@ -111,10 +111,8 @@ export default function QuickLaunch({
 				)}
 
 				{app.isLocal && (
-					<div
-						className="h-full w-full bg-neutral-900"
-					>
-					<Laptop className="h-full w-full p-4 text-white/80" />
+					<div className="h-full w-full bg-neutral-900">
+						<Laptop className="h-full w-full p-4 text-white/80" />
 					</div>
 				)}
 			</Link>

@@ -102,7 +102,9 @@ export interface SetupSocketProps {
 	>;
 	setDeleteLogs: React.Dispatch<React.SetStateAction<string[]>>;
 	data: any;
-	socketsRef: React.MutableRefObject<Record<string, { socket: Socket; isLocal?: boolean }>>;
+	socketsRef: React.MutableRefObject<
+		Record<string, { socket: Socket; isLocal?: boolean }>
+	>;
 	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	isLocal?: boolean;
 }

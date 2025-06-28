@@ -1,5 +1,6 @@
 import Background from "@renderer/components/first-time/background";
 import LanguageSelector from "@renderer/components/first-time/onboarding/language-selector";
+import ExecuteSound from "@renderer/components/first-time/sounds/sound";
 import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
@@ -11,7 +12,6 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
-import ExecuteSound from "@renderer/components/first-time/sounds/sound";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
@@ -62,7 +62,11 @@ export default function FirstTime() {
 	useEffect(() => {
 		function shouldRedirect() {
 			if (user) {
-				if (firstLaunch === "true" || firstLaunch === null || isLogin !== "true") {
+				if (
+					firstLaunch === "true" ||
+					firstLaunch === null ||
+					isLogin !== "true"
+				) {
 					changeLevel(3);
 				} else {
 					changeLevel(4);
@@ -109,7 +113,11 @@ export default function FirstTime() {
 					await saveRefreshToken(data.session.refresh_token);
 					setRefreshSessionToken(data.session.refresh_token);
 					getUser(data.user.id);
-					if (firstLaunch === "true" || firstLaunch === null || isLogin !== "true") {
+					if (
+						firstLaunch === "true" ||
+						firstLaunch === null ||
+						isLogin !== "true"
+					) {
 						changeLevel(3);
 					} else {
 						changeLevel(4);
