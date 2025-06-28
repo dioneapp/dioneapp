@@ -1,5 +1,5 @@
-import FeaturedCarousel from "./featured-carrousel";
-import PromoBanner from "./promo";
+import FeaturedCarousel from "../explore/featured-carrousel";
+import PromoBanner from "../explore/promo";
 
 export default function Featured() {
 	return (

@@ -1,5 +1,5 @@
-import { useTranslation } from "../../translations/translationContext";
-import { openLink } from "../../utils/openLink";
+import { useTranslation } from "@renderer/translations/translationContext";
+import { openLink } from "@renderer/utils/openLink";
 
 export default function PromoBanner() {
 	const { t } = useTranslation();

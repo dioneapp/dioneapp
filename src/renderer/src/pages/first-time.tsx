@@ -1,6 +1,6 @@
 import Background from "@renderer/components/first-time/background";
 import LanguageSelector from "@renderer/components/first-time/onboarding/language-selector";
-import ExecuteSound from "@renderer/components/first-time/sound";
+import ExecuteSound from "../components/first-time/sounds/sound";
 import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";

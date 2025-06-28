@@ -9,9 +9,11 @@ import { useAuthContext } from "../contexts/AuthContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import Icon from "../icons/icon";
 import QuickLaunch from "./quick-launch";
+import { useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
 	const { user, loading } = useAuthContext();
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
@@ -310,9 +312,7 @@ export default function Sidebar() {
 								<button
 									type="button"
 									className="p-2 bg-white text-black border rounded-full border-white/10 hover:bg-white/80 transition-colors flex gap-1 items-center justify-start cursor-pointer relative"
-									onClick={() =>
-										openLink("https://getdione.app/auth/login?app=true")
-									}
+									onClick={() => navigate("/first-time")}
 									onMouseEnter={() => setHoveredTooltip("login")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
