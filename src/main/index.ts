@@ -1,7 +1,6 @@
 import os from "node:os";
 import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
-import dotenv from "dotenv";
 import {
 	BrowserWindow,
 	Tray,
@@ -32,9 +31,6 @@ import {
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
-
-// load env variables
-dotenv.config();
 
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
@@ -96,8 +92,7 @@ function createWindow() {
 			provider: "github",
 			owner: "dioneapp",
 			repo: "dioneapp",
-			private: true,
-			token: process.env.GH_TOKEN,
+			private: false
 		});
 		autoUpdater.checkForUpdatesAndNotify();
 	});
@@ -320,6 +315,19 @@ app.whenReady().then(async () => {
 		return result;
 	});
 
+	// select file
+	ipcMain.handle("select-file", async (_event, path: string) => {
+		const result = await dialog.showOpenDialog({
+			defaultPath: path,
+			properties: ["openFile"],
+			title: "Select a file",
+			message: "Select a file",
+			securityScopedBookmarks: true,
+		});
+
+		return result;
+	});
+
 	// open dir
 	ipcMain.handle("open-dir", async (_event, path: string) => {
 		await shell.openPath(path);
@@ -428,7 +436,7 @@ app.whenReady().then(async () => {
 
 	ipcMain.handle("send-discord-report", async (_, data) => {
 		if (!app.isPackaged) {
-			return false;
+			return "dev-mode";
 		}
 		try {
 			const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
@@ -450,7 +458,7 @@ app.whenReady().then(async () => {
 
 			return true;
 		} catch (err) {
-			console.error("Failed to send Discord report:", err);
+			logger.error("Failed to send Discord report:", err);
 			return false;
 		}
 	});
