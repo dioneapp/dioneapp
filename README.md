@@ -1,51 +1,57 @@
+# Dione: Explore, Install, Innovate — in 1 Click
 
-![Banner](https://i.imgur.com/EN5bI35.png)
+**Dione** makes installing complex applications as simple as clicking a button — no terminal or technical knowledge needed.
+For developers, Dione offers a zero-friction way to distribute apps using just a JSON file.
+**App installation has never been this effortless.**
 
-
-# Dione - Explore, Install, Innovate — in 1 Click.
-We are creating Dione so that **any user can install complex applications** in a simple and hassle-free way. In addition, **developers will be able to distribute their apps easily** with just a JSON file. **Installing any app has never been so easy!**
-
-## Demo
+## 🖼️ Showcase
 
 ![Demo](https://i.imgur.com/gUaV5qT.png)
 
 
-## Documentation
-Learn how to develop scripts for dione in our [documentation](https://docs.getdione.app).
+## 📦 Download
+
+Looking to use Dione?
+Head to our [Releases page](https://github.com/dioneapp/dioneapp/releases) and download the latest version for your platform.
 
 
-## Run Locally
+## 📚 Documentation
 
-#### Prerequisites
-You need [Node.js](https://nodejs.org/en/download/) on your system, plus a package manager like [NPM](https://www.npmjs.com/get-npm).
+Want to create and distribute apps with Dione?
+Check out the [official docs](https://docs.getdione.app) for a complete guide to writing scripts and packaging apps.
 
-#### Clone the project in current folder
 
-```bash
-  git clone https://github.com/dioneapp/dioneapp.git .
-```
+## 👨‍💻 Contributing
 
-#### Install dependencies
+If you're interested in contributing or running Dione locally, follow these steps:
 
-```bash
-  npm install
-```
+### ✅ Prerequisites
 
-#### Start Dione in development mode
+* [Node.js](https://nodejs.org/en/download/)
+* [npm](https://www.npmjs.com/get-npm)
 
-```bash
-  npm run dev
-```
-
-#### Build project
+### 🧪 Run Locally
 
 ```bash
-  npm run build
+# Clone the repo
+git clone https://github.com/dioneapp/dioneapp.git
+cd dioneapp
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+### 🔨 Build for Production
+
+```bash
+npm run build
 ```
 
 
-## Support
+## 💬 Support & Contact
 
-We are happy to help you on our support channel, [join our discord here](https://getdione.app/discord).
-
-If you have found a security breach please contact us at [contact@getdione.app](mailto:contact@getdione.app)
+* Questions? Feedback? [Join our Discord](https://getdione.app/discord)
+* Found a security issue? [contact@getdione.app](mailto:contact@getdione.app)
