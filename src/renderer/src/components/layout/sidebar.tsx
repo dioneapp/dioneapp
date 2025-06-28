@@ -142,9 +142,9 @@ export default function Sidebar() {
 									{t("sidebar.activeApps")}
 								</h3>
 							)}
-							<div className={`${config?.compactMode ? "flex flex-col gap-2" : "flex flex-col gap-2"}`}>
-								{activeApps?.slice(0, config?.compactMode ? 4 : 6).map((app, index) => (
-									<div key={app.appId}>
+							<div className={`${config?.compactMode ? "flex flex-col gap-2 items-center" : "flex flex-col gap-2"}`}>
+								{activeApps?.slice(0, config?.compactMode ? 6 : 4).map((app, index) => (
+									<div key={app.appId} className={`${config?.compactMode ? "w-full flex justify-center" : "w-full"}`}>
 										<div
 											className={`group relative ${config?.compactMode ? "w-12 h-12" : "w-full"}`}
 										>
@@ -157,7 +157,7 @@ export default function Sidebar() {
 											</button>
 											<Link
 												to={`/install/${app.appId}`}
-												className={`${config?.compactMode ? "w-12 h-12 rounded-xl" : "w-full h-10 rounded-lg"} hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group`}
+												className={`${config?.compactMode ? "w-12 h-12 rounded-xl flex items-center justify-center" : "w-full h-10 rounded-lg flex items-center gap-3 px-3"} hover:bg-white/5 transition-all duration-200 overflow-hidden group`}
 											>
 												<div className={`${config?.compactMode ? "w-8 h-8" : "w-6 h-6"} overflow-hidden flex-shrink-0 rounded-lg`}>
 													{app.data.logo_url?.startsWith("linear-gradient") ? (
@@ -185,7 +185,7 @@ export default function Sidebar() {
 												)}
 											</Link>
 										</div>
-										{index < activeApps.slice(0, config?.compactMode ? 4 : 6).length - 1 && (
+										{index < activeApps.slice(0, config?.compactMode ? 6 : 4).length - 1 && (
 											<div className={`${config?.compactMode ? "w-8 mx-auto" : "w-full"} h-px bg-white/10 my-2`} />
 										)}
 									</div>
