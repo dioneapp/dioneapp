@@ -1,6 +1,5 @@
 import Background from "@renderer/components/first-time/background";
 import LanguageSelector from "@renderer/components/first-time/onboarding/language-selector";
-import ExecuteSound from "../components/first-time/sounds/sound";
 import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
@@ -9,14 +8,17 @@ import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link as LinkIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
+import ExecuteSound from "@renderer/components/first-time/sounds/sound";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
+	const [searchParams] = useSearchParams();
 	const { user, setUser, setRefreshSessionToken } = useAuthContext();
 	const firstLaunch = localStorage.getItem("firstLaunch");
+	const isLogin = searchParams.get("login");
 	// toast stuff
 	const { addToast } = useToast();
 	const showToast = (
@@ -60,10 +62,10 @@ export default function FirstTime() {
 	useEffect(() => {
 		function shouldRedirect() {
 			if (user) {
-				if (firstLaunch === "true" || firstLaunch === null) {
-					changeLevel(4);
-				} else {
+				if (firstLaunch === "true" || firstLaunch === null || isLogin !== "true") {
 					changeLevel(3);
+				} else {
+					changeLevel(4);
 				}
 			}
 		}
@@ -107,7 +109,11 @@ export default function FirstTime() {
 					await saveRefreshToken(data.session.refresh_token);
 					setRefreshSessionToken(data.session.refresh_token);
 					getUser(data.user.id);
-					changeLevel(3);
+					if (firstLaunch === "true" || firstLaunch === null || isLogin !== "true") {
+						changeLevel(3);
+					} else {
+						changeLevel(4);
+					}
 				}
 			}
 
@@ -276,7 +282,7 @@ export default function FirstTime() {
 				{/* first time onboarding */}
 				{level === 3 && (
 					<motion.div
-						key={4}
+						key={3}
 						initial={{ opacity: 0, x: 200, filter: "blur(30px)" }}
 						animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
 						exit={{
