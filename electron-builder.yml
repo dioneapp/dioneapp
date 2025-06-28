@@ -18,6 +18,8 @@ protocols:
       - dione
 win:
   executableName: Dione
+  target: 
+    - nsis
   protocols:
     - name: dione
       schemes:
