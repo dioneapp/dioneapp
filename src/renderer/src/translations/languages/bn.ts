@@ -124,6 +124,7 @@ export const bn = {
 	// sidebar component
 	sidebar: {
 		tagline: "অন্বেষণ করুন, ইনস্টল করুন, উদ্ভাবন করুন — 1 ক্লিকে।",
+		activeApps: "সক্রিয় অ্যাপস",
 		update: {
 			title: "আপডেট উপলব্ধ",
 			description:

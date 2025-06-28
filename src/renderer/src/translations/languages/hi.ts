@@ -124,7 +124,8 @@ export const hi = {
 
 	// sidebar component
 	sidebar: {
-		tagline: "अन्वेषण करें, इंस्टॉल करें, नया करें — 1 क्लिक में।",
+		tagline: "खोजें, इंस्टॉल करें, नवाचार करें — 1 क्लिक में।",
+		activeApps: "सक्रिय ऐप्स",
 		update: {
 			title: "अपडेट उपलब्ध है",
 			description:

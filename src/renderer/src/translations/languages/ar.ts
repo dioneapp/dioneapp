@@ -123,6 +123,7 @@ export const ar = {
 	// sidebar component
 	sidebar: {
 		tagline: "استكشف، ثبت، ابتكر — بنقرة واحدة.",
+		activeApps: "التطبيقات النشطة",
 		update: {
 			title: "تحديث متاح",
 			description:

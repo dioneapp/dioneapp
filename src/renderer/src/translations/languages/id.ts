@@ -125,7 +125,8 @@ export const id = {
 
 	// sidebar component
 	sidebar: {
-		tagline: "Jelajahi, Instal, Berinovasi — dalam 1 Klik.",
+		tagline: "Jelajahi, Instal, Inovasi — dalam 1 Klik.",
+		activeApps: "Aplikasi Aktif",
 		update: {
 			title: "Pembaruan Tersedia",
 			description:

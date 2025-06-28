@@ -125,7 +125,8 @@ export const fr = {
 
 	// sidebar component
 	sidebar: {
-		tagline: "Explorez, installez, innovez — en 1 clic.",
+		tagline: "Explorez, Installez, Innovez — en 1 Clic.",
+		activeApps: "Applications Actives",
 		update: {
 			title: "Mise à jour disponible",
 			description:

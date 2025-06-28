@@ -24,7 +24,6 @@ export default function Installed() {
 				const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
 
 				const appsToFetch = installedApps
-					.slice(0, 6)
 					.filter((app) => !cachedData[app]);
 
 				if (appsToFetch.length > 0) {
@@ -44,10 +43,9 @@ export default function Installed() {
 					localStorage.setItem(CACHE_KEY, JSON.stringify(cachedData));
 				}
 				const finalResults = installedApps
-					.slice(0, 6)
 					.flatMap((app) => cachedData[app] || []);
 
-				setApps(finalResults.slice(0, 6));
+				setApps(finalResults);
 			} catch (error) {
 				console.error("Error loading apps:", error);
 			}

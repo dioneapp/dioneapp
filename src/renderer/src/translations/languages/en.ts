@@ -126,6 +126,7 @@ export const en = {
 	// sidebar component
 	sidebar: {
 		tagline: "Explore, Install, Innovate — in 1 Click.",
+		activeApps: "Active Apps",
 		update: {
 			title: "Update Available",
 			description:
