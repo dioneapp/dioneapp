@@ -1,34 +1,6 @@
 import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { type Socket, io as clientIO } from "socket.io-client";
-
-interface SetupSocketProps {
-	appId: string;
-	addLog: (appId: string, log: string) => void;
-	port: number;
-	setMissingDependencies: React.Dispatch<React.SetStateAction<any>>;
-	setIframeAvailable: React.Dispatch<React.SetStateAction<boolean>>;
-	setCatchPort: React.Dispatch<React.SetStateAction<number | undefined>>;
-	loadIframe: (port: number) => void;
-	setIframeSrc: React.Dispatch<React.SetStateAction<string>>;
-	errorRef: React.MutableRefObject<boolean>;
-	showToast: (
-		variant: "default" | "success" | "error" | "warning",
-		message: string,
-		fixed?: "true" | "false",
-		button?: boolean,
-		buttonText?: string,
-		buttonAction?: () => void,
-	) => void;
-	stopCheckingRef: React.MutableRefObject<boolean>;
-	statusLog: Record<string, { status: string; content: string }>;
-	setStatusLog: React.Dispatch<
-		React.SetStateAction<Record<string, { status: string; content: string }>>
-	>;
-	setDeleteLogs: React.Dispatch<React.SetStateAction<string[]>>;
-	data: any;
-	socketsRef: React.MutableRefObject<Record<string, Socket>>;
-	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-}
+import type { SetupSocketProps } from "../types/context-types";
 
 export function setupSocket({
 	appId,

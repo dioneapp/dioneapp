@@ -9,17 +9,7 @@ import {
 } from "@renderer/utils/secure-tokens";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
-interface AuthContextType {
-	user: any;
-	setUser: React.Dispatch<React.SetStateAction<any>>;
-	refreshSessionToken: string | null;
-	setRefreshSessionToken: React.Dispatch<React.SetStateAction<string | null>>;
-	logout: () => void;
-	checkSession: () => void;
-	loading: boolean;
-	checkAccess: () => void;
-}
+import type { AuthContextType } from "./types/context-types";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

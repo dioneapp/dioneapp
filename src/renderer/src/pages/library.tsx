@@ -1,4 +1,4 @@
-import Installed from "@renderer/components/home/installed";
+import Installed from "@renderer/components/library/installed";
 
 export default function Library() {
 	return (

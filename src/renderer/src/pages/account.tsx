@@ -4,16 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
-
-const SkeletonCard = ({ className = "" }) => (
-	<div
-		className={`bg-white/5 rounded-xl p-8 animate-pulse border border-white/10 ${className}`}
-	>
-		<div className="h-7 w-3/4 bg-white/10 rounded mb-6" />
-		<div className="h-4 w-1/2 bg-white/10 rounded mb-6" />
-		<div className="h-10 w-1/3 bg-white/10 rounded mt-auto" />
-	</div>
-);
+import { StatCard } from "@renderer/components/account/stat-card";
 
 export default function Account() {
 	const { t } = useTranslation();
@@ -110,11 +101,6 @@ export default function Account() {
 		setConsecutiveDays(streak);
 	}
 
-	const cardVariants = {
-		hidden: { opacity: 0, y: 20 },
-		visible: { opacity: 1, y: 0 },
-	};
-
 	return (
 		<div className="min-h-screen pt-4">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -142,162 +128,102 @@ export default function Account() {
 								},
 							}}
 						>
-							<motion.div
-								variants={cardVariants}
-								className="col-span-2 sm:col-span-1 md:col-span-2 md:row-span-2 bg-gradient-to-br from-[#BCB1E7]/10 to-[#080808]/20 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
-							>
-								<div className="flex flex-col items-start overflow-hidden rounded-lg h-full">
-									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
-										<div className="flex items-center justify-between w-full">
-											<h3 className="z-10 text-2xl font-medium text-white w-full">
-												{t("account.stats.timeSpent.title")}
-											</h3>
-											<div className="p-2 bg-white/10 rounded-lg">
-												<Clock className="w-6 h-6 opacity-80" />
-											</div>
-										</div>
-										<h5 className="z-10 text-xs font-medium text-neutral-400">
-											{t("account.stats.timeSpent.subtitle")}
-										</h5>
-									</span>
-									<h4 className="z-10 text-3xl font-medium text-white flex justify-end mt-auto">
-										{formatTimeSpent(hoursInApp)}
-									</h4>
-								</div>
-							</motion.div>
-
-							<motion.div
-								variants={cardVariants}
-								className="col-span-2 sm:col-span-1 md:col-span-2 bg-gradient-to-br from-[#BCB1E7]/10 to-[#080808]/20 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
-							>
-								<div className="flex flex-col items-start overflow-hidden rounded-lg">
-									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
-										<div className="flex items-center justify-between w-full">
-											<h3 className="z-10 text-2xl font-medium text-white w-full">
-												{t("account.stats.sessions.title")}
-											</h3>
-											<div className="p-2 bg-white/10 rounded-lg">
-												<Calendar className="w-6 h-6 opacity-80" />
-											</div>
-										</div>
-										<h5 className="z-10 text-xs font-medium text-neutral-400">
-											{t("account.stats.sessions.subtitle")}
-										</h5>
-									</span>
-									<h4 className="z-10 text-3xl font-medium text-white">
-										{data.sessions.length}
-									</h4>
-								</div>
-							</motion.div>
-
-							<motion.div
-								variants={cardVariants}
-								className="col-span-2 sm:col-span-1 md:col-span-2 bg-gradient-to-br from-[#BCB1E7]/10 to-[#080808]/20 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
-							>
-								<div className="flex flex-col items-start overflow-hidden rounded-lg">
-									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
-										<div className="flex items-center justify-between w-full">
-											<h3 className="z-10 text-2xl font-medium text-white w-full">
-												{t("account.stats.shared.title")}
-											</h3>
-											<div className="p-2 bg-white/10 rounded-lg">
-												<Share2 className="w-6 h-6 opacity-80" />
-											</div>
-										</div>
-										<h5 className="z-10 text-xs font-medium text-neutral-400">
-											{t("account.stats.shared.subtitle")}
-										</h5>
-									</span>
-									<h4 className="z-10 text-3xl font-medium text-white">
-										{data.shared.length}
-									</h4>
-								</div>
-							</motion.div>
-
-							<motion.div
-								variants={cardVariants}
-								className="group relative col-span-2 sm:col-span-1 md:col-span-full bg-gradient-to-br from-[#BCB1E7]/15 to-[#080808]/30 rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300"
-							>
-								<div className="absolute inset-0 bg-gradient-to-br from-[#BCB1E7]/5 to-transparent opacity-100 rounded-xl" />
-								<div className="relative flex flex-col items-start overflow-hidden">
-									<span className="flex flex-col items-start gap-0.5 w-full mb-6">
-										<div className="flex items-center justify-between w-full">
-											<h3 className="z-10 text-2xl font-medium text-white w-full">
-												{t("account.stats.streak.title")}
-											</h3>
-											<div className="p-2 bg-white/10 rounded-lg">
-												<Flame className="w-6 h-6 opacity-80" />
-											</div>
-										</div>
-										<h5 className="z-10 text-xs font-medium text-neutral-400">
-											{t("account.stats.streak.subtitle")}
-										</h5>
-									</span>
-									<span className="flex items-end gap-1 mb-3">
-										<h4 className="z-10 text-3xl font-medium text-white">
-											{consecutiveDays}
-										</h4>
-										<h5 className="z-10 text-xs font-medium text-neutral-400 pb-1">
-											{t("account.stats.streak.days")}
-										</h5>
-									</span>
-									<div className="flex gap-1 w-full">
-										{[1, 2, 3, 4, 5, 6, 7].map((day) => (
-											<motion.div
-												key={day}
-												initial={{ scale: 0 }}
-												animate={{ scale: 1 }}
-												transition={{ delay: day * 0.1 }}
-												className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-													day <= consecutiveDays
-														? "bg-gradient-to-r from-[#BCB1E7] to-white"
-														: "bg-neutral-700"
-												}`}
-											/>
-										))}
-									</div>
-								</div>
-							</motion.div>
+							{/* Time spent */}
+							<StatCard
+								title={t("account.stats.timeSpent.title")}
+								subtitle={t("account.stats.timeSpent.subtitle")}
+								value={formatTimeSpent(hoursInApp)}
+								icon={Clock}
+								className="col-span-2 sm:col-span-1 md:col-span-2 "
+							/>
+							{/* Sessions and apps shared */}
+							<div className="col-span-2 gap-4 flex flex-col">
+							<StatCard
+								title={t("account.stats.sessions.title")}
+								subtitle={t("account.stats.sessions.subtitle")}
+								value={data.sessions.length}
+								icon={Calendar}
+							/>
+							<StatCard
+								title={t("account.stats.shared.title")}
+								subtitle={t("account.stats.shared.subtitle")}
+								value={data.shared.length}
+								icon={Share2}
+							/>
+							</div>
+							{/* Consecutive days */}
+							<StatCard
+								title={t("account.stats.streak.title")}
+								subtitle={t("account.stats.streak.subtitle")}
+								value={consecutiveDays}
+								icon={Flame}
+								className="col-span-2 sm:col-span-1 md:col-span-full"
+								isStreak
+								streakDays={consecutiveDays}
+								>
+								{t("account.stats.streak.days")}
+							</StatCard>
 						</motion.div>
 					) : (
-						<motion.div
-							className="grid grid-cols-2 grid-rows-1 gap-4 h-fit"
-							initial="hidden"
-							animate="visible"
-							variants={{
-								visible: {
-									transition: {
-										staggerChildren: 0.1,
-									},
-								},
-							}}
-						>
-							<SkeletonCard className="h-full" />
-							<div className="flex flex-col gap-4">
-								<SkeletonCard />
-								<SkeletonCard />
-							</div>
-							<SkeletonCard className="col-span-2 h-fit" />
-						</motion.div>
+						<Skeleton />
 					)}
-
-					{/* Logout button aligned with cards */}
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.6, duration: 0.3 }}
-						className="flex justify-end mb-auto"
-					>
-						<motion.button
-							onClick={logout}
-							className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 rounded-lg transition-all duration-300 text-red-400 hover:text-red-300 backdrop-blur-sm cursor-pointer"
-						>
-							<LogOut className="w-4 h-4" />
-							<span className="text-sm font-medium">{t("account.logout")}</span>
-						</motion.button>
-					</motion.div>
+					<LogoutButton logout={logout} />
 				</main>
 			</div>
 		</div>
 	);
+}
+
+const LogoutButton = ({ logout }: { logout: () => void }) => {
+	const { t } = useTranslation();
+	return (
+	<motion.div
+		initial={{ opacity: 0, y: 20 }}
+		animate={{ opacity: 1, y: 0 }}
+		transition={{ delay: 0.6, duration: 0.3 }}
+		className="flex justify-end mb-auto"
+	>
+		<motion.button
+			onClick={logout}
+			className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 rounded-lg transition-all duration-300 text-red-400 hover:text-red-300 backdrop-blur-sm cursor-pointer"
+		>
+			<LogOut className="w-4 h-4" />
+			<span className="text-sm font-medium">{t("account.logout")}</span>
+		</motion.button>
+	</motion.div>
+	)
+}
+
+const SkeletonCard = ({ className = "" }) => (
+	<div
+		className={`bg-white/5 rounded-xl p-8 animate-pulse border border-white/10 ${className}`}
+	>
+		<div className="h-7 w-3/4 bg-white/10 rounded mb-6" />
+		<div className="h-4 w-1/2 bg-white/10 rounded mb-6" />
+		<div className="h-10 w-1/3 bg-white/10 rounded mt-auto" />
+	</div>
+);
+
+const Skeleton = () => {
+	return (
+		<motion.div
+		className="grid grid-cols-2 grid-rows-1 gap-4 h-fit"
+		initial="hidden"
+		animate="visible"
+		variants={{
+			visible: {
+				transition: {
+					staggerChildren: 0.1,
+				},
+			},
+		}}
+	>
+		<SkeletonCard className="h-full" />
+		<div className="flex flex-col gap-4">
+			<SkeletonCard />
+			<SkeletonCard />
+		</div>
+		<SkeletonCard className="col-span-2 h-fit" />
+	</motion.div>
+	)
 }

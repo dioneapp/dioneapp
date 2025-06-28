@@ -1,9 +1,9 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useTranslation } from "../../translations/translationContext";
-import ScriptCard from "./feed/card";
-import type { Script } from "./feed/types";
-import Loading from "./loading-skeleton";
+import ScriptCard from "./card";
+import type { Script } from "./types";
+import Loading from "../loading-skeleton";
+import { useTranslation } from "@renderer/translations/translationContext";
 
 interface ScriptListProps {
 	endpoint: string;
