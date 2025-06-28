@@ -27,9 +27,10 @@ const lightColors = [
 	"#ffd7be",
 ];
 function generateGradient(input: string): string {
+	if (!input) return "";
 	let hash = 0;
-	for (let i = 0; i < input.length; i++) {
-		hash = input.charCodeAt(i) + ((hash << 5) - hash);
+	for (let i = 0; i < input?.length; i++) {
+		hash = input?.charCodeAt(i) + ((hash << 5) - hash);
 	}
 	hash = Math.abs(hash);
 	const dark = darkColors[hash % darkColors.length];
@@ -244,11 +245,12 @@ router.get("/search/:id", (req, res) => {
 		}
 		const script = data[0];
 		if (
-			script.logo_url === null ||
-			script.logo_url === undefined ||
-			script.logo_url === ""
+			script?.logo_url === null ||
+			script?.logo_url === undefined ||
+			script?.logo_url === "" ||
+			script
 		) {
-			script.logo_url = generateGradient(script.name);
+			generateGradient(script?.name);
 		}
 		res.send(script);
 		return;
@@ -306,7 +308,7 @@ router.get("/search/name/:name", async (req, res) => {
 				return script;
 			});
 
-			res.send(scripts);
+			res.send(scripts || []);
 		}
 	}
 	getData();
