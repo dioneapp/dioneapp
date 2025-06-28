@@ -1,15 +1,15 @@
 import ActionsComponent from "@renderer/components/install/actions";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
-import DeleteLoadingModal from "../components/modals/delete-loading";
-import { useScriptsContext } from "../components/contexts/ScriptsContext";
-import MissingDepsModal from "../components/modals/missing-deps";
 import sendEvent from "@renderer/utils/events";
 import { AnimatePresence } from "framer-motion";
 import { ArrowLeft, Bookmark, Share2, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
+import { useScriptsContext } from "../components/contexts/ScriptsContext";
+import DeleteLoadingModal from "../components/modals/delete-loading";
+import MissingDepsModal from "../components/modals/missing-deps";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
 
@@ -653,7 +653,9 @@ export default function Install({ id }: { id?: string }) {
 										return (
 											<label
 												key={index}
-												className={"flex items-center gap-3 py-2 cursor-pointer select-none"}
+												className={
+													"flex items-center gap-3 py-2 cursor-pointer select-none"
+												}
 												style={{ alignItems: "flex-start" }}
 											>
 												<input

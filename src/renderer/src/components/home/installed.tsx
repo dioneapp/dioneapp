@@ -2,10 +2,10 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 import Icon from "../icons/icon";
 import ScriptCard from "./feed/card";
 import Loading from "./loading-skeleton";
-import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function Installed() {
 	const { t } = useTranslation();
