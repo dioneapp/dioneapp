@@ -92,7 +92,7 @@ function createWindow() {
 			provider: "github",
 			owner: "dioneapp",
 			repo: "dioneapp",
-			private: false
+			private: false,
 		});
 		autoUpdater.checkForUpdatesAndNotify();
 	});

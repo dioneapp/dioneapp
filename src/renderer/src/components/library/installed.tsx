@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
+import ScriptCard from "../home/feed/card";
 import Icon from "../icons/icon";
 import Loading from "../install/loading-skeleton";
-import ScriptCard from "../home/feed/card";
 
 export default function Installed() {
 	const { t } = useTranslation();
@@ -21,10 +21,14 @@ export default function Installed() {
 				const port = await getCurrentPort();
 				const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
 
-				const normalizeName = (name: string) => name.toLowerCase().replace(/[\s\-]/g, '');
-				
-				const appsToFetch = installedApps.filter(app => {
-					return !localApps.some(localApp => normalizeName(localApp.name) === normalizeName(app.name));
+				const normalizeName = (name: string) =>
+					name.toLowerCase().replace(/[\s\-]/g, "");
+
+				const appsToFetch = installedApps.filter((app) => {
+					return !localApps.some(
+						(localApp) =>
+							normalizeName(localApp.name) === normalizeName(app.name),
+					);
 				});
 
 				if (appsToFetch.length > 0) {
