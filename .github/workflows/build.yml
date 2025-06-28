@@ -132,10 +132,6 @@ jobs:
           tag_name: v${{ github.event.inputs.version }}
           name: Dione v${{ github.event.inputs.version }}
           body: |
-            ## Release Notes
-            
-            New release with version ${{ github.event.inputs.version }}
-            
             ## Downloads
             
             This release includes builds for:
