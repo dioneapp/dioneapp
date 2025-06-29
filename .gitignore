@@ -29,3 +29,7 @@ electron-builder.env
 
 # changelog
 CHANGELOG.md
+
+# dont exclude local.ts
+!src/main/server/routes/local.ts
+
