@@ -8,7 +8,11 @@
 	"version": "0.0.1",
 	"description": "Explore, Install, Innovate — in 1 Click.",
 	"main": "./out/main/index.js",
-	"author": "Dione",
+	"author": {
+		"name": "Dione",
+		"email": "support@dione.app",
+		"url": "https://getdione.app"
+	},
 	"homepage": "https://getdione.app",
 	"scripts": {
 		"format": "biome format --write ./src",
