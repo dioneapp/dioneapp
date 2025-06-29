@@ -31,7 +31,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxss1 libgconf-2-4 libxrandr2 libasound2-dev libpangocairo-1.0-0 libatk1.0-dev libgtk-3-dev libgdk-pixbuf2.0-dev
+        sudo apt-get install --no-install-recommends -y libopenjp2-tools
     
     - name: Install dependencies
       run: npm ci
