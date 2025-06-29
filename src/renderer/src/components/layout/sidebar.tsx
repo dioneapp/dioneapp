@@ -172,24 +172,26 @@ export default function Sidebar() {
 												className={`${config?.compactMode ? "w-12 h-12 rounded-xl flex items-center justify-center" : "w-full h-10 rounded-lg flex items-center gap-3 px-3"} hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group`}
 											>
 												<div className={`${config?.compactMode ? "w-8 h-8" : "w-6 h-6"} overflow-hidden flex-shrink-0 rounded-lg`}>
-													{app.data.logo_url?.startsWith("linear-gradient") ? (
-														<div
-															style={{ backgroundImage: app.data.logo_url }}
-															className="w-full h-full bg-cover bg-center rounded-lg"
-														/>
-													) : (
-														!app.isLocal && (
+												{!app.isLocal ? (
+													<>
+														{app.data.logo_url?.startsWith("linear-gradient") ? (
 															<div
-																className="w-full h-full object-cover"
 																style={{ backgroundImage: app.data.logo_url }}
+																className="w-full h-full bg-cover bg-center rounded-lg"
 															/>
-														))}
-														{app.isLocal && (
-															<div className="w-full h-full bg-neutral-900">
-																<Laptop className="h-full w-full p-4 text-white/80" />
-															</div>
+														) : (
+															<img
+																src={app.data.logo_url}
+																alt={app.data.name}
+																className="w-full h-full object-cover rounded-lg"
+															/>
 														)}
-														
+													</>
+													) : (
+													<div className="w-full h-full bg-neutral-900">
+														<Laptop className="h-full w-full p-4 text-white/80" />
+													</div>
+													)}
 												</div>
 												{!config?.compactMode && (
 													<div className="flex-1 min-w-0">
