@@ -63,12 +63,12 @@ export default function DeleteDepsModal(
 													type="checkbox"
 													checked={selected}
 													onChange={() => {
-														setSelectedDeps((prev) =>
-															prev.includes(dep)
-																? prev.filter((d) => d !== dep)
-																: [...prev, dep],
-														);
-													}}
+                                                        if (selectedDeps.includes(dep)) {
+                                                            setSelectedDeps(selectedDeps.filter((d) => d !== dep));
+                                                        } else {
+                                                            setSelectedDeps([...selectedDeps, dep]);
+                                                        }
+                                                    }}
 													className="form-checkbox h-4 w-4 rounded border-white/30 bg-transparent checked:bg-[#BCB1E7] checked:border-[#BCB1E7] focus:ring-0 focus:outline-none mt-0.5"
 													style={{ accentColor: "#BCB1E7" }}
 												/>

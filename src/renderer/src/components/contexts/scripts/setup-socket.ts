@@ -19,9 +19,9 @@ export function setupSocket({
 	socketsRef,
 	setAppFinished,
 }: SetupSocketProps): Socket {
-	if (socketsRef.current[appId]) {
+	if (socketsRef.current[appId]?.socket) {
 		console.log(`Socket [${appId}] already exists`);
-		return socketsRef.current[appId];
+		return socketsRef.current[appId].socket;
 	}
 	const socket = clientIO(`http://localhost:${port}`);
 	const settings = JSON.parse(localStorage.getItem("config") || "{}");
@@ -117,6 +117,6 @@ export function setupSocket({
 		setDeleteLogs((prevLogs) => [...prevLogs, message]);
 	});
 
-	socketsRef.current[appId] = socket;
+	socketsRef.current[appId].socket = socket;
 	return socket;
 }

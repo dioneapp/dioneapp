@@ -3,9 +3,7 @@ import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
 import sendEvent from "@renderer/utils/events";
 import { AnimatePresence } from "framer-motion";
-import { ArrowLeft, Bookmark, Share2, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useScriptsContext } from "../components/contexts/ScriptsContext";
 import DeleteLoadingModal from "../components/modals/delete-loading";
@@ -54,8 +52,6 @@ export default function Install({
 	const [_imgLoading, setImgLoading] = useState<boolean>(true);
 	// data stuff
 	const [installed, setInstalled] = useState<boolean>(false);
-	// navigation stuff
-	const navigate = useNavigate();
 	// delete
 	const [deleteStatus, setDeleteStatus] = useState<string>("");
 	const [deleteDepsModal, setDeleteDepsModal] = useState<boolean>(false);

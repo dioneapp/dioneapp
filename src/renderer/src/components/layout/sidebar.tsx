@@ -2,7 +2,6 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import {
 	Laptop,
-	LaptopIcon,
 	Library,
 	LogIn,
 	MonitorDown,
