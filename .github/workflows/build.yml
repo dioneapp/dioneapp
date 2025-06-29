@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-        node-version: [18.x]
+        node-version: [20.x]
     
     steps:
     - name: Checkout code
@@ -30,11 +30,11 @@ jobs:
     - name: Install Linux dependencies
       if: runner.os == 'Linux'
       run: |
-        sudo apt-get update
+        sudo apt-get update -qq
         sudo apt-get install --no-install-recommends -y libopenjp2-tools
     
     - name: Install dependencies
-      run: npm ci
+      run: npm ci -prefer-offline --no-audit --no-fund --silent
     
     - name: Build app for Windows
       if: runner.os == 'Windows'
@@ -53,9 +53,15 @@ jobs:
       with:
         name: build-${{ matrix.os }}
         path: |
-          dist/
-          !dist/**/*.map
-        retention-days: 5
+          dist/*.exe
+          dist/*.msi
+          dist/*.dmg
+          dist/*.zip
+          dist/*.AppImage
+          dist/*.deb
+          dist/*.rpm
+        retention-days: 1
+        compression-level: 6
 
   release:
     needs: build
@@ -89,5 +95,6 @@ jobs:
         draft: false
         prerelease: false
         generate_release_notes: true
+        make_latest: true
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
