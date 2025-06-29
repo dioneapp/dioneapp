@@ -1,6 +1,8 @@
 import ActionsComponent from "@renderer/components/install/actions";
+import Buttons from "@renderer/components/install/buttons";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
+import DeleteDepsModal from "@renderer/components/modals/delete-deps";
 import sendEvent from "@renderer/utils/events";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
@@ -10,8 +12,6 @@ import DeleteLoadingModal from "../components/modals/delete-loading";
 import MissingDepsModal from "../components/modals/missing-deps";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
-import DeleteDepsModal from "@renderer/components/modals/delete-deps";
-import Buttons from "@renderer/components/install/buttons";
 
 export default function Install({
 	id,
