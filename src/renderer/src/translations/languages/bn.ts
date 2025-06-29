@@ -7,6 +7,8 @@ export const bn = {
 		success: "সফল",
 		pending: "মুলতুবি",
 		back: "ফিরে যান",
+		deselectAll: "সমস্ত অন্তর্ভুক্ত করুন",
+		selectAll: "সমস্ত নির্বাচন",
 	},
 
 	// authentication and access related

@@ -7,6 +7,8 @@ export const fr = {
 		success: "Succès",
 		pending: "En attente",
 		back: "Retour",
+		deselectAll: "Désélectionner tout",
+		selectAll: "Sélectionner tout",
 	},
 
 	// authentication and access related

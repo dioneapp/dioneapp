@@ -7,6 +7,8 @@ export const ar = {
 		success: "نجاح",
 		pending: "قيد الانتظار",
 		back: "رجوع",
+		deselectAll: "إلغاء اختيار الكل",
+		selectAll: "اختيار الكل",
 	},
 
 	// authentication and access related

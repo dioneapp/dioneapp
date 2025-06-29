@@ -7,6 +7,8 @@ export const id = {
 		success: "Berhasil",
 		pending: "Tertunda",
 		back: "Kembali",
+		deselectAll: "Batalkan Pilihan Semua",
+		selectAll: "Pilih Semua",
 	},
 
 	// authentication and access related

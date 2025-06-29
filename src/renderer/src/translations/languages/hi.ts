@@ -7,6 +7,8 @@ export const hi = {
 		success: "सफलता",
 		pending: "लंबित",
 		back: "वापस",
+		deselectAll: "सबको अचयनित करो",
+		selectAll: "सबको चयनित करो",
 	},
 
 	// authentication and access related

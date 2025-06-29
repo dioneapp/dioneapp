@@ -7,6 +7,8 @@ export const ru = {
 		success: "Успешно",
 		pending: "В ожидании",
 		back: "Назад",
+		deselectAll: "Отменить выбор всех",
+		selectAll: "Выбрать все",
 	},
 
 	// authentication and access related
