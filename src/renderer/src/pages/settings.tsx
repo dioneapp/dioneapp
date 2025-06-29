@@ -237,7 +237,10 @@ export default function Settings() {
 															type="text"
 															placeholder="Select folder"
 															readOnly
-															value={joinPath(config.defaultInstallFolder, "apps")}
+															value={joinPath(
+																config.defaultInstallFolder,
+																"apps",
+															)}
 															className="bg-white/10 border border-white/5 text-neutral-200 font-mono text-sm h-10 px-4 pr-12 rounded-full truncate max-w-[calc(100%-12rem)] min-w-[18rem] focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-200"
 														/>
 														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
