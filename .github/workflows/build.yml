@@ -127,38 +127,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
 
-    - name: Get release notes
-      id: release_notes
-      run: |
-        RELEASE_RESPONSE=$(gh release view v${{ github.event.inputs.version }} --json body -q ".body")
-        echo "NOTES<<EOF" >> $GITHUB_OUTPUT
-        echo "$RELEASE_RESPONSE" >> $GITHUB_OUTPUT
-        echo "EOF" >> $GITHUB_OUTPUT
-      env:
-        GITHUB_TOKEN: ${{ secrets.TOKEN }}
-
-    - name: Send discord message
-      env:
-        DISCORD_WEBHOOK: ${{ secrets.DISCORD_URL }}
-        VERSION: ${{ github.event.inputs.version }}
-        NOTES: ${{ steps.release_notes.outputs.NOTES }}
-      run: |
-        MAX_LENGTH=1800
-        SHORT_NOTES=$(echo "$NOTES" | head -c $MAX_LENGTH | sed 's/"/\\"/g')
-        curl -H "Content-Type: application/json" \
-             -X POST \
-             -d '{
-                   "username": "GitHub Actions",
-                   "avatar_url": "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
-                   "embeds": [{
-                     "title": "New release v'"$VERSION"' published!",
-                     "description": "'"$SHORT_NOTES"'",
-                     "color": 5814783,
-                     "url": "https://github.com/${{ github.repository }}/releases/tag/v'"$VERSION"'",
-                     "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"
-                   }]
-                 }' \
-             $DISCORD_WEBHOOK
-
-
         
