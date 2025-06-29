@@ -35,10 +35,50 @@
 		"productName": "Dione",
 		"win": {
 			"target": [
-				"nsis"
+				{
+					"target": "nsis",
+					"arch": ["x64", "ia32"]
+				},
+				{
+					"target": "msi",
+					"arch": ["x64"]
+				}
 			],
-			"icon": "./resources/icon.ico"
+			"icon": "./resources/icon.ico",
+			"publisherName": "Dione"
 		},
+		"mac": {
+			"target": [
+			  {
+				"target": "dmg",
+				"arch": ["x64", "arm64"]
+			  },
+			  {
+				"target": "zip",
+				"arch": ["x64", "arm64"]
+			  }
+			],
+			"icon": "./resources/icon.icns",
+			"category": "public.app-category.productivity"
+		  },
+		"linux": {
+			"target": [
+			  {
+				"target": "AppImage",
+				"arch": ["x64"]
+			  },
+			  {
+				"target": "deb",
+				"arch": ["x64"]
+			  },
+			  {
+				"target": "rpm",
+				"arch": ["x64"]
+			  }
+			],
+			"icon": "./resources/icon.png",
+			"category": "Office"
+		  },
 		"nsis": {
 			"oneClick": false,
 			"installerIcon": "./resources/icon.ico",
