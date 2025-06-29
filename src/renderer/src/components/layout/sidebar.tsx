@@ -1,13 +1,6 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
-import {
-	Library,
-	LogIn,
-	MonitorDown,
-	Settings,
-	User,
-	X,
-} from "lucide-react";
+import { Library, LogIn, MonitorDown, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -201,7 +194,8 @@ export default function Sidebar() {
 														) : (
 															<div className="w-full h-full bg-neutral-900 flex items-center justify-center">
 																<span className="text-white/80 font-semibold text-sm">
-																	{app.data.name?.charAt(0)?.toUpperCase() || "?"}
+																	{app.data.name?.charAt(0)?.toUpperCase() ||
+																		"?"}
 																</span>
 															</div>
 														)}
