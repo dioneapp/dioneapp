@@ -1,6 +1,7 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import {
+	Laptop,
 	LaptopIcon,
 	Library,
 	LogIn,
@@ -150,70 +151,59 @@ export default function Sidebar() {
 									{t("sidebar.activeApps")}
 								</h3>
 							)}
-							<div
-								className={`${config?.compactMode ? "flex flex-col gap-2" : "flex flex-col gap-2"}`}
-							>
-								{activeApps
-									?.slice(0, config?.compactMode ? 4 : 6)
-									.map((app, index) => (
-										<div key={app.appId}>
-											<div
-												className={`group relative ${config?.compactMode ? "w-12 h-12" : "w-full"}`}
+							<div className={`${config?.compactMode ? "flex flex-col gap-2 items-center" : "flex flex-col gap-2"}`}>
+								{activeApps?.slice(0, config?.compactMode ? 6 : 4).map((app, index) => (
+									<div key={app.appId} className={`${config?.compactMode ? "w-full flex justify-center" : "w-full"}`}>
+										<div
+											className={`group relative ${config?.compactMode ? "w-12 h-12" : "w-full"}`}
+										>
+											<button
+												type="button"
+												onClick={() => stopApp(app.appId, app.data.name)}
+												className={`absolute -top-1 -right-1 h-5 w-5 bg-red-500/80 hover:bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex items-center justify-center backdrop-blur-sm`}
 											>
-												<button
-													type="button"
-													onClick={() => stopApp(app.appId, app.data.name)}
-													className={
-														"absolute -top-1 -right-1 h-5 w-5 bg-red-500/80 hover:bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex items-center justify-center backdrop-blur-sm"
-													}
-												>
-													<X className="h-3 w-3 text-white" />
-												</button>
-												<Link
-													to={{
-														pathname: `/install/${app.isLocal ? app.data.name : app.appId}`,
-														search: `?isLocal=${app.isLocal}`,
-													}}
-													className={`${config?.compactMode ? "w-12 h-12 rounded-xl" : "w-full h-10 rounded-lg"} hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group`}
-												>
-													<div
-														className={`${config?.compactMode ? "w-8 h-8" : "w-6 h-6"} overflow-hidden flex-shrink-0`}
-													>
-														{app.data.logo_url?.startsWith(
-															"linear-gradient",
-														) ? (
+												<X className="h-3 w-3 text-white" />
+											</button>
+											<Link
+												to={{
+													pathname: `/install/${app.isLocal ? app.data.name : app.appId}`,
+													search: `?isLocal=${app.isLocal}`,
+												}}
+												className={`${config?.compactMode ? "w-12 h-12 rounded-xl flex items-center justify-center" : "w-full h-10 rounded-lg flex items-center gap-3 px-3"} hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group`}
+											>
+												<div className={`${config?.compactMode ? "w-8 h-8" : "w-6 h-6"} overflow-hidden flex-shrink-0 rounded-lg`}>
+													{app.data.logo_url?.startsWith("linear-gradient") ? (
+														<div
+															style={{ backgroundImage: app.data.logo_url }}
+															className="w-full h-full bg-cover bg-center rounded-lg"
+														/>
+													) : (
+														!app.isLocal && (
 															<div
+																className="w-full h-full object-cover"
 																style={{ backgroundImage: app.data.logo_url }}
-																className="w-full h-full bg-cover bg-center"
 															/>
-														) : (
-															!app.isLocal && (
-																<img
-																	src={app.data.logo_url}
-																	alt={app.data.name}
-																	className="w-full h-full object-cover rounded-lg"
-																/>
-															)
-														)}
+														))}
 														{app.isLocal && (
-															<div className="w-full h-full bg-cover bg-center flex justify-center items-center">
-																<LaptopIcon className="h-6 w-6 text-white/70" />
+															<div className="w-full h-full bg-neutral-900">
+																<Laptop className="h-full w-full p-4 text-white/80" />
 															</div>
 														)}
+														
+												</div>
+												{!config?.compactMode && (
+													<div className="flex-1 min-w-0">
+														<p className="text-sm font-medium text-white truncate">
+															{app.data.name}
+														</p>
+														<p className="text-xs text-neutral-400 truncate">
+															{app.data.description || "Running"}
+														</p>
 													</div>
-													{!config?.compactMode && (
-														<div className="flex-1 min-w-0">
-															<p className="text-sm font-medium text-white truncate">
-																{app.data.name}
-															</p>
-															<p className="text-xs text-neutral-400 truncate">
-																{app.data.description || "Running"}
-															</p>
-														</div>
-													)}
-												</Link>
-											</div>
-											{index <
+												)}
+											</Link>
+										</div>
+										{index <
 												activeApps.slice(0, config?.compactMode ? 4 : 6)
 													.length -
 													1 && (
@@ -221,8 +211,8 @@ export default function Sidebar() {
 													className={`${config?.compactMode ? "w-8 mx-auto" : "w-full"} h-px bg-white/10 my-2`}
 												/>
 											)}
-										</div>
-									))}
+									</div>
+								))}
 							</div>
 						</div>
 					)}
