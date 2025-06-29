@@ -62,6 +62,11 @@ jobs:
       run: ${{ matrix.build-command }}
       env:
         NODE_OPTIONS: --max-old-space-size=4096
+        VITE_DB_URL: ${{ secrets.DB_URL }}
+        VITE_DB_KEY: ${{ secrets.DB_KEY }}
+        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_URL }}
+        API_KEY: ${{ secrets.API_KEY }}
+        
     
     - name: Compress artifacts
       run: |
@@ -85,18 +90,36 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 1
-    
+        fetch-depth: 0
+
+    - name: Get commit messages since last tag
+      id: changelog
+      run: |
+        REPO_URL="https://github.com/${{ github.repository }}"
+        LAST_TAG=$(git describe --tags --abbrev=0 || echo "")
+        echo "Last tag: $LAST_TAG"
+
+        if [ -z "$LAST_TAG" ]; then
+          LOG_RANGE="HEAD"
+        else
+          LOG_RANGE="$LAST_TAG..HEAD"
+        fi
+
+        COMMITS=$(git log $LOG_RANGE -n 50 --pretty=format:"- [\`%h\`]($REPO_URL/commit/%H) %s (%an)")
+        echo "changelog<<EOF" >> $GITHUB_OUTPUT
+        echo "$COMMITS" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
     - name: Download all artifacts
       uses: actions/download-artifact@v4
       with:
         path: ./artifacts
-    
+
     - name: Extract and organize artifacts
       run: |
         mkdir -p release-files
@@ -108,16 +131,16 @@ jobs:
         done
         cd ..
         ls -la release-files/
-    
+
     - name: Create Release
       uses: softprops/action-gh-release@v2
       with:
         tag_name: v${{ github.event.inputs.version }}
-        name: Release v${{ github.event.inputs.version }}
+        name: Dione v${{ github.event.inputs.version }}
         files: release-files/**
+        body: ${{ steps.changelog.outputs.changelog }}
         draft: false
         prerelease: false
-        generate_release_notes: true
         make_latest: true
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
