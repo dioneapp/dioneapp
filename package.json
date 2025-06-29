@@ -56,7 +56,7 @@
 			"target": [
 			  {
 				"target": "dmg",
-				"arch": ["universal"]
+				"arch": ["x64", "arm64"]
 			  }
 			],
 			"icon": "./resources/icon.icns",
@@ -65,10 +65,6 @@
 		  },
 		"linux": {
 			"target": [
-			  {
-				"target": "pacman",
-				"arch": ["x64"]
-			  },
 			  {
 				"target": "deb",
 				"arch": ["x64"]
