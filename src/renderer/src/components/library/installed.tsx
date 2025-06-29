@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
+import ScriptCard from "../home/feed/card";
 import Icon from "../icons/icon";
 import Loading from "../install/loading-skeleton";
-import ScriptCard from "../home/feed/card";
 
 export default function Installed() {
 	const { t } = useTranslation();
-	const { installedApps } = useScriptsContext();
+	const { installedApps, localApps } = useScriptsContext();
 	const [apps, setApps] = useState<any[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const CACHE_KEY = "appsCache";
@@ -17,35 +17,34 @@ export default function Installed() {
 	useEffect(() => {
 		const getApps = async () => {
 			if (!installedApps || installedApps.length === 0) return;
-
-			console.log("installedApps", installedApps);
 			try {
 				const port = await getCurrentPort();
 				const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
 
-				const appsToFetch = installedApps
-					.filter((app) => !cachedData[app]);
+				const normalizeName = (name: string) =>
+					name.toLowerCase().replace(/[\s\-]/g, "");
+
+				const appsToFetch = installedApps.filter((app) => {
+					return !localApps.some(
+						(localApp) =>
+							normalizeName(localApp.name) === normalizeName(app.name),
+					);
+				});
 
 				if (appsToFetch.length > 0) {
 					await Promise.all(
 						appsToFetch.map((app) =>
 							fetch(
-								`http://localhost:${port}/db/search/name/${encodeURIComponent(app)}`,
+								`http://localhost:${port}/db/search/name/${encodeURIComponent(app.name)}`,
 							)
 								.then((res) => (res.ok ? res.json() : []))
 								.then((data) => {
-									cachedData[app] = data;
-									return data;
+									cachedData[app.name] = data;
+									setApps((prev) => [...prev, ...data]);
 								}),
 						),
 					);
-
-					localStorage.setItem(CACHE_KEY, JSON.stringify(cachedData));
 				}
-				const finalResults = installedApps
-					.flatMap((app) => cachedData[app] || []);
-
-				setApps(finalResults);
 			} catch (error) {
 				console.error("Error loading apps:", error);
 			}

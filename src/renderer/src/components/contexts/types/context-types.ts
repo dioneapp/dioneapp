@@ -60,9 +60,9 @@ export interface ScriptsContextType {
 	setRemovedApps: React.Dispatch<React.SetStateAction<any[]>>;
 	availableApps: any[];
 	setAvailableApps: React.Dispatch<React.SetStateAction<any[]>>;
-	connectApp: (appId: string) => void;
+	connectApp: (appId: string, isLocal?: boolean) => void;
 	disconnectApp: (appId: string) => void;
-	sockets: Record<string, Socket>;
+	sockets: Record<string, { socket: Socket; isLocal?: boolean }>;
 	activeApps: any[];
 	handleStopApp: (appId: string, appName: string) => void;
 	addLog: (appId: string, message: string) => void;
@@ -71,6 +71,9 @@ export interface ScriptsContextType {
 	appFinished: Record<string, boolean>;
 	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	loadIframe: (port: number) => void;
+	setLocalApps: React.Dispatch<React.SetStateAction<any[]>>;
+	localApps: any[];
+	isLocal?: boolean;
 }
 
 // Socket types
@@ -99,6 +102,9 @@ export interface SetupSocketProps {
 	>;
 	setDeleteLogs: React.Dispatch<React.SetStateAction<string[]>>;
 	data: any;
-	socketsRef: React.MutableRefObject<Record<string, Socket>>;
+	socketsRef: React.MutableRefObject<
+		Record<string, { socket: Socket; isLocal?: boolean }>
+	>;
 	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	isLocal?: boolean;
 }

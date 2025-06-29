@@ -7,4 +7,5 @@ export interface Script {
 	tags: string[];
 	downloads: number;
 	banner_url?: string;
+	isLocal?: boolean;
 }

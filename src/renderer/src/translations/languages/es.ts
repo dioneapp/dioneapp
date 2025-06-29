@@ -345,6 +345,12 @@ export const es = {
 		},
 	},
 
+	// local component
+	local: {
+		title: "Scripts locales",
+		upload: "Subir script",
+	},
+
 	// feed component
 	feed: {
 		noScripts: "No se encontraron scripts",

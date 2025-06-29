@@ -1,15 +1,24 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
-import { Library, LogIn, MonitorDown, Settings, User, X } from "lucide-react";
+import {
+	Laptop,
+	LaptopIcon,
+	Library,
+	LogIn,
+	MonitorDown,
+	Settings,
+	User,
+	X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { openLink } from "../../utils/openLink";
 import { useAuthContext } from "../contexts/AuthContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import Icon from "../icons/icon";
 import QuickLaunch from "./quick-launch";
-import { useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
 	const { t } = useTranslation();
@@ -156,21 +165,32 @@ export default function Sidebar() {
 												<X className="h-3 w-3 text-white" />
 											</button>
 											<Link
-												to={`/install/${app.appId}`}
-												className={`${config?.compactMode ? "w-12 h-12 rounded-xl flex items-center justify-center" : "w-full h-10 rounded-lg flex items-center gap-3 px-3"} hover:bg-white/5 transition-all duration-200 overflow-hidden group`}
+												to={{
+													pathname: `/install/${app.isLocal ? app.data.name : app.appId}`,
+													search: `?isLocal=${app.isLocal}`,
+												}}
+												className={`${config?.compactMode ? "w-12 h-12 rounded-xl flex items-center justify-center" : "w-full h-10 rounded-lg flex items-center gap-3 px-3"} hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group`}
 											>
 												<div className={`${config?.compactMode ? "w-8 h-8" : "w-6 h-6"} overflow-hidden flex-shrink-0 rounded-lg`}>
-													{app.data.logo_url?.startsWith("linear-gradient") ? (
-														<div
-															style={{ backgroundImage: app.data.logo_url }}
-															className="w-full h-full bg-cover bg-center rounded-lg"
-														/>
+												{!app.isLocal ? (
+													<>
+														{app.data.logo_url?.startsWith("linear-gradient") ? (
+															<div
+																style={{ backgroundImage: app.data.logo_url }}
+																className="w-full h-full bg-cover bg-center rounded-lg"
+															/>
+														) : (
+															<img
+																src={app.data.logo_url}
+																alt={app.data.name}
+																className="w-full h-full object-cover rounded-lg"
+															/>
+														)}
+													</>
 													) : (
-														<img
-															src={app.data.logo_url}
-															alt={app.data.name}
-															className="w-full h-full object-cover"
-														/>
+													<div className="w-full h-full bg-neutral-900">
+														<Laptop className="h-full w-full p-4 text-white/80" />
+													</div>
 													)}
 												</div>
 												{!config?.compactMode && (
@@ -185,9 +205,14 @@ export default function Sidebar() {
 												)}
 											</Link>
 										</div>
-										{index < activeApps.slice(0, config?.compactMode ? 6 : 4).length - 1 && (
-											<div className={`${config?.compactMode ? "w-8 mx-auto" : "w-full"} h-px bg-white/10 my-2`} />
-										)}
+										{index <
+												activeApps.slice(0, config?.compactMode ? 4 : 6)
+													.length -
+													1 && (
+												<div
+													className={`${config?.compactMode ? "w-8 mx-auto" : "w-full"} h-px bg-white/10 my-2`}
+												/>
+											)}
 									</div>
 								))}
 							</div>

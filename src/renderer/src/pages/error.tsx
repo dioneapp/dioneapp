@@ -1,7 +1,7 @@
 import Icon from "@renderer/components/icons/icon";
 import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { openLink } from "@renderer/utils/openLink";
-import { CheckCircle, Loader2, XCircle } from "lucide-react";
+import { CheckCircle, Loader2, TvMinimal, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../translations/translationContext";
@@ -10,7 +10,7 @@ export default function ErrorPage({ error }: { error?: Error }) {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const [reportStatus, setReportStatus] = useState<
-		"idle" | "pending" | "success" | "error"
+		"idle" | "pending" | "success" | "error" | "dev-mode"
 	>("idle");
 	const settings = JSON.parse(localStorage.getItem("config") || "{}");
 
@@ -26,6 +26,12 @@ export default function ErrorPage({ error }: { error?: Error }) {
 		const success = await sendDiscordReport(errorToSend, {
 			userReport: false,
 		});
+
+		if (success === "dev-mode") {
+			setReportStatus("dev-mode");
+			return;
+		}
+
 		if (success) {
 			setReportStatus("success");
 		} else {
@@ -34,7 +40,7 @@ export default function ErrorPage({ error }: { error?: Error }) {
 	}
 
 	return (
-		<div className="min-h-screen pt-4 overflow-hidden">
+		<div className="min-h-screen overflow-hidden">
 			<div className="max-w-[2000px] h-screen overflow-hidden mx-auto px-4 sm:px-6 lg:px-8">
 				<main className="flex flex-col h-full justify-center items-center pb-24">
 					<Icon name="DioDead" className="h-44 w-44 mb-12" />
@@ -59,13 +65,13 @@ export default function ErrorPage({ error }: { error?: Error }) {
 							</button>
 						)}
 						{(settings.sendAnonymousReports || reportStatus !== "idle") && (
-							<div className="absolute bottom-6 shadow-xl">
+							<div className="absolute bottom-6 shadow-xl z-50">
 								<button
 									onClick={() =>
 										openLink("https://github.com/dioneapp/dioneapp/issues")
 									}
 									type="button"
-									className="px-4 border border-white/10 active:hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-300 py-1 text-center active:cursor-pointer flex gap-2"
+									className="px-4 border border-white/10 enabled:hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-300 py-1 text-center enabled:cursor-pointer flex gap-2"
 									disabled
 								>
 									<span className="text-center py-1">
@@ -78,16 +84,21 @@ export default function ErrorPage({ error }: { error?: Error }) {
 										{reportStatus === "error" && (
 											<XCircle className="w-5 h-5 text-red-500" />
 										)}
+										{reportStatus === "dev-mode" && (
+											<TvMinimal className="w-5 h-5 text-neutral-300" />
+										)}
 									</span>
 									<span
-										className={`flex text-sm items-center gap-2 ${reportStatus === "pending" ? "text-orange-500" : ""} ${reportStatus === "success" ? "text-green-500" : ""} ${reportStatus === "error" ? "text-red-500" : ""}`}
+										className={`flex text-sm items-center gap-2 ${reportStatus === "pending" ? "text-orange-500" : ""} ${reportStatus === "success" ? "text-green-500" : ""} ${reportStatus === "error" ? "text-red-500" : ""} ${reportStatus === "dev-mode" ? "text-neutral-300" : ""}`}
 									>
 										<p className="opacity-80">
 											{reportStatus === "pending"
 												? t("error.report.sending")
 												: reportStatus === "success"
 													? t("error.report.success")
-													: t("error.report.failed")}
+													: reportStatus === "error"
+														? t("error.report.failed")
+														: "Error reporting disabled in dev mode"}
 										</p>
 									</span>
 								</button>

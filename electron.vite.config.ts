@@ -11,6 +11,10 @@ export default defineConfig({
 	main: {
 		envPrefix: ["VITE_"],
 		plugins: [externalizeDepsPlugin()],
+		define: {
+			"process.env.DISCORD_WEBHOOK_URL": JSON.stringify(process.env.DISCORD_WEBHOOK_URL),
+			"process.env.API_KEY": JSON.stringify(process.env.API_KEY),
+		},
 	},
 	preload: {
 		plugins: [externalizeDepsPlugin()],

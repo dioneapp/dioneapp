@@ -342,6 +342,12 @@ export const ru = {
 		},
 	},
 
+	// local component
+	local: {
+		title: "Скрипты локально",
+		upload: "Загрузить скрипт",
+	},
+
 	// feed component
 	feed: {
 		noScripts: "Скрипты не найдены",

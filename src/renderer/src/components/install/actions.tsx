@@ -1,6 +1,6 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { BadgeCheck, User } from "lucide-react";
+import { BadgeCheck, Laptop, User } from "lucide-react";
 import { useTranslation } from "../../translations/translationContext";
 import Loading from "./loading-skeleton";
 
@@ -14,6 +14,7 @@ interface ActionsProps {
 	isServerRunning: boolean;
 	handleReconnect: any;
 	handleDeleteDeps: any;
+	isLocal?: boolean;
 }
 
 export default function ActionsComponent({
@@ -26,6 +27,7 @@ export default function ActionsComponent({
 	isServerRunning,
 	handleReconnect,
 	handleDeleteDeps,
+	isLocal,
 }: ActionsProps) {
 	const { t } = useTranslation();
 
@@ -61,7 +63,7 @@ export default function ActionsComponent({
 						<div className="relative z-10">
 							<div className="flex gap-4">
 								<div className="relative h-16 w-16 flex-shrink-0">
-									{data?.logo_url?.startsWith("http") ? (
+									{data?.logo_url || data?.logo_url?.startsWith("http") ? (
 										<img
 											onLoad={() => setImgLoading(false)}
 											onError={() => setImgLoading(false)}
@@ -70,46 +72,62 @@ export default function ActionsComponent({
 											className="h-16 w-16 rounded-xl border border-white/10 object-cover object-center transition-all duration-200"
 										/>
 									) : (
-										<div
-											style={{
-												backgroundImage: data?.logo_url,
-												backgroundSize: "100%",
-												backgroundRepeat: "no-repeat",
-												backgroundPosition: "center",
-											}}
-											className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center 
+										!isLocal && (
+											<div
+												style={{
+													backgroundImage: data?.logo_url,
+													backgroundSize: "100%",
+													backgroundRepeat: "no-repeat",
+													backgroundPosition: "center",
+												}}
+												className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center 
                  												group-hover:border-white/20 transition-all duration-200"
-										/>
+											/>
+										)
+									)}
+									{isLocal && (
+										<div
+											className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center 
+															 group-hover:border-white/20 transition-all duration-200 flex items-center justify-center bg-neutral-900"
+										>
+											<Laptop className="h-10 w-10 text-white/70" />
+										</div>
 									)}
 								</div>
 								<div className="flex flex-col">
 									<h1 className="text-2xl font-medium mb-1 truncate text-white">
 										{data?.name}
 									</h1>
-									<p
-										className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-full cursor-pointer text-justify max-w-md"
-										onClick={() => openLink(data?.script_url)}
-									>
-										<span className="w-fit h-full flex items-center justify-center">
-											<BadgeCheck size={16} />
-										</span>
-										{data?.script_url.replace(
-											/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
-											"",
-										)}
-									</p>
-									<p className="text-xs text-[#BCB1E7] flex gap-1">
-										<span className="w-fit h-full flex items-center">
-											<User size={16} />
-										</span>
-										{t("actions.publishedBy")}{" "}
-										<span
-											className="hover:underline cursor-pointer"
-											onClick={() => openLink(`${data?.author_url}`)}
-										>
-											{data?.author}
-										</span>
-									</p>
+									{!isLocal && (
+										<>
+											<p
+												className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-full cursor-pointer text-justify max-w-md"
+												onClick={() => openLink(data?.script_url)}
+											>
+												<span className="w-fit h-full flex items-center justify-center">
+													<BadgeCheck size={16} />
+												</span>
+												{!isLocal &&
+													data?.script_url &&
+													data?.script_url.replace(
+														/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
+														"",
+													)}
+											</p>
+											<p className="text-xs text-[#BCB1E7] flex gap-1">
+												<span className="w-fit h-full flex items-center">
+													<User size={16} />
+												</span>
+												{t("actions.publishedBy")}{" "}
+												<span
+													className="hover:underline cursor-pointer"
+													onClick={() => openLink(`${data?.author_url}`)}
+												>
+													{data?.author}
+												</span>
+											</p>
+										</>
+									)}
 									<p className="text-xs text-neutral-400 mb-4 mt-2 line-clamp-3">
 										{data?.description}
 									</p>

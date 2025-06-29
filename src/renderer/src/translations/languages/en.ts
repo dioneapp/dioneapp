@@ -337,6 +337,12 @@ export const en = {
 		},
 	},
 
+	// local component
+	local: {
+		title: "Local scripts",
+		upload: "Upload script",
+	},
+
 	// feed component
 	feed: {
 		noScripts: "No scripts found",

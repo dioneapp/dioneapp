@@ -1,5 +1,5 @@
 import { AnimatePresence, type Variants, motion } from "framer-motion";
-import { Plus, X } from "lucide-react";
+import { Laptop, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
@@ -85,7 +85,10 @@ export default function QuickLaunch({
 	const renderAppButton = (app: any, index: number) => (
 		<div key={`slot-${index}`} className="flex flex-col items-center gap-1">
 			<Link
-				to={`/install/${app.id}`}
+				to={{
+					pathname: `/install/${app.isLocal ? app.name : app.id}`,
+					search: `?isLocal=${app.isLocal}`,
+				}}
 				className={`border border-white/10 hover:opacity-80 transition-opacity duration-300 rounded-xl flex items-center justify-center overflow-hidden ${compactMode ? "h-12 w-12" : "h-18 w-18"}`}
 				onContextMenu={(e) => {
 					e.preventDefault();
@@ -99,10 +102,18 @@ export default function QuickLaunch({
 						className="h-full w-full object-cover bg-neutral-800/50"
 					/>
 				) : (
-					<div
-						className="h-full w-full object-cover"
-						style={{ backgroundImage: app.logo_url }}
-					/>
+					!app.isLocal && (
+						<div
+							className="h-full w-full object-cover"
+							style={{ backgroundImage: app.logo_url }}
+						/>
+					)
+				)}
+
+				{app.isLocal && (
+					<div className="h-full w-full bg-neutral-900">
+						<Laptop className="h-full w-full p-4 text-white/80" />
+					</div>
 				)}
 			</Link>
 			{!compactMode && (
@@ -174,7 +185,7 @@ export default function QuickLaunch({
 			<AnimatePresence>
 				{showAppList && (
 					<motion.div
-						className="fixed inset-0 bg-black/50 backdrop-blur-xl z-50 flex items-center justify-center"
+						className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center"
 						onClick={() => setShowAppList(false)}
 						variants={backdropVariants}
 						initial="hidden"
@@ -227,11 +238,11 @@ export default function QuickLaunch({
 												className="flex flex-col items-center p-3 rounded-xl transition-colors w-full cursor-pointer"
 											>
 												<motion.div
-													className={`h-16 w-16 mb-2 ${app.logo_url ? "border border-white/10" : ""} rounded-xl flex items-center justify-center overflow-hidden`}
+													className={`h-16 w-16 mb-2 ${app?.logo_url ? "border border-white/10" : ""} rounded-xl flex items-center justify-center overflow-hidden`}
 													whileHover={{ scale: 1.05 }}
 													whileTap={{ scale: 0.95 }}
 												>
-													{app.logo_url.startsWith("http") ? (
+													{app?.logo_url?.startsWith("http") ? (
 														<img
 															src={app.logo_url}
 															alt={app.name}

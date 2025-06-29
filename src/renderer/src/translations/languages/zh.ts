@@ -325,6 +325,12 @@ export const zh = {
 		},
 	},
 
+	// local component
+	local: {
+		title: "本地脚本",
+		upload: "上传脚本",
+	},
+
 	// feed component
 	feed: {
 		noScripts: "未找到脚本",
