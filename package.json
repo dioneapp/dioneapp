@@ -93,12 +93,9 @@
 		},
 		"msi": {
 			"oneClick": false,
-			"installerIcon": "./resources/icon.ico",
-			"uninstallerIcon": "./resources/icon.ico",
 			"createDesktopShortcut": true,
 			"createStartMenuShortcut": true,
-			"shortcutName": "Dione",
-			"allowToChangeInstallationDirectory": true
+			"shortcutName": "Dione"
 		},
 		"files": [
 			"out/**/*",
