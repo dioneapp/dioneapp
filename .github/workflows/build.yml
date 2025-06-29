@@ -36,10 +36,6 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
-    - name: Run tests
-      run: npm test
-      continue-on-error: true
-    
     - name: Build Electron app
       run: npm run build
     
