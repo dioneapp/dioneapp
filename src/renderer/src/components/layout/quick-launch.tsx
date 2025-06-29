@@ -1,5 +1,5 @@
 import { AnimatePresence, type Variants, motion } from "framer-motion";
-import { Laptop, Plus, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
@@ -111,8 +111,10 @@ export default function QuickLaunch({
 				)}
 
 				{app.isLocal && (
-					<div className="h-full w-full bg-neutral-900">
-						<Laptop className="h-full w-full p-4 text-white/80" />
+					<div className="h-full w-full bg-neutral-900 flex items-center justify-center">
+						<span className="text-white/80 font-semibold text-lg">
+							{app.name?.charAt(0)?.toUpperCase() || "?"}
+						</span>
 					</div>
 				)}
 			</Link>

@@ -1,6 +1,6 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { BadgeCheck, Laptop, User } from "lucide-react";
+import { BadgeCheck, User } from "lucide-react";
 import { useTranslation } from "../../translations/translationContext";
 import Loading from "./loading-skeleton";
 
@@ -90,7 +90,9 @@ export default function ActionsComponent({
 											className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center 
 															 group-hover:border-white/20 transition-all duration-200 flex items-center justify-center bg-neutral-900"
 										>
-											<Laptop className="h-10 w-10 text-white/70" />
+											<span className="text-white/70 font-semibold text-xl">
+												{data?.name?.charAt(0)?.toUpperCase() || "?"}
+											</span>
 										</div>
 									)}
 								</div>

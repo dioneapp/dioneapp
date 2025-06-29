@@ -1,7 +1,6 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import {
-	Laptop,
 	Library,
 	LogIn,
 	MonitorDown,
@@ -200,8 +199,10 @@ export default function Sidebar() {
 																)}
 															</>
 														) : (
-															<div className="w-full h-full bg-neutral-900">
-																<Laptop className="h-full w-full p-4 text-white/80" />
+															<div className="w-full h-full bg-neutral-900 flex items-center justify-center">
+																<span className="text-white/80 font-semibold text-sm">
+																	{app.data.name?.charAt(0)?.toUpperCase() || "?"}
+																</span>
 															</div>
 														)}
 													</div>

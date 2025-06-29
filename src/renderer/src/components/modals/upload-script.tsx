@@ -54,7 +54,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 						<button
 							onClick={handleFileUpload}
 							type="button"
-							className=" px-6 py-3 bg-white/10 hover:bg-white/20 rounded transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
+							className=" px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
 						>
 							{scriptFile ? scriptFile : "Select file"}
 						</button>
@@ -62,7 +62,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 							required
 							value={scriptName}
 							onChange={(e) => setScriptName(e.target.value)}
-							className="focus:outline-2 focus:outline-white/10 w-full border border-white/10 rounded p-2 bg-transparent resize-none"
+							className="focus:outline-2 focus:outline-white/10 w-full border border-white/10 rounded-lg p-2 bg-transparent resize-none"
 							type="text"
 							placeholder="Script name"
 						/>
@@ -70,7 +70,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 							required
 							value={scriptDescription}
 							onChange={(e) => setScriptDescription(e.target.value)}
-							className="focus:outline-2 focus:outline-white/10 w-full h-24 border border-white/10 rounded p-2 bg-transparent resize-none"
+							className="focus:outline-2 focus:outline-white/10 w-full h-24 border border-white/10 rounded-lg p-2 bg-transparent resize-none"
 							placeholder="Script description"
 						/>
 					</div>

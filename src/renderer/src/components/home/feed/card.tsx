@@ -1,4 +1,4 @@
-import { Laptop, Trash } from "lucide-react";
+import { Trash } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import type { Script } from "./types";
@@ -55,7 +55,9 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 						className="h-16 w-16 rounded-xl border border-white/10 backdrop-blur-3xl bg-cover bg-center 
                  group-hover:border-white/20 transition-all duration-200 items-center justify-center flex bg-neutral-900"
 					>
-						<Laptop className="h-10 w-10 text-white/70" />
+						<span className="text-white/70 font-semibold text-xl">
+							{script.name?.charAt(0)?.toUpperCase() || "?"}
+						</span>
 					</div>
 				)}
 				<div className="flex flex-col gap-1 flex-1 min-w-0">
