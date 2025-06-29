@@ -13,6 +13,7 @@ jobs:
         uses: SethCohen/github-releases-to-discord@v1
         with:
           webhook_url: ${{ secrets.DISCORD_URL }}
+          content: "test"
           color: "2105893"
           username: "Release Changelog"
           footer_title: "Changelog"
