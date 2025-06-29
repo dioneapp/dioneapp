@@ -1,5 +1,4 @@
 name: Build and Release
-
 on:
   workflow_dispatch:
     inputs:
@@ -13,19 +12,42 @@ jobs:
     runs-on: ${{ matrix.os }}
     
     strategy:
+      fail-fast: false
       matrix:
-        os: [windows-latest, macos-latest, ubuntu-latest]
-        node-version: [20.x]
+        include:
+          - os: windows-latest
+            node-version: 20.x
+            build-command: npm run build:win
+            cache-key: win
+          - os: macos-latest
+            node-version: 20.x
+            build-command: npm run build:mac
+            cache-key: mac
+          - os: ubuntu-latest
+            node-version: 20.x
+            build-command: npm run build:linux
+            cache-key: linux
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: 'package-lock.json'
+    
+    - name: Cache node_modules
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
     
     - name: Install Linux dependencies
       if: runner.os == 'Linux'
@@ -34,34 +56,31 @@ jobs:
         sudo apt-get install --no-install-recommends -y libopenjp2-tools
     
     - name: Install dependencies
-      run: npm ci -prefer-offline --no-audit --no-fund --silent
+      run: npm ci --prefer-offline --no-audit --no-fund --silent --ignore-scripts
     
-    - name: Build app for Windows
-      if: runner.os == 'Windows'
-      run: npm run build:win
-      
-    - name: Build app for macOS
-      if: runner.os == 'macOS'
-      run: npm run build:mac
-      
-    - name: Build app for Linux
-      if: runner.os == 'Linux'
-      run: npm run build:linux
+    - name: Build app
+      run: ${{ matrix.build-command }}
+      env:
+        NODE_OPTIONS: --max-old-space-size=4096
+    
+    - name: Compress artifacts
+      run: |
+        if [ "$RUNNER_OS" == "Windows" ]; then
+          7z a -tzip build-artifacts.zip dist/*.exe dist/*.msi 2>/dev/null || true
+        elif [ "$RUNNER_OS" == "macOS" ]; then
+          zip -r build-artifacts.zip dist/*.dmg dist/*.zip 2>/dev/null || true
+        else
+          zip -r build-artifacts.zip dist/*.AppImage dist/*.deb dist/*.rpm 2>/dev/null || true
+        fi
+      shell: bash
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: build-${{ matrix.os }}
-        path: |
-          dist/*.exe
-          dist/*.msi
-          dist/*.dmg
-          dist/*.zip
-          dist/*.AppImage
-          dist/*.deb
-          dist/*.rpm
+        name: build-${{ matrix.cache-key }}
+        path: build-artifacts.zip
         retention-days: 1
-        compression-level: 6
+        compression-level: 1
 
   release:
     needs: build
@@ -70,30 +89,35 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
     
     - name: Download all artifacts
       uses: actions/download-artifact@v4
       with:
         path: ./artifacts
     
-    - name: Display structure of downloaded files
-      run: ls -la ./artifacts
+    - name: Extract and organize artifacts
+      run: |
+        mkdir -p release-files
+        cd artifacts
+        for dir in */; do
+          if [ -f "$dir/build-artifacts.zip" ]; then
+            unzip -q "$dir/build-artifacts.zip" -d "../release-files/"
+          fi
+        done
+        cd ..
+        ls -la release-files/
     
     - name: Create Release
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: v${{ github.event.inputs.version }}
         name: Release v${{ github.event.inputs.version }}
-        files: |
-          ./artifacts/build-windows-latest/*.exe
-          ./artifacts/build-windows-latest/*.msi
-          ./artifacts/build-macos-latest/*.dmg
-          ./artifacts/build-macos-latest/*.zip
-          ./artifacts/build-ubuntu-latest/*.AppImage
-          ./artifacts/build-ubuntu-latest/*.deb
-          ./artifacts/build-ubuntu-latest/*.rpm
+        files: release-files/**
         draft: false
         prerelease: false
         generate_release_notes: true
+        make_latest: true
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
