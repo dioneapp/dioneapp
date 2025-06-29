@@ -36,8 +36,17 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
-    - name: Build Electron app
-      run: npm run build
+    - name: Build app for Windows
+      if: runner.os == 'Windows'
+      run: npm run build:win
+      
+    - name: Build app for macOS
+      if: runner.os == 'macOS'
+      run: npm run build:mac
+      
+    - name: Build app for Linux
+      if: runner.os == 'Linux'
+      run: npm run build:linux
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
