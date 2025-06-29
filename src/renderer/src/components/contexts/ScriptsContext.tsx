@@ -17,8 +17,12 @@ const AppContext = createContext<ScriptsContextType | undefined>(undefined);
 
 export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	// socket ref
-	const [sockets, setSockets] = useState<Record<string, { socket: Socket; isLocal?: boolean }>>({}); // multiple sockets
-	const socketsRef = useRef<{ [key: string]: { socket: Socket; isLocal?: boolean } }>({});
+	const [sockets, setSockets] = useState<
+		Record<string, { socket: Socket; isLocal?: boolean }>
+	>({}); // multiple sockets
+	const socketsRef = useRef<{
+		[key: string]: { socket: Socket; isLocal?: boolean };
+	}>({});
 	const socketRef = useRef<any>(null);
 	const [exitRef, setExitRef] = useState<boolean>(false);
 	const pathname = useLocation().pathname;
@@ -109,88 +113,92 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const handleReloadQuickLaunch = async () => {
 		try {
 			const port = await getCurrentPort();
-			
+
 			// get all installed apps
-			const installedResponse = await fetch(`http://localhost:${port}/scripts/installed`);
+			const installedResponse = await fetch(
+				`http://localhost:${port}/scripts/installed`,
+			);
 			if (!installedResponse.ok) {
 				throw new Error("Failed to fetch installed apps");
 			}
-			
-			const installedData = await installedResponse.json();
-			const installedAppNames = Array.isArray(installedData?.apps) ? installedData.apps : [];
-			
-			// get details of each app
-			const appDetailsPromises = installedAppNames.slice(0, 6).map(async (appName: string) => {
-				try {
-					const existingLocalApp = localApps.find(app => 
-						app.name?.toLowerCase() === appName.toLowerCase()
-					);
-					if (existingLocalApp) {
-						return {
-							...existingLocalApp
-						};
-					}
 
-					// try to get from db
-					const dbResponse = await fetch(
-						`http://localhost:${port}/db/search/name/${encodeURIComponent(appName)}`
-					);
-					
-					if (dbResponse.ok) {
-						const dbData = await dbResponse.json();
-						const appData = Array.isArray(dbData) ? dbData[0] : dbData;
-						
-						if (appData) {
+			const installedData = await installedResponse.json();
+			const installedAppNames = Array.isArray(installedData?.apps)
+				? installedData.apps
+				: [];
+
+			// get details of each app
+			const appDetailsPromises = installedAppNames
+				.slice(0, 6)
+				.map(async (appName: string) => {
+					try {
+						const existingLocalApp = localApps.find(
+							(app) => app.name?.toLowerCase() === appName.toLowerCase(),
+						);
+						if (existingLocalApp) {
 							return {
-								...appData,
-								isLocal: false
+								...existingLocalApp,
 							};
 						}
+
+						// try to get from db
+						const dbResponse = await fetch(
+							`http://localhost:${port}/db/search/name/${encodeURIComponent(appName)}`,
+						);
+
+						if (dbResponse.ok) {
+							const dbData = await dbResponse.json();
+							const appData = Array.isArray(dbData) ? dbData[0] : dbData;
+
+							if (appData) {
+								return {
+									...appData,
+									isLocal: false,
+								};
+							}
+						}
+
+						// if not in db, assume it's local
+						const localResponse = await fetch(
+							`http://localhost:${port}/local/get/${encodeURIComponent(appName)}`,
+						);
+
+						if (localResponse.ok) {
+							const localData = await localResponse.json();
+							const addIsLocal = {
+								...localData,
+								isLocal: true,
+							};
+							setLocalApps((prev) => [...prev, addIsLocal]);
+							return addIsLocal;
+						}
+
+						console.warn(`No details found for ${appName}`);
+						return null;
+					} catch (error) {
+						console.error(`Error getting details of ${appName}:`, error);
+						return null;
 					}
-					
-					// if not in db, assume it's local
-					const localResponse = await fetch(
-						`http://localhost:${port}/local/get/${encodeURIComponent(appName)}`
-					);
-					
-					if (localResponse.ok) {
-						const localData = await localResponse.json();
-						const addIsLocal = {
-							...localData,
-							isLocal: true
-						};
-						setLocalApps((prev) => [...prev, addIsLocal]);
-						return addIsLocal;
-					}
-					
-					console.warn(`No details found for ${appName}`);
-					return null;
-					
-				} catch (error) {
-					console.error(`Error getting details of ${appName}:`, error);
-					return null;
-				}
-			});
-			const results = (await Promise.all(appDetailsPromises))
-				.filter((app): app is NonNullable<typeof app> => 
-					app !== null && 
-					typeof app === 'object' && 
-					'name' in app
-				);
+				});
+			const results = (await Promise.all(appDetailsPromises)).filter(
+				(app): app is NonNullable<typeof app> =>
+					app !== null && typeof app === "object" && "name" in app,
+			);
 			setAvailableApps(results);
-			setInstalledApps(installedAppNames.map(name => ({ name })));
+			setInstalledApps(installedAppNames.map((name) => ({ name })));
 			setApps(
 				results
-					.filter(app => !removedApps.some(removed => removed.id === app.id))
-					.slice(0, 6)
+					.filter(
+						(app) => !removedApps.some((removed) => removed.id === app.id),
+					)
+					.slice(0, 6),
 			);
-	
 		} catch (error) {
 			console.error("Error in handleReloadQuickLaunch:", error);
 			showToast("error", "Failed to reload quick launch apps");
 		}
 	};
-	
+
 	const isLocalAvailable = async (port: number): Promise<boolean> => {
 		try {
 			await fetch(`http://localhost:${port}`, {
@@ -251,12 +259,12 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			setDeleteLogs,
 			data,
 			socketsRef,
-			setAppFinished
+			setAppFinished,
 		});
-		socketsRef.current[appId] = { 
-			socket: newSocket, 
-			isLocal 
-		  };
+		socketsRef.current[appId] = {
+			socket: newSocket,
+			isLocal,
+		};
 		setSockets({ ...socketsRef.current });
 	}
 
@@ -300,31 +308,31 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			const appIds = Object.keys(sockets);
 			if (appIds.length === 0) return;
 			const port = await getCurrentPort();
-	
+
 			// get app info
 			Promise.all(
 				appIds.map((appId) => {
 					const isLocal = sockets[appId]?.isLocal || false;
-					const url = isLocal 
-						? `http://localhost:${port}/local/get_id/${encodeURIComponent(appId)}` 
+					const url = isLocal
+						? `http://localhost:${port}/local/get_id/${encodeURIComponent(appId)}`
 						: `http://localhost:${port}/db/search/${encodeURIComponent(appId)}`;
-					
+
 					return fetch(url)
 						.then((res) => {
 							if (!res.ok) throw new Error(`Error getting app info ${appId}`);
 							return res.json();
 						})
-						.then((data) => ({ 
-							appId, 
+						.then((data) => ({
+							appId,
 							data,
-							isLocal 
+							isLocal,
 						}))
 						.catch((error) => {
 							console.error(error);
-							return { 
-								appId, 
+							return {
+								appId,
 								data: null,
-								isLocal 
+								isLocal,
 							};
 						});
 				}),

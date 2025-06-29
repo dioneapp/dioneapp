@@ -5,9 +5,9 @@ import configRouter from "./config";
 // routers
 import databaseRouter from "./database";
 import { createDependenciesRouter } from "./dependencies";
+import { createLocalScriptsRouter } from "./local";
 import { createScriptRouter } from "./scripts";
 import searchBarRouter from "./searchbar";
-import { createLocalScriptsRouter } from "./local";
 
 export const setupRoutes = (server: Express, io: Server) => {
 	server.get("/", (_req, res) => {
