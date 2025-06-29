@@ -84,29 +84,54 @@ export default function DeleteDepsModal(
 									</p>
 								)}
 							</div>
-							<div className="mt-4 flex items-center justify-end gap-3">
-								<button
-									type="button"
-									onClick={() => {
-										setDeleteDepsModal(false);
-										handleUninstall(false);
-									}}
-									className="flex items-center justify-center gap-2 p-4 text-xs bg-white/10 hover:bg-white/20 transition-colors duration-400 rounded-full text-white font-semibold py-1 text-center cursor-pointer"
-								>
-									{t("common.cancel")}
-								</button>
-								<button
-									type="button"
-									onClick={() => {
-										setDeleteDepsModal(false);
-										handleUninstall(true);
-									}}
-									className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
-								>
-									<span className="font-semibold">
-										{t("actions.uninstall")}
-									</span>
-								</button>
+							<div className="flex justify-between mt-4">
+								<div className="">
+									<button
+										type="button"
+										className="flex items-center justify-center gap-2 p-2 text-xs border border-white/10 rounded-full text-neutral-300 font-medium py-1 text-center cursor-pointer"
+										onClick={() => {
+											if (selectedDeps.length === inUseDeps.length) {
+												setSelectedDeps([]);
+											} else {
+												setSelectedDeps([...inUseDeps]);
+											}
+										}}
+									>
+										{selectedDeps.length === inUseDeps.length ? (
+											<span className="font-semibold">
+												{t("common.deselectAll")}
+											</span>
+										) : (
+											<span className="font-semibold">
+												{t("common.selectAll")}
+											</span>
+										)}
+									</button>
+								</div>
+								<div className="flex items-center justify-end gap-3">
+									<button
+										type="button"
+										onClick={() => {
+											setDeleteDepsModal(false);
+											// handleUninstall(false);
+										}}
+										className="flex items-center justify-center gap-2 p-4 text-xs bg-white/10 hover:bg-white/20 transition-colors duration-400 rounded-full text-white font-semibold py-1 text-center cursor-pointer"
+									>
+										{t("common.cancel")}
+									</button>
+									<button
+										type="button"
+										onClick={() => {
+											setDeleteDepsModal(false);
+											handleUninstall(true);
+										}}
+										className="flex items-center justify-center gap-2 p-4 text-xs bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
+									>
+										<span className="font-semibold">
+											{t("actions.uninstall")}
+										</span>
+									</button>
+								</div>
 							</div>
 						</div>
 					</div>
