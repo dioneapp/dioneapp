@@ -5,6 +5,20 @@ body {
 	font-family: "Poppins", serif;
 	user-select: none;
 	scroll-behavior: smooth;
+	background-color: #080808;
+	transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Light mode styles */
+.light body {
+	color: #000;
+	background-color: #ffffff;
+}
+
+/* Dark mode styles (default) */
+.dark body {
+	color: #fff;
+	background-color: #080808;
 }
 
 #titlebar {

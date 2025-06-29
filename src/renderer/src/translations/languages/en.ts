@@ -172,6 +172,10 @@ export const en = {
 				description: "Choose your preferred interface language",
 			},
 			helpTranslate: "🤔 Not seeing your language? Help us add more!",
+			theme: {
+				label: "Theme",
+				description: "Choose between light and dark appearance",
+			},
 			compactView: {
 				label: "Compact View",
 				description:

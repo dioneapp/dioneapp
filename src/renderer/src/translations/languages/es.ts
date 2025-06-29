@@ -173,6 +173,10 @@ export const es = {
 				description: "Elige tu idioma de interfaz preferido",
 			},
 			helpTranslate: "🤔 ¿No ves tu idioma? ¡Ayúdanos a añadir más!",
+			theme: {
+				label: "Tema",
+				description: "Elige entre apariencia clara y oscura",
+			},
 			compactView: {
 				label: "Vista compacta",
 				description:

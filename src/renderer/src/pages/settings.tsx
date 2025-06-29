@@ -1,9 +1,10 @@
 import { useAuthContext } from "@renderer/components/contexts/AuthContext";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Folder } from "lucide-react";
+import { ChevronDown, Folder, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../components/contexts/ThemeContext";
 import { languages, useTranslation } from "../translations/translationContext";
 import { openLink } from "../utils/openLink";
 
@@ -85,6 +86,7 @@ export default function Settings() {
 	const [config, setConfig] = useState<any | null>(null);
 	const { setLanguage, t } = useTranslation();
 	const { logout } = useAuthContext();
+	const { theme, setTheme } = useTheme();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -201,11 +203,11 @@ export default function Settings() {
 	}
 
 	return (
-		<div className="min-h-screen bg-background pt-4">
+		<div className="min-h-screen bg-background dark:bg-background light:bg-background-light pt-4">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
 				<main className="flex flex-col gap-6 py-5">
 					{/* background */}
-					<div className="absolute top-0 left-0 w-full h-full bg-gradient-to-bl from-[#BCB1E7] to-[#080808] opacity-15 rounded-3xl blur-3xl z-0" />
+					<div className="absolute top-0 left-0 w-full h-full bg-gradient-to-bl from-[#BCB1E7] to-[#080808] dark:from-[#BCB1E7] dark:to-[#080808] light:from-[#8B5CF6] light:to-[#ffffff] opacity-15 rounded-3xl blur-3xl z-0" />
 					<div>
 						<div className="flex flex-col space-y-4 h-full">
 							{config && (
@@ -303,6 +305,35 @@ export default function Settings() {
 													([value, label]) => ({ value, label }),
 												)}
 											/>
+										</div>
+										<div className="flex justify-between w-full items-center h-full space-y-2 mt-4">
+											<div className="h-full flex items-start justify-center flex-col mt-auto">
+												<label className="text-neutral-200 font-medium">
+													{t("settings.interface.theme.label")}
+												</label>
+												<p className="text-xs text-neutral-400">
+													{t("settings.interface.theme.description")}
+												</p>
+											</div>
+											<button
+												type="button"
+												onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+												className={`relative w-16 h-8 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
+													theme === 'light'
+														? "bg-yellow-500/30"
+														: "bg-blue-500/30"
+												}`}
+											>
+												<div className={`flex items-center justify-center w-6 h-6 rounded-full bg-white shadow-md transform transition-transform duration-300 ${
+													theme === 'light' ? "translate-x-8" : "translate-x-0"
+												}`}>
+													{theme === 'light' ? (
+														<Sun className="w-3 h-3 text-yellow-600" />
+													) : (
+														<Moon className="w-3 h-3 text-blue-600" />
+													)}
+												</div>
+											</button>
 										</div>
 										<div>
 											<a
