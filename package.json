@@ -85,7 +85,8 @@
 			"createDesktopShortcut": true,
 			"createStartMenuShortcut": true,
 			"shortcutName": "Dione",
-			"allowToChangeInstallationDirectory": true
+			"allowToChangeInstallationDirectory": true,
+			"differentialPackage": false
 		},
 		"msi": {
 			"oneClick": false,
