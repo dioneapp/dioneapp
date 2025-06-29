@@ -36,7 +36,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 	};
 
 	return (
-		<div className="absolute inset-0 bg-black/90 backdrop-blur-sm w-full h-screen">
+		<div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50">
 			<div className="flex items-center justify-center h-full w-full max-w-xl mx-auto -mt-4 relative overflow-hidden">
 				<div className="p-6 gap-4 flex flex-col rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-h-96 h-96 w-full backdrop-blur-md z-20">
 					<div className="absolute top-0 left-0.5/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-10" />
