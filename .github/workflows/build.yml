@@ -85,16 +85,15 @@ jobs:
         tag_name: v${{ github.event.inputs.version }}
         name: Release v${{ github.event.inputs.version }}
         files: |
-          ./artifacts/build-windows-latest/dist/*.exe
-          ./artifacts/build-windows-latest/dist/*.msi
-          ./artifacts/build-macos-latest/dist/*.dmg
-          ./artifacts/build-macos-latest/dist/*.zip
-          ./artifacts/build-ubuntu-latest/dist/*.AppImage
-          ./artifacts/build-ubuntu-latest/dist/*.deb
-          ./artifacts/build-ubuntu-latest/dist/*.rpm
+          ./artifacts/build-windows-latest/*.exe
+          ./artifacts/build-windows-latest/*.msi
+          ./artifacts/build-macos-latest/*.dmg
+          ./artifacts/build-macos-latest/*.zip
+          ./artifacts/build-ubuntu-latest/*.AppImage
+          ./artifacts/build-ubuntu-latest/*.deb
+          ./artifacts/build-ubuntu-latest/*.rpm
         draft: false
         prerelease: false
         generate_release_notes: true
-        make_latest: true
       env:
         GITHUB_TOKEN: ${{ secrets.TOKEN }}
