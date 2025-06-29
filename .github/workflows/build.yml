@@ -71,11 +71,11 @@ jobs:
     - name: Compress artifacts
       run: |
         if [ "$RUNNER_OS" == "Windows" ]; then
-          7z a -tzip build-artifacts.zip dist/*.exe dist/*.msi 2>/dev/null || true
+          7z a -tzip build-artifacts.zip dist/*.exe dist/*.msi dist/latest.yml 2>/dev/null || true
         elif [ "$RUNNER_OS" == "macOS" ]; then
-          zip -r build-artifacts.zip dist/*.dmg dist/*.zip 2>/dev/null || true
+          zip -r build-artifacts.zip dist/*.dmg dist/*.zip dist/latest.yml 2>/dev/null || true
         else
-          zip -r build-artifacts.zip dist/*.AppImage dist/*.deb dist/*.rpm 2>/dev/null || true
+          zip -r build-artifacts.zip dist/*.AppImage dist/*.deb dist/*.rpm dist/latest.yml 2>/dev/null || true
         fi
       shell: bash
     
