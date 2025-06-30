@@ -188,6 +188,9 @@ export default function MissingDepsModal({
 												<CheckCircle className="h-4 w-4 text-green-500" />
 											) : (
 												<>
+													{dep.reason === "not-installed" && (
+														<AlertCircle className="h-4 w-4 text-red-500" />
+													)}
 													{dep.reason === "not-accepted" && (
 														<XCircle className="h-4 w-4 text-red-500" />
 													)}

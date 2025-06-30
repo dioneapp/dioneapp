@@ -32,4 +32,4 @@ CHANGELOG.md
 
 # dont exclude local.ts
 !src/main/server/routes/local.ts
-
+!src/main/server/scripts

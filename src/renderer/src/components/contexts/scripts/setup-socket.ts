@@ -42,6 +42,7 @@ export function setupSocket({
 	});
 
 	socket.on("missingDeps", (data) => {
+		console.log('MISSING DEPS FOUND')
 		setMissingDependencies(data);
 	});
 
@@ -117,6 +118,6 @@ export function setupSocket({
 		setDeleteLogs((prevLogs) => [...prevLogs, message]);
 	});
 
-	socketsRef.current[appId].socket = socket;
+	socketsRef.current[appId] = { socket };
 	return socket;
 }

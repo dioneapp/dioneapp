@@ -67,10 +67,10 @@ export default function Install({
 	const maxApps = 6;
 
 	// connect to server
-	useEffect(() => {
-		if (!isServerRunning || !data?.id) return;
-		connectApp(data?.id, isLocal);
-	}, [isServerRunning]);
+	// useEffect(() => {
+	// 	if (!isServerRunning || !data?.id) return;
+	// 	connectApp(data?.id, isLocal);
+	// }, [isServerRunning]);
 
 	// stop server and show actions if installation finish
 	useEffect(() => {
@@ -245,6 +245,9 @@ export default function Install({
 		setShow({ [data?.id]: "logs" });
 		if (!data?.id) return;
 
+		await connectApp(data?.id, isLocal);
+		await new Promise(resolve => setTimeout(resolve, 500)); // wait for socket to connect
+
 		try {
 			const port = await getCurrentPort();
 			window.electron.ipcRenderer.invoke(
@@ -291,6 +294,10 @@ export default function Install({
 			if (!data.name) return;
 			setIsServerRunning(true);
 			addLog(data?.id, `Starting ${data.name}...`);
+
+			await connectApp(data?.id, isLocal);
+			await new Promise(resolve => setTimeout(resolve, 500)); // wait for socket to connect
+
 			const port = await getCurrentPort();
 			window.electron.ipcRenderer.invoke(
 				"notify",
