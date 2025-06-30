@@ -87,9 +87,9 @@ export function AuthContextProvider({
 			checkAccess();
 		} else {
 			console.log("User is not logged");
-			if (pathname !== "/first-time") {
-				navigate("/first-time");
-			}
+			// if (pathname !== "/first-time") {
+			// 	navigate("/first-time");
+			// }
 		}
 	}
 
