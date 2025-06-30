@@ -3,14 +3,15 @@
 		"checkCommand": "msbuild -version",
 		"versionRegex": "\\d+\\.\\d+\\.\\d+",
 		"installCommand": {
-			"windows": "curl -LO https://aka.ms/vs/17/release/vs_BuildTools.exe && vs_BuildTools.exe --quiet --wait --norestart --nocache --installPath \"C:\\\\BuildTools\" --add Microsoft.VisualStudio.Workload.MSBuildTools --add Microsoft.VisualStudio.Workload.NetCoreBuildTools && setx PATH \"%%PATH%%;C:\\\\BuildTools\\\\MSBuild\\\\Current\\\\Bin\""
+			"windows": "winget install --id Microsoft.VisualStudio.2022.BuildTools --silent --accept-package-agreements --accept-source-agreements --override \"--quiet --wait --norestart --nocache --installPath C:\\BuildTools --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended\" && powershell -Command \"[Environment]::SetEnvironmentVariable('PATH', [Environment]::GetEnvironmentVariable('PATH','Machine') + ';C:\\BuildTools\\MSBuild\\Current\\Bin', 'Machine')\""
 		},
 		"uninstallCommand": {
-			"windows": "\"C:\\\\BuildTools\\\\Installer\\\\vs_installer.exe\" uninstall --quiet --norestart --installPath \"C:\\\\BuildTools\""
-		}
+			"windows": "winget uninstall --id Microsoft.VisualStudio.2022.BuildTools --silent"
+		},
+		"shouldRestart": true
 	},
 	"python": {
-		"checkCommand": "python --version",
+		"checkCommand": "python --version",	
 		"versionRegex": "Python (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
 			"windows": "curl -o python-installer.exe https://www.python.org/ftp/python/3.10.7/python-3.10.7-amd64.exe && python-installer.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0",
