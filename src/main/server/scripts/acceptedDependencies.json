@@ -11,7 +11,7 @@
 		"shouldRestart": true
 	},
 	"python": {
-		"checkCommand": "python --version",	
+		"checkCommand": "python --version",
 		"versionRegex": "Python (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
 			"windows": "curl -o python-installer.exe https://www.python.org/ftp/python/3.10.7/python-3.10.7-amd64.exe && python-installer.exe /quiet InstallAllUsers=1 PrependPath=1 Include_test=0",

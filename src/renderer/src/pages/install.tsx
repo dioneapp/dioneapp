@@ -246,7 +246,7 @@ export default function Install({
 		if (!data?.id) return;
 
 		await connectApp(data?.id, isLocal);
-		await new Promise(resolve => setTimeout(resolve, 500)); // wait for socket to connect
+		await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
 
 		try {
 			const port = await getCurrentPort();
@@ -296,7 +296,7 @@ export default function Install({
 			addLog(data?.id, `Starting ${data.name}...`);
 
 			await connectApp(data?.id, isLocal);
-			await new Promise(resolve => setTimeout(resolve, 500)); // wait for socket to connect
+			await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
 
 			const port = await getCurrentPort();
 			window.electron.ipcRenderer.invoke(

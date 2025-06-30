@@ -42,7 +42,7 @@ export function setupSocket({
 	});
 
 	socket.on("missingDeps", (data) => {
-		console.log('MISSING DEPS FOUND')
+		console.log("MISSING DEPS FOUND");
 		setMissingDependencies(data);
 	});
 
