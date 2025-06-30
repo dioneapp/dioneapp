@@ -8,7 +8,7 @@ import {
 	saveRefreshToken,
 } from "@renderer/utils/secure-tokens";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import type { AuthContextType } from "./types/context-types";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,7 +22,6 @@ export function AuthContextProvider({
 	);
 	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
-	const { pathname } = useLocation();
 
 	// on mount, try to load auth token
 	useEffect(() => {
