@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -44,6 +44,7 @@ export interface DependencyConfig {
 			macos?: string;
 			linux?: string;
 		};
+		shouldRestart?: boolean
 	};
 }
 
@@ -62,34 +63,43 @@ type versionResult = {
 	reason?: string;
 };
 
-async function isDependencyInstalled(
+function isDependencyInstalled(
 	dependency: string,
 	requiredVersion: string,
 	dependencyConfig: DependencyConfig,
-): Promise<versionResult> {
-	try {
-		if (!dependencyConfig[dependency]) {
-			logger.warn(`Not found dependency ${dependency} in config file`);
-			return { isValid: false, reason: "not-accepted" };
-		}
-		const config = dependencyConfig[dependency];
-		const output = await execSync(config.checkCommand);
-		const installedVersion = output.toString().trim();
+): versionResult {
+	if (!dependencyConfig[dependency]) {
+		logger.warn(`Not found dependency ${dependency} in config file`);
+		return { isValid: false, reason: "not-accepted" };
+	}
 
-		if (requiredVersion === "latest") {
-			return { isValid: true, reason: "required-version" };
-		}
+	const config = dependencyConfig[dependency];
+	const [cmd, ...args] = config.checkCommand.split(" ");
 
-		if (!semver.satisfies(installedVersion, requiredVersion)) {
-			logger.error(`Dependency "${dependency}" version is not satisfied`);
-			return { isValid: false, reason: "version-not-satisfied" };
-		}
+	const result = spawnSync(cmd, args);
 
-		return { isValid: true, reason: "required-version" };
-	} catch (error) {
-		logger.error(`Error checking dependency ${dependency} version:`, error);
+	if (result.error && (result.error as any).code === "ENOENT") {
+		logger.warn(`Dependency "${dependency}" is not installed.`);
+		return { isValid: false, reason: "not-installed" };
+	}
+
+	if (result.status !== 0) {
+		logger.error(`Error checking dependency ${dependency}:`, result.stderr?.toString());
 		return { isValid: false, reason: "error" };
 	}
+
+	const installedVersion = result.stdout?.toString().trim() || "";
+
+	if (requiredVersion === "latest") {
+		return { isValid: true, reason: "required-version" };
+	}
+
+	if (!semver.satisfies(installedVersion, requiredVersion)) {
+		logger.error(`Dependency "${dependency}" version is not satisfied`);
+		return { isValid: false, reason: "version-not-satisfied" };
+	}
+
+	return { isValid: true, reason: "required-version" };
 }
 
 export function isDepForCurrentOS(dep: any): boolean {
