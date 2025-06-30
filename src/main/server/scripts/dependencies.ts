@@ -44,7 +44,7 @@ export interface DependencyConfig {
 			macos?: string;
 			linux?: string;
 		};
-		shouldRestart?: boolean
+		shouldRestart?: boolean;
 	};
 }
 
@@ -84,7 +84,10 @@ function isDependencyInstalled(
 	}
 
 	if (result.status !== 0) {
-		logger.error(`Error checking dependency ${dependency}:`, result.stderr?.toString());
+		logger.error(
+			`Error checking dependency ${dependency}:`,
+			result.stderr?.toString(),
+		);
 		return { isValid: false, reason: "error" };
 	}
 
