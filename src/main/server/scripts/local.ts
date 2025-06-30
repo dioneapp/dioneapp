@@ -138,7 +138,9 @@ export async function loadLocalScript(name: string, io: Server) {
 			status: "error",
 			content: "Error detected",
 		});
-		logger.warn(`Some dependencies are missing: ${result.missing.map((dep) => dep.name).join(", ")}`)
+		logger.warn(
+			`Some dependencies are missing: ${result.missing.map((dep) => dep.name).join(", ")}`,
+		);
 	}
 }
 
