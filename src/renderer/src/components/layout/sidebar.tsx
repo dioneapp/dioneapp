@@ -95,9 +95,6 @@ export default function Sidebar() {
 						{!config?.compactMode && (
 							<div className="flex gap-1.5 justify-center items-center">
 								<h1 className="font-semibold text-3xl">Dione</h1>
-								{isServerRunning && (
-									<div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse mb-3.5" />
-								)}
 							</div>
 						)}
 					</Link>
@@ -158,7 +155,7 @@ export default function Sidebar() {
 												<button
 													type="button"
 													onClick={() => stopApp(app.appId, app.data.name)}
-													className={`absolute -top-1 -right-1 h-5 w-5 bg-red-500/80 hover:bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex items-center justify-center backdrop-blur-sm`}
+													className="absolute -top-1 -right-1 h-5 w-5 bg-red-500/80 hover:bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex items-center justify-center backdrop-blur-sm"
 												>
 													<X className="h-3 w-3 text-white" />
 												</button>
