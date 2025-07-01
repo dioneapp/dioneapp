@@ -24,7 +24,9 @@ export interface ScriptsContextType {
 		React.SetStateAction<Record<string, { status: string; content: string }>>
 	>;
 	isServerRunning: Record<string, boolean>;
-	setIsServerRunning: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	setIsServerRunning: React.Dispatch<
+		React.SetStateAction<Record<string, boolean>>
+	>;
 	setData: React.Dispatch<React.SetStateAction<any>>;
 	data: any;
 	error: boolean;
