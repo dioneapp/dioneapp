@@ -11,7 +11,7 @@ interface ActionsProps {
 	handleStart: any;
 	handleUninstall: any;
 	handleDownload: any;
-	isServerRunning: boolean;
+	isServerRunning: Record<string, boolean>;
 	handleReconnect: any;
 	handleDeleteDeps: any;
 	isLocal?: boolean;
@@ -63,6 +63,7 @@ export default function ActionsComponent({
 						<div className="relative z-10">
 							<div className="flex gap-4">
 								<div className="relative h-16 w-16 flex-shrink-0">
+									{/* biome-ignore lint/complexity/useOptionalChain: if you change && to || it will break */}
 									{data?.logo_url && data?.logo_url?.startsWith("http") ? (
 										<img
 											onLoad={() => setImgLoading(false)}
@@ -135,7 +136,7 @@ export default function ActionsComponent({
 							</div>
 
 							<div className="flex justify-center gap-2 w-full">
-								{isServerRunning && (
+								{isServerRunning[data?.id] && (
 									<button
 										type="button"
 										onClick={handleReconnect}
@@ -144,7 +145,7 @@ export default function ActionsComponent({
 										{t("actions.reconnect")}
 									</button>
 								)}
-								{!isServerRunning &&
+								{!isServerRunning[data?.id] &&
 									(installed ? (
 										<div className="flex gap-2 justify-end w-full">
 											<button
