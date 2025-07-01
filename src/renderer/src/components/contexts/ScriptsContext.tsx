@@ -32,7 +32,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const [statusLog, setStatusLog] = useState<
 		Record<string, { status: string; content: string }>
 	>({});
-	const [isServerRunning, setIsServerRunning] = useState<boolean>(false);
+	const [isServerRunning, setIsServerRunning] = useState<Record<string, boolean>>({});
 	// toast stuff
 	const { addToast } = useToast();
 	const showToast = (
@@ -344,7 +344,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	}, [sockets]);
 
 	useEffect(() => {
-		if (!pathname.includes("/install") && isServerRunning) {
+		if (!pathname.includes("/install") && isServerRunning[data?.id]) {
 			showToast(
 				"default",
 				"There is an application running in the background.",
@@ -352,12 +352,16 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				true,
 				"Return",
 				() => {
-					navigate(`/install/${data.id} `);
+					navigate(
+						`/install/${
+							sockets[data.id]?.isLocal ? encodeURIComponent(data.name) : data.id
+						}?isLocal=${sockets[data.id]?.isLocal}`,
+					);
 				},
 				5000,
 			);
 		}
-	}, [pathname.includes("/install"), isServerRunning]);
+	}, [pathname.includes("/install"), isServerRunning[data?.id]]);
 
 	const handleStopApp = async (appId: string, appName: string) => {
 		try {
@@ -378,7 +382,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				);
 				showToast("success", `Successfully stopped ${appName}`);
 				clearLogs(appId);
-				setIsServerRunning(false);
+				setIsServerRunning((prev) => ({ ...prev, [appId]: false }));
 			} else {
 				showToast("error", `Error stopping ${appName}: ${response.status}`);
 			}
