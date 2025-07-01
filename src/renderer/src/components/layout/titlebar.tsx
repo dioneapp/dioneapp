@@ -9,7 +9,7 @@ export default function Titlebar() {
 	const [showModal, setShowModal] = useState(false);
 
 	const handleClose = async () => {
-		if (isServerRunning) {
+		if (Object.keys(isServerRunning).length !== 0) {
 			setShowModal(true);
 			setExitRef(true);
 		} else {
