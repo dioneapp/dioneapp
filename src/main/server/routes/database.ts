@@ -230,7 +230,6 @@ router.get("/search/:id", (req, res) => {
 		) {
 			script.logo_url = generateGradient(script?.name);
 		}
-		console.log(script.logo_url);
 		res.send(script);
 		return;
 	}
