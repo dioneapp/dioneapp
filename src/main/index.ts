@@ -269,6 +269,8 @@ app.whenReady().then(async () => {
 		BrowserWindow.getFocusedWindow()?.minimize();
 	});
 
+	ipcMain.handle("get-version", () => app.getVersion());
+
 	// Add Discord presence update handler
 	ipcMain.handle(
 		"update-discord-presence",

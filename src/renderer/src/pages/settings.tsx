@@ -82,11 +82,20 @@ const CustomSelect = ({
 
 export default function Settings() {
 	const [port, setPort] = useState<number | null>(null);
+	const [packVersion, setPackVersion] = useState<string | null>(null);
 	const [versions] = useState(window.electron.process.versions);
 	const [config, setConfig] = useState<any | null>(null);
 	const { setLanguage, t } = useTranslation();
 	const { logout } = useAuthContext();
 	const navigate = useNavigate();
+
+	useEffect(() => {
+		const fetchVersion = async () => {
+			const version = await window.electron.ipcRenderer.invoke("get-version");
+			setPackVersion(version);
+		};
+		fetchVersion();
+	}, []);
 
 	useEffect(() => {
 		// get actual port
@@ -551,7 +560,7 @@ export default function Settings() {
 									</div>
 								</div>
 							)}
-							<div className="w-full flex items-end justify-between text-xs text-neutral-500 z-50 mt-14 pb-4">
+							<div className="w-full flex items-end justify-between text-xs text-neutral-500 z-50 mt-16 pb-4">
 								<div>
 									<a
 										href="https://getdione.app"
@@ -564,6 +573,7 @@ export default function Settings() {
 									<p>built with &hearts;</p>
 								</div>
 								<div className="text-right">
+									<button type="button" className="hover:underline cursor-pointer" onClick={() => openLink("https://github.com/dioneapp/dioneapp/releases")}>v{packVersion || "0.0.0"}</button>
 									<p>
 										Port{" "}
 										<button
