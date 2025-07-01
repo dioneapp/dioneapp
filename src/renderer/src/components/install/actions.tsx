@@ -63,7 +63,7 @@ export default function ActionsComponent({
 						<div className="relative z-10">
 							<div className="flex gap-4">
 								<div className="relative h-16 w-16 flex-shrink-0">
-									{data?.logo_url || data?.logo_url?.startsWith("http") ? (
+									{data?.logo_url && data?.logo_url?.startsWith("http") ? (
 										<img
 											onLoad={() => setImgLoading(false)}
 											onError={() => setImgLoading(false)}
@@ -80,15 +80,13 @@ export default function ActionsComponent({
 													backgroundRepeat: "no-repeat",
 													backgroundPosition: "center",
 												}}
-												className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center 
-                 												group-hover:border-white/20 transition-all duration-200"
+												className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center group-hover:border-white/20 transition-all duration-200"
 											/>
 										)
 									)}
 									{isLocal && (
 										<div
-											className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center 
-															 group-hover:border-white/20 transition-all duration-200 flex items-center justify-center bg-neutral-900"
+											className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center group-hover:border-white/20 transition-all duration-200 flex items-center justify-center bg-neutral-900"
 										>
 											<span className="text-white/70 font-semibold text-xl">
 												{data?.name?.charAt(0)?.toUpperCase() || "?"}

@@ -6,38 +6,16 @@ const router = express.Router();
 router.use(express.json());
 
 // generate gradients for logo if is null
-const darkColors = [
-	"#1e1e2f",
-	"#2c2c3a",
-	"#3b3b4f",
-	"#1f2937",
-	"#374151",
-	"#4b5563",
-	"#111827",
-	"#2d3748",
-];
-const lightColors = [
-	"#f5f5f5",
-	"#e0e0e0",
-	"#dbeafe",
-	"#fce4ec",
-	"#e8eaf6",
-	"#f0f4c3",
-	"#cfd8dc",
-	"#ffd7be",
-];
 function generateGradient(input: string): string {
 	if (!input) return "";
-	let hash = 0;
-	for (let i = 0; i < input?.length; i++) {
-		hash = input?.charCodeAt(i) + ((hash << 5) - hash);
-	}
-	hash = Math.abs(hash);
-	const dark = darkColors[hash % darkColors.length];
-	const light = lightColors[(hash >> 3) % lightColors.length];
-	const angle = hash % 360;
-	return `linear-gradient(${angle}deg, ${dark}, ${light})`;
+	const hash = [...input].reduce((a, c) => c.charCodeAt(0) + ((a << 5) - a), 0) >>> 0;
+	// biome-ignore lint/style/useSingleVarDeclarator: Here we seek the least amount of code possible.
+	const h1 = hash % 360, h2 = (hash * 3) % 360;
+	// biome-ignore lint/style/useSingleVarDeclarator: Here we seek the least amount of code possible.
+	const c1 = `hsl(${h1},70%,50%)`, c2 = `hsl(${h2},70%,70%)`;
+	return `linear-gradient(${hash % 360}deg, ${c1}, ${c2})`;
 }
+
 
 // auth
 router.get("/user/:id", async (req, res) => {
@@ -248,10 +226,11 @@ router.get("/search/:id", (req, res) => {
 			script?.logo_url === null ||
 			script?.logo_url === undefined ||
 			script?.logo_url === "" ||
-			script
+			!script
 		) {
-			generateGradient(script?.name);
+			script.logo_url = generateGradient(script?.name);
 		}
+		console.log(script.logo_url);
 		res.send(script);
 		return;
 	}
