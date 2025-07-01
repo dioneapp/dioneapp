@@ -85,9 +85,7 @@ export default function ActionsComponent({
 										)
 									)}
 									{isLocal && (
-										<div
-											className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center group-hover:border-white/20 transition-all duration-200 flex items-center justify-center bg-neutral-900"
-										>
+										<div className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center group-hover:border-white/20 transition-all duration-200 flex items-center justify-center bg-neutral-900">
 											<span className="text-white/70 font-semibold text-xl">
 												{data?.name?.charAt(0)?.toUpperCase() || "?"}
 											</span>
