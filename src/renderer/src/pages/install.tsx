@@ -241,7 +241,7 @@ export default function Install({
 			return;
 		}
 		clearLogs(data?.id);
-		setIsServerRunning(true);
+		setIsServerRunning((prev) => ({ ...prev, [data?.id]: true }));
 		setShow({ [data?.id]: "logs" });
 		if (!data?.id) return;
 
@@ -269,14 +269,14 @@ export default function Install({
 			if (!installedApps.includes(data.name)) {
 				setInstalledApps((prevApps) => [...prevApps, data.name]);
 			}
-			setIsServerRunning(false);
+			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 		} catch (error) {
 			showToast(
 				"error",
 				t("toast.install.error.download").replace("%s", String(error)),
 			);
 			addLog(data?.id, "Error initiating download");
-			setIsServerRunning(false);
+			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 		}
 		handleReloadQuickLaunch();
 	}
@@ -292,7 +292,7 @@ export default function Install({
 		}
 		try {
 			if (!data.name) return;
-			setIsServerRunning(true);
+			setIsServerRunning((prev) => ({ ...prev, [data?.id]: true }));
 			addLog(data?.id, `Starting ${data.name}...`);
 
 			await connectApp(data?.id, isLocal);
@@ -318,7 +318,7 @@ export default function Install({
 					.replace("%s", String(error)),
 			);
 			addLog(data?.id, `Error initiating ${data.name}`);
-			setIsServerRunning(false);
+			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 		}
 	}
 
@@ -346,7 +346,7 @@ export default function Install({
 				);
 				clearLogs(data?.id);
 				await fetchIfDownloaded();
-				setIsServerRunning(false);
+				setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 				if (type === "exit") {
 					window.electron.ipcRenderer.invoke("app:close");
 				}
