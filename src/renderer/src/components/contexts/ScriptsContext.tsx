@@ -32,7 +32,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const [statusLog, setStatusLog] = useState<
 		Record<string, { status: string; content: string }>
 	>({});
-	const [isServerRunning, setIsServerRunning] = useState<Record<string, boolean>>({});
+	const [isServerRunning, setIsServerRunning] = useState<
+		Record<string, boolean>
+	>({});
 	// toast stuff
 	const { addToast } = useToast();
 	const showToast = (
@@ -354,7 +356,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				() => {
 					navigate(
 						`/install/${
-							sockets[data.id]?.isLocal ? encodeURIComponent(data.name) : data.id
+							sockets[data.id]?.isLocal
+								? encodeURIComponent(data.name)
+								: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},

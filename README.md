@@ -54,4 +54,4 @@ npm run build
 ## 💬 Support & Contact
 
 * Questions? Feedback? [Join our Discord](https://getdione.app/discord)
-* Found a security issue? [contact@getdione.app](mailto:support@getdione.app)
+* Found a security issue? [support@getdione.app](mailto:support@getdione.app)
