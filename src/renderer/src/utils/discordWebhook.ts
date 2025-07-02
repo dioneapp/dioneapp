@@ -15,6 +15,9 @@ interface DiscordMessage {
 	embeds?: DiscordEmbed[];
 }
 
+const cooldown = 1 * 60 * 1000;
+let lastReportAt: number | null = null;
+
 // get hardware id
 async function getComputerId(): Promise<string> {
 	const hwid = await window.electron.ipcRenderer.invoke("get-hwid");
@@ -25,6 +28,12 @@ export async function sendDiscordReport(
 	error: Error | string,
 	additionalInfo?: Record<string, any>,
 ) {
+	if (lastReportAt && Date.now() - lastReportAt < cooldown) {
+		console.log("Calm down, you're sending too many reports");
+		return false;
+	}
+
+	lastReportAt = Date.now();
 	// get logs
 	const logs = (await window.electron.ipcRenderer.invoke("get-logs")) || "";
 	const truncatedLogs = logs.length > 882 ? `...${logs.slice(-882)}` : logs;
