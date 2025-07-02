@@ -251,8 +251,8 @@ app.whenReady().then(async () => {
 
 		try {
 			await Promise.race([
-				destroyPresence(),
-				handleEndSession(),
+				await destroyPresence(),
+				await handleEndSession(),
 				stopServer(),
 				new Promise((_, reject) =>
 					setTimeout(reject, 10000, new Error("Server stop timeout")),

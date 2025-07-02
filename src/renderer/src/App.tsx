@@ -48,10 +48,12 @@ function App() {
 				checkSession();
 			}
 		});
+	}, []);
 
+	useEffect(() => {
 		// start session
 		handleStartSession();
-	}, []);
+	}, [user]);
 
 	async function handleStartSession() {
 		if (!user || user.id === "") return;
