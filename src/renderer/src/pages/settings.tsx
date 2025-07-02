@@ -573,7 +573,15 @@ export default function Settings() {
 									<p>built with &hearts;</p>
 								</div>
 								<div className="text-right">
-									<button type="button" className="hover:underline cursor-pointer" onClick={() => openLink("https://github.com/dioneapp/dioneapp/releases")}>v{packVersion || "0.0.0"}</button>
+									<button
+										type="button"
+										className="hover:underline cursor-pointer"
+										onClick={() =>
+											openLink("https://github.com/dioneapp/dioneapp/releases")
+										}
+									>
+										v{packVersion || "0.0.0"}
+									</button>
 									<p>
 										Port{" "}
 										<button
