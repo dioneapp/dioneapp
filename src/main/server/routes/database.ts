@@ -370,7 +370,7 @@ router.post("/update-script/:id", async (req, res) => {
 		);
 		res.send(error);
 	} else {
-		logger.info(`Script updated successfully: ${data}`);
+		logger.info(`Script updated successfully: ${data.id}`);
 		res.send(data);
 	}
 	return;
