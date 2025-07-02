@@ -1,6 +1,6 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { BadgeCheck, User } from "lucide-react";
+import { BadgeCheck, Download, User } from "lucide-react";
 import { useTranslation } from "../../translations/translationContext";
 import Loading from "./loading-skeleton";
 
@@ -15,6 +15,7 @@ interface ActionsProps {
 	handleReconnect: any;
 	handleDeleteDeps: any;
 	isLocal?: boolean;
+	user?: boolean;
 }
 
 export default function ActionsComponent({
@@ -27,7 +28,7 @@ export default function ActionsComponent({
 	isServerRunning,
 	handleReconnect,
 	handleDeleteDeps,
-	isLocal,
+	isLocal,	
 }: ActionsProps) {
 	const { t } = useTranslation();
 
@@ -61,7 +62,7 @@ export default function ActionsComponent({
 						{/* background effects */}
 						<div className="absolute top-0 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-50" />
 						<div className="relative z-10">
-							<div className="flex gap-4">
+							<div className="flex gap-4 items-start justify-start">
 								<div className="relative h-16 w-16 flex-shrink-0">
 									{/* biome-ignore lint/complexity/useOptionalChain: if you change && to || it will break */}
 									{data?.logo_url && data?.logo_url?.startsWith("http") ? (
@@ -93,25 +94,50 @@ export default function ActionsComponent({
 										</div>
 									)}
 								</div>
-								<div className="flex flex-col">
-									<h1 className="text-2xl font-medium mb-1 truncate text-white">
-										{data?.name}
-									</h1>
+								<div className="flex flex-col items-start w-full">
+									<div className="flex w-full items-start justify-between gap-2">
+									<div className="flex items-start justify-start -mt-1">
+										<h1 className="text-2xl font-medium mb-1 truncate text-white">
+											{data?.name}
+										</h1>
+									</div>
 									{!isLocal && (
-										<>
-											<p
-												className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-full cursor-pointer text-justify max-w-md"
+											<div className="flex items-start mb-auto gap-2 justify-center">
+											{/* <button
+												disabled={!user}
+												type="button"
+												onClick={() => handleShare()}
+												className="flex items-center justify-center gap-2 text-xs w-full enabled:hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 text-center enabled:cursor-pointer"
+											>
+												<ThumbsUp className="h-3 w-3" />
+												<span className="font-semibold">{data.likes || 0}</span>
+											</button> */}
+											<button
+												type="button"
+												className={"flex items-center justify-center gap-2 text-xs w-full transition-colors duration-400 rounded-full text-neutral-400 text-center"}
+											>
+												<Download className="h-3 w-3" />
+												<span className="font-semibold">{data.downloads || 0}</span>
+											</button>
+										</div>	
+									)}
+								</div>
+								{!isLocal && (
+									<>
+										<p
+											className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-fit cursor-pointer text-justify max-w-md"
 												onClick={() => openLink(data?.script_url)}
 											>
 												<span className="w-fit h-full flex items-center justify-center">
 													<BadgeCheck size={16} />
 												</span>
 												{!isLocal &&
-													data?.script_url &&
-													data?.script_url.replace(
-														/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
-														"",
-													)}
+												data?.script_url &&
+												data?.script_url.replace(
+													/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
+													"" 
+												).split("/").slice(0, 2).join("/")
+											}
 											</p>
 											<p className="text-xs text-[#BCB1E7] flex gap-1">
 												<span className="w-fit h-full flex items-center">
