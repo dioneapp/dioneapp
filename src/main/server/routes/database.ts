@@ -345,8 +345,38 @@ router.get("/search/type/:type", async (req, res) => {
 	getData();
 });
 
-// events
+// update a script
+router.post("/update-script/:id", async (req, res) => {
+	const id = req.params.id;
+	const updateData = req.body;
+	if (!id) {
+		return res.status(400).send("No script ID provided");
+	}
 
+	if (!supabase) {
+		logger.error("Supabase client is not initialized");
+		return res.status(500).json({ error: "Database connection not available" });
+	}
+
+	const { data, error } = await supabase
+		.from("scripts")
+		.update(updateData)
+		.eq("id", id)
+		.select()
+		.single();
+	if (error) {
+		logger.error(
+			`Unable to update the script: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+		);
+		res.send(error);
+	} else {
+		logger.info(`Script updated successfully: ${data}`);
+		res.send(data);
+	}
+	return;
+});
+
+// events
 router.get("/events", async (req, res) => {
 	const user = req.headers.user;
 	if (!user) {
