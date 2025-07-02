@@ -331,6 +331,7 @@ export const zh = {
 	local: {
 		title: "本地脚本",
 		upload: "上传脚本",
+		noScripts: "未找到脚本",
 	},
 
 	// feed component

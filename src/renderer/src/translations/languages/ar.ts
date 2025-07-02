@@ -337,6 +337,7 @@ export const ar = {
 	local: {
 		title: "السلاسل المحلية",
 		upload: "تحميل السكربت",
+		noScripts: "لم يتم العثور على برامج نصية",
 	},
 
 	// feed component

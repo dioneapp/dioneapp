@@ -339,6 +339,7 @@ export const hi = {
 	local: {
 		title: "स्क्रिप्ट",
 		upload: "स्क्रिप्ट अपलोड",
+		noScripts: "कोई स्क्रिप्ट नहीं मिली",
 	},
 
 	// feed component

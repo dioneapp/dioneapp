@@ -347,6 +347,7 @@ export const id = {
 	local: {
 		title: "Skrip Lokal",
 		upload: "Unggah Skrip",
+		noScripts: "Tidak ada skrip ditemukan",
 	},
 
 	// feed component

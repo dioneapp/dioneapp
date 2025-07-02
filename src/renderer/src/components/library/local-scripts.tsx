@@ -67,7 +67,7 @@ export default function LocalScripts() {
 				!scripts ||
 				scripts === undefined ? (
 					<p className="text-center text-neutral-400 text-sm">
-						No scripts found.
+						{t("local.noScripts")}
 					</p>
 				) : (
 					scripts.map((script) => (

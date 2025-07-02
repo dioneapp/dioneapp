@@ -351,6 +351,7 @@ export const es = {
 	local: {
 		title: "Scripts locales",
 		upload: "Subir script",
+		noScripts: "No se encontraron scripts",
 	},
 
 	// feed component

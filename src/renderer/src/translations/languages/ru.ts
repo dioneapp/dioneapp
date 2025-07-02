@@ -348,6 +348,7 @@ export const ru = {
 	local: {
 		title: "Скрипты локально",
 		upload: "Загрузить скрипт",
+		noScripts: "Скрипты не найдены",
 	},
 
 	// feed component

@@ -350,6 +350,7 @@ export const fr = {
 	local: {
 		title: "Scripts locaux",
 		upload: "Télécharger le script",
+		noScripts: "Aucun script trouvé",
 	},
 
 	// feed component
