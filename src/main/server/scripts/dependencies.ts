@@ -129,7 +129,7 @@ export async function checkDependencies(dioneFile: string): Promise<{
 			return { success: false, missing: [], error: true };
 		}
 		const needEnv = JSON.stringify(config).includes("env");
-		const envType = config.installation.find((dep) => dep.env?.type)?.env?.type;
+		const envType = config.installation.find((dep) => dep.env)?.env?.type || "uv";
 		const missing: {
 			name: string;
 			installed: boolean;
@@ -137,8 +137,11 @@ export async function checkDependencies(dioneFile: string): Promise<{
 			version: string;
 		}[] = [];
 
+		if (!config.dependencies) config.dependencies = {};
+
 		// if use an env, add uv as dependency
 		if (needEnv && envType === "uv" && !config.dependencies?.uv) {
+			logger.info("Adding uv as dependency");
 			config.dependencies = {
 				...config.dependencies,
 				uv: {
@@ -162,7 +165,7 @@ export async function checkDependencies(dioneFile: string): Promise<{
 			return { success: true, missing: [] };
 		}
 
-		for (const [dependency, details] of Object.entries(config.dependencies)) {
+		for (const [dependency, details] of Object.entries(config.dependencies || {})) {
 			// skip dep if not for current os
 			if (!isDepForCurrentOS(details)) {
 				continue;
