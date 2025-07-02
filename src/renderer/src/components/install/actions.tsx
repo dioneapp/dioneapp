@@ -28,7 +28,7 @@ export default function ActionsComponent({
 	isServerRunning,
 	handleReconnect,
 	handleDeleteDeps,
-	isLocal,	
+	isLocal,
 }: ActionsProps) {
 	const { t } = useTranslation();
 
@@ -96,14 +96,14 @@ export default function ActionsComponent({
 								</div>
 								<div className="flex flex-col items-start w-full">
 									<div className="flex w-full items-start justify-between gap-2">
-									<div className="flex items-start justify-start -mt-1">
-										<h1 className="text-2xl font-medium mb-1 truncate text-white">
-											{data?.name}
-										</h1>
-									</div>
-									{!isLocal && (
+										<div className="flex items-start justify-start -mt-1">
+											<h1 className="text-2xl font-medium mb-1 truncate text-white">
+												{data?.name}
+											</h1>
+										</div>
+										{!isLocal && (
 											<div className="flex items-start mb-auto gap-2 justify-center">
-											{/* <button
+												{/* <button
 												disabled={!user}
 												type="button"
 												onClick={() => handleShare()}
@@ -112,32 +112,39 @@ export default function ActionsComponent({
 												<ThumbsUp className="h-3 w-3" />
 												<span className="font-semibold">{data.likes || 0}</span>
 											</button> */}
-											<button
-												type="button"
-												className={"flex items-center justify-center gap-2 text-xs w-full transition-colors duration-400 rounded-full text-neutral-400 text-center"}
-											>
-												<Download className="h-3 w-3" />
-												<span className="font-semibold">{data.downloads || 0}</span>
-											</button>
-										</div>	
-									)}
-								</div>
-								{!isLocal && (
-									<>
-										<p
-											className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-fit cursor-pointer text-justify max-w-md"
+												<button
+													type="button"
+													className={
+														"flex items-center justify-center gap-2 text-xs w-full transition-colors duration-400 rounded-full text-neutral-400 text-center"
+													}
+												>
+													<Download className="h-3 w-3" />
+													<span className="font-semibold">
+														{data.downloads || 0}
+													</span>
+												</button>
+											</div>
+										)}
+									</div>
+									{!isLocal && (
+										<>
+											<p
+												className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-fit cursor-pointer text-justify max-w-md"
 												onClick={() => openLink(data?.script_url)}
 											>
 												<span className="w-fit h-full flex items-center justify-center">
 													<BadgeCheck size={16} />
 												</span>
 												{!isLocal &&
-												data?.script_url &&
-												data?.script_url.replace(
-													/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
-													"" 
-												).split("/").slice(0, 2).join("/")
-											}
+													data?.script_url &&
+													data?.script_url
+														.replace(
+															/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
+															"",
+														)
+														.split("/")
+														.slice(0, 2)
+														.join("/")}
 											</p>
 											<p className="text-xs text-[#BCB1E7] flex gap-1">
 												<span className="w-fit h-full flex items-center">

@@ -129,7 +129,8 @@ export async function checkDependencies(dioneFile: string): Promise<{
 			return { success: false, missing: [], error: true };
 		}
 		const needEnv = JSON.stringify(config).includes("env");
-		const envType = config.installation.find((dep) => dep.env)?.env?.type || "uv";
+		const envType =
+			config.installation.find((dep) => dep.env)?.env?.type || "uv";
 		const missing: {
 			name: string;
 			installed: boolean;
@@ -164,7 +165,9 @@ export async function checkDependencies(dioneFile: string): Promise<{
 			return { success: true, missing: [] };
 		}
 
-		for (const [dependency, details] of Object.entries(config.dependencies || {})) {
+		for (const [dependency, details] of Object.entries(
+			config.dependencies || {},
+		)) {
 			// skip dep if not for current os
 			if (!isDepForCurrentOS(details)) {
 				continue;
