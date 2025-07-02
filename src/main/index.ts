@@ -324,6 +324,7 @@ app.whenReady().then(async () => {
 			properties: ["openFile"],
 			title: "Select a file",
 			message: "Select a file",
+			filters: [{ name: "Dione Config File", extensions: ["json"] }],
 			securityScopedBookmarks: true,
 		});
 
