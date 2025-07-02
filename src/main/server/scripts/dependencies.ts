@@ -141,7 +141,6 @@ export async function checkDependencies(dioneFile: string): Promise<{
 
 		// if use an env, add uv as dependency
 		if (needEnv && envType === "uv" && !config.dependencies?.uv) {
-			logger.info("Adding uv as dependency");
 			config.dependencies = {
 				...config.dependencies,
 				uv: {
