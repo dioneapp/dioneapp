@@ -278,7 +278,32 @@ export default function Install({
 			addLog(data?.id, "Error initiating download");
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 		}
+
 		handleReloadQuickLaunch();
+		if (!isLocal) {
+			updateDownloadsCount();
+		}
+	}
+
+	async function updateDownloadsCount() {
+		if (!data?.id) return;
+		const port = await getCurrentPort();
+		const response = await fetch(`http://localhost:${port}/db/update-script/${data.id}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				downloads: data.downloads + 1,
+				updated_at: new Date().toISOString(),
+			})
+		});
+
+		if (!response.ok) {
+			throw new Error("Failed to update downloads count");
+		}
+		const result = await response.json();
+		console.log(result);
 	}
 
 	async function start() {
