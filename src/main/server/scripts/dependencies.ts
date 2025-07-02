@@ -217,9 +217,10 @@ function getPlatformKey() {
 }
 
 export async function inUseDependencies(dioneFile: string) {
-	// should change this later, for now if app uses a dependency, else if its not installed, gonna try to delete it
 	const config = await readDioneConfig(dioneFile);
-	if (config.installation.find((dep) => dep.env?.type === "uv")) {
+	const needEnv = JSON.stringify(config).includes("env");
+	const envType = config.installation.find((dep) => dep.env)?.env?.type || "uv";
+	if (envType === "uv" && !config.dependencies?.uv && needEnv) {
 		config.dependencies = {
 			...config.dependencies,
 			uv: {
@@ -228,7 +229,7 @@ export async function inUseDependencies(dioneFile: string) {
 		};
 	}
 
-	if (config.installation.find((dep) => dep.env?.type === "conda")) {
+	if (envType === "conda" && !config.dependencies?.conda && needEnv) {
 		config.dependencies = {
 			...config.dependencies,
 			conda: {
@@ -246,13 +247,23 @@ export async function uninstallDependency(
 ) {
 	const config = await readDioneConfig(dioneFile);
 	const workingDir = path.dirname(dioneFile);
-	if (!config.dependencies) {
+	const needEnv = JSON.stringify(config).includes("env");
+	const envType = config.installation.find((dep) => dep.env)?.env?.type || "uv";
+	if (!config.dependencies && !needEnv) {
 		logger.warn("No dependencies found in dione.json");
 		return {
 			success: false,
 			missing: [],
 			error: true,
 			reasons: ["no-dependencies"],
+		};
+	}
+
+	if (!config.dependencies?.[envType] && needEnv) {
+		config.dependencies = {
+			envType: {
+				version: "latest",
+			},
 		};
 	}
 
@@ -267,7 +278,7 @@ export async function uninstallDependency(
 		const depConfig = acceptedDependencies[dependency];
 		const isInstalled = await isDependencyInstalled(
 			dependency,
-			config.dependencies[dependency]?.version || "latest",
+			config.dependencies?.[dependency]?.version || "latest",
 			acceptedDependencies,
 		);
 

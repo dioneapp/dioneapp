@@ -240,6 +240,10 @@ export const createDependenciesRouter = (io: Server) => {
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const settings = readConfig();
 		const selectedDeps = req.body.selectedDeps;
+		if (selectedDeps.length === 0) {
+			res.json({ success: true });
+			return;
+		}
 		const dioneFile = `${path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName, "dione.json")}`;
 		const result = await uninstallDependency(selectedDeps, dioneFile, io);
 		if (result.success) {
