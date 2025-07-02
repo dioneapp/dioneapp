@@ -437,7 +437,7 @@ router.post("/events", async (req, res) => {
 			);
 			res.send(error);
 		} else {
-			logger.info(`Event updated successfully: ${data}`);
+			logger.info(`Event updated successfully: ${data.id}`);
 			res.send(data);
 		}
 		return;
