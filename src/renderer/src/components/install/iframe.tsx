@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import {
 	ArrowLeft,
 	ExternalLink,
-	FileText,
+	SquareTerminal,
 	Folder,
 	Maximize2,
 	RotateCcw,
@@ -175,7 +175,7 @@ export default function IframeComponent({
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={() => setShow({ [data.id]: "logs" })}
 					>
-						<FileText className="w-4 h-4 " />
+						<SquareTerminal className="w-4 h-4 " />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.logs")}
 						</div>
@@ -191,7 +191,7 @@ export default function IframeComponent({
 							{t("iframe.openFolder")}
 						</div>
 					</button>
-					<div className="flex items-center border border-white/10 bg-white/5 rounded-md group relative">
+					<div className="flex items-center border border-white/10 bg-white/5 rounded-md relative">
 						<div className="flex items-center pl-2 pr-1.5 py-1 gap-2">
 							<span className="text-sm text-neutral-300">
 								{currentPort || "3000"}
@@ -200,11 +200,11 @@ export default function IframeComponent({
 						<button
 							type="button"
 							onClick={handleOpenInBrowser}
-							className="p-1.5 hover:bg-white/10 border-l border-white/10 transition-colors rounded-r-md cursor-pointer group"
+							className="p-1.5 hover:bg-white/10 border-l border-white/10 transition-colors rounded-r-md cursor-pointer group relative"
 							title={t("iframe.openInBrowser")}
 						>
 							<ExternalLink className="w-4 h-4" />
-							<div className="absolute z-50 -top-9 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
+							<div className="absolute z-50 -top-9 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
 								{t("iframe.openInBrowser")}
 							</div>
 						</button>
