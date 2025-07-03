@@ -17,7 +17,7 @@ export default function Sidebar() {
 	const { user, loading } = useAuthContext();
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
-	const { isServerRunning, activeApps, handleStopApp } = useScriptsContext();
+	const { activeApps, handleStopApp } = useScriptsContext();
 	const [avatarError, setAvatarError] = useState(false);
 
 	// updates
