@@ -104,7 +104,7 @@ export default function Account() {
 	return (
 		<div className="min-h-screen pt-4">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
-				<main className="flex flex-col gap-6 py-5 h-full">
+				<main className="flex flex-col min-h-[60vh] gap-6 py-5">
 					<motion.div
 						initial={{ opacity: 0, y: -20 }}
 						animate={{ opacity: 1, y: 0 }}
@@ -115,59 +115,84 @@ export default function Account() {
 						</h1>
 					</motion.div>
 
-					{data && !loading ? (
-						<motion.div
-							className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full"
-							initial="hidden"
-							animate="visible"
-							variants={{
-								visible: {
-									transition: {
-										staggerChildren: 0.1,
-									},
-								},
-							}}
-						>
-							{/* Time spent */}
-							<StatCard
-								title={t("account.stats.timeSpent.title")}
-								subtitle={t("account.stats.timeSpent.subtitle")}
-								value={formatTimeSpent(hoursInApp)}
-								icon={Clock}
-								className="col-span-2 sm:col-span-1 md:col-span-2 "
-							/>
-							{/* Sessions and apps shared */}
-							<div className="col-span-2 gap-4 flex flex-col">
-								<StatCard
-									title={t("account.stats.sessions.title")}
-									subtitle={t("account.stats.sessions.subtitle")}
-									value={data.sessions.length}
-									icon={Calendar}
-								/>
-								<StatCard
-									title={t("account.stats.shared.title")}
-									subtitle={t("account.stats.shared.subtitle")}
-									value={data.shared.length}
-									icon={Share2}
-								/>
-							</div>
-							{/* Consecutive days */}
-							<StatCard
-								title={t("account.stats.streak.title")}
-								subtitle={t("account.stats.streak.subtitle")}
-								value={consecutiveDays}
-								icon={Flame}
-								className="col-span-2 sm:col-span-1 md:col-span-full"
-								isStreak
-								streakDays={consecutiveDays}
+					<div className="w-full max-w-full">
+						<div className="relative min-h-[220px] w-full">
+							<motion.div
+								initial={{ opacity: 1 }}
+								animate={{ opacity: data && !loading ? 0 : 1 }}
+								transition={{ duration: 0.4 }}
+								className="absolute inset-0 z-10"
 							>
-								{t("account.stats.streak.days")}
-							</StatCard>
-						</motion.div>
-					) : (
-						<Skeleton />
-					)}
-					<LogoutButton logout={logout} />
+								<Skeleton />
+							</motion.div>
+							<motion.div
+								className="flex flex-col w-full h-full justify-between"
+								initial={{ opacity: 0 }}
+								animate={{ opacity: data && !loading ? 1 : 0 }}
+								transition={{ duration: 0.4 }}
+							>
+								{data && !loading ? (
+									<div className="flex flex-col w-full h-full justify-between">
+										<div className="flex-1">
+											<motion.div
+												className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 h-full"
+												initial="hidden"
+												animate="visible"
+												variants={{
+													visible: {
+														transition: {
+															staggerChildren: 0.1,
+														},
+													},
+												}}
+											>
+												{/* Time spent */}
+												<StatCard
+													title={t("account.stats.timeSpent.title")}
+													subtitle={t("account.stats.timeSpent.subtitle")}
+													value={formatTimeSpent(hoursInApp)}
+													icon={Clock}
+													className="col-span-2 sm:col-span-1 md:col-span-2 "
+												/>
+												{/* Sessions and apps shared */}
+												<div className="col-span-2 gap-4 flex flex-col">
+													<StatCard
+														title={t("account.stats.sessions.title")}
+														subtitle={t("account.stats.sessions.subtitle")}
+														value={data.sessions.length}
+														icon={Calendar}
+													/>
+													<StatCard
+														title={t("account.stats.shared.title")}
+														subtitle={t("account.stats.shared.subtitle")}
+														value={data.shared.length}
+														icon={Share2}
+													/>
+												</div>
+												{/* Consecutive days */}
+												<StatCard
+													title={t("account.stats.streak.title")}
+													subtitle={t("account.stats.streak.subtitle")}
+													value={consecutiveDays}
+													icon={Flame}
+													className="col-span-2 sm:col-span-1 md:col-span-full"
+													isStreak
+													streakDays={consecutiveDays}
+												>
+													{t("account.stats.streak.days")}
+												</StatCard>
+											</motion.div>
+										</div>
+										<div className="flex justify-end mt-4">
+											<LogoutButton logout={logout} />
+										</div>
+									</div>
+								) : (
+									<Skeleton />
+								)}
+							</motion.div>
+						</div>
+					</div>
 				</main>
 			</div>
 		</div>
