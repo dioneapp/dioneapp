@@ -53,9 +53,6 @@ export default function ActionsComponent({
 	// add mock fields to data if not present
 	data = {
 		...data,
-		stars: data.stars ?? 123,
-		forks: data.forks ?? 45,
-		license: data.license ?? "MIT",
 		lastUpdated: data.lastUpdated ?? "2024-06-01",
 	};
 
