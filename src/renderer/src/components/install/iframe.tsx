@@ -3,11 +3,11 @@ import { motion } from "framer-motion";
 import {
 	ArrowLeft,
 	ExternalLink,
-	SquareTerminal,
 	Folder,
 	Maximize2,
 	RotateCcw,
 	Square,
+	SquareTerminal,
 	X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
