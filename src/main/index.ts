@@ -66,7 +66,7 @@ function createWindow() {
 		titleBarStyle: "hidden",
 		icon: icon,
 		fullscreenable: false,
-		maximizable: false,
+		maximizable: true,
 		fullscreen: false,
 		frame: false,
 		// window effects
@@ -174,6 +174,18 @@ function createWindow() {
 	} else {
 		mainWindow.loadFile(join(__dirname, "../renderer/index.html"));
 	}
+
+	// add ipc handler for maximize/restore
+	ipcMain.handle("app:toggle-maximize", () => {
+		if (!mainWindow) return false;
+		if (mainWindow.isMaximized()) {
+			mainWindow.unmaximize();
+			return false;
+		} else {
+			mainWindow.maximize();
+			return true;
+		}
+	});
 }
 
 // Sets up the application when ready.
@@ -266,8 +278,22 @@ app.whenReady().then(async () => {
 	});
 
 	ipcMain.handle("app:minimize", () => {
-		BrowserWindow.getFocusedWindow()?.minimize();
+		const win = BrowserWindow.getFocusedWindow();
+		if (win) {
+			win.minimize();
+			win.webContents.send("app:minimized");
+		}
 	});
+
+	// emit restore event
+	if (mainWindow) {
+		mainWindow.on("restore", () => {
+			mainWindow.webContents.send("app:restored");
+		});
+		mainWindow.on("unminimize", () => {
+			mainWindow.webContents.send("app:restored");
+		});
+	}
 
 	ipcMain.handle("get-version", () => app.getVersion());
 

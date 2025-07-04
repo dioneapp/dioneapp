@@ -24,6 +24,7 @@ function App() {
 	const [_isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 	const [_isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate();
+	const [isMinimized, setIsMinimized] = useState(false);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -54,6 +55,15 @@ function App() {
 		// start session
 		handleStartSession();
 	}, [user]);
+
+	useEffect(() => {
+		window.electron.ipcRenderer.on("app:minimized", () => setIsMinimized(true));
+		window.electron.ipcRenderer.on("app:restored", () => setIsMinimized(false));
+		return () => {
+			window.electron.ipcRenderer.removeAllListeners("app:minimized");
+			window.electron.ipcRenderer.removeAllListeners("app:restored");
+		};
+	}, []);
 
 	async function handleStartSession() {
 		if (!user || user.id === "") return;
@@ -88,7 +98,7 @@ function App() {
 	const PageComponent = getPage();
 	return (
 		<TranslationProvider>
-			<div className="h-screen w-screen overflow-hidden" id="main">
+			<div className={`h-screen w-screen overflow-hidden${isMinimized ? " minimized" : ""}`} id="main">
 				<Titlebar />
 				<div className="flex h-[calc(100%)]">
 					{pathname !== "/first-time" && pathname !== "/no_access" && (

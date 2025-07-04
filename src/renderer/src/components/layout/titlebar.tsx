@@ -1,4 +1,4 @@
-import { Minus, X } from "lucide-react";
+import { Minus, X, Maximize, Minimize as Minimize2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
@@ -7,6 +7,7 @@ export default function Titlebar() {
 	const { t } = useTranslation();
 	const { isServerRunning, setExitRef } = useScriptsContext();
 	const [showModal, setShowModal] = useState(false);
+	const [isMaximized, setIsMaximized] = useState(false);
 
 	const handleClose = async () => {
 		if (Object.keys(isServerRunning).length !== 0) {
@@ -19,6 +20,11 @@ export default function Titlebar() {
 
 	const handleMinimize = async () => {
 		await window.electron.ipcRenderer.invoke("app:minimize");
+	};
+
+	const handleMaximize = async () => {
+		const maximized = await window.electron.ipcRenderer.invoke("app:toggle-maximize");
+		setIsMaximized(maximized);
 	};
 
 	return (
@@ -49,15 +55,29 @@ export default function Titlebar() {
 							type="button"
 							id="minimize-button"
 							onClick={handleMinimize}
-							className="cursor-pointer p-1 hover:bg-white/10 rounded-full transition-colors duration-200"
+							className="cursor-pointer p-1 hover:text-white/80 rounded-full transition-colors duration-200"
 						>
 							<Minus className="h-5 w-5" />
 						</button>
+						<div id="no-draggable">
+							<button
+								type="button"
+								id="maximize-button"
+								onClick={handleMaximize}
+								className="cursor-pointer p-1.5 hover:text-white/80 rounded-full transition-colors duration-200"
+							>
+								{isMaximized ? (
+									<Minimize2 className="h-4 w-4" />
+								) : (
+									<Maximize className="h-4 w-4" />
+								)}
+							</button>
+						</div>	
 						<button
 							type="button"
 							id="close-button"
 							onClick={handleClose}
-							className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-full transition-colors duration-200"
+							className="cursor-pointer p-1 hover:text-red-400 rounded-full transition-colors duration-200"
 						>
 							<X className="h-5 w-5" />
 						</button>
