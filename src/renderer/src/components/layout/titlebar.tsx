@@ -1,4 +1,4 @@
-import { Minus, X, Maximize, Minimize as Minimize2 } from "lucide-react";
+import { Maximize, Minimize as Minimize2, Minus, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
@@ -23,7 +23,9 @@ export default function Titlebar() {
 	};
 
 	const handleMaximize = async () => {
-		const maximized = await window.electron.ipcRenderer.invoke("app:toggle-maximize");
+		const maximized = await window.electron.ipcRenderer.invoke(
+			"app:toggle-maximize",
+		);
 		setIsMaximized(maximized);
 	};
 
@@ -72,7 +74,7 @@ export default function Titlebar() {
 									<Maximize className="h-4 w-4" />
 								)}
 							</button>
-						</div>	
+						</div>
 						<button
 							type="button"
 							id="close-button"

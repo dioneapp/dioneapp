@@ -1,9 +1,21 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { BadgeCheck, Download, User, CheckCircle, Circle, HelpCircle, Star, GitFork, BadgeInfo, Clock } from "lucide-react";
+import {
+	BadgeCheck,
+	BadgeInfo,
+	CheckCircle,
+	Circle,
+	Clock,
+	Download,
+	GitFork,
+	HelpCircle,
+	Star,
+	User,
+} from "lucide-react";
+import type React from "react";
+import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import Loading from "./loading-skeleton";
-import React, { useState } from "react";
 
 interface ActionsProps {
 	data: any;
@@ -33,19 +45,69 @@ export default function ActionsComponent({
 }: ActionsProps) {
 	const { t } = useTranslation();
 
-		// fake version data
-		const versions = [
-			{ version: "v1.2.3", commit: "z9y8x7w", verified: true, date: "2024-06-01" },
-			{ version: "v1.2.2", commit: "a1b2c3d", verified: true, date: "2024-05-20" },
-			{ version: "v1.2.1", commit: "d4e5f6g", verified: false, date: "2024-05-10" },
-			{ version: "v1.2.0", commit: "h7g6f5e", verified: false, date: "2024-05-01" },
-			{ version: "v1.1.9", commit: "j4k3h2g", verified: false, date: "2024-04-20" },
-			{ version: "v1.1.8", commit: "m1n0l2k", verified: false, date: "2024-04-10" },
-			{ version: "v1.1.7", commit: "p9o8n7m", verified: false, date: "2024-04-01" },
-			{ version: "v1.1.6", commit: "r5q4p3o", verified: false, date: "2024-03-20" },
-			{ version: "v1.1.5", commit: "t7u6v5w", verified: false, date: "2024-03-10" },
-			{ version: "v1.1.4", commit: "x3y2z1a", verified: false, date: "2024-03-01" },
-		];
+	// fake version data
+	const versions = [
+		{
+			version: "v1.2.3",
+			commit: "z9y8x7w",
+			verified: true,
+			date: "2024-06-01",
+		},
+		{
+			version: "v1.2.2",
+			commit: "a1b2c3d",
+			verified: true,
+			date: "2024-05-20",
+		},
+		{
+			version: "v1.2.1",
+			commit: "d4e5f6g",
+			verified: false,
+			date: "2024-05-10",
+		},
+		{
+			version: "v1.2.0",
+			commit: "h7g6f5e",
+			verified: false,
+			date: "2024-05-01",
+		},
+		{
+			version: "v1.1.9",
+			commit: "j4k3h2g",
+			verified: false,
+			date: "2024-04-20",
+		},
+		{
+			version: "v1.1.8",
+			commit: "m1n0l2k",
+			verified: false,
+			date: "2024-04-10",
+		},
+		{
+			version: "v1.1.7",
+			commit: "p9o8n7m",
+			verified: false,
+			date: "2024-04-01",
+		},
+		{
+			version: "v1.1.6",
+			commit: "r5q4p3o",
+			verified: false,
+			date: "2024-03-20",
+		},
+		{
+			version: "v1.1.5",
+			commit: "t7u6v5w",
+			verified: false,
+			date: "2024-03-10",
+		},
+		{
+			version: "v1.1.4",
+			commit: "x3y2z1a",
+			verified: false,
+			date: "2024-03-01",
+		},
+	];
 	const [selectedVersion, setSelectedVersion] = useState(versions[0].version);
 	const displayedVersions = versions.slice(0, 5);
 	const [tooltipIndex, setTooltipIndex] = useState<number | null>(null);
@@ -126,17 +188,35 @@ export default function ActionsComponent({
 									</div>
 									{!isLocal && (
 										<>
-											<p className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-fit cursor-pointer max-w-md" onClick={() => openLink(data?.script_url)}>
+											<p
+												className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-fit cursor-pointer max-w-md"
+												onClick={() => openLink(data?.script_url)}
+											>
 												<span className="w-fit h-full flex items-center justify-center">
 													<BadgeCheck size={16} />
 												</span>
-												{!isLocal && data?.script_url && data?.script_url.replace(/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//, "").split("/").slice(0, 2).join("/")}
+												{!isLocal &&
+													data?.script_url &&
+													data?.script_url
+														.replace(
+															/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
+															"",
+														)
+														.split("/")
+														.slice(0, 2)
+														.join("/")}
 											</p>
 											<p className="text-xs text-[#BCB1E7] flex gap-1">
 												<span className="w-fit h-full flex items-center">
 													<User size={16} />
 												</span>
-												{t("actions.publishedBy")} <span className="hover:underline cursor-pointer" onClick={() => openLink(`${data?.author_url}`)}>{data?.author}</span>
+												{t("actions.publishedBy")}{" "}
+												<span
+													className="hover:underline cursor-pointer"
+													onClick={() => openLink(`${data?.author_url}`)}
+												>
+													{data?.author}
+												</span>
 											</p>
 											<span className="flex items-center gap-2 flex-wrap mt-2">
 												<span className="flex items-center gap-1 bg-white/5 text-neutral-300 rounded px-1.5 py-0.5 text-xs font-mono">
@@ -155,7 +235,9 @@ export default function ActionsComponent({
 									</p>
 
 									<div className="w-full mt-2 mb-3 p-3 rounded-lg border border-white/10 flex flex-col gap-1">
-										<p className="text-xs text-[#BCB1E7] font-medium mb-2">Select version</p>
+										<p className="text-xs text-[#BCB1E7] font-medium mb-2">
+											Select version
+										</p>
 										<ul className="flex flex-col gap-1">
 											{displayedVersions.map((v, idx) => (
 												<li
@@ -175,7 +257,9 @@ export default function ActionsComponent({
 													) : (
 														<HelpCircle className="h-4 w-4 text-yellow-400" />
 													)}
-													<span className="font-mono text-white">{v.version}</span>
+													<span className="font-mono text-white">
+														{v.version}
+													</span>
 													<span
 														className="relative bg-[#393053] text-white/80 rounded-full px-2 py-0.5 text-[10px] font-mono ml-1"
 														onMouseEnter={() => setTooltipIndex(idx)}
