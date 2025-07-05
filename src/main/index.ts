@@ -1,5 +1,4 @@
 import os from "node:os";
-import si from "systeminformation";
 import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import {
@@ -14,6 +13,7 @@ import {
 import { Notification } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
+import si from "systeminformation";
 import icon from "../../resources/icon.ico?asset";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
 import {
@@ -101,31 +101,30 @@ function createWindow() {
 		});
 		async function checkForUpdates(): Promise<void> {
 			return new Promise((resolve) => {
-
 				let updateDownloaded = false;
-	
+
 				autoUpdater.on("update-available", () => {
 					logger.info("Update available, downloading...");
 				});
-	
+
 				autoUpdater.on("update-downloaded", () => {
 					logger.info("Update downloaded, installing...");
 					updateDownloaded = true;
 					autoUpdater.quitAndInstall();
 				});
-	
+
 				autoUpdater.on("update-not-available", () => {
 					logger.info("No update available");
 					resolve();
 				});
-	
+
 				autoUpdater.on("error", (err) => {
 					logger.error("Error in autoUpdater", err);
 					resolve();
 				});
-				
+
 				autoUpdater.checkForUpdates();
-	
+
 				// if in 5s doesn't have any info about update, resolve
 				setTimeout(() => {
 					if (!updateDownloaded) resolve();
@@ -601,43 +600,43 @@ app.whenReady().then(async () => {
 				// get cpu usage
 				const cpuLoad = await si.currentLoad();
 				const cpuUsage = cpuLoad.currentLoad;
-				
+
 				// get memory usage
 				const mem = await si.mem();
 				const ramUsage = {
-					percent: ((mem.used / mem.total) * 100),
-					usedGB: mem.used / (1024 * 1024 * 1024)
+					percent: (mem.used / mem.total) * 100,
+					usedGB: mem.used / (1024 * 1024 * 1024),
 				};
-				
+
 				const result = {
 					cpu: cpuUsage,
-					ram: ramUsage
+					ram: ramUsage,
 				};
-				
+
 				return result;
 			} catch (siError) {
 				const cpuUsage = Math.round(Math.random() * 30 + 10);
-				
+
 				// get memory usage
 				const totalMem = os.totalmem();
 				const freeMem = os.freemem();
 				const usedMem = totalMem - freeMem;
 				const ramUsage = {
-					percent: ((usedMem / totalMem) * 100),
-					usedGB: usedMem / (1024 * 1024 * 1024)
+					percent: (usedMem / totalMem) * 100,
+					usedGB: usedMem / (1024 * 1024 * 1024),
 				};
-				
+
 				const result = {
 					cpu: cpuUsage,
-					ram: ramUsage
+					ram: ramUsage,
 				};
-				
+
 				return result;
 			}
 		} catch (error) {
 			return {
 				cpu: 0,
-				ram: { percent: 0, usedGB: 0 }
+				ram: { percent: 0, usedGB: 0 },
 			};
 		}
 	});

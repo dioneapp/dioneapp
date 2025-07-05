@@ -76,9 +76,7 @@ export function AuthContextProvider({
 
 	async function fetchUser(id: string) {
 		const port = await getCurrentPort();
-		const response = await fetch(
-			`http://localhost:${port}/db/user/${id}`,
-		);
+		const response = await fetch(`http://localhost:${port}/db/user/${id}`);
 		if (response.ok) {
 			const userData = await response.json();
 			await saveId(id);
