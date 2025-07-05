@@ -23,12 +23,10 @@ interface IframeProps {
 	data: any;
 }
 
-// interface SystemUsage {
-// 	cpu: number;
-// 	ram: { percent: number; usedGB: number };
-// 	gpu: { percent: number; vramGB: number };
-// 	disk: { percent: number; usedGB: number };
-// }
+interface SystemUsage {
+	cpu: number;
+	ram: { percent: number; usedGB: number };
+}
 
 export default function IframeComponent({
 	iframeSrc,
@@ -40,35 +38,30 @@ export default function IframeComponent({
 }: IframeProps) {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
-	// const [systemUsage, setSystemUsage] = useState<SystemUsage>({
-	// 	cpu: 0,
-	// 	ram: { percent: 0, usedGB: 0 },
-	// 	gpu: { percent: 0, vramGB: 0 },
-	// 	disk: { percent: 0, usedGB: 0 },
-	// });
+	const [systemUsage, setSystemUsage] = useState<SystemUsage>({
+		cpu: 0,
+		ram: { percent: 0, usedGB: 0 },
+	});
 	const [isFullscreen, setIsFullscreen] = useState(false);
 
-	// useEffect(() => {
-	// 	const interval = setInterval(() => {
-	// 		setSystemUsage({
-	// 			cpu: Math.random() * 100,
-	// 			ram: {
-	// 				percent: Math.random() * 100,
-	// 				usedGB: Math.random() * 16,
-	// 			},
-	// 			gpu: {
-	// 				percent: Math.random() * 100,
-	// 				vramGB: Math.random() * 12,
-	// 			},
-	// 			disk: {
-	// 				percent: Math.random() * 100,
-	// 				usedGB: Math.random() * 1000,
-	// 			},
-	// 		});
-	// 	}, 1000);
+	useEffect(() => {
+		const updateSystemUsage = async () => {
+			try {
+				console.log("Calling getSystemUsage...");
+				const usage = await window.electron.ipcRenderer.invoke("get-system-usage");
+				console.log("Received system usage:", usage);
+				setSystemUsage(usage);
+			} catch (error) {
+				console.error("Failed to get system usage:", error);
+			}
+		};
 
-	// 	return () => clearInterval(interval);
-	// }, []);
+		updateSystemUsage();
+
+		const interval = setInterval(updateSystemUsage, 2000);
+
+		return () => clearInterval(interval);
+	}, []);
 
 	const handleOpenInBrowser = () => {
 		window.open(`http://localhost:${currentPort || "3000"}`, "_blank");
@@ -113,43 +106,47 @@ export default function IframeComponent({
 		};
 	}, []);
 
-	// const UsageIndicator = ({
-	// 	label,
-	// 	percentage,
-	// 	absoluteValue,
-	// }: {
-	// 	label: string;
-	// 	percentage: number;
-	// 	absoluteValue?: string;
-	// }) => {
-	// 	const [isHovered, setIsHovered] = useState(false);
+	const UsageIndicator = ({
+		label,
+		percentage,
+		absoluteValue,
+	}: {
+		label: string;
+		percentage: number;
+		absoluteValue?: string;
+	}) => {
+		const [isHovered, setIsHovered] = useState(false);
 
-	// 	return (
-	// 		<div
-	// 			className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded-md cursor-pointer flex-shrink-0 relative"
-	// 			onMouseEnter={() => setIsHovered(true)}
-	// 			onMouseLeave={() => setIsHovered(false)}
-	// 		>
-	// 			<span className="text-xs text-neutral-300 font-medium">{label}</span>
-	// 			<div className="w-20 h-2 bg-white/10 rounded-full overflow-hidden">
-	// 				<motion.div
-	// 					className="h-full bg-gradient-to-r from-[#A395D9] to-[#C1B8E3] shadow-lg"
-	// 					style={{ width: `${percentage}%` }}
-	// 					animate={{
-	// 						scale: isHovered ? 1.05 : 1,
-	// 						filter: isHovered ? "brightness(1.3)" : "brightness(1)",
-	// 					}}
-	// 					transition={{ duration: 0.3 }}
-	// 				/>
-	// 			</div>
-	// 			<span className="text-xs text-neutral-300 text-right w-6">
-	// 				{isHovered && absoluteValue
-	// 					? absoluteValue
-	// 					: `${Math.round(percentage)}%`}
-	// 			</span>
-	// 		</div>
-	// 	);
-	// };
+		return (
+			<div
+				className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded-md cursor-pointer flex-shrink-0 relative"
+				onMouseEnter={() => setIsHovered(true)}
+				onMouseLeave={() => setIsHovered(false)}
+			>
+				<span className="text-xs text-neutral-300 font-medium">{label}</span>
+				<div className="w-20 h-2 bg-white/10 rounded-full overflow-hidden">
+					<motion.div
+						className="h-full bg-gradient-to-r from-[#A395D9] to-[#C1B8E3] shadow-lg"
+						style={{ width: `${percentage}%` }}
+						animate={{
+							scale: isHovered ? 1.05 : 1,
+							filter: isHovered ? "brightness(1.3)" : "brightness(1)",
+						}}
+						transition={{ 
+							duration: 0.8, 
+							ease: "easeInOut",
+							width: { duration: 1.2, ease: "easeOut" }
+						}}
+					/>
+				</div>
+				<span className="text-xs text-neutral-300 text-right w-6">
+					{isHovered && absoluteValue
+						? absoluteValue
+						: `${Math.round(percentage)}%`}
+				</span>
+			</div>
+		);
+	};
 
 	return (
 		<div className="w-full h-full flex flex-col gap-2 p-6">
@@ -212,23 +209,12 @@ export default function IframeComponent({
 				</div>
 
 				<div className="flex gap-1 justify-center items-center flex-1">
-					{/* WIP */}
-					{/* <UsageIndicator label="CPU" percentage={systemUsage.cpu} />
+					<UsageIndicator label="CPU" percentage={systemUsage.cpu} />
 					<UsageIndicator
 						label="RAM"
 						percentage={systemUsage.ram.percent}
 						absoluteValue={`${systemUsage.ram.usedGB.toFixed(1)}G`}
 					/>
-					<UsageIndicator
-						label="GPU"
-						percentage={systemUsage.gpu.percent}
-						absoluteValue={`${systemUsage.gpu.vramGB.toFixed(1)}G`}
-					/>
-					<UsageIndicator
-						label="DISK"
-						percentage={systemUsage.disk.percent}
-						absoluteValue={`${systemUsage.disk.usedGB.toFixed(1)}G`}
-					/> */}
 				</div>
 
 				<div className="flex gap-1">

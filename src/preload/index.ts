@@ -4,11 +4,14 @@ import { contextBridge } from "electron";
 // Custom APIs for renderer
 const api = {
 	updateDiscordPresence: (details: string, state: string) => {
-		return (window as any).electron.ipcRenderer.invoke(
+		return electronAPI.ipcRenderer.invoke(
 			"update-discord-presence",
 			details,
 			state,
 		);
+	},
+	getSystemUsage: () => {
+		return electronAPI.ipcRenderer.invoke("get-system-usage");
 	},
 };
 
