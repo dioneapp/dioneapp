@@ -18,7 +18,7 @@ import Settings from "./pages/settings";
 import { TranslationProvider } from "./translations/translationContext";
 
 function App() {
-	const { user, checkSession } = useAuthContext();
+	const { user } = useAuthContext();
 	const location = useLocation();
 	const { pathname } = location;
 	const [_isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
@@ -46,7 +46,7 @@ function App() {
 			localStorage.setItem("firstLaunch", result.toString());
 			setIsLoading(false);
 			if (result === true) {
-				checkSession();
+				navigate("/first-time");
 			}
 		});
 	}, []);
@@ -99,7 +99,7 @@ function App() {
 	return (
 		<TranslationProvider>
 			<div className="h-screen w-screen overflow-hidden" id="main">
-				<Titlebar />
+				{pathname !== "/first-time" && <Titlebar />}
 				<div className="flex h-[calc(100%)]">
 					{pathname !== "/first-time" && pathname !== "/no_access" && (
 						<Sidebar />
