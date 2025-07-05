@@ -48,7 +48,8 @@ export default function IframeComponent({
 		const updateSystemUsage = async () => {
 			try {
 				console.log("Calling getSystemUsage...");
-				const usage = await window.electron.ipcRenderer.invoke("get-system-usage");
+				const usage =
+					await window.electron.ipcRenderer.invoke("get-system-usage");
 				console.log("Received system usage:", usage);
 				setSystemUsage(usage);
 			} catch (error) {
@@ -132,10 +133,10 @@ export default function IframeComponent({
 							scale: isHovered ? 1.05 : 1,
 							filter: isHovered ? "brightness(1.3)" : "brightness(1)",
 						}}
-						transition={{ 
-							duration: 0.8, 
+						transition={{
+							duration: 0.8,
 							ease: "easeInOut",
-							width: { duration: 1.2, ease: "easeOut" }
+							width: { duration: 1.2, ease: "easeOut" },
 						}}
 					/>
 				</div>
