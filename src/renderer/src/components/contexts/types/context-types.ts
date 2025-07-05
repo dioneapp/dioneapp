@@ -7,9 +7,7 @@ export interface AuthContextType {
 	refreshSessionToken: string | null;
 	setRefreshSessionToken: React.Dispatch<React.SetStateAction<string | null>>;
 	logout: () => void;
-	checkSession: () => void;
 	loading: boolean;
-	checkAccess: () => void;
 }
 
 // Scripts context
