@@ -181,10 +181,9 @@ function createWindow() {
 		if (mainWindow.isMaximized()) {
 			mainWindow.unmaximize();
 			return false;
-		} else {
-			mainWindow.maximize();
-			return true;
 		}
+		mainWindow.maximize();
+		return true;
 	});
 }
 
@@ -265,7 +264,7 @@ app.whenReady().then(async () => {
 			await Promise.race([
 				await destroyPresence(),
 				await handleEndSession(),
-				stopServer(),
+				await stopServer(),
 				new Promise((_, reject) =>
 					setTimeout(reject, 10000, new Error("Server stop timeout")),
 				),
@@ -288,9 +287,6 @@ app.whenReady().then(async () => {
 	// emit restore event
 	if (mainWindow) {
 		mainWindow.on("restore", () => {
-			mainWindow.webContents.send("app:restored");
-		});
-		mainWindow.on("unminimize", () => {
 			mainWindow.webContents.send("app:restored");
 		});
 	}
