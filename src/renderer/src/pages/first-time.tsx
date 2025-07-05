@@ -4,7 +4,7 @@ import ExecuteSound from "@renderer/components/first-time/sounds/sound";
 import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
-import { saveExpiresAt, saveRefreshToken } from "@renderer/utils/secure-tokens";
+import { saveExpiresAt, saveId, saveRefreshToken } from "@renderer/utils/secure-tokens";
 import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link as LinkIcon } from "lucide-react";
@@ -134,6 +134,7 @@ export default function FirstTime() {
 		const response = await fetch(`http://localhost:${port}/db/user/${id}`);
 		const data = await response.json();
 		setUser(data[0]);
+		await saveId(data[0].id);
 	}
 
 	function onSelectLanguage() {

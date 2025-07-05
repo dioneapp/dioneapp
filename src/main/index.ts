@@ -23,10 +23,13 @@ import {
 } from "./discord/presence";
 import {
 	deleteExpiresAt,
+	deleteId,
 	deleteToken,
 	getExpiresAt,
+	getId,
 	getToken,
 	saveExpiresAt,
+	saveId,
 	saveToken,
 } from "./security/secure-tokens";
 import { start as startServer, stop as stopServer } from "./server/server";
@@ -558,6 +561,18 @@ app.whenReady().then(async () => {
 
 	ipcMain.handle("secure-token:delete-expiresAt", () => {
 		return deleteExpiresAt();
+	});
+
+	ipcMain.handle("secure-token:save-id", (_event, id: string) => {
+		return saveId(id);
+	});
+
+	ipcMain.handle("secure-token:get-id", () => {
+		return getId();
+	});
+
+	ipcMain.handle("secure-token:delete-id", () => {
+		return deleteId();
 	});
 
 	// restart backend

@@ -26,3 +26,15 @@ export async function deleteExpiresAt() {
 		"secure-token:delete-expiresAt",
 	);
 }
+
+export async function saveId(id: string) {
+	return await window.electron.ipcRenderer.invoke("secure-token:save-id", id);
+}
+
+export async function getId(): Promise<string | null> {
+	return await window.electron.ipcRenderer.invoke("secure-token:get-id");
+}
+
+export async function deleteId() {
+	return await window.electron.ipcRenderer.invoke("secure-token:delete-id");
+}

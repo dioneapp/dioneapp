@@ -1,10 +1,13 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import {
 	deleteExpiresAt,
+	deleteId,
 	deleteRefreshToken,
 	getExpiresAt,
+	getId,
 	getRefreshToken,
 	saveExpiresAt,
+	saveId,
 	saveRefreshToken,
 } from "@renderer/utils/secure-tokens";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -26,9 +29,9 @@ export function AuthContextProvider({
 	// on mount, try to load auth token
 	useEffect(() => {
 		(async () => {
-			const storedToken = await getRefreshToken();
-			if (storedToken) {
-				refreshSession(storedToken);
+			const id = await getId();
+			if (id) {
+				fetchUser(id);
 			}
 		})();
 	}, []);
@@ -38,9 +41,9 @@ export function AuthContextProvider({
 			setLoading(true);
 			const storedToken = await getRefreshToken();
 			const sessionExpiresAt = await getExpiresAt();
-			if (!storedToken) return;
+			if (!storedToken || !sessionExpiresAt) return;
 			// refresh token if session expires
-			if (!sessionExpiresAt || sessionExpiresAt * 1000 < Date.now()) {
+			if (sessionExpiresAt * 1000 < Date.now()) {
 				await refreshSession(storedToken);
 			} else {
 				setRefreshSessionToken(storedToken);
@@ -62,20 +65,26 @@ export function AuthContextProvider({
 			await saveExpiresAt(data.session.expires_at);
 			setRefreshSessionToken(data.session.refresh_token);
 			saveRefreshToken(data.session.refresh_token);
-			const response = await fetch(
-				`http://localhost:${port}/db/user/${data.session.user.id}`,
-			);
-			if (response.ok) {
-				const userData = await response.json();
-				setUser(userData[0]);
-			} else {
-				setUser(null);
-			}
+			await fetchUser(data.session.user.id);
 			setLoading(false);
 		} else {
 			checkSession();
 			setRefreshSessionToken(token);
 			setLoading(false);
+		}
+	}
+
+	async function fetchUser(id: string) {
+		const port = await getCurrentPort();
+		const response = await fetch(
+			`http://localhost:${port}/db/user/${id}`,
+		);
+		if (response.ok) {
+			const userData = await response.json();
+			await saveId(id);
+			setUser(userData[0]);
+		} else {
+			setUser(null);
 		}
 	}
 
@@ -107,6 +116,7 @@ export function AuthContextProvider({
 		setRefreshSessionToken(null);
 		await deleteRefreshToken();
 		await deleteExpiresAt();
+		await deleteId();
 		window.electron.ipcRenderer.send("end-session");
 		// remove this after beta
 		navigate("/first-time");
