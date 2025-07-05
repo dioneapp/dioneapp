@@ -68,7 +68,6 @@ export function AuthContextProvider({
 			await fetchUser(data.session.user.id);
 			setLoading(false);
 		} else {
-			checkSession();
 			setRefreshSessionToken(token);
 			setLoading(false);
 		}
@@ -85,29 +84,6 @@ export function AuthContextProvider({
 			setUser(userData[0]);
 		} else {
 			setUser(null);
-		}
-	}
-
-	async function checkSession() {
-		if (user) {
-			console.log("User is logged");
-			// if user is logged, check access
-			checkAccess();
-		} else {
-			console.log("User is not logged");
-			// if (pathname !== "/first-time") {
-			// 	navigate("/first-time");
-			// }
-		}
-	}
-
-	async function checkAccess() {
-		if (user) {
-			if (user.tester === true) {
-				console.log("User its a tester");
-			} else {
-				console.log("User is not a tester");
-			}
 		}
 	}
 
@@ -130,8 +106,6 @@ export function AuthContextProvider({
 				refreshSessionToken,
 				setRefreshSessionToken,
 				logout,
-				checkSession,
-				checkAccess,
 				loading,
 			}}
 		>
