@@ -118,20 +118,12 @@ export default function Account() {
 					<div className="w-full max-w-full">
 						<div className="relative min-h-[220px] w-full">
 							<motion.div
-								initial={{ opacity: 1 }}
-								animate={{ opacity: data && !loading ? 0 : 1 }}
-								transition={{ duration: 0.4 }}
-								className="absolute inset-0 z-10"
-							>
-								<Skeleton />
-							</motion.div>
-							<motion.div
 								className="flex flex-col w-full h-full justify-between"
 								initial={{ opacity: 0 }}
 								animate={{ opacity: data && !loading ? 1 : 0 }}
 								transition={{ duration: 0.4 }}
 							>
-								{data && !loading ? (
+								{data && !loading && (
 									<div className="flex flex-col w-full h-full justify-between">
 										<div className="flex-1">
 											<motion.div
@@ -187,8 +179,6 @@ export default function Account() {
 											<LogoutButton logout={logout} />
 										</div>
 									</div>
-								) : (
-									<Skeleton />
 								)}
 							</motion.div>
 						</div>
@@ -215,40 +205,6 @@ const LogoutButton = ({ logout }: { logout: () => void }) => {
 				<LogOut className="w-4 h-4" />
 				<span className="text-sm font-medium">{t("account.logout")}</span>
 			</motion.button>
-		</motion.div>
-	);
-};
-
-const SkeletonCard = ({ className = "" }) => (
-	<div
-		className={`bg-white/5 rounded-xl p-8 animate-pulse border border-white/10 ${className}`}
-	>
-		<div className="h-7 w-3/4 bg-white/10 rounded mb-6" />
-		<div className="h-4 w-1/2 bg-white/10 rounded mb-6" />
-		<div className="h-10 w-1/3 bg-white/10 rounded mt-auto" />
-	</div>
-);
-
-const Skeleton = () => {
-	return (
-		<motion.div
-			className="grid grid-cols-2 grid-rows-1 gap-4 h-fit"
-			initial="hidden"
-			animate="visible"
-			variants={{
-				visible: {
-					transition: {
-						staggerChildren: 0.1,
-					},
-				},
-			}}
-		>
-			<SkeletonCard className="h-full" />
-			<div className="flex flex-col gap-4">
-				<SkeletonCard />
-				<SkeletonCard />
-			</div>
-			<SkeletonCard className="col-span-2 h-fit" />
 		</motion.div>
 	);
 };
