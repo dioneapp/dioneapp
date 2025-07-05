@@ -1,4 +1,5 @@
 import os from "node:os";
+import si from "systeminformation";
 import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import {
@@ -545,8 +546,6 @@ app.whenReady().then(async () => {
 	ipcMain.handle("get-system-usage", async () => {
 		try {
 			try {
-				const si = require("systeminformation");
-				
 				// get cpu usage
 				const cpuLoad = await si.currentLoad();
 				const cpuUsage = cpuLoad.currentLoad;
@@ -558,8 +557,6 @@ app.whenReady().then(async () => {
 					usedGB: mem.used / (1024 * 1024 * 1024)
 				};
 				
-
-				
 				const result = {
 					cpu: cpuUsage,
 					ram: ramUsage
@@ -567,8 +564,6 @@ app.whenReady().then(async () => {
 				
 				return result;
 			} catch (siError) {
-				
-				const os = require("os");
 				const cpuUsage = Math.round(Math.random() * 30 + 10);
 				
 				// get memory usage

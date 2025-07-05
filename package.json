@@ -42,11 +42,15 @@
 			"target": [
 				{
 					"target": "nsis",
-					"arch": ["x64"]
+					"arch": [
+						"x64"
+					]
 				},
 				{
 					"target": "msi",
-					"arch": ["x64"]
+					"arch": [
+						"x64"
+					]
 				}
 			],
 			"icon": "./resources/icon.ico",
@@ -54,30 +58,37 @@
 		},
 		"mac": {
 			"target": [
-			  {
-				"target": "dmg",
-				"arch": ["x64", "arm64"]
-			  }
+				{
+					"target": "dmg",
+					"arch": [
+						"x64",
+						"arm64"
+					]
+				}
 			],
 			"icon": "./resources/icon.icns",
 			"category": "public.app-category.productivity",
 			"artifactName": "Dione-${version}-Installer-Mac.${ext}"
-		  },
+		},
 		"linux": {
 			"target": [
-			  {
-				"target": "deb",
-				"arch": ["x64"]
-			  },
-			  {
-				"target": "rpm",
-				"arch": ["x64"]
-			  }
+				{
+					"target": "deb",
+					"arch": [
+						"x64"
+					]
+				},
+				{
+					"target": "rpm",
+					"arch": [
+						"x64"
+					]
+				}
 			],
 			"icon": "./resources/icon.png",
 			"category": "Office",
 			"artifactName": "Dione-${version}-Installer-Linux.${ext}"
-		  },
+		},
 		"nsis": {
 			"oneClick": false,
 			"installerIcon": "./resources/icon.ico",
@@ -135,6 +146,7 @@
 		"semver": "^7.7.1",
 		"socket.io": "^4.8.1",
 		"socket.io-client": "^4.8.1",
+		"systeminformation": "^5.27.7",
 		"tailwindcss": "^4.1.6",
 		"winston": "^3.17.0"
 	},
