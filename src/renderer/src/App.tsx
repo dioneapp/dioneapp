@@ -98,10 +98,7 @@ function App() {
 	const PageComponent = getPage();
 	return (
 		<TranslationProvider>
-			<div
-				className={`h-screen w-screen overflow-hidden${isMinimized ? " minimized" : ""}`}
-				id="main"
-			>
+			<div className="h-screen w-screen overflow-hidden" id="main">
 				<Titlebar />
 				<div className="flex h-[calc(100%)]">
 					{pathname !== "/first-time" && pathname !== "/no_access" && (
