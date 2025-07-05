@@ -84,7 +84,8 @@ function createWindow() {
 	// Remove default menu from the window
 	mainWindow.removeMenu();
 
-	mainWindow.once("ready-to-show", () => {
+	// Show the window when ready
+	mainWindow.webContents.once("did-finish-load", () => {
 		// autoUpdater.forceDevUpdateConfig = true;
 		autoUpdater.logger = logger;
 		autoUpdater.autoDownload = true;
@@ -95,13 +96,49 @@ function createWindow() {
 			repo: "dioneapp",
 			private: false,
 		});
-		autoUpdater.checkForUpdatesAndNotify();
-	});
+		async function checkForUpdates(): Promise<void> {
+			return new Promise((resolve) => {
 
-	// Show the window when ready
-	mainWindow.webContents.once("did-finish-load", () => {
-		mainWindow.show();
-		mainWindow.focus();
+				let updateDownloaded = false;
+	
+				autoUpdater.on("update-available", () => {
+					logger.info("Update available, downloading...");
+				});
+	
+				autoUpdater.on("update-downloaded", () => {
+					logger.info("Update downloaded, installing...");
+					updateDownloaded = true;
+					autoUpdater.quitAndInstall();
+				});
+	
+				autoUpdater.on("update-not-available", () => {
+					logger.info("No update available");
+					resolve();
+				});
+	
+				autoUpdater.on("error", (err) => {
+					logger.error("Error in autoUpdater", err);
+					resolve();
+				});
+				
+				autoUpdater.checkForUpdates();
+	
+				// if in 5s doesn't have any info about update, resolve
+				setTimeout(() => {
+					if (!updateDownloaded) resolve();
+				}, 5000);
+			});
+		}
+
+		if (!app.isPackaged) {
+			mainWindow.show();
+			mainWindow.focus();
+		} else {
+			checkForUpdates().then(() => {
+				mainWindow.show();
+				mainWindow.focus();
+			});
+		}
 	});
 
 	// Prevent opening new windows and handle external links
