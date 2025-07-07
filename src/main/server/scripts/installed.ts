@@ -16,15 +16,31 @@ export default async function getAllScripts() {
 	}
 
 	try {
-		const apps = await fs.promises.readdir(scriptsDir);
-		if (apps.length === 0) {
+		const appDirs = await fs.promises.readdir(scriptsDir, { withFileTypes: true });
+
+		const validApps: string[] = [];
+
+		for (const dirent of appDirs) {
+			if (dirent.isDirectory()) {
+				const appPath = path.join(scriptsDir, dirent.name);
+				const files = await fs.promises.readdir(appPath);
+				const scriptConfig = files.filter((file) => file !== "dione.json");
+
+				if (scriptConfig.length > 0) {
+					validApps.push(dirent.name);
+				}
+			}
+		}
+
+		if (validApps.length === 0) {
 			logger.info("No installed apps found.");
 			return JSON.stringify({ apps: [] });
 		}
+
 		logger.info(
-			`Installed applications: [${apps.map((app) => `"${app}"`).join(", ")}]`,
+			`Installed apps: [${validApps.map((app) => `"${app}"`).join(", ")}]`
 		);
-		return JSON.stringify({ apps });
+		return JSON.stringify({ apps: validApps });
 	} catch (error) {
 		logger.error("Error reading apps directory:", error);
 		return JSON.stringify({ apps: [] });
@@ -42,8 +58,11 @@ export async function getInstalledScript(name: string) {
 	);
 
 	try {
-		await fs.promises.readdir(scriptDir);
-		return true;
+		const files = await fs.promises.readdir(scriptDir, {
+			withFileTypes: true,
+		});
+
+		return files.some((file) => file.name !== "dione.json");
 	} catch (error) {
 		return false;
 	}
