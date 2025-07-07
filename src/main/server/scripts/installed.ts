@@ -16,7 +16,9 @@ export default async function getAllScripts() {
 	}
 
 	try {
-		const appDirs = await fs.promises.readdir(scriptsDir, { withFileTypes: true });
+		const appDirs = await fs.promises.readdir(scriptsDir, {
+			withFileTypes: true,
+		});
 
 		const validApps: string[] = [];
 
@@ -38,7 +40,7 @@ export default async function getAllScripts() {
 		}
 
 		logger.info(
-			`Installed apps: [${validApps.map((app) => `"${app}"`).join(", ")}]`
+			`Installed apps: [${validApps.map((app) => `"${app}"`).join(", ")}]`,
 		);
 		return JSON.stringify({ apps: validApps });
 	} catch (error) {

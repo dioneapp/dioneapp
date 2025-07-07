@@ -1,4 +1,5 @@
 import Background from "@renderer/components/first-time/background";
+import SureNotLogin from "@renderer/components/first-time/login";
 import LanguageSelector from "@renderer/components/first-time/onboarding/language-selector";
 import ExecuteSound from "@renderer/components/first-time/sounds/sound";
 import Icon from "@renderer/components/icons/icon";
@@ -16,7 +17,6 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
-import SureNotLogin from "@renderer/components/first-time/login";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
@@ -283,30 +283,32 @@ export default function FirstTime() {
 				)}
 				{level === 2.5 && (
 					<motion.div
-					key={2.5}
-					initial={{ opacity: 0, x: 200, filter: "blur(30px)" }}
-					animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-					exit={{
-						opacity: 0,
-						x: -200,
-						filter: "blur(30px)",
-						transition: { duration: 0.4 },
-					}}
-					transition={{ duration: 0.6 }}
-					className={getContainerClasses()}>
+						key={2.5}
+						initial={{ opacity: 0, x: 200, filter: "blur(30px)" }}
+						animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+						exit={{
+							opacity: 0,
+							x: -200,
+							filter: "blur(30px)",
+							transition: { duration: 0.4 },
+						}}
+						transition={{ duration: 0.6 }}
+						className={getContainerClasses()}
+					>
 						<div className="flex flex-col gap-4 justify-center items-center">
-							<SureNotLogin 
+							<SureNotLogin
 								onSkip={() => {
-								if (firstLaunch === "true" || firstLaunch === null) {
-									changeLevel(3);
-								} else {
-									changeLevel(4);
-								}
-							}} 
-							onLogin={() => {
-								openLink("https://getdione.app/auth/login?app=true")
-								changeLevel(2)
-							}} />
+									if (firstLaunch === "true" || firstLaunch === null) {
+										changeLevel(3);
+									} else {
+										changeLevel(4);
+									}
+								}}
+								onLogin={() => {
+									openLink("https://getdione.app/auth/login?app=true");
+									changeLevel(2);
+								}}
+							/>
 						</div>
 					</motion.div>
 				)}
@@ -370,20 +372,18 @@ export default function FirstTime() {
 				)}
 				{/* progress bar */}
 				{level !== 2.5 && (
-				<motion.div
-					className="absolute bottom-4 left-1/2 translate-x-[-50%]"
-				>
-					<div className="flex gap-2">
-						{[1, 2, 3, 4].map((lvl) => (
-							<div key={lvl} className="py-1">
-								<div
-									className={`w-6 h-1 rounded-full ${lvl === level ? "bg-[#BCB1E7] w-10" : "bg-white/20"}`}
-								/>
-							</div>
-						))}
-					</div>
-				</motion.div>
-			)}
+					<motion.div className="absolute bottom-4 left-1/2 translate-x-[-50%]">
+						<div className="flex gap-2">
+							{[1, 2, 3, 4].map((lvl) => (
+								<div key={lvl} className="py-1">
+									<div
+										className={`w-6 h-1 rounded-full ${lvl === level ? "bg-[#BCB1E7] w-10" : "bg-white/20"}`}
+									/>
+								</div>
+							))}
+						</div>
+					</motion.div>
+				)}
 			</AnimatePresence>
 		</div>
 	);
