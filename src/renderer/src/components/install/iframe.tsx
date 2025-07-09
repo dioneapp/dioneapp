@@ -237,7 +237,7 @@ export default function IframeComponent({
 					>
 						<RotateCcw className="w-4 h-4" />
 						<div className="absolute z-50 -top-6 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
-								{t("iframe.reload")}
+							{t("iframe.reload")}
 						</div>
 					</motion.button>
 					<motion.button
@@ -246,7 +246,7 @@ export default function IframeComponent({
 						title={t("iframe.stop")}
 					>
 						<div className="absolute z-50 -top-6 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
-								{t("iframe.stop")}
+							{t("iframe.stop")}
 						</div>
 						<Square className="w-4 h-4 text-black" />
 					</motion.button>
@@ -270,7 +270,7 @@ export default function IframeComponent({
 						className="absolute cursor-pointer top-10 left-10 z-50 flex items-center justify-center p-2 bg-neutral-800/80 hover:bg-neutral-800 border border-white/10 backdrop-blur-3xl rounded-full"
 						type="button"
 						onClick={handleExitFullscreen}
-						style={{zIndex: 9999}}
+						style={{ zIndex: 9999 }}
 					>
 						<X className="h-4 w-4" />
 					</button>
