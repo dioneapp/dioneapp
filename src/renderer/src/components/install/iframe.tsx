@@ -2,9 +2,11 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import {
 	ArrowLeft,
+	CircleStop,
 	ExternalLink,
 	Folder,
 	Maximize2,
+	Power,
 	RotateCcw,
 	Square,
 	SquareTerminal,
@@ -120,14 +122,14 @@ export default function IframeComponent({
 
 		return (
 			<div
-				className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded-md cursor-pointer flex-shrink-0 relative"
+				className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded flex-shrink-0 relative"
 				onMouseEnter={() => setIsHovered(true)}
 				onMouseLeave={() => setIsHovered(false)}
 			>
 				<span className="text-xs text-neutral-300 font-medium">{label}</span>
 				<div className="w-20 h-2 bg-white/10 rounded-full overflow-hidden">
 					<motion.div
-						className="h-full bg-gradient-to-r from-[#A395D9] to-[#C1B8E3] shadow-lg"
+						className="h-full bg-gradient-to-r from-[#A395D9] to-[#C1B8E3]"
 						style={{ width: `${percentage}%` }}
 						animate={{
 							scale: isHovered ? 1.05 : 1,
@@ -209,7 +211,7 @@ export default function IframeComponent({
 					</div>
 				</div>
 
-				<div className="flex gap-1 justify-center items-center flex-1">
+				<div className="flex gap-1 justify-start items-center flex-1">
 					<UsageIndicator label="CPU" percentage={systemUsage.cpu} />
 					<UsageIndicator
 						label="RAM"
@@ -231,18 +233,24 @@ export default function IframeComponent({
 						</div>
 					</motion.button>
 					<motion.button
+						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						onClick={handleReloadIframe}
+						title={t("iframe.reload")}
+					>
+						<RotateCcw className="w-4 h-4" />
+						<div className="absolute z-50 -top-6 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
+								{t("iframe.reload")}
+						</div>
+					</motion.button>
+					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleStop}
 						title={t("iframe.stop")}
 					>
+						<div className="absolute z-50 -top-6 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
+								{t("iframe.stop")}
+						</div>
 						<Square className="w-4 h-4 text-black" />
-					</motion.button>
-					<motion.button
-						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
-						onClick={handleReloadIframe}
-						title={t("iframe.reload")}
-					>
-						<RotateCcw className="w-4 h-4 text-black" />
 					</motion.button>
 				</div>
 			</motion.div>
@@ -250,13 +258,6 @@ export default function IframeComponent({
 			<motion.div
 				id="iframe-container"
 				key="iframe"
-				animate={{
-					opacity: 1,
-					scale: isFullscreen ? 1.05 : 1,
-					boxShadow: isFullscreen
-						? "0 0 40px 10px rgba(163,149,217,0.2)"
-						: "0 0 20px 2px rgba(0,0,0,0.2)",
-				}}
 				exit={{ opacity: 0, scale: 0.95 }}
 				transition={{ duration: 0.5 }}
 				className={`w-full h-full rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl relative transition-all duration-500 ${isFullscreen ? "fullscreen-anim" : ""}`}
@@ -268,11 +269,12 @@ export default function IframeComponent({
 			>
 				{isFullscreen && (
 					<button
-						className="absolute cursor-pointer top-6 left-6 z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-full"
+						className="absolute cursor-pointer top-10 left-10 z-50 flex items-center justify-center p-2 bg-neutral-800/80 hover:bg-neutral-800 border border-white/10 backdrop-blur-3xl rounded-full"
 						type="button"
 						onClick={handleExitFullscreen}
+						style={{zIndex: 9999}}
 					>
-						<X className="h-3 w-3" />
+						<X className="h-4 w-4" />
 					</button>
 				)}
 
