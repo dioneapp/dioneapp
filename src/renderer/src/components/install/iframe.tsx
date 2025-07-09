@@ -2,11 +2,9 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import {
 	ArrowLeft,
-	CircleStop,
 	ExternalLink,
 	Folder,
 	Maximize2,
-	Power,
 	RotateCcw,
 	Square,
 	SquareTerminal,
