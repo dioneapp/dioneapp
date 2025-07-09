@@ -24,7 +24,7 @@ function App() {
 	const [_isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 	const [_isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate();
-	const [isMinimized, setIsMinimized] = useState(false);
+	const [_isMinimized, setIsMinimized] = useState(false);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
