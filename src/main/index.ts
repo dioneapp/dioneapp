@@ -76,7 +76,7 @@ function createWindow() {
 		// window effects
 		vibrancy: "fullscreen-ui", // macos
 		backgroundMaterial: "acrylic", // windows 11
-		backgroundColor: "rgba(0, 0, 0, 0.9)",
+		backgroundColor: "rgba(0, 0, 0, 0.8)",
 		...(process.platform === "linux" ? { icon } : {}),
 		webPreferences: {
 			preload: join(__dirname, "../preload/index.js"),
