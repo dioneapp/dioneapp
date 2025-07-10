@@ -1,7 +1,8 @@
 import { Maximize, Minimize as Minimize2, Minus, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
+import { motion } from "framer-motion";
 
 export default function Titlebar() {
 	const { t } = useTranslation();
@@ -54,10 +55,12 @@ export default function Titlebar() {
 			<div
 				id="titlebar"
 				className="absolute top-0 w-full z-50"
-				style={{ zIndex: 100 }}
+				style={{ zIndex: 9999 }}
 			>
-				<div className="flex flex-row items-center justify-center h-10 w-full px-2">
-					<div className="flex gap-1.5 items-center justify-end h-full w-full">
+				<div className="flex flex-row items-center justify-end h-10 w-full p-4 px-2">
+					<div
+						className="flex gap-1.5 items-center justify-end h-full w-fit hover:bg-white/5 hover:backdrop-blur-sm rounded-lg py-3 px-2"
+					>
 						<button
 							type="button"
 							id="minimize-button"
