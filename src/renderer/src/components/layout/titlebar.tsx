@@ -11,8 +11,13 @@ export default function Titlebar() {
 
 	const handleClose = async () => {
 		if (Object.keys(isServerRunning).length !== 0) {
-			setShowModal(true);
-			setExitRef(true);
+			const hasRunning = Object.values(isServerRunning).some((value) => value);
+			if (hasRunning) {
+				setShowModal(true);
+				setExitRef(true);
+			} else {
+				window.electron.ipcRenderer.invoke("app:close");
+			}
 		} else {
 			window.electron.ipcRenderer.invoke("app:close");
 		}
