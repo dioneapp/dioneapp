@@ -9,7 +9,13 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 
 	const handleFileUpload = () => {
 		window.electron.ipcRenderer.invoke("select-file", "").then((result) => {
-			setScriptFile(result.filePaths[0]);
+			const fullPath = result.filePaths[0];
+			setScriptFile(fullPath);
+	
+			const folders = fullPath.split(/[/\\]/);
+			const folderName = folders[folders.length - 2];
+	
+			setScriptName(folderName.charAt(0).toUpperCase() + folderName.slice(1));
 		});
 	};
 
@@ -54,7 +60,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 						<button
 							onClick={handleFileUpload}
 							type="button"
-							className=" px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
+							className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-sm font-medium text-neutral-300 whitespace-nowrap cursor-pointer"
 						>
 							{scriptFile ? scriptFile : "Select file"}
 						</button>
