@@ -202,5 +202,19 @@
 		"uninstallCommand": {
 			"linux": "sudo apt remove -y unzip"
 		}
+	},
+	"dotnet": {
+		"checkCommand": "dotnet --version",
+		"versionRegex": "dotnet (\\d+\\.\\d+\\.\\d+)",
+		"installCommand": {
+			"windows": "winget install Microsoft.DotNet.SDK.8",
+			"linux": "sudo apt update && sudo apt install -y dotnet-sdk-8.0",
+			"macos": "brew install dotnet-sdk"
+		},
+		"uninstallCommand": {
+			"windows": "winget uninstall Microsoft.DotNet.SDK.8",
+			"linux": "sudo apt remove -y dotnet-sdk-8.0",
+			"macos": "brew uninstall dotnet-sdk"
+		}
 	}
 }
