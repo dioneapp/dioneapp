@@ -1,8 +1,10 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import type { Script } from "../feed/types";
+import { useNavigate } from "react-router-dom";
+import sendEvent from "@renderer/utils/events";
+import { useAuthContext } from "@renderer/components/contexts/AuthContext";
 
 export default function FeaturedCarousel() {
 	const [scripts, setScripts] = useState<Script[]>([]);
@@ -11,6 +13,8 @@ export default function FeaturedCarousel() {
 	const [gradients, setGradients] = useState<Record<string, string>>({});
 	const [activeIndex, setActiveIndex] = useState<string | null>(null);
 	const [currentIndex, setCurrentIndex] = useState<number>(0);
+	const { user } = useAuthContext();
+	const navigate = useNavigate();
 
 	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -112,17 +116,30 @@ export default function FeaturedCarousel() {
 		return <CarrouselSkeleton />;
 	}
 
+	const handlePromoClick = async (id: string) => {
+		const result = await sendEvent({
+			user: user?.id || "",
+			event: "promo_click",
+			app_id: id,
+			app_name: scripts.find((script) => script.id === id)?.name,
+		});
+		console.log(result);
+		navigate(`/install/${id}`);
+	}
+
 	return (
 		<section className="flex flex-col gap-0">
 			<div className="relative h-70">
 				<AnimatePresence initial={false} mode="wait">
 					{scripts.length > 0 && activeIndex ? (
 						<div key={activeIndex} className="absolute w-full h-full">
-							<Link
-								to={`/install/${activeIndex}`}
+							<div
+								onClick={(e) => {
+									e.preventDefault();
+									handlePromoClick(activeIndex);
+								}}
 								className="w-full h-72 flex transition-all duration-200 cursor-pointer rounded-xl relative overflow-hidden group border border-white/5 "
 							>
-								{/* background */}
 								<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
 								<img
 									aria-hidden
@@ -143,10 +160,8 @@ export default function FeaturedCarousel() {
 									}}
 									className={`absolute inset-0 w-full h-full bg-black/5 ${scripts.find((script) => script.id === activeIndex)?.banner_url ? "opacity-50" : "opacity-20 scale-150"}`}
 								/>
-								{/* content */}
 								<div className="z-50 absolute inset-0 p-10 transition-all duration-500 group-hover:bg-black/20">
 									<div className="flex w-full h-full flex-col justify-start items-center">
-										{/* logo */}
 										<div className="w-full h-full flex justify-end">
 											{scripts.find((script) => script.id === activeIndex)
 												?.logo_url && (
@@ -178,8 +193,6 @@ export default function FeaturedCarousel() {
 											</h3>
 										</div>
 									</div>
-
-									{/* progress Indicators */}
 									<div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-50">
 										{scripts.map((_, index) => (
 											<button
@@ -194,7 +207,7 @@ export default function FeaturedCarousel() {
 										))}
 									</div>
 								</div>
-							</Link>
+							</div>
 						</div>
 					) : (
 						<CarrouselSkeleton />
@@ -211,31 +224,21 @@ export function CarrouselSkeleton() {
 			<div className="relative h-70">
 				<div className="absolute w-full h-full">
 					<div className="w-full h-72 flex rounded-xl relative overflow-hidden border border-white/5">
-						{/* background skeleton */}
 						<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
 						<div className="absolute inset-0 w-full h-full bg-gradient-to-br from-neutral-600/20 to-neutral-900/10" />
-
-						{/* content skeleton */}
 						<div className="z-50 absolute inset-0 p-10">
 							<div className="flex w-full h-full flex-col justify-start items-center">
-								{/* logo skeleton */}
 								<div className="w-full h-full flex justify-end">
 									<div className="w-24 h-24 rounded-xl bg-gray-200/20 animate-pulse" />
 								</div>
-
 								<div className="flex flex-col justify-end gap-2 w-full h-full -mt-6">
-									{/* title skeleton */}
 									<div className="h-10 w-3/4 rounded-md bg-gray-200/20 animate-pulse" />
-
-									{/* description skeleton */}
 									<div className="space-y-2 mt-2">
 										<div className="h-4 w-full rounded-md bg-gray-200/20 animate-pulse" />
 										<div className="h-4 w-4/5 rounded-md bg-gray-200/20 animate-pulse" />
 									</div>
 								</div>
 							</div>
-
-							{/* progress indicators skeleton */}
 							<div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-50">
 								{[...Array(5)].map((_, index) => (
 									<div

@@ -472,18 +472,34 @@ router.post("/events", async (req, res) => {
 		return;
 	}
 
+	type EventData = {
+		created_at: string;
+		type: any;
+		event: any;
+		app_id: any;
+		app_name: any;
+		started_at: any;
+		finished_at: any;
+		user_id?: string;
+	};
+
+	const eventData: EventData = {
+		created_at: new Date().toISOString(),
+		type: req.headers.type,
+		event: req.headers.event,
+		app_id: req.headers.app_id || null,
+		app_name: req.headers.app_name || null,
+		started_at: req.headers.started_at || null,
+		finished_at: req.headers.finished_at || null,
+	};
+
+	if (req.headers.user) {
+		eventData.user_id = req.headers.user;
+	}
+
 	const { data, error } = await supabase
 		.from("events")
-		.insert({
-			created_at: new Date().toISOString(),
-			user_id: req.headers.user,
-			type: req.headers.type,
-			event: req.headers.event,
-			app_id: req.headers.app_id || null,
-			app_name: req.headers.app_name || null,
-			started_at: req.headers.started_at || null,
-			finished_at: req.headers.finished_at || null,
-		})
+		.insert(eventData)
 		.select()
 		.single();
 	if (error) {
