@@ -11,10 +11,10 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 		window.electron.ipcRenderer.invoke("select-file", "").then((result) => {
 			const fullPath = result.filePaths[0];
 			setScriptFile(fullPath);
-	
+
 			const folders = fullPath.split(/[/\\]/);
 			const folderName = folders[folders.length - 2];
-	
+
 			setScriptName(folderName.charAt(0).toUpperCase() + folderName.slice(1));
 		});
 	};

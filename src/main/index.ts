@@ -620,7 +620,10 @@ app.whenReady().then(async () => {
 
 				return result;
 			} catch (siError) {
-				logger.warn("Error getting system usage, returning only ram usage:", siError);
+				logger.warn(
+					"Error getting system usage, returning only ram usage:",
+					siError,
+				);
 
 				// get memory usage
 				const totalMem = os.totalmem();
