@@ -210,17 +210,23 @@ export default function IframeComponent({
 				</div>
 
 				<div className="flex gap-1 justify-start items-center flex-1">
-					<UsageIndicator label="CPU" percentage={systemUsage.cpu} />
-					<UsageIndicator
-						label="RAM"
-						percentage={systemUsage.ram.percent}
-						absoluteValue={`${systemUsage.ram.usedGB.toFixed(1)}G`}
-					/>
-					<UsageIndicator
-						label="Disk"
-						percentage={systemUsage.disk}
-						absoluteValue={`${systemUsage.disk.toFixed(1)}G`}
-					/>
+					{systemUsage.cpu !== undefined && (
+						<UsageIndicator label="CPU" percentage={systemUsage.cpu} />
+					)}
+					{systemUsage.ram.percent !== undefined && (
+						<UsageIndicator
+							label="RAM"
+							percentage={systemUsage.ram.percent}
+							absoluteValue={`${systemUsage.ram.usedGB?.toFixed(1) || 0}G`}
+						/>
+					)}
+					{systemUsage.disk !== undefined && (
+						<UsageIndicator
+							label="Disk"
+							percentage={systemUsage.disk}
+							absoluteValue={`${systemUsage.disk?.toFixed(1) || 0}G`}
+						/>
+					)}
 				</div>
 
 				<div className="flex gap-1">
@@ -231,7 +237,7 @@ export default function IframeComponent({
 						}
 					>
 						<Maximize2 className="w-4 h-4" />
-						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute bottom-full left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.fullscreen")}
 						</div>
 					</motion.button>
@@ -241,7 +247,7 @@ export default function IframeComponent({
 						title={t("iframe.reload")}
 					>
 						<RotateCcw className="w-4 h-4" />
-						<div className="absolute z-50 -top-6 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute z-50 -top-5 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.reload")}
 						</div>
 					</motion.button>
@@ -250,7 +256,7 @@ export default function IframeComponent({
 						onClick={handleStop}
 						title={t("iframe.stop")}
 					>
-						<div className="absolute z-50 -top-6 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute z-50 -top-5 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.stop")}
 						</div>
 						<Square className="w-4 h-4 text-black" />
