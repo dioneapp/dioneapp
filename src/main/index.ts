@@ -608,15 +608,18 @@ app.whenReady().then(async () => {
 					usedGB: mem.used / (1024 * 1024 * 1024),
 				};
 
+				// get disk usage
+				const diskUsage = await si.fsSize();
+				const diskUsagePercent = diskUsage[0].used / diskUsage[0].size;
+
 				const result = {
 					cpu: cpuUsage,
 					ram: ramUsage,
+					disk: diskUsagePercent,
 				};
 
 				return result;
 			} catch (siError) {
-				const cpuUsage = Math.round(Math.random() * 30 + 10);
-
 				// get memory usage
 				const totalMem = os.totalmem();
 				const freeMem = os.freemem();
@@ -627,7 +630,6 @@ app.whenReady().then(async () => {
 				};
 
 				const result = {
-					cpu: cpuUsage,
 					ram: ramUsage,
 				};
 
@@ -637,6 +639,7 @@ app.whenReady().then(async () => {
 			return {
 				cpu: 0,
 				ram: { percent: 0, usedGB: 0 },
+				disk: 0,
 			};
 		}
 	});

@@ -26,6 +26,7 @@ interface IframeProps {
 interface SystemUsage {
 	cpu: number;
 	ram: { percent: number; usedGB: number };
+	disk: number;
 }
 
 export default function IframeComponent({
@@ -41,16 +42,15 @@ export default function IframeComponent({
 	const [systemUsage, setSystemUsage] = useState<SystemUsage>({
 		cpu: 0,
 		ram: { percent: 0, usedGB: 0 },
+		disk: 0,
 	});
 	const [isFullscreen, setIsFullscreen] = useState(false);
 
 	useEffect(() => {
 		const updateSystemUsage = async () => {
 			try {
-				console.log("Calling getSystemUsage...");
 				const usage =
 					await window.electron.ipcRenderer.invoke("get-system-usage");
-				console.log("Received system usage:", usage);
 				setSystemUsage(usage);
 			} catch (error) {
 				console.error("Failed to get system usage:", error);
@@ -120,7 +120,7 @@ export default function IframeComponent({
 
 		return (
 			<div
-				className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded flex-shrink-0 relative"
+				className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded-md flex-shrink-0 relative"
 				onMouseEnter={() => setIsHovered(true)}
 				onMouseLeave={() => setIsHovered(false)}
 			>
@@ -155,7 +155,7 @@ export default function IframeComponent({
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.4 }}
-				className="w-full flex items-center justify-between gap-2 rounded-lg mt-6	"
+				className="w-full flex items-center justify-between gap-2 rounded-md mt-6"
 			>
 				<div className="flex items-center gap-1">
 					<button
@@ -202,7 +202,7 @@ export default function IframeComponent({
 							title={t("iframe.openInBrowser")}
 						>
 							<ExternalLink className="w-4 h-4" />
-							<div className="absolute z-50 -top-9 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
+							<div className="absolute z-50 -top-9 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 								{t("iframe.openInBrowser")}
 							</div>
 						</button>
@@ -215,6 +215,11 @@ export default function IframeComponent({
 						label="RAM"
 						percentage={systemUsage.ram.percent}
 						absoluteValue={`${systemUsage.ram.usedGB.toFixed(1)}G`}
+					/>
+					<UsageIndicator
+						label="Disk"
+						percentage={systemUsage.disk}
+						absoluteValue={`${systemUsage.disk.toFixed(1)}G`}
 					/>
 				</div>
 
@@ -236,7 +241,7 @@ export default function IframeComponent({
 						title={t("iframe.reload")}
 					>
 						<RotateCcw className="w-4 h-4" />
-						<div className="absolute z-50 -top-6 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute z-50 -top-6 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.reload")}
 						</div>
 					</motion.button>
@@ -245,7 +250,7 @@ export default function IframeComponent({
 						onClick={handleStop}
 						title={t("iframe.stop")}
 					>
-						<div className="absolute z-50 -top-6 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute z-50 -top-6 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
 							{t("iframe.stop")}
 						</div>
 						<Square className="w-4 h-4 text-black" />
@@ -258,7 +263,7 @@ export default function IframeComponent({
 				key="iframe"
 				exit={{ opacity: 0, scale: 0.95 }}
 				transition={{ duration: 0.5 }}
-				className={`w-full h-full rounded-lg border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl relative transition-all duration-500 ${isFullscreen ? "fullscreen-anim" : ""}`}
+				className={`w-full h-full rounded-md border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl relative transition-all duration-500 ${isFullscreen ? "fullscreen-anim" : ""}`}
 				style={{
 					borderRadius: isFullscreen ? "0" : "6px",
 					transition:
