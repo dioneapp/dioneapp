@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Loading from "../loading-skeleton";
 import ScriptCard from "./card";
 import type { Script } from "./types";
+import { openLink } from "@renderer/utils/openLink";
 
 interface ScriptListProps {
 	endpoint: string;
@@ -51,7 +52,7 @@ export default function List({
 				const data = await response.json();
 
 				if (data.status === 404) {
-					setScripts([]);
+					setHasMore(false);
 					return;
 				}
 
@@ -138,6 +139,12 @@ export default function List({
 				</div>
 			)}
 
+			{!loading && !error && !hasMore && (
+				<div className="text-center text-neutral-500 text-sm flex flex-col gap-2 mt-12">
+					<span>You have reached the end.</span>
+					<span className="text-neutral-400">If you think there are not enough apps, <span onClick={() => openLink("https://docs.getdione.app/developers/making-a-script")} className="cursor-pointer hover:text-neutral-200 underline underline-offset-4 text-neutral-300 transition-colors duration-300">please help us to add more</span>.</span>
+				</div>
+			)}
 			{error && (
 				<div className="text-center text-red-400 text-sm mt-4">{error}</div>
 			)}

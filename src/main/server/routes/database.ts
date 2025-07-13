@@ -188,7 +188,11 @@ router.get("/explore", (req, res) => {
 
 			const data = await response.json();
 
-			const scripts = data.map((script) => ({
+			if (data.status === 404) {
+				return res.json(data);
+			}
+
+			const scripts = data.map((script: any) => ({
 				...script,
 				logo_url: script.logo_url || generateGradient(script.name),
 			}));
