@@ -45,12 +45,6 @@
 					"arch": [
 						"x64"
 					]
-				},
-				{
-					"target": "msi",
-					"arch": [
-						"x64"
-					]
 				}
 			],
 			"icon": "./resources/icon.ico",
@@ -72,6 +66,12 @@
 		},
 		"linux": {
 			"target": [
+				{
+					"target": "AppImage",
+					"arch": [
+						"x64"
+					]
+				},
 				{
 					"target": "deb",
 					"arch": [
