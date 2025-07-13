@@ -90,7 +90,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-	background: transparent;
+	background: rgba(255, 255, 255, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
