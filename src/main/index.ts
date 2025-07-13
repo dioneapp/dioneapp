@@ -81,6 +81,11 @@ function createWindow() {
 		webPreferences: {
 			preload: join(__dirname, "../preload/index.js"),
 			sandbox: false,
+			...(process.platform === "linux" ? {
+				enableRemoteModule: false,
+				webSecurity: false,
+				allowRunningInsecureContent: true,
+			} : {}),
 		},
 	});
 
