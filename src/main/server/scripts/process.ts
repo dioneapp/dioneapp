@@ -116,19 +116,31 @@ export const executeCommand = async (
 		};
 
 		// handle bat files
-		if (
-			isWindows &&
-			(executable.endsWith(".bat") || executable.endsWith(".cmd"))
-		) {
-			activeProcess = spawn("cmd.exe", ["/S", "/C", command], {
-				...spawnOptions,
-				stdio: ["pipe", "pipe", "pipe"],
-			});
+		if (isWindows) {
+			if (executable.endsWith(".bat") || executable.endsWith(".cmd")) {
+				activeProcess = spawn("cmd.exe", ["/S", "/C", command], {
+					...spawnOptions,
+					stdio: ["pipe", "pipe", "pipe"],
+				});
+			} else {
+				activeProcess = spawn(executable, args, {
+					...spawnOptions,
+					stdio: ["pipe", "pipe", "pipe"],
+				});
+			}
 		} else {
-			activeProcess = spawn(executable, args, {
-				...spawnOptions,
-				stdio: ["pipe", "pipe", "pipe"],
-			});
+			// handle sh files
+			if (executable.endsWith(".sh")) {
+				activeProcess = spawn("bash", [executable, ...args], {
+					...spawnOptions,
+					stdio: ["pipe", "pipe", "pipe"],
+				});
+			} else {
+				activeProcess = spawn(executable, args, {
+					...spawnOptions,
+					stdio: ["pipe", "pipe", "pipe"],
+				});
+			}
 		}
 
 		activePID = activeProcess.pid;
