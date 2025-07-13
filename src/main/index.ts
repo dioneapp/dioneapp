@@ -81,11 +81,13 @@ function createWindow() {
 		webPreferences: {
 			preload: join(__dirname, "../preload/index.js"),
 			sandbox: false,
-			...(process.platform === "linux" ? {
-				enableRemoteModule: false,
-				webSecurity: false,
-				allowRunningInsecureContent: true,
-			} : {}),
+			...(process.platform === "linux"
+				? {
+						enableRemoteModule: false,
+						webSecurity: false,
+						allowRunningInsecureContent: true,
+					}
+				: {}),
 		},
 	});
 
@@ -625,7 +627,10 @@ app.whenReady().then(async () => {
 
 				return result;
 			} catch (siError) {
-				logger.warn("Error getting system usage, returning only ram usage:", siError);
+				logger.warn(
+					"Error getting system usage, returning only ram usage:",
+					siError,
+				);
 
 				// get memory usage
 				const totalMem = os.totalmem();
