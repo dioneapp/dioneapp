@@ -230,6 +230,7 @@ export const en = {
 		error: "Failed to send report. Please try again.",
 		send: "Send Report",
 		sending: "Sending...",
+		contribute: "Help us make this script compatible with all devices",
 	},
 
 	// quick launch component

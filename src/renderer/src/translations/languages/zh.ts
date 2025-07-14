@@ -218,6 +218,7 @@ export const zh = {
 		error: "发送报告失败。请重试。",
 		send: "发送报告",
 		sending: "正在发送...",
+		contribute: "帮助我们使此脚本与所有设备兼容"
 	},
 
 	// quick launch component
