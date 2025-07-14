@@ -235,7 +235,8 @@ export const fr = {
 		error: "Échec de l'envoi du rapport. Veuillez réessayer.",
 		send: "Envoyer le rapport",
 		sending: "Envoi en cours...",
-		contribute: "Aidez-nous à rendre ce script compatible avec tous les appareils"
+		contribute:
+			"Aidez-nous à rendre ce script compatible avec tous les appareils",
 	},
 
 	// quick launch component

@@ -96,7 +96,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		{},
 	);
 	// not supported stuff
-	const [notSupported, setNotSupported] = useState<Record<string, { reasons: string[] }>>({});
+	const [notSupported, setNotSupported] = useState<
+		Record<string, { reasons: string[] }>
+	>({});
 
 	useEffect(() => {
 		setData(null);

@@ -235,7 +235,8 @@ export const pt = {
 		error: "Falha ao enviar relatório. Por favor, tente novamente.",
 		send: "Enviar Relatório",
 		sending: "Enviando...",
-		contribute: "Ajude-nos a tornar este script compatível com todos os dispositivos"
+		contribute:
+			"Ajude-nos a tornar este script compatível com todos os dispositivos",
 	},
 
 	// quick launch component
