@@ -1,6 +1,5 @@
-import { motion } from "framer-motion";
 import { Maximize, Minimize as Minimize2, Minus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 
