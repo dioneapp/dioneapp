@@ -21,7 +21,7 @@ export default function NotSupported({ reasons, data, onClose }: { reasons: stri
 					</div>
 					<div className="flex flex-col w-full ml-auto mt-auto justify-end items-end px-6 py-4">
 						<button onClick={onClose} className="bg-neutral-200 hover:bg-neutral-300 transition-all duration-300 cursor-pointer text-black text-sm font-semibold py-1 w-24 rounded-full">Close</button>
-						<p onClick={() => openLink("https://github.com/dioneapp/official-scripts")} className="text-xs text-neutral-400 mt-2 hover:text-neutral-200 transition-all duration-300 cursor-pointer">Help us make this script compatible with all devices</p>
+						<p onClick={() => openLink(data.author_url || "https://github.com/dioneapp/official-scripts")} className="text-xs text-neutral-400 mt-2 hover:text-neutral-200 transition-all duration-300 cursor-pointer">Help us make this script compatible with all devices</p>
 					</div>
 				</div>
 			</div>
