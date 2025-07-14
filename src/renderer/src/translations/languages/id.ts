@@ -232,7 +232,8 @@ export const id = {
 		error: "Gagal mengirim laporan. Silakan coba lagi.",
 		send: "Kirim Laporan",
 		sending: "Mengirim...",
-		contribute: "Bantu kami membuat skrip ini kompatibel dengan semua perangkat"
+		contribute:
+			"Bantu kami membuat skrip ini kompatibel dengan semua perangkat",
 	},
 
 	// quick launch component

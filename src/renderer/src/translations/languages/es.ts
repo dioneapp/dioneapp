@@ -236,7 +236,8 @@ export const es = {
 		error: "Error al enviar el informe. Por favor, inténtalo de nuevo.",
 		send: "Enviar informe",
 		sending: "Enviando...",
-		contribute: "Ayudanos a hacer este script compatible con todos los dispositivos",
+		contribute:
+			"Ayudanos a hacer este script compatible con todos los dispositivos",
 	},
 
 	// quick launch component
