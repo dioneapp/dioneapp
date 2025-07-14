@@ -1,10 +1,10 @@
+import { useAuthContext } from "@renderer/components/contexts/AuthContext";
+import sendEvent from "@renderer/utils/events";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import type { Script } from "../feed/types";
 import { useNavigate } from "react-router-dom";
-import sendEvent from "@renderer/utils/events";
-import { useAuthContext } from "@renderer/components/contexts/AuthContext";
+import type { Script } from "../feed/types";
 
 export default function FeaturedCarousel() {
 	const [scripts, setScripts] = useState<Script[]>([]);
@@ -125,7 +125,7 @@ export default function FeaturedCarousel() {
 		});
 		console.log(result);
 		navigate(`/install/${id}`);
-	}
+	};
 
 	return (
 		<section className="flex flex-col gap-0">

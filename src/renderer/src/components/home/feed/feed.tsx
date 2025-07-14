@@ -1,10 +1,10 @@
 import { useTranslation } from "@renderer/translations/translationContext";
 import { getCurrentPort } from "@renderer/utils/getPort";
+import { openLink } from "@renderer/utils/openLink";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Loading from "../loading-skeleton";
 import ScriptCard from "./card";
 import type { Script } from "./types";
-import { openLink } from "@renderer/utils/openLink";
 
 interface ScriptListProps {
 	endpoint: string;
@@ -142,7 +142,18 @@ export default function List({
 			{!loading && !error && !hasMore && (
 				<div className="text-center text-neutral-500 text-sm flex flex-col gap-2 mt-12">
 					<span>You have reached the end.</span>
-					<span className="text-neutral-400">If you think there are not enough apps, <span onClick={() => openLink("https://docs.getdione.app/developers/making-a-script")} className="cursor-pointer hover:text-neutral-200 underline underline-offset-4 text-neutral-300 transition-colors duration-300">please help us to add more</span>.</span>
+					<span className="text-neutral-400">
+						If you think there are not enough apps,{" "}
+						<span
+							onClick={() =>
+								openLink("https://docs.getdione.app/developers/making-a-script")
+							}
+							className="cursor-pointer hover:text-neutral-200 underline underline-offset-4 text-neutral-300 transition-colors duration-300"
+						>
+							please help us to add more
+						</span>
+						.
+					</span>
 				</div>
 			)}
 			{error && (
