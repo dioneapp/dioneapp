@@ -73,6 +73,8 @@ export interface ScriptsContextType {
 	loadIframe: (port: number) => void;
 	setLocalApps: React.Dispatch<React.SetStateAction<any[]>>;
 	localApps: any[];
+	setNotSupported: React.Dispatch<React.SetStateAction<Record<string, { reasons: string[] }>>>;
+	notSupported: Record<string, { reasons: string[] }>;
 	isLocal?: boolean;
 }
 
@@ -106,5 +108,6 @@ export interface SetupSocketProps {
 		Record<string, { socket: Socket; isLocal?: boolean }>
 	>;
 	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	setNotSupported: React.Dispatch<React.SetStateAction<Record<string, { reasons: string[] }>>>;
 	isLocal?: boolean;
 }

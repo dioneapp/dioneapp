@@ -22,7 +22,7 @@ export default function Buttons({
 			<div className="p-12 z-50 absolute">
 				<button
 					type="button"
-					onClick={() => navigate("/")}
+					onClick={() => navigate(-1)}
 					className="flex items-center justify-center gap-2 text-xs w-full border border-white/10 hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 py-2 px-4 text-center cursor-pointer"
 				>
 					<ArrowLeft className="h-4 w-4" />

@@ -6,6 +6,7 @@ import { readConfig } from "../../config";
 import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies";
 import executeInstallation from "./execute";
+import { checkSystem } from "./system";
 
 const root = process.cwd();
 const config = readConfig();
@@ -98,7 +99,28 @@ export async function loadLocalScript(name: string, io: Server) {
 		fs.readFileSync(path.join(appPath, "app_info.json"), "utf-8"),
 	);
 	const id = scriptInfo.id;
-
+	// check system requirements
+	const systemCheck = await checkSystem(dioneConfigPath);
+	if (systemCheck.success === false) {
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: "System requirements not met.",
+		});
+		io.to(id).emit("installUpdate", {
+			type: "status",
+			status: "error",
+			content: "Error detected",
+		});
+		io.to(id).emit("notSupported", {
+			reasons: systemCheck.reasons,
+		});
+		return;
+	} else {
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: "All system requirements are met.",
+		});
+	}
 	// check deps
 	const result = await checkDependencies(dioneConfigPath);
 	if (result.success) {

@@ -28,6 +28,10 @@ export interface DioneConfig {
 	};
 	installation: Command[];
 	start: Command[];
+	requirements?: {
+		gpus?: string[];
+		os?: string[];
+	};
 }
 export interface DependencyConfig {
 	[key: string]: {

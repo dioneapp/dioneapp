@@ -12,6 +12,7 @@ import DeleteLoadingModal from "../components/modals/delete-loading";
 import MissingDepsModal from "../components/modals/missing-deps";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
+import NotSupported from "@renderer/components/install/not-supported";
 
 export default function Install({
 	id,
@@ -46,6 +47,7 @@ export default function Install({
 		appFinished,
 		loadIframe,
 		setLocalApps,
+		notSupported,
 	} = useScriptsContext();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
@@ -65,12 +67,20 @@ export default function Install({
 	const savedApps = JSON.parse(localStorage.getItem("savedApps") || "[]");
 	// max apps limit (default 6)
 	const maxApps = 6;
+	// not supported modal
+	const [notSupportedModal, setNotSupportedModal] = useState<boolean>(false);
 
 	// connect to server
 	// useEffect(() => {
 	// 	if (!isServerRunning || !data?.id) return;
 	// 	connectApp(data?.id, isLocal);
 	// }, [isServerRunning]);
+
+	useEffect(() => {
+		if (notSupported[data?.id]) {
+			setNotSupportedModal(true);
+		}
+	}, [notSupported]);
 
 	// stop server and show actions if installation finish
 	useEffect(() => {
@@ -700,6 +710,17 @@ export default function Install({
 				/>
 			)}
 			<div className="relative w-full h-full overflow-auto">
+				{notSupportedModal && (
+					<NotSupported
+						reasons={notSupported[data?.id].reasons}
+						data={data}
+						onClose={() => {
+							stopApp();
+							setShow({ [data?.id]: "actions" });
+							setNotSupportedModal(false);
+						}}
+					/>
+				)}
 				{show[data?.id] === "actions" && (
 					<Buttons
 						user={user}

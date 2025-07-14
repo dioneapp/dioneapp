@@ -7,10 +7,11 @@ import { supabase } from "../utils/database";
 import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies";
 import executeInstallation from "./execute";
+import { checkSystem } from "./system";
 
 export async function getScripts(id: string, io: Server) {
 	if (!supabase) {
-		logger.error("Supabase client is not initialized");
+		logger.warn("Supabase client is not initialized");
 		return;
 	}
 	try {
@@ -172,6 +173,29 @@ export function downloadFile(
 						status: "success",
 						content: "Script downloaded",
 					});
+					// check if system requirements are met
+					const systemCheck = await checkSystem(FILE_PATH);
+					if (systemCheck.success === false) {
+						io.to(id).emit("installUpdate", {
+							type: "log",
+							content: "System requirements not met.",
+						});
+						io.to(id).emit("installUpdate", {
+							type: "status",
+							status: "error",
+							content: "Error detected",
+						});
+						io.to(id).emit("notSupported", {
+							reasons: systemCheck.reasons,
+						});
+						return;
+					} else {
+						io.to(id).emit("installUpdate", {
+							type: "log",
+							content: "All system requirements are met.",
+						});
+					}
+
 					// download finished, now checking dependencies
 					const result = await checkDependencies(FILE_PATH);
 					if (result.success) {

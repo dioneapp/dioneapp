@@ -18,6 +18,7 @@ export function setupSocket({
 	data,
 	socketsRef,
 	setAppFinished,
+	setNotSupported
 }: SetupSocketProps): Socket {
 	if (socketsRef.current[appId]?.socket) {
 		console.log(`Socket [${appId}] already exists`);
@@ -113,6 +114,15 @@ export function setupSocket({
 		},
 	);
 
+	socket.on("notSupported", (message: { reasons: string }) => {
+		const reasons = [message.reasons];
+		setNotSupported(prev => ({ ...prev, [appId]: { reasons } }));
+		window.electron.ipcRenderer.invoke(
+			"notify",
+			"Script execution failed",
+			"Do not meet the minimum requirements to use an app."
+		)
+	  });
 	socket.on("deleteUpdate", (message: string) => {
 		console.log("Received log:", message);
 		setDeleteLogs((prevLogs) => [...prevLogs, message]);

@@ -95,6 +95,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const [appFinished, setAppFinished] = useState<{ [key: string]: boolean }>(
 		{},
 	);
+	// not supported stuff
+	const [notSupported, setNotSupported] = useState<Record<string, { reasons: string[] }>>({});
 
 	useEffect(() => {
 		setData(null);
@@ -262,6 +264,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			data,
 			socketsRef,
 			setAppFinished,
+			setNotSupported,
 		});
 		socketsRef.current[appId] = {
 			socket: newSocket,
@@ -460,6 +463,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				loadIframe,
 				setLocalApps,
 				localApps,
+				setNotSupported,
+				notSupported,
 			}}
 		>
 			{children}
