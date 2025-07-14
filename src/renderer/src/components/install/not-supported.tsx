@@ -1,7 +1,15 @@
 import { openLink } from "@renderer/utils/openLink";
 import { Gpu, Monitor } from "lucide-react";
+import { useTranslation } from "@renderer/translations/translationContext";
 
 export default function NotSupported({ reasons, data, onClose }: { reasons: string[]; data: any; onClose: () => void }) {
+	const { t } = useTranslation();
+
+	const appName = data.name || "this app";
+	const reason = reasons.includes("gpu") ? "GPU" : "OS";
+	const rawText = t("feed.errors.notSupported");
+	const parts = rawText.split("%s");
+
 	return (
 		<div className="absolute h-screen w-full bg-black/40 backdrop-blur-xl" style={{ zIndex: 999 }}>
 			<div className="w-full h-full flex justify-center items-center">
@@ -16,7 +24,7 @@ export default function NotSupported({ reasons, data, onClose }: { reasons: stri
 						</div>
 						<div className="flex flex-col justify-end ml-auto max-w-xl gap-2 text-right">
 							<h1 className="text-3xl font-semibold">Your device is not supported</h1>
-							<h2 className="text-sm text-neutral-400 ">Unfortunately <span className="text-neutral-200 hover:underline">{data.name || "this app"}</span> does not support your <span className="text-neutral-200 hover:underline">{reasons.includes("gpu") ? "GPU" : "operating system"}</span>. </h2>
+							<h2 className="text-sm text-neutral-400 ">{parts[0]} <span className="text-neutral-200 hover:underline">{appName}</span> {parts[1]} <span className="text-neutral-200 hover:underline">{reason}</span>. </h2>
 						</div>
 					</div>
 					<div className="flex flex-col w-full ml-auto mt-auto justify-end items-end px-6 py-4">

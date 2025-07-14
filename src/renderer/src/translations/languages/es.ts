@@ -360,6 +360,7 @@ export const es = {
 		errors: {
 			notArray: "Los datos obtenidos no son un array",
 			fetchFailed: "Error al obtener scripts",
+			notSupported: "Lamentablemente %s no es compatible con tu %s.",
 		},
 	},
 

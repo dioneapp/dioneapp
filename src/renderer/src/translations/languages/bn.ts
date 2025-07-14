@@ -348,6 +348,7 @@ export const bn = {
 		errors: {
 			notArray: "প্রাপ্ত ডেটা একটি অ্যারে নয়",
 			fetchFailed: "স্ক্রিপ্ট আনতে ব্যর্থ হয়েছে",
+			notSupported: "দুঃখিত, %s আপনার %s পরিষ্কার হয়েছে।",
 		},
 	},
 

@@ -352,6 +352,7 @@ export const en = {
 		errors: {
 			notArray: "Fetched data is not an array",
 			fetchFailed: "Failed to fetch scripts",
+			notSupported: "Unfortunately %s is not supported on your %s.",
 		},
 	},
 

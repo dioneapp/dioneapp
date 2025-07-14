@@ -346,6 +346,7 @@ export const ar = {
 		errors: {
 			notArray: "البيانات التي تم جلبها ليست مصفوفة",
 			fetchFailed: "فشل جلب البرامج النصية",
+			notSupported: "لقد تم رفض %s على %s.",
 		},
 	},
 

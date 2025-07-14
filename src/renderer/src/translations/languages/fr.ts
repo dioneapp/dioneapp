@@ -359,6 +359,7 @@ export const fr = {
 		errors: {
 			notArray: "Les données récupérées ne sont pas un tableau",
 			fetchFailed: "Échec de la récupération des scripts",
+			notSupported: "Dommage, %s n'est pas supporté sur votre %s.",
 		},
 	},
 
