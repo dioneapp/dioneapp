@@ -14,8 +14,8 @@ import { Notification } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
 import si from "systeminformation";
-import icon from "../../resources/icon.ico?asset";
 import macosIcon from "../../resources/icon.icns?asset";
+import icon from "../../resources/icon.ico?asset";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
 import {
 	destroyPresence,
