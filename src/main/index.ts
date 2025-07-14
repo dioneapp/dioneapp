@@ -15,6 +15,7 @@ import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
 import si from "systeminformation";
 import icon from "../../resources/icon.ico?asset";
+import macosIcon from "../../resources/icon.icns?asset";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
 import {
 	destroyPresence,
@@ -68,7 +69,6 @@ function createWindow() {
 		show: false,
 		autoHideMenuBar: true,
 		titleBarStyle: "hidden",
-		icon: icon,
 		fullscreenable: false,
 		maximizable: true,
 		fullscreen: false,
@@ -77,7 +77,9 @@ function createWindow() {
 		vibrancy: "fullscreen-ui", // macos
 		backgroundMaterial: "acrylic", // windows 11
 		backgroundColor: "rgba(0, 0, 0, 0.88)",
+		...(process.platform === "win32" ? { icon } : {}),
 		...(process.platform === "linux" ? { icon } : {}),
+		...(process.platform === "darwin" ? { icon: macosIcon } : {}),
 		webPreferences: {
 			preload: join(__dirname, "../preload/index.js"),
 			sandbox: false,
