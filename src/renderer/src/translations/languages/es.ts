@@ -76,8 +76,8 @@ export const es = {
 				title: "Sesiones",
 				subtitle: "en los últimos 7 días",
 			},
-			events: {
-				title: "Eventos",
+			shared: {
+				title: "Compartidos",
 				subtitle: "en los últimos 7 días",
 			},
 			streak: {
