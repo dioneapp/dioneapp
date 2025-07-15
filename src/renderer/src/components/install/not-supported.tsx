@@ -31,7 +31,7 @@ export default function NotSupported({
 						</div>
 						<div className="flex flex-col justify-end ml-auto max-w-xl gap-2 text-right">
 							<h1 className="text-3xl font-semibold">
-								Your device is not supported
+								{t("feed.errors.notSupportedTitle")}
 							</h1>
 							<h2 className="text-sm text-neutral-400 ">
 								{parts[0]}{" "}

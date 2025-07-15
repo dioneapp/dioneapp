@@ -362,6 +362,7 @@ export const pt = {
 			notArray: "Dados obtidos não são um array",
 			fetchFailed: "Falha ao buscar scripts",
 			notSupported: "Infelizmente %s não é suportado em seus %s.",
+			notSupportedTitle: "Seu dispositivo não é suportado",
 		},
 	},
 

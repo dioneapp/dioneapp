@@ -359,6 +359,7 @@ export const id = {
 			notArray: "Data yang diambil bukan array",
 			fetchFailed: "Gagal mengambil skrip",
 			notSupported: "Malangnya %s tidak disokong pada %s anda.",
+			notSupportedTitle: "Perangkat anda tidak disokong",
 		},
 	},
 
