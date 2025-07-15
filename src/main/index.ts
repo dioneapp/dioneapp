@@ -68,11 +68,11 @@ function createWindow() {
 		minHeight: 800,
 		show: false,
 		autoHideMenuBar: true,
-		titleBarStyle: "hidden",
+		titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "hidden",
 		fullscreenable: false,
 		maximizable: true,
 		fullscreen: false,
-		frame: false,
+		frame: process.platform === "darwin" ? true : false,
 		// window effects
 		vibrancy: "fullscreen-ui", // macos
 		backgroundMaterial: "acrylic", // windows 11
@@ -98,16 +98,27 @@ function createWindow() {
 
 	// Show the window when ready
 	mainWindow.webContents.once("did-finish-load", () => {
-		// autoUpdater.forceDevUpdateConfig = true;
-		autoUpdater.logger = logger;
-		autoUpdater.autoDownload = true;
-		autoUpdater.autoInstallOnAppQuit = true;
-		autoUpdater.setFeedURL({
-			provider: "github",
-			owner: "dioneapp",
-			repo: "dioneapp",
-			private: false,
-		});
+
+		// on macos show window immediately
+		if (process.platform === "darwin") {
+			mainWindow.show();
+			mainWindow.focus();
+
+			if (app.isPackaged) {
+				checkForUpdates();
+			}
+		} else {
+			if (!app.isPackaged) {
+				mainWindow.show();
+				mainWindow.focus();
+			} else {
+				checkForUpdates().then(() => {
+					mainWindow.show();
+					mainWindow.focus();
+				});
+			}
+		}
+
 		async function checkForUpdates(): Promise<void> {
 			return new Promise((resolve) => {
 				let updateDownloaded = false;
@@ -137,17 +148,7 @@ function createWindow() {
 				// if in 5s doesn't have any info about update, resolve
 				setTimeout(() => {
 					if (!updateDownloaded) resolve();
-				}, 5000);
-			});
-		}
-
-		if (!app.isPackaged) {
-			mainWindow.show();
-			mainWindow.focus();
-		} else {
-			checkForUpdates().then(() => {
-				mainWindow.show();
-				mainWindow.focus();
+				}, 3000);
 			});
 		}
 	});
@@ -240,6 +241,17 @@ function createWindow() {
 app.whenReady().then(async () => {
 	logger.info("Starting app...");
 
+	// autoUpdater.forceDevUpdateConfig = true;
+	autoUpdater.logger = logger;
+	autoUpdater.autoDownload = true;
+	autoUpdater.autoInstallOnAppQuit = true;
+	autoUpdater.setFeedURL({
+		provider: "github",
+		owner: "dioneapp",
+		repo: "dioneapp",
+		private: false,
+	});
+
 	// Initialize Discord presence
 	await initializeDiscordPresence();
 
@@ -266,6 +278,9 @@ app.whenReady().then(async () => {
 
 	// Start the server
 	port = await startServer();
+
+	// Create the main application window
+	createWindow();
 
 	// Register global shortcuts
 	globalShortcut.register("Control+R", () => {
@@ -494,9 +509,6 @@ app.whenReady().then(async () => {
 		const result = await handleEndSession();
 		return result;
 	});
-
-	// Create the main application window
-	createWindow();
 
 	// handle protocols
 	if (process.env.NODE_ENV !== "development") {
