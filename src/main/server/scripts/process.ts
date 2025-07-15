@@ -102,7 +102,7 @@ export const executeCommand = async (
 		// command options
 		const spawnOptions = {
 			cwd: workingDir,
-			shell: isWindows,
+			shell: true,
 			windowsHide: true,
 			detached: false,
 			env: {
