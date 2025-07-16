@@ -98,7 +98,6 @@ function createWindow() {
 
 	// Show the window when ready
 	mainWindow.webContents.once("did-finish-load", () => {
-
 		// on macos show window immediately
 		if (process.platform === "darwin") {
 			mainWindow.show();
