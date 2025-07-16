@@ -7,7 +7,12 @@ export async function getSystemInfo() {
 	let gpu;
 
 	try {
-		gpu = (await si.graphics()).controllers[0].vendor;
+		const gpus = (await si.graphics()).controllers;
+		const mainGPU = gpus.find((gpu) =>
+			/nvidia|amd/i.test(gpu.vendor)
+		);
+
+		gpu = mainGPU?.vendor || "unknown";
 		os = (await si.osInfo()).platform;
 	} catch (error) {
 		logger.error(`Error getting system info: ${error}`);
