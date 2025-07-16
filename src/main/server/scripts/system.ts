@@ -8,9 +8,7 @@ export async function getSystemInfo() {
 
 	try {
 		const gpus = (await si.graphics()).controllers;
-		const mainGPU = gpus.find((gpu) =>
-			/nvidia|amd/i.test(gpu.vendor)
-		);
+		const mainGPU = gpus.find((gpu) => /nvidia|amd/i.test(gpu.vendor));
 
 		gpu = mainGPU?.vendor || "unknown";
 		os = (await si.osInfo()).platform;
