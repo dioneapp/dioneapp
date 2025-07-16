@@ -42,7 +42,7 @@
 		"checkCommand": "conda --version",
 		"versionRegex": "conda (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
-			"windows": "winget install --id=Anaconda.Miniconda3 -e --silent --accept-source-agreements --accept-package-agreements --override \"/S /AddToPath=1 --quiet --wait --norestart --nocache --installPath C:\\Miniconda3\"",
+			"windows": "winget install --id=Anaconda.Miniconda3 -e --silent --accept-source-agreements --accept-package-agreements --override \"/S /AddToPath=1 --quiet --wait --norestart --nocache\"",
 			"linux": "sudo apt install -y conda",
 			"macos": "brew install conda"
 		},
@@ -57,7 +57,7 @@
 		"checkCommand": "ffmpeg -version",
 		"versionRegex": "ffmpeg version (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
-			"windows": "winget install -e --id Gyan.FFmpeg",
+			"windows": "winget install -e --id Gyan.FFmpeg --override \"/S /AddToPath=1 --quiet --wait --norestart --nocache\"",
 			"linux": "sudo apt install -y ffmpeg",
 			"macos": "brew install ffmpeg"
 		},
@@ -113,7 +113,7 @@
 		"checkCommand": "git --version",
 		"versionRegex": "git version (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
-			"windows": "winget install --id Git.Git -e --source winget",
+			"windows": "winget install --id Git.Git -e --source winget --override \"/S /AddToPath=1 --quiet --wait --norestart --nocache\"",
 			"linux": "sudo apt update && sudo apt install -y git",
 			"macos": "brew install git"
 		},
@@ -127,7 +127,7 @@
 		"checkCommand": "docker --version",
 		"versionRegex": "Docker version (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
-			"windows": "winget install -e --id Docker.DockerDesktop",
+			"windows": "winget install -e --id Docker.DockerDesktop --override \"/S /AddToPath=1 --quiet --wait --norestart --nocache\"",
 			"linux": "curl -fsSL https://get.docker.com | sudo sh",
 			"macos": "brew install --cask docker"
 		},
@@ -169,7 +169,7 @@
 		"checkCommand": "curl --version",
 		"versionRegex": "curl (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
-			"windows": "winget install -e --id Curl.Curl",
+			"windows": "winget install -e --id Curl.Curl --override \"/S /AddToPath=1 --quiet --wait --norestart --nocache\"",
 			"linux": "sudo apt update && sudo apt install -y curl",
 			"macos": "brew install curl"
 		},
@@ -183,7 +183,7 @@
 		"checkCommand": "wget --version",
 		"versionRegex": "GNU Wget (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
-			"windows": "winget install -e --id GNU.Wget",
+			"windows": "winget install -e --id GNU.Wget --override \"/S /AddToPath=1 --quiet --wait --norestart --nocache\"",
 			"linux": "sudo apt update && sudo apt install -y wget",
 			"macos": "brew install wget"
 		},
@@ -207,7 +207,7 @@
 		"checkCommand": "dotnet --version",
 		"versionRegex": "dotnet (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
-			"windows": "winget install Microsoft.DotNet.SDK.8",
+			"windows": "winget install Microsoft.DotNet.SDK.8 --override \"/S /AddToPath=1 --quiet --wait --norestart --nocache\"",
 			"linux": "sudo apt update && sudo apt install -y dotnet-sdk-8.0",
 			"macos": "brew install dotnet-sdk"
 		},
