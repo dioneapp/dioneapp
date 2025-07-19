@@ -97,8 +97,7 @@ export function AuthContextProvider({
 		await deleteExpiresAt();
 		await deleteId();
 		window.electron.ipcRenderer.send("end-session");
-		// remove this after beta
-		navigate("/first-time");
+		navigate("/");
 	}
 
 	return (
