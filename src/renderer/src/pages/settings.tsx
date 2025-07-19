@@ -85,7 +85,7 @@ export default function Settings() {
 	const [packVersion, setPackVersion] = useState<string | null>(null);
 	const [versions] = useState(window.electron.process.versions);
 	const [config, setConfig] = useState<any | null>(null);
-	const { setLanguage, t } = useTranslation();
+	const { setLanguage, language, t } = useTranslation();
 	const { logout } = useAuthContext();
 	const navigate = useNavigate();
 
@@ -310,7 +310,7 @@ export default function Settings() {
 												</p>
 											</div>
 											<CustomSelect
-												value={config.language}
+												value={language}
 												onChange={(value) => setLanguage(value as any)}
 												options={Object.entries(languages).map(
 													([value, label]) => ({ value, label }),
