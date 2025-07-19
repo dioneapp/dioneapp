@@ -1,10 +1,10 @@
+import { Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import sound from "./intro.mp3";
-import { Volume2, VolumeX } from "lucide-react";
 
 const ExecuteSound = ({ firstLaunch }: { firstLaunch: string }) => {
 	const [isMuted, setIsMuted] = useState(() => {
-		const savedMute = localStorage.getItem('isSoundMuted');
+		const savedMute = localStorage.getItem("isSoundMuted");
 		return savedMute ? JSON.parse(savedMute) : false;
 	});
 
@@ -22,7 +22,7 @@ const ExecuteSound = ({ firstLaunch }: { firstLaunch: string }) => {
 		if (firstLaunch === "true") {
 			audio!.muted = isMuted;
 			audio!.volume = isMuted ? 0 : 0.2;
-			audio!.play().catch(e => console.warn("Audio play failed:", e));
+			audio!.play().catch((e) => console.warn("Audio play failed:", e));
 		}
 
 		return () => {
@@ -46,8 +46,8 @@ const ExecuteSound = ({ firstLaunch }: { firstLaunch: string }) => {
 	const toggleMute = () => {
 		const newMutedState = !isMuted;
 		setIsMuted(newMutedState);
-		localStorage.setItem('isSoundMuted', JSON.stringify(newMutedState));
-		
+		localStorage.setItem("isSoundMuted", JSON.stringify(newMutedState));
+
 		if (audioRef.current) {
 			audioRef.current.muted = newMutedState;
 			audioRef.current.volume = newMutedState ? 0 : 0.2;
@@ -57,18 +57,18 @@ const ExecuteSound = ({ firstLaunch }: { firstLaunch: string }) => {
 	return (
 		<>
 			{firstLaunch === "true" && (
-			<button
-				onClick={toggleMute}
-				className="absolute bottom-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200"
-				style={{ zIndex: 9999 }}
-				aria-label={isMuted ? "Unmute sound" : "Mute sound"}
-			>
-				{isMuted ? (
-					<VolumeX className="w-4 h-4 text-white/80" />
-				) : (
-					<Volume2 className="w-4 h-4 text-white/80" />
-				)}
-			</button>
+				<button
+					onClick={toggleMute}
+					className="absolute bottom-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200"
+					style={{ zIndex: 9999 }}
+					aria-label={isMuted ? "Unmute sound" : "Mute sound"}
+				>
+					{isMuted ? (
+						<VolumeX className="w-4 h-4 text-white/80" />
+					) : (
+						<Volume2 className="w-4 h-4 text-white/80" />
+					)}
+				</button>
 			)}
 		</>
 	);

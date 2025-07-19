@@ -8,4 +8,4 @@ export const openLink = (url: string) => {
 
 export const openFolder = async (path: string) => {
 	await window.electron.ipcRenderer.invoke("open-dir", path);
-}
+};
