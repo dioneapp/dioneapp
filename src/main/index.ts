@@ -110,6 +110,7 @@ function createWindow() {
 			if (!app.isPackaged) {
 				mainWindow.show();
 				mainWindow.focus();
+				mainWindow.webContents.openDevTools({ mode: "undocked" });
 			} else {
 				checkForUpdates().then(() => {
 					mainWindow.show();
