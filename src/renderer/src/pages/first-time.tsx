@@ -161,21 +161,26 @@ export default function FirstTime() {
 			<ExecuteSound firstLaunch={firstLaunch || "false"} />
 			{/* background stuff */}
 			<AnimatePresence mode="wait">
-			{level !== 2.5 && <Background />}
-			<motion.div
-				initial={{ opacity: 0 }}
-				animate={{ opacity: 1 }}
-				transition={{ duration: 1 }}
-				className="absolute blur-sm bg-[#BCB1E7]/5 h-full w-full"
-				style={{ zIndex: -1 }}
-			/>
+				{level !== 2.5 && <Background />}
+				<motion.div
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					transition={{ duration: 1 }}
+					className="absolute blur-sm bg-[#BCB1E7]/5 h-full w-full"
+					style={{ zIndex: -1 }}
+				/>
 				{/* 1 - welcome */}
 				{level === 1 && (
 					<motion.div
 						key={1}
 						initial={{ opacity: 0, y: 30, filter: "blur(20px)" }}
 						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-						exit={{ opacity: 0, y: -100, filter: "blur(20px)", transition: { duration: 0.5, delay: 0 } }}
+						exit={{
+							opacity: 0,
+							y: -100,
+							filter: "blur(20px)",
+							transition: { duration: 0.5, delay: 0 },
+						}}
 						transition={{ duration: 0.6, delay: 1.5 }}
 						className={getContainerClasses()}
 					>
@@ -183,9 +188,9 @@ export default function FirstTime() {
 							<Icon name="Dio" className="w-20 h-20 mb-2" />
 							<h1 className="text-6xl font-semibold flex">
 								{t("firstTime.welcome.title") + " "}
-								<div className="mx-2"/>
-									{Array.from("Dione").map((char, i) => (
-										<motion.span
+								<div className="mx-2" />
+								{Array.from("Dione").map((char, i) => (
+									<motion.span
 										key={i}
 										initial={{
 											opacity: 0,
@@ -205,45 +210,45 @@ export default function FirstTime() {
 											ease: "easeOut",
 										}}
 										className="bg-clip-text text-transparent bg-gradient-to-t from-white/80 via-[#BCB1E7] to-[#BCB1E7] inline-block"
-										>
+									>
 										{char}
-										</motion.span>
-									))}
+									</motion.span>
+								))}
 							</h1>
 							<h2 className="text-neutral-400 text-balance text-center max-w-xl">
 								{t("firstTime.welcome.subtitle")}
 							</h2>
 						</div>
-						<motion.div
-							className="mt-4 flex flex-col gap-4"
-						>
-						<motion.button
-							type="button"
-							initial={{ scale: 0.8 }}
-							animate={{ scale: 1 }}
-							whileHover={{
-								boxShadow: "0 0 50px rgba(188, 177, 231, 0.3)",
-							}}
-							whileTap={{ scale: 0.95 }}
-							transition={{ type: "spring", stiffness: 400, damping: 17 }}
-							className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer relative overflow-hidden"
-							onClick={() => {
-							changeLevel(2)
-							openLink("https://getdione.app/auth/login?app=true")
-							}}
-						>
-							<motion.div
-								initial={{ x: "-100%" }}
-								animate={{ x: "100%" }}
-								transition={{
-									duration: 2,
-									repeat: Number.POSITIVE_INFINITY,
-									repeatDelay: 1.5,
+						<motion.div className="mt-4 flex flex-col gap-4">
+							<motion.button
+								type="button"
+								initial={{ scale: 0.8 }}
+								animate={{ scale: 1 }}
+								whileHover={{
+									boxShadow: "0 0 50px rgba(188, 177, 231, 0.3)",
 								}}
-								className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-							/>
-							<span className="relative z-10">{t("firstTime.welcome.login")}</span>
-						</motion.button>
+								whileTap={{ scale: 0.95 }}
+								transition={{ type: "spring", stiffness: 400, damping: 17 }}
+								className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer relative overflow-hidden"
+								onClick={() => {
+									changeLevel(2);
+									openLink("https://getdione.app/auth/login?app=true");
+								}}
+							>
+								<motion.div
+									initial={{ x: "-100%" }}
+									animate={{ x: "100%" }}
+									transition={{
+										duration: 2,
+										repeat: Number.POSITIVE_INFINITY,
+										repeatDelay: 1.5,
+									}}
+									className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+								/>
+								<span className="relative z-10">
+									{t("firstTime.welcome.login")}
+								</span>
+							</motion.button>
 							<button
 								type="button"
 								className="text-xs text-white opacity-50 flex items-center justify-center gap-1 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
@@ -267,10 +272,7 @@ export default function FirstTime() {
 				)}
 				{/* 2 - logging in */}
 				{level === 2 && (
-					<motion.div
-						key={2}
-						className={getContainerClasses()}
-					>
+					<motion.div key={2} className={getContainerClasses()}>
 						<div className="flex flex-col gap-4 justify-center items-center mt-12">
 							<h1 className="text-6xl font-semibold">
 								{t("firstTime.loggingIn.title")}
@@ -298,14 +300,18 @@ export default function FirstTime() {
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
-						exit={{ opacity: 0, filter: "blur(20px)", transition: { duration: 0.5 } }}
+						exit={{
+							opacity: 0,
+							filter: "blur(20px)",
+							transition: { duration: 0.5 },
+						}}
 						key={2.5}
 						transition={{ duration: 0.3 }}
 						className={getContainerClasses()}
-						>
-							<div className="flex flex-col gap-4 justify-center items-center">
-								<SureNotLogin
-									onSkip={() => {
+					>
+						<div className="flex flex-col gap-4 justify-center items-center">
+							<SureNotLogin
+								onSkip={() => {
 									if (firstLaunch === "true" || firstLaunch === null) {
 										changeLevel(3);
 									} else {
@@ -325,7 +331,12 @@ export default function FirstTime() {
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
-						exit={{ opacity: 0, y: -100, filter: "blur(20px)", transition: { duration: 0.5, delay: 0.5 } }}
+						exit={{
+							opacity: 0,
+							y: -100,
+							filter: "blur(20px)",
+							transition: { duration: 0.5, delay: 0.5 },
+						}}
 						transition={{ duration: 0.5 }}
 						key={3}
 						className={getContainerClasses()}
@@ -341,7 +352,11 @@ export default function FirstTime() {
 						key={4}
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
-						exit={{ filter: "blur(20px)", opacity: 0, transition: { duration: 2, delay: 0.5 } }}
+						exit={{
+							filter: "blur(20px)",
+							opacity: 0,
+							transition: { duration: 2, delay: 0.5 },
+						}}
 						transition={{ duration: 0.5 }}
 						className={getContainerClasses()}
 					>

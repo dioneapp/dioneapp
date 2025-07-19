@@ -110,7 +110,10 @@ const CustomInput = ({
 						}
 					}}
 				/>
-				<button onClick={() => onClickIcon()} className="bg-white/10 rounded-r-full px-4 border border-white/5 hover:bg-white/20 transition-colors duration-200 cursor-pointer">
+				<button
+					onClick={() => onClickIcon()}
+					className="bg-white/10 rounded-r-full px-4 border border-white/5 hover:bg-white/20 transition-colors duration-200 cursor-pointer"
+				>
 					{icon}
 				</button>
 			</div>
@@ -283,7 +286,11 @@ export default function Settings() {
 														handleUpdate({ defaultInstallFolder: value })
 													}
 													onClick={handleSaveDir}
-													onClickIcon={() => openFolder(joinPath(config.defaultInstallFolder, "apps"))}
+													onClickIcon={() =>
+														openFolder(
+															joinPath(config.defaultInstallFolder, "apps"),
+														)
+													}
 												/>
 											</div>
 											<div className="flex justify-between w-full items-center h-full space-y-2">
