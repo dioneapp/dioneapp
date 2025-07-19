@@ -90,7 +90,7 @@ export default function LanguageSelector({
 																	: `https://flagcdn.com/${key}.svg`
 											}
 											alt={value}
-											className="w-full h-full object-cover object-center overflow-hidden rounded aspect-[5/3] transition-opacity duration-300"
+											className="bg-black/20 border border-white/5 w-full h-full object-cover object-center overflow-hidden rounded aspect-[5/3] transition-opacity duration-300"
 										/>
 										<span className="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 absolute bottom-0 left-0 px-2 bg-gradient-to-t from-[#080808] via-[#080808]/50 to-[#080808]/0 w-full h-10 pointer-events-none">
 											<div className="flex items-end pb-2 font-medium justify-start h-full text-sm">

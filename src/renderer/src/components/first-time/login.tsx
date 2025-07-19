@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+
 export default function SureNotLogin({
 	onSkip,
 	onLogin,
@@ -5,7 +7,11 @@ export default function SureNotLogin({
 	return (
 		<section className="min-h-screen min-w-screen flex flex-col items-center justify-center px-4">
 			<div className="flex justify-start items-center gap-4 w-screen h-full pl-12">
-				<div className="flex flex-col items-start gap-4 max-w-2xl">
+				<motion.div 
+				initial={{ opacity: 0, filter: "blur(30px)", y: 100 }}
+				animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+				transition={{ duration: 0.5, delay: 0.8 }}
+				className="flex flex-col items-start gap-4 max-w-2xl">
 					<h1 className="font-semibold text-5xl">You are missing features</h1>
 					<p className="text-neutral-400 text-wrap text-sm">
 						Log in to Dione so you don't miss out on these features.
@@ -26,10 +32,10 @@ export default function SureNotLogin({
 							Skip
 						</button>
 					</div>
-				</div>
+				</motion.div>
 				<div className="w-full flex justify-end items-center -mr-44 z-50">
 					<div className="grid grid-cols-2 grid-rows-2 gap-2 w-full">
-						<div className="flex flex-col gap-2 bg-black/50 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
+						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute right-24 -top-24 w-34 h-44 bg-pink-800/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
 								<h2 className="font-semibold text-3xl">Send custom reports</h2>
@@ -39,7 +45,7 @@ export default function SureNotLogin({
 								</p>
 							</div>
 						</div>
-						<div className="flex flex-col gap-2 bg-black/50 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
+						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute right-24  w-34 h-44 bg-zinc-600/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
 								<h2 className="font-semibold text-3xl">Create a profile</h2>
@@ -48,7 +54,7 @@ export default function SureNotLogin({
 								</p>
 							</div>
 						</div>
-						<div className="flex flex-col gap-2 bg-black/50 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
+						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute left-12 w-34 h-44 bg-[#BCB1E7]/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
 								<h2 className="font-semibold text-3xl">Sync your data</h2>
@@ -57,7 +63,7 @@ export default function SureNotLogin({
 								</p>
 							</div>
 						</div>
-						<div className="flex flex-col gap-2 bg-black/50 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
+						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute right-0 top-24 w-44 h-44 bg-yellow-300/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
 								<h2 className="font-semibold text-3xl">
@@ -68,7 +74,7 @@ export default function SureNotLogin({
 								</p>
 							</div>
 						</div>
-						<div className="flex flex-col gap-2 bg-black/50 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
+						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute right-0 top-0 w-24 h-44 bg-red-300/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
 								<h2 className="font-semibold text-3xl">Give out likes</h2>
@@ -78,7 +84,7 @@ export default function SureNotLogin({
 								</p>
 							</div>
 						</div>
-						<div className="flex flex-col gap-2 bg-black/50 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
+						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute left-0 -bottom-20 w-24 h-44 bg-white/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
 								<h2 className="font-semibold text-3xl">Publish scripts</h2>
@@ -87,7 +93,7 @@ export default function SureNotLogin({
 								</p>
 							</div>
 						</div>
-						<div className="flex flex-col gap-2 bg-black/50 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
+						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute left-0 -bottom-20 w-24 h-44 bg-blue-300/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
 								<h2 className="font-semibold text-3xl">Achieve goals</h2>
@@ -96,7 +102,7 @@ export default function SureNotLogin({
 								</p>
 							</div>
 						</div>
-						<div className="flex flex-col gap-2 bg-black/50 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
+						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute right-0 -top-20 w-44 h-44 bg-green-300/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
 								<h2 className="font-semibold text-3xl">Get newswire</h2>
