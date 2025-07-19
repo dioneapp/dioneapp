@@ -56,7 +56,7 @@ export default function Titlebar() {
 				className="absolute top-0 w-full z-50"
 				style={{ zIndex: 9999 }}
 			>
-				<div className="flex flex-row items-center justify-end h-10 w-full p-4 px-2">
+				<div className="flex flex-row items-center justify-end h-10 w-full p-4 px-3">
 					<div className="flex gap-1.5 items-center justify-end h-full w-fit bg-white/[0.03] backdrop-blur-sm rounded-md py-3 px-2">
 						<button
 							type="button"
