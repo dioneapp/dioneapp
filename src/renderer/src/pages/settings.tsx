@@ -6,7 +6,7 @@ import { ChevronDown, Folder } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
-import { openLink } from "../utils/openLink";
+import { openFolder, openLink } from "../utils/openLink";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -76,6 +76,44 @@ const CustomSelect = ({
 					</>
 				)}
 			</AnimatePresence>
+		</div>
+	);
+};
+
+const CustomInput = ({
+	value,
+	onChange,
+	onClick,
+	onClickIcon = () => {},
+	icon = <Folder className="w-4 h-4 text-neutral-300" />,
+}: {
+	value: string;
+	onChange: (value: string) => void;
+	onClick: () => void;
+	onClickIcon?: () => void;
+	icon?: React.ReactNode;
+}) => {
+	return (
+		<div className="flex gap-2 items-center justify-end w-full">
+			<div className="flex gap-0">
+				<input
+					required
+					readOnly
+					onClick={onClick}
+					className="bg-white/10 border border-r-none border-white/5 text-neutral-200 font-mono text-sm h-10 px-4 rounded-full rounded-r-none truncate max-w-[calc(100%-12rem)] min-w-[18rem] focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-200"
+					type="text"
+					value={value}
+					onChange={(e) => {
+						const value = e.target.value;
+						if (value !== null && value.trim() !== "") {
+							onChange(value);
+						}
+					}}
+				/>
+				<button onClick={() => onClickIcon()} className="bg-white/10 rounded-r-full px-4 border border-white/5 hover:bg-white/20 transition-colors duration-200 cursor-pointer">
+					{icon}
+				</button>
+			</div>
 		</div>
 	);
 };
@@ -239,24 +277,14 @@ export default function Settings() {
 														)}
 													</p>
 												</div>
-												<div className="flex gap-2 items-center justify-end w-full">
-													<div className="relative">
-														<input
-															onClick={handleSaveDir}
-															type="text"
-															placeholder="Select folder"
-															readOnly
-															value={joinPath(
-																config.defaultInstallFolder,
-																"apps",
-															)}
-															className="bg-white/10 border border-white/5 text-neutral-200 font-mono text-sm h-10 px-4 pr-12 rounded-full truncate max-w-[calc(100%-12rem)] min-w-[18rem] focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-200"
-														/>
-														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-															<Folder className="w-4 h-4 text-neutral-400" />
-														</div>
-													</div>
-												</div>
+												<CustomInput
+													value={joinPath(config.defaultInstallFolder, "apps")}
+													onChange={(value) =>
+														handleUpdate({ defaultInstallFolder: value })
+													}
+													onClick={handleSaveDir}
+													onClickIcon={() => openFolder(joinPath(config.defaultInstallFolder, "apps"))}
+												/>
 											</div>
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
@@ -500,27 +528,14 @@ export default function Settings() {
 														{t("settings.other.logsDirectory.description")}
 													</p>
 												</div>
-												<div className="flex gap-2 items-center justify-end w-full">
-													<div className="relative">
-														<input
-															required
-															readOnly
-															onClick={handleLogsDir}
-															className="bg-white/10 border border-white/5 text-neutral-200 font-mono text-sm h-10 px-4 pr-12 rounded-full truncate max-w-[calc(100%-12rem)] min-w-[18rem] focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-200"
-															type="text"
-															value={config.defaultLogsPath}
-															onChange={(e) => {
-																const value = e.target.value;
-																if (value !== null && value.trim() !== "") {
-																	handleUpdate({ defaultLogsPath: value });
-																}
-															}}
-														/>
-														<div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-															<Folder className="w-4 h-4 text-neutral-400" />
-														</div>
-													</div>
-												</div>
+												<CustomInput
+													value={config.defaultLogsPath}
+													onChange={(value) =>
+														handleUpdate({ defaultLogsPath: value })
+													}
+													onClick={handleLogsDir}
+													onClickIcon={() => openFolder(config.defaultLogsPath)}
+												/>
 											</div>
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
