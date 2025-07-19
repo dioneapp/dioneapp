@@ -5,3 +5,7 @@ export const openLink = (url: string) => {
 		window.electron.ipcRenderer.invoke("open-external-link", url);
 	}
 };
+
+export const openFolder = async (path: string) => {
+	await window.electron.ipcRenderer.invoke("open-dir", path);
+}
