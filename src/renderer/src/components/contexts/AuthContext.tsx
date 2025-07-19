@@ -56,6 +56,7 @@ export function AuthContextProvider({
 		const port = await getCurrentPort();
 		const response = await fetch(`http://localhost:${port}/db/refresh-token`, {
 			headers: {
+				api_key: import.meta.env.LOCAL_API_KEY || "",
 				accessToken: token,
 			},
 		});
@@ -75,7 +76,11 @@ export function AuthContextProvider({
 
 	async function fetchUser(id: string) {
 		const port = await getCurrentPort();
-		const response = await fetch(`http://localhost:${port}/db/user/${id}`);
+		const response = await fetch(`http://localhost:${port}/db/user/${id}`, {
+			headers: {
+				api_key: import.meta.env.LOCAL_API_KEY || "", // use this env variable to access the local API key
+			},
+		});
 		if (response.ok) {
 			const userData = await response.json();
 			await saveId(id);

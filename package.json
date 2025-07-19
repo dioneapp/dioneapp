@@ -110,7 +110,7 @@
 			"resources/**/*",
 			"node_modules/**/*",
 			"package.json",
-			"!node_modules/@tailwindcss/oxide-android-arm64/**"
+			"!node_modules/@tailwindcss/oxide-*/**"
 		],
 		"extraResources": [],
 		"directories": {
@@ -131,6 +131,7 @@
 		"@supabase/supabase-js": "^2.49.4",
 		"@tailwindcss/vite": "^4.1.6",
 		"cors": "^2.8.5",
+		"dotenv": "^17.2.0",
 		"electron-store": "^10.0.1",
 		"electron-updater": "^6.6.2",
 		"express": "^5.1.0",

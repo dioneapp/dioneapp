@@ -26,6 +26,13 @@ router.get("/user/:id", async (req, res) => {
 		return res.status(500).json({ error: "Database connection not available" });
 	}
 
+	// check if request come from app
+	const api_key = req.get("api_key");
+	if (!api_key || api_key !== process.env.LOCAL_API_KEY) {
+		logger.error("Invalid API key");
+		return res.status(401).json({ error: "Unauthorized" });
+	}
+
 	try {
 		const { data, error } = await supabase
 			.from("users")
@@ -53,6 +60,13 @@ router.get("/refresh-token", async (req, res) => {
 	if (!supabase) {
 		logger.error("Supabase client is not initialized");
 		return res.status(500).json({ error: "Database connection not available" });
+	}
+
+	// check if request come from app
+	const api_key = req.get("api_key");
+	if (!api_key || api_key !== process.env.LOCAL_API_KEY) {
+		logger.error("Invalid API key");
+		return res.status(401).json({ error: "Unauthorized" });
 	}
 
 	try {
@@ -88,6 +102,13 @@ router.get("/set-session", async (req, res) => {
 	if (!supabase) {
 		logger.error("Supabase client is not initialized");
 		return res.status(500).json({ error: "Database connection not available" });
+	}
+
+	// check if request come from app
+	const api_key = req.get("api_key");
+	if (!api_key || api_key !== process.env.LOCAL_API_KEY) {
+		logger.error("Invalid API key");
+		return res.status(401).json({ error: "Unauthorized" });
 	}
 
 	try {

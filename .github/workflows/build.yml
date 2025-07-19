@@ -64,10 +64,10 @@ jobs:
         NODE_OPTIONS: --max-old-space-size=4096
         VITE_DB_URL: ${{ secrets.DB_URL }}
         VITE_DB_KEY: ${{ secrets.DB_KEY }}
-        DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_URL }}
-        API_KEY: ${{ secrets.API_KEY }}
-        
-    
+        MAIN_VITE_DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_URL }}
+        MAIN_VITE_API_KEY: ${{ secrets.API_KEY }}
+        MAIN_VITE_LOCAL_API_KEY: ${{ secrets.LOCAL_API_KEY }}
+
     - name: Compress artifacts
       run: |
         if [ "$RUNNER_OS" == "Windows" ]; then
