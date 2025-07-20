@@ -1,7 +1,7 @@
+import { app } from "electron";
 import express from "express";
 import { supabase } from "../utils/database";
 import logger from "../utils/logger";
-import { app } from "electron";
 
 const router = express.Router();
 router.use(express.json());
@@ -30,7 +30,11 @@ router.get("/user/:id", async (req, res) => {
 	// check if request come from app
 	const api_key = req.get("api_key");
 	if (!api_key || api_key !== process.env.LOCAL_API_KEY) {
-		logger.warn(app.isPackaged ? "Invalid API key" : "In development mode, functions like AUTH are not available.");
+		logger.warn(
+			app.isPackaged
+				? "Invalid API key"
+				: "In development mode, functions like AUTH are not available.",
+		);
 		return res.status(401).json({ error: "Unauthorized" });
 	}
 
@@ -66,7 +70,11 @@ router.get("/refresh-token", async (req, res) => {
 	// check if request come from app
 	const api_key = req.get("api_key");
 	if (!api_key || api_key !== process.env.LOCAL_API_KEY) {
-		logger.warn(app.isPackaged ? "Invalid API key" : "In development mode, functions like AUTH are not available");
+		logger.warn(
+			app.isPackaged
+				? "Invalid API key"
+				: "In development mode, functions like AUTH are not available",
+		);
 		return res.status(401).json({ error: "Unauthorized" });
 	}
 
@@ -108,7 +116,11 @@ router.get("/set-session", async (req, res) => {
 	// check if request come from app
 	const api_key = req.get("api_key");
 	if (!api_key || api_key !== process.env.LOCAL_API_KEY) {
-		logger.warn(app.isPackaged ? "Invalid API key" : "In development mode, functions like AUTH are not available");
+		logger.warn(
+			app.isPackaged
+				? "Invalid API key"
+				: "In development mode, functions like AUTH are not available",
+		);
 		return res.status(401).json({ error: "Unauthorized" });
 	}
 
