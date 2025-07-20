@@ -8,7 +8,7 @@ let supabase: ReturnType<typeof createClient> | null = null;
 try {
 	if (!import.meta.env.VITE_DB_URL || !import.meta.env.VITE_DB_KEY) {
 		logger.warn(
-			"Supabase not initialized: Missing required environment variables VITE_DB_URL or VITE_DB_KEY",
+			"Supabase not initialized: If you are in DEV mode remember, functions like AUTH are not available. If you want to use your own database, set VITE_DB_URL and VITE_DB_KEY in your .env file.",
 		);
 	} else {
 		supabase = createClient(
