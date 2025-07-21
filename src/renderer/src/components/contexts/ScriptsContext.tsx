@@ -406,6 +406,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		} finally {
 			disconnectApp(appId);
 			setAppFinished({ [appId]: false });
+			handleReloadQuickLaunch();
 		}
 	};
 
