@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface DragState {
 	isDragging: boolean;
@@ -20,11 +20,15 @@ interface AppSlotPosition {
 	slotIndex: number;
 }
 
-export const useCustomDrag = ({ apps, setApps, maxApps }: UseCustomDragProps) => {
+export const useCustomDrag = ({
+	apps,
+	setApps,
+	maxApps,
+}: UseCustomDragProps) => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const dragTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const startPositionRef = useRef<{ x: number; y: number } | null>(null);
-	const STORAGE_KEY = 'quicklaunch-app-positions';
+	const STORAGE_KEY = "quicklaunch-app-positions";
 	const DRAG_DELAY = 200;
 
 	const [dragState, setDragState] = useState<DragState>({
@@ -41,7 +45,7 @@ export const useCustomDrag = ({ apps, setApps, maxApps }: UseCustomDragProps) =>
 			const saved = localStorage.getItem(STORAGE_KEY);
 			return saved ? JSON.parse(saved) : [];
 		} catch (error) {
-			console.error('Error loading saved positions:', error);
+			console.error("Error loading saved positions:", error);
 			return [];
 		}
 	}, []);
@@ -56,61 +60,67 @@ export const useCustomDrag = ({ apps, setApps, maxApps }: UseCustomDragProps) =>
 					return null;
 				})
 				.filter((position): position is AppSlotPosition => position !== null);
-			
+
 			localStorage.setItem(STORAGE_KEY, JSON.stringify(positions));
 		} catch (error) {
-			console.error('Error saving positions:', error);
+			console.error("Error saving positions:", error);
 		}
 	}, []);
 
-	const applyStoredPositions = useCallback((appsToOrder: any[]) => {
-		const savedPositions = loadSavedPositions();
-		if (savedPositions.length === 0) return appsToOrder;
+	const applyStoredPositions = useCallback(
+		(appsToOrder: any[]) => {
+			const savedPositions = loadSavedPositions();
+			if (savedPositions.length === 0) return appsToOrder;
 
-		const orderedApps = new Array(maxApps).fill(null);
-		const validApps = appsToOrder.filter(app => app && app.id);
-		const appMap = new Map(validApps.map(app => [app.id, app]));
-		
-		savedPositions.forEach(({ id, slotIndex }) => {
-			const app = appMap.get(id);
-			if (app && slotIndex >= 0 && slotIndex < maxApps) {
-				orderedApps[slotIndex] = app;
-				appMap.delete(id);
-			}
-		});
+			const orderedApps = new Array(maxApps).fill(null);
+			const validApps = appsToOrder.filter((app) => app && app.id);
+			const appMap = new Map(validApps.map((app) => [app.id, app]));
 
-		let nextEmptySlot = 0;
-		for (const app of appMap.values()) {
-			while (nextEmptySlot < maxApps && orderedApps[nextEmptySlot] !== null) {
-				nextEmptySlot++;
-			}
-			if (nextEmptySlot < maxApps) {
-				orderedApps[nextEmptySlot] = app;
-				nextEmptySlot++;
-			}
-		}
+			savedPositions.forEach(({ id, slotIndex }) => {
+				const app = appMap.get(id);
+				if (app && slotIndex >= 0 && slotIndex < maxApps) {
+					orderedApps[slotIndex] = app;
+					appMap.delete(id);
+				}
+			});
 
-		return orderedApps;
-	}, [maxApps, loadSavedPositions]);
-
-	const getSlotAtPosition = useCallback((x: number, y: number): number | null => {
-		if (!containerRef.current) return null;
-		
-		const slots = containerRef.current.querySelectorAll('[data-slot-index]');
-		for (let i = 0; i < slots.length; i++) {
-			const slot = slots[i] as HTMLElement;
-			const rect = slot.getBoundingClientRect();
-			if (
-				x >= rect.left &&
-				x <= rect.right &&
-				y >= rect.top &&
-				y <= rect.bottom
-			) {
-				return parseInt(slot.dataset.slotIndex || '0');
+			let nextEmptySlot = 0;
+			for (const app of appMap.values()) {
+				while (nextEmptySlot < maxApps && orderedApps[nextEmptySlot] !== null) {
+					nextEmptySlot++;
+				}
+				if (nextEmptySlot < maxApps) {
+					orderedApps[nextEmptySlot] = app;
+					nextEmptySlot++;
+				}
 			}
-		}
-		return null;
-	}, []);
+
+			return orderedApps;
+		},
+		[maxApps, loadSavedPositions],
+	);
+
+	const getSlotAtPosition = useCallback(
+		(x: number, y: number): number | null => {
+			if (!containerRef.current) return null;
+
+			const slots = containerRef.current.querySelectorAll("[data-slot-index]");
+			for (let i = 0; i < slots.length; i++) {
+				const slot = slots[i] as HTMLElement;
+				const rect = slot.getBoundingClientRect();
+				if (
+					x >= rect.left &&
+					x <= rect.right &&
+					y >= rect.top &&
+					y <= rect.bottom
+				) {
+					return Number.parseInt(slot.dataset.slotIndex || "0");
+				}
+			}
+			return null;
+		},
+		[],
+	);
 
 	const clearDragTimeout = useCallback(() => {
 		if (dragTimeoutRef.current) {
@@ -119,133 +129,160 @@ export const useCustomDrag = ({ apps, setApps, maxApps }: UseCustomDragProps) =>
 		}
 	}, []);
 
-	const startDrag = useCallback((
-		clientX: number,
-		clientY: number,
-		app: any,
-		index: number,
-		targetElement: HTMLElement
-	) => {
-		const rect = targetElement.getBoundingClientRect();
-		const offset = {
-			x: clientX - rect.left - rect.width / 2,
-			y: clientY - rect.top - rect.height / 2,
-		};
-
-		setDragState({
-			isDragging: true,
-			draggedApp: app,
-			draggedFromIndex: index,
-			mousePosition: { x: clientX, y: clientY },
-			dragOffset: offset,
-			hoveredSlot: null,
-		});
-
-		document.body.style.cursor = 'grabbing';
-		document.body.style.userSelect = 'none';
-	}, []);
-
-	const handlePointerDown = useCallback((
-		e: React.MouseEvent | React.TouchEvent,
-		app: any,
-		index: number
-	) => {
-		const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-		const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-		const target = e.currentTarget as HTMLElement;
-
-		startPositionRef.current = { x: clientX, y: clientY };
-
-		clearDragTimeout();
-
-		dragTimeoutRef.current = setTimeout(() => {
-			startDrag(clientX, clientY, app, index, target);
-		}, DRAG_DELAY);
-	}, [startDrag, clearDragTimeout]);
-
-	const handlePointerUp = useCallback((e: MouseEvent | TouchEvent | React.MouseEvent | React.TouchEvent) => {
-		if (dragState.isDragging) {
-			const clientX = 'touches' in e ? 
-				('changedTouches' in e ? e.changedTouches[0].clientX : (e as TouchEvent).changedTouches[0].clientX) : 
-				e.clientX;
-			const clientY = 'touches' in e ? 
-				('changedTouches' in e ? e.changedTouches[0].clientY : (e as TouchEvent).changedTouches[0].clientY) : 
-				e.clientY;
-
-			const targetSlot = getSlotAtPosition(clientX, clientY);
-
-			if (targetSlot !== null && dragState.draggedFromIndex !== null && targetSlot !== dragState.draggedFromIndex) {
-				const newApps = [...apps];
-				
-				if (newApps[targetSlot]) {
-					const tempApp = newApps[targetSlot];
-					newApps[targetSlot] = dragState.draggedApp;
-					newApps[dragState.draggedFromIndex] = tempApp;
-				} else {
-					newApps[targetSlot] = dragState.draggedApp;
-					newApps[dragState.draggedFromIndex] = null;
-				}
-				
-				setApps(newApps);
-				savePositions(newApps);
-			}
+	const startDrag = useCallback(
+		(
+			clientX: number,
+			clientY: number,
+			app: any,
+			index: number,
+			targetElement: HTMLElement,
+		) => {
+			const rect = targetElement.getBoundingClientRect();
+			const offset = {
+				x: clientX - rect.left - rect.width / 2,
+				y: clientY - rect.top - rect.height / 2,
+			};
 
 			setDragState({
-				isDragging: false,
-				draggedApp: null,
-				draggedFromIndex: null,
-				mousePosition: { x: 0, y: 0 },
-				dragOffset: { x: 0, y: 0 },
+				isDragging: true,
+				draggedApp: app,
+				draggedFromIndex: index,
+				mousePosition: { x: clientX, y: clientY },
+				dragOffset: offset,
 				hoveredSlot: null,
 			});
 
-			document.body.style.cursor = '';
-			document.body.style.userSelect = '';
-		}
+			document.body.style.cursor = "grabbing";
+			document.body.style.userSelect = "none";
+		},
+		[],
+	);
 
-		clearDragTimeout();
-		startPositionRef.current = null;
-	}, [dragState, getSlotAtPosition, apps, setApps, savePositions, clearDragTimeout]);
+	const handlePointerDown = useCallback(
+		(e: React.MouseEvent | React.TouchEvent, app: any, index: number) => {
+			const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+			const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+			const target = e.currentTarget as HTMLElement;
 
-	const handlePointerMove = useCallback((e: MouseEvent | TouchEvent) => {
-		if (!dragState.isDragging) {
-			if (dragTimeoutRef.current && startPositionRef.current) {
-				const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-				const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-				
-				const deltaX = Math.abs(clientX - startPositionRef.current.x);
-				const deltaY = Math.abs(clientY - startPositionRef.current.y);
-				
-				if (deltaX > 10 || deltaY > 10) {
-					clearDragTimeout();
-					startPositionRef.current = null;
+			startPositionRef.current = { x: clientX, y: clientY };
+
+			clearDragTimeout();
+
+			dragTimeoutRef.current = setTimeout(() => {
+				startDrag(clientX, clientY, app, index, target);
+			}, DRAG_DELAY);
+		},
+		[startDrag, clearDragTimeout],
+	);
+
+	const handlePointerUp = useCallback(
+		(e: MouseEvent | TouchEvent | React.MouseEvent | React.TouchEvent) => {
+			if (dragState.isDragging) {
+				const clientX =
+					"touches" in e
+						? "changedTouches" in e
+							? e.changedTouches[0].clientX
+							: (e as TouchEvent).changedTouches[0].clientX
+						: e.clientX;
+				const clientY =
+					"touches" in e
+						? "changedTouches" in e
+							? e.changedTouches[0].clientY
+							: (e as TouchEvent).changedTouches[0].clientY
+						: e.clientY;
+
+				const targetSlot = getSlotAtPosition(clientX, clientY);
+
+				if (
+					targetSlot !== null &&
+					dragState.draggedFromIndex !== null &&
+					targetSlot !== dragState.draggedFromIndex
+				) {
+					const newApps = [...apps];
+
+					if (newApps[targetSlot]) {
+						const tempApp = newApps[targetSlot];
+						newApps[targetSlot] = dragState.draggedApp;
+						newApps[dragState.draggedFromIndex] = tempApp;
+					} else {
+						newApps[targetSlot] = dragState.draggedApp;
+						newApps[dragState.draggedFromIndex] = null;
+					}
+
+					setApps(newApps);
+					savePositions(newApps);
 				}
+
+				setDragState({
+					isDragging: false,
+					draggedApp: null,
+					draggedFromIndex: null,
+					mousePosition: { x: 0, y: 0 },
+					dragOffset: { x: 0, y: 0 },
+					hoveredSlot: null,
+				});
+
+				document.body.style.cursor = "";
+				document.body.style.userSelect = "";
 			}
-			return;
-		}
 
-		const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-		const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-		const hoveredSlot = getSlotAtPosition(clientX, clientY);
+			clearDragTimeout();
+			startPositionRef.current = null;
+		},
+		[
+			dragState,
+			getSlotAtPosition,
+			apps,
+			setApps,
+			savePositions,
+			clearDragTimeout,
+		],
+	);
 
-		setDragState(prev => ({
-			...prev,
-			mousePosition: { x: clientX, y: clientY },
-			hoveredSlot,
-		}));
-	}, [dragState.isDragging, getSlotAtPosition, clearDragTimeout]);
+	const handlePointerMove = useCallback(
+		(e: MouseEvent | TouchEvent) => {
+			if (!dragState.isDragging) {
+				if (dragTimeoutRef.current && startPositionRef.current) {
+					const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+					const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+
+					const deltaX = Math.abs(clientX - startPositionRef.current.x);
+					const deltaY = Math.abs(clientY - startPositionRef.current.y);
+
+					if (deltaX > 10 || deltaY > 10) {
+						clearDragTimeout();
+						startPositionRef.current = null;
+					}
+				}
+				return;
+			}
+
+			const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+			const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+			const hoveredSlot = getSlotAtPosition(clientX, clientY);
+
+			setDragState((prev) => ({
+				...prev,
+				mousePosition: { x: clientX, y: clientY },
+				hoveredSlot,
+			}));
+		},
+		[dragState.isDragging, getSlotAtPosition, clearDragTimeout],
+	);
 
 	useEffect(() => {
-		document.addEventListener('mousemove', handlePointerMove);
-		document.addEventListener('mouseup', handlePointerUp);
-		document.addEventListener('touchmove', handlePointerMove, { passive: false });
-		document.addEventListener('touchend', handlePointerUp);
+		document.addEventListener("mousemove", handlePointerMove);
+		document.addEventListener("mouseup", handlePointerUp);
+		document.addEventListener("touchmove", handlePointerMove, {
+			passive: false,
+		});
+		document.addEventListener("touchend", handlePointerUp);
 
 		return () => {
-			document.removeEventListener('mousemove', handlePointerMove);
-			document.removeEventListener('mouseup', handlePointerUp);
-			document.removeEventListener('touchmove', handlePointerMove);
-			document.removeEventListener('touchend', handlePointerUp);
+			document.removeEventListener("mousemove", handlePointerMove);
+			document.removeEventListener("mouseup", handlePointerUp);
+			document.removeEventListener("touchmove", handlePointerMove);
+			document.removeEventListener("touchend", handlePointerUp);
 		};
 	}, [handlePointerMove, handlePointerUp]);
 
