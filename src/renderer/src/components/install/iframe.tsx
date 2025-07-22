@@ -154,7 +154,7 @@ export default function IframeComponent({
 	useEffect(() => {
 		const webview = webviewRef.current;
 		if (webview) {
-			webview.addEventListener('dom-ready', () => {
+			webview.addEventListener("dom-ready", () => {
 				webview.insertCSS(`
 					::-webkit-scrollbar {
 						width: 6px;
@@ -180,7 +180,6 @@ export default function IframeComponent({
 			});
 		}
 	}, []);
-
 
 	return (
 		<div className="w-full h-full flex flex-col gap-2 p-6">
@@ -324,7 +323,13 @@ export default function IframeComponent({
 					id="iframe"
 					ref={webviewRef}
 					src={iframeSrc}
-					style={{ width: '100%', height: '100%', border: 0, scrollbarWidth: 'thin', msScrollbarTrackColor: 'transparent' }}
+					style={{
+						width: "100%",
+						height: "100%",
+						border: 0,
+						scrollbarWidth: "thin",
+						msScrollbarTrackColor: "transparent",
+					}}
 				/>
 
 				{/* <iframe
