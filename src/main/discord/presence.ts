@@ -15,7 +15,7 @@ export const initializeDiscordPresence = async () => {
 
 		await rpc.login();
 	} catch (error) {
-		logger.error("Failed to initialize Discord presence:", error);
+		logger.warn("Failed to initialize Discord presence:", error);
 	}
 };
 
