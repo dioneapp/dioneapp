@@ -207,12 +207,15 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	const isLocalAvailable = async (port: number): Promise<boolean> => {
 		try {
-			await fetch(`http://localhost:${port}`, {
+			const response = await fetch(`http://localhost:${port}`, {
 				method: "GET",
-				mode: "no-cors",
 			});
-			return true;
-		} catch (error) {
+			if (response.ok) {
+				return true;
+			}
+			return false;
+		} catch (error: any) {
+			console.log('ERROR', error);
 			console.log("Port is not available", error);
 			return false;
 		}

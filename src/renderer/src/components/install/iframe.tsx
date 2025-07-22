@@ -288,13 +288,15 @@ export default function IframeComponent({
 				)}
 
 				<iframe
-					title="Script screen"
+					title="Script preview"
 					id="iframe"
 					src={iframeSrc}
 					className="w-full h-full bg-neutral-900 z-50"
-					style={{ border: 0, overflow: "hidden" }}
-					sandbox="allow-scripts allow-same-origin allow-forms"
-				/>
+					style={{ border: 0, overflow: "auto" }}
+					sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
+					allow="fullscreen"
+					referrerPolicy="no-referrer-when-downgrade"
+					/>
 			</motion.div>
 		</div>
 	);
