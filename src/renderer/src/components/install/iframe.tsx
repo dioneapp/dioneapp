@@ -10,7 +10,7 @@ import {
 	SquareTerminal,
 	X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 
@@ -148,6 +148,39 @@ export default function IframeComponent({
 			</div>
 		);
 	};
+
+	const webviewRef = useRef<Electron.WebviewTag>(null);
+
+	useEffect(() => {
+		const webview = webviewRef.current;
+		if (webview) {
+			webview.addEventListener('dom-ready', () => {
+				webview.insertCSS(`
+					::-webkit-scrollbar {
+						width: 6px;
+					}
+
+					::-webkit-scrollbar-thumb:hover,
+					::-webkit-scrollbar-thumb:active {
+						background: rgba(255, 255, 255, 0.4);
+					}
+
+					::-webkit-scrollbar:hover {
+						background: rgba(255, 255, 255, 0.2);
+					}
+
+					::-webkit-scrollbar-track {
+						background: rgba(255, 255, 255, 0.1);
+					}
+
+					::-webkit-scrollbar-thumb {
+						background: rgba(255, 255, 255, 0.2);
+					}
+				`);
+			});
+		}
+	}, []);
+
 
 	return (
 		<div className="w-full h-full flex flex-col gap-2 p-6">
@@ -287,7 +320,14 @@ export default function IframeComponent({
 					</button>
 				)}
 
-				<iframe
+				<webview
+					id="iframe"
+					ref={webviewRef}
+					src={iframeSrc}
+					style={{ width: '100%', height: '100%', border: 0, scrollbarWidth: 'thin', msScrollbarTrackColor: 'transparent' }}
+				/>
+
+				{/* <iframe
 					title="Script preview"
 					id="iframe"
 					src={iframeSrc}
@@ -296,7 +336,7 @@ export default function IframeComponent({
 					sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
 					allow="fullscreen"
 					referrerPolicy="no-referrer-when-downgrade"
-				/>
+				/> */}
 			</motion.div>
 		</div>
 	);

@@ -81,6 +81,7 @@ function createWindow() {
 		...(process.platform === "linux" ? { icon } : {}),
 		...(process.platform === "darwin" ? { icon: macosIcon } : {}),
 		webPreferences: {
+			webviewTag: true,
 			preload: join(__dirname, "../preload/index.js"),
 			sandbox: false,
 			...(process.platform === "linux"
