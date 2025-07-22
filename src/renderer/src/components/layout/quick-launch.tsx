@@ -24,14 +24,14 @@ export default function QuickLaunch({
 	const dragGhostRef = useRef<HTMLDivElement>(null);
 	const maxApps = 6;
 
-  // custom drag and drop
-  const {
-    dragState,
-    containerRef,
-    handlePointerDown,
-    applyStoredPositions,
-    savePositions,
-  } = useCustomDrag({ apps, setApps, maxApps });
+	// custom drag and drop
+	const {
+		dragState,
+		containerRef,
+		handlePointerDown,
+		applyStoredPositions,
+		savePositions,
+	} = useCustomDrag({ apps, setApps, maxApps });
 
 	const backdropVariants: Variants = {
 		hidden: { opacity: 0 },
@@ -108,79 +108,81 @@ export default function QuickLaunch({
 	};
 
 	const renderAppButton = (app: any, index: number) => {
-  const isBeingDragged = dragState.isDragging && dragState.draggedFromIndex === index;
-  const isHovered = dragState.hoveredSlot === index && dragState.isDragging;
+		const isBeingDragged =
+			dragState.isDragging && dragState.draggedFromIndex === index;
+		const isHovered = dragState.hoveredSlot === index && dragState.isDragging;
 
-  return (
-    <div 
-      key={`slot-${index}`} 
-      className="flex flex-col items-center gap-1"
-      data-slot-index={index}
-    >
-      <motion.div
-        className={`
+		return (
+			<div
+				key={`slot-${index}`}
+				className="flex flex-col items-center gap-1"
+				data-slot-index={index}
+			>
+				<motion.div
+					className={`
           border border-white/10 hover:opacity-80 transition-all duration-300 rounded-xl 
           flex items-center justify-center overflow-hidden cursor-pointer
           ${compactMode ? "h-12 w-12" : "h-18 w-18"}
           ${isBeingDragged ? "opacity-30 scale-95" : ""}
           ${isHovered ? "ring-2 ring-[#BCB1E7] ring-opacity-70 shadow-lg shadow-[#BCB1E7]/25" : ""}
         `}
-        onMouseDown={(e) => handlePointerDown(e, app, index)}
-        onTouchStart={(e) => handlePointerDown(e, app, index)}
-        onContextMenu={(e) => {
-          e.preventDefault();
-          removeApp(index);
-        }}
-        animate={{
-          scale: isHovered ? 1.05 : 1,
-          rotate: isBeingDragged ? 5 : 0,
-        }}
-        transition={{ duration: 0.2 }}
-      >
-        <Link
-          to={{
-            pathname: `/install/${app.isLocal ? app.name : app.id}`,
-            search: `?isLocal=${app.isLocal}`,
-          }}
-          className={`h-full w-full flex items-center justify-center ${
-            dragState.isDragging ? 'pointer-events-none' : 'pointer-events-auto'
-          }`}
-        >
-          {app.logo_url?.startsWith("http") ? (
-            <img
-              src={app.logo_url}
-              alt={app.name}
-              className="h-full w-full object-cover bg-neutral-800/50"
-            />
-          ) : (
-            !app.isLocal && (
-              <div
-                className="h-full w-full object-cover"
-                style={{ backgroundImage: app.logo_url }}
-              />
-            )
-          )}
+					onMouseDown={(e) => handlePointerDown(e, app, index)}
+					onTouchStart={(e) => handlePointerDown(e, app, index)}
+					onContextMenu={(e) => {
+						e.preventDefault();
+						removeApp(index);
+					}}
+					animate={{
+						scale: isHovered ? 1.05 : 1,
+						rotate: isBeingDragged ? 5 : 0,
+					}}
+					transition={{ duration: 0.2 }}
+				>
+					<Link
+						to={{
+							pathname: `/install/${app.isLocal ? app.name : app.id}`,
+							search: `?isLocal=${app.isLocal}`,
+						}}
+						className={`h-full w-full flex items-center justify-center ${
+							dragState.isDragging
+								? "pointer-events-none"
+								: "pointer-events-auto"
+						}`}
+					>
+						{app.logo_url?.startsWith("http") ? (
+							<img
+								src={app.logo_url}
+								alt={app.name}
+								className="h-full w-full object-cover bg-neutral-800/50"
+							/>
+						) : (
+							!app.isLocal && (
+								<div
+									className="h-full w-full object-cover"
+									style={{ backgroundImage: app.logo_url }}
+								/>
+							)
+						)}
 
-          {app.isLocal && (
-            <div className="h-full w-full bg-neutral-900 flex items-center justify-center">
-              <span className="text-white/80 font-semibold text-lg">
-                {app.name?.charAt(0)?.toUpperCase() || "?"}
-              </span>
-            </div>
-          )}
-        </Link>
-      </motion.div>
-      {!compactMode && (
-        <div className="max-w-18 overflow-hidden flex justify-center items-center">
-          <p className="text-[12px] text-neutral-300 truncate w-full">
-            {app.name}
-          </p>
-        </div>
-      )}
-    </div>
-  );
-};
-
+						{app.isLocal && (
+							<div className="h-full w-full bg-neutral-900 flex items-center justify-center">
+								<span className="text-white/80 font-semibold text-lg">
+									{app.name?.charAt(0)?.toUpperCase() || "?"}
+								</span>
+							</div>
+						)}
+					</Link>
+				</motion.div>
+				{!compactMode && (
+					<div className="max-w-18 overflow-hidden flex justify-center items-center">
+						<p className="text-[12px] text-neutral-300 truncate w-full">
+							{app.name}
+						</p>
+					</div>
+				)}
+			</div>
+		);
+	};
 
 	const renderEmptyButton = (index: number) => {
 		const isHovered = dragState.hoveredSlot === index && dragState.isDragging;

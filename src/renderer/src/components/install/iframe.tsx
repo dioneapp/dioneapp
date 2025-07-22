@@ -296,7 +296,7 @@ export default function IframeComponent({
 					sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
 					allow="fullscreen"
 					referrerPolicy="no-referrer-when-downgrade"
-					/>
+				/>
 			</motion.div>
 		</div>
 	);
