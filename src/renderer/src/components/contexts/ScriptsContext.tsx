@@ -215,7 +215,6 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			}
 			return false;
 		} catch (error: any) {
-			console.log('ERROR', error);
 			console.log("Port is not available", error);
 			return false;
 		}
