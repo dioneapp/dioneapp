@@ -76,6 +76,7 @@ export function setupSocket({
 					);
 				if (match) {
 					loadIframe(Number.parseInt(match[1]));
+					setCatchPort(Number.parseInt(match[1]));
 					setIframeAvailable(true);
 				}
 			}
