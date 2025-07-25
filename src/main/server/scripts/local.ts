@@ -10,7 +10,10 @@ import { checkSystem } from "./system";
 
 const root = process.cwd();
 const config = readConfig();
-const scriptsFolder = path.join(config?.defaultScriptsFolder || root, "scripts");
+const scriptsFolder = path.join(
+	config?.defaultScriptsFolder || root,
+	"scripts",
+);
 const appFolder = path.join(config?.defaultInstallFolder || root, "apps");
 
 export async function getAllLocalScripts() {
