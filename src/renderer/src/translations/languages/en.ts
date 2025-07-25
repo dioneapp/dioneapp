@@ -309,6 +309,7 @@ export const en = {
 		back: "Back",
 		openFolder: "Open folder",
 		openInBrowser: "Open in Browser",
+		openNewWindow: "Open new window",
 		fullscreen: "Fullscreen",
 		stop: "Stop",
 		reload: "Reload",

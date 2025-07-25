@@ -317,6 +317,7 @@ export const fr = {
 		back: "Retour",
 		openFolder: "Ouvrir le dossier",
 		openInBrowser: "Ouvrir dans le navigateur",
+		openNewWindow: "Ouvrir nouvelle fenêtre",
 		fullscreen: "Plein écran",
 		stop: "Arrêter",
 		reload: "Recharger",

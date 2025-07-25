@@ -297,6 +297,7 @@ export const zh = {
 		back: "返回",
 		openFolder: "打开文件夹",
 		openInBrowser: "在浏览器中打开",
+		openNewWindow: "在新窗口中打开",
 		fullscreen: "全屏",
 		stop: "停止",
 		reload: "重新加载",

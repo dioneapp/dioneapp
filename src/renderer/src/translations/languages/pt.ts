@@ -317,6 +317,7 @@ export const pt = {
 		back: "Voltar",
 		openFolder: "Abrir pasta",
 		openInBrowser: "Abrir no navegador",
+		openNewWindow: "Abrir em nova janela",
 		fullscreen: "Tela cheia",
 		stop: "Parar",
 		reload: "Recarregar",

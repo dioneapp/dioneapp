@@ -318,6 +318,7 @@ export const es = {
 		back: "Volver",
 		openFolder: "Abrir carpeta",
 		openInBrowser: "Abrir en el navegador",
+		openNewWindow: "Abrir nueva ventana",
 		fullscreen: "Pantalla completa",
 		stop: "Detener",
 		reload: "Recargar",

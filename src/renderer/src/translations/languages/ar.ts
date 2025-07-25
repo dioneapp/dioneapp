@@ -303,6 +303,7 @@ export const ar = {
 		back: "رجوع",
 		openFolder: "فتح المجلد",
 		openInBrowser: "فتح في المتصفح",
+		openNewWindow: "فتح في نافذة جديدة",
 		fullscreen: "ملء الشاشة",
 		stop: "إيقاف",
 		reload: "إعادة تحميل",

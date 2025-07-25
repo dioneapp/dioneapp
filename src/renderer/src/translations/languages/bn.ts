@@ -305,6 +305,7 @@ export const bn = {
 		back: "ফিরে যান",
 		openFolder: "ফোল্ডার খুলুন",
 		openInBrowser: "ব্রাউজারে খুলুন",
+		openNewWindow: "নতুন উইন্ডোতে খুলুন",
 		fullscreen: "ফুলস্ক্রিন",
 		stop: "বন্ধ করুন",
 		reload: "পুনরায় লোড করুন",

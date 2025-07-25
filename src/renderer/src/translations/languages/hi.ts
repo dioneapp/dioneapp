@@ -305,6 +305,7 @@ export const hi = {
 		back: "वापस",
 		openFolder: "फ़ोल्डर खोलें",
 		openInBrowser: "ब्राउज़र में खोलें",
+		openNewWindow: "नई विंडो में खोलें",
 		fullscreen: "फुलस्क्रीन",
 		stop: "रोकें",
 		reload: "फिर से लोड करें",

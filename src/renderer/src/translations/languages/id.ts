@@ -314,6 +314,7 @@ export const id = {
 		back: "Kembali",
 		openFolder: "Buka folder",
 		openInBrowser: "Buka di Peramban",
+		openNewWindow: "Buka di jendela baru",
 		fullscreen: "Layar Penuh",
 		stop: "Hentikan",
 		reload: "Muat Ulang",

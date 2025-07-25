@@ -315,6 +315,7 @@ export const ru = {
 		back: "Назад",
 		openFolder: "Открыть папку",
 		openInBrowser: "Открыть в браузере",
+		openNewWindow: "Открыть в новом окне",
 		fullscreen: "Полноэкранный режим",
 		stop: "Стоп",
 		reload: "Перезагрузить",
