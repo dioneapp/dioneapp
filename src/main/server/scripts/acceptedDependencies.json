@@ -3,7 +3,7 @@
 		"checkCommand": "msbuild -version",
 		"versionRegex": "\\d+\\.\\d+\\.\\d+",
 		"installCommand": {
-			"windows": "winget install --id Microsoft.VisualStudio.2022.BuildTools --silent --accept-package-agreements --accept-source-agreements --override \"--quiet --wait --norestart --nocache --installPath C:\\BuildTools --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended\" && powershell -Command \"[Environment]::SetEnvironmentVariable('PATH', [Environment]::GetEnvironmentVariable('PATH','Machine') + ';C:\\BuildTools\\MSBuild\\Current\\Bin', 'Machine')\""
+			"windows": "winget install --id Microsoft.VisualStudio.2022.BuildTools --silent --accept-package-agreements --accept-source-agreements --override \"--quiet --wait --norestart --nocache --installPath C:\\BuildTools --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended\" && powershell -Command \"[Environment]::SetEnvironmentVariable('PATH', [Environment]::GetEnvironmentVariable('PATH','User') + ';C:\\BuildTools\\MSBuild\\Current\\Bin', 'User')\""
 		},
 		"uninstallCommand": {
 			"windows": "winget uninstall --id Microsoft.VisualStudio.2022.BuildTools --silent"
@@ -57,12 +57,12 @@
 		"checkCommand": "ffmpeg -version",
 		"versionRegex": "ffmpeg version (\\d+\\.\\d+\\.\\d+)",
 		"installCommand": {
-			"windows": "winget install -e --id Gyan.FFmpeg --override \"/S /AddToPath=1 --quiet --wait --norestart --nocache\"",
+			"windows": "winget install Gyan.FFmpeg --accept-source-agreements --accept-package-agreements --override \"/S /AddToPath=1 --wait\"",
 			"linux": "sudo apt install -y ffmpeg",
 			"macos": "brew install ffmpeg"
 		},
 		"uninstallCommand": {
-			"windows": "winget uninstall -e FFmpeg",
+			"windows": "winget uninstall -e FFmpeg --override \"/S --quiet --wait --norestart --nocache\"",
 			"linux": "sudo apt remove -y ffmpeg",
 			"macos": "brew uninstall ffmpeg"
 		}
