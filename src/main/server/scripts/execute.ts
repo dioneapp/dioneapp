@@ -171,7 +171,7 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 					response = await executeCommands(commandsArray, configDir, io, id);
 				}
 
-				if (response.error) {
+				if (response?.error) {
 					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `ERROR: Failed in step "${step.name}": ${response.error}`,
