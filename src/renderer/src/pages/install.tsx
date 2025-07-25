@@ -143,7 +143,7 @@ export default function Install({
 				const port = await getCurrentPort();
 				console.log("id", id);
 				const response = await fetch(
-					`http://localhost:${port}/local/get/${encodeURIComponent(id)}`,
+					`http://localhost:${port}/local/get_app/${encodeURIComponent(id)}`,
 				);
 				if (response.ok) {
 					const script = await response.json();

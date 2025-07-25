@@ -2,13 +2,12 @@ import express from "express";
 import type { Server } from "socket.io";
 import {
 	deleteLocalScript,
-	getAllLocalScripts,
-	getInstalledLocalScript,
 	getLocalApps,
-	getLocalScript,
 	getLocalScriptById,
 	loadLocalScript,
 	uploadLocalScript,
+	getAllLocalScripts,
+	getInstalledLocalScript
 } from "../scripts/local";
 import logger from "../utils/logger";
 
@@ -34,19 +33,6 @@ export function createLocalScriptsRouter(io: Server) {
 		}
 	});
 
-	router.get("/get/:name", async (req, res) => {
-		const { name } = req.params;
-		try {
-			const script = await getLocalScript(decodeURIComponent(name));
-			res.send(script);
-		} catch (error: any) {
-			logger.error(
-				`Error handling install request: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
-			);
-			res.status(500).send("An error occurred while processing your request.");
-		}
-	});
-
 	router.get("/get_app/:name", async (req, res) => {
 		const { name } = req.params;
 		try {
@@ -58,24 +44,6 @@ export function createLocalScriptsRouter(io: Server) {
 			);
 			res.status(500).send("An error occurred while processing your request.");
 		}
-	});
-
-	router.get("/installed/:name", async (req, res) => {
-		const { name } = req.params;
-		try {
-			const script = await getInstalledLocalScript(decodeURIComponent(name));
-			res.send(script);
-		} catch (error: any) {
-			logger.error(
-				`Error handling install request: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
-			);
-			res.status(500).send("An error occurred while processing your request.");
-		}
-	});
-
-	router.get("/installed_all", async (_req, res) => {
-		const scripts = await getAllLocalScripts();
-		res.send(scripts);
 	});
 
 	router.get("/load/:name", async (req, res) => {
@@ -101,6 +69,19 @@ export function createLocalScriptsRouter(io: Server) {
 		} catch (error: any) {
 			logger.error(
 				`Error handling upload request: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+			);
+			res.status(500).send("An error occurred while processing your request.");
+		}
+	});
+
+	router.get("/installed/:name", async (req, res) => {
+		const { name } = req.params;
+		try {
+			const script = await getInstalledLocalScript(decodeURIComponent(name));
+			res.send(script);
+		} catch (error: any) {
+			logger.error(
+				`Error handling install request: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
 			);
 			res.status(500).send("An error occurred while processing your request.");
 		}
