@@ -8,6 +8,7 @@ export default function Titlebar() {
 	const { isServerRunning, setExitRef } = useScriptsContext();
 	const [showModal, setShowModal] = useState(false);
 	const [isMaximized, setIsMaximized] = useState(false);
+	const isFullscreen = localStorage.getItem("isFullscreen") === "true";
 
 	const handleClose = async () => {
 		if (Object.keys(isServerRunning).length !== 0) {
@@ -52,7 +53,7 @@ export default function Titlebar() {
 				</div>
 			)}
 			<div
-				id="titlebar"
+				id={isFullscreen ? "" : "titlebar"}
 				className="absolute top-0 w-full z-50"
 				style={{ zIndex: 9999 }}
 			>
