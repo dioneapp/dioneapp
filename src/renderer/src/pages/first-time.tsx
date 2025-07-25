@@ -160,14 +160,14 @@ export default function FirstTime() {
 			<div className="absolute top-0 w-full h-6" id="titlebar" />
 			<ExecuteSound firstLaunch={firstLaunch || "false"} />
 			{/* background stuff */}
-				<Background />
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={{ duration: 1 }}
-					className="absolute blur-sm bg-[#BCB1E7]/5 h-full w-full"
-					style={{ zIndex: -1 }}
-				/>
+			<Background />
+			<motion.div
+				initial={{ opacity: 0 }}
+				animate={{ opacity: 1 }}
+				transition={{ duration: 1 }}
+				className="absolute blur-sm bg-[#BCB1E7]/5 h-full w-full"
+				style={{ zIndex: -1 }}
+			/>
 			<AnimatePresence mode="wait">
 				{/* 1 - welcome */}
 				{level === 1 && (
@@ -179,7 +179,7 @@ export default function FirstTime() {
 							opacity: 0,
 							filter: "blur(20px)",
 							y: -30,
-							transition: { duration: 0.5, delay: 0.0 }
+							transition: { duration: 0.5, delay: 0.0 },
 						}}
 						transition={{ duration: 0.5, delay: 1 }}
 						className={getContainerClasses()}
@@ -297,9 +297,7 @@ export default function FirstTime() {
 					</motion.div>
 				)} */}
 				{level === 2 && (
-					<motion.div
-						className={getContainerClasses()}
-					>
+					<motion.div className={getContainerClasses()}>
 						<div className="flex flex-col gap-4 justify-center items-center">
 							<SureNotLogin
 								onSkip={() => {

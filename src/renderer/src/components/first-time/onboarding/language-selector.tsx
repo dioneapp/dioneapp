@@ -26,7 +26,7 @@ export default function LanguageSelector({
 	}, [currentPage, languageEntries]);
 
 	const handleImageLoad = (key: string) => {
-		setLoadedImages(prev => new Set(prev).add(key));
+		setLoadedImages((prev) => new Set(prev).add(key));
 	};
 
 	const isImageLoaded = (key: string) => loadedImages.has(key);
@@ -44,9 +44,7 @@ export default function LanguageSelector({
 	return (
 		<section className="min-h-screen flex flex-col items-center justify-center px-4 py-10">
 			<div className="flex flex-col items-center justify-between h-full w-full max-w-screen-lg gap-8">
-				<motion.h1
-					className="text-5xl font-semibold mt-30 text-center"
-				>
+				<motion.h1 className="text-5xl font-semibold mt-30 text-center">
 					{t("firstTime.languageSelector.title")}
 				</motion.h1>
 				<div className="flex flex-col items-center justify-center grow gap-6">
@@ -99,7 +97,7 @@ export default function LanguageSelector({
 																		: `https://flagcdn.com/${key}.svg`
 												}
 												alt={value}
-												className={`bg-black/10 border border-white/5 w-full h-full object-cover object-center overflow-hidden rounded aspect-[5/3] transition-opacity duration-300 ${isImageLoaded(key) ? 'opacity-100' : 'opacity-0'}`}
+												className={`bg-black/10 border border-white/5 w-full h-full object-cover object-center overflow-hidden rounded aspect-[5/3] transition-opacity duration-300 ${isImageLoaded(key) ? "opacity-100" : "opacity-0"}`}
 												onLoad={() => handleImageLoad(key)}
 											/>
 										</div>
