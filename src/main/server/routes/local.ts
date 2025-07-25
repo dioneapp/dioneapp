@@ -2,12 +2,12 @@ import express from "express";
 import type { Server } from "socket.io";
 import {
 	deleteLocalScript,
+	getAllLocalScripts,
+	getInstalledLocalScript,
 	getLocalApps,
 	getLocalScriptById,
 	loadLocalScript,
 	uploadLocalScript,
-	getAllLocalScripts,
-	getInstalledLocalScript
 } from "../scripts/local";
 import logger from "../utils/logger";
 

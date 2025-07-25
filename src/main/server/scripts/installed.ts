@@ -26,7 +26,9 @@ export default async function getAllScripts() {
 			if (dirent.isDirectory()) {
 				const appPath = path.join(scriptsDir, dirent.name);
 				const files = await fs.promises.readdir(appPath);
-				const scriptConfig = files.filter((file) => file !== "dione.json" && file !== "app_info.json");
+				const scriptConfig = files.filter(
+					(file) => file !== "dione.json" && file !== "app_info.json",
+				);
 
 				if (scriptConfig.length > 0) {
 					validApps.push(dirent.name);
