@@ -166,7 +166,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 						// if not in db, assume it's local
 						const localResponse = await fetch(
-							`http://localhost:${port}/local/get/${encodeURIComponent(appName)}`,
+							`http://localhost:${port}/local/get_app/${encodeURIComponent(appName)}`,
 						);
 
 						if (localResponse.ok) {
@@ -186,6 +186,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 						return null;
 					}
 				});
+			console.log("appDetailsPromises", await Promise.all(appDetailsPromises));
 			const results = (await Promise.all(appDetailsPromises)).filter(
 				(app): app is NonNullable<typeof app> =>
 					app !== null && typeof app === "object" && "name" in app,
@@ -378,7 +379,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		try {
 			const port = await getCurrentPort();
 			const response = await fetch(
-				`http://localhost:${port}/scripts/stop/${appName}/${appId}`,
+				`http://localhost:${port}/scripts/stop/${appName}/${appId}/${catchPort}`,
 				{
 					method: "GET",
 				},
