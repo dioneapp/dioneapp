@@ -154,7 +154,7 @@ export default function IframeComponent({
 	useEffect(() => {
 		const webview = webviewRef.current;
 		if (webview) {
-			webview.addEventListener('dom-ready', () => {
+			webview.addEventListener("dom-ready", () => {
 				webview.insertCSS(`
 					::-webkit-scrollbar {
 						width: 6px;
@@ -180,7 +180,6 @@ export default function IframeComponent({
 			});
 		}
 	}, []);
-
 
 	return (
 		<div className="w-full h-full flex flex-col gap-2 p-6">
