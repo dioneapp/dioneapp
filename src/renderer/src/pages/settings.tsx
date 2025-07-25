@@ -303,35 +303,6 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
-														{t(
-															"settings.applications.installationDirectory.label",
-														)}
-													</label>
-													<p className="text-xs text-neutral-400 w-80">
-														{t(
-															"settings.applications.installationDirectory.description",
-														)}
-													</p>
-												</div>
-												<CustomInput
-													value={joinPath(
-														config.defaultScriptsFolder,
-														"scripts",
-													)}
-													onChange={(value) =>
-														handleUpdate({ defaultScriptsFolder: value })
-													}
-													onClick={() => handleSaveDir("defaultScriptsFolder")}
-													onClickIcon={() =>
-														openFolder(
-															joinPath(config.defaultScriptsFolder, "scripts"),
-														)
-													}
-												/>
-											</div>
-											<div className="flex justify-between w-full items-center h-full space-y-2">
-												<div className="h-full flex items-start justify-center flex-col mt-auto">
-													<label className="text-neutral-200 font-medium">
 														{t("settings.applications.cleanUninstall.label")}
 													</label>
 													<p className="text-xs text-neutral-400">
