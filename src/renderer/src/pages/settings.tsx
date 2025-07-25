@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
 import { openFolder, openLink } from "../utils/openLink";
+import { useScriptsContext } from "@renderer/components/contexts/ScriptsContext";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -128,6 +129,7 @@ export default function Settings() {
 	const [config, setConfig] = useState<any | null>(null);
 	const { setLanguage, language, t } = useTranslation();
 	const { logout } = useAuthContext();
+	const { handleReloadQuickLaunch } = useScriptsContext();
 	const navigate = useNavigate();
 
 	useEffect(() => {
@@ -210,18 +212,19 @@ export default function Settings() {
 			// update local storage
 			localStorage.setItem("config", JSON.stringify(updatedConfig));
 			window.dispatchEvent(new Event("config-updated"));
+			handleReloadQuickLaunch();
 		} catch (error) {
 			console.error("Error updating config:", error);
 		}
 	};
 
-	async function handleSaveDir() {
+	async function handleSaveDir(setting: string) {
 		const result = await window.electron.ipcRenderer.invoke(
 			"save-dir",
-			joinPath(config.defaultInstallFolder, "apps"),
+			joinPath(config[setting], "apps"),
 		);
 		if (!result.canceled && result.filePaths[0]) {
-			handleUpdate({ defaultInstallFolder: result.filePaths[0] });
+			handleUpdate({ [setting]: result.filePaths[0] });
 		}
 	}
 
@@ -250,6 +253,10 @@ export default function Settings() {
 		window.electron.ipcRenderer.send("end-session");
 		navigate("/first-time");
 	}
+
+	useEffect(() => {
+      console.log('settings', config?.defaultScriptsFolder);
+	}, []);
 
 	return (
 		<div className="min-h-screen bg-background pt-4">
@@ -285,10 +292,36 @@ export default function Settings() {
 													onChange={(value) =>
 														handleUpdate({ defaultInstallFolder: value })
 													}
-													onClick={handleSaveDir}
+													onClick={() => handleSaveDir("defaultInstallFolder")}
 													onClickIcon={() =>
 														openFolder(
 															joinPath(config.defaultInstallFolder, "apps"),
+														)
+													}
+												/>
+											</div>
+											<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
+														{t(
+															"settings.applications.installationDirectory.label",
+														)}
+													</label>
+													<p className="text-xs text-neutral-400 w-80">
+														{t(
+															"settings.applications.installationDirectory.description",
+														)}
+													</p>
+												</div>
+												<CustomInput
+													value={joinPath(config.defaultScriptsFolder, "scripts")}
+													onChange={(value) =>
+														handleUpdate({ defaultScriptsFolder: value })
+													}
+													onClick={() => handleSaveDir("defaultScriptsFolder")}
+													onClickIcon={() =>
+														openFolder(
+															joinPath(config.defaultScriptsFolder, "scripts"),
 														)
 													}
 												/>

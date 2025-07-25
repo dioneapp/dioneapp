@@ -10,6 +10,7 @@ export interface AppConfig {
 	enableDesktopNotifications: boolean;
 	notifyOnInstallComplete: boolean;
 	defaultInstallFolder: string;
+	defaultScriptsFolder: string;
 	defaultLogsPath: string;
 	compactMode: boolean;
 	alwaysUninstallDependencies: boolean;
@@ -24,6 +25,9 @@ export const defaultConfig: AppConfig = {
 	enableDesktopNotifications: true,
 	notifyOnInstallComplete: true,
 	defaultInstallFolder: app.isPackaged
+		? path.join(path.dirname(app.getPath("exe")))
+		: path.join(process.cwd()),
+	defaultScriptsFolder: app.isPackaged
 		? path.join(path.dirname(app.getPath("exe")))
 		: path.join(process.cwd()),
 	defaultLogsPath: path.join(app.getPath("userData"), "logs"),
