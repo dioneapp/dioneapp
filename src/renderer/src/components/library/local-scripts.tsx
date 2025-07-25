@@ -1,10 +1,10 @@
 import { useTranslation } from "@renderer/translations/translationContext";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { useEffect, useState } from "react";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 import ScriptCard from "../home/feed/card";
 import type { Script } from "../home/feed/types";
 import UploadModal from "../modals/upload-script";
-import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function LocalScripts() {
 	const { t } = useTranslation();
