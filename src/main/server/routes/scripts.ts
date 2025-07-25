@@ -68,8 +68,8 @@ export function createScriptRouter(io: Server) {
 		}
 	});
 	// stop a script by name
-	router.get("/stop/:name/:id", async (req, res) => {
-		const { name, id } = req.params;
+	router.get("/stop/:name/:id/:port", async (req, res) => {
+		const { name, id, port } = req.params;
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const root = process.cwd();
 		const config = readConfig();
@@ -80,7 +80,7 @@ export function createScriptRouter(io: Server) {
 		);
 		logger.info(`Stopping script '${sanitizedName}' on '${workingDir}'`);
 		try {
-			const success = await stopActiveProcess(io, id);
+			const success = await stopActiveProcess(io, id, port);
 			if (success) {
 				res.status(200).send({ message: "Process stopped successfully" });
 			} else {
@@ -111,9 +111,13 @@ export function createScriptRouter(io: Server) {
 		});
 		try {
 			await executeStartup(workingDir, io, id);
+			res.status(200).send({ message: "Script started successfully" });
 		} catch (error: any) {
+			logger.error(`Error handling start request - Full error:`, error);
+			logger.error(`Error message: ${error.message}`);
+			logger.error(`Error stack: ${error.stack}`);
 			logger.error(
-				`Error handling start request: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
+				`Error handling start request: [ (${error.code || "No code"}) ${error.message || error.details || "No details"} ]`,
 			);
 			res.status(500).send("An error occurred while processing your request.");
 		}

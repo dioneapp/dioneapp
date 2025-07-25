@@ -1,8 +1,8 @@
-import { spawn } from "node:child_process";
+import { exec, spawn } from "node:child_process";
 import fs from "node:fs";
+import pidtree from "pidtree";
 import { platform as getPlatform } from "node:os";
 import path from "node:path";
-import pidtree from "pidtree";
 import type { Server } from "socket.io";
 import logger from "../utils/logger";
 
@@ -10,72 +10,156 @@ let activeProcess: any = null;
 let activePID: number | null = null;
 
 // kill process and its children
+// currently, this function is only used during the installation of dependencies, 
+// as this is a process that must be controlled. 
+// it will not work if used in processes that generate non-child threads. 
+// in such cases, it is recommended to use the killByPort (l-53) function.
 export const killProcess = async (pid: number, io: Server, id: string) => {
-	try {
-		const currentPlatform = getPlatform();
-		if (currentPlatform === "win32") {
-			const taskkill = spawn("taskkill", ["/PID", pid.toString(), "/T", "/F"]);
-			taskkill.on("close", (code) => {
-				if (code === 0) {
-					io.to(id).emit("installUpdate", {
-						type: "log",
-						content: "Script killed successfully",
-					});
-					logger.info("Script killed successfully");
-				} else {
-					logger.error(`Script exited with code ${code}`);
-				}
-			});
-		} else {
-			// macos / linux
-			const childPids = await pidtree(pid, { root: true });
-			for (const childPid of childPids) {
-				process.kill(childPid, "SIGKILL");
-			}
-			process.kill(pid, "SIGKILL");
-		}
-		io.to(id).emit("installUpdate", {
-			type: "log",
-			content: "Script killed successfully",
-		});
-		logger.info("Script killed successfully");
-		return true;
-	} catch (error) {
-		logger.error(`Can't kill process with PID ${pid}: ${error}`);
-		return false;
-	}
+    try {
+        const currentPlatform = getPlatform();
+        if (currentPlatform === "win32") {
+            return new Promise<boolean>((resolve) => {
+                const taskkill = spawn("taskkill", ["/PID", pid.toString(), "/T", "/F"]);
+                taskkill.on("close", (code) => {
+                    if (code === 0) {
+                        io.to(id).emit("installUpdate", {
+                            type: "log",
+                            content: "Script killed successfully",
+                        });
+                        logger.info("Script killed successfully");
+                        resolve(true);
+                    } else {
+                        logger.error(`Script exited with code ${code}`);
+                        resolve(false);
+                    }
+                });
+                
+                taskkill.on("error", (error) => {
+                    logger.error(`Error killing process: ${error.message}`);
+                    resolve(false);
+                });
+            });
+        } else {
+            // macos / linux
+            const childPids = await pidtree(pid, { root: true });
+            for (const childPid of childPids) {
+                process.kill(childPid, "SIGKILL");
+            }
+            process.kill(pid, "SIGKILL");
+            
+            io.to(id).emit("installUpdate", {
+                type: "log",
+                content: "Script killed successfully",
+            });
+            logger.info("Script killed successfully");
+            return true;
+        }
+    } catch (error) {
+        logger.error(`Can't kill process with PID ${pid}: ${error}`);
+        return false;
+    }
 };
+async function killByPort(port: number, io: Server, id: string): Promise<boolean> {
+  const currentPlatform = getPlatform();
+  if (currentPlatform !== "win32") {
+    // linux/macos
+    const cmd = `lsof -t -i :${port}`;
+    return new Promise((resolve) => {
+      exec(cmd, async (err, stdout, stderr) => {
+        if (err) {
+          logger.error(`Error listing port ${port}: ${stderr}`);
+          io.to(id).emit("installUpdate", { type: "log", content: `ERROR listing port ${port}: ${stderr}` });
+          return resolve(false);
+        }
+        const pids = stdout.split(/\r?\n/).filter(Boolean).map(Number);
+        if (pids.length === 0) {
+          io.to(id).emit("installUpdate", { type: "log", content: `No processes found on port ${port}` });
+		  if (!activePID) {
+			return resolve(true); // no active process to stop
+		  }
+		  const success = await killProcess(activePID, io, id);
+		  return resolve(success);
+        }
+        Promise.all(pids.map(pid => {
+          return new Promise<void>(res => {
+            try {
+              process.kill(pid, "SIGKILL");
+              logger.info(`Killed PID ${pid} on Linux/macOS`);
+            } catch (e) {
+              logger.warn(`Failed to kill PID ${pid}: ${e}`);
+            }
+            res();
+          });
+        })).then(() => {
+          io.to(id).emit("installUpdate", { type: "log", content: `Killed processes: ${pids.join(", ")}` });
+          resolve(true);
+        });
+      });
+    });
+  } else {
+    // win
+    return new Promise((resolve) => {
+      exec("netstat -ano -p tcp", async (err, stdout, stderr) => {
+        if (err) {
+          logger.error(`Error netstat: ${stderr}`);
+          io.to(id).emit("installUpdate", { type: "log", content: `ERROR netstat: ${stderr}` });
+          return resolve(false);
+        }
+        const lines = stdout.split(/\r?\n/);
+        const matches = lines
+          .map(line => {
+            const parts = line.trim().split(/\s+/);
+            // format
+            if (parts[1] && parts[1].endsWith(`:${port}`) && parts[3] === "LISTENING") {
+              return Number(parts[4]);
+            }
+            return null;
+          })
+          .filter((pid): pid is number => pid !== null);
+
+        if (matches.length === 0) {
+          io.to(id).emit("installUpdate", { type: "log", content: `No processes found on port ${port}` });
+		  if (!activePID) {
+			return resolve(true); // no active process to stop
+		  }
+		  const success = await killProcess(activePID, io, id);
+		  return resolve(success);
+        }
+
+        // kill each PID
+		logger.info(`Killing processes on port ${port}: ${matches.join(", ")}`);
+        Promise.all(matches.map(pid => {
+          return new Promise<void>(res => {
+            exec(`taskkill /PID ${pid} /T /F`, (killErr, killStderr) => {
+              if (killErr) {
+                logger.warn(`Error killing PID ${pid}: ${killStderr}`);
+                io.to(id).emit("installUpdate", {
+                  type: "log",
+                  content: `ERROR killing PID ${pid}: ${killStderr}`,
+                });
+              } else {
+                logger.info(`PID ${pid} killed successfully`);
+                io.to(id).emit("installUpdate", {
+                  type: "log",
+                  content: `PID ${pid} killed successfully`,
+                });
+              }
+              res();
+            });
+          });
+        })).then(() => resolve(true));
+      });
+    });
+  }
+}
 
 // is active process running?
-export const stopActiveProcess = async (io: Server, id: string) => {
-	if (!activeProcess || !activePID) {
-		return true;
-	}
-
-	logger.warn(`Stopping process ${activePID} and its children`);
-
-	try {
-		const killSuccess = await killProcess(activePID, io, id);
-
-		// ait active process finish
-		await Promise.race([
-			new Promise((resolve, reject) => {
-				activeProcess.on("exit", resolve);
-				activeProcess.on("error", reject);
-			}),
-			new Promise((_, reject) =>
-				setTimeout(() => reject(new Error("Process kill timeout")), 3000),
-			),
-		]);
-
-		return killSuccess;
-	} catch (error) {
-		logger.error(`Error stopping process: ${error}`);
-		return false;
-	} finally {
-		activeProcess = null;
-		activePID = null;
-	}
+export const stopActiveProcess = async (io: Server, id: string, port: number) => {
+  logger.warn(`Stopping any process on port ${port}…`);
+  const success = await killByPort(port, io, id);
+  activeProcess = null;
+  activePID = null;
+  return success;
 };
 
 // execute command
@@ -99,10 +183,12 @@ export const executeCommand = async (
 		// split command into executable and arguments
 		const [executable, ...args] = command.split(/\s+/);
 
+		const isBatFile = executable.endsWith(".bat") || executable.endsWith(".cmd");
+
 		// command options
 		const spawnOptions = {
 			cwd: workingDir,
-			shell: true,
+			shell: isWindows ? isBatFile ? false : true : true,
 			windowsHide: true,
 			detached: false,
 			env: {
@@ -316,9 +402,18 @@ export const executeCommands = async (
 		} else {
 			const response = await executeCommand(command, io, currentWorkingDir, id);
 			if (response.code !== 0) {
-				throw new Error(
-					response.stderr || `Command failed with exit code ${response.code}`,
-				);
+                if (!activePID && response.code === 1) {
+                    logger.info("Process was manually cancelled");
+                    io.to(id).emit("installUpdate", {
+                        type: "log",
+                        content: "INFO: Process was manually cancelled",
+                    });
+                    // no error to throw, just exit
+                    return;
+                }
+                throw new Error(
+                    response.stderr || `Command failed with exit code ${response.code}`,
+                );
 			}
 		}
 	}
