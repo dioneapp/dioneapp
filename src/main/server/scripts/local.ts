@@ -46,7 +46,7 @@ export async function getInstalledLocalScript(name: string) {
 	try {
 		const files = await fs.promises.readdir(scriptPath);
 		const filtered = files.filter(
-			(f) => f !== "dione.json" && f !== "app_info.json"
+			(f) => f !== "dione.json" && f !== "app_info.json",
 		);
 		return filtered.length > 0;
 	} catch (error) {
