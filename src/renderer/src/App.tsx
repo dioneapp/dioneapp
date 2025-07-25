@@ -24,7 +24,6 @@ function App() {
 	const [_isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 	const [_isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate();
-	const [_isMinimized, setIsMinimized] = useState(false);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
@@ -55,15 +54,6 @@ function App() {
 		// start session
 		handleStartSession();
 	}, [user]);
-
-	useEffect(() => {
-		window.electron.ipcRenderer.on("app:minimized", () => setIsMinimized(true));
-		window.electron.ipcRenderer.on("app:restored", () => setIsMinimized(false));
-		return () => {
-			window.electron.ipcRenderer.removeAllListeners("app:minimized");
-			window.electron.ipcRenderer.removeAllListeners("app:restored");
-		};
-	}, []);
 
 	async function handleStartSession() {
 		if (!user || user.id === "") return;
