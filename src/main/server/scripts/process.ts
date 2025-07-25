@@ -191,7 +191,7 @@ export const stopActiveProcess = async (
 	id: string,
 	port: number,
 ) => {
-	logger.warn(`Stopping any process on port ${port}…`);
+	logger.warn(`Stopping any process on port ${port}...`);
 	const success = await killByPort(port, io, id);
 	activeProcess = null;
 	activePID = null;

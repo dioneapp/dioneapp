@@ -186,7 +186,6 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 						return null;
 					}
 				});
-			console.log("appDetailsPromises", await Promise.all(appDetailsPromises));
 			const results = (await Promise.all(appDetailsPromises)).filter(
 				(app): app is NonNullable<typeof app> =>
 					app !== null && typeof app === "object" && "name" in app,
