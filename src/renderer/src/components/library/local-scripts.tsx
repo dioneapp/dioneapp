@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import ScriptCard from "../home/feed/card";
 import type { Script } from "../home/feed/types";
 import UploadModal from "../modals/upload-script";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function LocalScripts() {
 	const { t } = useTranslation();
+	const { handleReloadQuickLaunch } = useScriptsContext();
 	const [openModal, setOpenModal] = useState(false);
 	const [scripts, setScripts] = useState<
 		{
@@ -44,6 +46,7 @@ export default function LocalScripts() {
 			},
 		);
 		fetchScripts();
+		handleReloadQuickLaunch();
 	};
 
 	return (
