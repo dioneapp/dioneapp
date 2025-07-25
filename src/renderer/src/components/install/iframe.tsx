@@ -5,6 +5,7 @@ import {
 	ExternalLink,
 	Folder,
 	Maximize2,
+	PictureInPicture,
 	RotateCcw,
 	Square,
 	SquareTerminal,
@@ -75,13 +76,17 @@ export default function IframeComponent({
 		if (container && !document.fullscreenElement) {
 			container.requestFullscreen().catch((err) => {
 				console.error(`Error attempting to enable fullscreen: ${err.message}`);
+				return;
 			});
+
+			localStorage.setItem("isFullscreen", "true");
 		}
 	};
 
 	const handleExitFullscreen = () => {
 		if (document.fullscreenElement) {
 			document.exitFullscreen();
+			localStorage.removeItem("isFullscreen");
 		}
 	};
 
@@ -181,6 +186,10 @@ export default function IframeComponent({
 		}
 	}, []);
 
+	const handleOpenNewWindow = () => {
+		window.electron.ipcRenderer.send("new-window", iframeSrc);
+	};
+
 	return (
 		<div className="w-full h-full flex flex-col gap-2 p-6">
 			<motion.div
@@ -264,6 +273,15 @@ export default function IframeComponent({
 				<div className="flex gap-1">
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						onClick={handleOpenNewWindow}
+					>
+						<PictureInPicture className="w-4 h-4" />
+						<div className="absolute bottom-full left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+							{t("iframe.openNewWindow")}
+						</div>
+					</motion.button>
+					<motion.button
+						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={
 							isFullscreen ? handleExitFullscreen : handleEnterFullscreen
 						}
@@ -304,6 +322,7 @@ export default function IframeComponent({
 				className={`w-full h-full rounded-md border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl relative transition-all duration-500 ${isFullscreen ? "fullscreen-anim" : ""}`}
 				style={{
 					borderRadius: isFullscreen ? "0" : "6px",
+					zIndex: isFullscreen ? 99999 : 1,
 					transition:
 						"box-shadow 0.5s, border-radius 0.5s, opacity 0.5s, transform 0.5s",
 				}}

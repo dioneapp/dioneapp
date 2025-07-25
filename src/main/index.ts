@@ -246,7 +246,7 @@ function createWindow() {
 app.whenReady().then(async () => {
 	logger.info("Starting app...");
 
-	// Mapa para almacenar orígenes de requests
+	// map to store request origins
 	const requestOrigins = new Map<string, string>();
 
 	// set up CORS for localhost
@@ -788,6 +788,45 @@ app.whenReady().then(async () => {
 			};
 		}
 	});
+});
+
+let previewWindow: BrowserWindow | null = null;
+
+ipcMain.on('new-window', (_event, url) => {
+	if (previewWindow && !previewWindow.isDestroyed()) {
+		previewWindow.focus();
+		return;
+	}
+
+	previewWindow = new BrowserWindow({
+		width: 600,
+		height: 400,
+		autoHideMenuBar: true,
+		closable: true,
+		...(process.platform === "win32" ? { icon } : {}),
+		...(process.platform === "linux" ? { icon } : {}),
+		...(process.platform === "darwin" ? { icon: macosIcon } : {}),
+	});
+
+	previewWindow.loadURL(url);
+	previewWindow.maximize();
+	previewWindow.focus();
+
+	previewWindow.on("close", () => {
+		console.log("Closing preview window...");
+		previewWindow?.destroy();
+	});
+
+	previewWindow.on("closed", () => {
+		previewWindow = null;
+		console.log("Preview window destroyed");
+	});
+});
+
+ipcMain.on("close-preview-window", () => {
+	if (previewWindow) {
+		previewWindow.destroy();
+	}
 });
 
 // Quit the application when all windows are closed, except on macOS.

@@ -669,6 +669,7 @@ export default function Install({
 	const stopApp = async () => {
 		await fetchIfDownloaded();
 		await handleStopApp(data.id, data.name);
+		window.electron.ipcRenderer.send("close-preview-window");
 	};
 
 	useEffect(() => {
