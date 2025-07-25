@@ -10,11 +10,11 @@ import { checkSystem } from "./system";
 
 const root = process.cwd();
 const config = readConfig();
-const scriptsFolder = path.join(root, "scripts");
+const scriptsFolder = path.join(config?.defaultScriptsFolder || root, "scripts");
 const appFolder = path.join(config?.defaultInstallFolder || root, "apps");
 
 export async function getAllLocalScripts() {
-	const scriptsPath = path.join(process.cwd(), "scripts");
+	const scriptsPath = path.join(scriptsFolder);
 	if (!fs.existsSync(scriptsPath)) {
 		fs.mkdirSync(scriptsPath);
 	}
@@ -44,6 +44,17 @@ export async function getAllLocalScripts() {
 export async function getLocalScript(name: string) {
 	const sanitizedName = name.replace(/\s+/g, "-");
 	const scriptPath = path.join(scriptsFolder, sanitizedName);
+	const scriptInfo = JSON.parse(
+		fs.readFileSync(path.join(scriptPath, "app_info.json"), "utf-8"),
+	);
+
+	return scriptInfo;
+}
+
+// check script data on APPS folder
+export async function getLocalApps(name: string) {
+	const sanitizedName = name.replace(/\s+/g, "-");
+	const scriptPath = path.join(appFolder, sanitizedName);
 	const scriptInfo = JSON.parse(
 		fs.readFileSync(path.join(scriptPath, "app_info.json"), "utf-8"),
 	);
@@ -183,7 +194,6 @@ export async function uploadLocalScript(
 
 	logger.info(`Uploading script '${name}' with ID '${id}'`);
 
-	const scriptsFolder = path.join(process.cwd(), "scripts");
 	const scriptPath = path.join(scriptsFolder, sanitizedName);
 	fs.mkdirSync(scriptPath, { recursive: true });
 	fs.writeFileSync(
