@@ -324,7 +324,8 @@ export default function IframeComponent({
 					id="iframe"
 					ref={webviewRef}
 					src={iframeSrc}
-					style={{ width: '100%', height: '100%', border: 0, scrollbarWidth: 'thin', msScrollbarTrackColor: 'transparent' }}
+					style={{ width: '100%', height: '100%', border: 0 }}
+					useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
 				/>
 
 				{/* <iframe

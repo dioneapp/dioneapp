@@ -8,6 +8,7 @@ import {
 	dialog,
 	globalShortcut,
 	ipcMain,
+	session,
 	shell,
 } from "electron";
 import { Notification } from "electron";
@@ -81,6 +82,8 @@ function createWindow() {
 		...(process.platform === "linux" ? { icon } : {}),
 		...(process.platform === "darwin" ? { icon: macosIcon } : {}),
 		webPreferences: {
+			contextIsolation: true,
+			nodeIntegration: false,
 			webviewTag: true,
 			preload: join(__dirname, "../preload/index.js"),
 			sandbox: false,
@@ -241,6 +244,102 @@ function createWindow() {
 // Sets up the application when ready.
 app.whenReady().then(async () => {
 	logger.info("Starting app...");
+
+	// Mapa para almacenar orígenes de requests
+	const requestOrigins = new Map<string, string>();
+
+	// set up CORS for localhost
+	session.defaultSession.webRequest.onBeforeSendHeaders(
+		{ urls: ['http://localhost:*/*', 'http://127.0.0.1:*/*'] },
+		(details, callback) => {
+			const headers = { ...details.requestHeaders };
+			const url = new URL(details.url);
+
+			// only apply configurations for localhost/127.0.0.1
+			if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+				headers.Origin = `${url.protocol}//${url.hostname}:${url.port}`;
+				headers.Host = `${url.hostname}:${url.port}`;
+
+				// Guardar el origen del request para usar en onHeadersReceived
+				const requestOrigin = details.requestHeaders?.['origin']?.[0] || 
+								   details.requestHeaders?.['Origin']?.[0];
+				if (requestOrigin && details.id) {
+					requestOrigins.set(details.id.toString(), requestOrigin);
+				}
+			}
+
+			callback({ requestHeaders: headers });
+		}
+	);
+
+	// secure CORS
+	session.defaultSession.webRequest.onHeadersReceived(
+		{ urls: ['http://localhost:*/*', 'http://127.0.0.1:*/*'] },
+		(details, callback) => {
+			const headers = { ...details.responseHeaders };
+			const url = new URL(details.url);
+
+			// only apply configurations for localhost/127.0.0.1
+			if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+				// clean
+				delete headers['Access-Control-Allow-Origin'];
+				delete headers['access-control-allow-origin'];
+				// get request origin
+				const requestOrigin = details.id ? requestOrigins.get(details.id.toString()) : null;
+
+				// check origin
+				let allowedOrigin = '*';
+				if (requestOrigin) {
+					try {
+						const originUrl = new URL(requestOrigin);
+						if (originUrl.hostname === 'localhost' || originUrl.hostname === '127.0.0.1') {
+							allowedOrigin = requestOrigin;
+						}
+					} catch (e) {
+						// if fails, use fallback
+						// allowedOrigin = '*';
+					}
+				}
+
+				// custom CORS rules
+				headers['Access-Control-Allow-Origin'] = [allowedOrigin];
+				headers['Access-Control-Allow-Methods'] = ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'];
+				headers['Access-Control-Allow-Headers'] = ['*'];
+				headers['Access-Control-Allow-Credentials'] = ['true'];
+				headers['X-Frame-Options'] = ['SAMEORIGIN'];
+
+				// clean up
+				if (details.id) {
+					requestOrigins.delete(details.id.toString());
+				}
+				
+				// configure CSP for localhost
+				if (headers['Content-Security-Policy']) {
+					headers['Content-Security-Policy'] = headers['Content-Security-Policy']
+						.map(v => {
+							// clean frame-ancestors directive
+							return v.replace(
+								/frame-ancestors[^;]*;?/gi, 
+								`frame-ancestors 'self' http://localhost:* http://127.0.0.1:* file: app:;`
+							);
+						})
+						.filter(v => v.trim() !== '');
+				} else {
+					// if no CSP, create a basic one that allows frames from localhost
+					headers['Content-Security-Policy'] = [
+						`frame-ancestors 'self' http://localhost:* http://127.0.0.1:* file: app:;`
+					];
+				}
+
+				// security headers
+				headers['X-Content-Type-Options'] = ['nosniff'];
+				headers['X-XSS-Protection'] = ['1; mode=block'];
+				headers['Referrer-Policy'] = ['strict-origin-when-cross-origin'];
+			}
+
+			callback({ responseHeaders: headers });
+		}
+	);
 
 	// autoUpdater.forceDevUpdateConfig = true;
 	autoUpdater.logger = logger;
