@@ -1,4 +1,5 @@
 import { useAuthContext } from "@renderer/components/contexts/AuthContext";
+import { useScriptsContext } from "@renderer/components/contexts/ScriptsContext";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { joinPath } from "@renderer/utils/path";
 import { AnimatePresence, motion } from "framer-motion";
@@ -7,7 +8,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
 import { openFolder, openLink } from "../utils/openLink";
-import { useScriptsContext } from "@renderer/components/contexts/ScriptsContext";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -255,7 +255,7 @@ export default function Settings() {
 	}
 
 	useEffect(() => {
-      console.log('settings', config?.defaultScriptsFolder);
+		console.log("settings", config?.defaultScriptsFolder);
 	}, []);
 
 	return (
@@ -314,7 +314,10 @@ export default function Settings() {
 													</p>
 												</div>
 												<CustomInput
-													value={joinPath(config.defaultScriptsFolder, "scripts")}
+													value={joinPath(
+														config.defaultScriptsFolder,
+														"scripts",
+													)}
 													onChange={(value) =>
 														handleUpdate({ defaultScriptsFolder: value })
 													}
