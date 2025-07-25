@@ -254,7 +254,7 @@ function createVirtualEnvCommands(
 		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
 		if (isWindows) {
 			return [
-				`if not exist "${envPath}" (conda create -p "${envPath}" ${pythonArg} -y)`,
+				`if not exist "${envPath}" (conda tos accept --channel main && conda create -p "${envPath}" ${pythonArg} -y)`,
 				`call conda activate "${envPath}" ${middle} && call conda deactivate`,
 			];
 		}
