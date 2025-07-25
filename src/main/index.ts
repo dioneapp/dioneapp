@@ -37,6 +37,7 @@ import {
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
+import { refreshPathFromSystem } from "./server/utils/refresh-env";
 
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
@@ -714,12 +715,16 @@ app.whenReady().then(async () => {
 		try {
 			logger.info("Restarting backend...");
 			await Promise.race([
-				stopServer(),
+				await stopServer(),
 				new Promise((_, reject) =>
 					setTimeout(reject, 10000, new Error("Server stop timeout")),
 				),
 			]);
 			const port = await startServer();
+			// refresh environment variables
+			if (os.platform() === "win32") {
+				refreshPathFromSystem();
+			}
 			logger.info(`Backend restarted successfully on port ${port}`);
 			return port;
 		} catch (error) {
