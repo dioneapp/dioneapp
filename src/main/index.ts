@@ -792,7 +792,7 @@ app.whenReady().then(async () => {
 
 let previewWindow: BrowserWindow | null = null;
 
-ipcMain.on('new-window', (_event, url) => {
+ipcMain.on("new-window", (_event, url) => {
 	if (previewWindow && !previewWindow.isDestroyed()) {
 		previewWindow.focus();
 		return;
