@@ -160,8 +160,7 @@ export default function FirstTime() {
 			<div className="absolute top-0 w-full h-6" id="titlebar" />
 			<ExecuteSound firstLaunch={firstLaunch || "false"} />
 			{/* background stuff */}
-			<AnimatePresence mode="wait">
-				{level !== 2.5 && <Background />}
+				<Background />
 				<motion.div
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
@@ -169,19 +168,20 @@ export default function FirstTime() {
 					className="absolute blur-sm bg-[#BCB1E7]/5 h-full w-full"
 					style={{ zIndex: -1 }}
 				/>
+			<AnimatePresence mode="wait">
 				{/* 1 - welcome */}
 				{level === 1 && (
 					<motion.div
 						key={1}
-						initial={{ opacity: 0, y: 30, filter: "blur(20px)" }}
+						initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
 						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
 						exit={{
 							opacity: 0,
-							y: -100,
 							filter: "blur(20px)",
-							transition: { duration: 0.5, delay: 0 },
+							y: -30,
+							transition: { duration: 0.5, delay: 0.0 }
 						}}
-						transition={{ duration: 0.6, delay: 1.5 }}
+						transition={{ duration: 0.5, delay: 1 }}
 						className={getContainerClasses()}
 					>
 						<div className="flex flex-col gap-4 justify-center items-center transition-all duration-500">
@@ -205,7 +205,7 @@ export default function FirstTime() {
 											scale: 1,
 										}}
 										transition={{
-											delay: 1.5 + i * 0.1,
+											delay: 1 + i * 0.1,
 											duration: 0.5,
 											ease: "easeOut",
 										}}
@@ -225,13 +225,13 @@ export default function FirstTime() {
 								initial={{ scale: 0.8 }}
 								animate={{ scale: 1 }}
 								whileHover={{
-									boxShadow: "0 0 50px rgba(188, 177, 231, 0.3)",
+									boxShadow: "0 0 50px rgba(188, 177, 231, 0.5)",
 								}}
 								whileTap={{ scale: 0.95 }}
-								transition={{ type: "spring", stiffness: 400, damping: 17 }}
+								transition={{ type: "spring", stiffness: 400, damping: 20 }}
 								className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer relative overflow-hidden"
 								onClick={() => {
-									changeLevel(2);
+									// changeLevel(2);
 									openLink("https://getdione.app/auth/login?app=true");
 								}}
 							>
@@ -260,19 +260,19 @@ export default function FirstTime() {
 								<span>{t("firstTime.welcome.copyLink")}</span>
 							</button>
 						</motion.div>
-						<motion.span
+						<span
 							onClick={() => {
-								changeLevel(2.5);
+								changeLevel(2);
 							}}
 							className="absolute bottom-12 text-xs text-white/70 hover:text-white cursor-pointer transition-all duration-300"
 						>
 							{t("firstTime.welcome.skipLogin")}
-						</motion.span>
+						</span>
 					</motion.div>
 				)}
 				{/* 2 - logging in */}
-				{level === 2 && (
-					<motion.div key={2} className={getContainerClasses()}>
+				{/* {level === 2 && (
+					<motion.div exit={{ opacity: 0, filter: "blur(20px)" }} transition={{ duration: 0.3 }} key={2} className={getContainerClasses()}>
 						<div className="flex flex-col gap-4 justify-center items-center mt-12">
 							<h1 className="text-6xl font-semibold">
 								{t("firstTime.loggingIn.title")}
@@ -295,18 +295,9 @@ export default function FirstTime() {
 							</div>
 						</div>
 					</motion.div>
-				)}
-				{level === 2.5 && (
+				)} */}
+				{level === 2 && (
 					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{
-							opacity: 0,
-							filter: "blur(20px)",
-							transition: { duration: 0.5 },
-						}}
-						key={2.5}
-						transition={{ duration: 0.3 }}
 						className={getContainerClasses()}
 					>
 						<div className="flex flex-col gap-4 justify-center items-center">
@@ -320,7 +311,6 @@ export default function FirstTime() {
 								}}
 								onLogin={() => {
 									openLink("https://getdione.app/auth/login?app=true");
-									changeLevel(2);
 								}}
 							/>
 						</div>
@@ -329,13 +319,12 @@ export default function FirstTime() {
 				{/* first time onboarding */}
 				{level === 3 && (
 					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
+						initial={{ filter: "blur(20px)", y: 30, opacity: 0 }}
+						animate={{ filter: "blur(0px)", y: 0, opacity: 1 }}
 						exit={{
 							opacity: 0,
-							y: -100,
+							y: -30,
 							filter: "blur(20px)",
-							transition: { duration: 0.5, delay: 0.5 },
 						}}
 						transition={{ duration: 0.5 }}
 						key={3}
@@ -350,14 +339,14 @@ export default function FirstTime() {
 				{level === 4 && (
 					<motion.div
 						key={4}
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
+						initial={{ opacity: 0, y: 30, filter: "blur(20px)" }}
+						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
 						exit={{
+							y: -30,
 							filter: "blur(20px)",
 							opacity: 0,
-							transition: { duration: 2, delay: 0.5 },
 						}}
-						transition={{ duration: 0.5 }}
+						transition={{ duration: 0.5, ease: [0.42, 0, 0.58, 1] }}
 						className={getContainerClasses()}
 					>
 						<div className="flex flex-col gap-4 justify-center items-center">
@@ -383,21 +372,21 @@ export default function FirstTime() {
 						</div>
 					</motion.div>
 				)}
-				{/* progress bar */}
-				{level !== 2.5 && (
-					<motion.div className="absolute bottom-4 left-1/2 translate-x-[-50%]">
-						<div className="flex gap-2">
-							{[1, 2, 3, 4].map((lvl) => (
-								<div key={lvl} className="py-1">
-									<div
-										className={`w-6 h-1 rounded-full ${lvl === level ? "bg-[#BCB1E7] w-10" : "bg-white/20"}`}
-									/>
-								</div>
-							))}
-						</div>
-					</motion.div>
-				)}
 			</AnimatePresence>
+			{/* progress bar */}
+			{level !== 2 && (
+				<motion.div className="absolute bottom-4 left-1/2 translate-x-[-50%]">
+					<div className="flex gap-2">
+						{[1, 2, 3, 4].map((lvl) => (
+							<div key={lvl} className="py-1">
+								<div
+									className={`w-6 h-1 rounded-full ${lvl === level ? "bg-[#BCB1E7] w-10" : "bg-white/20"}`}
+								/>
+							</div>
+						))}
+					</div>
+				</motion.div>
+			)}
 		</div>
 	);
 }

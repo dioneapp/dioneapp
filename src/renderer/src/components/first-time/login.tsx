@@ -8,9 +8,15 @@ export default function SureNotLogin({
 		<section className="min-h-screen min-w-screen flex flex-col items-center justify-center px-4">
 			<div className="flex justify-start items-center gap-4 w-screen h-full pl-12">
 				<motion.div
-					initial={{ opacity: 0, filter: "blur(30px)", y: 100 }}
-					animate={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-					transition={{ duration: 0.5, delay: 0.8 }}
+					initial={{ opacity: 0, y: 30, filter: "blur(20px)" }}
+					animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+					exit={{
+						opacity: 0,
+						y: -30,
+						filter: "blur(20px)",
+					}}
+					key={2.5}
+					transition={{ duration: 0.5 }}
 					className="flex flex-col items-start gap-4 max-w-2xl"
 				>
 					<h1 className="font-semibold text-5xl">You are missing features</h1>
