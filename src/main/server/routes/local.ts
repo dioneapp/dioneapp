@@ -4,6 +4,7 @@ import {
 	deleteLocalScript,
 	getAllLocalScripts,
 	getInstalledLocalScript,
+	getLocalApps,
 	getLocalScript,
 	getLocalScriptById,
 	loadLocalScript,
@@ -37,6 +38,19 @@ export function createLocalScriptsRouter(io: Server) {
 		const { name } = req.params;
 		try {
 			const script = await getLocalScript(decodeURIComponent(name));
+			res.send(script);
+		} catch (error: any) {
+			logger.error(
+				`Error handling install request: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
+			);
+			res.status(500).send("An error occurred while processing your request.");
+		}
+	});
+
+	router.get("/get_app/:name", async (req, res) => {
+		const { name } = req.params;
+		try {
+			const script = await getLocalApps(decodeURIComponent(name));
 			res.send(script);
 		} catch (error: any) {
 			logger.error(
