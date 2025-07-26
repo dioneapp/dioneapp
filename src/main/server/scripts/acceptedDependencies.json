@@ -6,7 +6,7 @@
 			"windows": "winget install --id Microsoft.VisualStudio.2022.BuildTools --silent --accept-package-agreements --accept-source-agreements --override \"--quiet --wait --norestart --nocache --installPath C:\\BuildTools --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended\" && powershell -Command \"[Environment]::SetEnvironmentVariable('PATH', [Environment]::GetEnvironmentVariable('PATH','User') + ';C:\\BuildTools\\MSBuild\\Current\\Bin', 'User')\""
 		},
 		"uninstallCommand": {
-			"windows": "winget uninstall --id Microsoft.VisualStudio.2022.BuildTools --silent"
+			"windows": "winget uninstall --id Microsoft.VisualStudio.2022.BuildTools --silent --accept-package-agreements --accept-source-agreements --override \"--quiet --wait --norestart --nocache --installPath C:\\BuildTools\""
 		},
 		"shouldRestart": true
 	},
