@@ -8,6 +8,7 @@ import logger from "../utils/logger";
 
 let activeProcess: any = null;
 let activePID: number | null = null;
+let processWasCancelled = false;
 
 // kill process and its children
 // currently, this function is only used during the installation of dependencies,
@@ -16,6 +17,7 @@ let activePID: number | null = null;
 // in such cases, it is recommended to use the killByPort (l-53) function.
 export const killProcess = async (pid: number, io: Server, id: string) => {
 	try {
+		processWasCancelled = true;
 		const currentPlatform = getPlatform();
 		if (currentPlatform === "win32") {
 			return new Promise<boolean>((resolve) => {
@@ -69,6 +71,7 @@ async function killByPort(
 	io: Server,
 	id: string,
 ): Promise<boolean> {
+	processWasCancelled = true;
 	const currentPlatform = getPlatform();
 	if (currentPlatform !== "win32") {
 		// linux/macos
@@ -192,6 +195,7 @@ export const stopActiveProcess = async (
 	port: number,
 ) => {
 	logger.warn(`Stopping any process on port ${port}...`);
+	processWasCancelled = true;
 	const success = await killByPort(port, io, id);
 	activeProcess = null;
 	activePID = null;
@@ -210,6 +214,8 @@ export const executeCommand = async (
 	let stderrData = "";
 	const logs = logsType || "installUpdate";
 	try {
+		processWasCancelled = false;
+		
 		// // if active process exists, kill it (disabled for multiple apps)
 		// await stopActiveProcess(io, id);
 
@@ -439,7 +445,7 @@ export const executeCommands = async (
 		} else {
 			const response = await executeCommand(command, io, currentWorkingDir, id);
 			if (response.code !== 0) {
-				if (!activePID && response.code === 1) {
+				if (processWasCancelled) {
 					logger.info("Process was manually cancelled");
 					io.to(id).emit("installUpdate", {
 						type: "log",
