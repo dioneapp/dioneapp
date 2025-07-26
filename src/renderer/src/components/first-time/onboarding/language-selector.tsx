@@ -13,7 +13,7 @@ export default function LanguageSelector({
 }: LanguageSelectorProps) {
 	const { setLanguage, language, t } = useTranslation();
 	const [currentPage, setCurrentPage] = useState(0);
-	const [direction, setDirection] = useState(0);
+	const [_direction, setDirection] = useState(0);
 	const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 	const perPage = 8;
 
