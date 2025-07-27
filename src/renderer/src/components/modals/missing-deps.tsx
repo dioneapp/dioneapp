@@ -122,7 +122,9 @@ export default function MissingDepsModal({
 				throw new Error(response.statusText);
 			}
 
-			if (!error && !logs.includes("error")) {
+			const result = await response.json();
+
+			if (!error && !logs.includes("error") && result.success) {
 				await onFinish();
 			}
 		} catch (error: any) {
