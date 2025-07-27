@@ -814,7 +814,7 @@ ipcMain.on("new-window", (_event, url) => {
 
 	previewWindow.webContents.setWindowOpenHandler(({ url }) => {
 		shell.openExternal(url);
-		return { action: 'deny' };
+		return { action: "deny" };
 	});
 
 	previewWindow.on("close", () => {

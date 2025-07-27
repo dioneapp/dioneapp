@@ -215,7 +215,7 @@ export const executeCommand = async (
 	const logs = logsType || "installUpdate";
 	try {
 		processWasCancelled = false;
-		
+
 		// // if active process exists, kill it (disabled for multiple apps)
 		// await stopActiveProcess(io, id);
 
