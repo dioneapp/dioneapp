@@ -4,7 +4,7 @@ import path from "node:path";
 import type { Server } from "socket.io";
 import { readConfig } from "../../config";
 import logger from "../utils/logger";
-import { checkDependencies } from "./dependencies";
+import { checkDependencies } from "./dependencies/dependencies";
 import executeInstallation from "./execute";
 import { checkSystem } from "./system";
 

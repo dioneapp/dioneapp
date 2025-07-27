@@ -5,6 +5,7 @@ import path from "node:path";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
 import logger from "../utils/logger";
+import { getAllValues, initDefaultEnv } from "./dependencies/environment";
 
 let activeProcess: any = null;
 let activePID: number | null = null;
@@ -213,6 +214,12 @@ export const executeCommand = async (
 	let stdoutData = "";
 	let stderrData = "";
 	const logs = logsType || "installUpdate";
+	const ENVIRONMENT = getAllValues();
+
+	if (ENVIRONMENT === null) {
+		initDefaultEnv();
+	}
+
 	try {
 		processWasCancelled = false;
 		
@@ -235,7 +242,7 @@ export const executeCommand = async (
 			windowsHide: true,
 			detached: false,
 			env: {
-				...process.env,
+				...ENVIRONMENT,
 				PYTHONUNBUFFERED: "1",
 				NODE_NO_BUFFERING: "1",
 				FORCE_UNBUFFERED_OUTPUT: "1",

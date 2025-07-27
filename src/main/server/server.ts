@@ -55,7 +55,7 @@ export const stop = async () => {
 		const timeout = setTimeout(() => {
 			logger.warn("Forcing server closure");
 			forceClose();
-		}, 5000);
+		}, 1000);
 
 		await new Promise<void>((resolve) => {
 			httpServer?.close(() => {
