@@ -812,6 +812,11 @@ ipcMain.on("new-window", (_event, url) => {
 	previewWindow.maximize();
 	previewWindow.focus();
 
+	previewWindow.webContents.setWindowOpenHandler(({ url }) => {
+		shell.openExternal(url);
+		return { action: 'deny' };
+	});
+
 	previewWindow.on("close", () => {
 		console.log("Closing preview window...");
 		previewWindow?.destroy();
