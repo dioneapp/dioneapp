@@ -3,11 +3,9 @@ import path from 'node:path';
 import logger from '../../utils/logger';
 import type { Server } from 'socket.io';
 import { dependencyRegistry } from './accepted-dependencies';
-import { addValue } from './environment';
 
 const root = process.cwd();
 const binFolder = path.join(root, 'bin');
-const ENVIRONMENT = path.join(binFolder, 'VARIABLES');
 
 export function readDioneConfig(filePath: string): any {
     try {
@@ -26,8 +24,20 @@ export async function checkDependencies(dioneConfigPath: string): Promise<{
 }> {
     const dioneConfig = readDioneConfig(dioneConfigPath);
     const dependencies = dioneConfig?.dependencies || {};
+    const needEnv = JSON.stringify(dioneConfig).includes("env");
+    const envType = dioneConfig.installation.find((dep) => dep.env)?.env?.type || "uv";
 
     const missing: { name: string; installed: boolean; reason: string }[] = [];
+
+
+    // if use an environment, check if uv or conda is needed
+    if (envType === "uv" && !dependencies.uv && needEnv) {
+        dependencies.uv = { version: "latest" };
+    }
+    if (envType === "conda" && !dependencies.conda && needEnv) {
+        dependencies.conda = { version: "latest" };
+    }
+
 
     if (Object.keys(dependencies).length === 0) {
         logger.warn('No dependencies found in Dione config');
@@ -44,7 +54,7 @@ export async function checkDependencies(dioneConfigPath: string): Promise<{
             missing.push({
                 name: depName,
                 installed: false,
-                reason: 'Unknown dependency'
+                reason: 'error'
             });
             continue;
         }
@@ -52,7 +62,7 @@ export async function checkDependencies(dioneConfigPath: string): Promise<{
         try {
             const installed = await entry.isInstalled(binFolder);
             if (!installed.installed) {
-                logger.warn(`Dependency not installed: ${depName}`);
+                logger.warn(`Dependency not installed: ${depName}, Reason: ${installed.reason}`);
                 missing.push({
                     name: depName,
                     installed: false,
@@ -97,6 +107,10 @@ export async function installDependency(depName: string, id: string, io: Server)
         }
     } catch (error) {
         logger.error(`Error installing dependency ${depName}:`, error);
+        io.to(id).emit("installDep", {
+            type: "error",
+            content: `Error installing ${depName}: ${error}`
+        });
         return { success: false, reason: `error` };
     }
 }
@@ -139,14 +153,25 @@ export async function inUseDependencies(dioneFile: string): Promise<string[] | n
     if (Object.keys(dependencies).length === 0) {
         return null;
     }
-    const inUse: string[] = [];
 
+    const inUse: string[] = [];
     Object.keys(dependencies).forEach(depName => {
         const entry = dependencyRegistry[depName];
         if (entry) {
             inUse.push(depName);
         }
     }); 
+
+    const needEnv = JSON.stringify(dioneConfig).includes("env");
+    const envType = dioneConfig.installation.find((dep) => dep.env)?.env.type || "uv";
+
+    if (envType === "uv" && !dioneConfig.dependencies?.uv && needEnv) {
+        inUse.push("uv");
+    }
+
+    if (envType === "conda" && !dioneConfig.dependencies?.conda && needEnv) {
+        inUse.push("conda");
+    }
 
     console.log(`Dependencies in use: ${inUse.join(', ')}`);
     return inUse;
