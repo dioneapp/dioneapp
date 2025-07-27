@@ -12,12 +12,15 @@ export async function isInstalled(binFolder: string): Promise<{ installed: boole
     const depFolder = path.join(binFolder, depName);
     const ENVIRONMENT = getAllValues(); 
 
-    if (!fs.existsSync(depFolder)) {
+    if (
+        !fs.existsSync(depFolder) ||
+        fs.readdirSync(depFolder).length === 0
+    ) {
         return { installed: false, reason: `not-installed` };
     }
 
     try {
-        const stdout = await new Promise<string>((resolve, reject) => {
+        await new Promise<string>((resolve, reject) => {
                 execFile(depName, ["--version"], {env: ENVIRONMENT}, (error, stdout) => {
                 if (error) {
                     reject(error);
@@ -26,9 +29,9 @@ export async function isInstalled(binFolder: string): Promise<{ installed: boole
                 }
             });
         });
-        return { installed: true, reason: `installed ${stdout.trim()}` };
+        return { installed: true, reason: `installed` };
     } catch (error: any) {
-        return { installed: false, reason: `error ${error.message}` };
+        return { installed: false, reason: `error` };
     }
 }           
 
@@ -98,6 +101,11 @@ export async function install(binFolder: string, id: string, io: Server): Promis
                     reject(new Error(`HTTP ${response.statusCode}`));
                 }
             }).on("error", reject);
+        });
+    } else {
+        io.to(id).emit("installDep", {
+            type: "error",
+            content: `No download URL found for ${depName} on ${platform} (${arch})`
         });
     }
 
@@ -186,7 +194,7 @@ export async function install(binFolder: string, id: string, io: Server): Promis
                 if (platform === "windows") {
                     addValue("PATH", path.join(depFolder, "cmd"));
                 } else {
-                    // Para Linux y macOS
+                    // linux/macos
                     addValue("PATH", path.join(depFolder, "bin"));
                     addValue("GIT_EXEC_PATH", path.join(depFolder, "libexec", "git-core"));
                     addValue("GIT_TEMPLATE_DIR", path.join(depFolder, "share", "git-core", "templates"));
