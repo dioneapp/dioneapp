@@ -252,10 +252,12 @@ function createVirtualEnvCommands(
 
 	if (envType === "conda") {
 		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
+		const activateScript = path.join(process.cwd(), "bin", "conda", "Scripts", "activate");
+		const deactivateScript = path.join(process.cwd(), "bin", "conda", "Scripts", "deactivate");
 		if (isWindows) {
 			return [
 				`if not exist "${envPath}" (conda tos accept --channel main && conda create -p "${envPath}" ${pythonArg} -y)`,
-				`call conda activate "${envPath}" ${middle} && call conda deactivate`,
+				`call "${activateScript}" "${envPath}" ${middle} && call "${deactivateScript}"`,
 			];
 		}
 		// for linux and mac
