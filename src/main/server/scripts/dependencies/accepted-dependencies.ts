@@ -1,5 +1,6 @@
 import { Server } from 'socket.io';
 import * as git from './files/git';
+import * as conda from './files/conda';
 
 export const dependencyRegistry: Record<
   string,
@@ -12,5 +13,6 @@ export const dependencyRegistry: Record<
     uninstall: (binFolder: string) => Promise<void>;
   }
 > = {
-  git
+  git,
+  conda
 };
