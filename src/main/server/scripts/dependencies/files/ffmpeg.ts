@@ -51,12 +51,12 @@ export async function install(binFolder: string, id: string, io: Server): Promis
 
     const urls: Record<string, Record<string, string>> = {
         linux: {
-            amd64: "https://github.com/astral-sh/uv/releases/download/0.8.3/uv-x86_64-unknown-linux-gnu.tar.gz",
-            arm64: "https://github.com/astral-sh/uv/releases/download/0.8.3/uv-aarch64-unknown-linux-gnu.tar.gz"
+            amd64: "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz",
+            arm64: "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linuxarm64-gpl.tar.xz"
         },
         macos: {
-            amd64: "https://github.com/astral-sh/uv/releases/download/0.8.3/uv-x86_64-apple-darwin.tar.gz",
-            arm64: "https://github.com/astral-sh/uv/releases/download/0.8.3/uv-aarch64-apple-darwin.tar.gz"
+            amd64: "https://evermeet.cx/ffmpeg/ffmpeg-7.1.1.zip",
+            arm64: "https://evermeet.cx/ffmpeg/ffmpeg-7.1.1.zip"
         },
         windows: {
             amd64: "https://github.com/GyanD/codexffmpeg/releases/download/7.1.1/ffmpeg-7.1.1-full_build.zip",
@@ -70,7 +70,8 @@ export async function install(binFolder: string, id: string, io: Server): Promis
         // if temp dir does not exist, create it
         fs.mkdirSync(tempDir, { recursive: true });
     }
-    const installerExt = platform === "windows" ? "zip" : "sh";
+
+    const installerExt = platform === "macos" ? "zip" : platform === "linux" ? "tar.xz" : "zip";
     const installerFile = fs.createWriteStream(path.join(tempDir, `${depName}-${platform}-${arch}.${installerExt}`));
 
     if (url) {
@@ -192,22 +193,24 @@ export async function install(binFolder: string, id: string, io: Server): Promis
                         content: `${depName} installed successfully`
                     });
 
-                    try {
-                        // move from ffmpeg-7.1.1-full_build to binFolder
-                        io.to(id).emit("installDep", {
-                            type: "log",
-                            content: `Moving FFmpeg files to ${binFolder}/${depName}...`
-                        });
-                        const tempFolder = path.join(binFolder, depName, "ffmpeg-7.1.1-full_build");
-                        fs.cpSync(tempFolder, path.join(binFolder, depName), { recursive: true, force: true });
-                        fs.rmSync(tempFolder, { recursive: true, force: true });
-                    } catch (error) {
-                        logger.error(`Error moving FFmpeg files:`, error);
-                        io.to(id).emit("installDep", {
-                            type: "error",
-                            content: `Error moving FFmpeg files: ${error}`
-                        });
-                        reject(error);
+                    if (getOS() === "windows") {
+                        try {
+                            // move from ffmpeg-7.1.1-full_build to binFolder
+                            io.to(id).emit("installDep", {
+                                type: "log",
+                                content: `Moving FFmpeg files to ${binFolder}/${depName}...`
+                            });
+                            const tempFolder = path.join(binFolder, depName, "ffmpeg-7.1.1-full_build");
+                            fs.cpSync(tempFolder, path.join(binFolder, depName), { recursive: true, force: true });
+                            fs.rmSync(tempFolder, { recursive: true, force: true });
+                        } catch (error) {
+                            logger.error(`Error moving FFmpeg files:`, error);
+                            io.to(id).emit("installDep", {
+                                type: "error",
+                                content: `Error moving FFmpeg files: ${error}`
+                            });
+                            reject(error);
+                        }
                     }
 
                     // update environment variables
