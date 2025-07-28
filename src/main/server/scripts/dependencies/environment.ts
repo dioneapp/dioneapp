@@ -21,6 +21,7 @@ export function addValue(key: string, value: string) {
 
   const content = fs.readFileSync(ENVIRONMENT, 'utf8');
   const lines = content.split('\n').filter(line => line.trim() !== '');
+  const separator = getOS() === 'windows' ? ';' : ':';
 
   let found = false;
   const newLines = lines.map(line => {
@@ -29,10 +30,10 @@ export function addValue(key: string, value: string) {
     const [k, currentValue] = kv;
     if (k === key) {
       found = true;
-      if (currentValue.split(';').includes(value)) {
+      if (currentValue.split(separator).includes(value)) {
         return line;
       }
-      return `${key}=${currentValue};${value}`;
+      return `${key}=${currentValue}${separator}${value}`;
     }
     return line;
   });
