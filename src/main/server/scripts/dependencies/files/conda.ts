@@ -1,5 +1,7 @@
-import { execFile, spawn } from "child_process";
+import { execFile, execSync, spawn } from "child_process";
 import fs from "fs";
+import * as fsRemove from "fs/promises";
+
 import path from "path";
 import https from "https";
 import type { Server } from "socket.io";
@@ -140,6 +142,7 @@ export async function install(binFolder: string, id: string, io: Server): Promis
             args: [
                 '/InstallationType=JustMe',
                 '/RegisterPython=0',
+                '/NOSHORTCUTS',
                 '/S',
                 '/D=' + depFolder,
             ]
@@ -217,23 +220,30 @@ export async function install(binFolder: string, id: string, io: Server): Promis
 
                     try {
                         // execute conda init
-                        const condaExecutable =
-                            platform === "windows"
-                                ? path.join(depFolder, "Scripts", "conda.exe")
-                                : path.join(depFolder, "bin", "conda");
-                        execFile(condaExecutable, ["init"], spawnOptions, (error) => {
-                            if (error) {
-                                logger.error(`Error initializing conda: ${error}`);
-                                reject(new Error(`Error initializing conda: ${error}`));
-                            } else {
-                                io.to(id).emit("installDep", {
-                                    type: "log",
-                                    content: `Conda initialized successfully`
-                                });
+                        const condaW = path.join(process.cwd(), "bin", "conda", "condabin", "conda.bat");
+                        const condaU = path.join(process.cwd(), "bin", "conda", "bin", "activate");
 
-                                resolve();
-                            }
+                        io.to(id).emit("installDep", {
+                            type: "log",
+                            content: `Initializing conda...`
                         });
+                        try {
+                            if (platform === "windows") {
+                                execSync(`${condaW} init --all && ${condaW} tos accept --channel main`, { cwd: depFolder, env: ENVIRONMENT });
+                            } else {
+                                execSync(`${condaU} init --all && ${condaU} tos accept --channel main`, { cwd: depFolder, env: ENVIRONMENT });
+                            }
+
+                            io.to(id).emit("installDep", {
+                                type: "log",
+                                content: `Conda initialized successfully`
+                            });
+
+                            resolve();
+                        } catch (error) {
+                            logger.error(`Error running conda init: ${error}`);
+                            throw new Error(`Error running conda init: ${error}`);
+                        }
                     } catch (error) {
                         logger.error(`Error running conda init: ${error}`);
                         io.to(id).emit("installDep", {
@@ -265,9 +275,9 @@ export async function uninstall(binFolder: string): Promise<void> {
 
     if (fs.existsSync(depFolder)) {
         logger.info(`Removing cache in ${cacheDir}...`);
-        fs.rmSync(cacheDir, { recursive: true, force: true });
+        fsRemove.rm(cacheDir, { recursive: true, force: true });
         logger.info(`Removing ${depName} folder in ${depFolder}...`);
-        fs.rmSync(depFolder, { recursive: true, force: true });
+        fsRemove.rm(depFolder, { recursive: true, force: true });
         logger.info(`Removing ${depName} from environment variables...`);
         if (getOS() === "windows") {
             removeValue(path.join(depFolder), "PATH");

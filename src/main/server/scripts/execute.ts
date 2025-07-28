@@ -252,18 +252,18 @@ function createVirtualEnvCommands(
 
 	if (envType === "conda") {
 		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
-		const activateScript = path.join(process.cwd(), "bin", "conda", "Scripts", "activate");
-		const deactivateScript = path.join(process.cwd(), "bin", "conda", "Scripts", "deactivate");
+		const condaW = path.join(process.cwd(), "bin", "conda", "condabin", "conda.bat");
+		const condaU = path.join(process.cwd(), "bin", "conda", "bin", "activate");
 		if (isWindows) {
 			return [
-				`if not exist "${envPath}" (conda tos accept --channel main && conda create -p "${envPath}" ${pythonArg} -y)`,
-				`call "${activateScript}" "${envPath}" ${middle} && call "${deactivateScript}"`,
+				`if not exist "${envPath}" (${condaW} create -p "${envPath}" ${pythonArg} -y)`,
+				`call ${condaW} activate "${envPath}" ${middle} && call conda deactivate`,
 			];
 		}
 		// for linux and mac
 		return [
-			`if [ ! -d "${envPath}" ]; then conda create -p "${envPath}" ${pythonArg} -y; fi`,
-			`source activate "${envPath}" ${middle} && conda deactivate`,
+			`if [ ! -d "${envPath}" ]; then ${condaU} create -p "${envPath}" ${pythonArg} -y; fi`,
+			`source "${condaU}" activate "${envPath}" && ${middle} && ${condaU} deactivate`,
 		];
 	}
 
