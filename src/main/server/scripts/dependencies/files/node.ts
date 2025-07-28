@@ -4,7 +4,7 @@ import path from "path";
 import https from "https";
 import type { Server } from "socket.io";
 import { getArch, getOS } from "../utils/system";
-import { addValue, getAllValues, removeValue } from "../environment";
+import { addValue, getAllValues, removeKey, removeValue } from "../environment";
 import logger from "../../../utils/logger";
 
 const depName = "node";
@@ -216,7 +216,7 @@ export async function install(binFolder: string, id: string, io: Server): Promis
                     const cacheDir = path.join(binFolder, "cache", depName);
                     addValue("PATH", path.join(depFolder));
                     addValue("NPM_CONFIG_CACHE", path.join(cacheDir));
-
+                    addValue("NPM_CONFIG_STORE_DIR", path.join(binFolder, "cache", depName));
                     resolve();
                 } else {
                     reject(new Error(`Installer exited with code ${code}`));
@@ -243,7 +243,8 @@ export async function uninstall(binFolder: string): Promise<void> {
         fs.rmSync(depFolder, { recursive: true, force: true });
         logger.info(`Removing ${depName} from environment variables...`);
         removeValue(path.join(depFolder), "PATH");
-        removeValue(path.join(binFolder, "cache", depName), "NPM_CONFIG_CACHE");    
+        removeKey("NPM_CONFIG_CACHE");
+        removeKey("NPM_CONFIG_STORE_DIR");
         logger.info(`${depName} uninstalled successfully`);
     }
 }
