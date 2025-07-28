@@ -200,23 +200,16 @@ export async function install(binFolder: string, id: string, io: Server): Promis
                     });
 
                     // update environment variables
-                    if (platform === "windows") {
-                        const cacheDir = path.join(binFolder, "cache", depName);
-                        addValue("CONDA_PKGS_DIRS", cacheDir);
-                        addValue(
-                            "CONDA_EXE",
-                            platform === "windows"
-                                ? path.join(depFolder, "Scripts", "conda.exe")
-                                : path.join(depFolder, "bin", "conda")
-                        );
-                        addValue("PATH", path.join(depFolder));
-                        addValue("PATH", path.join(depFolder, 'Scripts'));
-                    } else {
-                        // linux/macos
-                        addValue("PATH", path.join(depFolder, "bin"));
-                        addValue("GIT_EXEC_PATH", path.join(depFolder, "libexec", "git-core"));
-                        addValue("GIT_TEMPLATE_DIR", path.join(depFolder, "share", "git-core", "templates"));
-                    }
+                    const cacheDir = path.join(binFolder, "cache", depName);
+                    addValue("CONDA_PKGS_DIRS", cacheDir);
+                    addValue(
+                        "CONDA_EXE",
+                        platform === "windows"
+                            ? path.join(depFolder, "Scripts", "conda.exe")
+                            : path.join(depFolder, "bin", "conda")
+                    );
+                    addValue("PATH", path.join(depFolder));
+                    addValue("PATH", path.join(depFolder, 'Scripts'));
 
                     try {
                         // execute conda init
@@ -279,17 +272,11 @@ export async function uninstall(binFolder: string): Promise<void> {
         logger.info(`Removing ${depName} folder in ${depFolder}...`);
         fsRemove.rm(depFolder, { recursive: true, force: true });
         logger.info(`Removing ${depName} from environment variables...`);
-        if (getOS() === "windows") {
-            removeValue(path.join(depFolder), "PATH");
-            removeValue(path.join(depFolder, "Scripts"), "PATH");
-            removeValue(path.join(depFolder, "Library", "bin"), "PATH");
-            removeValue("CONDA_PKGS_DIRS", path.join(binFolder, "cache"));
-            removeValue("CONDA_EXE", path.join(depFolder, "Scripts", "conda.exe"));
-        } else {
-            removeValue(path.join(depFolder, "bin"), "PATH");
-            removeValue(path.join(depFolder, "libexec", "git-core"), "GIT_EXEC_PATH");
-            removeValue(path.join(depFolder, "share", "git-core", "templates"), "GIT_TEMPLATE_DIR");
-        }
+        removeValue(path.join(depFolder), "PATH");
+        removeValue(path.join(depFolder, "Scripts"), "PATH");
+        removeValue(path.join(depFolder, "Library", "bin"), "PATH");
+        removeValue("CONDA_PKGS_DIRS", path.join(binFolder, "cache"));
+        removeValue("CONDA_EXE", path.join(depFolder, "Scripts", "conda.exe"));
 
         logger.info(`${depName} uninstalled successfully`);
     } else {
