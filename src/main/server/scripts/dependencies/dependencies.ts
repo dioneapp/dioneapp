@@ -90,6 +90,10 @@ export async function installDependency(depName: string, id: string, io: Server)
     const entry = dependencyRegistry[depName];
     if (!entry) {
         logger.error(`Unknown dependency: ${depName}`);
+        io.emit("installDep", {
+            type: "error",
+            content: `Unknown dependency: ${depName}`
+        });
         return {
             success: false,
             reason: 'Unknown dependency'
