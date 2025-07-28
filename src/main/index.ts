@@ -158,12 +158,6 @@ function createWindow() {
 		}
 	});
 
-	// Prevent opening new windows and handle external links
-	mainWindow.webContents.setWindowOpenHandler((details) => {
-		shell.openExternal(details.url);
-		return { action: "deny" };
-	});
-
 	if (process.platform === "linux") app.commandLine.appendSwitch("no-sandbox");
 
 	const handleDeepLink = (url: string | undefined) => {
@@ -206,6 +200,15 @@ function createWindow() {
 	app.on("open-url", (event, url) => {
 		event.preventDefault();
 		handleDeepLink(url);
+	});
+
+	app.on('web-contents-created', (e, contents) => {
+		if (contents.getType() === 'webview') {
+			contents.setWindowOpenHandler((details) => {
+			shell.openExternal(details.url);
+			return { action: 'deny' };
+			});
+		}
 	});
 
 	const gotTheLock = app.requestSingleInstanceLock();
