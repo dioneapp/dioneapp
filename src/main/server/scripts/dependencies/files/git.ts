@@ -7,6 +7,7 @@ import { getArch, getOS } from "../utils/system";
 import { addValue, getAllValues, removeValue } from "../environment";
 
 const depName = "git";
+const ENVIRONMENT = getAllValues();
 
 export async function isInstalled(binFolder: string): Promise<{ installed: boolean; reason: string; }> {
     const depFolder = path.join(binFolder, depName);
@@ -161,7 +162,7 @@ export async function install(binFolder: string, id: string, io: Server): Promis
         windowsHide: true,
         detached: false,
         env: {
-            ...process.env,
+            ...ENVIRONMENT,
             PYTHONUNBUFFERED: "1",
             NODE_NO_BUFFERING: "1",
             FORCE_UNBUFFERED_OUTPUT: "1",

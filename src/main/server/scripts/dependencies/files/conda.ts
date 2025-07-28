@@ -198,7 +198,7 @@ export async function install(binFolder: string, id: string, io: Server): Promis
 
                     // update environment variables
                     if (platform === "windows") {
-                        const cacheDir = path.join(binFolder, "cache");
+                        const cacheDir = path.join(binFolder, "cache", depName);
                         addValue("CONDA_PKGS_DIRS", cacheDir);
                         addValue(
                             "CONDA_EXE",
