@@ -165,6 +165,14 @@ export const pt = {
 				description:
 					"Remover todas as dependências relacionadas ao desinstalar aplicativos",
 			},
+			deleteCache: {
+				label: "Excluir Cache",
+				description: "Remover todos os dados em cache dos aplicativos",
+				button: "Excluir Cache",
+				deleting: "Excluindo...",
+				deleted: "Excluído",
+				error: "Erro",
+			}
 		},
 		interface: {
 			title: "Interface",

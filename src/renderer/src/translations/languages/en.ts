@@ -164,6 +164,14 @@ export const en = {
 				description:
 					"Remove all related dependencies when uninstalling applications",
 			},
+			deleteCache: {
+				label: "Delete Cache",
+				description: "Remove all cached data from applications",
+				button: "Delete Cache",
+				deleting: "Deleting...",
+				deleted: "Deleted",
+				error: "Error",
+			}
 		},
 		interface: {
 			title: "Interface",

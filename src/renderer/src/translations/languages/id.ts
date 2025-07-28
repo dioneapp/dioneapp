@@ -164,6 +164,14 @@ export const id = {
 				description:
 					"Hapus semua dependensi terkait saat mencopot pemasangan aplikasi",
 			},
+			deleteCache: {
+				label: "Hapus Cache",
+				description: "Hapus semua data yang di-cache dari aplikasi",
+				button: "Hapus Cache",
+				deleting: "Menghapus...",
+				deleted: "Dihapus",
+				error: "Kesalahan",
+			}
 		},
 		interface: {
 			title: "Antarmuka",

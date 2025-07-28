@@ -165,6 +165,14 @@ export const es = {
 				description:
 					"Eliminar todas las dependencias relacionadas al desinstalar aplicaciones",
 			},
+			deleteCache: {
+				label: "Eliminar caché",
+				description: "Eliminar todos los datos en caché de las aplicaciones",
+				button: "Eliminar caché",
+				deleting: "Eliminando...",
+				deleted: "Eliminado",
+				error: "Error",
+			}
 		},
 		interface: {
 			title: "Interfaz",

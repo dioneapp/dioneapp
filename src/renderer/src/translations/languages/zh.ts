@@ -157,6 +157,14 @@ export const zh = {
 				label: "清理卸载",
 				description: "卸载应用程序时移除所有相关依赖项",
 			},
+			deleteCache: {
+				label: "删除缓存",
+				description: "从应用程序中删除所有缓存数据",
+				button: "删除缓存",
+				deleting: "正在删除...",
+				deleted: "已删除",
+				error: "错误",
+			}
 		},
 		interface: {
 			title: "界面",

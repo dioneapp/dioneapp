@@ -165,6 +165,14 @@ export const fr = {
 				description:
 					"Supprimer toutes les dépendances liées lors de la désinstallation des applications",
 			},
+			deleteCache: {
+				label: "Supprimer le cache",
+				description: "Supprimer toutes les données mises en cache des applications",
+				button: "Supprimer le cache",
+				deleting: "Suppression en cours...",
+				deleted: "Supprimé",
+				error: "Erreur",
+			}
 		},
 		interface: {
 			title: "Interface",

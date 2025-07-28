@@ -165,6 +165,14 @@ export const ru = {
 				description:
 					"Удалять все связанные зависимости при удалении приложений",
 			},
+			deleteCache: {
+				label: "Удалить кэш",
+				description: "Удалить все данные кэша из приложений",
+				button: "Удалить кэш",
+				deleting: "Удаление...",
+				deleted: "Удалено",
+				error: "Ошибка",
+			}
 		},
 		interface: {
 			title: "Интерфейс",
