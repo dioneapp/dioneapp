@@ -4,6 +4,7 @@ import * as conda from './files/conda';
 import * as uv from './files/uv';
 import * as ffmpeg from './files/ffmpeg';
 import * as node from './files/node';
+import * as pnpm from './files/pnpm';
 
 export const dependencyRegistry: Record<
   string,
@@ -20,5 +21,6 @@ export const dependencyRegistry: Record<
   conda,
   uv,
   ffmpeg,
-  node
+  node,
+  pnpm
 };
