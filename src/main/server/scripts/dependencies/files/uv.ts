@@ -193,16 +193,9 @@ export async function install(binFolder: string, id: string, io: Server): Promis
                     });
 
                     // update environment variables
-                    if (platform === "windows") {
-                        const cacheDir = path.join(binFolder, "cache", depName);
-                        addValue("PATH", path.join(depFolder));
-                        addValue("UV_CACHE_DIR", cacheDir);
-                    } else {
-                        // linux/macos
-                        addValue("PATH", path.join(depFolder, "bin"));
-                        addValue("GIT_EXEC_PATH", path.join(depFolder, "libexec", "git-core"));
-                        addValue("GIT_TEMPLATE_DIR", path.join(depFolder, "share", "git-core", "templates"));
-                    }
+                    const cacheDir = path.join(binFolder, "cache", depName);
+                    addValue("PATH", path.join(depFolder));
+                    addValue("UV_CACHE_DIR", cacheDir);
 
                     resolve();
                 } else {
