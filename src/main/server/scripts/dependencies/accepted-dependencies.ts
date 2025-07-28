@@ -3,6 +3,7 @@ import * as git from './files/git';
 import * as conda from './files/conda';
 import * as uv from './files/uv';
 import * as ffmpeg from './files/ffmpeg';
+import * as node from './files/node';
 
 export const dependencyRegistry: Record<
   string,
@@ -18,5 +19,6 @@ export const dependencyRegistry: Record<
   git,
   conda,
   uv,
-  ffmpeg
+  ffmpeg,
+  node
 };
