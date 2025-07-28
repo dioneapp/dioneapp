@@ -38,6 +38,7 @@ import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
 import { refreshPathFromSystem } from "./server/utils/refresh-env";
+import fs from "node:fs";
 
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
@@ -834,6 +835,61 @@ ipcMain.on("new-window", (_event, url) => {
 ipcMain.on("close-preview-window", () => {
 	if (previewWindow) {
 		previewWindow.destroy();
+	}
+});
+
+ipcMain.handle("check-folder-size", async (_event, folderPath) => {
+	if (!folderPath) {
+		folderPath = path.join(process.cwd(), "bin", "cache");
+	}
+
+	if (!fs.existsSync(folderPath)) {
+		return "0.00";
+	}
+
+	async function getFolderSize(folderPath: string): Promise<number> {
+		let totalSize = 0;
+
+		async function walk(dir: string) {
+			const files = await fs.promises.readdir(dir);
+
+			for (const file of files) {
+				const filePath = path.join(dir, file);
+				const stat = await fs.promises.stat(filePath);
+
+				if (stat.isDirectory()) {
+					await walk(filePath);
+				} else {
+					totalSize += stat.size;
+				}
+			}
+		}
+
+		await walk(folderPath);
+		return totalSize;
+	}
+
+	const sizeBytes = await getFolderSize(folderPath);
+	const sizeGB = sizeBytes / (1024 * 1024 * 1024);
+	return `${sizeGB.toFixed(2)}`;
+});
+
+ipcMain.handle("delete-folder", async (_event, folderPath) => {
+	if (!folderPath) {
+		folderPath = path.join(process.cwd(), "bin", "cache");
+	}
+
+	if (!fs.existsSync(folderPath)) {
+		console.warn(`Folder does not exist: ${folderPath}`);
+		return true;
+	}
+
+	try {
+		await fs.promises.rm(folderPath, { recursive: true, force: true });
+		return true;
+	} catch (error) {
+		console.error("Error deleting folder:", error);
+		return false;
 	}
 });
 

@@ -3,11 +3,12 @@ import { useScriptsContext } from "@renderer/components/contexts/ScriptsContext"
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { joinPath } from "@renderer/utils/path";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Folder } from "lucide-react";
+import { ChevronDown, Delete, Folder, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
 import { openFolder, openLink } from "../utils/openLink";
+import AnimatedCount from "@renderer/utils/animate-count";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -132,6 +133,17 @@ export default function Settings() {
 	const { handleReloadQuickLaunch } = useScriptsContext();
 	const navigate = useNavigate();
 
+	const [cacheSize, setCacheSize] = useState<number | null>(null);
+	const [deleteCacheStatus, setDeleteCacheStatus] = useState<string | null>(null);
+
+	useEffect(() => {
+		const fetchPort = async () => {
+			const currentPort = await getCurrentPort();
+			setPort(currentPort);
+		};
+		fetchPort();
+	}, []);
+
 	useEffect(() => {
 		const fetchVersion = async () => {
 			const version = await window.electron.ipcRenderer.invoke("get-version");
@@ -141,16 +153,23 @@ export default function Settings() {
 	}, []);
 
 	useEffect(() => {
-		// get actual port
-		const fetchPort = async () => {
-			const currentPort = await getCurrentPort();
-			setPort(currentPort);
-		};
-		fetchPort();
-
-		// fetch config
-		fetchConfig();
+		if (port) {
+			fetchConfig();
+		}
 	}, [port]);
+
+	useEffect(() => {
+		fetchCacheSize();
+	}, []);
+
+	async function fetchCacheSize() {
+		window.electron.ipcRenderer.invoke("check-folder-size")
+			.then(size => setCacheSize(size || 0))
+			.catch(error => {
+				console.error("Error loading cache size:", error);
+				setCacheSize(0);
+		});
+	}
 
 	async function fetchConfig() {
 		if (port) {
@@ -254,9 +273,21 @@ export default function Settings() {
 		navigate("/first-time");
 	}
 
-	useEffect(() => {
-		console.log("settings", config?.defaultScriptsFolder);
-	}, []);
+	async function handleDeleteCache() {
+		setDeleteCacheStatus("deleting");
+		const result = await window.electron.ipcRenderer.invoke("delete-folder");
+		if (result) {
+			console.log("Cache deleted successfully");
+			setDeleteCacheStatus("deleted");
+			setTimeout(() => {
+				setDeleteCacheStatus(null);
+			}, 3000);
+			fetchCacheSize();
+		} else {
+			console.error("Failed to delete cache");
+			setDeleteCacheStatus("error");
+		}
+	}
 
 	return (
 		<div className="min-h-screen bg-background pt-4">
@@ -333,6 +364,42 @@ export default function Settings() {
 														}`}
 													/>
 												</button>
+											</div>
+											<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
+														{t(
+															"settings.applications.deleteCache.label",
+														)}
+													</label>
+													<p className="text-xs text-neutral-400 w-80">
+														{t(
+															"settings.applications.deleteCache.description",
+														)}
+													</p>
+												</div>
+												<div className="flex flex-col gap-2 group">
+												<button
+													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full enabled:hover:bg-white/80 disabled:bg-white/80 transition-colors enabled:cursor-pointer flex gap-2 items-center justify-center"
+													type="button"
+													onClick={handleDeleteCache}
+													disabled={deleteCacheStatus === "deleting"}
+												>
+													<Trash2 className="w-4 h-4" />
+													{deleteCacheStatus === null ? (
+														<span>{t("settings.applications.deleteCache.button")}</span>
+													) : (
+														<span className={`${deleteCacheStatus === "deleted" ? "text-green-700" : deleteCacheStatus === "error" ? "text-red-500" : "text-orange-500"}`}>{deleteCacheStatus === "deleting" ? t("settings.applications.deleteCache.deleting") : deleteCacheStatus === "deleted" ? t("settings.applications.deleteCache.deleted") : t("settings.applications.deleteCache.error")}</span>
+													)}
+													<div className="flex gap-0 items-center justify-center text-xs bg-black/20 rounded-full font-mono px-2">
+														<AnimatedCount
+														value={cacheSize || 0}
+														suffix="GB"
+														className="text-black text-right"
+														/>
+													</div>
+												</button>
+												</div>
 											</div>
 										</div>
 									</div>
