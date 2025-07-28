@@ -5,6 +5,7 @@ import { getOS } from './utils/system';
 const root = process.cwd();
 const binFolder = path.join(root, 'bin');
 const ENVIRONMENT = path.join(binFolder, 'VARIABLES');
+const separator = getOS() === 'windows' ? ';' : ':';
 
 function splitKeyValue(line: string): [string, string] | null {
   const index = line.indexOf('=');
@@ -21,7 +22,6 @@ export function addValue(key: string, value: string) {
 
   const content = fs.readFileSync(ENVIRONMENT, 'utf8');
   const lines = content.split('\n').filter(line => line.trim() !== '');
-  const separator = getOS() === 'windows' ? ';' : ':';
 
   let found = false;
   const newLines = lines.map(line => {
@@ -66,6 +66,8 @@ export function removeValue(valueToRemove: string, key: string) {
 
   let updated = false;
 
+  const normalizedToRemove = path.normalize(valueToRemove).toLowerCase();
+
   const newLines = lines.map(line => {
     const kv = splitKeyValue(line);
     if (!kv) return line;
@@ -73,9 +75,12 @@ export function removeValue(valueToRemove: string, key: string) {
     const [k, v] = kv;
 
     if (k === key) {
-      const parts = v.split(';').filter(part => part !== valueToRemove);
+      const parts = v.split(separator).filter(part => {
+        const normalizedPart = path.normalize(part.trim()).toLowerCase();
+        return normalizedPart !== normalizedToRemove;
+      });
       updated = true;
-      return `${key}=${parts.join(';')}`;
+      return `${key}=${parts.join(separator)}`;
     }
 
     return line;
