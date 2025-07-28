@@ -261,7 +261,12 @@ export async function install(binFolder: string, id: string, io: Server): Promis
 
 export async function uninstall(binFolder: string): Promise<void> {
     const depFolder = path.join(binFolder, depName);
+    const cacheDir = path.join(binFolder, "cache", depName);
+
     if (fs.existsSync(depFolder)) {
+        logger.info(`Removing cache in ${cacheDir}...`);
+        fs.rmSync(cacheDir, { recursive: true, force: true });
+        logger.info(`Removing ${depName} folder in ${depFolder}...`);
         fs.rmSync(depFolder, { recursive: true, force: true });
         logger.info(`Removing ${depName} from environment variables...`);
         if (getOS() === "windows") {
