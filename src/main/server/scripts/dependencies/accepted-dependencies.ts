@@ -1,6 +1,7 @@
 import { Server } from 'socket.io';
 import * as git from './files/git';
 import * as conda from './files/conda';
+import * as uv from './files/uv';
 
 export const dependencyRegistry: Record<
   string,
@@ -14,5 +15,6 @@ export const dependencyRegistry: Record<
   }
 > = {
   git,
-  conda
+  conda,
+  uv
 };
