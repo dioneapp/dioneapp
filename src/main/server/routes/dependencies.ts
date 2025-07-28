@@ -1,10 +1,7 @@
-import { spawn } from "node:child_process";
-import fs from "node:fs";
 import path from "node:path";
 import express from "express";
 import type { Server } from "socket.io";
 import { readConfig } from "../../config";
-import { killProcess } from "../scripts/process";
 import logger from "../utils/logger";
 import { installDependency, inUseDependencies, uninstallDependency } from "../scripts/dependencies/dependencies";
 
