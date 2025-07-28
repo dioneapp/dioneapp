@@ -5,6 +5,7 @@ import https from "https";
 import type { Server } from "socket.io";
 import { getArch, getOS } from "../utils/system";
 import { addValue, getAllValues, removeValue } from "../environment";
+import logger from "../../../utils/logger";
 
 const depName = "git";
 const ENVIRONMENT = getAllValues();
@@ -218,7 +219,9 @@ export async function install(binFolder: string, id: string, io: Server): Promis
 export async function uninstall(binFolder: string): Promise<void> {
     const depFolder = path.join(binFolder, depName);
     if (fs.existsSync(depFolder)) {
+        logger.info(`Removing ${depName} folder in ${depFolder}...`);
         fs.rmSync(depFolder, { recursive: true, force: true });
+        logger.info(`Removing ${depName} from environment variables...`);
         if (getOS() === "windows") {
             removeValue(path.join(depFolder, "cmd"), "PATH");
         } else {
@@ -226,6 +229,8 @@ export async function uninstall(binFolder: string): Promise<void> {
             removeValue(path.join(depFolder, "libexec", "git-core"), "GIT_EXEC_PATH");
             removeValue(path.join(depFolder, "share", "git-core", "templates"), "GIT_TEMPLATE_DIR");
         }
+
+        logger.info(`${depName} uninstalled successfully`);
     } else {
         throw new Error(`Dependency ${depName} is not installed`);
     }
