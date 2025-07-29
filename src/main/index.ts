@@ -726,9 +726,9 @@ app.whenReady().then(async () => {
 			]);
 			const port = await startServer();
 			// refresh environment variables
-			if (os.platform() === "win32") {
-				refreshPathFromSystem();
-			}
+			// if (os.platform() === "win32") {
+			// 	refreshPathFromSystem();
+			// }
 			logger.info(`Backend restarted successfully on port ${port}`);
 			return port;
 		} catch (error) {
