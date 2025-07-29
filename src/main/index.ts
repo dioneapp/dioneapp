@@ -206,10 +206,15 @@ function createWindow() {
 	app.on('web-contents-created', (e, contents) => {
 		if (contents.getType() === 'webview') {
 			contents.setWindowOpenHandler((details) => {
-			shell.openExternal(details.url);
-			return { action: 'deny' };
+				shell.openExternal(details.url);
+				return { action: 'deny' };
 			});
 		}
+	});
+
+	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+		shell.openExternal(url);
+		return { action: 'deny' };
 	});
 
 	const gotTheLock = app.requestSingleInstanceLock();

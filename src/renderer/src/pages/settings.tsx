@@ -365,8 +365,8 @@ export default function Settings() {
 													/>
 												</button>
 											</div>
-											<div className="flex justify-between w-full items-center h-full space-y-2">
-												<div className="h-full flex items-start justify-center flex-col mt-auto">
+											<div className="flex justify-between w-full items-center h-full">
+												<div className="h-full flex items-start justify-center flex-col">
 													<label className="text-neutral-200 font-medium">
 														{t(
 															"settings.applications.deleteCache.label",
