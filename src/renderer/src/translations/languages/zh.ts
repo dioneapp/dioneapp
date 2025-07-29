@@ -164,7 +164,7 @@ export const zh = {
 				deleting: "正在删除...",
 				deleted: "已删除",
 				error: "错误",
-			}
+			},
 		},
 		interface: {
 			title: "界面",

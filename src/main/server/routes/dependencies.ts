@@ -2,8 +2,12 @@ import path from "node:path";
 import express from "express";
 import type { Server } from "socket.io";
 import { readConfig } from "../../config";
+import {
+	inUseDependencies,
+	installDependency,
+	uninstallDependency,
+} from "../scripts/dependencies/dependencies";
 import logger from "../utils/logger";
-import { installDependency, inUseDependencies, uninstallDependency } from "../scripts/dependencies/dependencies";
 
 export const createDependenciesRouter = (io: Server) => {
 	const router = express.Router();
@@ -24,8 +28,8 @@ export const createDependenciesRouter = (io: Server) => {
 	router.post("/install/:id", async (req, res) => {
 		const { id } = req.params;
 		const dependencies = Array.isArray(req.body?.dependencies)
-				? req.body.dependencies
-				: [];
+			? req.body.dependencies
+			: [];
 		if (dependencies.length === 0) {
 			res.json({ success: true });
 			return;

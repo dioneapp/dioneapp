@@ -172,7 +172,7 @@ export const ru = {
 				deleting: "Удаление...",
 				deleted: "Удалено",
 				error: "Ошибка",
-			}
+			},
 		},
 		interface: {
 			title: "Интерфейс",

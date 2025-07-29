@@ -171,7 +171,7 @@ export const id = {
 				deleting: "Menghapus...",
 				deleted: "Dihapus",
 				error: "Kesalahan",
-			}
+			},
 		},
 		interface: {
 			title: "Antarmuka",

@@ -168,7 +168,7 @@ export const hi = {
 				deleting: "हटाया जा रहा है...",
 				deleted: "हटाया गया",
 				error: "त्रुटि",
-			}
+			},
 		},
 		interface: {
 			title: "इंटरफ़ेस",

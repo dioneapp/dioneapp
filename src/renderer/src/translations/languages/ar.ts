@@ -166,7 +166,7 @@ export const ar = {
 				deleting: "جارٍ الحذف...",
 				deleted: "تم الحذف",
 				error: "خطأ",
-			}
+			},
 		},
 		interface: {
 			title: "الواجهة",
