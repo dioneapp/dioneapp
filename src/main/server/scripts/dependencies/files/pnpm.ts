@@ -145,9 +145,9 @@ export async function install(binFolder: string, id: string, io: Server): Promis
         });
 
         addValue("PATH", path.join(depFolder, 'pnpm.exe'));
-        addValue("XDG_CACHE_HOME", path.join(binFolder, "cache", depName));
-        addValue("XDG_STATE_HOME", path.join(binFolder, "state", depName));
-        addValue("XDG_DATA_HOME", path.join(binFolder, "cache", depName));
+        addValue("XDG_CACHE_HOME", path.join(binFolder, "cache", depName, "cache"));
+        addValue("XDG_STATE_HOME", path.join(binFolder, "cache", depName, "state"));
+        addValue("XDG_DATA_HOME", path.join(binFolder, "cache", depName, "data"));
         
         return { success: true };
     }
