@@ -7,7 +7,7 @@ export const zh = {
 		success: "成功",
 		pending: "待定",
 		back: "返回",
-		deselectAll: "取消选择所有",
+		unselectAll: "取消选择所有",
 		selectAll: "选择所有",
 	},
 

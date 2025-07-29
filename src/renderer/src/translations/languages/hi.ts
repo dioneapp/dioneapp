@@ -7,7 +7,7 @@ export const hi = {
 		success: "सफलता",
 		pending: "लंबित",
 		back: "वापस",
-		deselectAll: "सबको अचयनित करो",
+		unselectAll: "सबको अचयनित करो",
 		selectAll: "सबको चयनित करो",
 	},
 

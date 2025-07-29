@@ -7,7 +7,7 @@ export const pt = {
 		success: "Sucesso",
 		pending: "Pendente",
 		back: "Voltar",
-		deselectAll: "Deselecionar tudo",
+		unselectAll: "Deselecionar tudo",
 		selectAll: "Selecionar tudo",
 	},
 
