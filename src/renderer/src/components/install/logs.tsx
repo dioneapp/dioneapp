@@ -61,20 +61,22 @@ export default function LogsComponent({
 			transition={{ duration: 0.3 }}
 		>
 			<div className="w-full justify-end flex items-end mx-auto overflow-hidden">
-				<div className="w-52 h-12 rounded-t-xl border border-b-0 border-white/10 p-2 flex items-center justify-center">
+				<div className="max-w-80 min-w-32 h-12 rounded-t-xl border border-b-0 border-white/10 p-4 flex items-center justify-center">
 					<p
-						className={`text-xs ${statusLog[appId]?.status === "success" ? "text-green-400" : statusLog[appId]?.status === "error" ? "text-red-400" : statusLog[appId]?.status === "pending" || !statusLog[appId]?.status ? "text-orange-400" : "text-neutral-200"} flex items-center gap-2`}
+						className={`text-xs ${statusLog[appId]?.status === "success" ? "text-green-400" : statusLog[appId]?.status === "error" ? "text-red-400" : statusLog[appId]?.status === "pending" || !statusLog[appId]?.status ? "text-orange-400" : "text-neutral-200"} flex items-center gap-2 whitespace-nowrap overflow-hidden`}
 					>
 						{Spinner}
 						{statusLog[appId]?.status === "success" && (
-							<CheckCircle className="h-4 w-4" />
+							<CheckCircle className="h-4 w-4 flex-shrink-0" />
 						)}
 						{statusLog[appId]?.status === "error" && (
-							<XCircle className="h-4 w-4" />
+							<XCircle className="h-4 w-4 flex-shrink-0" />
 						)}
-						{statusLog[appId]?.content
-							? `${statusLog[appId]?.content}`
-							: t("logs.loading")}
+						<span className="truncate">
+							{statusLog[appId]?.content
+								? `${statusLog[appId]?.content}`
+								: t("logs.loading")}
+						</span>
 					</p>
 				</div>
 			</div>
