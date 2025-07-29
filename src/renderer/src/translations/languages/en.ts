@@ -171,7 +171,7 @@ export const en = {
 				deleting: "Deleting...",
 				deleted: "Deleted",
 				error: "Error",
-			}
+			},
 		},
 		interface: {
 			title: "Interface",

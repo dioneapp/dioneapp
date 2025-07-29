@@ -157,22 +157,23 @@ export default function IframeComponent({
 	const containerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-	const container = containerRef.current;
-	if (container && iframeSrc) {
-		container.innerHTML = '';
-		
-		// create webview
-		const webview = document.createElement('webview') as Electron.WebviewTag;
-		webview.setAttribute('allowpopups', '');
-		webview.id = 'iframe';
-		webview.style.width = '100%';
-		webview.style.height = '100%';
-		webview.style.border = '0';
-		webview.useragent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36';
-		
-		// custom scrollbar styles
-		webview.addEventListener('dom-ready', () => {
-			webview.insertCSS(`
+		const container = containerRef.current;
+		if (container && iframeSrc) {
+			container.innerHTML = "";
+
+			// create webview
+			const webview = document.createElement("webview") as Electron.WebviewTag;
+			webview.setAttribute("allowpopups", "");
+			webview.id = "iframe";
+			webview.style.width = "100%";
+			webview.style.height = "100%";
+			webview.style.border = "0";
+			webview.useragent =
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36";
+
+			// custom scrollbar styles
+			webview.addEventListener("dom-ready", () => {
+				webview.insertCSS(`
 				::-webkit-scrollbar {
 					width: 6px;
 				}
@@ -194,12 +195,11 @@ export default function IframeComponent({
 					background: rgba(255, 255, 255, 0.2);
 				}
 			`);
-		});
+			});
 
-
-		webview.src = iframeSrc;
-		container.appendChild(webview);
-	}
+			webview.src = iframeSrc;
+			container.appendChild(webview);
+		}
 	}, [iframeSrc]);
 
 	const handleOpenNewWindow = () => {
@@ -354,9 +354,9 @@ export default function IframeComponent({
 					</button>
 				)}
 
-				<div 
-				ref={containerRef}
-				style={{ width: "100%", height: "100%", border: 0 }}
+				<div
+					ref={containerRef}
+					style={{ width: "100%", height: "100%", border: 0 }}
 				/>
 			</motion.div>
 		</div>

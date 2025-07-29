@@ -172,7 +172,7 @@ export const es = {
 				deleting: "Eliminando...",
 				deleted: "Eliminado",
 				error: "Error",
-			}
+			},
 		},
 		interface: {
 			title: "Interfaz",

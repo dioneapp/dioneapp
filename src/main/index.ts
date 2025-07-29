@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import os from "node:os";
 import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
@@ -38,7 +39,6 @@ import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
 import { refreshPathFromSystem } from "./server/utils/refresh-env";
-import fs from "node:fs";
 
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
@@ -203,18 +203,18 @@ function createWindow() {
 		handleDeepLink(url);
 	});
 
-	app.on('web-contents-created', (e, contents) => {
-		if (contents.getType() === 'webview') {
+	app.on("web-contents-created", (e, contents) => {
+		if (contents.getType() === "webview") {
 			contents.setWindowOpenHandler((details) => {
 				shell.openExternal(details.url);
-				return { action: 'deny' };
+				return { action: "deny" };
 			});
 		}
 	});
 
 	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
 		shell.openExternal(url);
-		return { action: 'deny' };
+		return { action: "deny" };
 	});
 
 	const gotTheLock = app.requestSingleInstanceLock();
@@ -823,7 +823,7 @@ ipcMain.on("new-window", (_event, url) => {
 
 	previewWindow.webContents.setWindowOpenHandler(({ url }) => {
 		shell.openExternal(url);
-		return { action: 'deny' };
+		return { action: "deny" };
 	});
 
 	previewWindow.on("close", () => {

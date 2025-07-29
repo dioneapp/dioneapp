@@ -252,8 +252,20 @@ function createVirtualEnvCommands(
 
 	if (envType === "conda") {
 		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
-		const condaW = path.join(process.cwd(), "bin", "conda", "condabin", "conda.bat");
-		const condaU = path.join(process.cwd(), "bin", "conda", "condabin", "conda");
+		const condaW = path.join(
+			process.cwd(),
+			"bin",
+			"conda",
+			"condabin",
+			"conda.bat",
+		);
+		const condaU = path.join(
+			process.cwd(),
+			"bin",
+			"conda",
+			"condabin",
+			"conda",
+		);
 		if (isWindows) {
 			return [
 				`if not exist "${envPath}" (${condaW} create -p "${envPath}" ${pythonArg} -y)`,

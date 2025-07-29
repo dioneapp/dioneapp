@@ -45,17 +45,23 @@ export default function MissingDepsModal({
 				const port = await getCurrentPort();
 				socket = io(`http://localhost:${port}`);
 
-				socket.on("installDep", (message: { type: string; content: string }) => {
-					if (message.type === "log") {
-						setLogs((prevLogs) => [...prevLogs, message.content]);
-					} else if (message.type === "status") {
-						setLogs((prevLogs) => [...prevLogs, message.content]);
-					}
-					if (message.type === "error" || message.content.toLowerCase().includes("error")) {
-						setLogs((prevLogs) => [...prevLogs, `ERROR: ${message.content}`]);
-						setError(message.content);
-					}
-				});
+				socket.on(
+					"installDep",
+					(message: { type: string; content: string }) => {
+						if (message.type === "log") {
+							setLogs((prevLogs) => [...prevLogs, message.content]);
+						} else if (message.type === "status") {
+							setLogs((prevLogs) => [...prevLogs, message.content]);
+						}
+						if (
+							message.type === "error" ||
+							message.content.toLowerCase().includes("error")
+						) {
+							setLogs((prevLogs) => [...prevLogs, `ERROR: ${message.content}`]);
+							setError(message.content);
+						}
+					},
+				);
 
 				socket.on("connect", () => {
 					console.log("Connected to socket:", socket.id);

@@ -222,7 +222,7 @@ export const executeCommand = async (
 
 	try {
 		processWasCancelled = false;
-		
+
 		// // if active process exists, kill it (disabled for multiple apps)
 		// await stopActiveProcess(io, id);
 

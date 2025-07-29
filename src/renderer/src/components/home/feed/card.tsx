@@ -1,4 +1,12 @@
-import { BadgeCheck, Calendar, Download, GitCommitVertical, GitCompare, Tag, Trash } from "lucide-react";
+import {
+	BadgeCheck,
+	Calendar,
+	Download,
+	GitCommitVertical,
+	GitCompare,
+	Tag,
+	Trash,
+} from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
 import type { Script } from "./types";
@@ -71,24 +79,24 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 							</p>
 						</div>
 					</div>
-				{deleteScript && (
-					<div className="absolute right-4 top-5">
-						<button
-							onClick={(e) => {
-								e.preventDefault();
-								e.stopPropagation(); // prevents redirect
-								deleteScript(script.name);
-							}}
-							type="button"
-							className="opacity-0 group-hover:opacity-100 cursor-pointer hover:bg-red-500/50 border border-white/20 rounded-full p-2 transition-all duration-200"
-							style={{
-								zIndex: 9999,
-							}}
-						>
-							<Trash className="h-4 w-4" />
-						</button>
-					</div>
-				)}
+					{deleteScript && (
+						<div className="absolute right-4 top-5">
+							<button
+								onClick={(e) => {
+									e.preventDefault();
+									e.stopPropagation(); // prevents redirect
+									deleteScript(script.name);
+								}}
+								type="button"
+								className="opacity-0 group-hover:opacity-100 cursor-pointer hover:bg-red-500/50 border border-white/20 rounded-full p-2 transition-all duration-200"
+								style={{
+									zIndex: 9999,
+								}}
+							>
+								<Trash className="h-4 w-4" />
+							</button>
+						</div>
+					)}
 				</div>
 				{!script.isLocal && (
 					<div className="flex items-center w-full">
@@ -99,7 +107,7 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 									{new Date(script.created_at).toLocaleDateString()}
 								</span>
 							)}
-							{script.downloads !== 0 && script.downloads	 && (
+							{script.downloads !== 0 && script.downloads && (
 								<span className="text-[10px] text-neutral-400 bg-black/20 rounded px-2 p-0.5 border border-white/10 group-hover:border-white/15 flex items-center justify-center my-auto gap-1">
 									<Download className="inline h-3 w-3" />
 									{script.downloads}
@@ -119,8 +127,7 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 							)}
 							{script.version && (
 								<span className="text-[10px] text-neutral-400 bg-black/20 rounded px-2 p-0.5 border border-white/10 group-hover:border-white/15 flex items-center justify-center my-auto gap-1">
-									<GitCompare className="inline h-3 w-3" />
-									v{script.version}
+									<GitCompare className="inline h-3 w-3" />v{script.version}
 								</span>
 							)}
 						</div>

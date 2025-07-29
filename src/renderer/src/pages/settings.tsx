@@ -1,5 +1,6 @@
 import { useAuthContext } from "@renderer/components/contexts/AuthContext";
 import { useScriptsContext } from "@renderer/components/contexts/ScriptsContext";
+import AnimatedCount from "@renderer/utils/animate-count";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { joinPath } from "@renderer/utils/path";
 import { AnimatePresence, motion } from "framer-motion";
@@ -8,7 +9,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
 import { openFolder, openLink } from "../utils/openLink";
-import AnimatedCount from "@renderer/utils/animate-count";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -134,7 +134,9 @@ export default function Settings() {
 	const navigate = useNavigate();
 
 	const [cacheSize, setCacheSize] = useState<number | null>(null);
-	const [deleteCacheStatus, setDeleteCacheStatus] = useState<string | null>(null);
+	const [deleteCacheStatus, setDeleteCacheStatus] = useState<string | null>(
+		null,
+	);
 
 	useEffect(() => {
 		const fetchPort = async () => {
@@ -163,12 +165,13 @@ export default function Settings() {
 	}, []);
 
 	async function fetchCacheSize() {
-		window.electron.ipcRenderer.invoke("check-folder-size")
-			.then(size => setCacheSize(size || 0))
-			.catch(error => {
+		window.electron.ipcRenderer
+			.invoke("check-folder-size")
+			.then((size) => setCacheSize(size || 0))
+			.catch((error) => {
 				console.error("Error loading cache size:", error);
 				setCacheSize(0);
-		});
+			});
 	}
 
 	async function fetchConfig() {
@@ -368,37 +371,49 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full">
 												<div className="h-full flex items-start justify-center flex-col">
 													<label className="text-neutral-200 font-medium">
-														{t(
-															"settings.applications.deleteCache.label",
-														)}
+														{t("settings.applications.deleteCache.label")}
 													</label>
 													<p className="text-xs text-neutral-400 w-80">
-														{t(
-															"settings.applications.deleteCache.description",
-														)}
+														{t("settings.applications.deleteCache.description")}
 													</p>
 												</div>
 												<div className="flex flex-col gap-2 group">
-												<button
-													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full enabled:hover:bg-white/80 disabled:bg-white/80 transition-colors enabled:cursor-pointer flex gap-2 items-center justify-center"
-													type="button"
-													onClick={handleDeleteCache}
-													disabled={deleteCacheStatus === "deleting"}
-												>
-													<Trash2 className="w-4 h-4" />
-													{deleteCacheStatus === null ? (
-														<span>{t("settings.applications.deleteCache.button")}</span>
-													) : (
-														<span className={`${deleteCacheStatus === "deleted" ? "text-green-700" : deleteCacheStatus === "error" ? "text-red-500" : "text-orange-500"}`}>{deleteCacheStatus === "deleting" ? t("settings.applications.deleteCache.deleting") : deleteCacheStatus === "deleted" ? t("settings.applications.deleteCache.deleted") : t("settings.applications.deleteCache.error")}</span>
-													)}
-													<div className="flex gap-0 items-center justify-center text-xs bg-black/20 rounded-full font-mono px-2">
-														<AnimatedCount
-														value={cacheSize || 0}
-														suffix="GB"
-														className="text-black text-right"
-														/>
-													</div>
-												</button>
+													<button
+														className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full enabled:hover:bg-white/80 disabled:bg-white/80 transition-colors enabled:cursor-pointer flex gap-2 items-center justify-center"
+														type="button"
+														onClick={handleDeleteCache}
+														disabled={deleteCacheStatus === "deleting"}
+													>
+														<Trash2 className="w-4 h-4" />
+														{deleteCacheStatus === null ? (
+															<span>
+																{t("settings.applications.deleteCache.button")}
+															</span>
+														) : (
+															<span
+																className={`${deleteCacheStatus === "deleted" ? "text-green-700" : deleteCacheStatus === "error" ? "text-red-500" : "text-orange-500"}`}
+															>
+																{deleteCacheStatus === "deleting"
+																	? t(
+																			"settings.applications.deleteCache.deleting",
+																		)
+																	: deleteCacheStatus === "deleted"
+																		? t(
+																				"settings.applications.deleteCache.deleted",
+																			)
+																		: t(
+																				"settings.applications.deleteCache.error",
+																			)}
+															</span>
+														)}
+														<div className="flex gap-0 items-center justify-center text-xs bg-black/20 rounded-full font-mono px-2">
+															<AnimatedCount
+																value={cacheSize || 0}
+																suffix="GB"
+																className="text-black text-right"
+															/>
+														</div>
+													</button>
 												</div>
 											</div>
 										</div>

@@ -167,12 +167,13 @@ export const fr = {
 			},
 			deleteCache: {
 				label: "Supprimer le cache",
-				description: "Supprimer toutes les données mises en cache des applications",
+				description:
+					"Supprimer toutes les données mises en cache des applications",
 				button: "Supprimer le cache",
 				deleting: "Suppression en cours...",
 				deleted: "Supprimé",
 				error: "Erreur",
-			}
+			},
 		},
 		interface: {
 			title: "Interface",

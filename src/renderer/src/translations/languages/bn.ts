@@ -167,7 +167,7 @@ export const bn = {
 				deleting: "মুছে ফেলা হচ্ছে...",
 				deleted: "মুছে ফেলা হয়েছে",
 				error: "ত্রুটি",
-			}
+			},
 		},
 		interface: {
 			title: "ইন্টারফেস",
