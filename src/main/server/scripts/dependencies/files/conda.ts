@@ -202,6 +202,7 @@ export async function install(binFolder: string, id: string, io: Server): Promis
                     // update environment variables
                     const cacheDir = path.join(binFolder, "cache", depName);
                     addValue("CONDA_PKGS_DIRS", cacheDir);
+                    addValue("CONDA_ENVS_PATH", cacheDir);
                     addValue(
                         "CONDA_EXE",
                         platform === "windows"
@@ -210,6 +211,9 @@ export async function install(binFolder: string, id: string, io: Server): Promis
                     );
                     addValue("PATH", path.join(depFolder));
                     addValue("PATH", path.join(depFolder, 'Scripts'));
+                    addValue("CONDA_ROOT", path.join(depFolder));
+                    addValue("CONDARC", path.join(depFolder, ".condarc"));
+                    addValue("CONDA_NO_USER_CONFIG", "1");
 
                     try {
                         // execute conda init
@@ -277,6 +281,10 @@ export async function uninstall(binFolder: string): Promise<void> {
         removeValue(path.join(depFolder, "Library", "bin"), "PATH");
         removeValue("CONDA_PKGS_DIRS", path.join(binFolder, "cache"));
         removeValue("CONDA_EXE", path.join(depFolder, "Scripts", "conda.exe"));
+        removeValue("CONDA_ROOT", depFolder);
+        removeValue("CONDA_ENVS_PATH", path.join(binFolder, "cache", depName));
+        removeValue("CONDA_NO_USER_CONFIG", "1");
+        removeValue("CONDARC", path.join(depFolder, ".condarc"));
 
         logger.info(`${depName} uninstalled successfully`);
     } else {
