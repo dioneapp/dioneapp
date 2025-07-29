@@ -7,7 +7,7 @@ export const fr = {
 		success: "Succès",
 		pending: "En attente",
 		back: "Retour",
-		deselectAll: "Désélectionner tout",
+		unselectAll: "Désélectionner tout",
 		selectAll: "Sélectionner tout",
 	},
 
