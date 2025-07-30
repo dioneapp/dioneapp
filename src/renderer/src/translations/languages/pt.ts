@@ -363,6 +363,19 @@ export const pt = {
 		upload: "Carregar script",
 		noScripts: "Nenhum script encontrado",
 		deleting: "Excluindo script, aguarde...",
+		uploadModal: {
+			title: "Carregar Script",
+			selectFile: "Clique para selecionar um arquivo",
+			selectedFile: "Arquivo Selecionado",
+			scriptName: "Nome do script",
+			scriptDescription: "Descrição do script (opcional)",
+			uploadFile: "Carregar Arquivo",
+			uploading: "Carregando...",
+			errors: {
+				uploadFailed: "Falha ao carregar o script. Por favor, tente novamente.",
+				uploadError: "Ocorreu um erro ao carregar o script.",
+			},
+		},
 	},
 
 	// feed component

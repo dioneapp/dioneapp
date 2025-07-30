@@ -355,6 +355,19 @@ export const en = {
 		upload: "Upload script",
 		noScripts: "No scripts found",
 		deleting: "Deleting script, please wait...",
+		uploadModal: {
+			title: "Upload Script",
+			selectFile: "Click to select a file",
+			selectedFile: "Selected File",
+			scriptName: "Script name",
+			scriptDescription: "Script description (optional)",
+			uploadFile: "Upload File",
+			uploading: "Uploading...",
+			errors: {
+				uploadFailed: "Failed to upload script. Please try again.",
+				uploadError: "An error occurred while uploading the script.",
+			},
+		},
 	},
 
 	// feed component

@@ -364,6 +364,19 @@ export const fr = {
 		upload: "Télécharger le script",
 		noScripts: "Aucun script trouvé",
 		deleting: "Suppression du script, veuillez patienter...",
+		uploadModal: {
+			title: "Télécharger le Script",
+			selectFile: "Cliquez pour sélectionner un fichier",
+			selectedFile: "Fichier Sélectionné",
+			scriptName: "Nom du script",
+			scriptDescription: "Description du script (optionnel)",
+			uploadFile: "Télécharger le Fichier",
+			uploading: "Téléchargement...",
+			errors: {
+				uploadFailed: "Échec du téléchargement du script. Veuillez réessayer.",
+				uploadError: "Une erreur s'est produite lors du téléchargement du script.",
+			},
+		},
 	},
 
 	// feed component

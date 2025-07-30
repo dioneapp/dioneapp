@@ -343,6 +343,19 @@ export const zh = {
 		upload: "上传脚本",
 		noScripts: "未找到脚本",
 		deleting: "正在删除脚本，请稍候...",
+		uploadModal: {
+			title: "上传脚本",
+			selectFile: "点击选择文件",
+			selectedFile: "已选择文件",
+			scriptName: "脚本名称",
+			scriptDescription: "脚本描述（可选）",
+			uploadFile: "上传文件",
+			uploading: "上传中...",
+			errors: {
+				uploadFailed: "上传脚本失败。请重试。",
+				uploadError: "上传脚本时发生错误。",
+			},
+		},
 	},
 
 	// feed component
