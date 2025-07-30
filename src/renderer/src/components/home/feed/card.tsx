@@ -102,9 +102,9 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 					<div className="flex items-center w-full">
 						<div className="flex items-center gap-2 flex-1">
 							{script.official && (
-								<span className="text-[10px] text-[#BCB1E7] bg-black/20 rounded px-2 p-0.5 border border-white/10 group-hover:border-white/15 flex items-center justify-center my-auto gap-1">
-									<BadgeCheck className="inline h-3 w-3" />
-									Official
+								<span className="text-[10px] font-medium text-white bg-gradient-to-r from-[#BCB1E7]/20 to-[#9A8FD1]/20 rounded px-2 p-0.5 border border-[#BCB1E7]/30 group-hover:border-[#BCB1E7]/50 group-hover:from-[#BCB1E7]/30 group-hover:to-[#9A8FD1]/30 flex items-center justify-center my-auto gap-1.5 transition-all duration-200 shadow-sm group-hover:shadow-md backdrop-blur-sm">
+									<BadgeCheck className="inline h-3 w-3 text-[#BCB1E7] drop-shadow-sm" />
+									<span className="bg-gradient-to-r from-[#BCB1E7] to-[#9A8FD1] bg-clip-text text-transparent font-semibold">Official</span>
 								</span>
 							)}
 							{script.created_at && (
