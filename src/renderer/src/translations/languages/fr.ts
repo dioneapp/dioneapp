@@ -374,7 +374,8 @@ export const fr = {
 			uploading: "Téléchargement...",
 			errors: {
 				uploadFailed: "Échec du téléchargement du script. Veuillez réessayer.",
-				uploadError: "Une erreur s'est produite lors du téléchargement du script.",
+				uploadError:
+					"Une erreur s'est produite lors du téléchargement du script.",
 			},
 		},
 	},
