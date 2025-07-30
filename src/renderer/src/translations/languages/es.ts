@@ -373,7 +373,8 @@ export const es = {
 			uploadFile: "Subir Archivo",
 			uploading: "Subiendo...",
 			errors: {
-				uploadFailed: "Error al subir el script. Por favor, inténtalo de nuevo.",
+				uploadFailed:
+					"Error al subir el script. Por favor, inténtalo de nuevo.",
 				uploadError: "Ocurrió un error al subir el script.",
 			},
 		},
