@@ -361,6 +361,19 @@ export const ru = {
 		upload: "Загрузить скрипт",
 		noScripts: "Скрипты не найдены",
 		deleting: "Удаление скрипта, подождите...",
+		uploadModal: {
+			title: "Загрузить Скрипт",
+			selectFile: "Нажмите, чтобы выбрать файл",
+			selectedFile: "Выбранный Файл",
+			scriptName: "Название скрипта",
+			scriptDescription: "Описание скрипта (необязательно)",
+			uploadFile: "Загрузить Файл",
+			uploading: "Загрузка...",
+			errors: {
+				uploadFailed: "Не удалось загрузить скрипт. Пожалуйста, попробуйте снова.",
+				uploadError: "Произошла ошибка при загрузке скрипта.",
+			},
+		},
 	},
 
 	// feed component

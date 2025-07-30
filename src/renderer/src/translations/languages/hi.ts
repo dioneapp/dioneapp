@@ -351,6 +351,19 @@ export const hi = {
 		upload: "स्क्रिप्ट अपलोड",
 		noScripts: "कोई स्क्रिप्ट नहीं मिली",
 		deleting: "स्क्रिप्ट हटा रहे हैं, कृपया प्रतीक्षा करें...",
+		uploadModal: {
+			title: "स्क्रिप्ट अपलोड",
+			selectFile: "फ़ाइल चुनने के लिए क्लिक करें",
+			selectedFile: "चयनित फ़ाइल",
+			scriptName: "स्क्रिप्ट का नाम",
+			scriptDescription: "स्क्रिप्ट का विवरण (वैकल्पिक)",
+			uploadFile: "फ़ाइल अपलोड",
+			uploading: "अपलोड हो रहा है...",
+			errors: {
+				uploadFailed: "स्क्रिप्ट अपलोड करने में विफल। कृपया पुनः प्रयास करें।",
+				uploadError: "स्क्रिप्ट अपलोड करते समय त्रुटि हुई।",
+			},
+		},
 	},
 
 	// feed component

@@ -349,6 +349,19 @@ export const ar = {
 		upload: "تحميل السكربت",
 		noScripts: "لم يتم العثور على برامج نصية",
 		deleting: "جاري حذف السكربت، يرجى الانتظار...",
+		uploadModal: {
+			title: "تحميل النص البرمجي",
+			selectFile: "انقر لاختيار ملف",
+			selectedFile: "الملف المحدد",
+			scriptName: "اسم النص البرمجي",
+			scriptDescription: "وصف النص البرمجي (اختياري)",
+			uploadFile: "تحميل الملف",
+			uploading: "جاري التحميل...",
+			errors: {
+				uploadFailed: "فشل في تحميل النص البرمجي. يرجى المحاولة مرة أخرى.",
+				uploadError: "حدث خطأ أثناء تحميل النص البرمجي.",
+			},
+		},
 	},
 
 	// feed component

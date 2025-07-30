@@ -360,6 +360,19 @@ export const id = {
 		upload: "Unggah Skrip",
 		noScripts: "Tidak ada skrip ditemukan",
 		deleting: "Menghapus skrip, harap tunggu...",
+		uploadModal: {
+			title: "Unggah Skrip",
+			selectFile: "Klik untuk memilih file",
+			selectedFile: "File Dipilih",
+			scriptName: "Nama skrip",
+			scriptDescription: "Deskripsi skrip (opsional)",
+			uploadFile: "Unggah File",
+			uploading: "Mengunggah...",
+			errors: {
+				uploadFailed: "Gagal mengunggah skrip. Silakan coba lagi.",
+				uploadError: "Terjadi kesalahan saat mengunggah skrip.",
+			},
+		},
 	},
 
 	// feed component
