@@ -41,13 +41,13 @@ export default function LocalScripts() {
 
 	const deleteScript = async (name: string) => {
 		const port = await getCurrentPort();
-		
+
 		addToast({
 			variant: "default",
 			children: t("local.deleting"),
 			fixed: "true",
 		});
-		
+
 		await fetch(
 			`http://localhost:${port}/local/delete/${encodeURIComponent(name)}`,
 			{

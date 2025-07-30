@@ -1,5 +1,5 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
-import { X, FileText } from "lucide-react";
+import { FileText, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 
@@ -53,11 +53,14 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 	};
 
 	return (
-		<div className="fixed inset-0 flex items-center justify-center bg-black/95 p-4 backdrop-blur-3xl" style={{ zIndex: 100 }}>
+		<div
+			className="fixed inset-0 flex items-center justify-center bg-black/95 p-4 backdrop-blur-3xl"
+			style={{ zIndex: 100 }}
+		>
 			<div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl w-full backdrop-blur-md">
 				<div className="absolute top-0 left-0.5/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-10" />
 				<div className="absolute -top-10 -left-14 bg-[#BCB1E7] blur-3xl max-w-64 w-full h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" />
-				
+
 				<div className="flex justify-between w-full items-center relative z-20">
 					<h2 className="font-semibold text-xl flex items-center justify-center">
 						{t("local.uploadModal.title")}
@@ -80,13 +83,19 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 						>
 							{scriptFile ? (
 								<div className="text-center">
-									<div className="text-white font-medium mb-2">{t("local.uploadModal.selectedFile")}</div>
-									<div className="text-xs text-neutral-400 break-all">{scriptFile}</div>
+									<div className="text-white font-medium mb-2">
+										{t("local.uploadModal.selectedFile")}
+									</div>
+									<div className="text-xs text-neutral-400 break-all">
+										{scriptFile}
+									</div>
 								</div>
 							) : (
 								<div className="text-center">
 									<FileText className="h-8 w-8 mx-auto mb-3 text-white/60" />
-									<div className="text-white mb-1">{t("local.uploadModal.selectFile")}</div>
+									<div className="text-white mb-1">
+										{t("local.uploadModal.selectFile")}
+									</div>
 								</div>
 							)}
 						</button>
@@ -134,7 +143,9 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 							className="flex items-center justify-center gap-2 px-4 py-2 text-sm bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							<span className="font-semibold">
-								{isUploading ? t("local.uploadModal.uploading") : t("local.uploadModal.uploadFile")}
+								{isUploading
+									? t("local.uploadModal.uploading")
+									: t("local.uploadModal.uploadFile")}
 							</span>
 						</button>
 					</div>
