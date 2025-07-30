@@ -354,6 +354,7 @@ export const en = {
 		title: "Local scripts",
 		upload: "Upload script",
 		noScripts: "No scripts found",
+		deleting: "Deleting script, please wait...",
 	},
 
 	// feed component

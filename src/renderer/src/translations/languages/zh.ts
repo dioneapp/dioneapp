@@ -342,6 +342,7 @@ export const zh = {
 		title: "本地脚本",
 		upload: "上传脚本",
 		noScripts: "未找到脚本",
+		deleting: "正在删除脚本，请稍候...",
 	},
 
 	// feed component

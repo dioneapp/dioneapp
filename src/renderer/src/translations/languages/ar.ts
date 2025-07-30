@@ -348,6 +348,7 @@ export const ar = {
 		title: "السلاسل المحلية",
 		upload: "تحميل السكربت",
 		noScripts: "لم يتم العثور على برامج نصية",
+		deleting: "جاري حذف السكربت، يرجى الانتظار...",
 	},
 
 	// feed component

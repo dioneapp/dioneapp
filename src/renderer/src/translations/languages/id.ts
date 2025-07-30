@@ -359,6 +359,7 @@ export const id = {
 		title: "Skrip Lokal",
 		upload: "Unggah Skrip",
 		noScripts: "Tidak ada skrip ditemukan",
+		deleting: "Menghapus skrip, harap tunggu...",
 	},
 
 	// feed component

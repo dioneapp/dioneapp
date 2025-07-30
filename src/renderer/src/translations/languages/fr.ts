@@ -363,6 +363,7 @@ export const fr = {
 		title: "Scripts locaux",
 		upload: "Télécharger le script",
 		noScripts: "Aucun script trouvé",
+		deleting: "Suppression du script, veuillez patienter...",
 	},
 
 	// feed component
