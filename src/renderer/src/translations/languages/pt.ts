@@ -362,6 +362,7 @@ export const pt = {
 		title: "Scripts locais",
 		upload: "Carregar script",
 		noScripts: "Nenhum script encontrado",
+		deleting: "Excluindo script, aguarde...",
 	},
 
 	// feed component

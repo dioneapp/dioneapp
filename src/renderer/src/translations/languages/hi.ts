@@ -350,6 +350,7 @@ export const hi = {
 		title: "स्क्रिप्ट",
 		upload: "स्क्रिप्ट अपलोड",
 		noScripts: "कोई स्क्रिप्ट नहीं मिली",
+		deleting: "स्क्रिप्ट हटा रहे हैं, कृपया प्रतीक्षा करें...",
 	},
 
 	// feed component

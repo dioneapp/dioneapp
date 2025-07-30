@@ -360,6 +360,7 @@ export const ru = {
 		title: "Скрипты локально",
 		upload: "Загрузить скрипт",
 		noScripts: "Скрипты не найдены",
+		deleting: "Удаление скрипта, подождите...",
 	},
 
 	// feed component

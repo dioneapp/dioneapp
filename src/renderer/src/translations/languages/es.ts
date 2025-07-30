@@ -363,6 +363,7 @@ export const es = {
 		title: "Scripts locales",
 		upload: "Subir script",
 		noScripts: "No se encontraron scripts",
+		deleting: "Eliminando script, por favor espera...",
 	},
 
 	// feed component
