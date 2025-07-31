@@ -295,7 +295,7 @@ export const executeCommand = async (
 			}
 		});
 		activeProcess.stderr.on("data", (data: Buffer) => {
-			const text = data.toString("utf8").trim();
+			const text = data.toString("utf8").replace(/\r?\n$/, "");
 			if (text) {
 				stderrData += `${text}\n`;
 				if (text.match(/error|fatal|unexpected/i)) {
