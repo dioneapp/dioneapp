@@ -240,6 +240,7 @@ export async function install(
 					addValue("CONDA_ROOT", path.join(depFolder));
 					addValue("CONDARC", path.join(depFolder, ".condarc"));
 					addValue("CONDA_NO_USER_CONFIG", "1");
+					addValue("PIP_CACHE_DIR", path.join(binFolder, "cache", "pip"));
 
 					try {
 						// execute conda init
