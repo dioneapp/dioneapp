@@ -287,7 +287,7 @@ export const executeCommand = async (
 		});
 
 		activeProcess.stdout.on("data", (data: Buffer) => {
-			const text = data.toString("utf8").trim();
+			const text = data.toString("utf8").replace(/\r?\n$/, "");
 			if (text) {
 				stdoutData += `${text}\n`;
 				io.to(id).emit(logs, { type: "log", content: text });
