@@ -223,6 +223,7 @@ export async function install(
 					const cacheDir = path.join(binFolder, "cache", depName);
 					addValue("PATH", path.join(depFolder));
 					addValue("UV_CACHE_DIR", cacheDir);
+					addValue("PIP_CACHE_DIR", path.join(binFolder, "cache", "pip"));
 
 					resolve();
 				} else {
