@@ -69,7 +69,7 @@ export const createDependenciesRouter = (io: Server) => {
 	// 	};
 	// }
 
-	router.post("/uninstall", async (req, res) => {
+	router.post("/uninstall", async (req: express.Request, res: express.Response) => {
 		const selectedDeps = req.body.selectedDeps;
 		if (selectedDeps.length === 0) {
 			res.json({ success: true });
@@ -88,10 +88,9 @@ export const createDependenciesRouter = (io: Server) => {
 				res.json({ success: false, reasons: result.reasons });
 			}
 		}
-		res.json({ success: true });
 	});
 
-	router.post("/in-use", async (req, res) => {
+	router.post("/in-use", async (req: express.Request, res: express.Response) => {
 		const root = process.cwd();
 		const sanitizedName = req.body.dioneFile.replace(/\s+/g, "-");
 		const settings = readConfig();
@@ -101,6 +100,5 @@ export const createDependenciesRouter = (io: Server) => {
 		console.log(`Dependencies in use: ${result}`);
 		res.json({ result: result });
 	});
-
 	return router;
 };
