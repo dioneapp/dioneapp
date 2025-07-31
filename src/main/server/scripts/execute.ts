@@ -280,7 +280,7 @@ function createVirtualEnvCommands(
 	}
 
 	// default uv env
-	if (isWindows) {
+	if (isWindows && envType !== "conda") {
 		const activateScript = path.join(envPath, "Scripts", "activate");
 		const deactivateScript = path.join(envPath, "Scripts", "deactivate.bat");
 		return [
