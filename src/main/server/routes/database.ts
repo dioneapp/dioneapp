@@ -9,15 +9,20 @@ router.use(express.json());
 // generate gradients for logo if is null
 function generateGradient(input: string): string {
 	if (!input) return "";
-	const hash =
-		[...input].reduce((a, c) => c.charCodeAt(0) + ((a << 5) - a), 0) >>> 0;
-	// biome-ignore lint/style/useSingleVarDeclarator: Here we seek the least amount of code possible.
-	const h1 = hash % 360,
-		h2 = (hash * 3) % 360;
-	// biome-ignore lint/style/useSingleVarDeclarator: Here we seek the least amount of code possible.
-	const c1 = `hsl(${h1},70%,50%)`,
-		c2 = `hsl(${h2},70%,70%)`;
-	return `linear-gradient(${hash % 360}deg, ${c1}, ${c2})`;
+
+	let hash = 2166136261;
+	for (let i = 0; i < input.length; i++) {
+		hash ^= input.charCodeAt(i);
+		hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+	}
+	hash >>>= 0;
+
+	const hue = hash % 360;
+	const hue2 = (hue + 20 + (hash % 10)) % 360;
+	const c1 = `hsl(${hue}, 60%, 50%)`;
+	const c2 = `hsl(${hue2}, 60%, 70%)`;
+
+	return `linear-gradient(135deg, ${c1}, ${c2})`;
 }
 
 // auth
