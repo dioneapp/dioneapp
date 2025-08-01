@@ -5,6 +5,7 @@ import * as git from "./files/git";
 import * as node from "./files/node";
 import * as pnpm from "./files/pnpm";
 import * as uv from "./files/uv";
+import * as build_tools from "./files/build_tools";
 
 export const dependencyRegistry: Record<
 	string,
@@ -27,4 +28,5 @@ export const dependencyRegistry: Record<
 	ffmpeg,
 	node,
 	pnpm,
+	build_tools,
 };
