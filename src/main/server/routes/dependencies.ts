@@ -69,36 +69,42 @@ export const createDependenciesRouter = (io: Server) => {
 	// 	};
 	// }
 
-	router.post("/uninstall", async (req: express.Request, res: express.Response) => {
-		const selectedDeps = req.body.selectedDeps;
-		if (selectedDeps.length === 0) {
-			res.json({ success: true });
-			return;
-		}
-		const result = await uninstallDependency(selectedDeps, io);
-		if (result.success) {
-			res.json({ success: true });
-		} else {
-			if (
-				result?.reasons?.length === 1 &&
-				result?.reasons[0] === "not-installed"
-			) {
+	router.post(
+		"/uninstall",
+		async (req: express.Request, res: express.Response) => {
+			const selectedDeps = req.body.selectedDeps;
+			if (selectedDeps.length === 0) {
+				res.json({ success: true });
+				return;
+			}
+			const result = await uninstallDependency(selectedDeps, io);
+			if (result.success) {
 				res.json({ success: true });
 			} else {
-				res.json({ success: false, reasons: result.reasons });
+				if (
+					result?.reasons?.length === 1 &&
+					result?.reasons[0] === "not-installed"
+				) {
+					res.json({ success: true });
+				} else {
+					res.json({ success: false, reasons: result.reasons });
+				}
 			}
-		}
-	});
+		},
+	);
 
-	router.post("/in-use", async (req: express.Request, res: express.Response) => {
-		const root = process.cwd();
-		const sanitizedName = req.body.dioneFile.replace(/\s+/g, "-");
-		const settings = readConfig();
-		const dioneFile = `${path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName, "dione.json")}`;
-		const result = await inUseDependencies(dioneFile);
+	router.post(
+		"/in-use",
+		async (req: express.Request, res: express.Response) => {
+			const root = process.cwd();
+			const sanitizedName = req.body.dioneFile.replace(/\s+/g, "-");
+			const settings = readConfig();
+			const dioneFile = `${path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName, "dione.json")}`;
+			const result = await inUseDependencies(dioneFile);
 
-		console.log(`Dependencies in use: ${result}`);
-		res.json({ result: result });
-	});
+			console.log(`Dependencies in use: ${result}`);
+			res.json({ result: result });
+		},
+	);
 	return router;
 };

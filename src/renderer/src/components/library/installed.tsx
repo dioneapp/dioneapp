@@ -18,7 +18,7 @@ export default function Installed() {
 		const getApps = async () => {
 			if (!installedApps || installedApps.length === 0) return;
 			setApps([]);
-			
+
 			try {
 				const port = await getCurrentPort();
 				const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
@@ -35,7 +35,7 @@ export default function Installed() {
 
 				if (appsToFetch.length > 0) {
 					const allAppsData: any[] = [];
-					
+
 					await Promise.all(
 						appsToFetch.map((app) =>
 							fetch(
@@ -48,7 +48,7 @@ export default function Installed() {
 								}),
 						),
 					);
-					
+
 					setApps(allAppsData);
 				}
 			} catch (error) {
