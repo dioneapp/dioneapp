@@ -60,8 +60,8 @@ export async function install(
 
 	const urls: Record<string, Record<string, string>> = {
 		windows: {
-			amd64:"https://aka.ms/vs/17/release/vs_BuildTools.exe",
-            arm64: "https://aka.ms/vs/17/release/vs_BuildTools.exe",
+			amd64: "https://aka.ms/vs/17/release/vs_BuildTools.exe",
+			arm64: "https://aka.ms/vs/17/release/vs_BuildTools.exe",
 			x86: "https://aka.ms/vs/17/release/vs_BuildTools.exe",
 		},
 	};
@@ -132,20 +132,17 @@ export async function install(
 		content: `Running installer for ${depName}...`,
 	});
 
-	const exe = path.join(
-		tempDir,
-		`build_tools.exe`,
-	);
+	const exe = path.join(tempDir, `build_tools.exe`);
 	const commands: Record<string, { file: string; args: string[] }> = {
 		windows: {
 			file: exe,
 			args: [
 				`--installPath ${depFolder}`,
-                "--quiet",
-                "--wait",
-                "--norestart",
-                "--includeRecommended",
-                "--nocache"
+				"--quiet",
+				"--wait",
+				"--norestart",
+				"--includeRecommended",
+				"--nocache",
 			],
 		},
 	};
@@ -232,32 +229,32 @@ export async function uninstall(binFolder: string): Promise<void> {
 	if (fs.existsSync(depFolder)) {
 		logger.info(`Removing ${depName} folder in ${depFolder}...`);
 		try {
-            await new Promise<void>((resolve, reject) => {
-                const child = spawn("powershell", [
-                    "-Command", 
-                    `Start-Process -FilePath "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vs_installer.exe" -ArgumentList "uninstall","--installPath","${depFolder}","--quiet","--nocache" -Verb RunAs -Wait`
-                ]);
+			await new Promise<void>((resolve, reject) => {
+				const child = spawn("powershell", [
+					"-Command",
+					`Start-Process -FilePath "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vs_installer.exe" -ArgumentList "uninstall","--installPath","${depFolder}","--quiet","--nocache" -Verb RunAs -Wait`,
+				]);
 
-                child.stdout.on("data", (data) => {
-                    logger.info(data.toString());
-                });
+				child.stdout.on("data", (data) => {
+					logger.info(data.toString());
+				});
 
-                child.stderr.on("data", (data) => {
-                    logger.error(`Error during uninstallation: ${data.toString()}`);
-                });
+				child.stderr.on("data", (data) => {
+					logger.error(`Error during uninstallation: ${data.toString()}`);
+				});
 
-                child.on("close", (code) => {
-                    console.log(`Installer exited with code ${code}`);
-                    if (code === 0) {
-                        resolve();
-                    } else {
-                        reject(new Error(`Installer exited with code ${code}`));
-                    }
-                });
-            });
-        } catch (error) {
-            logger.error(`Error running installer for ${depName}:`, error);
-        }
+				child.on("close", (code) => {
+					console.log(`Installer exited with code ${code}`);
+					if (code === 0) {
+						resolve();
+					} else {
+						reject(new Error(`Installer exited with code ${code}`));
+					}
+				});
+			});
+		} catch (error) {
+			logger.error(`Error running installer for ${depName}:`, error);
+		}
 		logger.info(`Removing ${depName} from environment variables...`);
 		removeValue(path.join(depFolder, "MSBuild", "Current", "Bin"), "PATH");
 

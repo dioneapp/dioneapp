@@ -1,229 +1,241 @@
-import type React from "react"
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 import {
-  AlertCircle,
-  AlertTriangle,
-  CheckCircle,
-  Copy,
-  Dot,
-  ExternalLink,
-  Info,
-  Loader2,
-  Square,
-  XCircle,
-} from "lucide-react"
-import type { JSX } from "react"
-import { useMemo } from "react"
-import { useTranslation } from "../../translations/translationContext"
-import { useScriptsContext } from "../contexts/ScriptsContext"
+	AlertCircle,
+	AlertTriangle,
+	CheckCircle,
+	Copy,
+	Dot,
+	ExternalLink,
+	Info,
+	Loader2,
+	Square,
+	XCircle,
+} from "lucide-react";
+import type React from "react";
+import type { JSX } from "react";
+import { useMemo } from "react";
+import { useTranslation } from "../../translations/translationContext";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 
 interface LogsProps {
-  logs: Record<string, string[]>
-  copyLogsToClipboard: () => void
-  handleStop: () => void
-  iframeAvailable: boolean
-  setShow: React.Dispatch<React.SetStateAction<Record<string, string>>>
-  appId: string
+	logs: Record<string, string[]>;
+	copyLogsToClipboard: () => void;
+	handleStop: () => void;
+	iframeAvailable: boolean;
+	setShow: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+	appId: string;
 }
 
 export default function LogsComponent({
-  logs,
-  copyLogsToClipboard,
-  handleStop,
-  iframeAvailable,
-  setShow,
-  appId,
+	logs,
+	copyLogsToClipboard,
+	handleStop,
+	iframeAvailable,
+	setShow,
+	appId,
 }: LogsProps) {
-  const { statusLog } = useScriptsContext()
-  const { t } = useTranslation()
+	const { statusLog } = useScriptsContext();
+	const { t } = useTranslation();
 
-  const Spinner = useMemo(() => {
-    if (statusLog[appId]?.status === "pending" || !statusLog[appId]?.status) {
-      return <Loader2 className="h-4 w-4 animate-spin" />
-    }
-    return null
-  }, [statusLog[appId]?.status])
+	const Spinner = useMemo(() => {
+		if (statusLog[appId]?.status === "pending" || !statusLog[appId]?.status) {
+			return <Loader2 className="h-4 w-4 animate-spin" />;
+		}
+		return null;
+	}, [statusLog[appId]?.status]);
 
-  function cleanLogLine(log: string): string {
-    return log
-      .replace(/\x1B\[[0-9;]*[a-zA-Z]/g, "")
-      .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, "")
-      .replace(/^\s*\[[^\]]*\]\s*/, "")
-      .replace(/^\s*(ERROR:|WARN:|INFO:|OUT:)\s*/i, "")
-      .trim()
-  }
+	function cleanLogLine(log: string): string {
+		return log
+			.replace(/\x1B\[[0-9;]*[a-zA-Z]/g, "")
+			.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F-\u009F]/g, "")
+			.replace(/^\s*\[[^\]]*\]\s*/, "")
+			.replace(/^\s*(ERROR:|WARN:|INFO:|OUT:)\s*/i, "")
+			.trim();
+	}
 
-  // detect spinner patterns in logs
-  function isSpinnerLine(log: string): boolean {
-    const cleaned = cleanLogLine(log)
-    const spinnerPatterns = [
-      /^[\\|/-]+\s*$/, 
-      /^[\\|/-]\s+.*$/,
-      /.*[\\|/-]\s*$/,
-      /^[\s]*[\\|/-][\s]*[\\|/-][\s]*$/, 
-    ]
+	// detect spinner patterns in logs
+	function isSpinnerLine(log: string): boolean {
+		const cleaned = cleanLogLine(log);
+		const spinnerPatterns = [
+			/^[\\|/-]+\s*$/,
+			/^[\\|/-]\s+.*$/,
+			/.*[\\|/-]\s*$/,
+			/^[\s]*[\\|/-][\s]*[\\|/-][\s]*$/,
+		];
 
-    return spinnerPatterns.some((pattern) => pattern.test(cleaned))
-  }
+		return spinnerPatterns.some((pattern) => pattern.test(cleaned));
+	}
 
-  function processLogs(rawLogs: string[]): string[] {
-    if (!rawLogs || rawLogs.length === 0) return []
+	function processLogs(rawLogs: string[]): string[] {
+		if (!rawLogs || rawLogs.length === 0) return [];
 
-    const processedLogs: string[] = []
+		const processedLogs: string[] = [];
 
-    for (let i = 0; i < rawLogs.length; i++) {
-      const currentLog = rawLogs[i]
-      const cleanedCurrentLog = cleanLogLine(currentLog)
+		for (let i = 0; i < rawLogs.length; i++) {
+			const currentLog = rawLogs[i];
+			const cleanedCurrentLog = cleanLogLine(currentLog);
 
-      // ignore empty or whitespace-only logs
-      if (!cleanedCurrentLog || cleanedCurrentLog.trim() === "") {
-        continue
-      }
+			// ignore empty or whitespace-only logs
+			if (!cleanedCurrentLog || cleanedCurrentLog.trim() === "") {
+				continue;
+			}
 
-      const isCurrentSpinner = isSpinnerLine(currentLog)
-      if (isCurrentSpinner && processedLogs.length > 0) {
-        const lastIndex = processedLogs.length - 1
-        const lastLog = processedLogs[lastIndex]
+			const isCurrentSpinner = isSpinnerLine(currentLog);
+			if (isCurrentSpinner && processedLogs.length > 0) {
+				const lastIndex = processedLogs.length - 1;
+				const lastLog = processedLogs[lastIndex];
 
-        if (isSpinnerLine(lastLog)) {
-          // if spinner, replace the last log
-          processedLogs[lastIndex] = currentLog
-        } else {
-          // if not a spinner, just add the current log
-          processedLogs.push(currentLog)
-        }
-      } else {
-        processedLogs.push(currentLog)
-      }
-    }
+				if (isSpinnerLine(lastLog)) {
+					// if spinner, replace the last log
+					processedLogs[lastIndex] = currentLog;
+				} else {
+					// if not a spinner, just add the current log
+					processedLogs.push(currentLog);
+				}
+			} else {
+				processedLogs.push(currentLog);
+			}
+		}
 
-    return processedLogs
-  }
+		return processedLogs;
+	}
 
-  const processedLogs = useMemo(() => {
-    return processLogs(logs?.[appId] || [])
-  }, [logs, appId])
+	const processedLogs = useMemo(() => {
+		return processLogs(logs?.[appId] || []);
+	}, [logs, appId]);
 
-  return (
-    <motion.div
-      className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden"
-      key="logs"
-      initial={{ opacity: 0, height: 0, y: 20 }}
-      animate={{ opacity: 1, height: "auto", y: 0 }}
-      exit={{ opacity: 0, height: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="w-full justify-end flex items-end mx-auto overflow-hidden">
-        <div className="max-w-80 min-w-32 h-12 rounded-t-xl border border-b-0 border-white/10 p-4 flex items-center justify-center">
-          <p
-            className={`text-xs ${
-              statusLog[appId]?.status === "success"
-                ? "text-green-400"
-                : statusLog[appId]?.status === "error"
-                  ? "text-red-400"
-                  : statusLog[appId]?.status === "pending" || !statusLog[appId]?.status
-                    ? "text-orange-400"
-                    : "text-neutral-200"
-            } flex items-center gap-2 whitespace-nowrap overflow-hidden`}
-          >
-            {Spinner}
-            {statusLog[appId]?.status === "success" && <CheckCircle className="h-4 w-4 flex-shrink-0" />}
-            {statusLog[appId]?.status === "error" && <XCircle className="h-4 w-4 flex-shrink-0" />}
-            <span className="truncate">
-              {statusLog[appId]?.content ? `${statusLog[appId]?.content}` : t("logs.loading")}
-            </span>
-          </p>
-        </div>
-      </div>
-      <motion.div className="p-10 select-text rounded-tl-xl rounded-b-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/80 hide-scrollbar">
-        <div
-          id="logs"
-          className="flex flex-col mx-auto max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text text-wrap pb-4"
-          ref={(el) => {
-            if (el) {
-              el.scrollTop = el.scrollHeight
-            }
-          }}
-        >
-          {processedLogs.map((log, index) => {
-            const lowerLog = log.toLowerCase()
-            const cleanedLog = cleanLogLine(log)
-            const isSpinner = isSpinnerLine(log)
+	return (
+		<motion.div
+			className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden"
+			key="logs"
+			initial={{ opacity: 0, height: 0, y: 20 }}
+			animate={{ opacity: 1, height: "auto", y: 0 }}
+			exit={{ opacity: 0, height: 0, y: -20 }}
+			transition={{ duration: 0.3 }}
+		>
+			<div className="w-full justify-end flex items-end mx-auto overflow-hidden">
+				<div className="max-w-80 min-w-32 h-12 rounded-t-xl border border-b-0 border-white/10 p-4 flex items-center justify-center">
+					<p
+						className={`text-xs ${
+							statusLog[appId]?.status === "success"
+								? "text-green-400"
+								: statusLog[appId]?.status === "error"
+									? "text-red-400"
+									: statusLog[appId]?.status === "pending" ||
+											!statusLog[appId]?.status
+										? "text-orange-400"
+										: "text-neutral-200"
+						} flex items-center gap-2 whitespace-nowrap overflow-hidden`}
+					>
+						{Spinner}
+						{statusLog[appId]?.status === "success" && (
+							<CheckCircle className="h-4 w-4 flex-shrink-0" />
+						)}
+						{statusLog[appId]?.status === "error" && (
+							<XCircle className="h-4 w-4 flex-shrink-0" />
+						)}
+						<span className="truncate">
+							{statusLog[appId]?.content
+								? `${statusLog[appId]?.content}`
+								: t("logs.loading")}
+						</span>
+					</p>
+				</div>
+			</div>
+			<motion.div className="p-10 select-text rounded-tl-xl rounded-b-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/80 hide-scrollbar">
+				<div
+					id="logs"
+					className="flex flex-col mx-auto max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text text-wrap pb-4"
+					ref={(el) => {
+						if (el) {
+							el.scrollTop = el.scrollHeight;
+						}
+					}}
+				>
+					{processedLogs.map((log, index) => {
+						const lowerLog = log.toLowerCase();
+						const cleanedLog = cleanLogLine(log);
+						const isSpinner = isSpinnerLine(log);
 
-            let textColor = "text-neutral-400"
-            let symbol: JSX.Element | null = null
-            let bg = ""
-			const isLast = index === processedLogs.length - 1
+						let textColor = "text-neutral-400";
+						let symbol: JSX.Element | null = null;
+						let bg = "";
+						const isLast = index === processedLogs.length - 1;
 
-            if (lowerLog.includes("error")) {
-              textColor = "text-red-400"
-              symbol = <AlertCircle className="w-3 h-3" />
-              bg = "bg-red-500/10"
-            } else if (lowerLog.includes("warning")) {
-              textColor = "text-yellow-400"
-              symbol = <AlertTriangle className="w-3 h-3" />
-              bg = "bg-yellow-500/10"
-            } else if (lowerLog.includes("success")) {
-              textColor = "text-green-400"
-              symbol = <CheckCircle className="w-3 h-3" />
-              bg = "bg-green-500/10"
-            } else if (lowerLog.includes("info")) {
-              textColor = "text-blue-400"
-              symbol = <Info className="w-3 h-3" />
-              bg = "bg-blue-500/10"
-            } else {
-              symbol = isSpinner && isLast ? <Loader2 className="w-3 h-3 animate-spin" /> : <Dot className="w-3 h-3" />
-            }
+						if (lowerLog.includes("error")) {
+							textColor = "text-red-400";
+							symbol = <AlertCircle className="w-3 h-3" />;
+							bg = "bg-red-500/10";
+						} else if (lowerLog.includes("warning")) {
+							textColor = "text-yellow-400";
+							symbol = <AlertTriangle className="w-3 h-3" />;
+							bg = "bg-yellow-500/10";
+						} else if (lowerLog.includes("success")) {
+							textColor = "text-green-400";
+							symbol = <CheckCircle className="w-3 h-3" />;
+							bg = "bg-green-500/10";
+						} else if (lowerLog.includes("info")) {
+							textColor = "text-blue-400";
+							symbol = <Info className="w-3 h-3" />;
+							bg = "bg-blue-500/10";
+						} else {
+							symbol =
+								isSpinner && isLast ? (
+									<Loader2 className="w-3 h-3 animate-spin" />
+								) : (
+									<Dot className="w-3 h-3" />
+								);
+						}
 
-
-            return (
-              <motion.div
-                key={index}
-                className="w-full"
-              >
-                <div className={`flex items-center gap-2 py-1 px-2 ${bg} rounded-md w-full relative`}>
-                  <span className="flex items-center min-w-6">{symbol}</span>
-                  <pre className={`whitespace-pre-wrap break-words font-mono text-xs ${textColor} flex-1`}>
-                    {cleanedLog}
-                  </pre>
-                </div>
-                {!isLast && <div className="w-full h-px bg-white/5 my-1" />}
-              </motion.div>
-            )
-          })}
-        </div>
-        <div className="h-px w-full bg-white/10 mb-4" />
-        <div className="text-xs text-neutral-500 mt-4 mb-2 text-center max-w-sm mx-auto justify-center items-center flex">
-          {t("logs.disclaimer")}
-        </div>
-        <div className="absolute bottom-2 right-2">
-          <div className="flex gap-1.5">
-            {iframeAvailable && (
-              <button
-                type="button"
-                className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
-                onClick={() => setShow({ [appId]: "iframe" })}
-              >
-                <ExternalLink className="h-4 w-4" />
-              </button>
-            )}
-            <button
-              type="button"
-              className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
-              onClick={copyLogsToClipboard}
-            >
-              <Copy className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
-              onClick={handleStop}
-            >
-              <Square className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-      </motion.div>
-    </motion.div>
-  )
+						return (
+							<motion.div key={index} className="w-full">
+								<div
+									className={`flex items-center gap-2 py-1 px-2 ${bg} rounded-md w-full relative`}
+								>
+									<span className="flex items-center min-w-6">{symbol}</span>
+									<pre
+										className={`whitespace-pre-wrap break-words font-mono text-xs ${textColor} flex-1`}
+									>
+										{cleanedLog}
+									</pre>
+								</div>
+								{!isLast && <div className="w-full h-px bg-white/5 my-1" />}
+							</motion.div>
+						);
+					})}
+				</div>
+				<div className="h-px w-full bg-white/10 mb-4" />
+				<div className="text-xs text-neutral-500 mt-4 mb-2 text-center max-w-sm mx-auto justify-center items-center flex">
+					{t("logs.disclaimer")}
+				</div>
+				<div className="absolute bottom-2 right-2">
+					<div className="flex gap-1.5">
+						{iframeAvailable && (
+							<button
+								type="button"
+								className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
+								onClick={() => setShow({ [appId]: "iframe" })}
+							>
+								<ExternalLink className="h-4 w-4" />
+							</button>
+						)}
+						<button
+							type="button"
+							className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
+							onClick={copyLogsToClipboard}
+						>
+							<Copy className="h-4 w-4" />
+						</button>
+						<button
+							type="button"
+							className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
+							onClick={handleStop}
+						>
+							<Square className="h-4 w-4" />
+						</button>
+					</div>
+				</div>
+			</motion.div>
+		</motion.div>
+	);
 }
