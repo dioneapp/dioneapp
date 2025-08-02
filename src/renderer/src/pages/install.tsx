@@ -89,6 +89,7 @@ export default function Install({
 
 			if (appFinished[data.id] === true) {
 				await handleStopApp(data.id, data.name);
+				await fetchIfDownloaded();
 				setShow({ [data.id]: "actions" });
 			}
 		}
@@ -278,6 +279,7 @@ export default function Install({
 
 			if (!installedApps.includes(data.name)) {
 				setInstalledApps((prevApps) => [...prevApps, data.name]);
+				
 			}
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 		} catch (error) {

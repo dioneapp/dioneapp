@@ -237,7 +237,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			setIframeSrc(`http://localhost:${localPort}`);
 			setShow({ [data?.id]: "iframe" });
 			setIframeAvailable(true);
-			showToast("default", `${data.name} has opened a preview.`);
+			showToast("default", `${data.name || "Script"} has opened a preview.`);
 			window.electron.ipcRenderer.invoke(
 				"notify",
 				"Preview...",
