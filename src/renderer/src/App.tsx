@@ -1,4 +1,3 @@
-import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthContext } from "./components/contexts/AuthContext";
@@ -107,20 +106,14 @@ function App() {
 									: "view"
 						}
 					>
-						<AnimatePresence mode="wait">
-							<motion.div
-								className="page"
-								initial={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
-								animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-								exit={{ opacity: 0, scale: 0.98, filter: "blur(8px)" }}
-								transition={{ duration: 0.3, ease: [0.42, 0, 0.58, 1] }}
-								key={location.pathname}
-							>
-								<ErrorBoundary>
-									<PageComponent />
-								</ErrorBoundary>
-							</motion.div>
-						</AnimatePresence>
+						<div
+							className="page page-transition"
+							key={location.pathname}
+						>
+							<ErrorBoundary>
+								<PageComponent />
+							</ErrorBoundary>
+						</div>
 					</div>
 				</div>
 			</div>
