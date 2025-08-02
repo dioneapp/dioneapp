@@ -154,37 +154,53 @@ export default function IframeComponent({
 		);
 	};
 
-	const webviewRef = useRef<Electron.WebviewTag>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const webview = webviewRef.current;
-		if (webview) {
+		const container = containerRef.current;
+		if (container && iframeSrc) {
+			container.innerHTML = "";
+
+			// create webview
+			const webview = document.createElement("webview") as Electron.WebviewTag;
+			webview.setAttribute("allowpopups", "");
+			webview.id = "iframe";
+			webview.style.width = "100%";
+			webview.style.height = "100%";
+			webview.style.border = "0";
+			webview.useragent =
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36";
+
+			// custom scrollbar styles
 			webview.addEventListener("dom-ready", () => {
 				webview.insertCSS(`
-					::-webkit-scrollbar {
-						width: 6px;
-					}
+				::-webkit-scrollbar {
+					width: 6px;
+				}
 
-					::-webkit-scrollbar-thumb:hover,
-					::-webkit-scrollbar-thumb:active {
-						background: rgba(255, 255, 255, 0.4);
-					}
+				::-webkit-scrollbar-thumb:hover,
+				::-webkit-scrollbar-thumb:active {
+					background: rgba(255, 255, 255, 0.4);
+				}
 
-					::-webkit-scrollbar:hover {
-						background: rgba(255, 255, 255, 0.2);
-					}
+				::-webkit-scrollbar:hover {
+					background: rgba(255, 255, 255, 0.2);
+				}
 
-					::-webkit-scrollbar-track {
-						background: rgba(255, 255, 255, 0.1);
-					}
+				::-webkit-scrollbar-track {
+					background: rgba(255, 255, 255, 0.1);
+				}
 
-					::-webkit-scrollbar-thumb {
-						background: rgba(255, 255, 255, 0.2);
-					}
-				`);
+				::-webkit-scrollbar-thumb {
+					background: rgba(255, 255, 255, 0.2);
+				}
+			`);
 			});
+
+			webview.src = iframeSrc;
+			container.appendChild(webview);
 		}
-	}, []);
+	}, [iframeSrc]);
 
 	const handleOpenNewWindow = () => {
 		window.electron.ipcRenderer.send("new-window", iframeSrc);
@@ -338,24 +354,10 @@ export default function IframeComponent({
 					</button>
 				)}
 
-				<webview
-					id="iframe"
-					ref={webviewRef}
-					src={iframeSrc}
+				<div
+					ref={containerRef}
 					style={{ width: "100%", height: "100%", border: 0 }}
-					useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
 				/>
-
-				{/* <iframe
-					title="Script preview"
-					id="iframe"
-					src={iframeSrc}
-					className="w-full h-full bg-neutral-900 z-50"
-					style={{ border: 0, overflow: "auto" }}
-					sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-modals"
-					allow="fullscreen"
-					referrerPolicy="no-referrer-when-downgrade"
-				/> */}
 			</motion.div>
 		</div>
 	);

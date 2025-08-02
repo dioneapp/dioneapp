@@ -120,12 +120,12 @@ export default function QuickLaunch({
 			>
 				<motion.div
 					className={`
-          border border-white/10 hover:opacity-80 transition-all duration-300 rounded-xl 
-          flex items-center justify-center overflow-hidden cursor-pointer
-          ${compactMode ? "h-12 w-12" : "h-18 w-18"}
-          ${isBeingDragged ? "opacity-30 scale-95" : ""}
-          ${isHovered ? "ring-2 ring-[#BCB1E7] ring-opacity-70 shadow-lg shadow-[#BCB1E7]/25" : ""}
-        `}
+					border border-white/10 hover:opacity-80 transition-all duration-300 rounded-xl 
+					flex items-center justify-center overflow-hidden cursor-pointer
+					${compactMode ? "h-12 w-12" : "h-18 w-18"}
+					${isBeingDragged ? "opacity-30 scale-95" : ""}
+					${isHovered ? "ring-2 ring-[#BCB1E7] ring-opacity-70 shadow-lg shadow-[#BCB1E7]/25" : ""}
+					`}
 					onMouseDown={(e) => handlePointerDown(e, app, index)}
 					onTouchStart={(e) => handlePointerDown(e, app, index)}
 					onContextMenu={(e) => {
@@ -139,6 +139,7 @@ export default function QuickLaunch({
 					transition={{ duration: 0.2 }}
 				>
 					<Link
+						draggable={false}
 						to={{
 							pathname: `/install/${app.isLocal ? app.name : app.id}`,
 							search: `?isLocal=${app.isLocal}`,

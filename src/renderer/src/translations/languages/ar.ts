@@ -7,7 +7,7 @@ export const ar = {
 		success: "نجاح",
 		pending: "قيد الانتظار",
 		back: "رجوع",
-		deselectAll: "إلغاء اختيار الكل",
+		unselectAll: "إلغاء اختيار الكل",
 		selectAll: "اختيار الكل",
 	},
 
@@ -159,6 +159,14 @@ export const ar = {
 				label: "إلغاء تثبيت نظيف",
 				description: "إزالة جميع التبعيات ذات الصلة عند إلغاء تثبيت التطبيقات",
 			},
+			deleteCache: {
+				label: "حذف ذاكرة التخزين المؤقت",
+				description: "إزالة جميع البيانات المخزنة مؤقتًا من التطبيقات",
+				button: "حذف ذاكرة التخزين المؤقت",
+				deleting: "جارٍ الحذف...",
+				deleted: "تم الحذف",
+				error: "خطأ",
+			},
 		},
 		interface: {
 			title: "الواجهة",
@@ -208,6 +216,11 @@ export const ar = {
 				description:
 					"إعادة تعيين Dione إلى حالته الأولية وإظهار الإعداد الأولي مرة أخرى لإعادة التكوين",
 				button: "إعادة تعيين",
+			},
+			variables: {
+				label: "المتغيرات",
+				description: "إدارة متغيرات التطبيق وقيمها",
+				button: "فتح المتغيرات",
 			},
 		},
 	},
@@ -340,6 +353,20 @@ export const ar = {
 		title: "السلاسل المحلية",
 		upload: "تحميل السكربت",
 		noScripts: "لم يتم العثور على برامج نصية",
+		deleting: "جاري حذف السكربت، يرجى الانتظار...",
+		uploadModal: {
+			title: "تحميل النص البرمجي",
+			selectFile: "انقر لاختيار ملف",
+			selectedFile: "الملف المحدد",
+			scriptName: "اسم النص البرمجي",
+			scriptDescription: "وصف النص البرمجي (اختياري)",
+			uploadFile: "تحميل الملف",
+			uploading: "جاري التحميل...",
+			errors: {
+				uploadFailed: "فشل في تحميل النص البرمجي. يرجى المحاولة مرة أخرى.",
+				uploadError: "حدث خطأ أثناء تحميل النص البرمجي.",
+			},
+		},
 	},
 
 	// feed component

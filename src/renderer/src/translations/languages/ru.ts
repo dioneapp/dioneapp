@@ -7,7 +7,7 @@ export const ru = {
 		success: "Успешно",
 		pending: "В ожидании",
 		back: "Назад",
-		deselectAll: "Отменить выбор всех",
+		unselectAll: "Отменить выбор всех",
 		selectAll: "Выбрать все",
 	},
 
@@ -165,6 +165,14 @@ export const ru = {
 				description:
 					"Удалять все связанные зависимости при удалении приложений",
 			},
+			deleteCache: {
+				label: "Удалить кэш",
+				description: "Удалить все данные кэша из приложений",
+				button: "Удалить кэш",
+				deleting: "Удаление...",
+				deleted: "Удалено",
+				error: "Ошибка",
+			},
 		},
 		interface: {
 			title: "Интерфейс",
@@ -216,6 +224,11 @@ export const ru = {
 				description:
 					"Сбросить Dione в исходное состояние и снова показать вводное обучение для перенастройки",
 				button: "Сброс",
+			},
+			variables: {
+				label: "Переменные",
+				description: "Управление переменными приложения и их значениями",
+				button: "Открыть переменные",
 			},
 		},
 	},
@@ -352,6 +365,21 @@ export const ru = {
 		title: "Скрипты локально",
 		upload: "Загрузить скрипт",
 		noScripts: "Скрипты не найдены",
+		deleting: "Удаление скрипта, подождите...",
+		uploadModal: {
+			title: "Загрузить Скрипт",
+			selectFile: "Нажмите, чтобы выбрать файл",
+			selectedFile: "Выбранный Файл",
+			scriptName: "Название скрипта",
+			scriptDescription: "Описание скрипта (необязательно)",
+			uploadFile: "Загрузить Файл",
+			uploading: "Загрузка...",
+			errors: {
+				uploadFailed:
+					"Не удалось загрузить скрипт. Пожалуйста, попробуйте снова.",
+				uploadError: "Произошла ошибка при загрузке скрипта.",
+			},
+		},
 	},
 
 	// feed component

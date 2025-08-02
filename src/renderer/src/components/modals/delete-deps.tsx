@@ -96,7 +96,7 @@ export default function DeleteDepsModal({
 							>
 								{selectedDeps.length === inUseDeps.length ? (
 									<span className="font-semibold">
-										{t("common.deselectAll")}
+										{t("common.unselectAll")}
 									</span>
 								) : (
 									<span className="font-semibold">{t("common.selectAll")}</span>

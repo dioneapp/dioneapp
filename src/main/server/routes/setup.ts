@@ -8,6 +8,7 @@ import { createDependenciesRouter } from "./dependencies";
 import { createLocalScriptsRouter } from "./local";
 import { createScriptRouter } from "./scripts";
 import searchBarRouter from "./searchbar";
+import { createVariablesRouter } from "./variables";
 
 export const setupRoutes = (server: Express, io: Server) => {
 	server.get("/", (_req, res) => {
@@ -32,4 +33,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 
 	// local scripts stuff
 	server.use("/local", createLocalScriptsRouter(io));
+
+	// variables stuff
+	server.use("/variables", createVariablesRouter());
 };

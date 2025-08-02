@@ -45,17 +45,23 @@ export default function MissingDepsModal({
 				const port = await getCurrentPort();
 				socket = io(`http://localhost:${port}`);
 
-				socket.on("installDep", (message: { name: string; output: string }) => {
-					console.log("Received log:", message);
-					const newLines = formatLog(message.output);
-					if (newLines.length > 0) {
-						setLogs((prevLogs) => [...prevLogs, ...newLines]);
-					}
-					if (message.output.toLowerCase().includes("error")) {
-						setLogs((prevLogs) => [...prevLogs, `ERROR: ${message.output}`]);
-						setError(message.output);
-					}
-				});
+				socket.on(
+					"installDep",
+					(message: { type: string; content: string }) => {
+						if (message.type === "log") {
+							setLogs((prevLogs) => [...prevLogs, message.content]);
+						} else if (message.type === "status") {
+							setLogs((prevLogs) => [...prevLogs, message.content]);
+						}
+						if (
+							message.type === "error" ||
+							message.content.toLowerCase().includes("error")
+						) {
+							setLogs((prevLogs) => [...prevLogs, `ERROR: ${message.content}`]);
+							setError(message.content);
+						}
+					},
+				);
 
 				socket.on("connect", () => {
 					console.log("Connected to socket:", socket.id);
@@ -122,7 +128,9 @@ export default function MissingDepsModal({
 				throw new Error(response.statusText);
 			}
 
-			if (!error && !logs.includes("error")) {
+			const result = await response.json();
+
+			if (!error && !logs.includes("error") && result.success) {
 				await onFinish();
 			}
 		} catch (error: any) {
@@ -136,17 +144,17 @@ export default function MissingDepsModal({
 		}
 	}
 
-	function formatLog(output: string): string[] {
-		const trimmed = output.trim();
-		// ignore spinners
-		if (/^[-\\|\/]$/.test(trimmed)) return [];
-		const lines = trimmed
-			.split(/\r?\n/)
-			.map((l) => l.trim())
-			.filter(Boolean);
+	// function formatLog(output: string): string[] {
+	// 	const trimmed = output.trim();
+	// 	// ignore spinners
+	// 	if (/^[-\\|\/]$/.test(trimmed)) return [];
+	// 	const lines = trimmed
+	// 		.split(/\r?\n/)
+	// 		.map((l) => l.trim())
+	// 		.filter(Boolean);
 
-		return lines;
-	}
+	// 	return lines;
+	// }
 
 	return (
 		<div
@@ -170,7 +178,7 @@ export default function MissingDepsModal({
 					<div className="py-6 w-full h-full flex flex-col">
 						<div className="flex flex-col gap-4 w-full h-full overflow-auto border border-white/10 rounded-xl p-4">
 							{data.map((dep) => (
-								<>
+								<div key={dep.name}>
 									<div
 										className="flex items-center justify-between"
 										key={dep.name}
@@ -208,7 +216,7 @@ export default function MissingDepsModal({
 										className="h-[0.1px] w-full bg-neutral-400/10 rounded-full last:hidden"
 										key={dep}
 									/>
-								</>
+								</div>
 							))}
 						</div>
 						<div className="mt-4 flex items-center justify-end">

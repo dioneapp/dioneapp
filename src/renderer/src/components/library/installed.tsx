@@ -17,6 +17,8 @@ export default function Installed() {
 	useEffect(() => {
 		const getApps = async () => {
 			if (!installedApps || installedApps.length === 0) return;
+			setApps([]);
+
 			try {
 				const port = await getCurrentPort();
 				const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
@@ -32,6 +34,8 @@ export default function Installed() {
 				});
 
 				if (appsToFetch.length > 0) {
+					const allAppsData: any[] = [];
+
 					await Promise.all(
 						appsToFetch.map((app) =>
 							fetch(
@@ -40,10 +44,12 @@ export default function Installed() {
 								.then((res) => (res.ok ? res.json() : []))
 								.then((data) => {
 									cachedData[app.name] = data;
-									setApps((prev) => [...prev, ...data]);
+									allAppsData.push(...data);
 								}),
 						),
 					);
+
+					setApps(allAppsData);
 				}
 			} catch (error) {
 				console.error("Error loading apps:", error);
