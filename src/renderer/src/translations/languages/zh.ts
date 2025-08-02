@@ -7,7 +7,7 @@ export const zh = {
 		success: "成功",
 		pending: "待定",
 		back: "返回",
-		deselectAll: "取消选择所有",
+		unselectAll: "取消选择所有",
 		selectAll: "选择所有",
 	},
 
@@ -157,6 +157,14 @@ export const zh = {
 				label: "清理卸载",
 				description: "卸载应用程序时移除所有相关依赖项",
 			},
+			deleteCache: {
+				label: "删除缓存",
+				description: "从应用程序中删除所有缓存数据",
+				button: "删除缓存",
+				deleting: "正在删除...",
+				deleted: "已删除",
+				error: "错误",
+			},
 		},
 		interface: {
 			title: "界面",
@@ -203,6 +211,11 @@ export const zh = {
 				label: "显示新手指引",
 				description: "将Dione重置为初始状态并再次显示新手指引以重新配置",
 				button: "重置",
+			},
+			variables: {
+				label: "变量",
+				description: "管理应用程序变量及其值",
+				button: "打开变量",
 			},
 		},
 	},
@@ -334,6 +347,20 @@ export const zh = {
 		title: "本地脚本",
 		upload: "上传脚本",
 		noScripts: "未找到脚本",
+		deleting: "正在删除脚本，请稍候...",
+		uploadModal: {
+			title: "上传脚本",
+			selectFile: "点击选择文件",
+			selectedFile: "已选择文件",
+			scriptName: "脚本名称",
+			scriptDescription: "脚本描述（可选）",
+			uploadFile: "上传文件",
+			uploading: "上传中...",
+			errors: {
+				uploadFailed: "上传脚本失败。请重试。",
+				uploadError: "上传脚本时发生错误。",
+			},
+		},
 	},
 
 	// feed component

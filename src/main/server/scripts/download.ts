@@ -5,7 +5,7 @@ import type { Server } from "socket.io";
 import { readConfig } from "../../config";
 import { supabase } from "../utils/database";
 import logger from "../utils/logger";
-import { checkDependencies } from "./dependencies";
+import { checkDependencies } from "./dependencies/dependencies";
 import executeInstallation from "./execute";
 import { checkSystem } from "./system";
 
@@ -198,6 +198,7 @@ export function downloadFile(
 
 					// download finished, now checking dependencies
 					const result = await checkDependencies(FILE_PATH);
+					logger.info(`RESULT: ${JSON.stringify(result)}`);
 					if (result.success) {
 						io.to(id).emit("installUpdate", {
 							type: "log",

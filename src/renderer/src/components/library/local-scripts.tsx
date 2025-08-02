@@ -1,5 +1,6 @@
 import { useTranslation } from "@renderer/translations/translationContext";
 import { getCurrentPort } from "@renderer/utils/getPort";
+import { useToast } from "@renderer/utils/useToast";
 import { useEffect, useState } from "react";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import ScriptCard from "../home/feed/card";
@@ -8,6 +9,7 @@ import UploadModal from "../modals/upload-script";
 
 export default function LocalScripts() {
 	const { t } = useTranslation();
+	const { addToast } = useToast();
 	const { handleReloadQuickLaunch } = useScriptsContext();
 	const [openModal, setOpenModal] = useState(false);
 	const [scripts, setScripts] = useState<
@@ -39,6 +41,13 @@ export default function LocalScripts() {
 
 	const deleteScript = async (name: string) => {
 		const port = await getCurrentPort();
+
+		addToast({
+			variant: "default",
+			children: t("local.deleting"),
+			fixed: "true",
+		});
+
 		await fetch(
 			`http://localhost:${port}/local/delete/${encodeURIComponent(name)}`,
 			{

@@ -1,9 +1,11 @@
 import { useAuthContext } from "@renderer/components/contexts/AuthContext";
 import { useScriptsContext } from "@renderer/components/contexts/ScriptsContext";
+import VariablesModal from "@renderer/components/modals/variables";
+import AnimatedCount from "@renderer/utils/animate-count";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { joinPath } from "@renderer/utils/path";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Folder } from "lucide-react";
+import { ChevronDown, Folder, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
@@ -132,6 +134,20 @@ export default function Settings() {
 	const { handleReloadQuickLaunch } = useScriptsContext();
 	const navigate = useNavigate();
 
+	const [cacheSize, setCacheSize] = useState<number | null>(null);
+	const [deleteCacheStatus, setDeleteCacheStatus] = useState<string | null>(
+		null,
+	);
+	const [variablesModal, setVariablesModal] = useState(false);
+
+	useEffect(() => {
+		const fetchPort = async () => {
+			const currentPort = await getCurrentPort();
+			setPort(currentPort);
+		};
+		fetchPort();
+	}, []);
+
 	useEffect(() => {
 		const fetchVersion = async () => {
 			const version = await window.electron.ipcRenderer.invoke("get-version");
@@ -141,16 +157,24 @@ export default function Settings() {
 	}, []);
 
 	useEffect(() => {
-		// get actual port
-		const fetchPort = async () => {
-			const currentPort = await getCurrentPort();
-			setPort(currentPort);
-		};
-		fetchPort();
-
-		// fetch config
-		fetchConfig();
+		if (port) {
+			fetchConfig();
+		}
 	}, [port]);
+
+	useEffect(() => {
+		fetchCacheSize();
+	}, []);
+
+	async function fetchCacheSize() {
+		window.electron.ipcRenderer
+			.invoke("check-folder-size")
+			.then((size) => setCacheSize(size || 0))
+			.catch((error) => {
+				console.error("Error loading cache size:", error);
+				setCacheSize(0);
+			});
+	}
 
 	async function fetchConfig() {
 		if (port) {
@@ -254,382 +278,485 @@ export default function Settings() {
 		navigate("/first-time");
 	}
 
-	useEffect(() => {
-		console.log("settings", config?.defaultScriptsFolder);
-	}, []);
+	async function handleDeleteCache() {
+		setDeleteCacheStatus("deleting");
+		const result = await window.electron.ipcRenderer.invoke("delete-folder");
+		if (result) {
+			console.log("Cache deleted successfully");
+			setDeleteCacheStatus("deleted");
+			setTimeout(() => {
+				setDeleteCacheStatus(null);
+			}, 3000);
+			fetchCacheSize();
+		} else {
+			console.error("Failed to delete cache");
+			setDeleteCacheStatus("error");
+		}
+	}
+
+	const openVariablesModal = (state: boolean) => {
+		setVariablesModal(state);
+	};
 
 	return (
-		<div className="min-h-screen bg-background pt-4">
-			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
-				<main className="flex flex-col gap-6 py-5">
-					{/* background */}
-					<div className="absolute top-0 left-0 w-full h-full bg-gradient-to-bl from-[#BCB1E7] to-[#080808] opacity-15 rounded-3xl blur-3xl z-0" />
-					<div>
-						<div className="flex flex-col space-y-4 h-full">
-							{config && (
-								<div className="flex flex-col space-y-8 h-full z-50 mb-12">
-									<div className="flex flex-col">
-										{/* Apps */}
-										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											{t("settings.applications.title")}
-										</h2>
-										<div className="flex flex-col gap-2">
-											<div className="flex justify-between w-full items-center h-full space-y-2">
-												<div className="h-full flex items-start justify-center flex-col mt-auto">
-													<label className="text-neutral-200 font-medium">
-														{t(
-															"settings.applications.installationDirectory.label",
+		<>
+			<div className="min-h-screen bg-background pt-4 relative">
+				<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
+					<main className="flex flex-col gap-6 py-5">
+						{/* background */}
+						<div className="absolute top-0 left-0 w-full h-full bg-gradient-to-bl from-[#BCB1E7] to-[#080808] opacity-15 rounded-3xl blur-3xl z-0" />
+						<div>
+							<div className="flex flex-col space-y-4 h-full">
+								{config && (
+									<div className="flex flex-col space-y-8 h-full z-50 mb-12">
+										<div className="flex flex-col">
+											{/* Apps */}
+											<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
+												{t("settings.applications.title")}
+											</h2>
+											<div className="flex flex-col gap-2">
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t(
+																"settings.applications.installationDirectory.label",
+															)}
+														</label>
+														<p className="text-xs text-neutral-400 w-80">
+															{t(
+																"settings.applications.installationDirectory.description",
+															)}
+														</p>
+													</div>
+													<CustomInput
+														value={joinPath(
+															config.defaultInstallFolder,
+															"apps",
 														)}
-													</label>
-													<p className="text-xs text-neutral-400 w-80">
-														{t(
-															"settings.applications.installationDirectory.description",
-														)}
-													</p>
+														onChange={(value) =>
+															handleUpdate({ defaultInstallFolder: value })
+														}
+														onClick={() =>
+															handleSaveDir("defaultInstallFolder")
+														}
+														onClickIcon={() =>
+															openFolder(
+																joinPath(config.defaultInstallFolder, "apps"),
+															)
+														}
+													/>
 												</div>
-												<CustomInput
-													value={joinPath(config.defaultInstallFolder, "apps")}
-													onChange={(value) =>
-														handleUpdate({ defaultInstallFolder: value })
-													}
-													onClick={() => handleSaveDir("defaultInstallFolder")}
-													onClickIcon={() =>
-														openFolder(
-															joinPath(config.defaultInstallFolder, "apps"),
-														)
-													}
-												/>
-											</div>
-											<div className="flex justify-between w-full items-center h-full space-y-2">
-												<div className="h-full flex items-start justify-center flex-col mt-auto">
-													<label className="text-neutral-200 font-medium">
-														{t("settings.applications.cleanUninstall.label")}
-													</label>
-													<p className="text-xs text-neutral-400">
-														{t(
-															"settings.applications.cleanUninstall.description",
-														)}
-													</p>
-												</div>
-												<button
-													type="button"
-													onClick={() =>
-														handleUpdate({
-															alwaysUninstallDependencies:
-																!config.alwaysUninstallDependencies,
-														})
-													}
-													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
-														config.alwaysUninstallDependencies
-															? "bg-green-500/30"
-															: "bg-red-500/30"
-													}`}
-												>
-													<span
-														className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.applications.cleanUninstall.label")}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t(
+																"settings.applications.cleanUninstall.description",
+															)}
+														</p>
+													</div>
+													<button
+														type="button"
+														onClick={() =>
+															handleUpdate({
+																alwaysUninstallDependencies:
+																	!config.alwaysUninstallDependencies,
+															})
+														}
+														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
 															config.alwaysUninstallDependencies
-																? "translate-x-6"
-																: "translate-x-0"
+																? "bg-green-500/30"
+																: "bg-red-500/30"
 														}`}
-													/>
-												</button>
+													>
+														<span
+															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+																config.alwaysUninstallDependencies
+																	? "translate-x-6"
+																	: "translate-x-0"
+															}`}
+														/>
+													</button>
+												</div>
+												<div className="flex justify-between w-full items-center h-full">
+													<div className="h-full flex items-start justify-center flex-col">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.applications.deleteCache.label")}
+														</label>
+														<p className="text-xs text-neutral-400 w-80">
+															{t(
+																"settings.applications.deleteCache.description",
+															)}
+														</p>
+													</div>
+													<div className="flex flex-col gap-2 group">
+														<button
+															className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full enabled:hover:bg-white/80 disabled:bg-white/80 transition-colors enabled:cursor-pointer flex gap-2 items-center justify-center"
+															type="button"
+															onClick={handleDeleteCache}
+															disabled={deleteCacheStatus === "deleting"}
+														>
+															<Trash2 className="w-4 h-4" />
+															{deleteCacheStatus === null ? (
+																<span>
+																	{t(
+																		"settings.applications.deleteCache.button",
+																	)}
+																</span>
+															) : (
+																<span
+																	className={`${deleteCacheStatus === "deleted" ? "text-green-700" : deleteCacheStatus === "error" ? "text-red-500" : "text-orange-500"}`}
+																>
+																	{deleteCacheStatus === "deleting"
+																		? t(
+																				"settings.applications.deleteCache.deleting",
+																			)
+																		: deleteCacheStatus === "deleted"
+																			? t(
+																					"settings.applications.deleteCache.deleted",
+																				)
+																			: t(
+																					"settings.applications.deleteCache.error",
+																				)}
+																</span>
+															)}
+															<div className="flex gap-0 items-center justify-center text-xs bg-black/20 rounded-full font-mono px-2">
+																<AnimatedCount
+																	value={cacheSize || 0}
+																	suffix="GB"
+																	className="text-black text-right"
+																/>
+															</div>
+														</button>
+													</div>
+												</div>
 											</div>
 										</div>
-									</div>
-									<div className="flex flex-col">
-										{/* Interface */}
-										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
-										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											{t("settings.interface.title")}
-										</h2>
-										<div className="flex justify-between w-full items-center h-full space-y-2">
-											<div className="h-full flex items-start justify-center flex-col mt-auto">
-												<label className="text-neutral-200 font-medium">
-													{t("settings.interface.displayLanguage.label")}
-												</label>
-												<p className="text-xs text-neutral-400">
-													{t("settings.interface.displayLanguage.description")}
-												</p>
+										<div className="flex flex-col">
+											{/* Interface */}
+											<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
+											<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
+												{t("settings.interface.title")}
+											</h2>
+											<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
+														{t("settings.interface.displayLanguage.label")}
+													</label>
+													<p className="text-xs text-neutral-400">
+														{t(
+															"settings.interface.displayLanguage.description",
+														)}
+													</p>
+												</div>
+												<CustomSelect
+													value={language}
+													onChange={(value) => setLanguage(value as any)}
+													options={Object.entries(languages).map(
+														([value, label]) => ({ value, label }),
+													)}
+												/>
 											</div>
-											<CustomSelect
-												value={language}
-												onChange={(value) => setLanguage(value as any)}
-												options={Object.entries(languages).map(
-													([value, label]) => ({ value, label }),
-												)}
-											/>
-										</div>
-										<div>
-											<a
-												href="https://github.com/dioneapp/dioneapp"
-												target="_blank"
-												rel="noopener noreferrer"
-												className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-2 py-0.5 rounded-xl bg-white/10"
-											>
-												{t("settings.interface.helpTranslate")}
-											</a>
-										</div>
-									</div>
-									<div className="flex flex-col space-y-4">
-										<div className="flex justify-between w-full items-center h-full space-y-2">
-											<div className="h-full flex items-start justify-center flex-col mt-auto">
-												<label className="text-neutral-200 font-medium">
-													{t("settings.interface.compactView.label")}
-												</label>
-												<p className="text-xs text-neutral-400">
-													{t("settings.interface.compactView.description")}
-												</p>
+											<div>
+												<a
+													href="https://github.com/dioneapp/dioneapp"
+													target="_blank"
+													rel="noopener noreferrer"
+													className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-2 py-0.5 rounded-xl bg-white/10"
+												>
+													{t("settings.interface.helpTranslate")}
+												</a>
 											</div>
-											<button
-												type="button"
-												onClick={() =>
-													handleUpdate({ compactMode: !config.compactMode })
-												}
-												className={`relative w-12 h-6 flex items-center rounded-full p-1 duration-300 border border-white/5 cursor-pointer ${
-													config.compactMode
-														? "bg-green-500/30"
-														: "bg-red-500/30"
-												}`}
-											>
-												<span
-													className={`bg-white w-4 h-4 rounded-full shadow-md duration-300 ${
+										</div>
+										<div className="flex flex-col space-y-4">
+											<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
+														{t("settings.interface.compactView.label")}
+													</label>
+													<p className="text-xs text-neutral-400">
+														{t("settings.interface.compactView.description")}
+													</p>
+												</div>
+												<button
+													type="button"
+													onClick={() =>
+														handleUpdate({ compactMode: !config.compactMode })
+													}
+													className={`relative w-12 h-6 flex items-center rounded-full p-1 duration-300 border border-white/5 cursor-pointer ${
 														config.compactMode
-															? "translate-x-6"
-															: "translate-x-0"
-													}`}
-												/>
-											</button>
-										</div>
-									</div>
-									{/*  */}
-									<div className="flex flex-col">
-										{/* Account */}
-										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
-										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											{t("settings.notifications.title")}
-										</h2>
-										<div className="flex flex-col gap-2">
-											<div className="flex justify-between w-full items-center h-full space-y-2">
-												<div className="h-full flex items-start justify-center flex-col mt-auto">
-													<label className="text-neutral-200 font-medium">
-														{t(
-															"settings.notifications.systemNotifications.label",
-														)}
-													</label>
-													<p className="text-xs text-neutral-400">
-														{t(
-															"settings.notifications.systemNotifications.description",
-														)}
-													</p>
-												</div>
-												<button
-													type="button"
-													onClick={() =>
-														handleUpdate({
-															enableDesktopNotifications:
-																!config.enableDesktopNotifications,
-														})
-													}
-													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
-														config.enableDesktopNotifications
 															? "bg-green-500/30"
 															: "bg-red-500/30"
 													}`}
 												>
 													<span
-														className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+														className={`bg-white w-4 h-4 rounded-full shadow-md duration-300 ${
+															config.compactMode
+																? "translate-x-6"
+																: "translate-x-0"
+														}`}
+													/>
+												</button>
+											</div>
+										</div>
+										{/*  */}
+										<div className="flex flex-col">
+											{/* Account */}
+											<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
+											<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
+												{t("settings.notifications.title")}
+											</h2>
+											<div className="flex flex-col gap-2">
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t(
+																"settings.notifications.systemNotifications.label",
+															)}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t(
+																"settings.notifications.systemNotifications.description",
+															)}
+														</p>
+													</div>
+													<button
+														type="button"
+														onClick={() =>
+															handleUpdate({
+																enableDesktopNotifications:
+																	!config.enableDesktopNotifications,
+															})
+														}
+														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
 															config.enableDesktopNotifications
-																? "translate-x-6"
-																: "translate-x-0"
+																? "bg-green-500/30"
+																: "bg-red-500/30"
 														}`}
-													/>
-												</button>
-											</div>
-											<div className="flex justify-between w-full items-center h-full space-y-2">
-												<div className="h-full flex items-start justify-center flex-col mt-auto">
-													<label className="text-neutral-200 font-medium">
-														{t(
-															"settings.notifications.installationAlerts.label",
-														)}
-													</label>
-													<p className="text-xs text-neutral-400">
-														{t(
-															"settings.notifications.installationAlerts.description",
-														)}
-													</p>
+													>
+														<span
+															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+																config.enableDesktopNotifications
+																	? "translate-x-6"
+																	: "translate-x-0"
+															}`}
+														/>
+													</button>
 												</div>
-												<button
-													type="button"
-													onClick={() =>
-														handleUpdate({
-															notifyOnInstallComplete:
-																!config.notifyOnInstallComplete,
-														})
-													}
-													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
-														config.notifyOnInstallComplete
-															? "bg-green-500/30"
-															: "bg-red-500/30"
-													}`}
-												>
-													<span
-														className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t(
+																"settings.notifications.installationAlerts.label",
+															)}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t(
+																"settings.notifications.installationAlerts.description",
+															)}
+														</p>
+													</div>
+													<button
+														type="button"
+														onClick={() =>
+															handleUpdate({
+																notifyOnInstallComplete:
+																	!config.notifyOnInstallComplete,
+															})
+														}
+														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
 															config.notifyOnInstallComplete
-																? "translate-x-6"
-																: "translate-x-0"
+																? "bg-green-500/30"
+																: "bg-red-500/30"
 														}`}
-													/>
-												</button>
+													>
+														<span
+															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+																config.notifyOnInstallComplete
+																	? "translate-x-6"
+																	: "translate-x-0"
+															}`}
+														/>
+													</button>
+												</div>
 											</div>
 										</div>
-									</div>
-									{/*  */}
-									<div className="flex flex-col">
-										{/* Privacy */}
-										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
-										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											{t("settings.privacy.title")}
-										</h2>
-										<div className="flex flex-col gap-2">
-											<div className="flex justify-between w-full items-center h-full space-y-2">
-												<div className="h-full flex items-start justify-center flex-col mt-auto">
-													<label className="text-neutral-200 font-medium">
-														{t("settings.privacy.errorReporting.label")}
-													</label>
-													<p className="text-xs text-neutral-400">
-														{t("settings.privacy.errorReporting.description")}
-													</p>
-												</div>
-												<button
-													type="button"
-													onClick={() =>
-														handleUpdate({
-															sendAnonymousReports:
-																!config.sendAnonymousReports,
-														})
-													}
-													className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
-														config.sendAnonymousReports
-															? "bg-green-500/30"
-															: "bg-red-500/30"
-													}`}
-												>
-													<span
-														className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+										{/*  */}
+										<div className="flex flex-col">
+											{/* Privacy */}
+											<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
+											<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
+												{t("settings.privacy.title")}
+											</h2>
+											<div className="flex flex-col gap-2">
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.privacy.errorReporting.label")}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t("settings.privacy.errorReporting.description")}
+														</p>
+													</div>
+													<button
+														type="button"
+														onClick={() =>
+															handleUpdate({
+																sendAnonymousReports:
+																	!config.sendAnonymousReports,
+															})
+														}
+														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
 															config.sendAnonymousReports
-																? "translate-x-6"
-																: "translate-x-0"
+																? "bg-green-500/30"
+																: "bg-red-500/30"
 														}`}
+													>
+														<span
+															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+																config.sendAnonymousReports
+																	? "translate-x-6"
+																	: "translate-x-0"
+															}`}
+														/>
+													</button>
+												</div>
+											</div>
+										</div>
+										{/*  */}
+										<div className="flex flex-col">
+											{/* Other */}
+											<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
+											<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
+												{t("settings.other.title")}
+											</h2>
+											<div className="flex flex-col gap-2">
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.other.logsDirectory.label")}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t("settings.other.logsDirectory.description")}
+														</p>
+													</div>
+													<CustomInput
+														value={config.defaultLogsPath}
+														onChange={(value) =>
+															handleUpdate({ defaultLogsPath: value })
+														}
+														onClick={handleLogsDir}
+														onClickIcon={() =>
+															openFolder(config.defaultLogsPath)
+														}
 													/>
-												</button>
+												</div>
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.other.variables.label")}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t("settings.other.variables.description")}
+														</p>
+													</div>
+													<button
+														onClick={() => openVariablesModal(true)}
+														className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+														type="button"
+													>
+														{t("settings.other.variables.button")}
+													</button>
+												</div>
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.other.submitFeedback.label")}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t("settings.other.submitFeedback.description")}
+														</p>
+													</div>
+													<button
+														onClick={() => handleReportError()}
+														className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+														type="button"
+													>
+														{t("settings.other.submitFeedback.button")}
+													</button>
+												</div>
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.other.showOnboarding.label")}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t("settings.other.showOnboarding.description")}
+														</p>
+													</div>
+													<button
+														onClick={() => handleResetSettings()}
+														className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+														type="button"
+													>
+														{t("settings.other.showOnboarding.button")}
+													</button>
+												</div>
 											</div>
 										</div>
 									</div>
-									{/*  */}
-									<div className="flex flex-col">
-										{/* Other */}
-										<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
-										<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
-											{t("settings.other.title")}
-										</h2>
-										<div className="flex flex-col gap-2">
-											<div className="flex justify-between w-full items-center h-full space-y-2">
-												<div className="h-full flex items-start justify-center flex-col mt-auto">
-													<label className="text-neutral-200 font-medium">
-														{t("settings.other.logsDirectory.label")}
-													</label>
-													<p className="text-xs text-neutral-400">
-														{t("settings.other.logsDirectory.description")}
-													</p>
-												</div>
-												<CustomInput
-													value={config.defaultLogsPath}
-													onChange={(value) =>
-														handleUpdate({ defaultLogsPath: value })
-													}
-													onClick={handleLogsDir}
-													onClickIcon={() => openFolder(config.defaultLogsPath)}
-												/>
-											</div>
-											<div className="flex justify-between w-full items-center h-full space-y-2">
-												<div className="h-full flex items-start justify-center flex-col mt-auto">
-													<label className="text-neutral-200 font-medium">
-														{t("settings.other.submitFeedback.label")}
-													</label>
-													<p className="text-xs text-neutral-400">
-														{t("settings.other.submitFeedback.description")}
-													</p>
-												</div>
-												<button
-													onClick={() => handleReportError()}
-													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
-													type="button"
-												>
-													{t("settings.other.submitFeedback.button")}
-												</button>
-											</div>
-											<div className="flex justify-between w-full items-center h-full space-y-2">
-												<div className="h-full flex items-start justify-center flex-col mt-auto">
-													<label className="text-neutral-200 font-medium">
-														{t("settings.other.showOnboarding.label")}
-													</label>
-													<p className="text-xs text-neutral-400">
-														{t("settings.other.showOnboarding.description")}
-													</p>
-												</div>
-												<button
-													onClick={() => handleResetSettings()}
-													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
-													type="button"
-												>
-													{t("settings.other.showOnboarding.button")}
-												</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							)}
-							<div className="w-full flex items-end justify-between text-xs text-neutral-500 z-50 mt-16 pb-4">
-								<div>
-									<a
-										href="https://getdione.app"
-										target="_blank"
-										rel="noopener noreferrer"
-										className="hover:underline cursor-pointer"
-									>
-										getdione.app
-									</a>
-									<p>built with &hearts;</p>
-								</div>
-								<div className="text-right">
-									<button
-										type="button"
-										className="hover:underline cursor-pointer"
-										onClick={() =>
-											openLink("https://github.com/dioneapp/dioneapp/releases")
-										}
-									>
-										v{packVersion || "0.0.0"}
-									</button>
-									<p>
-										Port{" "}
-										<button
-											type="button"
-											onClick={() => openLink(`http://localhost:${port}`)}
+								)}
+								<div className="w-full flex items-end justify-between text-xs text-neutral-500 z-50 mt-16 pb-4">
+									<div>
+										<a
+											href="https://getdione.app"
+											target="_blank"
+											rel="noopener noreferrer"
 											className="hover:underline cursor-pointer"
 										>
-											{port}
+											getdione.app
+										</a>
+										<p>built with &hearts;</p>
+									</div>
+									<div className="text-right">
+										<button
+											type="button"
+											className="hover:underline cursor-pointer"
+											onClick={() =>
+												openLink(
+													"https://github.com/dioneapp/dioneapp/releases",
+												)
+											}
+										>
+											v{packVersion || "0.0.0"}
 										</button>
-									</p>
-									<p>Node v{versions.node}</p>
-									<p>Electron v{versions.electron}</p>
-									<p>Chromium v{versions.chrome}</p>
+										<p>
+											Port{" "}
+											<button
+												type="button"
+												onClick={() => openLink(`http://localhost:${port}`)}
+												className="hover:underline cursor-pointer"
+											>
+												{port}
+											</button>
+										</p>
+										<p>Node v{versions.node}</p>
+										<p>Electron v{versions.electron}</p>
+										<p>Chromium v{versions.chrome}</p>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				</main>
+					</main>
+				</div>
 			</div>
-		</div>
+			{variablesModal && (
+				<div>
+					<VariablesModal onClose={() => openVariablesModal(false)} />
+				</div>
+			)}
+		</>
 	);
 }

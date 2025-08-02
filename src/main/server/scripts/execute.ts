@@ -196,11 +196,11 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 			}
 		}
 		// emit log to reload frontend after all actions are executed
-		io.to(id).emit("installUpdate", {
-			type: "status",
-			status: "success",
-			content: "Actions executed",
-		});
+		// io.to(id).emit("installUpdate", {
+		// 	type: "status",
+		// 	status: "success",
+		// 	content: "Actions executed",
+		// });
 	} catch (error) {
 		io.to(id).emit("installUpdate", {
 			type: "log",
@@ -252,21 +252,35 @@ function createVirtualEnvCommands(
 
 	if (envType === "conda") {
 		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
+		const condaW = path.join(
+			process.cwd(),
+			"bin",
+			"conda",
+			"condabin",
+			"conda.bat",
+		);
+		const condaU = path.join(
+			process.cwd(),
+			"bin",
+			"conda",
+			"condabin",
+			"conda",
+		);
 		if (isWindows) {
 			return [
-				`if not exist "${envPath}" (conda tos accept --channel main && conda create -p "${envPath}" ${pythonArg} -y)`,
-				`call conda activate "${envPath}" ${middle} && call conda deactivate`,
+				`if not exist "${envPath}" (${condaW} create -p "${envPath}" ${pythonArg} -y)`,
+				`call ${condaW} activate "${envPath}" ${middle} && call ${condaW} deactivate`,
 			];
 		}
 		// for linux and mac
 		return [
-			`if [ ! -d "${envPath}" ]; then conda create -p "${envPath}" ${pythonArg} -y; fi`,
-			`source activate "${envPath}" ${middle} && conda deactivate`,
+			`if [ ! -d "${envPath}" ]; then ${condaU} create -p "${envPath}" ${pythonArg} -y; fi`,
+			`source "${condaU}" activate "${envPath}" && ${middle} && ${condaU} deactivate`,
 		];
 	}
 
 	// default uv env
-	if (isWindows) {
+	if (isWindows && envType !== "conda") {
 		const activateScript = path.join(envPath, "Scripts", "activate");
 		const deactivateScript = path.join(envPath, "Scripts", "deactivate.bat");
 		return [

@@ -89,6 +89,7 @@ export default function Install({
 
 			if (appFinished[data.id] === true) {
 				await handleStopApp(data.id, data.name);
+				await fetchIfDownloaded();
 				setShow({ [data.id]: "actions" });
 			}
 		}
@@ -543,10 +544,9 @@ export default function Install({
 			body: JSON.stringify({ dioneFile: data?.name }),
 		});
 		const result = await response.json();
-		const depsArray = Object.keys(result.result);
-		setInUseDeps(depsArray);
-		setSelectedDeps(depsArray);
-		return depsArray;
+		setInUseDeps(result.result || []);
+		setSelectedDeps(result.result || []);
+		return result.result || [];
 	}
 
 	const handleDeleteDeps = async () => {
@@ -557,6 +557,8 @@ export default function Install({
 			if (deps && deps.length > 0) {
 				setDeleteDepsModal(!deleteDepsModal);
 			} else {
+				console.log(`DEPS: ${JSON.stringify(deps)}`);
+				console.log(`${deps.length} deps in use`);
 				await uninstall(false);
 			}
 		}

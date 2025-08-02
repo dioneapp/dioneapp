@@ -7,7 +7,7 @@ export const id = {
 		success: "Berhasil",
 		pending: "Tertunda",
 		back: "Kembali",
-		deselectAll: "Batalkan Pilihan Semua",
+		unselectAll: "Batalkan Pilihan Semua",
 		selectAll: "Pilih Semua",
 	},
 
@@ -164,6 +164,14 @@ export const id = {
 				description:
 					"Hapus semua dependensi terkait saat mencopot pemasangan aplikasi",
 			},
+			deleteCache: {
+				label: "Hapus Cache",
+				description: "Hapus semua data yang di-cache dari aplikasi",
+				button: "Hapus Cache",
+				deleting: "Menghapus...",
+				deleted: "Dihapus",
+				error: "Kesalahan",
+			},
 		},
 		interface: {
 			title: "Antarmuka",
@@ -214,6 +222,11 @@ export const id = {
 				description:
 					"Reset Dione ke keadaan awal dan tampilkan kembali onboarding untuk rekonfigurasi",
 				button: "Atur Ulang",
+			},
+			variables: {
+				label: "Variabel",
+				description: "Kelola variabel aplikasi dan nilainya",
+				button: "Buka Variabel",
 			},
 		},
 	},
@@ -351,6 +364,20 @@ export const id = {
 		title: "Skrip Lokal",
 		upload: "Unggah Skrip",
 		noScripts: "Tidak ada skrip ditemukan",
+		deleting: "Menghapus skrip, harap tunggu...",
+		uploadModal: {
+			title: "Unggah Skrip",
+			selectFile: "Klik untuk memilih file",
+			selectedFile: "File Dipilih",
+			scriptName: "Nama skrip",
+			scriptDescription: "Deskripsi skrip (opsional)",
+			uploadFile: "Unggah File",
+			uploading: "Mengunggah...",
+			errors: {
+				uploadFailed: "Gagal mengunggah skrip. Silakan coba lagi.",
+				uploadError: "Terjadi kesalahan saat mengunggah skrip.",
+			},
+		},
 	},
 
 	// feed component

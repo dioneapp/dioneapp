@@ -7,7 +7,7 @@ export const es = {
 		success: "Éxito",
 		pending: "Pendiente",
 		back: "Volver",
-		deselectAll: "Deseleccionar todo",
+		unselectAll: "Deseleccionar todo",
 		selectAll: "Seleccionar todo",
 	},
 
@@ -165,6 +165,14 @@ export const es = {
 				description:
 					"Eliminar todas las dependencias relacionadas al desinstalar aplicaciones",
 			},
+			deleteCache: {
+				label: "Eliminar caché",
+				description: "Eliminar todos los datos en caché de las aplicaciones",
+				button: "Eliminar caché",
+				deleting: "Eliminando...",
+				deleted: "Eliminado",
+				error: "Error",
+			},
 		},
 		interface: {
 			title: "Interfaz",
@@ -218,6 +226,11 @@ export const es = {
 				description:
 					"Restablece Dione a su estado inicial y muestra de nuevo la bienvenida para la reconfiguración",
 				button: "Restablecer",
+			},
+			variables: {
+				label: "Variables",
+				description: "Gestionar las variables de la aplicación y sus valores",
+				button: "Abrir Variables",
 			},
 		},
 	},
@@ -355,6 +368,21 @@ export const es = {
 		title: "Scripts locales",
 		upload: "Subir script",
 		noScripts: "No se encontraron scripts",
+		deleting: "Eliminando script, por favor espera...",
+		uploadModal: {
+			title: "Subir Script",
+			selectFile: "Haz clic para seleccionar un archivo",
+			selectedFile: "Archivo Seleccionado",
+			scriptName: "Nombre del script",
+			scriptDescription: "Descripción del script (opcional)",
+			uploadFile: "Subir Archivo",
+			uploading: "Subiendo...",
+			errors: {
+				uploadFailed:
+					"Error al subir el script. Por favor, inténtalo de nuevo.",
+				uploadError: "Ocurrió un error al subir el script.",
+			},
+		},
 	},
 
 	// feed component

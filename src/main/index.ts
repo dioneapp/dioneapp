@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import os from "node:os";
 import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
@@ -37,7 +38,6 @@ import {
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
-import { refreshPathFromSystem } from "./server/utils/refresh-env";
 
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
@@ -158,12 +158,6 @@ function createWindow() {
 		}
 	});
 
-	// Prevent opening new windows and handle external links
-	mainWindow.webContents.setWindowOpenHandler((details) => {
-		shell.openExternal(details.url);
-		return { action: "deny" };
-	});
-
 	if (process.platform === "linux") app.commandLine.appendSwitch("no-sandbox");
 
 	const handleDeepLink = (url: string | undefined) => {
@@ -206,6 +200,20 @@ function createWindow() {
 	app.on("open-url", (event, url) => {
 		event.preventDefault();
 		handleDeepLink(url);
+	});
+
+	app.on("web-contents-created", (_e, contents) => {
+		if (contents.getType() === "webview") {
+			contents.setWindowOpenHandler((details) => {
+				shell.openExternal(details.url);
+				return { action: "deny" };
+			});
+		}
+	});
+
+	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+		shell.openExternal(url);
+		return { action: "deny" };
 	});
 
 	const gotTheLock = app.requestSingleInstanceLock();
@@ -722,9 +730,9 @@ app.whenReady().then(async () => {
 			]);
 			const port = await startServer();
 			// refresh environment variables
-			if (os.platform() === "win32") {
-				refreshPathFromSystem();
-			}
+			// if (os.platform() === "win32") {
+			// 	refreshPathFromSystem();
+			// }
 			logger.info(`Backend restarted successfully on port ${port}`);
 			return port;
 		} catch (error) {
@@ -814,7 +822,7 @@ ipcMain.on("new-window", (_event, url) => {
 
 	previewWindow.webContents.setWindowOpenHandler(({ url }) => {
 		shell.openExternal(url);
-		return { action: 'deny' };
+		return { action: "deny" };
 	});
 
 	previewWindow.on("close", () => {
@@ -831,6 +839,61 @@ ipcMain.on("new-window", (_event, url) => {
 ipcMain.on("close-preview-window", () => {
 	if (previewWindow) {
 		previewWindow.destroy();
+	}
+});
+
+ipcMain.handle("check-folder-size", async (_event, folderPath) => {
+	if (!folderPath) {
+		folderPath = path.join(process.cwd(), "bin", "cache");
+	}
+
+	if (!fs.existsSync(folderPath)) {
+		return "0.00";
+	}
+
+	async function getFolderSize(folderPath: string): Promise<number> {
+		let totalSize = 0;
+
+		async function walk(dir: string) {
+			const files = await fs.promises.readdir(dir);
+
+			for (const file of files) {
+				const filePath = path.join(dir, file);
+				const stat = await fs.promises.stat(filePath);
+
+				if (stat.isDirectory()) {
+					await walk(filePath);
+				} else {
+					totalSize += stat.size;
+				}
+			}
+		}
+
+		await walk(folderPath);
+		return totalSize;
+	}
+
+	const sizeBytes = await getFolderSize(folderPath);
+	const sizeGB = sizeBytes / (1024 * 1024 * 1024);
+	return `${sizeGB.toFixed(2)}`;
+});
+
+ipcMain.handle("delete-folder", async (_event, folderPath) => {
+	if (!folderPath) {
+		folderPath = path.join(process.cwd(), "bin", "cache");
+	}
+
+	if (!fs.existsSync(folderPath)) {
+		console.warn(`Folder does not exist: ${folderPath}`);
+		return true;
+	}
+
+	try {
+		await fs.promises.rm(folderPath, { recursive: true, force: true });
+		return true;
+	} catch (error) {
+		console.error("Error deleting folder:", error);
+		return false;
 	}
 });
 

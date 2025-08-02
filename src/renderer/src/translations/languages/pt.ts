@@ -7,7 +7,7 @@ export const pt = {
 		success: "Sucesso",
 		pending: "Pendente",
 		back: "Voltar",
-		deselectAll: "Deselecionar tudo",
+		unselectAll: "Deselecionar tudo",
 		selectAll: "Selecionar tudo",
 	},
 
@@ -165,6 +165,14 @@ export const pt = {
 				description:
 					"Remover todas as dependências relacionadas ao desinstalar aplicativos",
 			},
+			deleteCache: {
+				label: "Excluir Cache",
+				description: "Remover todos os dados em cache dos aplicativos",
+				button: "Excluir Cache",
+				deleting: "Excluindo...",
+				deleted: "Excluído",
+				error: "Erro",
+			},
 		},
 		interface: {
 			title: "Interface",
@@ -217,6 +225,11 @@ export const pt = {
 				description:
 					"Redefinir Dione para seu estado inicial e mostrar novamente a integração para reconfiguração",
 				button: "Redefinir",
+			},
+			variables: {
+				label: "Variáveis",
+				description: "Gerenciar variáveis de aplicativo e seus valores",
+				button: "Abrir Variáveis",
 			},
 		},
 	},
@@ -354,6 +367,20 @@ export const pt = {
 		title: "Scripts locais",
 		upload: "Carregar script",
 		noScripts: "Nenhum script encontrado",
+		deleting: "Excluindo script, aguarde...",
+		uploadModal: {
+			title: "Carregar Script",
+			selectFile: "Clique para selecionar um arquivo",
+			selectedFile: "Arquivo Selecionado",
+			scriptName: "Nome do script",
+			scriptDescription: "Descrição do script (opcional)",
+			uploadFile: "Carregar Arquivo",
+			uploading: "Carregando...",
+			errors: {
+				uploadFailed: "Falha ao carregar o script. Por favor, tente novamente.",
+				uploadError: "Ocorreu um erro ao carregar o script.",
+			},
+		},
 	},
 
 	// feed component

@@ -11,6 +11,7 @@ import {
 	Square,
 	XCircle,
 } from "lucide-react";
+import type React from "react";
 import type { JSX } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "../../translations/translationContext";
@@ -35,6 +36,7 @@ export default function LogsComponent({
 }: LogsProps) {
 	const { statusLog } = useScriptsContext();
 	const { t } = useTranslation();
+
 	const Spinner = useMemo(() => {
 		if (statusLog[appId]?.status === "pending" || !statusLog[appId]?.status) {
 			return <Loader2 className="h-4 w-4 animate-spin" />;
@@ -51,6 +53,57 @@ export default function LogsComponent({
 			.trim();
 	}
 
+	// detect spinner patterns in logs
+	function isSpinnerLine(log: string): boolean {
+		const cleaned = cleanLogLine(log);
+		const spinnerPatterns = [
+			/^[\\|/-]+\s*$/,
+			/^[\\|/-]\s+.*$/,
+			/.*[\\|/-]\s*$/,
+			/^[\s]*[\\|/-][\s]*[\\|/-][\s]*$/,
+		];
+
+		return spinnerPatterns.some((pattern) => pattern.test(cleaned));
+	}
+
+	function processLogs(rawLogs: string[]): string[] {
+		if (!rawLogs || rawLogs.length === 0) return [];
+
+		const processedLogs: string[] = [];
+
+		for (let i = 0; i < rawLogs.length; i++) {
+			const currentLog = rawLogs[i];
+			const cleanedCurrentLog = cleanLogLine(currentLog);
+
+			// ignore empty or whitespace-only logs
+			if (!cleanedCurrentLog || cleanedCurrentLog.trim() === "") {
+				continue;
+			}
+
+			const isCurrentSpinner = isSpinnerLine(currentLog);
+			if (isCurrentSpinner && processedLogs.length > 0) {
+				const lastIndex = processedLogs.length - 1;
+				const lastLog = processedLogs[lastIndex];
+
+				if (isSpinnerLine(lastLog)) {
+					// if spinner, replace the last log
+					processedLogs[lastIndex] = currentLog;
+				} else {
+					// if not a spinner, just add the current log
+					processedLogs.push(currentLog);
+				}
+			} else {
+				processedLogs.push(currentLog);
+			}
+		}
+
+		return processedLogs;
+	}
+
+	const processedLogs = useMemo(() => {
+		return processLogs(logs?.[appId] || []);
+	}, [logs, appId]);
+
 	return (
 		<motion.div
 			className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden"
@@ -61,39 +114,53 @@ export default function LogsComponent({
 			transition={{ duration: 0.3 }}
 		>
 			<div className="w-full justify-end flex items-end mx-auto overflow-hidden">
-				<div className="w-52 h-12 rounded-t-xl border border-b-0 border-white/10 p-2 flex items-center justify-center">
+				<div className="max-w-80 min-w-32 h-12 rounded-t-xl border border-b-0 border-white/10 p-4 flex items-center justify-center">
 					<p
-						className={`text-xs ${statusLog[appId]?.status === "success" ? "text-green-400" : statusLog[appId]?.status === "error" ? "text-red-400" : statusLog[appId]?.status === "pending" || !statusLog[appId]?.status ? "text-orange-400" : "text-neutral-200"} flex items-center gap-2`}
+						className={`text-xs ${
+							statusLog[appId]?.status === "success"
+								? "text-green-400"
+								: statusLog[appId]?.status === "error"
+									? "text-red-400"
+									: statusLog[appId]?.status === "pending" ||
+											!statusLog[appId]?.status
+										? "text-orange-400"
+										: "text-neutral-200"
+						} flex items-center gap-2 whitespace-nowrap overflow-hidden`}
 					>
 						{Spinner}
 						{statusLog[appId]?.status === "success" && (
-							<CheckCircle className="h-4 w-4" />
+							<CheckCircle className="h-4 w-4 flex-shrink-0" />
 						)}
 						{statusLog[appId]?.status === "error" && (
-							<XCircle className="h-4 w-4" />
+							<XCircle className="h-4 w-4 flex-shrink-0" />
 						)}
-						{statusLog[appId]?.content
-							? `${statusLog[appId]?.content}`
-							: t("logs.loading")}
+						<span className="truncate">
+							{statusLog[appId]?.content
+								? `${statusLog[appId]?.content}`
+								: t("logs.loading")}
+						</span>
 					</p>
 				</div>
 			</div>
 			<motion.div className="p-10 select-text rounded-tl-xl rounded-b-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/80 hide-scrollbar">
 				<div
 					id="logs"
-					className="flex flex-col mx-auto  max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text text-wrap pb-4"
+					className="flex flex-col mx-auto max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text text-wrap pb-4"
 					ref={(el) => {
 						if (el) {
 							el.scrollTop = el.scrollHeight;
 						}
 					}}
 				>
-					{(logs?.[appId] || []).map((log, index) => {
+					{processedLogs.map((log, index) => {
 						const lowerLog = log.toLowerCase();
 						const cleanedLog = cleanLogLine(log);
+						const isSpinner = isSpinnerLine(log);
+
 						let textColor = "text-neutral-400";
 						let symbol: JSX.Element | null = null;
 						let bg = "";
+						const isLast = index === processedLogs.length - 1;
 
 						if (lowerLog.includes("error")) {
 							textColor = "text-red-400";
@@ -112,13 +179,16 @@ export default function LogsComponent({
 							symbol = <Info className="w-3 h-3" />;
 							bg = "bg-blue-500/10";
 						} else {
-							symbol = <Dot className="w-3 h-3" />;
+							symbol =
+								isSpinner && isLast ? (
+									<Loader2 className="w-3 h-3 animate-spin" />
+								) : (
+									<Dot className="w-3 h-3" />
+								);
 						}
 
-						const isLast = index === (logs?.[appId]?.length || 0) - 1;
-
 						return (
-							<div key={index} className="w-full">
+							<motion.div key={index} className="w-full">
 								<div
 									className={`flex items-center gap-2 py-1 px-2 ${bg} rounded-md w-full relative`}
 								>
@@ -130,7 +200,7 @@ export default function LogsComponent({
 									</pre>
 								</div>
 								{!isLast && <div className="w-full h-px bg-white/5 my-1" />}
-							</div>
+							</motion.div>
 						);
 					})}
 				</div>

@@ -1,6 +1,6 @@
 import si from "systeminformation";
 import logger from "../utils/logger";
-import { readDioneConfig } from "./dependencies";
+import { readDioneConfig } from "./dependencies/dependencies";
 
 export async function getSystemInfo() {
 	let os;
@@ -27,7 +27,7 @@ export async function checkSystem(FILE_PATH: string) {
 	logger.info(`Using: ${gpu}, required: ${dioneConfig.requirements?.gpus}`);
 
 	if (dioneConfig.requirements) {
-		if (dioneConfig.requirements.os) {
+		if (dioneConfig.requirements.os && dioneConfig.requirements.os.length > 0) {
 			if (!dioneConfig.requirements.os.includes(os.toLowerCase())) {
 				logger.error(`OS ${os} is not supported`);
 				return {
@@ -36,7 +36,10 @@ export async function checkSystem(FILE_PATH: string) {
 				};
 			}
 		}
-		if (dioneConfig.requirements.gpus) {
+		if (
+			dioneConfig.requirements.gpus &&
+			dioneConfig.requirements.gpus.length > 0
+		) {
 			if (!dioneConfig.requirements.gpus.includes(gpu.toLowerCase())) {
 				logger.error(`GPU ${gpu} is not supported`);
 				return {

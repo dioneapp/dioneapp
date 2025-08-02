@@ -7,7 +7,7 @@ export const hi = {
 		success: "सफलता",
 		pending: "लंबित",
 		back: "वापस",
-		deselectAll: "सबको अचयनित करो",
+		unselectAll: "सबको अचयनित करो",
 		selectAll: "सबको चयनित करो",
 	},
 
@@ -161,6 +161,14 @@ export const hi = {
 				label: "स्वच्छ अनइंस्टॉल",
 				description: "एप्लिकेशन को अनइंस्टॉल करते समय सभी संबंधित निर्भरताओं को हटा दें",
 			},
+			deleteCache: {
+				label: "कैशे हटाएं",
+				description: "एप्लिकेशन से सभी कैशे डेटा हटाएं",
+				button: "कैशे हटाएं",
+				deleting: "हटाया जा रहा है...",
+				deleted: "हटाया गया",
+				error: "त्रुटि",
+			},
 		},
 		interface: {
 			title: "इंटरफ़ेस",
@@ -209,6 +217,11 @@ export const hi = {
 				description:
 					"Dione को उसकी प्रारंभिक स्थिति में रीसेट करें और पुनर्गठन के लिए ऑनबोर्डिंग को फिर से दिखाएँ",
 				button: "रीसेट करें",
+			},
+			variables: {
+				label: "वेरिएबल्स",
+				description: "एप्लिकेशन वेरिएबल्स और उनके मान प्रबंधित करें",
+				button: "वेरिएबल्स खोलें",
 			},
 		},
 	},
@@ -342,6 +355,20 @@ export const hi = {
 		title: "स्क्रिप्ट",
 		upload: "स्क्रिप्ट अपलोड",
 		noScripts: "कोई स्क्रिप्ट नहीं मिली",
+		deleting: "स्क्रिप्ट हटा रहे हैं, कृपया प्रतीक्षा करें...",
+		uploadModal: {
+			title: "स्क्रिप्ट अपलोड",
+			selectFile: "फ़ाइल चुनने के लिए क्लिक करें",
+			selectedFile: "चयनित फ़ाइल",
+			scriptName: "स्क्रिप्ट का नाम",
+			scriptDescription: "स्क्रिप्ट का विवरण (वैकल्पिक)",
+			uploadFile: "फ़ाइल अपलोड",
+			uploading: "अपलोड हो रहा है...",
+			errors: {
+				uploadFailed: "स्क्रिप्ट अपलोड करने में विफल। कृपया पुनः प्रयास करें।",
+				uploadError: "स्क्रिप्ट अपलोड करते समय त्रुटि हुई।",
+			},
+		},
 	},
 
 	// feed component

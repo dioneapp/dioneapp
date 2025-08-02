@@ -98,7 +98,8 @@ export function setupSocket({
 						`${data.name} has finished successfully.`,
 					);
 					stopCheckingRef.current = true;
-					setAppFinished({ [appId]: true });
+
+					setAppFinished((prev) => ({ ...prev, [appId]: true }));
 				}
 			}
 			if (type === "catch") {

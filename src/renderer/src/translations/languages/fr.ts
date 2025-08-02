@@ -7,7 +7,7 @@ export const fr = {
 		success: "Succès",
 		pending: "En attente",
 		back: "Retour",
-		deselectAll: "Désélectionner tout",
+		unselectAll: "Désélectionner tout",
 		selectAll: "Sélectionner tout",
 	},
 
@@ -165,6 +165,15 @@ export const fr = {
 				description:
 					"Supprimer toutes les dépendances liées lors de la désinstallation des applications",
 			},
+			deleteCache: {
+				label: "Supprimer le cache",
+				description:
+					"Supprimer toutes les données mises en cache des applications",
+				button: "Supprimer le cache",
+				deleting: "Suppression en cours...",
+				deleted: "Supprimé",
+				error: "Erreur",
+			},
 		},
 		interface: {
 			title: "Interface",
@@ -217,6 +226,11 @@ export const fr = {
 				description:
 					"Réinitialiser Dione à son état initial et afficher à nouveau l'intégration pour la reconfiguration",
 				button: "Réinitialiser",
+			},
+			variables: {
+				label: "Variables",
+				description: "Gérer les variables de l'application et leurs valeurs",
+				button: "Ouvrir les variables",
 			},
 		},
 	},
@@ -354,6 +368,21 @@ export const fr = {
 		title: "Scripts locaux",
 		upload: "Télécharger le script",
 		noScripts: "Aucun script trouvé",
+		deleting: "Suppression du script, veuillez patienter...",
+		uploadModal: {
+			title: "Télécharger le Script",
+			selectFile: "Cliquez pour sélectionner un fichier",
+			selectedFile: "Fichier Sélectionné",
+			scriptName: "Nom du script",
+			scriptDescription: "Description du script (optionnel)",
+			uploadFile: "Télécharger le Fichier",
+			uploading: "Téléchargement...",
+			errors: {
+				uploadFailed: "Échec du téléchargement du script. Veuillez réessayer.",
+				uploadError:
+					"Une erreur s'est produite lors du téléchargement du script.",
+			},
+		},
 	},
 
 	// feed component
