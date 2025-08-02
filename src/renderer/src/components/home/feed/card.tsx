@@ -2,7 +2,6 @@ import {
 	BadgeCheck,
 	Calendar,
 	Download,
-	GitCommitVertical,
 	GitCompare,
 	Tag,
 	Trash,
