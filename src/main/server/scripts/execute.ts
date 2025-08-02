@@ -196,11 +196,11 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 			}
 		}
 		// emit log to reload frontend after all actions are executed
-		io.to(id).emit("installUpdate", {
-			type: "status",
-			status: "success",
-			content: "Actions executed",
-		});
+		// io.to(id).emit("installUpdate", {
+		// 	type: "status",
+		// 	status: "success",
+		// 	content: "Actions executed",
+		// });
 	} catch (error) {
 		io.to(id).emit("installUpdate", {
 			type: "log",
