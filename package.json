@@ -5,7 +5,7 @@
 		"type": "git",
 		"url": "https://github.com/dioneapp/dioneapp.git"
 	},
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"description": "Explore, Install, Innovate — in 1 Click.",
 	"main": "./out/main/index.js",
 	"author": {
