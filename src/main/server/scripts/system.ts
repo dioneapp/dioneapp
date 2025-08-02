@@ -36,7 +36,10 @@ export async function checkSystem(FILE_PATH: string) {
 				};
 			}
 		}
-		if (dioneConfig.requirements.gpus && dioneConfig.requirements.gpus.length > 0) {
+		if (
+			dioneConfig.requirements.gpus &&
+			dioneConfig.requirements.gpus.length > 0
+		) {
 			if (!dioneConfig.requirements.gpus.includes(gpu.toLowerCase())) {
 				logger.error(`GPU ${gpu} is not supported`);
 				return {
