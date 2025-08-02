@@ -4,7 +4,7 @@ import AnimatedCount from "@renderer/utils/animate-count";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { joinPath } from "@renderer/utils/path";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Delete, Folder, Trash2 } from "lucide-react";
+import { ChevronDown, Folder, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
