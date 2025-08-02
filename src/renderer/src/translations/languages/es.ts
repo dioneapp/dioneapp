@@ -227,6 +227,11 @@ export const es = {
 					"Restablece Dione a su estado inicial y muestra de nuevo la bienvenida para la reconfiguración",
 				button: "Restablecer",
 			},
+			variables: {
+				label: "Variables",
+				description: "Gestionar las variables de la aplicación y sus valores",
+				button: "Abrir Variables",
+			},
 		},
 	},
 

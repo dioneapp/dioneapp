@@ -223,6 +223,11 @@ export const id = {
 					"Reset Dione ke keadaan awal dan tampilkan kembali onboarding untuk rekonfigurasi",
 				button: "Atur Ulang",
 			},
+			variables: {
+				label: "Variabel",
+				description: "Kelola variabel aplikasi dan nilainya",
+				button: "Buka Variabel",
+			},
 		},
 	},
 

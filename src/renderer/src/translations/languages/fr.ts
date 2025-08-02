@@ -227,6 +227,11 @@ export const fr = {
 					"Réinitialiser Dione à son état initial et afficher à nouveau l'intégration pour la reconfiguration",
 				button: "Réinitialiser",
 			},
+			variables: {
+				label: "Variables",
+				description: "Gérer les variables de l'application et leurs valeurs",
+				button: "Ouvrir les variables",
+			},
 		},
 	},
 

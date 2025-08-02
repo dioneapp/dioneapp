@@ -226,6 +226,11 @@ export const pt = {
 					"Redefinir Dione para seu estado inicial e mostrar novamente a integração para reconfiguração",
 				button: "Redefinir",
 			},
+			variables: {
+				label: "Variáveis",
+				description: "Gerenciar variáveis de aplicativo e seus valores",
+				button: "Abrir Variáveis",
+			},
 		},
 	},
 
