@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
 import { openFolder, openLink } from "../utils/openLink";
+import VariablesModal from "@renderer/components/modals/variables";
 
 // custom dropdown component
 const CustomSelect = ({
@@ -137,6 +138,7 @@ export default function Settings() {
 	const [deleteCacheStatus, setDeleteCacheStatus] = useState<string | null>(
 		null,
 	);
+	const [variablesModal, setVariablesModal] = useState(false);
 
 	useEffect(() => {
 		const fetchPort = async () => {
@@ -292,8 +294,13 @@ export default function Settings() {
 		}
 	}
 
+	const openVariablesModal = (state: boolean) => {
+		setVariablesModal(state);
+	}
+
 	return (
-		<div className="min-h-screen bg-background pt-4">
+		<>
+		<div className="min-h-screen bg-background pt-4 relative">
 			<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
 				<main className="flex flex-col gap-6 py-5">
 					{/* background */}
@@ -636,6 +643,23 @@ export default function Settings() {
 											<div className="flex justify-between w-full items-center h-full space-y-2">
 												<div className="h-full flex items-start justify-center flex-col mt-auto">
 													<label className="text-neutral-200 font-medium">
+														{t("settings.other.variables.label")}
+													</label>
+													<p className="text-xs text-neutral-400">
+														{t("settings.other.variables.description")}
+													</p>
+												</div>
+												<button
+													onClick={() => openVariablesModal(true)}
+													className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+													type="button"
+												>
+													{t("settings.other.variables.button")}
+												</button>
+											</div>
+											<div className="flex justify-between w-full items-center h-full space-y-2">
+												<div className="h-full flex items-start justify-center flex-col mt-auto">
+													<label className="text-neutral-200 font-medium">
 														{t("settings.other.submitFeedback.label")}
 													</label>
 													<p className="text-xs text-neutral-400">
@@ -713,5 +737,11 @@ export default function Settings() {
 				</main>
 			</div>
 		</div>
+        {variablesModal && (
+          <div>
+            <VariablesModal onClose={() => openVariablesModal(false)} />
+          </div>
+        )}
+		</>
 	);
 }
