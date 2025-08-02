@@ -130,6 +130,7 @@ export function initDefaultEnv() {
 	}
 
 	const currentEnv = getAllValues();
+	const cacheFolder = path.join(binFolder, "cache");
 
 	if (getOS() === "windows") {
 		// windows
@@ -168,6 +169,18 @@ export function initDefaultEnv() {
 				".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC",
 			);
 		}
+		if (!currentEnv.HF_HUB_CACHE) {
+			addValue("HF_HUB_CACHE", path.join(cacheFolder));
+		}
+		if (!currentEnv.HF_HOME) {
+			addValue("HF_HOME", path.join(cacheFolder));
+		}
+		if (!currentEnv.TRANSFORMERS_CACHE) {
+			addValue("TRANSFORMERS_CACHE", path.join(cacheFolder));
+		}
+		if (!currentEnv.TEMP) {
+			addValue("TEMP", path.join(cacheFolder));
+		}
 	} else {
 		// linux/macos
 		if (!currentEnv.PATH) {
@@ -175,6 +188,15 @@ export function initDefaultEnv() {
 				"PATH",
 				"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
 			);
+		}
+		if (!currentEnv.HF_HUB_CACHE) {
+			addValue("HF_HUB_CACHE", path.join(cacheFolder));
+		}
+		if (!currentEnv.HF_HOME) {
+			addValue("HF_HOME", path.join(cacheFolder));
+		}
+		if (!currentEnv.TRANSFORMERS_CACHE) {
+			addValue("TRANSFORMERS_CACHE", path.join(cacheFolder));
 		}
 	}
 }
