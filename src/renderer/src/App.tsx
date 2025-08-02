@@ -106,10 +106,7 @@ function App() {
 									: "view"
 						}
 					>
-						<div
-							className="page page-transition"
-							key={location.pathname}
-						>
+						<div className="page page-transition" key={location.pathname}>
 							<ErrorBoundary>
 								<PageComponent />
 							</ErrorBoundary>
