@@ -279,7 +279,6 @@ export default function Install({
 
 			if (!installedApps.includes(data.name)) {
 				setInstalledApps((prevApps) => [...prevApps, data.name]);
-				
 			}
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 		} catch (error) {

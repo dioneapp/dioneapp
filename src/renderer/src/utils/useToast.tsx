@@ -40,13 +40,13 @@ export const ToastProvider: React.FC<{
 		<ToastContext.Provider value={{ addToast, removeToast }}>
 			{children}
 			<div className="absolute bottom-0 right-0 p-4 space-y-4 max-h-screen overflow-hidden pointer-events-none">
-					{toasts.map((toast) => (
-						<div key={toast.id}>
-							<Toast {...toast} onClose={() => removeToast(toast.id)}>
-								{toast.children}
-							</Toast>
-						</div>
-					))}
+				{toasts.map((toast) => (
+					<div key={toast.id}>
+						<Toast {...toast} onClose={() => removeToast(toast.id)}>
+							{toast.children}
+						</Toast>
+					</div>
+				))}
 			</div>
 		</ToastContext.Provider>
 	);
