@@ -38,7 +38,6 @@ import {
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
-import { refreshPathFromSystem } from "./server/utils/refresh-env";
 
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
@@ -203,7 +202,7 @@ function createWindow() {
 		handleDeepLink(url);
 	});
 
-	app.on("web-contents-created", (e, contents) => {
+	app.on("web-contents-created", (_e, contents) => {
 		if (contents.getType() === "webview") {
 			contents.setWindowOpenHandler((details) => {
 				shell.openExternal(details.url);

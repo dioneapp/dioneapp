@@ -1,7 +1,5 @@
-import { execFile, execSync, spawn } from "child_process";
+import { execFile, spawn } from "child_process";
 import fs from "fs";
-import * as fsRemove from "fs/promises";
-
 import https from "https";
 import path from "path";
 import type { Server } from "socket.io";
