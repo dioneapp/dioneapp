@@ -221,6 +221,11 @@ export const en = {
 					"Reset Dione to its initial state and show again the onboarding for reconfiguration",
 				button: "Reset",
 			},
+			variables: {
+				label: "Variables",
+				description: "Manage application variables and their values",
+				button: "Open Variables",
+			},
 		},
 	},
 

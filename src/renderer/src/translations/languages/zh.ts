@@ -212,6 +212,11 @@ export const zh = {
 				description: "将Dione重置为初始状态并再次显示新手指引以重新配置",
 				button: "重置",
 			},
+			variables: {
+				label: "变量",
+				description: "管理应用程序变量及其值",
+				button: "打开变量",
+			},
 		},
 	},
 
