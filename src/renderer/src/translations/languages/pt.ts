@@ -161,9 +161,14 @@ export const pt = {
 					"Escolha onde novos aplicativos serão instalados por padrão",
 			},
 			cleanUninstall: {
-				label: "Desinstalação limpa",
+				label: "Desinstalação Limpa",
 				description:
-					"Remover todas as dependências relacionadas ao desinstalar aplicativos",
+					"Remover todas as dependências relacionadas ao desinstalar aplicações",
+			},
+			autoOpenAfterInstall: {
+				label: "Abrir Automaticamente Após Instalar",
+				description:
+					"Abrir automaticamente as aplicações pela primeira vez após a instalação",
 			},
 			deleteCache: {
 				label: "Excluir Cache",

@@ -9,6 +9,7 @@ export interface AppConfig {
 	language: string;
 	enableDesktopNotifications: boolean;
 	notifyOnInstallComplete: boolean;
+	autoOpenAfterInstall: boolean;
 	defaultInstallFolder: string;
 	defaultScriptsFolder: string;
 	defaultLogsPath: string;
@@ -24,6 +25,7 @@ export const defaultConfig: AppConfig = {
 	language: "en",
 	enableDesktopNotifications: true,
 	notifyOnInstallComplete: true,
+	autoOpenAfterInstall: true,
 	defaultInstallFolder: app.isPackaged
 		? path.join(path.dirname(app.getPath("exe")))
 		: path.join(process.cwd()),

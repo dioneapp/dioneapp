@@ -49,11 +49,15 @@ export default function Install({
 		setLocalApps,
 		notSupported,
 	} = useScriptsContext();
+	
+	const { t } = useTranslation();
+	
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
 	const [_imgLoading, setImgLoading] = useState<boolean>(true);
 	// data stuff
 	const [installed, setInstalled] = useState<boolean>(false);
+	const [wasJustInstalled, setWasJustInstalled] = useState<boolean>(false);
 	// delete
 	const [deleteStatus, setDeleteStatus] = useState<string>("");
 	const [deleteDepsModal, setDeleteDepsModal] = useState<boolean>(false);
@@ -91,18 +95,58 @@ export default function Install({
 				await handleStopApp(data.id, data.name);
 				await fetchIfDownloaded();
 				setShow({ [data.id]: "actions" });
+				
+				// auto-open the app if the setting is enabled and it was just installed
+				if (config?.autoOpenAfterInstall && wasJustInstalled) {
+					const port = await getCurrentPort();
+					let response: Response;
+					if (isLocal) {
+						response = await fetch(
+							`http://localhost:${port}/local/installed/${encodeURIComponent(data.name)}`,
+							{
+								method: "GET",
+								headers: {
+									"Content-Type": "application/json",
+								},
+							},
+						);
+					} else {
+						response = await fetch(
+							`http://localhost:${port}/scripts/installed/${data.name}`,
+							{
+								method: "GET",
+								headers: {
+									"Content-Type": "application/json",
+								},
+							},
+						);
+					}
+					
+					if (response.ok) {
+						const isActuallyInstalled = await response.json();
+						if (isActuallyInstalled) {
+							setTimeout(async () => {
+								setShow({ [data?.id]: "logs" });
+								await start();
+								setWasJustInstalled(false);
+							}, 1000);
+						}
+					}
+				}
 			}
 		}
 		stopApp();
-	}, [appFinished, data?.id]);
+	}, [appFinished, data?.id, config?.autoOpenAfterInstall, wasJustInstalled, handleStopApp, fetchIfDownloaded, setShow, start, isLocal]);
 
 	useEffect(() => {
 		setData(null);
 		setSaved(false);
+		setWasJustInstalled(false);
 
 		return () => {
 			setData(null);
 			setSaved(false);
+			setWasJustInstalled(false);
 		};
 	}, []);
 
@@ -279,6 +323,7 @@ export default function Install({
 
 			if (!installedApps.includes(data.name)) {
 				setInstalledApps((prevApps) => [...prevApps, data.name]);
+				setWasJustInstalled(true);
 			}
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 		} catch (error) {
@@ -603,8 +648,6 @@ export default function Install({
 	function handleCloseDeleteModal() {
 		setDeleteStatus("");
 	}
-
-	const { t } = useTranslation();
 
 	async function handleShare() {
 		if (user.id && user !== undefined && user !== null) {

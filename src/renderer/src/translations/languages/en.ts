@@ -164,6 +164,11 @@ export const en = {
 				description:
 					"Remove all related dependencies when uninstalling applications",
 			},
+			autoOpenAfterInstall: {
+				label: "Auto-Open After Install",
+				description:
+					"Automatically open applications for the first time after installation",
+			},
 			deleteCache: {
 				label: "Delete Cache",
 				description: "Remove all cached data from applications",

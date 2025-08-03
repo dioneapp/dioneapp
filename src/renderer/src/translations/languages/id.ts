@@ -160,9 +160,14 @@ export const id = {
 				description: "Pilih di mana aplikasi baru akan diinstal secara default",
 			},
 			cleanUninstall: {
-				label: "Copot Pemasangan Bersih",
+				label: "Uninstall Bersih",
 				description:
-					"Hapus semua dependensi terkait saat mencopot pemasangan aplikasi",
+					"Hapus semua dependensi terkait saat uninstall aplikasi",
+			},
+			autoOpenAfterInstall: {
+				label: "Buka Otomatis Setelah Install",
+				description:
+					"Buka aplikasi secara otomatis untuk pertama kali setelah instalasi",
 			},
 			deleteCache: {
 				label: "Hapus Cache",

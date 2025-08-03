@@ -380,6 +380,40 @@ export default function Settings() {
 														/>
 													</button>
 												</div>
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.applications.autoOpenAfterInstall.label")}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t(
+																"settings.applications.autoOpenAfterInstall.description",
+															)}
+														</p>
+													</div>
+													<button
+														type="button"
+														onClick={() =>
+															handleUpdate({
+																autoOpenAfterInstall:
+																	!config.autoOpenAfterInstall,
+															})
+														}
+														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
+															config.autoOpenAfterInstall
+																? "bg-green-500/30"
+																: "bg-red-500/30"
+														}`}
+													>
+														<span
+															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+																config.autoOpenAfterInstall
+																	? "translate-x-6"
+																	: "translate-x-0"
+															}`}
+														/>
+													</button>
+												</div>
 												<div className="flex justify-between w-full items-center h-full">
 													<div className="h-full flex items-start justify-center flex-col">
 														<label className="text-neutral-200 font-medium">
