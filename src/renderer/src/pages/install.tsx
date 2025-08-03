@@ -49,9 +49,9 @@ export default function Install({
 		setLocalApps,
 		notSupported,
 	} = useScriptsContext();
-	
+
 	const { t } = useTranslation();
-	
+
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
 	const [_imgLoading, setImgLoading] = useState<boolean>(true);
@@ -95,7 +95,7 @@ export default function Install({
 				await handleStopApp(data.id, data.name);
 				await fetchIfDownloaded();
 				setShow({ [data.id]: "actions" });
-				
+
 				// auto-open the app if the setting is enabled and it was just installed
 				if (config?.autoOpenAfterInstall && wasJustInstalled) {
 					const port = await getCurrentPort();
@@ -121,7 +121,7 @@ export default function Install({
 							},
 						);
 					}
-					
+
 					if (response.ok) {
 						const isActuallyInstalled = await response.json();
 						if (isActuallyInstalled) {
@@ -136,7 +136,17 @@ export default function Install({
 			}
 		}
 		stopApp();
-	}, [appFinished, data?.id, config?.autoOpenAfterInstall, wasJustInstalled, handleStopApp, fetchIfDownloaded, setShow, start, isLocal]);
+	}, [
+		appFinished,
+		data?.id,
+		config?.autoOpenAfterInstall,
+		wasJustInstalled,
+		handleStopApp,
+		fetchIfDownloaded,
+		setShow,
+		start,
+		isLocal,
+	]);
 
 	useEffect(() => {
 		setData(null);

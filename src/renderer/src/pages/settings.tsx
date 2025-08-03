@@ -383,7 +383,9 @@ export default function Settings() {
 												<div className="flex justify-between w-full items-center h-full space-y-2">
 													<div className="h-full flex items-start justify-center flex-col mt-auto">
 														<label className="text-neutral-200 font-medium">
-															{t("settings.applications.autoOpenAfterInstall.label")}
+															{t(
+																"settings.applications.autoOpenAfterInstall.label",
+															)}
 														</label>
 														<p className="text-xs text-neutral-400">
 															{t(
