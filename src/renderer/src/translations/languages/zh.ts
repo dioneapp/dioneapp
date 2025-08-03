@@ -155,13 +155,11 @@ export const zh = {
 			},
 			cleanUninstall: {
 				label: "清理卸载",
-				description:
-					"卸载应用程序时删除所有相关依赖项",
+				description: "卸载应用程序时删除所有相关依赖项",
 			},
 			autoOpenAfterInstall: {
 				label: "安装后自动打开",
-				description:
-					"安装后首次自动打开应用程序",
+				description: "安装后首次自动打开应用程序",
 			},
 			deleteCache: {
 				label: "删除缓存",

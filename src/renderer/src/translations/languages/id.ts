@@ -161,8 +161,7 @@ export const id = {
 			},
 			cleanUninstall: {
 				label: "Uninstall Bersih",
-				description:
-					"Hapus semua dependensi terkait saat uninstall aplikasi",
+				description: "Hapus semua dependensi terkait saat uninstall aplikasi",
 			},
 			autoOpenAfterInstall: {
 				label: "Buka Otomatis Setelah Install",
