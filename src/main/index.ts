@@ -38,6 +38,7 @@ import {
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
+import { initDefaultEnv } from "./server/scripts/dependencies/environment";
 
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
@@ -253,6 +254,9 @@ function createWindow() {
 // Sets up the application when ready.
 app.whenReady().then(async () => {
 	logger.info("Starting app...");
+
+	// initialize environment variables
+	initDefaultEnv();
 
 	// map to store request origins
 	const requestOrigins = new Map<string, string>();
