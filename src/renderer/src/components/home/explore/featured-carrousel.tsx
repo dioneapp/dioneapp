@@ -166,12 +166,13 @@ export default function FeaturedCarousel() {
 									}}
 									className={`absolute inset-0 w-full h-full bg-black/5 ${scripts.find((script) => script.id === activeIndex)?.banner_url ? "opacity-50" : "opacity-20 scale-150"}`}
 								/>
-								<motion.div 
+								<motion.div
 									initial={{ opacity: 0, filter: "blur(4px)", top: 10 }}
 									animate={{ opacity: 1, filter: "blur(0px)", top: 0 }}
 									exit={{ opacity: 0, filter: "blur(4px)", top: -10 }}
 									transition={{ duration: 0.3 }}
-									className="z-50 absolute inset-0 p-10 transition-colors duration-300 group-hover:bg-black/20">
+									className="z-50 absolute inset-0 p-10 transition-colors duration-300 group-hover:bg-black/20"
+								>
 									<div className="flex w-full h-full flex-col justify-start items-center">
 										<div className="w-full h-full flex justify-end">
 											{scripts.find((script) => script.id === activeIndex)
