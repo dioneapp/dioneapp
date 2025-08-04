@@ -1,11 +1,18 @@
 import { ActivityType, Client } from "minimal-discord-rpc";
 import logger from "../server/utils/logger";
+import { readConfig } from "../config";
 
 const clientId = "1374430697024000112";
 let rpc: Client | null = null;
 
 export const initializeDiscordPresence = async () => {
 	try {
+		const config = readConfig();
+		if (!config?.enableDiscordRPC) {
+			logger.info("Discord RPC is disabled in settings");
+			return;
+		}
+
 		rpc = new Client({ clientId });
 
 		rpc.on("ready", () => {
@@ -64,6 +71,14 @@ export const destroyPresence = async () => {
 		rpc = null;
 	} catch (error) {
 		logger.error("Failed to destroy Discord presence:", error);
+	}
+};
+
+export const toggleDiscordRPC = async (enabled: boolean) => {
+	if (enabled) {
+		await initializeDiscordPresence();
+	} else {
+		await destroyPresence();
 	}
 };
 

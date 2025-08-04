@@ -200,9 +200,12 @@ export const es = {
 					"Mostrar notificaciones de escritorio para eventos importantes",
 			},
 			installationAlerts: {
-				label: "Alertas de instalación",
-				description:
-					"Recibir notificaciones cuando se completen las instalaciones de aplicaciones",
+				label: "Alertas de Instalación",
+				description: "Recibe notificaciones cuando se completen las instalaciones de aplicaciones",
+			},
+			discordRPC: {
+				label: "Discord Rich Presence",
+				description: "Muestra tu actividad actual en el estado de Discord",
 			},
 		},
 		privacy: {

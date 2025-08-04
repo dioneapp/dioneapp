@@ -200,9 +200,12 @@ export const pt = {
 					"Mostrar notificações da área de trabalho para eventos importantes",
 			},
 			installationAlerts: {
-				label: "Alertas de instalação",
-				description:
-					"Seja notificado quando as instalações de aplicativos forem concluídas",
+				label: "Alertas de Instalação",
+				description: "Receber notificações quando as instalações de aplicativos forem concluídas",
+			},
+			discordRPC: {
+				label: "Discord Rich Presence",
+				description: "Mostrar sua atividade atual no status do Discord",
 			},
 		},
 		privacy: {

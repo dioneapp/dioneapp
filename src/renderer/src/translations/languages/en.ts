@@ -201,6 +201,10 @@ export const en = {
 				label: "Installation Alerts",
 				description: "Get notified when application installations complete",
 			},
+			discordRPC: {
+				label: "Discord Rich Presence",
+				description: "Show your current activity in Discord status",
+			},
 		},
 		privacy: {
 			title: "Privacy",

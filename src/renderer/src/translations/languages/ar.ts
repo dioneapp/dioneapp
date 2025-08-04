@@ -195,6 +195,10 @@ export const ar = {
 				label: "تنبيهات التثبيت",
 				description: "الحصول على إشعار عند اكتمال تثبيت التطبيقات",
 			},
+			discordRPC: {
+				label: "Discord Rich Presence",
+				description: "عرض نشاطك الحالي في حالة Discord",
+			},
 		},
 		privacy: {
 			title: "الخصوصية",

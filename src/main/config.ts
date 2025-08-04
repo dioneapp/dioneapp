@@ -16,6 +16,7 @@ export interface AppConfig {
 	compactMode: boolean;
 	alwaysUninstallDependencies: boolean;
 	sendAnonymousReports: boolean;
+	enableDiscordRPC: boolean;
 }
 
 // default config
@@ -36,6 +37,7 @@ export const defaultConfig: AppConfig = {
 	compactMode: false,
 	alwaysUninstallDependencies: false,
 	sendAnonymousReports: true,
+	enableDiscordRPC: true,
 };
 // get config file
 export const getConfigPath = () => {

@@ -189,8 +189,12 @@ export const zh = {
 				description: "重要事件显示桌面通知",
 			},
 			installationAlerts: {
-				label: "安装警报",
+				label: "安装提醒",
 				description: "应用程序安装完成时收到通知",
+			},
+			discordRPC: {
+				label: "Discord 丰富状态",
+				description: "在 Discord 状态中显示当前活动",
 			},
 		},
 		privacy: {

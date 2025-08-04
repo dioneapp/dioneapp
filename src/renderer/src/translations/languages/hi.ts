@@ -197,6 +197,10 @@ export const hi = {
 				label: "इंस्टॉलेशन अलर्ट",
 				description: "एप्लिकेशन इंस्टॉलेशन पूरा होने पर सूचित करें",
 			},
+			discordRPC: {
+				label: "Discord Rich Presence",
+				description: "Discord स्थिति में अपनी वर्तमान गतिविधि दिखाएं",
+			},
 		},
 		privacy: {
 			title: "गोपनीयता",

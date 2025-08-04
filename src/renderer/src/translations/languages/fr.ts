@@ -202,9 +202,12 @@ export const fr = {
 					"Afficher les notifications de bureau pour les événements importants",
 			},
 			installationAlerts: {
-				label: "Alertes d'installation",
-				description:
-					"Recevoir une notification lorsque les installations d'applications sont terminées",
+				label: "Alertes d'Installation",
+				description: "Recevoir des notifications lorsque les installations d'applications sont terminées",
+			},
+			discordRPC: {
+				label: "Discord Rich Presence",
+				description: "Afficher votre activité actuelle dans le statut Discord",
 			},
 		},
 		privacy: {

@@ -195,6 +195,10 @@ export const bn = {
 				label: "ইনস্টলেশন সতর্কতা",
 				description: "অ্যাপ্লিকেশন ইনস্টলেশন সম্পূর্ণ হলে বিজ্ঞপ্তি পান",
 			},
+			discordRPC: {
+				label: "Discord Rich Presence",
+				description: "Discord স্ট্যাটাসে আপনার বর্তমান কার্যকলাপ দেখান",
+			},
 		},
 		privacy: {
 			title: "গোপনীয়তা",

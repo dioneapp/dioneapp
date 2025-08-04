@@ -5,6 +5,7 @@ import {
 	resetConfig,
 	updateConfig,
 } from "../../config";
+import { toggleDiscordRPC } from "../../discord/presence";
 
 const router = express.Router();
 router.use(express.json());
@@ -16,11 +17,18 @@ router.get("/", (_req, res) => {
 });
 
 // update config
-router.post("/update", (req, res) => {
+router.post("/update", async (req, res) => {
 	try {
 		console.log("trying to update config: ", req.body);
+		const currentConfig = readConfig();
 		updateConfig(req.body);
 		const updatedConfig = readConfig();
+		
+		if (req.body.enableDiscordRPC !== undefined && 
+			req.body.enableDiscordRPC !== currentConfig?.enableDiscordRPC) {
+			await toggleDiscordRPC(req.body.enableDiscordRPC);
+		}
+		
 		res.send(updatedConfig);
 	} catch (error) {
 		res.status(400).send({ error: "Failed to update configuration" });

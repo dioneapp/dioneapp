@@ -199,7 +199,11 @@ export const id = {
 			},
 			installationAlerts: {
 				label: "Peringatan Instalasi",
-				description: "Dapatkan pemberitahuan saat instalasi aplikasi selesai",
+				description: "Dapatkan notifikasi ketika instalasi aplikasi selesai",
+			},
+			discordRPC: {
+				label: "Discord Rich Presence",
+				description: "Tampilkan aktivitas saat ini di status Discord",
 			},
 		},
 		privacy: {
