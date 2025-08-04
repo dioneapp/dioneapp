@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { getOS } from "./utils/system";
+import { app } from "electron";
 
 const root = process.cwd();
 const binFolder = path.join(root, "bin");
@@ -125,78 +126,93 @@ export function getAllValues(): Record<string, string> {
 }
 
 export function initDefaultEnv() {
-	if (!fs.existsSync(ENVIRONMENT)) {
-		fs.writeFileSync(ENVIRONMENT, "");
-	}
+    if (!fs.existsSync(ENVIRONMENT)) {
+        fs.writeFileSync(ENVIRONMENT, "");
+    }
 
-	const currentEnv = getAllValues();
-	const cacheFolder = path.join(binFolder, "cache");
+    const currentEnv = getAllValues();
+    const cacheFolder = path.join(binFolder, "cache");
 
-	if (getOS() === "windows") {
-		// windows
-		let pathValue = currentEnv.PATH || "";
-		const basicEnv = [
-			"C:\\Windows\\System32",
-			"C:\\Windows",
-			"C:\\Windows\\System32\\Wbem",
-			"C:\\Windows\\System32\\WindowsPowerShell\\v1.0",
-		];
+    if (getOS() === "windows") {
+        // windows
+        const appData = app.getPath("appData");
+        const basicEnv = [
+            "C:\\Windows\\System32",
+            "C:\\Windows",
+            "C:\\Windows\\System32\\Wbem",
+            "C:\\Windows\\System32\\WindowsPowerShell\\v1.0",
+            `${path.join(appData, "Local", "Microsoft", "WindowsApps")}`,
+        ];
 
-		basicEnv.forEach((p) => {
-			if (!pathValue.toLowerCase().includes(p.toLowerCase())) {
-				if (pathValue.length > 0 && !pathValue.endsWith(";")) {
-					pathValue += ";";
-				}
-				pathValue += p;
-			}
-		});
+       	// check if have basics paths
+        basicEnv.forEach((basicPath) => {
+            const currentPath = currentEnv.PATH || "";
+            const pathParts = currentPath.split(separator).map(p => p.trim());
+            
+            const pathExists = pathParts.some(part => 
+                path.normalize(part).toLowerCase() === path.normalize(basicPath).toLowerCase()
+            );
+            
+            if (!pathExists) {
+                addValue("PATH", basicPath);
+            }
+        });
 
-		if (!currentEnv.PATH || currentEnv.PATH !== pathValue) {
-			addValue("PATH", pathValue);
-		}
+        if (!currentEnv.ComSpec) {
+            addValue("ComSpec", "C:\\Windows\\System32\\cmd.exe");
+        }
 
-		if (!currentEnv.ComSpec) {
-			addValue("ComSpec", "C:\\Windows\\System32\\cmd.exe");
-		}
+        if (!currentEnv.SystemRoot) {
+            addValue("SystemRoot", "C:\\Windows");
+        }
 
-		if (!currentEnv.SystemRoot) {
-			addValue("SystemRoot", "C:\\Windows");
-		}
-
-		if (!currentEnv.PATHEXT) {
-			addValue(
-				"PATHEXT",
-				".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC",
-			);
-		}
-		if (!currentEnv.HF_HUB_CACHE) {
-			addValue("HF_HUB_CACHE", path.join(cacheFolder));
-		}
-		if (!currentEnv.HF_HOME) {
-			addValue("HF_HOME", path.join(cacheFolder));
-		}
-		if (!currentEnv.TRANSFORMERS_CACHE) {
-			addValue("TRANSFORMERS_CACHE", path.join(cacheFolder));
-		}
-		if (!currentEnv.TEMP) {
-			addValue("TEMP", path.join(cacheFolder));
-		}
-	} else {
-		// linux/macos
-		if (!currentEnv.PATH) {
-			addValue(
-				"PATH",
-				"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-			);
-		}
-		if (!currentEnv.HF_HUB_CACHE) {
-			addValue("HF_HUB_CACHE", path.join(cacheFolder));
-		}
-		if (!currentEnv.HF_HOME) {
-			addValue("HF_HOME", path.join(cacheFolder));
-		}
-		if (!currentEnv.TRANSFORMERS_CACHE) {
-			addValue("TRANSFORMERS_CACHE", path.join(cacheFolder));
-		}
-	}
+        if (!currentEnv.PATHEXT) {
+            addValue(
+                "PATHEXT",
+                ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC",
+            );
+        }
+        
+        if (!currentEnv.HF_HUB_CACHE) {
+            addValue("HF_HUB_CACHE", path.join(cacheFolder));
+        }
+        
+        if (!currentEnv.HF_HOME) {
+            addValue("HF_HOME", path.join(cacheFolder));
+        }
+        
+        if (!currentEnv.TRANSFORMERS_CACHE) {
+            addValue("TRANSFORMERS_CACHE", path.join(cacheFolder));
+        }
+        
+        if (!currentEnv.TEMP) {
+            addValue("TEMP", path.join(cacheFolder));
+        }
+    } else {
+        // linux/macos
+        const basicPath = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
+        const basicPaths = basicPath.split(":");
+        
+        // check if have basics paths
+        basicPaths.forEach((basicPathPart) => {
+            const currentPath = currentEnv.PATH || "";
+            const pathParts = currentPath.split(separator).map(p => p.trim());
+            
+            if (!pathParts.includes(basicPathPart)) {
+                addValue("PATH", basicPathPart);
+            }
+        });
+        
+        if (!currentEnv.HF_HUB_CACHE) {
+            addValue("HF_HUB_CACHE", path.join(cacheFolder));
+        }
+        
+        if (!currentEnv.HF_HOME) {
+            addValue("HF_HOME", path.join(cacheFolder));
+        }
+        
+        if (!currentEnv.TRANSFORMERS_CACHE) {
+            addValue("TRANSFORMERS_CACHE", path.join(cacheFolder));
+        }
+    }
 }
