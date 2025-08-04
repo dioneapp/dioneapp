@@ -1,7 +1,7 @@
 import { useAuthContext } from "@renderer/components/contexts/AuthContext";
 import sendEvent from "@renderer/utils/events";
 import { getCurrentPort } from "@renderer/utils/getPort";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Script } from "../feed/types";
@@ -37,8 +37,14 @@ export default function FeaturedCarousel() {
 
 				const data = await response.json();
 				if (Array.isArray(data)) {
-					setScripts(data);
-					generateGradients(data);
+					// prior scripts should be at the top
+					const sorted = [
+						...data.filter((s) => s.order === "prior"),
+						...data.filter((s) => s.order !== "prior"),
+					];
+					console.log("Fetched scripts:", sorted);
+					setScripts(sorted);
+					generateGradients(sorted);
 				} else {
 					setError("Fetched data is not an array");
 				}
@@ -160,7 +166,12 @@ export default function FeaturedCarousel() {
 									}}
 									className={`absolute inset-0 w-full h-full bg-black/5 ${scripts.find((script) => script.id === activeIndex)?.banner_url ? "opacity-50" : "opacity-20 scale-150"}`}
 								/>
-								<div className="z-50 absolute inset-0 p-10 transition-all duration-500 group-hover:bg-black/20">
+								<motion.div 
+									initial={{ opacity: 0, filter: "blur(4px)", top: 10 }}
+									animate={{ opacity: 1, filter: "blur(0px)", top: 0 }}
+									exit={{ opacity: 0, filter: "blur(4px)", top: -10 }}
+									transition={{ duration: 0.3 }}
+									className="z-50 absolute inset-0 p-10 transition-colors duration-300 group-hover:bg-black/20">
 									<div className="flex w-full h-full flex-col justify-start items-center">
 										<div className="w-full h-full flex justify-end">
 											{scripts.find((script) => script.id === activeIndex)
@@ -206,7 +217,7 @@ export default function FeaturedCarousel() {
 											/>
 										))}
 									</div>
-								</div>
+								</motion.div>
 							</div>
 						</div>
 					) : (
