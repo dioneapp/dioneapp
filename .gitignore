@@ -23,6 +23,9 @@ scripts
 # build folder
 /build/
 
+# bin folder
+bin
+
 # env variables
 .env
 electron-builder.env
