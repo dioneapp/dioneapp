@@ -126,6 +126,10 @@ export function getAllValues(): Record<string, string> {
 }
 
 export function initDefaultEnv() {
+	if (!fs.existsSync(binFolder)) {
+		fs.mkdirSync(binFolder, { recursive: true });
+	}
+
 	if (!fs.existsSync(ENVIRONMENT)) {
 		fs.writeFileSync(ENVIRONMENT, "");
 	}
