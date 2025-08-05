@@ -133,7 +133,8 @@ export const ja = {
 			title: "アップデートが利用可能",
 			description:
 				"Dioneの新しいバージョンが利用可能です。更新するにはアプリを再起動してください。",
-			tooltip: "新しいアップデートが利用可能です。更新するにはDioneを再起動してください。",
+			tooltip:
+				"新しいアップデートが利用可能です。更新するにはDioneを再起動してください。",
 		},
 		tooltips: {
 			library: "ライブラリ",
@@ -166,8 +167,7 @@ export const ja = {
 			},
 			autoOpenAfterInstall: {
 				label: "インストール後に自動で開く",
-				description:
-					"インストール後に初回起動時にアプリケーションを自動で開く",
+				description: "インストール後に初回起動時にアプリケーションを自動で開く",
 			},
 			deleteCache: {
 				label: "キャッシュを削除",
@@ -184,7 +184,8 @@ export const ja = {
 				label: "表示言語",
 				description: "お好みのインターフェース言語を選択",
 			},
-			helpTranslate: "🤔 お使いの言語が見つかりませんか？追加をお手伝いください！",
+			helpTranslate:
+				"🤔 お使いの言語が見つかりませんか？追加をお手伝いください！",
 			compactView: {
 				label: "コンパクトビュー",
 				description:
@@ -246,13 +247,13 @@ export const ja = {
 		placeholder:
 			"例：アプリケーションをインストールしようとしていたときにこのエラーが発生しました...",
 		systemInformationTitle: "システム情報",
-		disclaimer:
-			"以下のシステム情報と匿名IDがレポートに含まれます。",
+		disclaimer: "以下のシステム情報と匿名IDがレポートに含まれます。",
 		success: "レポートが正常に送信されました！",
 		error: "レポートの送信に失敗しました。もう一度お試しください。",
 		send: "レポートを送信",
 		sending: "送信中...",
-		contribute: "このスクリプトをすべてのデバイスと互換性を持たせるのを手伝ってください",
+		contribute:
+			"このスクリプトをすべてのデバイスと互換性を持たせるのを手伝ってください",
 	},
 
 	// quick launch component
@@ -261,7 +262,8 @@ export const ja = {
 		addApp: "アプリを追加",
 		selectApp: {
 			title: "アプリを選択",
-			description: "{count}個のアプリが利用可能です。最大{max}個まで選択できます。",
+			description:
+				"{count}個のアプリが利用可能です。最大{max}個まで選択できます。",
 		},
 	},
 
@@ -301,7 +303,8 @@ export const ja = {
 			subtitle: "エラー",
 			hasOccurred: "が発生しました",
 			deps: "Dioneは依存関係を削除できませんでした。手動で削除してください。",
-			general: "後でもう一度お試しください。または詳細についてはログを確認してください。",
+			general:
+				"後でもう一度お試しください。または詳細についてはログを確認してください。",
 		},
 		loading: {
 			title: "読み込み中...",
@@ -378,7 +381,8 @@ export const ja = {
 			uploadFile: "ファイルをアップロード",
 			uploading: "アップロード中...",
 			errors: {
-				uploadFailed: "スクリプトのアップロードに失敗しました。もう一度お試しください。",
+				uploadFailed:
+					"スクリプトのアップロードに失敗しました。もう一度お試しください。",
 				uploadError: "スクリプトのアップロード中にエラーが発生しました。",
 			},
 		},
@@ -405,4 +409,4 @@ export const ja = {
 			chat: "チャット",
 		},
 	},
-} as const; 
+} as const;

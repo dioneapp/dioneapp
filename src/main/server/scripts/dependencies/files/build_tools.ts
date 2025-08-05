@@ -142,7 +142,7 @@ export async function install(
 				"--includeRecommended",
 				"--nocache",
 				"--add Microsoft.VisualStudio.Workload.VCTools",
-				"--add Microsoft.VisualStudio.Component.VC.CMake.Project"
+				"--add Microsoft.VisualStudio.Component.VC.CMake.Project",
 			],
 		},
 	};

@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 import type { Server } from "socket.io";
 import logger from "../utils/logger";
-import { executeCommands } from "./process";
 import { addValue, getAllValues } from "./dependencies/environment";
+import { executeCommands } from "./process";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
@@ -251,7 +251,7 @@ function createVirtualEnvCommands(
 		? `&& ${commandStrings.join(" && ")}`
 		: "";
 
-	// variables 
+	// variables
 	const variables = getAllValues();
 
 	if (envType === "conda") {
@@ -299,7 +299,7 @@ function createVirtualEnvCommands(
 	// for linux and mac
 	const activateScript = path.join(envPath, "bin", "activate");
 	if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
-			addValue("PATH", path.join(envPath, "Scripts"));
+		addValue("PATH", path.join(envPath, "Scripts"));
 	}
 	return [
 		`if [ ! -d "${envPath}" ]; then uv venv ${pythonFlag} "${envName}"; fi`,
