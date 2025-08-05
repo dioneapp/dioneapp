@@ -7,8 +7,11 @@ import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies/dependencies";
 import executeInstallation from "./execute";
 import { checkSystem } from "./system";
+import { app } from "electron";
 
-const root = process.cwd();
+const root = app.isPackaged
+		? path.join(path.dirname(app.getPath("exe")))
+		: path.join(process.cwd());
 const config = readConfig();
 const appFolder = path.join(config?.defaultInstallFolder || root, "apps");
 

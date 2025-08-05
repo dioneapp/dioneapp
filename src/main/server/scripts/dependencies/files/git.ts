@@ -6,6 +6,7 @@ import type { Server } from "socket.io";
 import logger from "../../../utils/logger";
 import { addValue, getAllValues, removeValue } from "../environment";
 import { getArch, getOS } from "../utils/system";
+import { closeFile } from "../../delete";
 
 const depName = "git";
 const ENVIRONMENT = getAllValues();
@@ -254,6 +255,7 @@ export async function uninstall(binFolder: string): Promise<void> {
 	const depFolder = path.join(binFolder, depName);
 	if (fs.existsSync(depFolder)) {
 		logger.info(`Removing ${depName} folder in ${depFolder}...`);
+		await closeFile(depFolder);
 		fs.rmSync(depFolder, { recursive: true, force: true });
 		logger.info(`Removing ${depName} from environment variables...`);
 		if (getOS() === "windows") {

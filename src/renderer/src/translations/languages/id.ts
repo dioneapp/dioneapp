@@ -159,6 +159,11 @@ export const id = {
 				label: "Direktori Instalasi",
 				description: "Pilih di mana aplikasi baru akan diinstal secara default",
 			},
+			binDirectory: {
+				label: "Direktori Binary",
+				description:
+					"Pilih di mana binary aplikasi akan disimpan untuk akses yang mudah",
+			},
 			cleanUninstall: {
 				label: "Uninstall Bersih",
 				description: "Hapus semua dependensi terkait saat uninstall aplikasi",

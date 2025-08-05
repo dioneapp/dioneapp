@@ -160,6 +160,11 @@ export const es = {
 				description:
 					"Elige dónde se instalarán las nuevas aplicaciones por defecto",
 			},
+			binDirectory: {
+				label: "Directorio de Binarios",
+				description:
+					"Elige dónde se almacenarán los binarios de las aplicaciones para fácil acceso",
+			},
 			cleanUninstall: {
 				label: "Desinstalación Limpia",
 				description:

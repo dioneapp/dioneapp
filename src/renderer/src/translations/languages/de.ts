@@ -159,6 +159,11 @@ export const de = {
 				description:
 					"Wählen Sie, wo neue Anwendungen standardmäßig installiert werden sollen",
 			},
+			binDirectory: {
+				label: "Binärverzeichnis",
+				description:
+					"Wählen Sie, wo die Anwendungsbinärdateien für einfachen Zugriff gespeichert werden",
+			},
 			cleanUninstall: {
 				label: "Saubere Deinstallation",
 				description:

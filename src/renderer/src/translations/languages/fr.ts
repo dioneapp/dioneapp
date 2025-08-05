@@ -160,6 +160,11 @@ export const fr = {
 				description:
 					"Choisissez où les nouvelles applications seront installées par défaut",
 			},
+			binDirectory: {
+				label: "Répertoire des Binaires",
+				description:
+					"Choisissez où les binaires des applications seront stockés pour un accès facile",
+			},
 			cleanUninstall: {
 				label: "Désinstallation Propre",
 				description:

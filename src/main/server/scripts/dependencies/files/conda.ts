@@ -245,15 +245,13 @@ export async function install(
 					try {
 						// execute conda init
 						const condaW = path.join(
-							process.cwd(),
-							"bin",
+							binFolder,
 							"conda",
 							"condabin",
 							"conda.bat",
 						);
 						const condaU = path.join(
-							process.cwd(),
-							"bin",
+							binFolder,
 							"conda",
 							"bin",
 							"activate",

@@ -159,6 +159,11 @@ export const en = {
 				description:
 					"Choose where new applications will be installed by default",
 			},
+			binDirectory: {
+				label: "Bin Directory",
+				description:
+					"Choose where the application binaries will be stored for easy access",
+			},
 			cleanUninstall: {
 				label: "Clean Uninstall",
 				description:

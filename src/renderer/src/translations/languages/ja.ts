@@ -160,6 +160,11 @@ export const ja = {
 				description:
 					"新しいアプリケーションがデフォルトでインストールされる場所を選択",
 			},
+			binDirectory: {
+				label: "バイナリディレクトリ",
+				description:
+					"アプリケーションのバイナリが簡単にアクセスできるように保存される場所を選択",
+			},
 			cleanUninstall: {
 				label: "クリーンアンインストール",
 				description:

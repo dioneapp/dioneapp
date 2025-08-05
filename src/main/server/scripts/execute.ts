@@ -4,6 +4,8 @@ import type { Server } from "socket.io";
 import logger from "../utils/logger";
 import { addValue, getAllValues } from "./dependencies/environment";
 import { executeCommands } from "./process";
+import { readConfig as userConfig } from "../../config";
+import { app } from "electron";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
@@ -253,18 +255,19 @@ function createVirtualEnvCommands(
 
 	// variables
 	const variables = getAllValues();
+	const config = userConfig();
 
 	if (envType === "conda") {
 		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
 		const condaW = path.join(
-			process.cwd(),
+			config?.defaultBinFolder || path.join(app.getPath("userData")),
 			"bin",
 			"conda",
 			"condabin",
 			"conda.bat",
 		);
 		const condaU = path.join(
-			process.cwd(),
+			config?.defaultBinFolder || path.join(app.getPath("userData")),
 			"bin",
 			"conda",
 			"condabin",

@@ -109,27 +109,21 @@ function createWindow() {
 
 	// show the window when its ready
 	mainWindow.once("ready-to-show", () => {
-		if (process.platform === "darwin") {
-			// on macOS, show the window immediately
+		mainWindow.show();
+		mainWindow.focus();
+		if (!app.isPackaged) {
+			// in development mode, show the window and open dev tools
 			mainWindow.show();
 			mainWindow.focus();
-
-			if (app.isPackaged) {
-				checkForUpdates();
-			}
+			mainWindow.webContents.openDevTools({ mode: "undocked" });
 		} else {
-			if (!app.isPackaged) {
-				// in development mode, show the window and open dev tools
-				mainWindow.show();
-				mainWindow.focus();
-				mainWindow.webContents.openDevTools({ mode: "undocked" });
-			} else {
-				// in production mode, check for updates and show the window
-				checkForUpdates().then(() => {
-					mainWindow.show();
-					mainWindow.focus();
+			checkForUpdates()
+				.then(() => {
+					logger.info("Checked for updates successfully.");
+				})
+				.catch((err) => {
+					logger.error("Error checking for updates:", err);
 				});
-			}
 		}
 
 		async function checkForUpdates(): Promise<void> {
@@ -162,6 +156,29 @@ function createWindow() {
 				setTimeout(() => {
 					if (!updateDownloaded) resolve();
 				}, 3000);
+			});
+		}
+
+		const config = readConfig();
+		const root = app.isPackaged
+			? path.join(path.dirname(app.getPath("exe")))
+			: path.join(process.cwd());
+
+		if (config?.defaultBinFolder.toLowerCase().includes(root.toLowerCase())) {
+			logger.warn("Default bin folder is set to the current working directory. This may cause issues.");
+			dialog.showMessageBox({
+				type: "warning",
+				title: "Warning!",
+				message: "To avoid potential errors when updating, please do not use on defaultBinFolder the same path as the Dione executable.",
+			});
+		}
+
+		if (config?.defaultInstallFolder.toLowerCase().includes(root.toLowerCase())) {
+			logger.warn("Default install folder is set to the current working directory. This may cause issues.");
+			dialog.showMessageBox({
+				type: "warning",
+				title: "Warning!",
+				message: "To avoid potential errors when updating, please do not use on defaultInstallFolder the same path as the Dione executable.",
 			});
 		}
 	});
@@ -854,11 +871,15 @@ ipcMain.on("close-preview-window", () => {
 });
 
 ipcMain.handle("check-folder-size", async (_event, folderPath) => {
+	const config = readConfig();
+	const defaultFolder = config?.defaultBinFolder || path.join(app.getPath("userData"));
+
 	if (!folderPath) {
-		folderPath = path.join(process.cwd(), "bin", "cache");
+		folderPath = path.join(defaultFolder, "bin", "cache");
 	}
 
 	if (!fs.existsSync(folderPath)) {
+		console.warn(`Folder does not exist: ${folderPath}`);
 		return "0.00";
 	}
 
@@ -890,8 +911,10 @@ ipcMain.handle("check-folder-size", async (_event, folderPath) => {
 });
 
 ipcMain.handle("delete-folder", async (_event, folderPath) => {
+	const config = readConfig()
+
 	if (!folderPath) {
-		folderPath = path.join(process.cwd(), "bin", "cache");
+		folderPath = path.join(config?.defaultBinFolder || path.join(app.getPath("userData"), "bin", "cache"));
 	}
 
 	if (!fs.existsSync(folderPath)) {

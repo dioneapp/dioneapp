@@ -8,6 +8,7 @@ import { executeStartup } from "../scripts/execute";
 import getAllScripts, { getInstalledScript } from "../scripts/installed";
 import { stopActiveProcess } from "../scripts/process";
 import logger from "../utils/logger";
+import { app } from "electron";
 
 export function createScriptRouter(io: Server) {
 	const router = express.Router();
@@ -71,7 +72,9 @@ export function createScriptRouter(io: Server) {
 	router.get("/stop/:name/:id/:port", async (req, res) => {
 		const { name, id, port } = req.params;
 		const sanitizedName = name.replace(/\s+/g, "-");
-		const root = process.cwd();
+		const root = app.isPackaged
+		? path.join(path.dirname(app.getPath("exe")))
+		: path.join(process.cwd());
 		const config = readConfig();
 		const workingDir = path.join(
 			config?.defaultInstallFolder || root,

@@ -3,9 +3,11 @@ import path from "node:path";
 import type { Server } from "socket.io";
 import logger from "../../utils/logger";
 import { dependencyRegistry } from "./accepted-dependencies";
+import { readConfig } from "../../../config";
+import { app } from "electron";
 
-const root = process.cwd();
-const binFolder = path.join(root, "bin");
+const config = readConfig();
+const binFolder = path.join(config?.defaultBinFolder || path.join(app.getPath("userData")), "bin");
 
 export function readDioneConfig(filePath: string): any {
 	try {

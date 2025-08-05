@@ -153,6 +153,11 @@ export const zh = {
 				label: "安装目录",
 				description: "选择新应用程序默认安装的位置",
 			},
+			binDirectory: {
+				label: "二进制目录",
+				description:
+					"选择应用程序二进制文件的存储位置以便轻松访问",
+			},
 			cleanUninstall: {
 				label: "清理卸载",
 				description: "卸载应用程序时删除所有相关依赖项",

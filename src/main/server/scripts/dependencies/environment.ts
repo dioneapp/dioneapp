@@ -2,9 +2,10 @@ import fs from "fs";
 import path from "path";
 import { app } from "electron";
 import { getOS } from "./utils/system";
+import { readConfig } from "../../../config";
 
-const root = process.cwd();
-const binFolder = path.join(root, "bin");
+const config = readConfig();
+const binFolder = path.join(config?.defaultBinFolder || path.join(app.getPath("userData")), "bin");
 const ENVIRONMENT = path.join(binFolder, "VARIABLES");
 const separator = getOS() === "windows" ? ";" : ":";
 

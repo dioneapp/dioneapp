@@ -3,6 +3,7 @@ import path from "node:path";
 import type { Response } from "express";
 import { readConfig } from "../../config";
 import { removeValue } from "./dependencies/environment";
+import { app } from "electron";
 
 export async function deleteScript(name: string, res: Response) {
 	try {
@@ -10,7 +11,9 @@ export async function deleteScript(name: string, res: Response) {
 		const sanitizedName = name.replace(/\s+/g, "-");
 
 		// delete script dirs
-		const root = process.cwd();
+		const root = app.isPackaged
+		? path.join(path.dirname(app.getPath("exe")))
+		: path.join(process.cwd());
 		const config = readConfig();
 		const appsDir = path.join(config?.defaultInstallFolder || root, "apps");
 		const appDir = path.join(appsDir, sanitizedName);
@@ -51,7 +54,7 @@ export async function deleteScript(name: string, res: Response) {
 	}
 }
 
-async function closeFile(directory: string) {
+export async function closeFile(directory: string) {
 	try {
 		const files = await fs.readdir(directory);
 		for (const file of files) {

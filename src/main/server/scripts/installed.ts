@@ -2,9 +2,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { readConfig } from "../../config";
 import logger from "../utils/logger";
+import { app } from "electron";
 
 export default async function getAllScripts() {
-	const root = process.cwd();
+	const root = app.isPackaged
+		? path.join(path.dirname(app.getPath("exe")))
+		: path.join(process.cwd());
 	const config = readConfig();
 	const scriptsDir = path.join(config?.defaultInstallFolder || root, "apps");
 
@@ -52,7 +55,9 @@ export default async function getAllScripts() {
 }
 
 export async function getInstalledScript(name: string) {
-	const root = process.cwd();
+	const root = app.isPackaged
+		? path.join(path.dirname(app.getPath("exe")))
+		: path.join(process.cwd());
 	const config = readConfig();
 	const sanitizedName = name.replace(/\s+/g, "-");
 	const scriptDir = path.join(
