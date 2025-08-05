@@ -2,6 +2,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { Response } from "express";
 import { readConfig } from "../../config";
+import { removeValue } from "./dependencies/environment";
 
 export async function deleteScript(name: string, res: Response) {
 	try {
@@ -13,6 +14,20 @@ export async function deleteScript(name: string, res: Response) {
 		const config = readConfig();
 		const appsDir = path.join(config?.defaultInstallFolder || root, "apps");
 		const appDir = path.join(appsDir, sanitizedName);
+		const dioneFile = path.join(appDir, "dione.json");
+		const dioneData = await fs.readFile(dioneFile, "utf-8");
+		const dioneJson = JSON.parse(dioneData);
+		const needEnv = JSON.stringify(dioneJson).includes("env");
+		const envDep = (dioneJson.installation as Array<{ name?: string; env?: { name?: string } }>)
+			.find((dep) => dep.env && dep.env.name);
+		const envName = envDep?.env?.name;
+		const envPath = envName ? path.join(appDir, envName, "Scripts") : undefined;
+
+		// remove environment variable if needed
+		if (needEnv && envName && envPath) {
+			console.log(`Removing environment variable: ${envName} on ${envPath}`);
+			removeValue(envPath, "PATH");
+		}
 
 		// check if dir exists
 		try {
