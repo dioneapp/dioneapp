@@ -3,6 +3,7 @@ import path from "node:path";
 import type { Server } from "socket.io";
 import logger from "../utils/logger";
 import { executeCommands } from "./process";
+import { addValue, getAllValues } from "./dependencies/environment";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
@@ -250,6 +251,9 @@ function createVirtualEnvCommands(
 		? `&& ${commandStrings.join(" && ")}`
 		: "";
 
+	// variables 
+	const variables = getAllValues();
+
 	if (envType === "conda") {
 		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
 		const condaW = path.join(
@@ -283,6 +287,9 @@ function createVirtualEnvCommands(
 	if (isWindows && envType !== "conda") {
 		const activateScript = path.join(envPath, "Scripts", "activate");
 		const deactivateScript = path.join(envPath, "Scripts", "deactivate.bat");
+		if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
+			addValue("PATH", path.join(envPath, "Scripts"));
+		}
 		return [
 			`if not exist "${envPath}" (uv venv ${pythonFlag} "${envName}")`,
 			`call "${activateScript}" ${middle} && call "${deactivateScript}"`,
@@ -291,6 +298,9 @@ function createVirtualEnvCommands(
 
 	// for linux and mac
 	const activateScript = path.join(envPath, "bin", "activate");
+	if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
+			addValue("PATH", path.join(envPath, "Scripts"));
+	}
 	return [
 		`if [ ! -d "${envPath}" ]; then uv venv ${pythonFlag} "${envName}"; fi`,
 		`source "${activateScript}" ${middle} && deactivate`,
