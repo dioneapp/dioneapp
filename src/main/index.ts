@@ -70,16 +70,16 @@ function createWindow() {
 		minWidth: 1200,
 		minHeight: 800,
 		show: false,
+		center: true,
 		autoHideMenuBar: true,
-		titleBarStyle: process.platform === "darwin" ? "hiddenInset" : "hidden",
+		titleBarStyle: process.platform === "darwin" ? "default" : "hidden",
 		fullscreenable: false,
 		maximizable: true,
 		fullscreen: false,
 		frame: process.platform === "darwin" ? true : false,
-		// window effects
-		vibrancy: "fullscreen-ui", // macos
-		backgroundMaterial: "acrylic", // windows 11
+		// vibrancy: "fullscreen-ui", // macos
 		backgroundColor: "rgba(0, 0, 0, 0.88)",
+		...(process.platform === "win32" ? { backgroundMaterial: "acrylic" } : {}),
 		...(process.platform === "win32" ? { icon } : {}),
 		...(process.platform === "linux" ? { icon } : {}),
 		...(process.platform === "darwin" ? { icon: macosIcon } : {}),
@@ -102,10 +102,15 @@ function createWindow() {
 	// Remove default menu from the window
 	mainWindow.removeMenu();
 
-	// Show the window when ready
-	mainWindow.webContents.once("did-finish-load", () => {
-		// on macos show window immediately
+	mainWindow.webContents.once("did-fail-load", () => {
+		logger.error("Failed to load the main window content.");
+		dialog.showErrorBox("Error", "Failed to load the main window content.");
+	});
+
+	// show the window when its ready
+	mainWindow.once("ready-to-show", () => {
 		if (process.platform === "darwin") {
+			// on macOS, show the window immediately
 			mainWindow.show();
 			mainWindow.focus();
 
@@ -114,10 +119,12 @@ function createWindow() {
 			}
 		} else {
 			if (!app.isPackaged) {
+				// in development mode, show the window and open dev tools
 				mainWindow.show();
 				mainWindow.focus();
 				mainWindow.webContents.openDevTools({ mode: "undocked" });
 			} else {
+				// in production mode, check for updates and show the window
 				checkForUpdates().then(() => {
 					mainWindow.show();
 					mainWindow.focus();
@@ -136,7 +143,7 @@ function createWindow() {
 				autoUpdater.on("update-downloaded", () => {
 					logger.info("Update downloaded, installing...");
 					updateDownloaded = true;
-					autoUpdater.quitAndInstall();
+					mainWindow.webContents.send("update_downloaded");
 				});
 
 				autoUpdater.on("update-not-available", () => {
@@ -151,7 +158,7 @@ function createWindow() {
 
 				autoUpdater.checkForUpdates();
 
-				// if in 5s doesn't have any info about update, resolve
+				// if in 3s doesn't have any info about update, resolve
 				setTimeout(() => {
 					if (!updateDownloaded) resolve();
 				}, 3000);
