@@ -620,9 +620,7 @@ export default function Settings() {
 												<div className="flex justify-between w-full items-center h-full space-y-2">
 													<div className="h-full flex items-start justify-center flex-col mt-auto">
 														<label className="text-neutral-200 font-medium">
-															{t(
-																"settings.notifications.discordRPC.label",
-															)}
+															{t("settings.notifications.discordRPC.label")}
 														</label>
 														<p className="text-xs text-neutral-400">
 															{t(
@@ -634,8 +632,7 @@ export default function Settings() {
 														type="button"
 														onClick={() =>
 															handleUpdate({
-																enableDiscordRPC:
-																	!config.enableDiscordRPC,
+																enableDiscordRPC: !config.enableDiscordRPC,
 															})
 														}
 														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${

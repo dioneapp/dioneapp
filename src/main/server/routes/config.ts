@@ -23,12 +23,14 @@ router.post("/update", async (req, res) => {
 		const currentConfig = readConfig();
 		updateConfig(req.body);
 		const updatedConfig = readConfig();
-		
-		if (req.body.enableDiscordRPC !== undefined && 
-			req.body.enableDiscordRPC !== currentConfig?.enableDiscordRPC) {
+
+		if (
+			req.body.enableDiscordRPC !== undefined &&
+			req.body.enableDiscordRPC !== currentConfig?.enableDiscordRPC
+		) {
 			await toggleDiscordRPC(req.body.enableDiscordRPC);
 		}
-		
+
 		res.send(updatedConfig);
 	} catch (error) {
 		res.status(400).send({ error: "Failed to update configuration" });

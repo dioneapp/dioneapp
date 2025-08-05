@@ -201,7 +201,8 @@ export const pt = {
 			},
 			installationAlerts: {
 				label: "Alertas de Instalação",
-				description: "Receber notificações quando as instalações de aplicativos forem concluídas",
+				description:
+					"Receber notificações quando as instalações de aplicativos forem concluídas",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",

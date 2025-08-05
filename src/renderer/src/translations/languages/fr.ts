@@ -203,7 +203,8 @@ export const fr = {
 			},
 			installationAlerts: {
 				label: "Alertes d'Installation",
-				description: "Recevoir des notifications lorsque les installations d'applications sont terminées",
+				description:
+					"Recevoir des notifications lorsque les installations d'applications sont terminées",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",

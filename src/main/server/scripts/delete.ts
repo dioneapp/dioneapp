@@ -18,8 +18,12 @@ export async function deleteScript(name: string, res: Response) {
 		const dioneData = await fs.readFile(dioneFile, "utf-8");
 		const dioneJson = JSON.parse(dioneData);
 		const needEnv = JSON.stringify(dioneJson).includes("env");
-		const envDep = (dioneJson.installation as Array<{ name?: string; env?: { name?: string } }>)
-			.find((dep) => dep.env && dep.env.name);
+		const envDep = (
+			dioneJson.installation as Array<{
+				name?: string;
+				env?: { name?: string };
+			}>
+		).find((dep) => dep.env && dep.env.name);
 		const envName = envDep?.env?.name;
 		const envPath = envName ? path.join(appDir, envName, "Scripts") : undefined;
 
