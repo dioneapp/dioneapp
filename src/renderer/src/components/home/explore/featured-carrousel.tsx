@@ -42,7 +42,6 @@ export default function FeaturedCarousel() {
 						...data.filter((s) => s.order === "prior"),
 						...data.filter((s) => s.order !== "prior"),
 					];
-					console.log("Fetched scripts:", sorted);
 					setScripts(sorted);
 					generateGradients(sorted);
 				} else {
