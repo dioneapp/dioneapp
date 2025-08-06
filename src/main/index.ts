@@ -16,6 +16,7 @@ import { Notification } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
 import si from "systeminformation";
+import linuxIcon from "../../resources/icon.png?asset";
 import macosIcon from "../../resources/icon.icns?asset";
 import icon from "../../resources/icon.ico?asset";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
@@ -81,7 +82,7 @@ function createWindow() {
 		backgroundColor: "rgba(0, 0, 0, 0.88)",
 		...(process.platform === "win32" ? { backgroundMaterial: "acrylic" } : {}),
 		...(process.platform === "win32" ? { icon } : {}),
-		...(process.platform === "linux" ? { icon } : {}),
+		...(process.platform === "linux" ? { icon: linuxIcon } : {}),
 		...(process.platform === "darwin" ? { icon: macosIcon } : {}),
 		webPreferences: {
 			contextIsolation: true,
@@ -412,16 +413,16 @@ app.whenReady().then(async () => {
 	switch (os.platform()) {
 		// add the appropriate icon for the platform
 		case "win32":
-			appIcon = new Tray(path.resolve(__dirname, "../../resources/icon.ico"));
+			appIcon = new Tray(icon);
 			break;
 		case "darwin":
-			appIcon = new Tray(path.resolve(__dirname, "../../resources/icon.icns"));
+			appIcon = new Tray(macosIcon);
 			break;
 		case "linux":
-			appIcon = new Tray(path.resolve(__dirname, "../../resources/icon.png"));
+			appIcon = new Tray(linuxIcon);
 			break;
 		default:
-			appIcon = new Tray(path.resolve(__dirname, "../../resources/icon.ico"));
+			appIcon = new Tray(icon);
 			break;
 	}
 	electronApp.setAppUserModelId("Dione");
@@ -873,7 +874,7 @@ ipcMain.on("new-window", (_event, url) => {
 		autoHideMenuBar: true,
 		closable: true,
 		...(process.platform === "win32" ? { icon } : {}),
-		...(process.platform === "linux" ? { icon } : {}),
+		...(process.platform === "linux" ? { icon: linuxIcon } : {}),
 		...(process.platform === "darwin" ? { icon: macosIcon } : {}),
 	});
 
