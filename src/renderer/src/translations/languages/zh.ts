@@ -160,8 +160,7 @@ export const zh = {
 			},
 			binDirectory: {
 				label: "二进制目录",
-				description:
-					"选择应用程序二进制文件的存储位置以便轻松访问",
+				description: "选择应用程序二进制文件的存储位置以便轻松访问",
 			},
 			cleanUninstall: {
 				label: "清理卸载",

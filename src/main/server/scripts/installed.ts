@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
+import { app } from "electron";
 import { readConfig } from "../../config";
 import logger from "../utils/logger";
-import { app } from "electron";
 
 export default async function getAllScripts() {
 	const root = app.isPackaged

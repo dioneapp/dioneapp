@@ -4,9 +4,9 @@ import https from "https";
 import path from "path";
 import type { Server } from "socket.io";
 import logger from "../../../utils/logger";
+import { closeFile } from "../../delete";
 import { addValue, getAllValues, removeValue } from "../environment";
 import { getArch, getOS } from "../utils/system";
-import { closeFile } from "../../delete";
 
 const depName = "git";
 const ENVIRONMENT = getAllValues();

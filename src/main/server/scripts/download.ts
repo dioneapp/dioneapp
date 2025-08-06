@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
+import { app } from "electron";
 import type { Server } from "socket.io";
 import { readConfig } from "../../config";
 import { supabase } from "../utils/database";
@@ -8,7 +9,6 @@ import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies/dependencies";
 import executeInstallation from "./execute";
 import { checkSystem } from "./system";
-import { app } from "electron";
 
 export async function getScripts(id: string, io: Server) {
 	if (!supabase) {
@@ -40,8 +40,8 @@ export async function getScripts(id: string, io: Server) {
 		}
 
 		const root = app.isPackaged
-		? path.join(path.dirname(app.getPath("exe")))
-		: path.join(process.cwd());
+			? path.join(path.dirname(app.getPath("exe")))
+			: path.join(process.cwd());
 		const sanitizedName = data.name.replace(/\s+/g, "-");
 		const settings = readConfig();
 		const saveDirectory = path.join(

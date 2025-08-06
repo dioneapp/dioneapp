@@ -1,13 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
+import { app } from "electron";
 import type { Server } from "socket.io";
+import { readConfig } from "../../../config";
 import logger from "../../utils/logger";
 import { dependencyRegistry } from "./accepted-dependencies";
-import { readConfig } from "../../../config";
-import { app } from "electron";
 
 const config = readConfig();
-const binFolder = path.join(config?.defaultBinFolder || path.join(app.getPath("userData")), "bin");
+const binFolder = path.join(
+	config?.defaultBinFolder || path.join(app.getPath("userData")),
+	"bin",
+);
 
 export function readDioneConfig(filePath: string): any {
 	try {
