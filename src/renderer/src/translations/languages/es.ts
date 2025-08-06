@@ -47,6 +47,11 @@ export const es = {
 			success:
 				"Copiado al portapapeles correctamente, ¡ahora pégalo en tu navegador!",
 		},
+		selectPath: {
+			title: "Seleccionar ruta de instalación",
+			button: "Seleccionar una ruta",
+			success: "Siguiente",
+		},
 	},
 
 	// error handling

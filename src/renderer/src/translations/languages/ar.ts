@@ -46,6 +46,11 @@ export const ar = {
 		clipboard: {
 			success: "تم النسخ إلى الحافظة بشكل صحيح، الصقه الآن في متصفحك!",
 		},
+		selectPath: {
+			title: "اختر مسار التثبيت",
+			button: "اختر مسارًا",
+			success: "التالي",
+		},
 	},
 
 	// error handling

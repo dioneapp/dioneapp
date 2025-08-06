@@ -47,6 +47,11 @@ export const id = {
 			success:
 				"Berhasil disalin ke papan klip, sekarang tempelkan di browser Anda!",
 		},
+		selectPath: {
+			title: "Pilih jalur instalasi",
+			button: "Pilih jalur",
+			success: "Selanjutnya",
+		},
 	},
 
 	// error handling

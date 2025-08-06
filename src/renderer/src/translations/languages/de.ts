@@ -47,6 +47,11 @@ export const de = {
 			success:
 				"Erfolgreich in die Zwischenablage kopiert, fügen Sie es jetzt in Ihren Browser ein!",
 		},
+		selectPath: {
+			title: "Installationspfad auswählen",
+			button: "Pfad auswählen",
+			success: "Weiter",
+		},
 	},
 
 	// error handling

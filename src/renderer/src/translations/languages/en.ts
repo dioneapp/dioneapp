@@ -47,6 +47,11 @@ export const en = {
 			success:
 				"Copied to the clipboard correctly, now paste it in your browser!",
 		},
+		selectPath: {
+			title: "Select installation path",
+			button: "Select a path",
+			success: "Next",
+		},
 	},
 
 	// error handling

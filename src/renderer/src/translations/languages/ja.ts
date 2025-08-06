@@ -47,6 +47,11 @@ export const ja = {
 			success:
 				"クリップボードに正しくコピーされました。今度はブラウザに貼り付けてください！",
 		},
+		selectPath: {
+			title: "インストールパスを選択",
+			button: "パスを選択",
+			success: "次へ",
+		},
 	},
 
 	// error handling

@@ -45,6 +45,11 @@ export const zh = {
 		clipboard: {
 			success: "已正确复制到剪贴板，现在将其粘贴到您的浏览器中！",
 		},
+		selectPath: {
+			title: "选择安装路径",
+			button: "选择路径",
+			success: "下一步",
+		},
 	},
 
 	// error handling

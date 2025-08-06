@@ -164,7 +164,7 @@ function createWindow() {
 			? path.join(path.dirname(app.getPath("exe")))
 			: path.join(process.cwd());
 
-		if (config?.defaultBinFolder.toLowerCase().includes(root.toLowerCase())) {
+		if (config?.defaultBinFolder.toLowerCase() === root.toLowerCase()) {
 			logger.warn("Default bin folder is set to the current working directory. This may cause issues.");
 			dialog.showMessageBox({
 				type: "warning",
@@ -173,7 +173,7 @@ function createWindow() {
 			});
 		}
 
-		if (config?.defaultInstallFolder.toLowerCase().includes(root.toLowerCase())) {
+		if (config?.defaultInstallFolder.toLowerCase() === root.toLowerCase()) {
 			logger.warn("Default install folder is set to the current working directory. This may cause issues.");
 			dialog.showMessageBox({
 				type: "warning",
@@ -543,6 +543,11 @@ app.whenReady().then(async () => {
 
 	// save dir
 	ipcMain.handle("save-dir", async (_event, path: string) => {
+
+		if (!path) {
+			path = app.getPath("desktop");
+		}
+
 		const result = await dialog.showOpenDialog({
 			defaultPath: path,
 			properties: ["openDirectory"],
@@ -566,6 +571,34 @@ app.whenReady().then(async () => {
 		});
 
 		return result;
+	});
+
+	// check dir 
+	ipcMain.handle("check-dir", async (_event, dirValue: string) => {
+		const root = app.isPackaged
+			? path.join(path.dirname(app.getPath("exe")))
+			: path.join(process.cwd());
+
+		if (dirValue.toLowerCase() === root.toLowerCase()) {
+			logger.warn("Directory is set to the current working directory. This may cause issues.");
+			return false;
+		} 
+
+		return true;
+	});
+
+	// update config
+	ipcMain.handle("update-config", (_event, newValue: any) => {
+		let currentConfig = readConfig();
+		if (!currentConfig) {
+			logger.warn("No config found, creating a new one");
+			writeConfig(defaultConfig);
+			currentConfig = defaultConfig;
+		}
+		const updatedConfig = { ...currentConfig, ...newValue };
+		writeConfig(updatedConfig);
+		logger.info("Config updated successfully");
+		return updatedConfig;
 	});
 
 	// open dir

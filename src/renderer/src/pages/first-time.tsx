@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
+import SelectPath from "@renderer/components/first-time/onboarding/select-path";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
@@ -74,7 +75,7 @@ export default function FirstTime() {
 				) {
 					changeLevel(3);
 				} else {
-					changeLevel(4);
+					changeLevel(5);
 				}
 			}
 		}
@@ -126,7 +127,7 @@ export default function FirstTime() {
 					) {
 						changeLevel(3);
 					} else {
-						changeLevel(4);
+						changeLevel(5);
 					}
 				}
 			}
@@ -333,10 +334,28 @@ export default function FirstTime() {
 						</div>
 					</motion.div>
 				)}
-				{/* 4 - ready */}
 				{level === 4 && (
 					<motion.div
+						initial={{ filter: "blur(20px)", y: 30, opacity: 0 }}
+						animate={{ filter: "blur(0px)", y: 0, opacity: 1 }}
+						exit={{
+							opacity: 0,
+							y: -30,
+							filter: "blur(20px)",
+						}}
+						transition={{ duration: 0.5 }}
 						key={4}
+						className={getContainerClasses()}
+					>
+						<div className="flex flex-col gap-4 justify-center items-center">
+							<SelectPath onFinish={() => changeLevel(5)} />
+						</div>
+					</motion.div>
+				)}
+				{/* 5 - ready */}
+				{level === 5 && (
+					<motion.div
+						key={5}
 						initial={{ opacity: 0, y: 30, filter: "blur(20px)" }}
 						animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
 						exit={{
@@ -375,7 +394,7 @@ export default function FirstTime() {
 			{level !== 2 && (
 				<motion.div className="absolute bottom-4 left-1/2 translate-x-[-50%]">
 					<div className="flex gap-2">
-						{[1, 2, 3, 4].map((lvl) => (
+						{[1, 2, 3, 4, 5].map((lvl) => (
 							<div key={lvl} className="py-1">
 								<div
 									className={`w-6 h-1 rounded-full ${lvl === level ? "bg-[#BCB1E7] w-10" : "bg-white/20"}`}

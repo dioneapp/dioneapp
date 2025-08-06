@@ -46,6 +46,11 @@ export const bn = {
 		clipboard: {
 			success: "সঠিকভাবে ক্লিপবোর্ডে কপি করা হয়েছে, এখন আপনার ব্রাউজারে পেস্ট করুন!",
 		},
+		selectPath: {
+			title: "ইনস্টলেশন পাথ নির্বাচন করুন",
+			button: "একটি পাথ নির্বাচন করুন",
+			success: "পরবর্তী",
+		},
 	},
 
 	// error handling

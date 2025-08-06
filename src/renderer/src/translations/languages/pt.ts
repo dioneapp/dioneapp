@@ -47,6 +47,11 @@ export const pt = {
 			success:
 				"Copiado para a área de transferência corretamente, agora cole-o no seu navegador!",
 		},
+		selectPath: {
+			title: "Selecionar caminho de instalação",
+			button: "Selecionar um caminho",
+			success: "Próximo",
+		},
 	},
 
 	// error handling

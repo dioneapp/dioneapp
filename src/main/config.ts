@@ -69,12 +69,12 @@ export const writeConfig = (config: AppConfig) => {
 		fs.mkdirSync(config.defaultBinFolder, { recursive: true });
 	}
 
-	if (config.defaultInstallFolder.includes(root)) {
+	if (config.defaultInstallFolder === root) {
 		logger.warn("Default install folder is set to the current working directory. This may cause issues.");
 		dialog.showErrorBox("Warning!","To avoid potential errors when updating, please do not use the same path as the Dione executable.");
 		config.defaultInstallFolder = path.join(app.getPath("userData"));		
 	}
-	if (config.defaultBinFolder.includes(root)) {
+	if (config.defaultBinFolder === root) {
 		logger.warn("Default bin folder is set to the current working directory. This may cause issues.");
 		dialog.showErrorBox("Warning!","To avoid potential errors when updating, please do not use the same path as the Dione executable.");
 		config.defaultBinFolder = path.join(app.getPath("userData"));

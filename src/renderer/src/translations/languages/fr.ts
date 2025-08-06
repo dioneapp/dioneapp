@@ -47,6 +47,11 @@ export const fr = {
 			success:
 				"Copié correctement dans le presse-papiers, collez-le maintenant dans votre navigateur！",
 		},
+		selectPath: {
+			title: "Sélectionner le chemin d'installation",
+			button: "Sélectionner un chemin",
+			success: "Suivant",
+		},
 	},
 
 	// error handling
