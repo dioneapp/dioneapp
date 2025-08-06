@@ -1,6 +1,7 @@
 import Background from "@renderer/components/first-time/background";
 import SureNotLogin from "@renderer/components/first-time/login";
 import LanguageSelector from "@renderer/components/first-time/onboarding/language-selector";
+import SelectPath from "@renderer/components/first-time/onboarding/select-path";
 import ExecuteSound from "@renderer/components/first-time/sounds/sound";
 import Icon from "@renderer/components/icons/icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
@@ -17,7 +18,6 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
-import SelectPath from "@renderer/components/first-time/onboarding/select-path";
 
 export default function FirstTime() {
 	const { t } = useTranslation();

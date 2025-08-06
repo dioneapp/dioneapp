@@ -1,4 +1,5 @@
 import path from "node:path";
+import { app } from "electron";
 import express from "express";
 import type { Server } from "socket.io";
 import { readConfig } from "../../config";
@@ -8,7 +9,6 @@ import {
 	uninstallDependency,
 } from "../scripts/dependencies/dependencies";
 import logger from "../utils/logger";
-import { app } from "electron";
 
 export const createDependenciesRouter = (io: Server) => {
 	const router = express.Router();
@@ -98,8 +98,8 @@ export const createDependenciesRouter = (io: Server) => {
 		"/in-use",
 		async (req: express.Request, res: express.Response) => {
 			const root = app.isPackaged
-			? path.join(path.dirname(app.getPath("exe")))
-			: path.join(process.cwd());
+				? path.join(path.dirname(app.getPath("exe")))
+				: path.join(process.cwd());
 			const sanitizedName = req.body.dioneFile.replace(/\s+/g, "-");
 			const settings = readConfig();
 			const dioneFile = `${path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName, "dione.json")}`;

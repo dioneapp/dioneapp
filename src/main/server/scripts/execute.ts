@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
+import { app } from "electron";
 import type { Server } from "socket.io";
+import { readConfig as userConfig } from "../../config";
 import logger from "../utils/logger";
 import { addValue, getAllValues } from "./dependencies/environment";
 import { executeCommands } from "./process";
-import { readConfig as userConfig } from "../../config";
-import { app } from "electron";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");

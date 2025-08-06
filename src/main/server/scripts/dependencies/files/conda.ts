@@ -250,12 +250,7 @@ export async function install(
 							"condabin",
 							"conda.bat",
 						);
-						const condaU = path.join(
-							binFolder,
-							"conda",
-							"bin",
-							"activate",
-						);
+						const condaU = path.join(binFolder, "conda", "bin", "activate");
 
 						io.to(id).emit("installDep", {
 							type: "log",

@@ -16,9 +16,9 @@ import { Notification } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
 import si from "systeminformation";
-import linuxIcon from "../../resources/icon.png?asset";
 import macosIcon from "../../resources/icon.icns?asset";
 import icon from "../../resources/icon.ico?asset";
+import linuxIcon from "../../resources/icon.png?asset";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
 import {
 	destroyPresence,
@@ -58,12 +58,13 @@ function getIconPath(platform: string): string {
 				return icon;
 		}
 	} catch (error) {
-		logger?.error?.("Error getting icon path:", error) || console.error("Error getting icon path:", error);
+		logger?.error?.("Error getting icon path:", error) ||
+			console.error("Error getting icon path:", error);
 		// Fallback to a basic icon path
-		const resourcesPath = app.isPackaged 
-			? path.join(process.resourcesPath) 
+		const resourcesPath = app.isPackaged
+			? path.join(process.resourcesPath)
 			: path.join(__dirname, "../../resources");
-		
+
 		switch (platform) {
 			case "win32":
 				return path.join(resourcesPath, "icon.ico");
@@ -115,7 +116,9 @@ function createWindow() {
 			frame: process.platform === "darwin" ? true : false,
 			// vibrancy: "fullscreen-ui", // macos
 			backgroundColor: "rgba(0, 0, 0, 0.88)",
-			...(process.platform === "win32" ? { backgroundMaterial: "acrylic" } : {}),
+			...(process.platform === "win32"
+				? { backgroundMaterial: "acrylic" }
+				: {}),
 			...(process.platform === "win32" ? { icon: getIconPath("win32") } : {}),
 			...(process.platform === "linux" ? { icon: getIconPath("linux") } : {}),
 			...(process.platform === "darwin" ? { icon: getIconPath("darwin") } : {}),
@@ -169,7 +172,7 @@ function createWindow() {
 		} catch (error) {
 			logger.error("Error showing main window:", error);
 		}
-		
+
 		if (!app.isPackaged) {
 			// in development mode, show the window and open dev tools
 			try {
@@ -229,20 +232,26 @@ function createWindow() {
 			: path.join(process.cwd());
 
 		if (config?.defaultBinFolder.toLowerCase() === root.toLowerCase()) {
-			logger.warn("Default bin folder is set to the current working directory. This may cause issues.");
+			logger.warn(
+				"Default bin folder is set to the current working directory. This may cause issues.",
+			);
 			dialog.showMessageBox({
 				type: "warning",
 				title: "Warning!",
-				message: "To avoid potential errors when updating, please do not use on defaultBinFolder the same path as the Dione executable.",
+				message:
+					"To avoid potential errors when updating, please do not use on defaultBinFolder the same path as the Dione executable.",
 			});
 		}
 
 		if (config?.defaultInstallFolder.toLowerCase() === root.toLowerCase()) {
-			logger.warn("Default install folder is set to the current working directory. This may cause issues.");
+			logger.warn(
+				"Default install folder is set to the current working directory. This may cause issues.",
+			);
 			dialog.showMessageBox({
 				type: "warning",
 				title: "Warning!",
-				message: "To avoid potential errors when updating, please do not use on defaultInstallFolder the same path as the Dione executable.",
+				message:
+					"To avoid potential errors when updating, please do not use on defaultInstallFolder the same path as the Dione executable.",
 			});
 		}
 	});
@@ -602,7 +611,6 @@ app.whenReady().then(async () => {
 
 	// save dir
 	ipcMain.handle("save-dir", async (_event, path: string) => {
-
 		if (!path) {
 			path = app.getPath("desktop");
 		}
@@ -632,16 +640,18 @@ app.whenReady().then(async () => {
 		return result;
 	});
 
-	// check dir 
+	// check dir
 	ipcMain.handle("check-dir", async (_event, dirValue: string) => {
 		const root = app.isPackaged
 			? path.join(path.dirname(app.getPath("exe")))
 			: path.join(process.cwd());
 
 		if (dirValue.toLowerCase() === root.toLowerCase()) {
-			logger.warn("Directory is set to the current working directory. This may cause issues.");
+			logger.warn(
+				"Directory is set to the current working directory. This may cause issues.",
+			);
 			return false;
-		} 
+		}
 
 		return true;
 	});
@@ -964,7 +974,8 @@ ipcMain.on("close-preview-window", () => {
 
 ipcMain.handle("check-folder-size", async (_event, folderPath) => {
 	const config = readConfig();
-	const defaultFolder = config?.defaultBinFolder || path.join(app.getPath("userData"));
+	const defaultFolder =
+		config?.defaultBinFolder || path.join(app.getPath("userData"));
 
 	if (!folderPath) {
 		folderPath = path.join(defaultFolder, "bin", "cache");
@@ -1003,10 +1014,13 @@ ipcMain.handle("check-folder-size", async (_event, folderPath) => {
 });
 
 ipcMain.handle("delete-folder", async (_event, folderPath) => {
-	const config = readConfig()
+	const config = readConfig();
 
 	if (!folderPath) {
-		folderPath = path.join(config?.defaultBinFolder || path.join(app.getPath("userData"), "bin", "cache"));
+		folderPath = path.join(
+			config?.defaultBinFolder ||
+				path.join(app.getPath("userData"), "bin", "cache"),
+		);
 	}
 
 	if (!fs.existsSync(folderPath)) {

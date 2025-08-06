@@ -1,11 +1,14 @@
 import fs from "fs";
 import path from "path";
 import { app } from "electron";
-import { getOS } from "./utils/system";
 import { readConfig } from "../../../config";
+import { getOS } from "./utils/system";
 
 const config = readConfig();
-const binFolder = path.join(config?.defaultBinFolder || path.join(app.getPath("userData")), "bin");
+const binFolder = path.join(
+	config?.defaultBinFolder || path.join(app.getPath("userData")),
+	"bin",
+);
 const ENVIRONMENT = path.join(binFolder, "VARIABLES");
 const separator = getOS() === "windows" ? ";" : ":";
 

@@ -1,9 +1,9 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { app } from "electron";
 import type { Response } from "express";
 import { readConfig } from "../../config";
 import { removeValue } from "./dependencies/environment";
-import { app } from "electron";
 
 export async function deleteScript(name: string, res: Response) {
 	try {
@@ -12,8 +12,8 @@ export async function deleteScript(name: string, res: Response) {
 
 		// delete script dirs
 		const root = app.isPackaged
-		? path.join(path.dirname(app.getPath("exe")))
-		: path.join(process.cwd());
+			? path.join(path.dirname(app.getPath("exe")))
+			: path.join(process.cwd());
 		const config = readConfig();
 		const appsDir = path.join(config?.defaultInstallFolder || root, "apps");
 		const appDir = path.join(appsDir, sanitizedName);
