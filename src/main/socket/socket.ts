@@ -4,7 +4,7 @@ import { Server } from "socket.io";
 import logger from "../server/utils/logger";
 
 export const start = (httpServer: http.Server) => {
-	logger.info("Starting connection server...");
+	logger.info("Connecting socket...");
 	try {
 		const io = new Server(httpServer, {
 			cors: {
@@ -40,7 +40,7 @@ export const start = (httpServer: http.Server) => {
 			});
 		});
 
-		logger.info("Socket connection works successfully");
+		logger.info("Socket connected successfully");
 		ipcMain.emit("socket-ready");
 
 		return io;

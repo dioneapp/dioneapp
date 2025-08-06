@@ -44,6 +44,39 @@ import logger, { getLogs } from "./server/utils/logger";
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
 
+// get icon path based on platform
+function getIconPath(platform: string): string {
+	try {
+		switch (platform) {
+			case "win32":
+				return icon;
+			case "darwin":
+				return macosIcon;
+			case "linux":
+				return linuxIcon;
+			default:
+				return icon;
+		}
+	} catch (error) {
+		logger?.error?.("Error getting icon path:", error) || console.error("Error getting icon path:", error);
+		// Fallback to a basic icon path
+		const resourcesPath = app.isPackaged 
+			? path.join(process.resourcesPath) 
+			: path.join(__dirname, "../../resources");
+		
+		switch (platform) {
+			case "win32":
+				return path.join(resourcesPath, "icon.ico");
+			case "darwin":
+				return path.join(resourcesPath, "icon.icns");
+			case "linux":
+				return path.join(resourcesPath, "icon.png");
+			default:
+				return path.join(resourcesPath, "icon.ico");
+		}
+	}
+}
+
 // If we are running a non-packaged version of the app && on windows
 if (process.env.NODE_ENV === "development" && process.platform === "win32") {
 	// set the path of the app on node_modules/electron/electron.exe
@@ -65,40 +98,58 @@ let sessionId: string;
 
 // Creates the main application window with specific configurations.
 function createWindow() {
-	mainWindow = new BrowserWindow({
-		width: 1200,
-		height: 800,
-		minWidth: 1200,
-		minHeight: 800,
-		show: false,
-		center: true,
-		autoHideMenuBar: true,
-		titleBarStyle: process.platform === "darwin" ? "default" : "hidden",
-		fullscreenable: false,
-		maximizable: true,
-		fullscreen: false,
-		frame: process.platform === "darwin" ? true : false,
-		// vibrancy: "fullscreen-ui", // macos
-		backgroundColor: "rgba(0, 0, 0, 0.88)",
-		...(process.platform === "win32" ? { backgroundMaterial: "acrylic" } : {}),
-		...(process.platform === "win32" ? { icon } : {}),
-		...(process.platform === "linux" ? { icon: linuxIcon } : {}),
-		...(process.platform === "darwin" ? { icon: macosIcon } : {}),
-		webPreferences: {
-			contextIsolation: true,
-			nodeIntegration: false,
-			webviewTag: true,
-			preload: join(__dirname, "../preload/index.js"),
-			sandbox: false,
-			...(process.platform === "linux"
-				? {
-						enableRemoteModule: false,
-						webSecurity: false,
-						allowRunningInsecureContent: true,
-					}
-				: {}),
-		},
-	});
+	try {
+		logger.info("Creating main window...");
+		mainWindow = new BrowserWindow({
+			width: 1200,
+			height: 800,
+			minWidth: 1200,
+			minHeight: 800,
+			show: false,
+			center: true,
+			autoHideMenuBar: true,
+			titleBarStyle: process.platform === "darwin" ? "default" : "hidden",
+			fullscreenable: false,
+			maximizable: true,
+			fullscreen: false,
+			frame: process.platform === "darwin" ? true : false,
+			// vibrancy: "fullscreen-ui", // macos
+			backgroundColor: "rgba(0, 0, 0, 0.88)",
+			...(process.platform === "win32" ? { backgroundMaterial: "acrylic" } : {}),
+			...(process.platform === "win32" ? { icon: getIconPath("win32") } : {}),
+			...(process.platform === "linux" ? { icon: getIconPath("linux") } : {}),
+			...(process.platform === "darwin" ? { icon: getIconPath("darwin") } : {}),
+			webPreferences: {
+				contextIsolation: true,
+				nodeIntegration: false,
+				webviewTag: true,
+				preload: join(__dirname, "../preload/index.js"),
+				sandbox: false,
+				...(process.platform === "linux"
+					? {
+							enableRemoteModule: false,
+							webSecurity: false,
+							allowRunningInsecureContent: true,
+						}
+					: {}),
+			},
+		});
+		logger.info("Main window created successfully");
+	} catch (error) {
+		logger.error("Error creating main window:", error);
+		// Try to create a simpler window without icons
+		mainWindow = new BrowserWindow({
+			width: 1200,
+			height: 800,
+			show: false,
+			webPreferences: {
+				contextIsolation: true,
+				nodeIntegration: false,
+				preload: join(__dirname, "../preload/index.js"),
+			},
+		});
+		logger.info("Fallback window created");
+	}
 
 	// Remove default menu from the window
 	mainWindow.removeMenu();
@@ -110,13 +161,25 @@ function createWindow() {
 
 	// show the window when its ready
 	mainWindow.once("ready-to-show", () => {
-		mainWindow.show();
-		mainWindow.focus();
-		if (!app.isPackaged) {
-			// in development mode, show the window and open dev tools
+		logger.info("Main window ready to show");
+		try {
 			mainWindow.show();
 			mainWindow.focus();
-			mainWindow.webContents.openDevTools({ mode: "undocked" });
+			logger.info("Main window shown and focused");
+		} catch (error) {
+			logger.error("Error showing main window:", error);
+		}
+		
+		if (!app.isPackaged) {
+			// in development mode, show the window and open dev tools
+			try {
+				mainWindow.show();
+				mainWindow.focus();
+				mainWindow.webContents.openDevTools({ mode: "undocked" });
+				logger.info("Development tools opened");
+			} catch (error) {
+				logger.error("Error opening development tools:", error);
+			}
 		} else {
 			checkForUpdates()
 				.then(() => {
@@ -404,35 +467,30 @@ app.whenReady().then(async () => {
 		private: false,
 	});
 
-	// Initialize Discord presence
-	await initializeDiscordPresence();
-
-	// Set up tray icon
-	app.setName("Dione");
-	let appIcon: Tray;
-	switch (os.platform()) {
-		// add the appropriate icon for the platform
-		case "win32":
-			appIcon = new Tray(icon);
-			break;
-		case "darwin":
-			appIcon = new Tray(macosIcon);
-			break;
-		case "linux":
-			appIcon = new Tray(linuxIcon);
-			break;
-		default:
-			appIcon = new Tray(icon);
-			break;
+	// initialize rpc safety
+	try {
+		await initializeDiscordPresence();
+	} catch (error) {
+		logger.error("Failed to initialize Discord presence:", error);
 	}
-	electronApp.setAppUserModelId("Dione");
-	appIcon.setToolTip("Dione");
 
-	// Start the server
+	// set tray icon safety
+	app.setName("Dione");
+	let appIcon: Tray | null = null;
+	try {
+		const iconPath = getIconPath(os.platform());
+		appIcon = new Tray(iconPath);
+		electronApp.setAppUserModelId("Dione");
+		appIcon.setToolTip("Dione");
+	} catch (error) {
+		logger.error("Failed to create tray icon:", error);
+	}
+
+	// start backend
 	port = await startServer();
 
-	// Create the main application window
-	createWindow();
+	// create window
+	await createWindow();
 
 	// Register global shortcuts
 	globalShortcut.register("Control+R", () => {
@@ -873,9 +931,9 @@ ipcMain.on("new-window", (_event, url) => {
 		height: 400,
 		autoHideMenuBar: true,
 		closable: true,
-		...(process.platform === "win32" ? { icon } : {}),
-		...(process.platform === "linux" ? { icon: linuxIcon } : {}),
-		...(process.platform === "darwin" ? { icon: macosIcon } : {}),
+		...(process.platform === "win32" ? { icon: getIconPath("win32") } : {}),
+		...(process.platform === "linux" ? { icon: getIconPath("linux") } : {}),
+		...(process.platform === "darwin" ? { icon: getIconPath("darwin") } : {}),
 	});
 
 	previewWindow.loadURL(url);
