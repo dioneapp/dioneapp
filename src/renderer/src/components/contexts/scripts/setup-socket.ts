@@ -44,15 +44,15 @@ export function setupSocket({
 
 	socket.on("missingDeps", (data) => {
 		console.log("MISSING DEPS FOUND");
-    setMissingDependencies(data);
+		setMissingDependencies(data);
 	});
 
-  socket.on("installDep", (message: { type: string; content: string }) => {
-    if (!message) return;
-    const content = message.content || "";
-    if (content.trim().length === 0) return;
-    addLog(appId, content);
-  });
+	socket.on("installDep", (message: { type: string; content: string }) => {
+		if (!message) return;
+		const content = message.content || "";
+		if (content.trim().length === 0) return;
+		addLog(appId, content);
+	});
 
 	socket.on(
 		"installUpdate",
