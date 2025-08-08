@@ -13,6 +13,8 @@ import { es } from "./languages/es";
 import { fr } from "./languages/fr";
 import { hi } from "./languages/hi";
 import { id } from "./languages/id";
+import { de } from "./languages/de";
+import { ja } from "./languages/ja";
 import { pt } from "./languages/pt";
 import { ru } from "./languages/ru";
 import { zh } from "./languages/zh";
@@ -23,9 +25,11 @@ export const languages = {
 	es: "Spanish",
 	ar: "Arabic",
 	bn: "Bengali",
+	de: "German",
 	fr: "French",
 	hi: "Hindi",
 	id: "Indonesian",
+	ja: "Japanese",
 	pt: "Portuguese",
 	ru: "Russian",
 	zh: "Chinese",
@@ -51,9 +55,11 @@ const translations = {
 	es,
 	ar,
 	bn,
+	de,
 	fr,
 	hi,
 	id,
+	ja,
 	pt,
 	ru,
 	zh,
