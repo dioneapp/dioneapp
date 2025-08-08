@@ -89,14 +89,20 @@ export default function Install({
 			}
 
 			setShow({ [data.id]: "logs" });
-			addLog(data.id, `installing required dependencies: ${missing.join(", ")}`);
+			addLog(
+				data.id,
+				`installing required dependencies: ${missing.join(", ")}`,
+			);
 			try {
 				const response = await fetch(
 					`http://localhost:${port}/deps/install/${data.id}`,
 					{
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({ dependencies: missing, nameFolder: data.name.replace(/\s+/g, "-") }),
+						body: JSON.stringify({
+							dependencies: missing,
+							nameFolder: data.name.replace(/\s+/g, "-"),
+						}),
 					},
 				);
 				if (!response.ok) {
@@ -107,7 +113,13 @@ export default function Install({
 					addLog(data.id, "dependencies installed successfully");
 					await onFinishInstallDeps();
 				} else {
-					showToast("error", t("missingDeps.logs.error.install").replace("{error}", "unknown error"));
+					showToast(
+						"error",
+						t("missingDeps.logs.error.install").replace(
+							"{error}",
+							"unknown error",
+						),
+					);
 					addLog(data.id, "error installing dependencies");
 				}
 			} catch (err: any) {
