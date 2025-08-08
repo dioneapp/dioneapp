@@ -255,6 +255,9 @@ export const zh = {
 	quickLaunch: {
 		title: "快速启动",
 		addApp: "添加应用",
+		tooltips: {
+			noMoreApps: "没有可添加的应用",
+		},
 		selectApp: {
 			title: "选择一个应用程序",
 			description: "{count}个应用程序可用。您最多可以选择{max}个。",

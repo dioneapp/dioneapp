@@ -261,6 +261,9 @@ export const ar = {
 	quickLaunch: {
 		title: "تشغيل سريع",
 		addApp: "إضافة تطبيق",
+		tooltips: {
+			noMoreApps: "لا توجد تطبيقات متاحة للإضافة",
+		},
 		selectApp: {
 			title: "حدد تطبيقًا",
 			description: "{count} تطبيقات متاحة. يمكنك اختيار ما يصل إلى {max}.",

@@ -271,6 +271,9 @@ export const id = {
 	quickLaunch: {
 		title: "Peluncuran Cepat",
 		addApp: "Tambah Aplikasi",
+		tooltips: {
+			noMoreApps: "Tidak ada app yang tersedia untuk ditambahkan",
+		},
 		selectApp: {
 			title: "Pilih Aplikasi",
 			description:

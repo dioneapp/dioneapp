@@ -274,6 +274,9 @@ export const ru = {
 	quickLaunch: {
 		title: "Быстрый запуск",
 		addApp: "Добавить приложение",
+		tooltips: {
+			noMoreApps: "Нет доступных приложений для добавления",
+		},
 		selectApp: {
 			title: "Выберите приложение",
 			description: "Доступно {count} приложений. Вы можете выбрать до {max}.",
