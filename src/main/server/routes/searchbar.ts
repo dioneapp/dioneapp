@@ -43,9 +43,11 @@ router.get("/name/:name", async (req, res) => {
 		const response = await fetch(
 			`https://api.getdione.app/v1/scripts?q=${name}`,
 			{
-				headers: {
-					Authorization: `Bearer ${process.env.API_KEY}`,
-				},
+                headers: {
+                    ...(process.env.API_KEY
+                        ? { Authorization: `Bearer ${process.env.API_KEY}` }
+                        : {}),
+                },
 			},
 		);
 		const data = await response.json();

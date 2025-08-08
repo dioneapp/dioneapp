@@ -11,16 +11,17 @@ import executeInstallation from "./execute";
 import { checkSystem } from "./system";
 
 export async function getScripts(id: string, io: Server) {
-	if (!supabase) {
-		logger.warn("Supabase client is not initialized");
-		return;
-	}
+    if (!supabase) {
+        logger.warn("Supabase not initialized (no .env). Continuing without DB features.");
+    }
 	try {
 		const response = await fetch(
 			`https://api.getdione.app/v1/scripts?id=${id}&limit=1`,
 			{
 				headers: {
-					Authorization: `Bearer ${process.env.API_KEY}`,
+					...(process.env.API_KEY
+						? { Authorization: `Bearer ${process.env.API_KEY}` }
+						: {}),
 				},
 			},
 		);
