@@ -228,19 +228,19 @@ export function downloadFile(
 							status: "error",
 							content: "Error detected",
 						});
-          } else {
-            io.to(id).emit("missingDeps", result.missing);
-            const depsList = result.missing.map((dep) => dep.name).join(", ");
-            io.to(id).emit("installUpdate", {
-              type: "log",
-              content: `Installing dependencies: ${depsList}`,
-            });
-            io.to(id).emit("installUpdate", {
-              type: "status",
-              status: "pending",
-              content: "Installing dependencies...",
-            });
-          }
+					} else {
+						io.to(id).emit("missingDeps", result.missing);
+						const depsList = result.missing.map((dep) => dep.name).join(", ");
+						io.to(id).emit("installUpdate", {
+							type: "log",
+							content: `Installing dependencies: ${depsList}`,
+						});
+						io.to(id).emit("installUpdate", {
+							type: "status",
+							status: "pending",
+							content: "Installing dependencies...",
+						});
+					}
 				});
 				file.on("error", (error) => {
 					file.close();
