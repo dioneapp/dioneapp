@@ -277,6 +277,9 @@ export const de = {
 	quickLaunch: {
 		title: "Schnellstart",
 		addApp: "App hinzufügen",
+		tooltips: {
+			noMoreApps: "Keine Apps verfügbar zum Hinzufügen",
+		},
 		selectApp: {
 			title: "App auswählen",
 			description: "{count} Apps verfügbar. Sie können bis zu {max} auswählen.",

@@ -270,6 +270,9 @@ export const ja = {
 	quickLaunch: {
 		title: "クイック起動",
 		addApp: "アプリを追加",
+		tooltips: {
+			noMoreApps: "追加できるアプリはありません",
+		},
 		selectApp: {
 			title: "アプリを選択",
 			description:

@@ -263,6 +263,9 @@ export const hi = {
 	quickLaunch: {
 		title: "त्वरित लॉन्च",
 		addApp: "ऐप जोड़ें",
+		tooltips: {
+			noMoreApps: "जोड़ने के लिए कोई ऐप उपलब्ध नहीं",
+		},
 		selectApp: {
 			title: "एक ऐप चुनें",
 			description: "{count} ऐप उपलब्ध हैं। आप अधिकतम {max} चुन सकते हैं।",

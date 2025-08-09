@@ -275,6 +275,9 @@ export const pt = {
 	quickLaunch: {
 		title: "Lançamento rápido",
 		addApp: "Adicionar aplicativo",
+		tooltips: {
+			noMoreApps: "Sem apps disponíveis para adicionar",
+		},
 		selectApp: {
 			title: "Selecione um aplicativo",
 			description:

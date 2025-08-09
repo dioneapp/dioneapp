@@ -47,6 +47,13 @@ export function setupSocket({
 		setMissingDependencies(data);
 	});
 
+	socket.on("installDep", (message: { type: string; content: string }) => {
+		if (!message) return;
+		const content = message.content || "";
+		if (content.trim().length === 0) return;
+		addLog(appId, content);
+	});
+
 	socket.on(
 		"installUpdate",
 		(message: { type: string; content: string; status: string }) => {

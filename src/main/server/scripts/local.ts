@@ -156,18 +156,17 @@ export async function loadLocalScript(name: string, io: Server) {
 		logger.error(`Error downloading script: ${result.error}`);
 	} else {
 		io.to(id).emit("missingDeps", result.missing);
+		const depsList = result.missing.map((dep) => dep.name).join(", ");
 		io.to(id).emit("installUpdate", {
 			type: "log",
-			content: `ERROR: Some dependencies are missing: ${result.missing.map((dep) => dep.name).join(", ")}`,
+			content: `Installing dependencies: ${depsList}`,
 		});
 		io.to(id).emit("installUpdate", {
 			type: "status",
-			status: "error",
-			content: "Error detected",
+			status: "pending",
+			content: "Installing dependencies...",
 		});
-		logger.warn(
-			`Some dependencies are missing: ${result.missing.map((dep) => dep.name).join(", ")}`,
-		);
+		logger.warn(`Installing dependencies: ${depsList}`);
 	}
 }
 

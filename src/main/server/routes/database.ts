@@ -173,7 +173,9 @@ router.get("/featured", (_req, res) => {
 			"https://api.getdione.app/v1/scripts?limit=4&order_type=desc&featured=true",
 			{
 				headers: {
-					Authorization: `Bearer ${process.env.API_KEY}`,
+					...(process.env.API_KEY
+						? { Authorization: `Bearer ${process.env.API_KEY}` }
+						: {}),
 				},
 			},
 		);
@@ -205,7 +207,11 @@ router.get("/explore", (req, res) => {
 			const response = await fetch(
 				`https://api.getdione.app/v1/scripts?order_type=desc&page=${page}&limit=${limit}`,
 				{
-					headers: { Authorization: `Bearer ${process.env.API_KEY}` },
+					headers: {
+						...(process.env.API_KEY
+							? { Authorization: `Bearer ${process.env.API_KEY}` }
+							: {}),
+					},
 				},
 			);
 
@@ -243,14 +249,16 @@ router.get("/explore", (req, res) => {
 router.get("/search/:id", (req, res) => {
 	async function getData() {
 		logger.info(`Searching script with ID: "${req.params.id}"`);
-		const response = await fetch(
-			`https://api.getdione.app/v1/scripts?id=${req.params.id}&limit=1`,
-			{
-				headers: {
-					Authorization: `Bearer ${process.env.API_KEY}`,
+			const response = await fetch(
+				`https://api.getdione.app/v1/scripts?id=${req.params.id}&limit=1`,
+				{
+					headers: {
+						...(process.env.API_KEY
+							? { Authorization: `Bearer ${process.env.API_KEY}` }
+							: {}),
+					},
 				},
-			},
-		);
+			);
 		const data = await response.json();
 		if (response.status !== 200) {
 			logger.error(
@@ -283,14 +291,16 @@ router.get("/search/name/:name", async (req, res) => {
 			.replace(/\s+/g, " ")
 			.trim();
 		if (sanitizedName) {
-			const response = await fetch(
-				`https://api.getdione.app/v1/scripts?q=${sanitizedName}`,
-				{
-					headers: {
-						Authorization: `Bearer ${process.env.API_KEY}`,
+				const response = await fetch(
+					`https://api.getdione.app/v1/scripts?q=${sanitizedName}`,
+					{
+						headers: {
+							...(process.env.API_KEY
+								? { Authorization: `Bearer ${process.env.API_KEY}` }
+								: {}),
+						},
 					},
-				},
-			);
+				);
 			const data = await response.json();
 			if (response.status !== 200) {
 				logger.error(
@@ -336,14 +346,16 @@ router.get("/search/type/:type", async (req, res) => {
 	async function getData() {
 		const type = req.params.type;
 
-		const response = await fetch(
-			`https://api.getdione.app/v1/scripts?tags=${type}`,
-			{
-				headers: {
-					Authorization: `Bearer ${process.env.API_KEY}`,
+			const response = await fetch(
+				`https://api.getdione.app/v1/scripts?tags=${type}`,
+				{
+					headers: {
+						...(process.env.API_KEY
+							? { Authorization: `Bearer ${process.env.API_KEY}` }
+							: {}),
+					},
 				},
-			},
-		);
+			);
 		const data = await response.json();
 		if (response.status !== 200) {
 			logger.error(
@@ -389,10 +401,11 @@ router.post("/update-script/:id", async (req, res) => {
 		return res.status(400).send("No script ID provided");
 	}
 
-	if (!supabase) {
-		logger.error("Supabase client is not initialized");
-		return res.status(500).json({ error: "Database connection not available" });
-	}
+  // allow installs to proceed when db isn't configured
+  if (!supabase) {
+    logger.warn("Supabase not initialized, skipping script update (no .env)");
+    return res.status(200).json({ skipped: true, reason: "database not configured" });
+  }
 
 	const { data, error } = await supabase
 		.from("scripts")

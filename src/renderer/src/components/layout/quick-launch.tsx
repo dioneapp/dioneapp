@@ -21,6 +21,9 @@ export default function QuickLaunch({
 
 	const [showAppList, setShowAppList] = useState<boolean>(false);
 	const [selectedSlot, setSelectedSlot] = useState<number | null>(null);
+	const [blockedTooltipIndex, setBlockedTooltipIndex] = useState<number | null>(
+		null,
+	);
 	const dragGhostRef = useRef<HTMLDivElement>(null);
 	const maxApps = 6;
 
@@ -193,10 +196,24 @@ export default function QuickLaunch({
 		);
 		const clickIsDisabled = availableToAdd.length === 0;
 		return (
-			<div className="flex flex-col items-center gap-1" data-slot-index={index}>
+			<div
+				className="flex flex-col items-center gap-1 relative"
+				data-slot-index={index}
+			>
 				<motion.button
 					type="button"
-					onClick={() => !clickIsDisabled && showAppSelector(index)}
+					onClick={() => {
+						if (clickIsDisabled) {
+							setBlockedTooltipIndex(index);
+							setTimeout(() => {
+								setBlockedTooltipIndex((current) =>
+									current === index ? null : current,
+								);
+							}, 1500);
+							return;
+						}
+						showAppSelector(index);
+					}}
 					className={`
             h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center transition-all duration-300
             ${clickIsDisabled && !isHovered && "opacity-50 cursor-not-allowed"}
@@ -216,6 +233,22 @@ export default function QuickLaunch({
 						className={`h-10 w-10 transition-colors ${isHovered ? "text-[#BCB1E7]" : ""}`}
 					/>
 				</motion.button>
+				<AnimatePresence>
+					{clickIsDisabled && blockedTooltipIndex === index && (
+						<motion.div
+							initial={{ opacity: 0, y: 6 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: 6 }}
+							className="absolute -top-9 z-10"
+						>
+							<div className="bg-black/80 backdrop-blur-sm border border-white/20 rounded-md px-2 py-1">
+								<p className="text-white text-xs whitespace-nowrap">
+									{t("quickLaunch.tooltips.noMoreApps")}
+								</p>
+							</div>
+						</motion.div>
+					)}
+				</AnimatePresence>
 				<div className="max-w-18 overflow-hidden flex justify-center items-center">
 					<p className="text-[12px] text-neutral-400 truncate w-full">
 						{t("quickLaunch.addApp")}

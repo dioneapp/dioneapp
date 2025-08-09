@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useScriptsContext } from "../components/contexts/ScriptsContext";
 import DeleteLoadingModal from "../components/modals/delete-loading";
-import MissingDepsModal from "../components/modals/missing-deps";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
 
@@ -73,6 +72,75 @@ export default function Install({
 	const maxApps = 6;
 	// not supported modal
 	const [notSupportedModal, setNotSupportedModal] = useState<boolean>(false);
+
+	// auto-install missing dependencies
+	const [installingDeps, setInstallingDeps] = useState<boolean>(false);
+
+	useEffect(() => {
+		async function autoInstallMissingDependencies() {
+			if (!data?.id || !data?.name) return;
+			const port = await getCurrentPort();
+			const missing = (missingDependencies || [])
+				.filter((dep: any) => !dep.installed)
+				.map((dep: any) => dep.name);
+			if (!missing || missing.length === 0) {
+				await onFinishInstallDeps();
+				return;
+			}
+
+			setShow({ [data.id]: "logs" });
+			addLog(
+				data.id,
+				`installing required dependencies: ${missing.join(", ")}`,
+			);
+			try {
+				const response = await fetch(
+					`http://localhost:${port}/deps/install/${data.id}`,
+					{
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							dependencies: missing,
+							nameFolder: data.name.replace(/\s+/g, "-"),
+						}),
+					},
+				);
+				if (!response.ok) {
+					throw new Error(String(response.status));
+				}
+				const result = await response.json();
+				if (result?.success) {
+					addLog(data.id, "dependencies installed successfully");
+					await onFinishInstallDeps();
+				} else {
+					showToast(
+						"error",
+						t("missingDeps.logs.error.install").replace(
+							"{error}",
+							"unknown error",
+						),
+					);
+					addLog(data.id, "error installing dependencies");
+				}
+			} catch (err: any) {
+				showToast(
+					"error",
+					t("missingDeps.logs.error.install").replace(
+						"{error}",
+						String(err?.message || err?.toString() || "Unknown error"),
+					),
+				);
+				addLog(data.id, `error installing dependencies: ${String(err)}`);
+			} finally {
+				setInstallingDeps(false);
+			}
+		}
+
+		if (missingDependencies && !installingDeps) {
+			setInstallingDeps(true);
+			autoInstallMissingDependencies();
+		}
+	}, [missingDependencies, data?.id]);
 
 	// connect to server
 	// useEffect(() => {
@@ -745,15 +813,6 @@ export default function Install({
 				<DeleteLoadingModal
 					status={deleteStatus}
 					onClose={handleCloseDeleteModal}
-				/>
-			)}
-			{missingDependencies && (
-				<MissingDepsModal
-					data={missingDependencies}
-					set={setMissingDependencies}
-					onFinish={onFinishInstallDeps}
-					workingDir={data?.name}
-					appId={data?.id}
 				/>
 			)}
 			{deleteDepsModal && (

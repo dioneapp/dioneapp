@@ -11,16 +11,17 @@ import executeInstallation from "./execute";
 import { checkSystem } from "./system";
 
 export async function getScripts(id: string, io: Server) {
-	if (!supabase) {
-		logger.warn("Supabase client is not initialized");
-		return;
-	}
+    if (!supabase) {
+        logger.warn("Supabase not initialized (no .env). Continuing without DB features.");
+    }
 	try {
 		const response = await fetch(
 			`https://api.getdione.app/v1/scripts?id=${id}&limit=1`,
 			{
 				headers: {
-					Authorization: `Bearer ${process.env.API_KEY}`,
+					...(process.env.API_KEY
+						? { Authorization: `Bearer ${process.env.API_KEY}` }
+						: {}),
 				},
 			},
 		);
@@ -230,14 +231,15 @@ export function downloadFile(
 						});
 					} else {
 						io.to(id).emit("missingDeps", result.missing);
+						const depsList = result.missing.map((dep) => dep.name).join(", ");
 						io.to(id).emit("installUpdate", {
 							type: "log",
-							content: `ERROR: Some dependencies are missing: ${result.missing.map((dep) => dep.name).join(", ")}`,
+							content: `Installing dependencies: ${depsList}`,
 						});
 						io.to(id).emit("installUpdate", {
 							type: "status",
-							status: "error",
-							content: "Error detected",
+							status: "pending",
+							content: "Installing dependencies...",
 						});
 					}
 				});

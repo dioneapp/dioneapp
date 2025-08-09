@@ -263,6 +263,9 @@ export const bn = {
 	quickLaunch: {
 		title: "দ্রুত লঞ্চ",
 		addApp: "অ্যাপ যোগ করুন",
+		tooltips: {
+			noMoreApps: "যোগ করার মতো কোনো অ্যাপ নেই",
+		},
 		selectApp: {
 			title: "একটি অ্যাপ নির্বাচন করুন",
 			description:
