@@ -146,31 +146,62 @@ export default function FeaturedCarousel() {
 								className="w-full h-72 flex transition-all duration-200 cursor-pointer rounded-xl relative overflow-hidden group border border-white/5 "
 							>
 								<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
-								<img
-									aria-hidden
-									alt={
-										scripts.find((script) => script.id === activeIndex)?.name
-									}
-									{...(scripts.find((script) => script.id === activeIndex)
-										?.banner_url
-										? {
-												src: scripts.find((script) => script.id === activeIndex)
-													?.banner_url,
-											}
-										: {})}
-									style={{
-										background:
-											gradients[activeIndex] ||
-											"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, #BCB1E7 100%)",
-									}}
-									className={`absolute inset-0 w-full h-full bg-black/5 ${scripts.find((script) => script.id === activeIndex)?.banner_url ? "opacity-50" : "opacity-20 scale-150"}`}
-								/>
+								{scripts.find((script) => script.id === activeIndex)?.banner_url ? (
+									<motion.img
+										aria-hidden
+										alt={scripts.find((script) => script.id === activeIndex)?.name}
+										src={scripts.find((script) => script.id === activeIndex)?.banner_url}
+										className={`absolute inset-0 w-full h-full bg-black/5 opacity-50`}
+										style={{
+											objectFit: "cover",
+											width: "100%",
+											height: "100%",
+										}}
+										initial={{ scale: 1, filter: "blur(0px)" }}
+										animate={{
+											scale: [1, 1.05, 1],
+											filter: ["blur(0px)", "blur(2px)", "blur(0px)"],
+										}}
+										transition={{
+											duration: 16,
+											repeat: Infinity,
+											ease: "linear",
+										}}
+									/>
+								) : (
+									<motion.div
+										aria-hidden
+										className="absolute inset-0 w-full h-full bg-black/5 opacity-20 scale-150"
+										style={{
+											background:
+												gradients[activeIndex] ||
+												"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, #BCB1E7 100%)",
+											backgroundSize: "200% 200%",
+										}}
+										initial={{ backgroundPosition: "0% 50%" }}
+										animate={{
+											backgroundPosition: [
+												"0% 50%",
+												"100% 30%",
+												"60% 100%",
+												"20% 80%",
+												"80% 10%",
+												"0% 50%",
+											],
+										}}
+										transition={{
+											duration: 48,
+											repeat: Infinity,
+											ease: "linear",
+										}}
+									/>
+								)}
 								<motion.div
 									initial={{ opacity: 0, filter: "blur(4px)", top: 10 }}
 									animate={{ opacity: 1, filter: "blur(0px)", top: 0 }}
 									exit={{ opacity: 0, filter: "blur(4px)", top: -10 }}
 									transition={{ duration: 0.3 }}
-									className="z-50 absolute inset-0 p-10 transition-colors duration-300 group-hover:bg-black/20"
+									className="z-50 absolute inset-0 p-10 transition-colors duration-200 group-hover:bg-black/5"
 								>
 									<div className="flex w-full h-full flex-col justify-start items-center">
 										<div className="w-full h-full flex justify-end">
