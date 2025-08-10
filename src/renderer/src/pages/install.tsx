@@ -47,6 +47,7 @@ export default function Install({
 		loadIframe,
 		setLocalApps,
 		notSupported,
+		sockets,
 	} = useScriptsContext();
 
 	const { t } = useTranslation();
@@ -88,7 +89,10 @@ export default function Install({
 				return;
 			}
 
-			setShow({ [data.id]: "logs" });
+			// Only switch to logs view if we're not already there
+			if (show[data.id] !== "logs") {
+				setShow({ [data.id]: "logs" });
+			}
 			addLog(
 				data.id,
 				`installing required dependencies: ${missing.join(", ")}`,
@@ -165,7 +169,8 @@ export default function Install({
 				setShow({ [data.id]: "actions" });
 
 				// auto-open the app if the setting is enabled and it was just installed
-				if (config?.autoOpenAfterInstall && wasJustInstalled) {
+				// but only if we're not in the middle of installing dependencies
+				if (config?.autoOpenAfterInstall && wasJustInstalled && !missingDependencies) {
 					const port = await getCurrentPort();
 					let response: Response;
 					if (isLocal) {
@@ -209,6 +214,7 @@ export default function Install({
 		data?.id,
 		config?.autoOpenAfterInstall,
 		wasJustInstalled,
+		missingDependencies,
 		handleStopApp,
 		fetchIfDownloaded,
 		setShow,
@@ -375,11 +381,17 @@ export default function Install({
 		}
 		clearLogs(data?.id);
 		setIsServerRunning((prev) => ({ ...prev, [data?.id]: true }));
-		setShow({ [data?.id]: "logs" });
+		// only switch to logs view if we're not already there
+		if (show[data?.id] !== "logs") {
+			setShow({ [data?.id]: "logs" });
+		}
 		if (!data?.id) return;
 
-		await connectApp(data?.id, isLocal);
-		await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
+		// only connect if we don't already have a socket connection
+		if (!sockets[data?.id]) {
+			await connectApp(data?.id, isLocal);
+			await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
+		}
 
 		try {
 			const port = await getCurrentPort();
@@ -457,8 +469,11 @@ export default function Install({
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: true }));
 			addLog(data?.id, `Starting ${data.name}...`);
 
-			await connectApp(data?.id, isLocal);
-			await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
+			// only connect if we don't already have a socket connection
+			if (!sockets[data?.id]) {
+				await connectApp(data?.id, isLocal);
+				await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
+			}
 
 			const port = await getCurrentPort();
 			window.electron.ipcRenderer.invoke(
@@ -646,7 +661,10 @@ export default function Install({
 
 	const handleStart = async () => {
 		showToast("default", t("toast.install.starting").replace("%s", data.name));
-		setShow({ [data?.id]: "logs" });
+		// only switch to logs view if we're not already there
+		if (show[data?.id] !== "logs") {
+			setShow({ [data?.id]: "logs" });
+		}
 		await start();
 	};
 
@@ -692,7 +710,10 @@ export default function Install({
 			"default",
 			t("toast.install.reconnecting").replace("%s", data.name),
 		);
-		setShow({ [data?.id]: "logs" });
+		// only switch to logs view if we're not already there
+		if (show[data?.id] !== "logs") {
+			setShow({ [data?.id]: "logs" });
+		}
 	};
 	const handleReloadIframe = async () => {
 		const iframe = document.getElementById("iframe") as HTMLIFrameElement;
@@ -703,24 +724,29 @@ export default function Install({
 		// remove app from installed apps
 		setInstalledApps((prevApps) => prevApps.filter((app) => app !== data.name));
 		setApps((prevApps) => prevApps.filter((app) => app?.name !== data.name));
-		// restart backend
-		await window.electron.ipcRenderer.invoke("restart-backend");
+		
 		// clear missing deps
 		setMissingDependencies(null);
+		
 		// show success toast
 		showToast("success", t("toast.install.success.depsInstalled"));
+		
 		// clear logs
 		clearLogs(data?.id);
+		
 		// clear errors
 		setError(false);
-		// show logs
-		setShow({ [data?.id]: "logs" });
-		// setIsServerRunning(false);
+		
+		// show retrying toast
 		showToast("default", t("toast.install.retrying").replace("%s", data.name));
-		await handleStopApp(data?.id, data?.name);
-		// setup socket again
-		connectApp(data?.id, isLocal);
-		await handleDownload();
+		
+		if (sockets[data?.id]) {
+			await handleDownload();
+		} else {
+			await connectApp(data?.id, isLocal);
+			await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
+			await handleDownload();
+		}
 	}
 
 	function handleCloseDeleteModal() {
@@ -847,7 +873,7 @@ export default function Install({
 				)}
 				<div className="flex h-screen w-full">
 					<div className="w-full h-full flex justify-center items-center">
-						<AnimatePresence mode="wait">
+						<AnimatePresence>
 							{show[data?.id] === "iframe" && (
 								<IframeComponent
 									iframeSrc={iframeSrc}
