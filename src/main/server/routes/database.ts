@@ -131,18 +131,19 @@ router.get("/set-session", async (req, res) => {
 			logger.error(
 				`Unable to established session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
 			);
-			res.send(error);
-		} else {
-			logger.info(`Session established successfully: ${data.user?.id}`);
-			const userId = data.user?.id;
-			const now = new Date().toISOString();
+			return res.status(500).send(error);
+		}
 
-			if (!userId) {
-				logger.error("User ID is missing from session");
-				res.status(400).send({ error: "Missing user ID" });
-				return;
-			}
+		logger.info(`Session established successfully: ${data.user?.id}`);
+		const userId = data.user?.id;
+		const now = new Date().toISOString();
 
+		if (!userId) {
+			logger.error("User ID is missing from session");
+			return res.status(400).send({ error: "Missing user ID" });
+		}
+
+		try {
 			const { error: updateError } = await supabase
 				.from("users")
 				.update({ last_login: now })
@@ -153,16 +154,21 @@ router.get("/set-session", async (req, res) => {
 				logger.error(
 					`Unable to update user: [ (${updateError.code || "No code"}) ${updateError.message || "No details"} ]`,
 				);
-				res.send(updateError);
-			} else {
-				res.send(data);
+				return res.status(500).send(updateError);
 			}
+		} catch (updateErr: any) {
+			logger.error(
+				`Exception while updating user: [ (${updateErr.code || "No code"}) ${updateErr.message || "No details"} ]`,
+			);
+			return res.status(500).send("An error occurred while updating the user.");
 		}
+
+		return res.send(data);
 	} catch (error: any) {
 		logger.error(
 			`Unable to get session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
 		);
-		res.status(500).send("An error occurred while processing your request.");
+		return res.status(500).send("An error occurred while processing your request.");
 	}
 });
 
