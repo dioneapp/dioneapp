@@ -12,6 +12,7 @@ import { useScriptsContext } from "../components/contexts/ScriptsContext";
 import DeleteLoadingModal from "../components/modals/delete-loading";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
+import { useNavigate } from "react-router-dom";
 
 export default function Install({
 	id,
@@ -51,7 +52,7 @@ export default function Install({
 	} = useScriptsContext();
 
 	const { t } = useTranslation();
-
+	const navigate = useNavigate();
 	// loading stuff
 	const [_loading, setLoading] = useState<boolean>(true);
 	const [_imgLoading, setImgLoading] = useState<boolean>(true);
@@ -750,6 +751,10 @@ export default function Install({
 	}
 
 	function handleCloseDeleteModal() {
+		console.log("isLocal", isLocal);
+		if (isLocal) {
+			navigate("/library");
+		}
 		setDeleteStatus("");
 	}
 
