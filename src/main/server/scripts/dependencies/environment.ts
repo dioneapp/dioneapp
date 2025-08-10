@@ -147,9 +147,9 @@ export function initDefaultEnv() {
 		const basicEnv = [
 			"C:\\Windows\\System32",
 			"C:\\Windows",
-			"C:\\Windows\\System32\\Wbem",
+			"C:\\Windows\\System32\\wbem",
 			"C:\\Windows\\System32\\WindowsPowerShell\\v1.0",
-			`${path.join(appData, "Local", "Microsoft", "WindowsApps")}`,
+			`${path.join(appData, "..", "Local", "Microsoft", "WindowsApps")}`,
 		];
 
 		// check if have basics paths
