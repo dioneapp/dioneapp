@@ -146,11 +146,17 @@ export default function FeaturedCarousel() {
 								className="w-full h-72 flex transition-all duration-200 cursor-pointer rounded-xl relative overflow-hidden group border border-white/5 "
 							>
 								<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
-								{scripts.find((script) => script.id === activeIndex)?.banner_url ? (
+								{scripts.find((script) => script.id === activeIndex)
+									?.banner_url ? (
 									<motion.img
 										aria-hidden
-										alt={scripts.find((script) => script.id === activeIndex)?.name}
-										src={scripts.find((script) => script.id === activeIndex)?.banner_url}
+										alt={
+											scripts.find((script) => script.id === activeIndex)?.name
+										}
+										src={
+											scripts.find((script) => script.id === activeIndex)
+												?.banner_url
+										}
 										className={`absolute inset-0 w-full h-full bg-black/5 opacity-50`}
 										style={{
 											objectFit: "cover",
@@ -164,7 +170,7 @@ export default function FeaturedCarousel() {
 										}}
 										transition={{
 											duration: 16,
-											repeat: Infinity,
+											repeat: Number.POSITIVE_INFINITY,
 											ease: "linear",
 										}}
 									/>
@@ -191,7 +197,7 @@ export default function FeaturedCarousel() {
 										}}
 										transition={{
 											duration: 48,
-											repeat: Infinity,
+											repeat: Number.POSITIVE_INFINITY,
 											ease: "linear",
 										}}
 									/>

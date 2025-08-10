@@ -374,21 +374,21 @@ export const executeCommands = async (
 	io: Server,
 	id: string,
 ): Promise<{ cancelled: boolean }> => {
-  // reset cancellation state for a new command batch
-  processWasCancelled = false;
+	// reset cancellation state for a new command batch
+	processWasCancelled = false;
 	let currentWorkingDir = workingDir;
 	const currentPlatform = getPlatform(); // "win32", "linux", "darwin"
 
 	for (const cmd of commands) {
-    // if user requested cancellation, stop processing further commands
-    if (processWasCancelled) {
-      logger.info("Process cancelled - stopping remaining commands");
-      io.to(id).emit("installUpdate", {
-        type: "log",
-        content: "INFO: Process cancelled - stopping remaining commands",
-      });
-      return { cancelled: true };
-    }
+		// if user requested cancellation, stop processing further commands
+		if (processWasCancelled) {
+			logger.info("Process cancelled - stopping remaining commands");
+			io.to(id).emit("installUpdate", {
+				type: "log",
+				content: "INFO: Process cancelled - stopping remaining commands",
+			});
+			return { cancelled: true };
+		}
 		let command: string;
 
 		// if string use it
@@ -451,7 +451,7 @@ export const executeCommands = async (
 					status: "error",
 					content: "Error detected",
 				});
-        continue;
+				continue;
 			}
 			logger.info(`Changed working directory to: ${currentWorkingDir}`);
 			io.to(id).emit("installUpdate", {
@@ -461,20 +461,20 @@ export const executeCommands = async (
 		} else {
 			const response = await executeCommand(command, io, currentWorkingDir, id);
 			if (response.code !== 0) {
-        if (processWasCancelled) {
-          logger.info("Process was manually cancelled");
-          io.to(id).emit("installUpdate", {
-            type: "log",
-            content: "INFO: Process was manually cancelled",
-          });
-          // exit and signal cancellation to caller
-          return { cancelled: true };
-        }
+				if (processWasCancelled) {
+					logger.info("Process was manually cancelled");
+					io.to(id).emit("installUpdate", {
+						type: "log",
+						content: "INFO: Process was manually cancelled",
+					});
+					// exit and signal cancellation to caller
+					return { cancelled: true };
+				}
 				throw new Error(
 					response.stderr || `Command failed with exit code ${response.code}`,
 				);
 			}
 		}
 	}
-  return { cancelled: false };
+	return { cancelled: false };
 };
