@@ -9,13 +9,17 @@ router.use(express.json());
 // generate gradients for logo if is null
 function generateGradient(input: string): string {
 	if (!input) return "";
-    let h = 2166136261;
-    for (let i = 0; i < input.length; i++) h = Math.imul(h ^ input.charCodeAt(i), 16777619);
-    const a = h >>> 0, hue = a % 360;
-    const s = 60 + ((a >> 5) % 10);
-    const l1 = 48 + ((a >> 9) % 6), l2 = 56 + ((a >> 12) % 6), l3 = 64 + ((a >> 15) % 6);
-    const ang = 100 + (a % 201);
-    return `linear-gradient(${ang}deg, hsl(${hue}, ${s}%, ${l1}%) 0%, hsl(${hue}, ${s}%, ${l2}%) 50%, hsl(${hue}, ${s}%, ${l3}%) 100%)`;
+	let h = 2166136261;
+	for (let i = 0; i < input.length; i++)
+		h = Math.imul(h ^ input.charCodeAt(i), 16777619);
+	const a = h >>> 0,
+		hue = a % 360;
+	const s = 60 + ((a >> 5) % 10);
+	const l1 = 48 + ((a >> 9) % 6),
+		l2 = 56 + ((a >> 12) % 6),
+		l3 = 64 + ((a >> 15) % 6);
+	const ang = 100 + (a % 201);
+	return `linear-gradient(${ang}deg, hsl(${hue}, ${s}%, ${l1}%) 0%, hsl(${hue}, ${s}%, ${l2}%) 50%, hsl(${hue}, ${s}%, ${l3}%) 100%)`;
 }
 
 // auth
@@ -168,7 +172,9 @@ router.get("/set-session", async (req, res) => {
 		logger.error(
 			`Unable to get session: [ (${error.code || "No code"}) ${error.message || "No details"} ]`,
 		);
-		return res.status(500).send("An error occurred while processing your request.");
+		return res
+			.status(500)
+			.send("An error occurred while processing your request.");
 	}
 });
 
@@ -255,16 +261,16 @@ router.get("/explore", (req, res) => {
 router.get("/search/:id", (req, res) => {
 	async function getData() {
 		logger.info(`Searching script with ID: "${req.params.id}"`);
-			const response = await fetch(
-				`https://api.getdione.app/v1/scripts?id=${req.params.id}&limit=1`,
-				{
-					headers: {
-						...(process.env.API_KEY
-							? { Authorization: `Bearer ${process.env.API_KEY}` }
-							: {}),
-					},
+		const response = await fetch(
+			`https://api.getdione.app/v1/scripts?id=${req.params.id}&limit=1`,
+			{
+				headers: {
+					...(process.env.API_KEY
+						? { Authorization: `Bearer ${process.env.API_KEY}` }
+						: {}),
 				},
-			);
+			},
+		);
 		const data = await response.json();
 		if (response.status !== 200) {
 			logger.error(
@@ -297,16 +303,16 @@ router.get("/search/name/:name", async (req, res) => {
 			.replace(/\s+/g, " ")
 			.trim();
 		if (sanitizedName) {
-				const response = await fetch(
-					`https://api.getdione.app/v1/scripts?q=${sanitizedName}`,
-					{
-						headers: {
-							...(process.env.API_KEY
-								? { Authorization: `Bearer ${process.env.API_KEY}` }
-								: {}),
-						},
+			const response = await fetch(
+				`https://api.getdione.app/v1/scripts?q=${sanitizedName}`,
+				{
+					headers: {
+						...(process.env.API_KEY
+							? { Authorization: `Bearer ${process.env.API_KEY}` }
+							: {}),
 					},
-				);
+				},
+			);
 			const data = await response.json();
 			if (response.status !== 200) {
 				logger.error(
@@ -352,16 +358,16 @@ router.get("/search/type/:type", async (req, res) => {
 	async function getData() {
 		const type = req.params.type;
 
-			const response = await fetch(
-				`https://api.getdione.app/v1/scripts?tags=${type}`,
-				{
-					headers: {
-						...(process.env.API_KEY
-							? { Authorization: `Bearer ${process.env.API_KEY}` }
-							: {}),
-					},
+		const response = await fetch(
+			`https://api.getdione.app/v1/scripts?tags=${type}`,
+			{
+				headers: {
+					...(process.env.API_KEY
+						? { Authorization: `Bearer ${process.env.API_KEY}` }
+						: {}),
 				},
-			);
+			},
+		);
 		const data = await response.json();
 		if (response.status !== 200) {
 			logger.error(
@@ -407,11 +413,13 @@ router.post("/update-script/:id", async (req, res) => {
 		return res.status(400).send("No script ID provided");
 	}
 
-  // allow installs to proceed when db isn't configured
-  if (!supabase) {
-    logger.warn("Supabase not initialized, skipping script update (no .env)");
-    return res.status(200).json({ skipped: true, reason: "database not configured" });
-  }
+	// allow installs to proceed when db isn't configured
+	if (!supabase) {
+		logger.warn("Supabase not initialized, skipping script update (no .env)");
+		return res
+			.status(200)
+			.json({ skipped: true, reason: "database not configured" });
+	}
 
 	const { data, error } = await supabase
 		.from("scripts")

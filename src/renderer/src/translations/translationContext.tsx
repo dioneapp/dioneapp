@@ -8,12 +8,12 @@ import {
 } from "react";
 import { ar } from "./languages/ar";
 import { bn } from "./languages/bn";
+import { de } from "./languages/de";
 import { en } from "./languages/en";
 import { es } from "./languages/es";
 import { fr } from "./languages/fr";
 import { hi } from "./languages/hi";
 import { id } from "./languages/id";
-import { de } from "./languages/de";
 import { ja } from "./languages/ja";
 import { pt } from "./languages/pt";
 import { ru } from "./languages/ru";

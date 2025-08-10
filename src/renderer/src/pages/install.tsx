@@ -7,12 +7,12 @@ import DeleteDepsModal from "@renderer/components/modals/delete-deps";
 import sendEvent from "@renderer/utils/events";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useScriptsContext } from "../components/contexts/ScriptsContext";
 import DeleteLoadingModal from "../components/modals/delete-loading";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
-import { useNavigate } from "react-router-dom";
 
 export default function Install({
 	id,
@@ -171,7 +171,11 @@ export default function Install({
 
 				// auto-open the app if the setting is enabled and it was just installed
 				// but only if we're not in the middle of installing dependencies
-				if (config?.autoOpenAfterInstall && wasJustInstalled && !missingDependencies) {
+				if (
+					config?.autoOpenAfterInstall &&
+					wasJustInstalled &&
+					!missingDependencies
+				) {
 					const port = await getCurrentPort();
 					let response: Response;
 					if (isLocal) {
@@ -725,22 +729,22 @@ export default function Install({
 		// remove app from installed apps
 		setInstalledApps((prevApps) => prevApps.filter((app) => app !== data.name));
 		setApps((prevApps) => prevApps.filter((app) => app?.name !== data.name));
-		
+
 		// clear missing deps
 		setMissingDependencies(null);
-		
+
 		// show success toast
 		showToast("success", t("toast.install.success.depsInstalled"));
-		
+
 		// clear logs
 		clearLogs(data?.id);
-		
+
 		// clear errors
 		setError(false);
-		
+
 		// show retrying toast
 		showToast("default", t("toast.install.retrying").replace("%s", data.name));
-		
+
 		if (sockets[data?.id]) {
 			await handleDownload();
 		} else {
