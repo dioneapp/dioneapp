@@ -57,13 +57,13 @@ export default function Titlebar() {
 				className="absolute top-0 w-full z-50"
 				style={{ zIndex: 9999 }}
 			>
-				<div className="flex flex-row items-center justify-end h-10 w-full p-4 px-3">
-					<div className="flex gap-1.5 items-center justify-end h-full w-fit bg-white/[0.03] backdrop-blur-sm rounded-md py-3 px-2">
+				<div className="flex flex-row items-center justify-end h-10 w-full p-6 px-4">
+					<div className="flex gap-2 items-center justify-end h-full w-fit">
 						<button
 							type="button"
 							id="minimize-button"
 							onClick={handleMinimize}
-							className="cursor-pointer p-1 hover:text-white/80 rounded-full transition-colors duration-200"
+							className="cursor-pointer p-1 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
 						>
 							<Minus className="h-5 w-5" />
 						</button>
@@ -72,7 +72,7 @@ export default function Titlebar() {
 								type="button"
 								id="maximize-button"
 								onClick={handleMaximize}
-								className="cursor-pointer p-1.5 hover:text-white/80 rounded-full transition-colors duration-200"
+								className="cursor-pointer p-1.5 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
 							>
 								{isMaximized ? (
 									<Minimize2 className="h-4 w-4" />
@@ -85,7 +85,7 @@ export default function Titlebar() {
 							type="button"
 							id="close-button"
 							onClick={handleClose}
-							className="cursor-pointer p-1 hover:text-red-400 rounded-full transition-colors duration-200"
+							className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-all duration-200 text-white/70"
 						>
 							<X className="h-5 w-5" />
 						</button>
