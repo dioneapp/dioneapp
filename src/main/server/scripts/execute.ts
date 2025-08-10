@@ -71,10 +71,24 @@ export default async function executeInstallation(
 						pythonVersion,
 						envType,
 					);
-					await executeCommands(envCommands, configDir, io, id);
+					const resp = await executeCommands(envCommands, configDir, io, id);
+					if (resp?.cancelled) {
+						io.to(id).emit("installUpdate", {
+							type: "log",
+							content: "INFO: Installation cancelled - stopping remaining steps",
+						});
+						return;
+					}
 				} else {
 					// execute commands normally
-					await executeCommands(commandsArray, configDir, io, id);
+					const resp = await executeCommands(commandsArray, configDir, io, id);
+					if (resp?.cancelled) {
+						io.to(id).emit("installUpdate", {
+							type: "log",
+							content: "INFO: Installation cancelled - stopping remaining steps",
+						});
+						return;
+					}
 				}
 
 				io.to(id).emit("installUpdate", {
@@ -173,6 +187,15 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 					// execute commands normally
 					response = await executeCommands(commandsArray, configDir, io, id);
 				}
+
+				if (response?.cancelled) {
+                    io.to(id).emit("installUpdate", {
+                        type: "log",
+                        content:
+                            `INFO: Startup cancelled - stopping remaining steps`,
+                    });
+                    return;
+                }
 
 				if (response?.error) {
 					io.to(id).emit("installUpdate", {
