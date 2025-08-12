@@ -75,7 +75,8 @@ export default async function executeInstallation(
 					if (resp?.cancelled) {
 						io.to(id).emit("installUpdate", {
 							type: "log",
-							content: "INFO: Installation cancelled - stopping remaining steps",
+							content:
+								"INFO: Installation cancelled - stopping remaining steps",
 						});
 						return;
 					}
@@ -85,7 +86,8 @@ export default async function executeInstallation(
 					if (resp?.cancelled) {
 						io.to(id).emit("installUpdate", {
 							type: "log",
-							content: "INFO: Installation cancelled - stopping remaining steps",
+							content:
+								"INFO: Installation cancelled - stopping remaining steps",
 						});
 						return;
 					}
@@ -189,13 +191,12 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 				}
 
 				if (response?.cancelled) {
-                    io.to(id).emit("installUpdate", {
-                        type: "log",
-                        content:
-                            `INFO: Startup cancelled - stopping remaining steps`,
-                    });
-                    return;
-                }
+					io.to(id).emit("installUpdate", {
+						type: "log",
+						content: `INFO: Startup cancelled - stopping remaining steps`,
+					});
+					return;
+				}
 
 				if (response?.error) {
 					io.to(id).emit("installUpdate", {
