@@ -6,6 +6,7 @@ import pidtree from "pidtree";
 import type { Server } from "socket.io";
 import logger from "../utils/logger";
 import { getAllValues, initDefaultEnv } from "./dependencies/environment";
+import { getSystemInfo } from "./system";
 
 let activeProcess: any = null;
 let activePID: number | null = null;
@@ -378,6 +379,9 @@ export const executeCommands = async (
 	processWasCancelled = false;
 	let currentWorkingDir = workingDir;
 	const currentPlatform = getPlatform(); // "win32", "linux", "darwin"
+	const { os, gpu: currentGpu } = await getSystemInfo(); // GPU actual del sistema
+
+	console.log("COMMANDS", commands);
 
 	for (const cmd of commands) {
 		// if user requested cancellation, stop processing further commands
@@ -389,6 +393,7 @@ export const executeCommands = async (
 			});
 			return { cancelled: true };
 		}
+
 		let command: string;
 
 		// if string use it
@@ -415,6 +420,22 @@ export const executeCommands = async (
 						content: `INFO: Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
 					});
 					continue;
+				}
+			}
+
+			// if object includes gpus, check if it matches current gpu vendor
+			if ("gpus" in cmd) {
+				const allowedGpus = Array.isArray(cmd.gpus)
+					? cmd.gpus.map(g => g.toLowerCase())
+					: [cmd.gpus.toLowerCase()];
+			
+				if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+					logger.info(`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`);
+					io.to(id).emit("installUpdate", {
+						type: "log",
+						content: `INFO: Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+					});
+					continue; // skip command
 				}
 			}
 
@@ -459,21 +480,21 @@ export const executeCommands = async (
 				content: `INFO: Changed working directory to: ${currentWorkingDir}`,
 			});
 		} else {
-			const response = await executeCommand(command, io, currentWorkingDir, id);
-			if (response.code !== 0) {
-				if (processWasCancelled) {
-					logger.info("Process was manually cancelled");
-					io.to(id).emit("installUpdate", {
-						type: "log",
-						content: "INFO: Process was manually cancelled",
-					});
-					// exit and signal cancellation to caller
-					return { cancelled: true };
-				}
-				throw new Error(
-					response.stderr || `Command failed with exit code ${response.code}`,
-				);
-			}
+			// const response = await executeCommand(command, io, currentWorkingDir, id);
+			// if (response.code !== 0) {
+			// 	if (processWasCancelled) {
+			// 		logger.info("Process was manually cancelled");
+			// 		io.to(id).emit("installUpdate", {
+			// 			type: "log",
+			// 			content: "INFO: Process was manually cancelled",
+			// 		});
+			// 		// exit and signal cancellation to caller
+			// 		return { cancelled: true };
+			// 	}
+			// 	throw new Error(
+			// 		response.stderr || `Command failed with exit code ${response.code}`,
+			// 	);
+			// }
 		}
 	}
 	return { cancelled: false };
