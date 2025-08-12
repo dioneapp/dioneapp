@@ -4,13 +4,18 @@ import { readDioneConfig } from "./dependencies/dependencies";
 
 export async function getSystemInfo() {
 	let os;
-	let gpu;
+	let gpu = "unknown";
 
 	try {
 		const gpus = (await si.graphics()).controllers;
 		const mainGPU = gpus.find((gpu) => /nvidia|amd/i.test(gpu.vendor));
-
-		gpu = mainGPU?.vendor || "unknown";
+		if (mainGPU) {
+			if (/nvidia/i.test(mainGPU.vendor)) {
+				gpu = "nvidia";
+			} else if (/amd/i.test(mainGPU.vendor)) {
+				gpu = "amd";
+			}
+		}
 		os = (await si.osInfo()).platform;
 	} catch (error) {
 		logger.error(`Error getting system info: ${error}`);
