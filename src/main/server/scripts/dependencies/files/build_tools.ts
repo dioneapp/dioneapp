@@ -1,8 +1,8 @@
 import { execFile, spawn } from "child_process";
 import fs from "fs";
 import https from "https";
-import path from "path";
 import os from "os";
+import path from "path";
 import type { Server } from "socket.io";
 import logger from "../../../utils/logger";
 import { addValue, getAllValues, removeValue } from "../environment";
@@ -133,28 +133,29 @@ export async function install(
 
 	const exe = path.join(tempDir, `build_tools.exe`);
 	const windowsRelease = os.release();
-	const windowsMajorVersion = parseInt(windowsRelease.split(".")[0], 10);
-	const buildNumber = parseInt(windowsRelease.split(".")[2], 10);
+	const windowsMajorVersion = Number.parseInt(windowsRelease.split(".")[0], 10);
+	const buildNumber = Number.parseInt(windowsRelease.split(".")[2], 10);
 	const windowsSDK =
 		windowsMajorVersion === 10 && buildNumber >= 22000 ? "11" : "10";
-	const windowsSDKVersion = windowsMajorVersion === 10 && buildNumber >= 22000 ? "22621" : "19041";
+	const windowsSDKVersion =
+		windowsMajorVersion === 10 && buildNumber >= 22000 ? "22621" : "19041";
 
 	const commands = {
-	  windows: {
-		file: exe,
-		args: [
-		  `--installPath ${depFolder}`,
-		  "--quiet",
-		  "--wait",
-		  "--norestart",
-		  "--includeRecommended",
-		  "--nocache",
-		  "--add Microsoft.VisualStudio.Workload.VCTools",
-		  "--add Microsoft.VisualStudio.Component.VC.CMake.Project",
-		  `--add Microsoft.VisualStudio.Component.Windows${windowsSDK}SDK.${windowsSDKVersion}`,
-		  "--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64", 
-		],
-	  },
+		windows: {
+			file: exe,
+			args: [
+				`--installPath ${depFolder}`,
+				"--quiet",
+				"--wait",
+				"--norestart",
+				"--includeRecommended",
+				"--nocache",
+				"--add Microsoft.VisualStudio.Workload.VCTools",
+				"--add Microsoft.VisualStudio.Component.VC.CMake.Project",
+				`--add Microsoft.VisualStudio.Component.Windows${windowsSDK}SDK.${windowsSDKVersion}`,
+				"--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+			],
+		},
 	};
 
 	// 2. run the installer/ command line method
@@ -218,31 +219,69 @@ export async function install(
 					// msvc tools
 					const vcToolsRoot = path.join(depFolder, "VC", "Tools", "MSVC");
 					if (fs.existsSync(vcToolsRoot)) {
-					const vcVersions = fs.readdirSync(vcToolsRoot).filter(name => 
-						fs.statSync(path.join(vcToolsRoot, name)).isDirectory()
-					).sort();
-					if (vcVersions.length > 0) {
-						const newestVc = path.join(vcToolsRoot, vcVersions[vcVersions.length - 1]);
-						addValue("PATH", path.join(newestVc, "bin", "Hostx64", "x64")); // cl.exe
-						addValue("PATH", path.join(depFolder, "VC", "Auxiliary", "Build")); // vcvars
-					}
+						const vcVersions = fs
+							.readdirSync(vcToolsRoot)
+							.filter((name) =>
+								fs.statSync(path.join(vcToolsRoot, name)).isDirectory(),
+							)
+							.sort();
+						if (vcVersions.length > 0) {
+							const newestVc = path.join(
+								vcToolsRoot,
+								vcVersions[vcVersions.length - 1],
+							);
+							addValue("PATH", path.join(newestVc, "bin", "Hostx64", "x64")); // cl.exe
+							addValue(
+								"PATH",
+								path.join(depFolder, "VC", "Auxiliary", "Build"),
+							); // vcvars
+						}
 					}
 
 					// windowssdk
 					const sdkBinRoot = path.join(depFolder, "Windows Kits", "10", "bin");
 					if (fs.existsSync(sdkBinRoot)) {
-					const sdkVersions = fs.readdirSync(sdkBinRoot).filter(name => 
-						fs.statSync(path.join(sdkBinRoot, name)).isDirectory()
-					).sort();
-					if (sdkVersions.length > 0) {
-						const newestSdk = path.join(sdkBinRoot, sdkVersions[sdkVersions.length - 1]);
-						addValue("PATH", path.join(newestSdk, "x64")); // rc.exe, mt.exe
-					}
+						const sdkVersions = fs
+							.readdirSync(sdkBinRoot)
+							.filter((name) =>
+								fs.statSync(path.join(sdkBinRoot, name)).isDirectory(),
+							)
+							.sort();
+						if (sdkVersions.length > 0) {
+							const newestSdk = path.join(
+								sdkBinRoot,
+								sdkVersions[sdkVersions.length - 1],
+							);
+							addValue("PATH", path.join(newestSdk, "x64")); // rc.exe, mt.exe
+						}
 					}
 
 					// cmake & ninja
-					addValue("PATH", path.join(depFolder, "Common7", "IDE", "CommonExtensions", "Microsoft", "CMake", "CMake", "bin"));
-					addValue("PATH", path.join(depFolder, "Common7", "IDE", "CommonExtensions", "Microsoft", "CMake", "Ninja"));
+					addValue(
+						"PATH",
+						path.join(
+							depFolder,
+							"Common7",
+							"IDE",
+							"CommonExtensions",
+							"Microsoft",
+							"CMake",
+							"CMake",
+							"bin",
+						),
+					);
+					addValue(
+						"PATH",
+						path.join(
+							depFolder,
+							"Common7",
+							"IDE",
+							"CommonExtensions",
+							"Microsoft",
+							"CMake",
+							"Ninja",
+						),
+					);
 
 					// cMake
 					addValue("CMAKE_GENERATOR", "Ninja");

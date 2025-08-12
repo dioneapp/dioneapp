@@ -426,11 +426,13 @@ export const executeCommands = async (
 			// if object includes gpus, check if it matches current gpu vendor
 			if ("gpus" in cmd) {
 				const allowedGpus = Array.isArray(cmd.gpus)
-					? cmd.gpus.map(g => g.toLowerCase())
+					? cmd.gpus.map((g) => g.toLowerCase())
 					: [cmd.gpus.toLowerCase()];
-			
+
 				if (!allowedGpus.includes(currentGpu.toLowerCase())) {
-					logger.info(`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`);
+					logger.info(
+						`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+					);
 					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `INFO: Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
