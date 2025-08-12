@@ -42,9 +42,10 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 						object-center group-hover:border-white/20 transition-all duration-200 bg-neutral-800/50"
 							/>
 						) : (
+							<>
+							{!script.isLocal && (
 							<div className="h-16 w-16 rounded-xl border border-white/10 backdrop-blur-3xl bg-cover bg-center 
 						group-hover:border-white/20 transition-all duration-200 overflow-hidden">
-								{!script.isLocal && (
 									<div
 										style={{
 											backgroundImage:
@@ -59,8 +60,9 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 										}}
 										className="rounded-full brightness-150"
 									/>
+									</div>
 								)}
-							</div>
+							</>
 						)}
 						{!script.logo_url && script.isLocal && (
 							<div
