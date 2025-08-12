@@ -53,13 +53,14 @@ export async function getScripts(id: string, io: Server) {
 			sanitizedName,
 		);
 		const script_url = data.script_url;
-
+		const commit_hashes = data.commit_hash || {};
+		const commit = commit_hashes[data.version] || "";
 		try {
 			// create app stuff
 			await fs.promises.mkdir(saveDirectory, { recursive: true });
 			const outputFilePath = path.join(saveDirectory, "dione.json");
 			// download dione.json
-			await downloadFile(script_url, outputFilePath, io, id);
+			await downloadFile(script_url, outputFilePath, io, id, commit);
 		} catch (error) {
 			io.to(id).emit("installUpdate", {
 				type: "log",
@@ -124,6 +125,7 @@ export function downloadFile(
 	FILE_PATH: string,
 	io: Server,
 	id: string,
+	commit: string,
 ) {
 	io.to(id).emit("installUpdate", {
 		type: "log",
@@ -160,6 +162,14 @@ export function downloadFile(
 			logger.error(`Invalid GitHub URL: ${error.message}`);
 			return;
 		}
+	}
+
+	if (commit) {
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: `Downloading script with commit ${commit}...`,
+		});
+		url += `?ref=${commit}`;
 	}
 
 	const file = fs.createWriteStream(FILE_PATH);
