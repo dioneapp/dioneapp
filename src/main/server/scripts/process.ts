@@ -482,21 +482,21 @@ export const executeCommands = async (
 				content: `INFO: Changed working directory to: ${currentWorkingDir}`,
 			});
 		} else {
-			// const response = await executeCommand(command, io, currentWorkingDir, id);
-			// if (response.code !== 0) {
-			// 	if (processWasCancelled) {
-			// 		logger.info("Process was manually cancelled");
-			// 		io.to(id).emit("installUpdate", {
-			// 			type: "log",
-			// 			content: "INFO: Process was manually cancelled",
-			// 		});
-			// 		// exit and signal cancellation to caller
-			// 		return { cancelled: true };
-			// 	}
-			// 	throw new Error(
-			// 		response.stderr || `Command failed with exit code ${response.code}`,
-			// 	);
-			// }
+			const response = await executeCommand(command, io, currentWorkingDir, id);
+			if (response.code !== 0) {
+				if (processWasCancelled) {
+					logger.info("Process was manually cancelled");
+					io.to(id).emit("installUpdate", {
+						type: "log",
+						content: "INFO: Process was manually cancelled",
+					});
+					// exit and signal cancellation to caller
+					return { cancelled: true };
+				}
+				throw new Error(
+					response.stderr || `Command failed with exit code ${response.code}`,
+				);
+			}
 		}
 	}
 	return { cancelled: false };
