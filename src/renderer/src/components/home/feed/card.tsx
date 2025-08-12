@@ -42,7 +42,8 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 						object-center group-hover:border-white/20 transition-all duration-200 bg-neutral-800/50"
 							/>
 						) : (
-							<>
+							<div className="h-16 w-16 rounded-xl border border-white/10 backdrop-blur-3xl bg-cover bg-center 
+						group-hover:border-white/20 transition-all duration-200 overflow-hidden">
 								{!script.isLocal && (
 									<div
 										style={{
@@ -52,12 +53,14 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 											backgroundSize: "100%",
 											backgroundRepeat: "no-repeat",
 											backgroundPosition: "center",
+											filter: "blur(15px)",
+											width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+											height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
 										}}
-										className="h-16 w-16 rounded-xl border border-white/10 backdrop-blur-3xl bg-cover bg-center 
-						group-hover:border-white/20 transition-all duration-200"
+										className="rounded-full brightness-150"
 									/>
 								)}
-							</>
+							</div>
 						)}
 						{!script.logo_url && script.isLocal && (
 							<div
