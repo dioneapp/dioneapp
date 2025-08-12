@@ -379,7 +379,7 @@ export const executeCommands = async (
 	processWasCancelled = false;
 	let currentWorkingDir = workingDir;
 	const currentPlatform = getPlatform(); // "win32", "linux", "darwin"
-	const { os, gpu: currentGpu } = await getSystemInfo(); // GPU actual del sistema
+	const { gpu: currentGpu } = await getSystemInfo();
 
 	console.log("COMMANDS", commands);
 
