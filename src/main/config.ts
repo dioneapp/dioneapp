@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { app, dialog } from "electron";
 import logger from "./server/utils/logger";
+import { initDefaultEnv } from "./server/scripts/dependencies/environment";
 
 export interface AppConfig {
 	firstLaunch: boolean;
@@ -60,11 +61,11 @@ export const writeConfig = (config: AppConfig) => {
 		? path.join(path.dirname(app.getPath("exe")))
 		: path.join(process.cwd());
 
-	if (!config.defaultInstallFolder) {
+	if (!fs.existsSync(config.defaultInstallFolder)) {
 		fs.mkdirSync(config.defaultInstallFolder, { recursive: true });
 	}
 
-	if (!config.defaultBinFolder) {
+	if (!fs.existsSync(config.defaultBinFolder)) {
 		fs.mkdirSync(config.defaultBinFolder, { recursive: true });
 	}
 
@@ -103,6 +104,18 @@ export const updateConfig = (newSettings: Partial<AppConfig>) => {
 		...currentConfig,
 		...newSettings,
 	};
+
+	if (newSettings.defaultBinFolder) {
+		if (newSettings?.defaultBinFolder !== currentConfig?.defaultBinFolder) {
+			fs.mkdirSync(newSettings?.defaultBinFolder!, { recursive: true });
+		}
+	}
+
+	if (newSettings.defaultInstallFolder) {
+		if (newSettings?.defaultInstallFolder !== currentConfig?.defaultInstallFolder) {
+			fs.mkdirSync(newSettings?.defaultInstallFolder!, { recursive: true });
+		}
+	}
 
 	writeConfig(updatedConfig);
 };

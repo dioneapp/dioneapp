@@ -35,6 +35,7 @@ export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 
 					if (configUpdated1 && configUpdated2) {
 						setSuccess(true);
+						window.electron.ipcRenderer.invoke("init-env");
 					} else {
 						setError(
 							"An error occurred while updating the configuration. Please try again.",

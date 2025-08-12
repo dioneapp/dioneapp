@@ -45,6 +45,8 @@ function App() {
 			setIsLoading(false);
 			if (result === true) {
 				navigate("/first-time");
+			} else {
+				window.electron.ipcRenderer.invoke("init-env");
 			}
 		});
 	}, []);

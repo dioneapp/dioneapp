@@ -352,9 +352,6 @@ function createWindow() {
 app.whenReady().then(async () => {
 	logger.info("Starting app...");
 
-	// initialize environment variables
-	initDefaultEnv();
-
 	// map to store request origins
 	const requestOrigins = new Map<string, string>();
 
@@ -665,9 +662,24 @@ app.whenReady().then(async () => {
 			currentConfig = defaultConfig;
 		}
 		const updatedConfig = { ...currentConfig, ...newValue };
+
+		if (!fs.existsSync(path.join(updatedConfig.defaultInstallFolder, "apps"))) {
+			fs.mkdirSync(path.join(updatedConfig.defaultInstallFolder, "apps"), { recursive: true });
+		}
+	
+		if (!fs.existsSync(path.join(updatedConfig.defaultBinFolder, "bin"))) {
+			console.log("not exists")
+			fs.mkdirSync(path.join(updatedConfig.defaultBinFolder, "bin"), { recursive: true });
+		}
+
 		writeConfig(updatedConfig);
 		logger.info("Config updated successfully");
 		return updatedConfig;
+	});
+
+	ipcMain.handle("init-env", () => {
+		logger.info("Starting with default env...")
+		initDefaultEnv();
 	});
 
 	// open dir

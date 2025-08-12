@@ -4,14 +4,6 @@ import { app } from "electron";
 import { readConfig } from "../../../config";
 import { getOS } from "./utils/system";
 
-const config = readConfig();
-const binFolder = path.join(
-	config?.defaultBinFolder || path.join(app.getPath("userData")),
-	"bin",
-);
-const ENVIRONMENT = path.join(binFolder, "VARIABLES");
-const separator = getOS() === "windows" ? ";" : ":";
-
 function splitKeyValue(line: string): [string, string] | null {
 	const index = line.indexOf("=");
 	if (index === -1) return null;
@@ -21,6 +13,12 @@ function splitKeyValue(line: string): [string, string] | null {
 }
 
 export function addValue(key: string, value: string) {
+	const config = readConfig();
+	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+
+	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
+	const separator = getOS() === "windows" ? ";" : ":";
+
 	if (!fs.existsSync(ENVIRONMENT)) {
 		initDefaultEnv();
 	}
@@ -51,6 +49,10 @@ export function addValue(key: string, value: string) {
 }
 
 export function removeKey(key: string) {
+	const config = readConfig();
+	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
+
 	if (!fs.existsSync(ENVIRONMENT)) return;
 
 	const content = fs.readFileSync(ENVIRONMENT, "utf8");
@@ -64,6 +66,12 @@ export function removeKey(key: string) {
 }
 
 export function removeValue(valueToRemove: string, key: string) {
+	const config = readConfig();
+	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+
+	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
+	const separator = getOS() === "windows" ? ";" : ":";
+
 	if (!fs.existsSync(ENVIRONMENT)) return;
 
 	const content = fs.readFileSync(ENVIRONMENT, "utf8");
@@ -97,6 +105,11 @@ export function removeValue(valueToRemove: string, key: string) {
 }
 
 export function getValue(key: string): string | null {
+	const config = readConfig();
+	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+
+	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
+
 	if (!fs.existsSync(ENVIRONMENT)) return null;
 
 	const content = fs.readFileSync(ENVIRONMENT, "utf8");
@@ -113,6 +126,11 @@ export function getValue(key: string): string | null {
 }
 
 export function getAllValues(): Record<string, string> {
+	const config = readConfig();
+	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+
+	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
+
 	if (!fs.existsSync(ENVIRONMENT)) return {};
 
 	const content = fs.readFileSync(ENVIRONMENT, "utf8");
@@ -130,8 +148,20 @@ export function getAllValues(): Record<string, string> {
 }
 
 export function initDefaultEnv() {
+	const config = readConfig();
+	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+
+	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
+	const separator = getOS() === "windows" ? ";" : ":";
+
+	console.log('BINFOLDER', binFolder)
+
 	if (!fs.existsSync(binFolder)) {
 		fs.mkdirSync(binFolder, { recursive: true });
+	}
+
+	if (!fs.existsSync(path.join(binFolder, "cache"))) {
+		fs.mkdirSync(path.join(binFolder, "cache"), { recursive: true });
 	}
 
 	if (!fs.existsSync(ENVIRONMENT)) {
