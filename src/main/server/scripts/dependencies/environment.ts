@@ -14,7 +14,9 @@ function splitKeyValue(line: string): [string, string] | null {
 
 export function addValue(key: string, value: string) {
 	const config = readConfig();
-	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+	const binFolder = config?.defaultBinFolder
+		? path.join(config?.defaultBinFolder, "bin")
+		: path.join(app.getPath("userData"), "bin");
 
 	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
 	const separator = getOS() === "windows" ? ";" : ":";
@@ -50,7 +52,9 @@ export function addValue(key: string, value: string) {
 
 export function removeKey(key: string) {
 	const config = readConfig();
-	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+	const binFolder = config?.defaultBinFolder
+		? path.join(config?.defaultBinFolder, "bin")
+		: path.join(app.getPath("userData"), "bin");
 	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
 
 	if (!fs.existsSync(ENVIRONMENT)) return;
@@ -67,7 +71,9 @@ export function removeKey(key: string) {
 
 export function removeValue(valueToRemove: string, key: string) {
 	const config = readConfig();
-	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+	const binFolder = config?.defaultBinFolder
+		? path.join(config?.defaultBinFolder, "bin")
+		: path.join(app.getPath("userData"), "bin");
 
 	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
 	const separator = getOS() === "windows" ? ";" : ":";
@@ -106,7 +112,9 @@ export function removeValue(valueToRemove: string, key: string) {
 
 export function getValue(key: string): string | null {
 	const config = readConfig();
-	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+	const binFolder = config?.defaultBinFolder
+		? path.join(config?.defaultBinFolder, "bin")
+		: path.join(app.getPath("userData"), "bin");
 
 	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
 
@@ -127,7 +135,9 @@ export function getValue(key: string): string | null {
 
 export function getAllValues(): Record<string, string> {
 	const config = readConfig();
-	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+	const binFolder = config?.defaultBinFolder
+		? path.join(config?.defaultBinFolder, "bin")
+		: path.join(app.getPath("userData"), "bin");
 
 	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
 
@@ -149,12 +159,14 @@ export function getAllValues(): Record<string, string> {
 
 export function initDefaultEnv() {
 	const config = readConfig();
-	const binFolder = config?.defaultBinFolder ? path.join(config?.defaultBinFolder, "bin") : path.join(app.getPath("userData"), "bin");
+	const binFolder = config?.defaultBinFolder
+		? path.join(config?.defaultBinFolder, "bin")
+		: path.join(app.getPath("userData"), "bin");
 
 	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
 	const separator = getOS() === "windows" ? ";" : ":";
 
-	console.log('BINFOLDER', binFolder)
+	console.log("BINFOLDER", binFolder);
 
 	if (!fs.existsSync(binFolder)) {
 		fs.mkdirSync(binFolder, { recursive: true });

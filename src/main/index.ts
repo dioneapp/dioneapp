@@ -664,12 +664,16 @@ app.whenReady().then(async () => {
 		const updatedConfig = { ...currentConfig, ...newValue };
 
 		if (!fs.existsSync(path.join(updatedConfig.defaultInstallFolder, "apps"))) {
-			fs.mkdirSync(path.join(updatedConfig.defaultInstallFolder, "apps"), { recursive: true });
+			fs.mkdirSync(path.join(updatedConfig.defaultInstallFolder, "apps"), {
+				recursive: true,
+			});
 		}
-	
+
 		if (!fs.existsSync(path.join(updatedConfig.defaultBinFolder, "bin"))) {
-			console.log("not exists")
-			fs.mkdirSync(path.join(updatedConfig.defaultBinFolder, "bin"), { recursive: true });
+			console.log("not exists");
+			fs.mkdirSync(path.join(updatedConfig.defaultBinFolder, "bin"), {
+				recursive: true,
+			});
 		}
 
 		writeConfig(updatedConfig);
@@ -678,7 +682,7 @@ app.whenReady().then(async () => {
 	});
 
 	ipcMain.handle("init-env", () => {
-		logger.info("Starting with default env...")
+		logger.info("Starting with default env...");
 		initDefaultEnv();
 	});
 
