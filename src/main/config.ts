@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { app, dialog } from "electron";
 import logger from "./server/utils/logger";
-import { initDefaultEnv } from "./server/scripts/dependencies/environment";
 
 export interface AppConfig {
 	firstLaunch: boolean;
