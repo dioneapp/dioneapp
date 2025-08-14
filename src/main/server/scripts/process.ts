@@ -381,8 +381,6 @@ export const executeCommands = async (
 	const currentPlatform = getPlatform(); // "win32", "linux", "darwin"
 	const { gpu: currentGpu } = await getSystemInfo();
 
-	console.log("COMMANDS", commands);
-
 	for (const cmd of commands) {
 		// if user requested cancellation, stop processing further commands
 		if (processWasCancelled) {
