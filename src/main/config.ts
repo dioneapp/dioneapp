@@ -111,7 +111,9 @@ export const updateConfig = (newSettings: Partial<AppConfig>) => {
 	}
 
 	if (newSettings.defaultInstallFolder) {
-		if (newSettings?.defaultInstallFolder !== currentConfig?.defaultInstallFolder) {
+		if (
+			newSettings?.defaultInstallFolder !== currentConfig?.defaultInstallFolder
+		) {
 			fs.mkdirSync(newSettings?.defaultInstallFolder!, { recursive: true });
 		}
 	}
