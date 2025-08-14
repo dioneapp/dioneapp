@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { app, dialog } from "electron";
-import logger from "./server/utils/logger";
 import { initDefaultEnv } from "./server/scripts/dependencies/environment";
+import logger from "./server/utils/logger";
 
 export interface AppConfig {
 	firstLaunch: boolean;
@@ -112,7 +112,9 @@ export const updateConfig = (newSettings: Partial<AppConfig>) => {
 	}
 
 	if (newSettings.defaultInstallFolder) {
-		if (newSettings?.defaultInstallFolder !== currentConfig?.defaultInstallFolder) {
+		if (
+			newSettings?.defaultInstallFolder !== currentConfig?.defaultInstallFolder
+		) {
 			fs.mkdirSync(newSettings?.defaultInstallFolder!, { recursive: true });
 		}
 	}
