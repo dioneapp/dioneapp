@@ -14,7 +14,13 @@ export async function isInstalled(
 	binFolder: string,
 ): Promise<{ installed: boolean; reason: string }> {
 	const depFolder = path.join(binFolder, depName);
-	const msbuild = path.join(depFolder, "MSBuild", "Current", "Bin", "MSBuild.exe");
+	const msbuild = path.join(
+		depFolder,
+		"MSBuild",
+		"Current",
+		"Bin",
+		"MSBuild.exe",
+	);
 	const env = getAllValues();
 
 	if (!fs.existsSync(depFolder) || fs.readdirSync(depFolder).length === 0) {
@@ -23,23 +29,18 @@ export async function isInstalled(
 
 	try {
 		await new Promise<string>((resolve, reject) => {
-			execFile(
-				msbuild,
-				["-version"],
-				{ env: env },
-				(error, stdout) => {
-					if (error) {
-						reject(error);
-					} else {
-						resolve(stdout);
-					}
-				},
-			);
+			execFile(msbuild, ["-version"], { env: env }, (error, stdout) => {
+				if (error) {
+					reject(error);
+				} else {
+					resolve(stdout);
+				}
+			});
 		});
 
 		return { installed: true, reason: `installed` };
 	} catch (error: any) {
-		console.log('ERROR BUILD_TOOLS', error);
+		console.log("ERROR BUILD_TOOLS", error);
 		return { installed: false, reason: `error` };
 	}
 }
@@ -144,9 +145,11 @@ export async function install(
 				"--nocache",
 				"--norestart",
 				"--includeRecommended",
-				"--add", "Microsoft.VisualStudio.Workload.VCTools",
-				"--add", "Microsoft.VisualStudio.Component.VC.CMake.Project"
-			  ],
+				"--add",
+				"Microsoft.VisualStudio.Workload.VCTools",
+				"--add",
+				"Microsoft.VisualStudio.Component.VC.CMake.Project",
+			],
 		},
 	};
 
@@ -207,33 +210,117 @@ export async function install(
 
 					// update environment variables
 					addValue("PATH", path.join(depFolder, "MSBuild", "Current", "Bin"));
-					addValue("PATH", path.join(depFolder, "Common7", "IDE", "CommonExtensions", "Microsoft", "CMake", "CMake", "bin"));
-					addValue("CMAKE_PREFIX_PATH", path.join(depFolder, "Common7", "IDE", "CommonExtensions", "Microsoft", "CMake", "CMake"));
-					addValue("CMAKE_MODULE_PATH", path.join(depFolder, "Common7", "IDE", "CommonExtensions", "Microsoft", "CMake", "CMake"));
-					addValue("CMAKE_C_COMPILER", path.join(depFolder, "VC", "Tools", "MSVC", "14.44.35207", "bin", "Hostx64", "x64", "cl.exe"));
-					addValue("CMAKE_CXX_COMPILER", path.join(depFolder, "VC", "Tools", "MSVC", "14.44.35207", "bin", "Hostx64", "x64", "cl.exe"));
-					addValue("PATH", path.join(depFolder, "VC", "Tools", "MSVC", "14.44.35207", "bin", "Hostx64", "x64"));
+					addValue(
+						"PATH",
+						path.join(
+							depFolder,
+							"Common7",
+							"IDE",
+							"CommonExtensions",
+							"Microsoft",
+							"CMake",
+							"CMake",
+							"bin",
+						),
+					);
+					addValue(
+						"CMAKE_PREFIX_PATH",
+						path.join(
+							depFolder,
+							"Common7",
+							"IDE",
+							"CommonExtensions",
+							"Microsoft",
+							"CMake",
+							"CMake",
+						),
+					);
+					addValue(
+						"CMAKE_MODULE_PATH",
+						path.join(
+							depFolder,
+							"Common7",
+							"IDE",
+							"CommonExtensions",
+							"Microsoft",
+							"CMake",
+							"CMake",
+						),
+					);
+					addValue(
+						"CMAKE_C_COMPILER",
+						path.join(
+							depFolder,
+							"VC",
+							"Tools",
+							"MSVC",
+							"14.44.35207",
+							"bin",
+							"Hostx64",
+							"x64",
+							"cl.exe",
+						),
+					);
+					addValue(
+						"CMAKE_CXX_COMPILER",
+						path.join(
+							depFolder,
+							"VC",
+							"Tools",
+							"MSVC",
+							"14.44.35207",
+							"bin",
+							"Hostx64",
+							"x64",
+							"cl.exe",
+						),
+					);
+					addValue(
+						"PATH",
+						path.join(
+							depFolder,
+							"VC",
+							"Tools",
+							"MSVC",
+							"14.44.35207",
+							"bin",
+							"Hostx64",
+							"x64",
+						),
+					);
 
 					try {
 						const vcvarsOutput = execSync(
-						  `"${path.join(depFolder, "VC", "Auxiliary", "Build", "vcvars64.bat")}" && set`,
-						  { shell: "cmd.exe", env: ENVIRONMENT },
+							`"${path.join(depFolder, "VC", "Auxiliary", "Build", "vcvars64.bat")}" && set`,
+							{ shell: "cmd.exe", env: ENVIRONMENT },
 						).toString();
-					  
-						vcvarsOutput.split(/\r?\n/).forEach(line => {
-						  const m = line.match(/^([^=]+)=(.*)$/);
-						  if (m) {
-							const key = m[1];
-							const value = m[2];
-							if (["INCLUDE", "LIB", "LIBPATH", "WindowsSdkDir", "WindowsSDKVersion", "UCRTVersion"].includes(key)) {
-							  logger.info(`Setting environment variable ${key}=${value}`);
-							  addValue(key, value);
+
+						vcvarsOutput.split(/\r?\n/).forEach((line) => {
+							const m = line.match(/^([^=]+)=(.*)$/);
+							if (m) {
+								const key = m[1];
+								const value = m[2];
+								if (
+									[
+										"INCLUDE",
+										"LIB",
+										"LIBPATH",
+										"WindowsSdkDir",
+										"WindowsSDKVersion",
+										"UCRTVersion",
+									].includes(key)
+								) {
+									logger.info(`Setting environment variable ${key}=${value}`);
+									addValue(key, value);
+								}
 							}
-						  }
 						});
-					  } catch (err) {
-						logger.error(`Error setting environment variables for ${depName}:`, err);
-					  }
+					} catch (err) {
+						logger.error(
+							`Error setting environment variables for ${depName}:`,
+							err,
+						);
+					}
 
 					resolve();
 				} else {
@@ -287,7 +374,19 @@ export async function uninstall(binFolder: string): Promise<void> {
 		}
 		logger.info(`Removing ${depName} from environment variables...`);
 		removeValue(path.join(depFolder, "MSBuild", "Current", "Bin"), "PATH");
-		removeValue(path.join(depFolder, "Common7", "IDE", "CommonExtensions", "Microsoft", "CMake", "CMake", "bin"), "PATH");
+		removeValue(
+			path.join(
+				depFolder,
+				"Common7",
+				"IDE",
+				"CommonExtensions",
+				"Microsoft",
+				"CMake",
+				"CMake",
+				"bin",
+			),
+			"PATH",
+		);
 		logger.info(`${depName} uninstalled successfully`);
 	} else {
 		throw new Error(`Dependency ${depName} is not installed`);
