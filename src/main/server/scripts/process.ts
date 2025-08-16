@@ -406,7 +406,9 @@ export const executeCommands = async (
 						? "windows"
 						: currentPlatform === "darwin"
 							? "mac"
-							: currentPlatform;
+							: currentPlatform === "linux"
+								? "linux"
+								: currentPlatform;
 
 				// if platform does not match current platform, skip
 				if (cmdPlatform !== normalizedPlatform) {

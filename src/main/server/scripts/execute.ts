@@ -6,6 +6,7 @@ import { readConfig as userConfig } from "../../config";
 import logger from "../utils/logger";
 import { addValue, getAllValues } from "./dependencies/environment";
 import { executeCommands } from "./process";
+import { getSystemInfo } from "./system";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
@@ -64,7 +65,7 @@ export default async function executeInstallation(
 					);
 
 					// create virtual environment and execute commands inside it
-					const envCommands = createVirtualEnvCommands(
+					const envCommands = await createVirtualEnvCommands(
 						envName,
 						commandsArray,
 						configDir,
@@ -177,7 +178,7 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 					);
 
 					// create virtual environment and execute commands inside it
-					const envCommands = createVirtualEnvCommands(
+					const envCommands = await createVirtualEnvCommands(
 						envName,
 						commandsArray,
 						configDir,
@@ -243,7 +244,7 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
 }
 
 // commands to create virtual environment
-function createVirtualEnvCommands(
+async function createVirtualEnvCommands(
 	envName,
 	commands,
 	baseDir,
@@ -251,9 +252,11 @@ function createVirtualEnvCommands(
 	envType = "uv",
 ) {
 	const isWindows = process.platform === "win32";
+	const currentPlatform = process.platform;
+	const { gpu: currentGpu } = await getSystemInfo();
 	const envPath = path.join(baseDir, envName);
 
-	// ensure commands is an array of strings without empty strings
+	// filter and ensure commands is an array of strings without empty strings
 	const commandStrings = Array.isArray(commands)
 		? commands.flatMap((cmd) => {
 				if (typeof cmd === "string" && cmd.trim()) {
@@ -265,6 +268,41 @@ function createVirtualEnvCommands(
 					typeof cmd.command === "string" &&
 					cmd.command.trim()
 				) {
+					// Apply platform filtering
+					if ("platform" in cmd) {
+						const cmdPlatform = cmd.platform.toLowerCase();
+						const normalizedPlatform =
+							currentPlatform === "win32"
+								? "windows"
+								: currentPlatform === "darwin"
+									? "mac"
+									: currentPlatform === "linux"
+										? "linux"
+										: currentPlatform;
+
+						// if platform does not match current platform, skip
+						if (cmdPlatform !== normalizedPlatform) {
+							logger.info(
+								`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+							);
+							return [];
+						}
+					}
+
+					// Apply GPU filtering
+					if ("gpus" in cmd) {
+						const allowedGpus = Array.isArray(cmd.gpus)
+							? cmd.gpus.map((g) => g.toLowerCase())
+							: [cmd.gpus.toLowerCase()];
+
+						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+							logger.info(
+								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+							);
+							return [];
+						}
+					}
+
 					return [cmd.command.trim()];
 				}
 				return [];
