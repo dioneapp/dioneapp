@@ -180,12 +180,14 @@ body:has(#modal) .page-transition {
 
 button {
 	transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
 }
 button:active {
 	transform: scale(0.97);
 }
 a {
-	transition: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+	transition: transform  cubic-bezier(0.4, 0, 0.2, 1);
+	cursor: pointer;
 }
 a:active {
 	transform: scale(0.97);
