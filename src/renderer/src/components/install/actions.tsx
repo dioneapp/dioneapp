@@ -182,14 +182,14 @@ export default function ActionsComponent({
 											<button
 												type="button"
 												onClick={handleStart}
-												className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+												className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer"
 											>
 												{t("actions.start")}
 											</button>
 											<button
 												type="button"
 												onClick={handleDeleteDeps}
-												className="bg-red-500/50 hover:bg-red-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+												className="bg-red-500/50 hover:bg-red-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer"
 											>
 												{t("actions.uninstall")}
 											</button>
@@ -198,7 +198,7 @@ export default function ActionsComponent({
 										<button
 											type="button"
 											onClick={handleDownload}
-											className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+											className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer"
 										>
 											{t("actions.install")}
 										</button>
