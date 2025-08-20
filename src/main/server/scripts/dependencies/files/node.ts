@@ -221,10 +221,13 @@ export async function install(
 								type: "log",
 								content: `Moving Node.js files to ${binFolder}/${depName}...`,
 							});
+							// Extract version from the URL to handle version updates
+							const versionMatch = url.match(/node-(v\d+\.\d+\.\d+)/);
+							const nodeVersion = versionMatch ? versionMatch[1] : "v22.18.0";
 							const tempFolder = path.join(
 								binFolder,
 								depName,
-								`node-v22.17.1-win-${arch == "amd64" ? "x64" : arch}`,
+								`node-${nodeVersion}-win-${arch == "amd64" ? "x64" : arch}`,
 							);
 							fs.cpSync(tempFolder, path.join(binFolder, depName), {
 								recursive: true,
