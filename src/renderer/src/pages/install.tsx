@@ -509,7 +509,7 @@ export default function Install({
 			console.log("stopping...");
 			const port = await getCurrentPort();
 			const response = await fetch(
-				`http://localhost:${port}/scripts/stop/${data.name}/${data.id}/${catchPort}`, 
+				`http://localhost:${port}/scripts/stop/${data.name}/${data.id}/${catchPort}`,
 				{
 					method: "GET",
 				},
