@@ -1,7 +1,7 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { useToast } from "@renderer/utils/useToast";
 import { motion } from "framer-motion";
-import { Check, Copy, Search, X, Trash } from "lucide-react";
+import { Check, Copy, Search, Trash, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface Variable {
@@ -18,7 +18,10 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	const [newValue, setNewValue] = useState("");
 	const [saving, setSaving] = useState(false);
 	const { addToast } = useToast();
-	const [pendingRemove, setPendingRemove] = useState<null | { key: string; value?: string | null }>(null);
+	const [pendingRemove, setPendingRemove] = useState<null | {
+		key: string;
+		value?: string | null;
+	}>(null);
 	const showToast = (
 		variant: "default" | "success" | "error" | "warning",
 		message: string,
@@ -74,7 +77,9 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 			});
 			if (!res.ok) {
 				const err = await res.json().catch(() => null);
-				throw new Error(err?.error || res.statusText || "Failed to add variable");
+				throw new Error(
+					err?.error || res.statusText || "Failed to add variable",
+				);
 			}
 			showToast("success", "Variable added");
 			setNewKey("");
@@ -93,9 +98,12 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	const handleRemoveKey = async (key: string) => {
 		try {
 			const port = await getCurrentPort();
-			const res = await fetch(`http://localhost:${port}/variables/${encodeURIComponent(key)}`, {
-				method: "DELETE",
-			});
+			const res = await fetch(
+				`http://localhost:${port}/variables/${encodeURIComponent(key)}`,
+				{
+					method: "DELETE",
+				},
+			);
 			if (!res.ok) throw new Error("Failed to remove key");
 			showToast("success", "Variable removed");
 			await fetchVariables();
@@ -109,9 +117,12 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	const handleRemoveValue = async (key: string, value: any) => {
 		try {
 			const port = await getCurrentPort();
-			const res = await fetch(`http://localhost:${port}/variables/${encodeURIComponent(key)}/${encodeURIComponent(value)}`, {
-				method: "DELETE",
-			});
+			const res = await fetch(
+				`http://localhost:${port}/variables/${encodeURIComponent(key)}/${encodeURIComponent(value)}`,
+				{
+					method: "DELETE",
+				},
+			);
 			if (!res.ok) throw new Error("Failed to remove value");
 			showToast("success", "Value removed");
 			await fetchVariables();
@@ -134,7 +145,9 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 
 	const handleCopy = async (key: any, value?: any) => {
 		try {
-			try { window.focus?.(); } catch {}
+			try {
+				window.focus?.();
+			} catch {}
 			if (!value) {
 				value = variables;
 			}
@@ -250,7 +263,11 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 		<motion.div
 			id="modal"
 			className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-sm flex items-center p-4 justify-center overflow-hidden"
-			style={{ isolation: "isolate", willChange: "backdrop-filter", zIndex: 2000 }}
+			style={{
+				isolation: "isolate",
+				willChange: "backdrop-filter",
+				zIndex: 2000,
+			}}
 			onClick={onClose}
 			initial={{ opacity: 0, scale: 0.95 }}
 			animate={{ opacity: 1, scale: 1 }}
@@ -275,20 +292,43 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 					{pendingRemove && (
 						<div className="absolute inset-0 z-[2500] flex items-center justify-center bg-black/60">
 							<div className="bg-neutral-800 border border-white/10 rounded-lg p-4 max-w-lg w-full mx-4">
-								<p className="text-sm text-neutral-300 mb-3">Are you sure you want to remove {pendingRemove.value ? "this value" : "the key and all its values"} from <span className="font-mono">{pendingRemove.key}</span>?</p>
+								<p className="text-sm text-neutral-300 mb-3">
+									Are you sure you want to remove{" "}
+									{pendingRemove.value
+										? "this value"
+										: "the key and all its values"}{" "}
+									from <span className="font-mono">{pendingRemove.key}</span>?
+								</p>
 								<div className="flex justify-end gap-2">
-									<button onClick={() => setPendingRemove(null)} className="px-4 text-sm py-1 rounded-full bg-white/5">Cancel</button>
-									<button onClick={async () => {
-										if (pendingRemove.value) await handleRemoveValue(pendingRemove.key, pendingRemove.value);
-										else await handleRemoveKey(pendingRemove.key);
-										setPendingRemove(null);
-									}} className="px-4 text-sm py-1 rounded-full bg-red-600/50 hover:bg-red-600/60 text-white">Confirm</button>
+									<button
+										onClick={() => setPendingRemove(null)}
+										className="px-4 text-sm py-1 rounded-full bg-white/5"
+									>
+										Cancel
+									</button>
+									<button
+										onClick={async () => {
+											if (pendingRemove.value)
+												await handleRemoveValue(
+													pendingRemove.key,
+													pendingRemove.value,
+												);
+											else await handleRemoveKey(pendingRemove.key);
+											setPendingRemove(null);
+										}}
+										className="px-4 text-sm py-1 rounded-full bg-red-600/50 hover:bg-red-600/60 text-white"
+									>
+										Confirm
+									</button>
 								</div>
 							</div>
 						</div>
 					)}
 					<div className="flex items-center gap-2">
-						<button onClick={() => setNewVariableModalOpen(!newVariableModalOpen)} className="w-full rounded-full bg-white/10 px-4 p-1 mr-2 flex justify-center items-center gap-2 hover:bg-white/20 cursor-pointer">
+						<button
+							onClick={() => setNewVariableModalOpen(!newVariableModalOpen)}
+							className="w-full rounded-full bg-white/10 px-4 p-1 mr-2 flex justify-center items-center gap-2 hover:bg-white/20 cursor-pointer"
+						>
 							<span className="text-xs text-neutral-300">Add key</span>
 						</button>
 						<button
@@ -374,50 +414,67 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 												{key}
 											</h3>
 										</div>
-												<div className="flex items-center gap-2">
-													<button
-														onClick={() => handleCopy(key, value)}
-														className="p-1 rounded text-neutral-400 hover:text-white flex-shrink-0"
-														title="Copy full value"
-													>
-														{copied[key] ? (
-															<Check className="w-3 h-3" />
-														) : (
-															<Copy className="w-3 h-3" />
-														)}
-													</button>
-													<button
-														onClick={() => setPendingRemove({ key })}
-														className="p-1 rounded text-red-400 hover:text-red-200 flex-shrink-0"
-														title="Delete key"
-													>
-														<Trash className="w-3 h-3" />
-													</button>
-												</div>
+										<div className="flex items-center gap-2">
+											<button
+												onClick={() => handleCopy(key, value)}
+												className="p-1 rounded text-neutral-400 hover:text-white flex-shrink-0"
+												title="Copy full value"
+											>
+												{copied[key] ? (
+													<Check className="w-3 h-3" />
+												) : (
+													<Copy className="w-3 h-3" />
+												)}
+											</button>
+											<button
+												onClick={() => setPendingRemove({ key })}
+												className="p-1 rounded text-red-400 hover:text-red-200 flex-shrink-0"
+												title="Delete key"
+											>
+												<Trash className="w-3 h-3" />
+											</button>
+										</div>
 									</div>
 									<div className="text-sm text-neutral-300 font-mono">
-												{typeof value === "string" && isPathVariable(key, value) ? (
-													<div className="space-y-1">
-														{formatPathVariable(value).map((path, index) => (
-															<div key={index} className="flex items-center gap-2 group">
-																<span className="text-neutral-500 text-xs w-6 flex-shrink-0">{index + 1}.</span>
-																<>
-																	<code className="flex-1 text-sm bg-white/5 px-2 py-1 rounded border border-white/10 break-all">{path}</code>
-																	<div className="flex items-center gap-0 opacity-0 group-hover:opacity-100">
-																		<button onClick={() => handleCopy(`${key}-${index}`, path)} className="p-1 rounded text-neutral-400 hover:text-white">
-																			<Copy className="w-3 h-3" />
-																		</button>
-																			<button onClick={() => setPendingRemove({ key, value: path })} className="p-1 rounded text-red-400 hover:text-red-200">
-																			<Trash className="w-3 h-3" />
-																			</button>
-																		</div>
-																	</>
+										{typeof value === "string" && isPathVariable(key, value) ? (
+											<div className="space-y-1">
+												{formatPathVariable(value).map((path, index) => (
+													<div
+														key={index}
+														className="flex items-center gap-2 group"
+													>
+														<span className="text-neutral-500 text-xs w-6 flex-shrink-0">
+															{index + 1}.
+														</span>
+														<>
+															<code className="flex-1 text-sm bg-white/5 px-2 py-1 rounded border border-white/10 break-all">
+																{path}
+															</code>
+															<div className="flex items-center gap-0 opacity-0 group-hover:opacity-100">
+																<button
+																	onClick={() =>
+																		handleCopy(`${key}-${index}`, path)
+																	}
+																	className="p-1 rounded text-neutral-400 hover:text-white"
+																>
+																	<Copy className="w-3 h-3" />
+																</button>
+																<button
+																	onClick={() =>
+																		setPendingRemove({ key, value: path })
+																	}
+																	className="p-1 rounded text-red-400 hover:text-red-200"
+																>
+																	<Trash className="w-3 h-3" />
+																</button>
 															</div>
-														))}
+														</>
 													</div>
-												) : (
-													renderVariableValue(key, value)
-												)}
+												))}
+											</div>
+										) : (
+											renderVariableValue(key, value)
+										)}
 									</div>
 								</div>
 							))}
