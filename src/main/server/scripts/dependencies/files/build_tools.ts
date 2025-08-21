@@ -10,25 +10,54 @@ import { getArch, getOS } from "../utils/system";
 const depName = "build_tools";
 const ENVIRONMENT = getAllValues();
 
-// Common VS installation paths
-const VS_PATHS = [
-	"C:\\Program Files\\Microsoft Visual Studio\\2022\\BuildTools",
-	"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community",
-	"C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional",
-	"C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise",
-	"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools",
-	"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Community",
-	"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Professional",
-	"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Enterprise",
-	"C:\\Program Files\\Microsoft Visual Studio\\2019\\BuildTools",
-	"C:\\Program Files\\Microsoft Visual Studio\\2019\\Community",
-	"C:\\Program Files\\Microsoft Visual Studio\\2019\\Professional",
-	"C:\\Program Files\\Microsoft Visual Studio\\2019\\Enterprise",
-	"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools",
-	"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community",
-	"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional",
-	"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise",
-];
+// Get all available drive letters on Windows
+function getWindowsDrives(): string[] {
+	const drives: string[] = [];
+	// Check drives A-Z
+	for (let i = 65; i <= 90; i++) {
+		const drive = String.fromCharCode(i) + ":";
+		try {
+			if (fs.existsSync(drive + "\\")) {
+				drives.push(drive);
+			}
+		} catch {
+			// Drive doesn't exist or not accessible
+		}
+	}
+	return drives;
+}
+
+// Generate VS installation paths for all drives
+function generateVSPaths(): string[] {
+	const paths: string[] = [];
+	const drives = getWindowsDrives();
+	const relativePaths = [
+		"\\Program Files\\Microsoft Visual Studio\\2022\\BuildTools",
+		"\\Program Files\\Microsoft Visual Studio\\2022\\Community",
+		"\\Program Files\\Microsoft Visual Studio\\2022\\Professional",
+		"\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise",
+		"\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools",
+		"\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Community",
+		"\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Professional",
+		"\\Program Files (x86)\\Microsoft Visual Studio\\2022\\Enterprise",
+		"\\Program Files\\Microsoft Visual Studio\\2019\\BuildTools",
+		"\\Program Files\\Microsoft Visual Studio\\2019\\Community",
+		"\\Program Files\\Microsoft Visual Studio\\2019\\Professional",
+		"\\Program Files\\Microsoft Visual Studio\\2019\\Enterprise",
+		"\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools",
+		"\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community",
+		"\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Professional",
+		"\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise",
+	];
+
+	for (const drive of drives) {
+		for (const relativePath of relativePaths) {
+			paths.push(drive + relativePath);
+		}
+	}
+
+	return paths;
+}
 
 function findMSVCVersion(vsPath: string): string | null {
 	const msvcPath = path.join(vsPath, "VC", "Tools", "MSVC");
@@ -61,8 +90,9 @@ function findVSInstallation(): { path: string; msvcVersion: string } | null {
 		}
 	}
 
-	// Check common installation paths
-	for (const vsPath of VS_PATHS) {
+	// Check common installation paths on all drives
+	const vsPaths = generateVSPaths();
+	for (const vsPath of vsPaths) {
 		if (fs.existsSync(vsPath)) {
 			const msvcVersion = findMSVCVersion(vsPath);
 			if (msvcVersion) {
@@ -74,27 +104,32 @@ function findVSInstallation(): { path: string; msvcVersion: string } | null {
 		}
 	}
 
-	// Try using vswhere to find VS installations
-	try {
-		const vswhereExe =
-			"C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe";
-		if (fs.existsSync(vswhereExe)) {
-			const output = execSync(
-				`"${vswhereExe}" -latest -property installationPath`,
-				{ encoding: "utf8" },
-			).trim();
-			if (output && fs.existsSync(output)) {
-				const msvcVersion = findMSVCVersion(output);
-				if (msvcVersion) {
-					logger.info(
-						`Found VS installation via vswhere: ${output} with MSVC ${msvcVersion}`,
-					);
-					return { path: output, msvcVersion };
+	// Try using vswhere to find VS installations (check all drives)
+	const drives = getWindowsDrives();
+	for (const drive of drives) {
+		try {
+			const vswhereExe = path.join(
+				drive,
+				"\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe",
+			);
+			if (fs.existsSync(vswhereExe)) {
+				const output = execSync(
+					`"${vswhereExe}" -latest -property installationPath`,
+					{ encoding: "utf8" },
+				).trim();
+				if (output && fs.existsSync(output)) {
+					const msvcVersion = findMSVCVersion(output);
+					if (msvcVersion) {
+						logger.info(
+							`Found VS installation via vswhere: ${output} with MSVC ${msvcVersion}`,
+						);
+						return { path: output, msvcVersion };
+					}
 				}
 			}
+		} catch (error) {
+			// vswhere not found on this drive, continue to next
 		}
-	} catch (error) {
-		logger.debug("vswhere not found or failed", error);
 	}
 
 	return null;
@@ -556,12 +591,27 @@ export async function uninstall(binFolder: string): Promise<void> {
 	if (fs.existsSync(depFolder)) {
 		logger.info(`Removing ${depName} folder in ${depFolder}...`);
 		try {
-			// First try to uninstall properly
-			await new Promise<void>((resolve, reject) => {
-				const child = spawn("powershell", [
-					"-Command",
-					`Start-Process -FilePath "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vs_installer.exe" -ArgumentList "uninstall","--installPath","${depFolder}","--quiet","--nocache" -Verb RunAs -Wait`,
-				]);
+			// Find vs_installer.exe on any drive
+			let vsInstallerPath = "";
+			const drives = getWindowsDrives();
+			for (const drive of drives) {
+				const installerPath = path.join(
+					drive,
+					"\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vs_installer.exe",
+				);
+				if (fs.existsSync(installerPath)) {
+					vsInstallerPath = installerPath;
+					break;
+				}
+			}
+
+			if (vsInstallerPath) {
+				// First try to uninstall properly
+				await new Promise<void>((resolve, reject) => {
+					const child = spawn("powershell", [
+						"-Command",
+						`Start-Process -FilePath "${vsInstallerPath}" -ArgumentList "uninstall","--installPath","${depFolder}","--quiet","--nocache" -Verb RunAs -Wait`,
+					]);
 
 				child.stdout.on("data", (data) => {
 					logger.info(data.toString());
@@ -571,16 +621,19 @@ export async function uninstall(binFolder: string): Promise<void> {
 					logger.error(`Error during uninstallation: ${data.toString()}`);
 				});
 
-				child.on("close", (code) => {
-					console.log(`Uninstaller exited with code ${code}`);
-					if (code === 0) {
-						resolve();
-					} else {
-						// Even if uninstaller fails, we'll clean up manually
-						resolve();
-					}
+					child.on("close", (code) => {
+						console.log(`Uninstaller exited with code ${code}`);
+						if (code === 0) {
+							resolve();
+						} else {
+							// Even if uninstaller fails, we'll clean up manually
+							resolve();
+						}
+					});
 				});
-			});
+			} else {
+				logger.info("VS installer not found, will remove folder directly");
+			}
 
 			// Clean up the folder
 			if (fs.existsSync(depFolder)) {
