@@ -696,15 +696,21 @@ export default function Settings() {
 													<button
 														type="button"
 														onClick={() =>
-															handleUpdate({ enableAutoUpdate: !config.enableAutoUpdate })
+															handleUpdate({
+																enableAutoUpdate: !config.enableAutoUpdate,
+															})
 														}
 														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
-															config.enableAutoUpdate ? "bg-green-500/30" : "bg-red-500/30"
+															config.enableAutoUpdate
+																? "bg-green-500/30"
+																: "bg-red-500/30"
 														}`}
 													>
 														<span
 															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
-																config.enableAutoUpdate ? "translate-x-6" : "translate-x-0"
+																config.enableAutoUpdate
+																	? "translate-x-6"
+																	: "translate-x-0"
 															}`}
 														/>
 													</button>
@@ -721,7 +727,11 @@ export default function Settings() {
 													<div className="flex flex-col gap-2">
 														<button
 															className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
-															onClick={() => window.electron.ipcRenderer.invoke("check-update")}
+															onClick={() =>
+																window.electron.ipcRenderer.invoke(
+																	"check-update",
+																)
+															}
 															type="button"
 														>
 															{t("settings.updates.checkNow.button")}
