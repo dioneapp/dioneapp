@@ -289,18 +289,30 @@ async function createVirtualEnvCommands(
 						}
 					}
 
-					// Apply GPU filtering
+					// Apply GPU filtering - only skip if explicitly incompatible
+					// Allow commands to run on GPUs not in the list unless there's a "none" or "cpu" option
 					if ("gpus" in cmd) {
 						const allowedGpus = Array.isArray(cmd.gpus)
 							? cmd.gpus.map((g) => g.toLowerCase())
 							: [cmd.gpus.toLowerCase()];
 
-						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+						// Only skip if:
+						// 1. Current GPU is "unknown" and specific GPUs are required
+						// 2. There's an explicit "none" or "cpu" option and we have a different GPU
+						if (currentGpu.toLowerCase() === "unknown" && !allowedGpus.includes("all")) {
 							logger.info(
-								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+								`Warning: Unknown GPU, attempting to run command anyway`,
 							);
-							return [];
+						} else if (allowedGpus.includes("none") || allowedGpus.includes("cpu")) {
+							// This command is specifically for CPU-only systems
+							if (currentGpu.toLowerCase() !== "unknown") {
+								logger.info(
+									`Skipping CPU-only command on system with ${currentGpu} GPU`,
+								);
+								return [];
+							}
 						}
+						// Otherwise, let the command run - it might work even on different GPUs
 					}
 
 					return [cmd.command.trim()];
