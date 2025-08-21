@@ -177,33 +177,76 @@ function updateEnvironmentForVS(vsPath: string, msvcVersion: string) {
 			addValue("CMAKE_CXX_COMPILER", clPath);
 		}
 	}
+	
+	// Add Windows SDK bin directory for rc.exe
+	// Try to find Windows SDK version
+	const windowsKitsPath = "C:\\Program Files (x86)\\Windows Kits\\10";
+	if (fs.existsSync(windowsKitsPath)) {
+		const binPath = path.join(windowsKitsPath, "bin");
+		if (fs.existsSync(binPath)) {
+			// Find the SDK version directories
+			const versions = fs.readdirSync(binPath).filter(dir => 
+				fs.statSync(path.join(binPath, dir)).isDirectory() && 
+				/^\d+\.\d+\.\d+\.\d+$/.test(dir)
+			);
+			if (versions.length > 0) {
+				// Use the latest version
+				const latestVersion = versions.sort().reverse()[0];
+				const rcPath = path.join(binPath, latestVersion, "x64");
+				if (fs.existsSync(path.join(rcPath, "rc.exe"))) {
+					logger.info(`Adding Windows SDK bin path for rc.exe: ${rcPath}`);
+					addValue("PATH", rcPath);
+				}
+				// Also add x86 path as fallback
+				const rcPathX86 = path.join(binPath, latestVersion, "x86");
+				if (fs.existsSync(path.join(rcPathX86, "rc.exe"))) {
+					logger.info(`Adding Windows SDK x86 bin path for rc.exe: ${rcPathX86}`);
+					addValue("PATH", rcPathX86);
+				}
+			}
+		}
+	}
 
 	// Run vcvars64.bat to get all environment variables
 	const vcvarsPath = path.join(vsPath, "VC", "Auxiliary", "Build", "vcvars64.bat");
 	if (fs.existsSync(vcvarsPath)) {
 		try {
-			const vcvarsOutput = execSync(`"${vcvarsPath}" && set`, {
-				shell: "cmd.exe",
-				env: getAllValues(),
-			}).toString();
+			// Use a more robust approach to get environment variables
+			const tempBatFile = path.join(vsPath, "temp_get_env.bat");
+			const batContent = `@echo off
+call "${vcvarsPath}" >nul 2>&1
+echo INCLUDE=%INCLUDE%
+echo LIB=%LIB%
+echo LIBPATH=%LIBPATH%
+echo WindowsSdkDir=%WindowsSdkDir%
+echo WindowsSDKVersion=%WindowsSDKVersion%
+echo UCRTVersion=%UCRTVersion%
+echo VCToolsInstallDir=%VCToolsInstallDir%
+echo VCToolsVersion=%VCToolsVersion%
+echo VSINSTALLDIR=%VSINSTALLDIR%
+echo VCToolsRedistDir=%VCToolsRedistDir%`;
+			
+			fs.writeFileSync(tempBatFile, batContent);
+			
+			const vcvarsOutput = execSync(`"${tempBatFile}"`, {
+				encoding: 'utf8',
+				shell: 'cmd.exe',
+				windowsHide: true,
+			});
+
+			// Clean up temp file
+			try {
+				fs.unlinkSync(tempBatFile);
+			} catch {
+				// Ignore cleanup errors
+			}
 
 			vcvarsOutput.split(/\r?\n/).forEach((line) => {
 				const m = line.match(/^([^=]+)=(.*)$/);
 				if (m) {
 					const key = m[1];
 					const value = m[2];
-					if (
-						[
-							"INCLUDE",
-							"LIB",
-							"LIBPATH",
-							"WindowsSdkDir",
-							"WindowsSDKVersion",
-							"UCRTVersion",
-							"VCToolsInstallDir",
-							"VCToolsVersion",
-						].includes(key)
-					) {
+					if (value && value !== `%${key}%`) { // Only set if value exists and is not unresolved
 						logger.info(`Setting environment variable ${key}`);
 						addValue(key, value);
 					}
@@ -211,7 +254,35 @@ function updateEnvironmentForVS(vsPath: string, msvcVersion: string) {
 			});
 		} catch (err) {
 			logger.error(`Error setting environment variables from vcvars64.bat:`, err);
+			
+			// Fallback: Try to set basic paths manually
+			const includeDir = path.join(vsPath, "VC", "Tools", "MSVC", msvcVersion, "include");
+			const libDir = path.join(vsPath, "VC", "Tools", "MSVC", msvcVersion, "lib", "x64");
+			
+			if (fs.existsSync(includeDir)) {
+				logger.info("Setting INCLUDE path manually");
+				addValue("INCLUDE", includeDir);
+			}
+			if (fs.existsSync(libDir)) {
+				logger.info("Setting LIB path manually");
+				addValue("LIB", libDir);
+			}
 		}
+		
+		// Set additional environment variables for Python builds
+		logger.info("Setting Python build environment variables");
+		addValue("DISTUTILS_USE_SDK", "1");
+		addValue("MSSdk", "1");
+		
+		// Set VS version for Python
+		if (vsPath.includes("2022")) {
+			addValue("VS170COMNTOOLS", path.join(vsPath, "Common7", "Tools"));
+		} else if (vsPath.includes("2019")) {
+			addValue("VS160COMNTOOLS", path.join(vsPath, "Common7", "Tools"));
+		}
+		
+		// Add VS installation directory
+		addValue("VSINSTALLDIR", vsPath);
 	}
 }
 
@@ -607,7 +678,7 @@ export async function uninstall(binFolder: string): Promise<void> {
 
 			if (vsInstallerPath) {
 				// First try to uninstall properly
-				await new Promise<void>((resolve, reject) => {
+				await new Promise<void>((resolve) => {
 					const child = spawn("powershell", [
 						"-Command",
 						`Start-Process -FilePath "${vsInstallerPath}" -ArgumentList "uninstall","--installPath","${depFolder}","--quiet","--nocache" -Verb RunAs -Wait`,

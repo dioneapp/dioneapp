@@ -215,10 +215,13 @@ export const executeCommand = async (
 	let stdoutData = "";
 	let stderrData = "";
 	const logs = logsType || "installUpdate";
-	const ENVIRONMENT = getAllValues();
+	// Get fresh environment variables each time to ensure we have the latest
+	// This is important for build tools that may have been detected/configured
+	let ENVIRONMENT = getAllValues();
 
-	if (ENVIRONMENT === null) {
+	if (ENVIRONMENT === null || Object.keys(ENVIRONMENT).length === 0) {
 		initDefaultEnv();
+		ENVIRONMENT = getAllValues();
 	}
 
 	try {
@@ -241,7 +244,8 @@ export const executeCommand = async (
 			windowsHide: true,
 			detached: false,
 			env: {
-				...ENVIRONMENT,
+				...process.env,  // Include system environment variables
+				...ENVIRONMENT,   // Override with our managed environment
 				PYTHONUNBUFFERED: "1",
 				NODE_NO_BUFFERING: "1",
 				FORCE_UNBUFFERED_OUTPUT: "1",
