@@ -216,6 +216,20 @@ export const en = {
 				description: "Show your current activity in Discord status",
 			},
 		},
+		updates: {
+			title: "Updates",
+			autoUpdate: {
+				label: "Auto-update Dione",
+				description:
+					"Automatically check and download updates in the background. Not recommended to disable while Dione is in beta, as we are iterating quickly to fix bugs.",
+			},
+			checkNow: {
+				label: "Manual update",
+				description:
+					"If auto-update is disabled, you can manually check for updates here.",
+				button: "Check for updates",
+			},
+		},
 		privacy: {
 			title: "Privacy",
 			errorReporting: {

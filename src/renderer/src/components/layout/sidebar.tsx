@@ -24,7 +24,16 @@ export default function Sidebar() {
 	const [updateAvailable, setUpdateAvailable] = useState(false);
 
 	useEffect(() => {
-		window.electron.ipcRenderer.invoke("check-update");
+		// respect user setting for auto updates
+		try {
+			const cached = localStorage.getItem("config");
+			const parsed = cached ? JSON.parse(cached) : null;
+			if (!parsed || parsed.enableAutoUpdate !== false) {
+				window.electron.ipcRenderer.invoke("check-update");
+			}
+		} catch (_) {
+			window.electron.ipcRenderer.invoke("check-update");
+		}
 	}, []);
 
 	useEffect(() => {

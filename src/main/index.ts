@@ -184,13 +184,16 @@ function createWindow() {
 				logger.error("Error opening development tools:", error);
 			}
 		} else {
-			checkForUpdates()
-				.then(() => {
-					logger.info("Checked for updates successfully.");
-				})
-				.catch((err) => {
-					logger.error("Error checking for updates:", err);
-				});
+			const cfg = readConfig();
+			if (cfg?.enableAutoUpdate !== false) {
+				checkForUpdates()
+					.then(() => {
+						logger.info("Checked for updates successfully.");
+					})
+					.catch((err) => {
+						logger.error("Error checking for updates:", err);
+					});
+			}
 		}
 
 		async function checkForUpdates(): Promise<void> {

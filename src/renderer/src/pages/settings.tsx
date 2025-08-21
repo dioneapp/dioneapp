@@ -678,6 +678,60 @@ export default function Settings() {
 										</div>
 										{/*  */}
 										<div className="flex flex-col">
+											{/* Updates */}
+											<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
+											<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
+												{t("settings.updates.title")}
+											</h2>
+											<div className="flex flex-col gap-2">
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.updates.autoUpdate.label")}
+														</label>
+														<p className="text-xs text-neutral-400 w-[36rem] max-w-full">
+															{t("settings.updates.autoUpdate.description")}
+														</p>
+													</div>
+													<button
+														type="button"
+														onClick={() =>
+															handleUpdate({ enableAutoUpdate: !config.enableAutoUpdate })
+														}
+														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
+															config.enableAutoUpdate ? "bg-green-500/30" : "bg-red-500/30"
+														}`}
+													>
+														<span
+															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+																config.enableAutoUpdate ? "translate-x-6" : "translate-x-0"
+															}`}
+														/>
+													</button>
+												</div>
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.updates.checkNow.label")}
+														</label>
+														<p className="text-xs text-neutral-400 w-[36rem] max-w-full">
+															{t("settings.updates.checkNow.description")}
+														</p>
+													</div>
+													<div className="flex flex-col gap-2">
+														<button
+															className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+															onClick={() => window.electron.ipcRenderer.invoke("check-update")}
+															type="button"
+														>
+															{t("settings.updates.checkNow.button")}
+														</button>
+													</div>
+												</div>
+											</div>
+											{/*  */}
+										</div>
+										<div className="flex flex-col">
 											{/* Privacy */}
 											<div className="w-full h-0.5 bg-white/10 mt-4 mb-8" />
 											<h2 className="text-2xl sm:text-3xl font-semibold mb-6">
