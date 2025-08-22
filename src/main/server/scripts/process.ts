@@ -121,11 +121,14 @@ async function killByPort(
 							res();
 						});
 					}),
-				).then(() => {
+				).then(async () => {
 					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `Killed processes: ${pids.join(", ")}`,
 					});
+					if (activePID) {
+						await killProcess(activePID, io, id);
+					}
 					resolve(true);
 				});
 			});
@@ -194,7 +197,13 @@ async function killByPort(
 							});
 						});
 					}),
-				).then(() => resolve(true));
+				).then(async () => {
+					if (activePID) {
+						await killProcess(activePID, io, id);
+					}
+
+					resolve(true);
+				});
 			});
 		});
 	}
