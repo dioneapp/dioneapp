@@ -24,8 +24,7 @@ export const zh = {
 	firstTime: {
 		welcome: {
 			title: "欢迎来到",
-			subtitle:
-				"感谢您早期加入我们的旅程。登录您的帐户即可开始。",
+			subtitle: "感谢您早期加入我们的旅程。登录您的帐户即可开始。",
 			login: "登录",
 			copyLink: "复制链接",
 			skipLogin: "跳过登录",
@@ -44,8 +43,7 @@ export const zh = {
 			finish: "完成",
 		},
 		clipboard: {
-			success:
-				"已成功复制到剪贴板，现在将其粘贴到您的浏览器中！",
+			success: "已成功复制到剪贴板，现在将其粘贴到您的浏览器中！",
 		},
 		selectPath: {
 			title: "选择安装路径",
@@ -57,8 +55,7 @@ export const zh = {
 	// error handling
 	error: {
 		title: "发生意外错误",
-		description:
-			"我们在应用程序中检测到意外错误，很抱歉给您带来不便。",
+		description: "我们在应用程序中检测到意外错误，很抱歉给您带来不便。",
 		return: "返回",
 		report: {
 			toTeam: "报告给团队",
@@ -115,8 +112,7 @@ export const zh = {
 				stop: "停止 %s 时出错： %s",
 				uninstall: "卸载 %s 时出错： %s",
 				serverRunning: "服务器已在运行。",
-				tooManyApps:
-					"放慢速度！您同时已有 6 个应用程序在运行。",
+				tooManyApps: "放慢速度！您同时已有 6 个应用程序在运行。",
 			},
 		},
 	},
@@ -125,8 +121,7 @@ export const zh = {
 	titlebar: {
 		closing: {
 			title: "正在停止应用程序...",
-			description:
-				"Dione 将在关闭所有打开的应用程序后自动关闭。",
+			description: "Dione 将在关闭所有打开的应用程序后自动关闭。",
 		},
 	},
 
@@ -136,8 +131,7 @@ export const zh = {
 		activeApps: "活动应用程序",
 		update: {
 			title: "有可用更新",
-			description:
-				"Dione 有新版本可用，请重启应用程序进行更新。",
+			description: "Dione 有新版本可用，请重启应用程序进行更新。",
 			tooltip: "有新更新可用，请重启 Dione 进行更新。",
 		},
 		tooltips: {
@@ -161,23 +155,19 @@ export const zh = {
 			title: "应用程序",
 			installationDirectory: {
 				label: "安装目录",
-				description:
-					"选择新应用程序的默认安装位置",
+				description: "选择新应用程序的默认安装位置",
 			},
 			binDirectory: {
 				label: "Bin 目录",
-				description:
-					"选择应用程序二进制文件存储的位置以便于访问",
+				description: "选择应用程序二进制文件存储的位置以便于访问",
 			},
 			cleanUninstall: {
 				label: "干净卸载",
-				description:
-					"卸载应用程序时删除所有相关的依赖项",
+				description: "卸载应用程序时删除所有相关的依赖项",
 			},
 			autoOpenAfterInstall: {
 				label: "安装后自动打开",
-				description:
-					"安装后首次自动打开应用程序",
+				description: "安装后首次自动打开应用程序",
 			},
 			deleteCache: {
 				label: "删除缓存",
@@ -197,8 +187,7 @@ export const zh = {
 			helpTranslate: "🤔 没看到您的语言？帮助我们添加更多！",
 			compactView: {
 				label: "紧凑视图",
-				description:
-					"使用更紧凑的布局，以便在屏幕上显示更多内容",
+				description: "使用更紧凑的布局，以便在屏幕上显示更多内容",
 			},
 		},
 		notifications: {
@@ -236,8 +225,7 @@ export const zh = {
 			},
 			showOnboarding: {
 				label: "显示入门指南",
-				description:
-					"将 Dione 重置为其初始状态并再次显示入门指南以重新配置",
+				description: "将 Dione 重置为其初始状态并再次显示入门指南以重新配置",
 				button: "重置",
 			},
 			variables: {
@@ -251,13 +239,10 @@ export const zh = {
 	// report form
 	report: {
 		title: "描述问题",
-		description:
-			"请提供有关发生情况以及您正在尝试执行的操作的详细信息。",
-		placeholder:
-			"例如：我尝试安装一个应用程序时遇到了此错误...",
+		description: "请提供有关发生情况以及您正在尝试执行的操作的详细信息。",
+		placeholder: "例如：我尝试安装一个应用程序时遇到了此错误...",
 		systemInformationTitle: "系统信息",
-		disclaimer:
-			"以下系统信息和匿名 ID 将包含在您的报告中。",
+		disclaimer: "以下系统信息和匿名 ID 将包含在您的报告中。",
 		success: "报告已成功发送！",
 		error: "发送报告失败。请重试。",
 		send: "发送报告",

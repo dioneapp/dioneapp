@@ -115,8 +115,7 @@ export const ja = {
 				stop: "%s の停止エラー: %s",
 				uninstall: "%s のアンインストールエラー: %s",
 				serverRunning: "サーバーは既に実行中です。",
-				tooManyApps:
-					"スローダウン！既に6つのアプリが同時に実行されています。",
+				tooManyApps: "スローダウン！既に6つのアプリが同時に実行されています。",
 			},
 		},
 	},
@@ -138,7 +137,8 @@ export const ja = {
 			title: "アップデートあり",
 			description:
 				"Dioneの新しいバージョンが利用可能です。アップデートするにはアプリを再起動してください。",
-			tooltip: "新しいアップデートがあります。Dioneを再起動してアップデートしてください。",
+			tooltip:
+				"新しいアップデートがあります。Dioneを再起動してアップデートしてください。",
 		},
 		tooltips: {
 			library: "ライブラリ",
@@ -176,8 +176,7 @@ export const ja = {
 			},
 			autoOpenAfterInstall: {
 				label: "インストール後に自動オープン",
-				description:
-					"インストール後に初めてアプリケーションを自動的に開きます",
+				description: "インストール後に初めてアプリケーションを自動的に開きます",
 			},
 			deleteCache: {
 				label: "キャッシュを削除",
@@ -194,7 +193,8 @@ export const ja = {
 				label: "表示言語",
 				description: "希望するインターフェース言語を選択してください",
 			},
-			helpTranslate: "🤔 あなたの言語が見つかりませんか？追加にご協力ください！",
+			helpTranslate:
+				"🤔 あなたの言語が見つかりませんか？追加にご協力ください！",
 			compactView: {
 				label: "コンパクト表示",
 				description:
@@ -209,7 +209,8 @@ export const ja = {
 			},
 			installationAlerts: {
 				label: "インストールアラート",
-				description: "アプリケーションのインストールが完了したときに通知を受け取ります",
+				description:
+					"アプリケーションのインストールが完了したときに通知を受け取ります",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
@@ -220,7 +221,8 @@ export const ja = {
 			title: "プライバシー",
 			errorReporting: {
 				label: "エラー報告",
-				description: "匿名のエラーレポートを送信することで、Dioneの改善に役立ててください",
+				description:
+					"匿名のエラーレポートを送信することで、Dioneの改善に役立ててください",
 			},
 		},
 		other: {
@@ -256,13 +258,13 @@ export const ja = {
 		placeholder:
 			"例: アプリケーションをインストールしようとしたときに、このエラーが発生しました...",
 		systemInformationTitle: "システム情報",
-		disclaimer:
-			"以下のシステム情報と匿名IDがレポートに含まれます。",
+		disclaimer: "以下のシステム情報と匿名IDがレポートに含まれます。",
 		success: "レポートは正常に送信されました！",
 		error: "レポートの送信に失敗しました。もう一度お試しください。",
 		send: "レポートを送信",
 		sending: "送信中...",
-		contribute: "このスクリプトをすべてのデバイスと互換性のあるものにするのを手伝ってください",
+		contribute:
+			"このスクリプトをすべてのデバイスと互換性のあるものにするのを手伝ってください",
 	},
 
 	// quick launch component
@@ -274,7 +276,8 @@ export const ja = {
 		},
 		selectApp: {
 			title: "アプリを選択",
-			description: "{count}個のアプリが利用可能です。最大{max}個まで選択できます。",
+			description:
+				"{count}個のアプリが利用可能です。最大{max}個まで選択できます。",
 		},
 	},
 
@@ -391,7 +394,8 @@ export const ja = {
 			uploadFile: "ファイルをアップロード",
 			uploading: "アップロード中...",
 			errors: {
-				uploadFailed: "スクリプトのアップロードに失敗しました。もう一度お試しください。",
+				uploadFailed:
+					"スクリプトのアップロードに失敗しました。もう一度お試しください。",
 				uploadError: "スクリプトのアップロード中にエラーが発生しました。",
 			},
 		},

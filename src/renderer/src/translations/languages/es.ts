@@ -138,7 +138,8 @@ export const es = {
 			title: "Actualización disponible",
 			description:
 				"Hay una nueva versión de Dione disponible, reinicia la aplicación para actualizar.",
-			tooltip: "Nueva actualización disponible, reinicia Dione para actualizar.",
+			tooltip:
+				"Nueva actualización disponible, reinicia Dione para actualizar.",
 		},
 		tooltips: {
 			library: "Biblioteca",
@@ -205,11 +206,13 @@ export const es = {
 			title: "Notificaciones",
 			systemNotifications: {
 				label: "Notificaciones del sistema",
-				description: "Muestra notificaciones de escritorio para eventos importantes",
+				description:
+					"Muestra notificaciones de escritorio para eventos importantes",
 			},
 			installationAlerts: {
 				label: "Alertas de instalación",
-				description: "Recibe notificaciones cuando las instalaciones de aplicaciones se completen",
+				description:
+					"Recibe notificaciones cuando las instalaciones de aplicaciones se completen",
 			},
 			discordRPC: {
 				label: "Presencia enriquecida de Discord",
@@ -220,14 +223,16 @@ export const es = {
 			title: "Privacidad",
 			errorReporting: {
 				label: "Informe de errores",
-				description: "Ayuda a mejorar Dione enviando informes de errores anónimos",
+				description:
+					"Ayuda a mejorar Dione enviando informes de errores anónimos",
 			},
 		},
 		other: {
 			title: "Otro",
 			logsDirectory: {
 				label: "Directorio de registros",
-				description: "Ubicación donde se almacenan los registros de la aplicación",
+				description:
+					"Ubicación donde se almacenan los registros de la aplicación",
 			},
 			submitFeedback: {
 				label: "Enviar comentarios",
@@ -262,7 +267,8 @@ export const es = {
 		error: "Error al enviar el informe. Por favor, inténtalo de nuevo.",
 		send: "Enviar Informe",
 		sending: "Enviando...",
-		contribute: "Ayúdanos a hacer que este script sea compatible con todos los dispositivos",
+		contribute:
+			"Ayúdanos a hacer que este script sea compatible con todos los dispositivos",
 	},
 
 	// quick launch component
@@ -274,7 +280,8 @@ export const es = {
 		},
 		selectApp: {
 			title: "Seleccionar una aplicación",
-			description: "{count} aplicaciones disponibles. Puedes elegir hasta {max}.",
+			description:
+				"{count} aplicaciones disponibles. Puedes elegir hasta {max}.",
 		},
 	},
 
@@ -314,7 +321,8 @@ export const es = {
 			subtitle: "error",
 			hasOccurred: "ha ocurrido",
 			deps: "Dione no ha podido eliminar ninguna dependencia, por favor hazlo manualmente.",
-			general: "Por favor, inténtalo más tarde o revisa los registros para más información.",
+			general:
+				"Por favor, inténtalo más tarde o revisa los registros para más información.",
 		},
 		loading: {
 			title: "Cargando...",
@@ -391,7 +399,8 @@ export const es = {
 			uploadFile: "Subir Archivo",
 			uploading: "Subiendo...",
 			errors: {
-				uploadFailed: "Error al subir el script. Por favor, inténtalo de nuevo.",
+				uploadFailed:
+					"Error al subir el script. Por favor, inténtalo de nuevo.",
 				uploadError: "Ocurrió un error al subir el script.",
 			},
 		},

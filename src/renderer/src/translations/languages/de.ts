@@ -115,8 +115,7 @@ export const de = {
 				stop: "Fehler beim Stoppen von %s: %s",
 				uninstall: "Fehler beim Deinstallieren von %s: %s",
 				serverRunning: "Server läuft bereits.",
-				tooManyApps:
-					"Langsam! Sie haben bereits 6 Apps gleichzeitig laufen.",
+				tooManyApps: "Langsam! Sie haben bereits 6 Apps gleichzeitig laufen.",
 			},
 		},
 	},
@@ -138,7 +137,8 @@ export const de = {
 			title: "Update verfügbar",
 			description:
 				"Eine neue Version von Dione ist verfügbar, starten Sie die App neu, um das Update zu installieren.",
-			tooltip: "Neues Update verfügbar, starten Sie Dione neu, um zu aktualisieren.",
+			tooltip:
+				"Neues Update verfügbar, starten Sie Dione neu, um zu aktualisieren.",
 		},
 		tooltips: {
 			library: "Bibliothek",
@@ -181,7 +181,8 @@ export const de = {
 			},
 			deleteCache: {
 				label: "Cache löschen",
-				description: "Alle zwischengespeicherten Daten von Anwendungen entfernen",
+				description:
+					"Alle zwischengespeicherten Daten von Anwendungen entfernen",
 				button: "Cache löschen",
 				deleting: "Lösche...",
 				deleted: "Gelöscht",
@@ -194,7 +195,8 @@ export const de = {
 				label: "Anzeigesprache",
 				description: "Wählen Sie Ihre bevorzugte Oberflächensprache",
 			},
-			helpTranslate: "🤔 Ihre Sprache nicht gefunden? Helfen Sie uns, mehr hinzuzufügen!",
+			helpTranslate:
+				"🤔 Ihre Sprache nicht gefunden? Helfen Sie uns, mehr hinzuzufügen!",
 			compactView: {
 				label: "Kompakte Ansicht",
 				description:
@@ -205,33 +207,39 @@ export const de = {
 			title: "Benachrichtigungen",
 			systemNotifications: {
 				label: "Systembenachrichtigungen",
-				description: "Zeigen Sie Desktop-Benachrichtigungen für wichtige Ereignisse an",
+				description:
+					"Zeigen Sie Desktop-Benachrichtigungen für wichtige Ereignisse an",
 			},
 			installationAlerts: {
 				label: "Installationsalarme",
-				description: "Werden Sie benachrichtigt, wenn die Installation von Anwendungen abgeschlossen ist",
+				description:
+					"Werden Sie benachrichtigt, wenn die Installation von Anwendungen abgeschlossen ist",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
-				description: "Zeigen Sie Ihre aktuelle Aktivität in Ihrem Discord-Status an",
+				description:
+					"Zeigen Sie Ihre aktuelle Aktivität in Ihrem Discord-Status an",
 			},
 		},
 		privacy: {
 			title: "Datenschutz",
 			errorReporting: {
 				label: "Fehlerberichterstattung",
-				description: "Helfen Sie, Dione zu verbessern, indem Sie anonyme Fehlerberichte senden",
+				description:
+					"Helfen Sie, Dione zu verbessern, indem Sie anonyme Fehlerberichte senden",
 			},
 		},
 		other: {
 			title: "Andere",
 			logsDirectory: {
 				label: "Protokollverzeichnis",
-				description: "Speicherort, an dem Anwendungsprotokolle gespeichert werden",
+				description:
+					"Speicherort, an dem Anwendungsprotokolle gespeichert werden",
 			},
 			submitFeedback: {
 				label: "Feedback senden",
-				description: "Melden Sie alle Probleme oder Schwierigkeiten, auf die Sie stoßen",
+				description:
+					"Melden Sie alle Probleme oder Schwierigkeiten, auf die Sie stoßen",
 				button: "Bericht senden",
 			},
 			showOnboarding: {
@@ -262,7 +270,8 @@ export const de = {
 		error: "Fehler beim Senden des Berichts. Bitte versuchen Sie es erneut.",
 		send: "Bericht senden",
 		sending: "Sendet...",
-		contribute: "Helfen Sie uns, dieses Skript mit allen Geräten kompatibel zu machen",
+		contribute:
+			"Helfen Sie uns, dieses Skript mit allen Geräten kompatibel zu machen",
 	},
 
 	// quick launch component
@@ -274,7 +283,8 @@ export const de = {
 		},
 		selectApp: {
 			title: "App auswählen",
-			description: "{count} Apps sind verfügbar. Sie können bis zu {max} auswählen.",
+			description:
+				"{count} Apps sind verfügbar. Sie können bis zu {max} auswählen.",
 		},
 	},
 
@@ -314,7 +324,8 @@ export const de = {
 			subtitle: "Fehler",
 			hasOccurred: "ist aufgetreten",
 			deps: "Dione konnte keine Abhängigkeit entfernen, bitte tun Sie dies manuell.",
-			general: "Bitte versuchen Sie es später erneut oder überprüfen Sie die Protokolle auf weitere Informationen.",
+			general:
+				"Bitte versuchen Sie es später erneut oder überprüfen Sie die Protokolle auf weitere Informationen.",
 		},
 		loading: {
 			title: "Lade...",
@@ -391,7 +402,8 @@ export const de = {
 			uploadFile: "Datei hochladen",
 			uploading: "Lade hoch...",
 			errors: {
-				uploadFailed: "Fehler beim Hochladen des Skripts. Bitte versuchen Sie es erneut.",
+				uploadFailed:
+					"Fehler beim Hochladen des Skripts. Bitte versuchen Sie es erneut.",
 				uploadError: "Beim Hochladen des Skripts ist ein Fehler aufgetreten.",
 			},
 		},
