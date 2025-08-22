@@ -77,16 +77,16 @@ export default function ActionsComponent({
 										!isLocal && (
 											<div
 												style={{
-												backgroundImage:
-													data?.logo_url ||
-													"linear-gradient(to right, #BCB1E7, #9A8FD1)",
-												backgroundSize: "100%",
-												backgroundRepeat: "no-repeat",
-												backgroundPosition: "center",
-												filter: "blur(15px)",
-												width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
-												height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
-											}}
+													backgroundImage:
+														data?.logo_url ||
+														"linear-gradient(to right, #BCB1E7, #9A8FD1)",
+													backgroundSize: "100%",
+													backgroundRepeat: "no-repeat",
+													backgroundPosition: "center",
+													filter: "blur(15px)",
+													width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+													height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+												}}
 												className="h-16 w-16 bg-cover bg-center group-hover:border-white/20 transition-all duration-200"
 											/>
 										)

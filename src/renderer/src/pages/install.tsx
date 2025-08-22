@@ -412,9 +412,12 @@ export default function Install({
 				});
 			} else {
 				if (force) {
-					await fetch(`http://localhost:${port}/scripts/download/${id}?force=true`, {
-						method: "GET",
-					});
+					await fetch(
+						`http://localhost:${port}/scripts/download/${id}?force=true`,
+						{
+							method: "GET",
+						},
+					);
 				} else {
 					await fetch(`http://localhost:${port}/scripts/download/${id}`, {
 						method: "GET",

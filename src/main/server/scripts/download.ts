@@ -126,7 +126,7 @@ export function downloadFile(
 	io: Server,
 	id: string,
 	commit: string,
-	force?: boolean
+	force?: boolean,
 ) {
 	io.to(id).emit("installUpdate", {
 		type: "log",
@@ -191,7 +191,10 @@ export function downloadFile(
 						content: "Script downloaded",
 					});
 					// check if system requirements are met
-					const systemCheck = force === true ? { success: true, reasons: [] } : await checkSystem(FILE_PATH);
+					const systemCheck =
+						force === true
+							? { success: true, reasons: [] }
+							: await checkSystem(FILE_PATH);
 					if (systemCheck.success === false) {
 						io.to(id).emit("installUpdate", {
 							type: "log",
