@@ -337,13 +337,13 @@ async function createVirtualEnvCommands(
 		);
 		if (isWindows) {
 			return [
-				`if not exist "${envPath}" (${condaW} create -p "${envPath}" ${pythonArg} -y)`,
+				`if not exist "${envPath}" (${condaW} tos accept --channel main &&${condaW} create -p "${envPath}" ${pythonArg} -y)`,
 				`call ${condaW} activate "${envPath}" ${middle} && call ${condaW} deactivate`,
 			];
 		}
 		// for linux and mac
 		return [
-			`if [ ! -d "${envPath}" ]; then ${condaU} create -p "${envPath}" ${pythonArg} -y; fi`,
+			`if [ ! -d "${envPath}" ]; then ${condaU} tos accept --channel main; ${condaU} create -p "${envPath}" ${pythonArg} -y; fi`,
 			`source "${condaU}" activate "${envPath}" && ${middle} && ${condaU} deactivate`,
 		];
 	}
