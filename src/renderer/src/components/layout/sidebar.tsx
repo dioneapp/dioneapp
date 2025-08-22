@@ -1,6 +1,6 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
-import { Library, LogIn, MonitorDown, Settings, User, X } from "lucide-react";
+import { Library, LoaderCircle, LogIn, MonitorDown, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +22,7 @@ export default function Sidebar() {
 
 	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);
+	const [updateDownloaded, setUpdateDownloaded] = useState(false);
 
 	useEffect(() => {
 		window.electron.ipcRenderer.invoke("check-update");
@@ -29,7 +30,7 @@ export default function Sidebar() {
 
 	useEffect(() => {
 		const handleUpdateAvailable = () => setUpdateAvailable(true);
-		const handleUpdateDownloaded = () => setUpdateAvailable(true);
+		const handleUpdateDownloaded = () => setUpdateDownloaded(true);
 
 		window.electron.ipcRenderer.on("update_available", handleUpdateAvailable);
 		window.electron.ipcRenderer.on("update_downloaded", handleUpdateDownloaded);
@@ -225,24 +226,45 @@ export default function Sidebar() {
 					)}
 				</div>
 				{updateAvailable && !config?.compactMode && (
-					<motion.div
+					<motion.button
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ duration: 0.2 }}
-						className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56 my-6 cursor-pointer hover:bg-white/10 transition-colors duration-200"
+						className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56 my-6 active:cursor-pointer active:hover:bg-white/10 transition-colors duration-200 text-left"
+						disabled={updateAvailable}
 						onClick={() => {
-							window.electron.ipcRenderer.send("restart_app");
+							if (updateDownloaded) {
+								window.electron.ipcRenderer.send("restart_app");
+							} else {
+								window.electron.ipcRenderer.send("download_and_restart");
+							}
 						}}
 					>
-						<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
-							<h1 className="font-semibold text-xl text-neutral-200">
-								{t("sidebar.update.title")}
-							</h1>
-							<h2 className="text-[10px] text-neutral-300 text-balance">
-								{t("sidebar.update.description")}
-							</h2>
-						</div>
-					</motion.div>
+						{updateDownloaded ? (
+							<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
+								<h1 className="font-semibold text-xl text-neutral-200">
+									{t("sidebar.update.title")}
+								</h1>
+								<h2 className="text-[10px] text-neutral-300 text-balance">
+									{t("sidebar.update.description")}
+								</h2>
+							</div>
+						) : (
+							<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
+								<div className="flex justify-between items-center w-full">
+								<h1 className="font-semibold text-xl text-neutral-200">
+									Downloading
+								</h1>
+								<span>
+									<LoaderCircle className="h-5 w-5 text-neutral-400 animate-spin" />
+								</span>
+								</div>
+								<h2 className="text-[10px] text-neutral-300 text-balance">
+									When the download finishes, the app will restart
+								</h2>
+							</div>
+						)}
+					</motion.button>
 				)}
 				{updateAvailable && config?.compactMode && (
 					<motion.div

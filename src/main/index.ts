@@ -174,23 +174,22 @@ function createWindow() {
 		}
 
 		if (!app.isPackaged) {
-			// in development mode, show the window and open dev tools
+			// in development mode, open dev tools
 			try {
-				mainWindow.show();
-				mainWindow.focus();
 				mainWindow.webContents.openDevTools({ mode: "undocked" });
 				logger.info("Development tools opened");
 			} catch (error) {
 				logger.error("Error opening development tools:", error);
 			}
 		} else {
+			// check for updates
 			checkForUpdates()
-				.then(() => {
-					logger.info("Checked for updates successfully.");
-				})
-				.catch((err) => {
+					.then(() => {
+						logger.info("Checked for updates successfully.");
+					})
+					.catch((err) => {
 					logger.error("Error checking for updates:", err);
-				});
+			});
 		}
 
 		async function checkForUpdates(): Promise<void> {
@@ -199,6 +198,7 @@ function createWindow() {
 
 				autoUpdater.on("update-available", () => {
 					logger.info("Update available, downloading...");
+					mainWindow.webContents.send("update_available");
 				});
 
 				autoUpdater.on("update-downloaded", () => {
@@ -464,14 +464,18 @@ app.whenReady().then(async () => {
 
 	// autoUpdater.forceDevUpdateConfig = true;
 	autoUpdater.logger = logger;
-	autoUpdater.autoDownload = true;
-	autoUpdater.autoInstallOnAppQuit = true;
 	autoUpdater.setFeedURL({
 		provider: "github",
 		owner: "dioneapp",
 		repo: "dioneapp",
 		private: false,
 	});
+
+	const config = readConfig();
+	if (!config?.disableAutoUpdates) {
+		autoUpdater.autoDownload = true;
+		autoUpdater.autoInstallOnAppQuit = true;
+	}
 
 	// initialize rpc safety
 	try {
@@ -707,6 +711,11 @@ app.whenReady().then(async () => {
 	});
 
 	ipcMain.on("restart_app", () => {
+		autoUpdater.quitAndInstall();
+	});
+
+	ipcMain.on("download_and_restart", () => {
+		autoUpdater.downloadUpdate();
 		autoUpdater.quitAndInstall();
 	});
 

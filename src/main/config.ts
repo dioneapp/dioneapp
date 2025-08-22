@@ -17,6 +17,7 @@ export interface AppConfig {
 	alwaysUninstallDependencies: boolean;
 	sendAnonymousReports: boolean;
 	enableDiscordRPC: boolean;
+	disableAutoUpdates: boolean;
 }
 
 // default config
@@ -34,6 +35,7 @@ export const defaultConfig: AppConfig = {
 	alwaysUninstallDependencies: false,
 	sendAnonymousReports: true,
 	enableDiscordRPC: true,
+	disableAutoUpdates: false,
 };
 // get config file
 export const getConfigPath = () => {
