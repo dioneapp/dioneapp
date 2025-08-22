@@ -8,14 +8,32 @@ export async function getSystemInfo() {
 
 	try {
 		const gpus = (await si.graphics()).controllers;
-		const mainGPU = gpus.find((gpu) => /nvidia|amd/i.test(gpu.vendor));
-		if (mainGPU) {
-			if (/nvidia/i.test(mainGPU.vendor)) {
+		
+		// Check all GPUs, not just the first one
+		for (const controller of gpus) {
+			// Check vendor and model for GPU identification
+			const vendorAndModel = `${controller.vendor} ${controller.model}`.toLowerCase();
+			
+			// More comprehensive GPU detection
+			if (/nvidia/i.test(vendorAndModel)) {
 				gpu = "nvidia";
-			} else if (/amd/i.test(mainGPU.vendor)) {
+				logger.info(`Found NVIDIA GPU: ${controller.model}`);
+				break; // Prioritize discrete GPUs
+			} else if (/amd|radeon/i.test(vendorAndModel)) {
 				gpu = "amd";
+				logger.info(`Found AMD GPU: ${controller.model}`);
+				break; // Prioritize discrete GPUs
 			}
 		}
+		
+		// Log all detected GPUs for debugging
+		if (gpu === "unknown" && gpus.length > 0) {
+			logger.info(`GPUs detected but not recognized as NVIDIA/AMD:`);
+			gpus.forEach((g, i) => {
+				logger.info(`  GPU ${i}: ${g.vendor} ${g.model}`);
+			});
+		}
+		
 		os = (await si.osInfo()).platform;
 	} catch (error) {
 		logger.error(`Error getting system info: ${error}`);
@@ -45,12 +63,19 @@ export async function checkSystem(FILE_PATH: string) {
 			dioneConfig.requirements.gpus &&
 			dioneConfig.requirements.gpus.length > 0
 		) {
-			if (!dioneConfig.requirements.gpus.includes(gpu.toLowerCase())) {
-				logger.error(`GPU ${gpu} is not supported`);
+			// Only fail if we have a known GPU that doesn't match requirements
+			// Allow "unknown" GPUs to pass (might be integrated or less common GPUs)
+			if (gpu !== "unknown" && !dioneConfig.requirements.gpus.includes(gpu.toLowerCase())) {
+				logger.error(`GPU ${gpu} is not supported. Required: ${dioneConfig.requirements.gpus.join(", ")}`);
 				return {
 					success: false,
 					reasons: ["gpu-not-supported"],
 				};
+			}
+			
+			// Log warning for unknown GPUs but don't fail
+			if (gpu === "unknown") {
+				logger.warn(`Could not detect GPU vendor. Required GPUs: ${dioneConfig.requirements.gpus.join(", ")}. Proceeding anyway...`);
 			}
 		}
 	}
