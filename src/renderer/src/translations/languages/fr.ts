@@ -231,6 +231,10 @@ export const fr = {
 		},
 		other: {
 			title: "Autre",
+			disableAutoUpdate: {
+				label: "Désactiver les mises à jour automatiques",
+				description: "Désactive les mises à jour automatiques. Prudence : votre application peut ne pas recevoir des corrections importantes ou des correctifs de sécurité. Cette option n'est pas recommandée pour la plupart des utilisateurs.",
+			},
 			logsDirectory: {
 				label: "Répertoire des journaux",
 				description: "Emplacement où les journaux d'application sont stockés",

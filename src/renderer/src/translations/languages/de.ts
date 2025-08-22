@@ -230,6 +230,10 @@ export const de = {
 		},
 		other: {
 			title: "Sonstiges",
+			disableAutoUpdate: {
+				label: "Auto-Updates deaktivieren",
+				description: "Deaktiviert automatische Updates. Vorsicht: Ihre Anwendung könnte wichtige Fehlerbehebungen oder Sicherheitsupdates verpassen. Diese Option wird den meisten Benutzern nicht empfohlen.",
+			},
 			logsDirectory: {
 				label: "Protokollverzeichnis",
 				description: "Ort, an dem Anwendungsprotokolle gespeichert werden",

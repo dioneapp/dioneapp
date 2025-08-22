@@ -215,6 +215,10 @@ export const zh = {
 		},
 		other: {
 			title: "其他",
+			disableAutoUpdate: {
+				label: "禁用自动更新",
+				description: "禁用自动更新。注意：您的应用可能会错过重要修复或安全补丁。对于大多数用户，不推荐启用此选项。",
+			},
 			logsDirectory: {
 				label: "日志目录",
 				description: "应用程序日志存储位置",

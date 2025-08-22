@@ -226,6 +226,10 @@ export const ja = {
 		},
 		other: {
 			title: "その他",
+			disableAutoUpdate: {
+				label: "自動更新を無効にする",
+				description: "自動更新を無効にします。注意：アプリケーションが重要な修正やセキュリティパッチを受け取れない可能性があります。ほとんどのユーザーにはこのオプションは推奨されません。",
+			},
 			logsDirectory: {
 				label: "ログディレクトリ",
 				description: "アプリケーションログが保存される場所",
