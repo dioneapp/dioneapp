@@ -184,12 +184,12 @@ function createWindow() {
 		} else {
 			// check for updates
 			checkForUpdates()
-					.then(() => {
-						logger.info("Checked for updates successfully.");
-					})
-					.catch((err) => {
+				.then(() => {
+					logger.info("Checked for updates successfully.");
+				})
+				.catch((err) => {
 					logger.error("Error checking for updates:", err);
-			});
+				});
 		}
 
 		async function checkForUpdates(): Promise<void> {

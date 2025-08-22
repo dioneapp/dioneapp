@@ -1,6 +1,14 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
-import { Library, LoaderCircle, LogIn, MonitorDown, Settings, User, X } from "lucide-react";
+import {
+	Library,
+	LoaderCircle,
+	LogIn,
+	MonitorDown,
+	Settings,
+	User,
+	X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -252,12 +260,12 @@ export default function Sidebar() {
 						) : (
 							<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
 								<div className="flex justify-between items-center w-full">
-								<h1 className="font-semibold text-xl text-neutral-200">
-									Downloading
-								</h1>
-								<span>
-									<LoaderCircle className="h-5 w-5 text-neutral-400 animate-spin" />
-								</span>
+									<h1 className="font-semibold text-xl text-neutral-200">
+										Downloading
+									</h1>
+									<span>
+										<LoaderCircle className="h-5 w-5 text-neutral-400 animate-spin" />
+									</span>
 								</div>
 								<h2 className="text-[10px] text-neutral-300 text-balance">
 									When the download finishes, the app will restart

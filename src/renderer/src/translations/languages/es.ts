@@ -231,7 +231,8 @@ export const es = {
 			title: "Otro",
 			disableAutoUpdate: {
 				label: "Desactivar actualizaciones automáticas",
-				description: "Desactiva las actualizaciones automáticas. Precaución: su aplicación puede perder correcciones importantes o parches de seguridad. Esta opción no se recomienda para la mayoría de los usuarios.",
+				description:
+					"Desactiva las actualizaciones automáticas. Precaución: su aplicación puede perder correcciones importantes o parches de seguridad. Esta opción no se recomienda para la mayoría de los usuarios.",
 			},
 			logsDirectory: {
 				label: "Directorio de registros",

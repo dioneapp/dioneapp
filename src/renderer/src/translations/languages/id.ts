@@ -229,7 +229,8 @@ export const id = {
 			title: "Lainnya",
 			disableAutoUpdate: {
 				label: "Nonaktifkan pembaruan otomatis",
-				description: "Menonaktifkan pembaruan otomatis. Hati-hati: aplikasi Anda mungkin melewatkan perbaikan penting atau patch keamanan. Opsi ini tidak disarankan untuk sebagian besar pengguna.",
+				description:
+					"Menonaktifkan pembaruan otomatis. Hati-hati: aplikasi Anda mungkin melewatkan perbaikan penting atau patch keamanan. Opsi ini tidak disarankan untuk sebagian besar pengguna.",
 			},
 			logsDirectory: {
 				label: "Direktori Log",
