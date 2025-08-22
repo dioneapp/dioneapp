@@ -404,7 +404,7 @@ export const en = {
 			notArray: "Fetched data is not an array",
 			fetchFailed: "Failed to fetch scripts",
 			notSupported: "Unfortunately %s is not supported on your %s.",
-			notSupportedTitle: "Your device is not supported",
+			notSupportedTitle: "Your device may be incompatible.",
 		},
 	},
 

@@ -414,7 +414,7 @@ export const de = {
 			notArray: "Abgerufene Daten sind kein Array",
 			fetchFailed: "Skripte konnten nicht abgerufen werden",
 			notSupported: "Leider wird %s auf Ihrem %s nicht unterstützt.",
-			notSupportedTitle: "Ihr Gerät wird nicht unterstützt",
+			notSupportedTitle: "Ihr Gerät ist möglicherweise nicht kompatibel.",
 		},
 	},
 

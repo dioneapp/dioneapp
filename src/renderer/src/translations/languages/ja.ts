@@ -408,7 +408,7 @@ export const ja = {
 			notArray: "取得されたデータが配列ではありません",
 			fetchFailed: "スクリプトの取得に失敗しました",
 			notSupported: "残念ながら%sはあなたの%sではサポートされていません。",
-			notSupportedTitle: "お使いのデバイスはサポートされていません",
+			notSupportedTitle: "お使いのデバイスは互換性がない可能性があります。",
 		},
 	},
 

@@ -414,7 +414,7 @@ export const es = {
 			notArray: "Los datos obtenidos no son un array",
 			fetchFailed: "Error al obtener scripts",
 			notSupported: "Lamentablemente %s no es compatible con tu %s.",
-			notSupportedTitle: "Tu dispositivo no es compatible",
+			notSupportedTitle: "Tu dispositivo puede ser incompatible.",
 		},
 	},
 

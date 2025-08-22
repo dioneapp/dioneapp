@@ -390,7 +390,7 @@ export const zh = {
 			notArray: "获取的数据不是数组",
 			fetchFailed: "获取脚本失败",
 			notSupported: "不幸 %s 不支持您的 %s。",
-			notSupportedTitle: "您的设备不支持",
+			notSupportedTitle: "您的设备可能不兼容。",
 		},
 	},
 

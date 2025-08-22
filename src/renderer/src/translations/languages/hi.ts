@@ -398,7 +398,7 @@ export const hi = {
 			notArray: "प्राप्त डेटा एक सरणी नहीं है",
 			fetchFailed: "स्क्रिप्ट प्राप्त करने में विफल",
 			notSupported: "दुखित, %s %s पर नहीं समर्थित।",
-			notSupportedTitle: "आपका डिवाइस समर्थित नहीं है",
+			notSupportedTitle: "आपका डिवाइस असंगत हो सकता है।",
 		},
 	},
 

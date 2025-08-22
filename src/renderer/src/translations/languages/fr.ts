@@ -414,7 +414,7 @@ export const fr = {
 			notArray: "Les données récupérées ne sont pas un tableau",
 			fetchFailed: "Échec de la récupération des scripts",
 			notSupported: "Dommage, %s n'est pas supporté sur votre %s.",
-			notSupportedTitle: "Votre appareil n'est pas supporté",
+			notSupportedTitle: "Votre appareil peut être incompatible.",
 		},
 	},
 
