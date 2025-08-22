@@ -227,7 +227,8 @@ export const en = {
 			title: "Other",
 			disableAutoUpdate: {
 				label: "Disable auto-updates",
-				description: "Disables automatic updates. Caution: your application may miss important fixes or security patches. This option is not recommended for most users.",
+				description:
+					"Disables automatic updates. Caution: your application may miss important fixes or security patches. This option is not recommended for most users.",
 			},
 			logsDirectory: {
 				label: "Logs Directory",

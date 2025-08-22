@@ -231,7 +231,8 @@ export const pt = {
 			title: "Outros",
 			disableAutoUpdate: {
 				label: "Desativar atualizações automáticas",
-				description: "Desativa as atualizações automáticas. Atenção: seu aplicativo pode perder correções importantes ou patches de segurança. Esta opção não é recomendada para a maioria dos usuários.",
+				description:
+					"Desativa as atualizações automáticas. Atenção: seu aplicativo pode perder correções importantes ou patches de segurança. Esta opção não é recomendada para a maioria dos usuários.",
 			},
 			logsDirectory: {
 				label: "Diretório de Logs",

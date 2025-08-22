@@ -186,7 +186,7 @@ button:active {
 }
 button:disabled {
 	cursor: default;
-	transform: scale(0.00);
+	transform: scale(0.0);
 }
 a {
 	transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);

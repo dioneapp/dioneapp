@@ -236,7 +236,10 @@ export default function Settings() {
 			// update local storage
 			localStorage.setItem("config", JSON.stringify(updatedConfig));
 			window.dispatchEvent(new Event("config-updated"));
-			if (updatedConfig.defaultInstallFolder !== config.defaultInstallFolder || updatedConfig.defaultBinFolder !== config.defaultBinFolder) {
+			if (
+				updatedConfig.defaultInstallFolder !== config.defaultInstallFolder ||
+				updatedConfig.defaultBinFolder !== config.defaultBinFolder
+			) {
 				handleReloadQuickLaunch();
 			}
 		} catch (error) {
@@ -729,39 +732,40 @@ export default function Settings() {
 											</h2>
 											<div className="flex flex-col gap-2">
 												<div className="flex flex-col gap-2">
-												<div className="flex justify-between w-full items-center h-full space-y-2">
-													<div className="h-full flex items-start justify-center flex-col mt-auto">
-														<label className="text-neutral-200 font-medium">
-															{t("settings.other.disableAutoUpdate.label")}
-														</label>
-														<p className="text-xs text-neutral-400 max-w-xl">
-															{t("settings.other.disableAutoUpdate.description")}
-														</p>
-													</div>
-													<button
-														type="button"
-														onClick={() =>
-															handleUpdate({
-																disableAutoUpdate:
-																	!config.disableAutoUpdate,
-															})
-														}
-														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
-															config.disableAutoUpdate
-																? "bg-green-500/30"
-																: "bg-red-500/30"
-														}`}
-													>
-														<span
-															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+													<div className="flex justify-between w-full items-center h-full space-y-2">
+														<div className="h-full flex items-start justify-center flex-col mt-auto">
+															<label className="text-neutral-200 font-medium">
+																{t("settings.other.disableAutoUpdate.label")}
+															</label>
+															<p className="text-xs text-neutral-400 max-w-xl">
+																{t(
+																	"settings.other.disableAutoUpdate.description",
+																)}
+															</p>
+														</div>
+														<button
+															type="button"
+															onClick={() =>
+																handleUpdate({
+																	disableAutoUpdate: !config.disableAutoUpdate,
+																})
+															}
+															className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
 																config.disableAutoUpdate
-																	? "translate-x-6"
-																	: "translate-x-0"
+																	? "bg-green-500/30"
+																	: "bg-red-500/30"
 															}`}
-														/>
-													</button>
+														>
+															<span
+																className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+																	config.disableAutoUpdate
+																		? "translate-x-6"
+																		: "translate-x-0"
+																}`}
+															/>
+														</button>
+													</div>
 												</div>
-											</div>
 												<div className="flex justify-between w-full items-center h-full space-y-2">
 													<div className="h-full flex items-start justify-center flex-col mt-auto">
 														<label className="text-neutral-200 font-medium">
