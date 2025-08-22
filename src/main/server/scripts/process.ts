@@ -74,6 +74,15 @@ async function killByPort(
 	id: string,
 ): Promise<boolean> {
 	processWasCancelled = true;
+
+	if (!port) {
+		logger.info(`Killing active process with PID ${activePID}`);
+		if (activePID) {
+			const success = await killProcess(activePID, io, id);
+			return success;
+		}
+	}
+
 	const currentPlatform = getPlatform();
 	if (currentPlatform !== "win32") {
 		// linux/macos
@@ -157,6 +166,7 @@ async function killByPort(
 					if (!activePID) {
 						return resolve(true); // no active process to stop
 					}
+					logger.info(`Killing active process with PID ${activePID}`);
 					const success = await killProcess(activePID, io, id);
 					return resolve(success);
 				}
