@@ -128,6 +128,7 @@
 	"dependencies": {
 		"@electron-toolkit/preload": "^3.0.2",
 		"@electron-toolkit/utils": "^4.0.0",
+		"@google/genai": "^1.15.0",
 		"@supabase/supabase-js": "^2.49.4",
 		"@tailwindcss/vite": "^4.1.6",
 		"cors": "^2.8.5",
