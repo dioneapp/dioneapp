@@ -6,7 +6,7 @@ export default function NotSupported({
 	reasons,
 	data,
 	onClose,
-}: { reasons: string[]; data: any; onClose: () => void }) {
+}: { reasons: string[]; data: any; onClose: (force?: boolean) => void }) {
 	const { t } = useTranslation();
 
 	const appName = data.name || "this app";
@@ -20,7 +20,7 @@ export default function NotSupported({
 			style={{ zIndex: 999 }}
 		>
 			<div className="w-full h-full flex justify-center items-center">
-				<div className="max-w-2xl max-h-96 rounded-xl w-full h-full bg-black/80 border border-white/10 overflow-hidden relative flex flex-col">
+				<div className="max-w-2xl max-h-96 rounded-xl w-full h-full bg-black/80 border border-white/10 backdrop-blur-sm overflow-hidden relative flex flex-col">
 					<div className="flex items-start p-6">
 						<div className="absolute">
 							{reasons[0].includes("gpu") ? (
@@ -46,14 +46,20 @@ export default function NotSupported({
 							</h2>
 						</div>
 					</div>
-					<div className="flex flex-col w-full ml-auto mt-auto justify-end items-end px-6 py-4">
+					<div className="flex gap-2 w-full ml-auto mt-auto justify-end items-end px-6 py-4">
 						<button
-							onClick={onClose}
+							onClick={() => onClose(true)}
+							className="bg-neutral-200/10 hover:bg-neutral-300/20 transition-all duration-300 cursor-pointer text-neutral-300 font-medium text-sm  py-1 w-44 rounded-full"
+						>
+							Continue anyway
+						</button>
+						<button
+							onClick={() => onClose(false)}
 							className="bg-neutral-200 hover:bg-neutral-300 transition-all duration-300 cursor-pointer text-black text-sm font-semibold py-1 w-24 rounded-full"
 						>
 							{t("toast.close")}
 						</button>
-						<p
+						{/* <p
 							onClick={() =>
 								openLink(
 									data.author_url ||
@@ -63,7 +69,7 @@ export default function NotSupported({
 							className="text-xs text-neutral-400 mt-2 hover:text-neutral-200 transition-all duration-300 cursor-pointer"
 						>
 							{t("report.contribute")}
-						</p>
+						</p> */}
 					</div>
 				</div>
 			</div>

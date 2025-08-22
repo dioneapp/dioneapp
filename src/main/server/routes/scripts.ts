@@ -14,11 +14,12 @@ export function createScriptRouter(io: Server) {
 	const router = express.Router();
 	router.use(express.json());
 
-	router.get("/download/:id", async (req, res) => {
+	router.get("/download/:id/", async (req, res) => {
 		const { id } = req.params;
+		const force = req.query.force === "true";
 
 		try {
-			await getScripts(id, io);
+			await getScripts(id, io, force);
 			res.status(200).send("Script downloaded successfully.");
 		} catch (error: any) {
 			logger.error(

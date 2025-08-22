@@ -375,7 +375,7 @@ export default function Install({
 		}
 	}, [show]);
 
-	async function download() {
+	async function download(force?: boolean) {
 		const tooMuchApps = activeApps.length >= maxApps;
 		if (tooMuchApps) {
 			showToast(
@@ -411,9 +411,15 @@ export default function Install({
 					method: "GET",
 				});
 			} else {
-				await fetch(`http://localhost:${port}/scripts/download/${id}`, {
-					method: "GET",
-				});
+				if (force) {
+					await fetch(`http://localhost:${port}/scripts/download/${id}?force=true`, {
+						method: "GET",
+					});
+				} else {
+					await fetch(`http://localhost:${port}/scripts/download/${id}`, {
+						method: "GET",
+					});
+				}
 			}
 
 			if (!installedApps.includes(data.name)) {
@@ -864,10 +870,15 @@ export default function Install({
 					<NotSupported
 						reasons={notSupported[data?.id].reasons}
 						data={data}
-						onClose={() => {
-							stopApp();
-							setShow({ [data?.id]: "actions" });
-							setNotSupportedModal(false);
+						onClose={(force?: boolean) => {
+							if (!force) {
+								stopApp();
+								setShow({ [data?.id]: "actions" });
+								setNotSupportedModal(false);
+							} else {
+								setNotSupportedModal(false);
+								download(true);
+							}
 						}}
 					/>
 				)}

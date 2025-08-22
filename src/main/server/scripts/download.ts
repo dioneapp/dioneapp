@@ -10,7 +10,7 @@ import { checkDependencies } from "./dependencies/dependencies";
 import executeInstallation from "./execute";
 import { checkSystem } from "./system";
 
-export async function getScripts(id: string, io: Server) {
+export async function getScripts(id: string, io: Server, force?: boolean) {
 	if (!supabase) {
 		logger.warn(
 			"Supabase not initialized (no .env). Continuing without DB features.",
@@ -60,7 +60,7 @@ export async function getScripts(id: string, io: Server) {
 			await fs.promises.mkdir(saveDirectory, { recursive: true });
 			const outputFilePath = path.join(saveDirectory, "dione.json");
 			// download dione.json
-			await downloadFile(script_url, outputFilePath, io, id, commit);
+			await downloadFile(script_url, outputFilePath, io, id, commit, force);
 		} catch (error) {
 			io.to(id).emit("installUpdate", {
 				type: "log",
@@ -126,6 +126,7 @@ export function downloadFile(
 	io: Server,
 	id: string,
 	commit: string,
+	force?: boolean
 ) {
 	io.to(id).emit("installUpdate", {
 		type: "log",
@@ -190,7 +191,7 @@ export function downloadFile(
 						content: "Script downloaded",
 					});
 					// check if system requirements are met
-					const systemCheck = await checkSystem(FILE_PATH);
+					const systemCheck = force === true ? { success: true, reasons: [] } : await checkSystem(FILE_PATH);
 					if (systemCheck.success === false) {
 						io.to(id).emit("installUpdate", {
 							type: "log",
