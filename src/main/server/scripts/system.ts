@@ -4,34 +4,44 @@ import { readDioneConfig } from "./dependencies/dependencies";
 
 export async function getSystemInfo() {
 	let os;
-	let gpu = "unknown";
+	let gpu = "cpu"; // Default to CPU if no GPU detected
 
 	try {
 		const gpus = (await si.graphics()).controllers;
 		
-		// Check all GPUs, not just the first one
-		for (const controller of gpus) {
-			// Check vendor and model for GPU identification
-			const vendorAndModel = `${controller.vendor} ${controller.model}`.toLowerCase();
-			
-			// More comprehensive GPU detection
-			if (/nvidia/i.test(vendorAndModel)) {
-				gpu = "nvidia";
-				logger.info(`Found NVIDIA GPU: ${controller.model}`);
-				break; // Prioritize discrete GPUs
-			} else if (/amd|radeon/i.test(vendorAndModel)) {
-				gpu = "amd";
-				logger.info(`Found AMD GPU: ${controller.model}`);
-				break; // Prioritize discrete GPUs
+		// Check if there are any GPUs at all
+		if (!gpus || gpus.length === 0) {
+			logger.info("No GPU detected, using CPU-only mode");
+			gpu = "cpu";
+		} else {
+			// Check all GPUs, not just the first one
+			let foundGpu = false;
+			for (const controller of gpus) {
+				// Check vendor and model for GPU identification
+				const vendorAndModel = `${controller.vendor} ${controller.model}`.toLowerCase();
+				
+				// More comprehensive GPU detection
+				if (/nvidia/i.test(vendorAndModel)) {
+					gpu = "nvidia";
+					logger.info(`Found NVIDIA GPU: ${controller.model}`);
+					foundGpu = true;
+					break; // Prioritize discrete GPUs
+				} else if (/amd|radeon/i.test(vendorAndModel)) {
+					gpu = "amd";
+					logger.info(`Found AMD GPU: ${controller.model}`);
+					foundGpu = true;
+					break; // Prioritize discrete GPUs
+				}
 			}
-		}
-		
-		// Log all detected GPUs for debugging
-		if (gpu === "unknown" && gpus.length > 0) {
-			logger.info(`GPUs detected but not recognized as NVIDIA/AMD:`);
-			gpus.forEach((g, i) => {
-				logger.info(`  GPU ${i}: ${g.vendor} ${g.model}`);
-			});
+			
+			// If GPUs exist but none are recognized as NVIDIA/AMD
+			if (!foundGpu) {
+				gpu = "unknown";
+				logger.info(`GPUs detected but not recognized as NVIDIA/AMD:`);
+				gpus.forEach((g, i) => {
+					logger.info(`  GPU ${i}: ${g.vendor} ${g.model}`);
+				});
+			}
 		}
 		
 		os = (await si.osInfo()).platform;
@@ -63,10 +73,24 @@ export async function checkSystem(FILE_PATH: string) {
 			dioneConfig.requirements.gpus &&
 			dioneConfig.requirements.gpus.length > 0
 		) {
+			const requiredGpus = dioneConfig.requirements.gpus.map(g => g.toLowerCase());
+			
+			// Check if CPU-only is required but we have a GPU
+			if ((requiredGpus.includes("cpu") || requiredGpus.includes("none")) && 
+			    gpu !== "cpu" && gpu !== "unknown") {
+				logger.error(`This app requires CPU-only mode but ${gpu} GPU was detected`);
+				return {
+					success: false,
+					reasons: ["gpu-not-supported"],
+				};
+			}
+			
 			// Only fail if we have a known GPU that doesn't match requirements
 			// Allow "unknown" GPUs to pass (might be integrated or less common GPUs)
-			if (gpu !== "unknown" && !dioneConfig.requirements.gpus.includes(gpu.toLowerCase())) {
-				logger.error(`GPU ${gpu} is not supported. Required: ${dioneConfig.requirements.gpus.join(", ")}`);
+			if (gpu !== "unknown" && gpu !== "cpu" && 
+			    !requiredGpus.includes(gpu) && 
+			    !requiredGpus.includes("all")) {
+				logger.error(`GPU ${gpu} is not supported. Required: ${requiredGpus.join(", ")}`);
 				return {
 					success: false,
 					reasons: ["gpu-not-supported"],
@@ -75,7 +99,7 @@ export async function checkSystem(FILE_PATH: string) {
 			
 			// Log warning for unknown GPUs but don't fail
 			if (gpu === "unknown") {
-				logger.warn(`Could not detect GPU vendor. Required GPUs: ${dioneConfig.requirements.gpus.join(", ")}. Proceeding anyway...`);
+				logger.warn(`Could not identify GPU vendor. Required: ${requiredGpus.join(", ")}. Proceeding anyway...`);
 			}
 		}
 	}

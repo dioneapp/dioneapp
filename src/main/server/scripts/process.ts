@@ -431,19 +431,11 @@ export const executeCommands = async (
 					: [cmd.gpus.toLowerCase()];
 
 				// Only skip if:
-				// 1. Current GPU is "unknown" and specific GPUs are required
-				// 2. There's an explicit "none" or "cpu" option and we have a different GPU
-				if (currentGpu.toLowerCase() === "unknown" && !allowedGpus.includes("all")) {
-					logger.info(
-						`Warning: Unknown GPU, attempting to run command anyway`,
-					);
-					io.to(id).emit("installUpdate", {
-						type: "log",
-						content: `WARNING: Unknown GPU detected, attempting to run command anyway`,
-					});
-				} else if (allowedGpus.includes("none") || allowedGpus.includes("cpu")) {
+				// 1. Command is for CPU-only but we have a GPU
+				// 2. Current GPU is "unknown" - log warning but continue
+				if (allowedGpus.includes("none") || allowedGpus.includes("cpu")) {
 					// This command is specifically for CPU-only systems
-					if (currentGpu.toLowerCase() !== "unknown") {
+					if (currentGpu.toLowerCase() !== "cpu" && currentGpu.toLowerCase() !== "unknown") {
 						logger.info(
 							`Skipping CPU-only command on system with ${currentGpu} GPU`,
 						);
@@ -453,6 +445,14 @@ export const executeCommands = async (
 						});
 						continue; // skip command
 					}
+				} else if (currentGpu.toLowerCase() === "unknown") {
+					logger.info(
+						`Warning: Unknown GPU detected, attempting to run command anyway`,
+					);
+					io.to(id).emit("installUpdate", {
+						type: "log",
+						content: `WARNING: Unknown GPU detected, attempting to run command anyway`,
+					});
 				}
 				// Otherwise, let the command run - it might work even on different GPUs
 			}
