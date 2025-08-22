@@ -63,7 +63,7 @@ export default function ActionsComponent({
 						<div className="absolute top-0 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-50" />
 						<div className="relative z-10">
 							<div className="flex gap-4 items-start justify-start">
-								<div className="relative h-16 w-16 flex-shrink-0">
+								<div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-white/10">
 									{/* biome-ignore lint/complexity/useOptionalChain: if you change && to || it will break */}
 									{data?.logo_url && data?.logo_url?.startsWith("http") ? (
 										<img
@@ -71,23 +71,28 @@ export default function ActionsComponent({
 											onError={() => setImgLoading(false)}
 											src={data?.logo_url}
 											alt={`${data?.name} icon`}
-											className="h-16 w-16 rounded-xl border border-white/10 object-cover object-center transition-all duration-200"
+											className="h-16 w-16 object-cover object-center transition-all duration-200"
 										/>
 									) : (
 										!isLocal && (
 											<div
 												style={{
-													backgroundImage: data?.logo_url,
-													backgroundSize: "100%",
-													backgroundRepeat: "no-repeat",
-													backgroundPosition: "center",
-												}}
-												className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center group-hover:border-white/20 transition-all duration-200"
+												backgroundImage:
+													data?.logo_url ||
+													"linear-gradient(to right, #BCB1E7, #9A8FD1)",
+												backgroundSize: "100%",
+												backgroundRepeat: "no-repeat",
+												backgroundPosition: "center",
+												filter: "blur(15px)",
+												width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+												height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+											}}
+												className="h-16 w-16 bg-cover bg-center group-hover:border-white/20 transition-all duration-200"
 											/>
 										)
 									)}
 									{isLocal && (
-										<div className="h-16 w-16 rounded-xl border border-white/10 bg-cover bg-center group-hover:border-white/20 transition-all duration-200 flex items-center justify-center bg-neutral-900">
+										<div className="h-16 w-16 bg-cover bg-center group-hover:border-white/20 transition-all duration-200 flex items-center justify-center bg-neutral-900">
 											<span className="text-white/70 font-semibold text-xl">
 												{data?.name?.charAt(0)?.toUpperCase() || "?"}
 											</span>

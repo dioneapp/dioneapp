@@ -163,7 +163,17 @@ export default function QuickLaunch({
 							!app.isLocal && (
 								<div
 									className="h-full w-full object-cover"
-									style={{ backgroundImage: app.logo_url }}
+									style={{
+										backgroundImage:
+											app?.logo_url ||
+											"linear-gradient(to right, #BCB1E7, #9A8FD1)",
+										backgroundSize: "100%",
+										backgroundRepeat: "no-repeat",
+										backgroundPosition: "center",
+										filter: "blur(15px)",
+										width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+										height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+									}}
 								/>
 							)
 						)}
