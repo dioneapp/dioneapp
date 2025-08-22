@@ -8,14 +8,14 @@ export const fr = {
 		pending: "En attente",
 		back: "Retour",
 		unselectAll: "Désélectionner tout",
-		selectAll: "Sélectionner tout",
+		selectAll: "Tout sélectionner",
 	},
 
 	// authentication and access related
 	noAccess: {
-		title: "Rejoignez la liste blanche Dione",
+		title: "Rejoindre la liste blanche Dione",
 		description:
-			"Dione est en construction et seul un nombre limité d'utilisateurs peuvent y accéder, rejoignez notre liste blanche dès maintenant pour accéder aux futures versions de notre application.",
+			"Dione est en cours de construction et seul un nombre limité d'utilisateurs y a accès. Rejoignez notre liste blanche dès maintenant pour accéder aux futures versions de notre application.",
 		join: "Rejoindre",
 		logout: "Déconnexion",
 	},
@@ -26,14 +26,14 @@ export const fr = {
 			title: "Bienvenue sur",
 			subtitle:
 				"Merci de nous rejoindre tôt dans ce voyage. Connectez-vous à votre compte pour commencer.",
-			login: "Se connecter",
+			login: "Connexion",
 			copyLink: "Copier le lien",
-			skipLogin: "Continuer sans login",
+			skipLogin: "Continuer sans connexion",
 		},
 		loggingIn: {
 			title: "Connexion en cours...",
 			authError: "Impossible de s'authentifier ?",
-			goBack: "Retourner",
+			goBack: "Retour",
 		},
 		languageSelector: {
 			title: "Sélectionnez votre langue",
@@ -45,10 +45,10 @@ export const fr = {
 		},
 		clipboard: {
 			success:
-				"Copié correctement dans le presse-papiers, collez-le maintenant dans votre navigateur！",
+				"Copié dans le presse-papiers avec succès, collez-le maintenant dans votre navigateur !",
 		},
 		selectPath: {
-			title: "Sélectionner le chemin d'installation",
+			title: "Sélectionnez le chemin d'installation",
 			button: "Sélectionner un chemin",
 			success: "Suivant",
 		},
@@ -56,7 +56,7 @@ export const fr = {
 
 	// error handling
 	error: {
-		title: "Une erreur inattendue est survenue",
+		title: "Une erreur inattendue s'est produite",
 		description:
 			"Nous avons détecté une erreur inattendue dans l'application, nous sommes désolés pour le désagrément.",
 		return: "Retour",
@@ -82,7 +82,7 @@ export const fr = {
 				subtitle: "au cours des 7 derniers jours",
 			},
 			shared: {
-				title: "Partagés",
+				title: "Partagé",
 				subtitle: "au cours des 7 derniers jours",
 			},
 			streak: {
@@ -105,12 +105,12 @@ export const fr = {
 			success: {
 				stopped: "%s arrêté avec succès.",
 				uninstalled: "%s désinstallé avec succès.",
-				logsCopied: "Journaux copiés avec succès dans le presse-papiers.",
+				logsCopied: "Logs copiés avec succès dans le presse-papiers.",
 				depsInstalled: "Dépendances installées avec succès.",
 				shared: "Lien de téléchargement copié dans le presse-papiers !",
 			},
 			error: {
-				download: "Erreur lors de l'initialisation du téléchargement : %s",
+				download: "Erreur lors de l'initiation du téléchargement : %s",
 				start: "Erreur lors du démarrage de %s : %s",
 				stop: "Erreur lors de l'arrêt de %s : %s",
 				uninstall: "Erreur lors de la désinstallation de %s : %s",
@@ -133,13 +133,12 @@ export const fr = {
 	// sidebar component
 	sidebar: {
 		tagline: "Explorez, Installez, Innovez — en 1 Clic.",
-		activeApps: "Applications Actives",
+		activeApps: "Applications actives",
 		update: {
 			title: "Mise à jour disponible",
 			description:
 				"Une nouvelle version de Dione est disponible, veuillez redémarrer l'application pour mettre à jour.",
-			tooltip:
-				"Nouvelle mise à jour disponible, veuillez redémarrer Dione pour mettre à jour.",
+			tooltip: "Nouvelle mise à jour disponible, veuillez redémarrer Dione pour mettre à jour.",
 		},
 		tooltips: {
 			library: "Bibliothèque",
@@ -166,26 +165,25 @@ export const fr = {
 					"Choisissez où les nouvelles applications seront installées par défaut",
 			},
 			binDirectory: {
-				label: "Répertoire des Binaires",
+				label: "Répertoire Bin",
 				description:
 					"Choisissez où les binaires des applications seront stockés pour un accès facile",
 			},
 			cleanUninstall: {
-				label: "Désinstallation Propre",
+				label: "Désinstallation propre",
 				description:
-					"Supprimer toutes les dépendances associées lors de la désinstallation d'applications",
+					"Supprimer toutes les dépendances liées lors de la désinstallation des applications",
 			},
 			autoOpenAfterInstall: {
-				label: "Ouvrir Automatiquement Après Installation",
+				label: "Ouvrir automatiquement après l'installation",
 				description:
 					"Ouvrir automatiquement les applications pour la première fois après l'installation",
 			},
 			deleteCache: {
 				label: "Supprimer le cache",
-				description:
-					"Supprimer toutes les données mises en cache des applications",
+				description: "Supprimer toutes les données mises en cache des applications",
 				button: "Supprimer le cache",
-				deleting: "Suppression en cours...",
+				deleting: "Suppression...",
 				deleted: "Supprimé",
 				error: "Erreur",
 			},
@@ -196,59 +194,55 @@ export const fr = {
 				label: "Langue d'affichage",
 				description: "Choisissez votre langue d'interface préférée",
 			},
-			helpTranslate:
-				"🤔 Votre langue n'apparaît pas ? Aidez-nous à en ajouter plus !",
+			helpTranslate: "🤔 Vous ne voyez pas votre langue ? Aidez-nous à en ajouter plus !",
 			compactView: {
 				label: "Vue compacte",
 				description:
-					"Utiliser une mise en page plus condensée pour afficher plus de contenu à l'écran",
+					"Utilisez une disposition plus condensée pour afficher plus de contenu à l'écran",
 			},
 		},
 		notifications: {
 			title: "Notifications",
 			systemNotifications: {
 				label: "Notifications système",
-				description:
-					"Afficher les notifications de bureau pour les événements importants",
+				description: "Afficher des notifications de bureau pour les événements importants",
 			},
 			installationAlerts: {
-				label: "Alertes d'Installation",
-				description:
-					"Recevoir des notifications lorsque les installations d'applications sont terminées",
+				label: "Alertes d'installation",
+				description: "Soyez informé lorsque les installations d'applications sont terminées",
 			},
 			discordRPC: {
-				label: "Discord Rich Presence",
-				description: "Afficher votre activité actuelle dans le statut Discord",
+				label: "Présence enrichie Discord",
+				description: "Affichez votre activité actuelle dans le statut Discord",
 			},
 		},
 		privacy: {
 			title: "Confidentialité",
 			errorReporting: {
-				label: "Rapports d'erreurs",
-				description:
-					"Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes",
+				label: "Rapport d'erreurs",
+				description: "Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes",
 			},
 		},
 		other: {
 			title: "Autre",
 			logsDirectory: {
-				label: "Répertoire des journaux",
-				description: "Emplacement où les journaux d'application sont stockés",
+				label: "Répertoire des logs",
+				description: "Emplacement où sont stockés les logs des applications",
 			},
 			submitFeedback: {
 				label: "Envoyer des commentaires",
-				description: "Signalez tout problème ou difficulté que vous rencontrez",
-				button: "Envoyer le rapport",
+				description: "Signaler tout problème ou difficulté que vous rencontrez",
+				button: "Envoyer un rapport",
 			},
 			showOnboarding: {
 				label: "Afficher l'intégration",
 				description:
-					"Réinitialiser Dione à son état initial et afficher à nouveau l'intégration pour la reconfiguration",
+					"Réinitialiser Dione à son état initial et afficher à nouveau l'intégration pour reconfiguration",
 				button: "Réinitialiser",
 			},
 			variables: {
 				label: "Variables",
-				description: "Gérer les variables de l'application et leurs valeurs",
+				description: "Gérer les variables des applications et leurs valeurs",
 				button: "Ouvrir les variables",
 			},
 		},
@@ -256,20 +250,19 @@ export const fr = {
 
 	// report form
 	report: {
-		title: "Décrire le problème",
+		title: "Décrivez le problème",
 		description:
 			"Veuillez fournir des détails sur ce qui s'est passé et ce que vous essayiez de faire.",
 		placeholder:
-			"Exemple : J'essayais d'installer une application lorsque cette erreur est survenue...",
+			"Exemple : J'essayais d'installer une application lorsque cette erreur s'est produite...",
 		systemInformationTitle: "Informations système",
 		disclaimer:
-			"Les informations système suivantes et un identifiant anonyme seront inclus dans votre rapport.",
+			"Les informations système suivantes et un identifiant anonyme seront inclus avec votre rapport.",
 		success: "Rapport envoyé avec succès !",
 		error: "Échec de l'envoi du rapport. Veuillez réessayer.",
 		send: "Envoyer le rapport",
-		sending: "Envoi en cours...",
-		contribute:
-			"Aidez-nous à rendre ce script compatible avec tous les appareils",
+		sending: "Envoi...",
+		contribute: "Aidez-nous à rendre ce script compatible avec tous les appareils",
 	},
 
 	// quick launch component
@@ -277,12 +270,11 @@ export const fr = {
 		title: "Lancement rapide",
 		addApp: "Ajouter une application",
 		tooltips: {
-			noMoreApps: "Aucune app disponible à ajouter",
+			noMoreApps: "Aucune application disponible à ajouter",
 		},
 		selectApp: {
 			title: "Sélectionner une application",
-			description:
-				"{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
+			description: "{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
 		},
 	},
 
@@ -297,7 +289,7 @@ export const fr = {
 			connected: "Connecté au serveur",
 			disconnected: "Déconnecté du serveur",
 			error: {
-				socket: "Erreur lors de la configuration du socket",
+				socket: "Erreur lors de la configuration de la socket",
 				install: "❌ Erreur lors de l'installation des dépendances : {error}",
 			},
 			allInstalled: "Toutes les dépendances sont déjà installées.",
@@ -307,23 +299,22 @@ export const fr = {
 	// delete loading modal
 	deleteLoading: {
 		uninstalling: {
-			title: "Désinstallation en cours",
+			title: "Désinstallation",
 			deps: "Désinstallation des dépendances",
-			wait: "Veuillez patienter...",
+			wait: "veuillez patienter...",
 		},
 		success: {
 			title: "Désinstallé",
 			subtitle: "avec succès",
-			closing: "Fermeture de cette modale dans",
+			closing: "Fermeture de cette fenêtre dans",
 			seconds: "secondes...",
 		},
 		error: {
 			title: "Une erreur inattendue",
 			subtitle: "erreur",
-			hasOccurred: "est survenue",
-			deps: "Dione n'a pas pu supprimer les dépendances, veuillez le faire manuellement.",
-			general:
-				"Veuillez réessayer plus tard ou consulter les journaux pour plus d'informations.",
+			hasOccurred: "s'est produite",
+			deps: "Dione n'a pas pu supprimer de dépendance, veuillez le faire manuellement.",
+			general: "Veuillez réessayer plus tard ou consulter les logs pour plus d'informations.",
 		},
 		loading: {
 			title: "Chargement...",
@@ -335,7 +326,7 @@ export const fr = {
 	logs: {
 		loading: "Chargement...",
 		disclaimer:
-			"Les journaux affichés proviennent de l'application elle-même. Si vous voyez une erreur, veuillez la signaler d'abord aux développeurs de l'application d'origine.",
+			"Les logs affichés proviennent de l'application elle-même. Si vous voyez une erreur, veuillez d'abord la signaler aux développeurs de l'application d'origine.",
 		status: {
 			success: "Succès",
 			error: "Erreur",
@@ -353,16 +344,16 @@ export const fr = {
 		back: "Retour",
 		openFolder: "Ouvrir le dossier",
 		openInBrowser: "Ouvrir dans le navigateur",
-		openNewWindow: "Ouvrir nouvelle fenêtre",
+		openNewWindow: "Ouvrir une nouvelle fenêtre",
 		fullscreen: "Plein écran",
 		stop: "Arrêter",
 		reload: "Recharger",
-		logs: "Journaux",
+		logs: "Logs",
 	},
 
 	// actions component
 	actions: {
-		reconnect: "Reconnexion",
+		reconnect: "Reconnecter",
 		start: "Démarrer",
 		uninstall: "Désinstaller",
 		install: "Installer",
@@ -373,7 +364,7 @@ export const fr = {
 	promo: {
 		title: "Vous voulez être présenté ici ?",
 		description: "Présentez votre outil à notre communauté",
-		button: "Obtenir une présentation",
+		button: "Être présenté",
 	},
 
 	// installed component
@@ -381,28 +372,27 @@ export const fr = {
 		title: "Votre bibliothèque",
 		empty: {
 			title: "Vous n'avez aucune application installée",
-			action: "Installer un maintenant",
+			action: "Installez-en une maintenant",
 		},
 	},
 
 	// local component
 	local: {
 		title: "Scripts locaux",
-		upload: "Télécharger le script",
+		upload: "Téléverser un script",
 		noScripts: "Aucun script trouvé",
 		deleting: "Suppression du script, veuillez patienter...",
 		uploadModal: {
-			title: "Télécharger le Script",
+			title: "Téléverser un script",
 			selectFile: "Cliquez pour sélectionner un fichier",
-			selectedFile: "Fichier Sélectionné",
+			selectedFile: "Fichier sélectionné",
 			scriptName: "Nom du script",
 			scriptDescription: "Description du script (optionnel)",
-			uploadFile: "Télécharger le Fichier",
+			uploadFile: "Téléverser le fichier",
 			uploading: "Téléchargement...",
 			errors: {
-				uploadFailed: "Échec du téléchargement du script. Veuillez réessayer.",
-				uploadError:
-					"Une erreur s'est produite lors du téléchargement du script.",
+				uploadFailed: "Échec du téléversement du script. Veuillez réessayer.",
+				uploadError: "Une erreur s'est produite lors du téléversement du script.",
 			},
 		},
 	},
@@ -413,7 +403,7 @@ export const fr = {
 		errors: {
 			notArray: "Les données récupérées ne sont pas un tableau",
 			fetchFailed: "Échec de la récupération des scripts",
-			notSupported: "Dommage, %s n'est pas supporté sur votre %s.",
+			notSupported: "Malheureusement, %s n'est pas pris en charge sur votre %s.",
 			notSupportedTitle: "Votre appareil peut être incompatible.",
 		},
 	},
