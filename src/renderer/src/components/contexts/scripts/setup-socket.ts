@@ -74,7 +74,11 @@ export function setupSocket({
 					content.toLowerCase().includes("http") ||
 					content.toLowerCase().includes("127.0.0.1") ||
 					content.toLowerCase().includes("localhost") ||
-					content.toLowerCase().includes("0.0.0.0"))
+					content.toLowerCase().includes("0.0.0.0")) ||
+					content.toLowerCase().includes("0.0.0.0") ||
+					content.toLowerCase().includes("running on") ||
+					content.toLowerCase().includes("serving at") ||
+					content.toLowerCase().includes("server running")
 			) {
 				const match = content
 					.replace(/\x1b\[[0-9;]*m/g, "")
