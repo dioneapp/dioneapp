@@ -19,6 +19,7 @@ export function setupSocket({
 	socketsRef,
 	setAppFinished,
 	setNotSupported,
+	setIsServerRunning,
 }: SetupSocketProps): Socket {
 	if (socketsRef.current[appId]?.socket) {
 		console.log(`Socket [${appId}] already exists`);
@@ -30,10 +31,13 @@ export function setupSocket({
 	socket.on("connect", () => {
 		console.log(`Socket [${appId}] connected with ID: ${socket.id}`);
 		socket.emit("registerApp", appId);
+		// Don't modify isServerRunning here - let install.tsx handle it
+		console.log(`Socket connected for app ${appId}`);
 	});
 
 	socket.on("disconnect", () => {
 		console.warn(`Socket [${appId}] disconnected`);
+		setIsServerRunning((prev) => ({ ...prev, [appId]: false }));
 		delete socketsRef.current[appId];
 	});
 
@@ -74,7 +78,10 @@ export function setupSocket({
 					content.toLowerCase().includes("http") ||
 					content.toLowerCase().includes("127.0.0.1") ||
 					content.toLowerCase().includes("localhost") ||
-					content.toLowerCase().includes("0.0.0.0"))
+					content.toLowerCase().includes("0.0.0.0") ||
+					content.toLowerCase().includes("running on") ||
+					content.toLowerCase().includes("serving at") ||
+					content.toLowerCase().includes("server running"))
 			) {
 				const match = content
 					.replace(/\x1b\[[0-9;]*m/g, "")
@@ -82,9 +89,11 @@ export function setupSocket({
 						/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i,
 					);
 				if (match) {
-					loadIframe(Number.parseInt(match[1]));
-					setCatchPort(Number.parseInt(match[1]));
+					const detectedPort = Number.parseInt(match[1]);
+					loadIframe(detectedPort);
+					setCatchPort(detectedPort);
 					setIframeAvailable(true);
+					console.log(`Server detected on port ${detectedPort} from logs`);
 				}
 			}
 			if (type === "log") {
@@ -98,6 +107,9 @@ export function setupSocket({
 			}
 			if (type === "status") {
 				setStatusLog({ [appId]: { status: status || "pending", content } });
+
+
+
 				if (content.toLowerCase().includes("actions executed")) {
 					window.electron.ipcRenderer.invoke(
 						"notify",
@@ -111,13 +123,47 @@ export function setupSocket({
 			}
 			if (type === "catch") {
 				stopCheckingRef.current = false;
-				setIframeAvailable(false);
-				// loadIframe(Number.parseInt(content));
-				setCatchPort(Number.parseInt(content));
+				const port = Number.parseInt(content);
+				setCatchPort(port);
+
+
+
+				// Start checking if the port is available
+				let attempts = 0;
+				const maxAttempts = 30; // Try for 30 seconds
+
+				const checkPortAvailability = async () => {
+					attempts++;
+					try {
+						await fetch(`http://localhost:${port}`, {
+							method: 'HEAD',
+							mode: 'no-cors'
+						});
+						// If we get here, the server is responding
+						loadIframe(port);
+						setIframeAvailable(true);
+						console.log(`Port ${port} is now available after ${attempts} attempts`);
+					} catch (error) {
+						// Server not ready yet, try again
+						if (attempts < maxAttempts) {
+							setTimeout(checkPortAvailability, 1000);
+						} else {
+							console.log(`Port ${port} not available after ${maxAttempts} attempts, but continuing...`);
+							// Even if port check fails, still try to load iframe
+							// This handles cases where CORS blocks the check but the server is actually running
+							loadIframe(port);
+							setIframeAvailable(true);
+						}
+					}
+				};
+
+				// Start checking after a short delay to let the server start
+				setTimeout(checkPortAvailability, 3000);
 			}
 
 			if (content === "Script killed successfully" && !errorRef.current) {
 				stopCheckingRef.current = true;
+				setIsServerRunning((prev) => ({ ...prev, [appId]: false }));
 				showToast("success", `${data?.name || "Script"} exited successfully.`);
 			}
 		},

@@ -269,6 +269,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			socketsRef,
 			setAppFinished,
 			setNotSupported,
+			setIsServerRunning,
 		});
 		socketsRef.current[appId] = {
 			socket: newSocket,

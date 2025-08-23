@@ -113,5 +113,8 @@ export interface SetupSocketProps {
 	setNotSupported: React.Dispatch<
 		React.SetStateAction<Record<string, { reasons: string[] }>>
 	>;
+	setIsServerRunning: React.Dispatch<
+		React.SetStateAction<Record<string, boolean>>
+	>;
 	isLocal?: boolean;
 }
