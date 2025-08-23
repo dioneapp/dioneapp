@@ -108,8 +108,6 @@ export function setupSocket({
 			if (type === "status") {
 				setStatusLog({ [appId]: { status: status || "pending", content } });
 
-
-
 				if (content.toLowerCase().includes("actions executed")) {
 					window.electron.ipcRenderer.invoke(
 						"notify",
@@ -126,8 +124,6 @@ export function setupSocket({
 				const port = Number.parseInt(content);
 				setCatchPort(port);
 
-
-
 				// Start checking if the port is available
 				let attempts = 0;
 				const maxAttempts = 30; // Try for 30 seconds
@@ -136,19 +132,23 @@ export function setupSocket({
 					attempts++;
 					try {
 						await fetch(`http://localhost:${port}`, {
-							method: 'HEAD',
-							mode: 'no-cors'
+							method: "HEAD",
+							mode: "no-cors",
 						});
 						// If we get here, the server is responding
 						loadIframe(port);
 						setIframeAvailable(true);
-						console.log(`Port ${port} is now available after ${attempts} attempts`);
+						console.log(
+							`Port ${port} is now available after ${attempts} attempts`,
+						);
 					} catch (error) {
 						// Server not ready yet, try again
 						if (attempts < maxAttempts) {
 							setTimeout(checkPortAvailability, 1000);
 						} else {
-							console.log(`Port ${port} not available after ${maxAttempts} attempts, but continuing...`);
+							console.log(
+								`Port ${port} not available after ${maxAttempts} attempts, but continuing...`,
+							);
 							// Even if port check fails, still try to load iframe
 							// This handles cases where CORS blocks the check but the server is actually running
 							loadIframe(port);
