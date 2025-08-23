@@ -1,9 +1,10 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { BadgeCheck, Download, User, ChevronDown } from "lucide-react";
+import { BadgeCheck, ChevronDown, Download, User } from "lucide-react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import Loading from "./loading-skeleton";
-import React, { useState, useRef, useEffect } from "react";
 
 interface ActionsProps {
 	data: any;
@@ -201,41 +202,43 @@ export default function ActionsComponent({
 									(installed ? (
 										<div className="flex gap-2 justify-end w-full">
 											{startOptions && startOptions.starts.length > 1 ? (
-											<div className="relative" ref={dropdownRef}>
-												<button
-													type="button"
-													onClick={() => setDropdownOpen((v) => !v)}
-													className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-bl-none rounded-lg" : "rounded-full"} focus:outline-none transition-all duration-150 cursor-pointer flex items-center gap-2`}
-												>
-													{t("actions.start")}
-													<ChevronDown size={16} />
-												</button>
-											{dropdownOpen && startOptions && (
-												<div className="absolute left-0 mt-2 p-2 w-44 bg-white border border-white/10 rounded-lg rounded-tl-none shadow-lg z-50 overflow-hidden">
-													{startOptions.starts.map((start, index) => (
-													<div
-														onClick={() => handleStart(start.name)}
-														key={index}
-														className="px-2 text-white-300 hover:bg-neutral-300 rounded cursor-pointer transition-colors"
+												<div className="relative" ref={dropdownRef}>
+													<button
+														type="button"
+														onClick={() => setDropdownOpen((v) => !v)}
+														className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-bl-none rounded-lg" : "rounded-full"} focus:outline-none transition-all duration-150 cursor-pointer flex items-center gap-2`}
 													>
-														<span className="text-xs text-black font-semibold">{start.name}</span>
-													</div>
-													))}
+														{t("actions.start")}
+														<ChevronDown size={16} />
+													</button>
+													{dropdownOpen && startOptions && (
+														<div className="absolute left-0 mt-2 p-2 w-44 bg-white border border-white/10 rounded-lg rounded-tl-none shadow-lg z-50 overflow-hidden">
+															{startOptions.starts.map((start, index) => (
+																<div
+																	onClick={() => handleStart(start.name)}
+																	key={index}
+																	className="px-2 text-white-300 hover:bg-neutral-300 rounded cursor-pointer transition-colors"
+																>
+																	<span className="text-xs text-black font-semibold">
+																		{start.name}
+																	</span>
+																</div>
+															))}
+														</div>
+													)}
+												</div>
+											) : (
+												<div className="relative" ref={dropdownRef}>
+													<button
+														type="button"
+														onClick={() => handleStart()}
+														className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-b-none rounded-lg" : "rounded-full"} focus:outline-none transition-all duration-200 cursor-pointer flex items-center gap-2`}
+													>
+														{t("actions.start")}
+													</button>
 												</div>
 											)}
-											</div>
-											): (
-												<div className="relative" ref={dropdownRef}>
-												<button
-													type="button"
-													onClick={() => handleStart()}
-													className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-b-none rounded-lg" : "rounded-full"} focus:outline-none transition-all duration-200 cursor-pointer flex items-center gap-2`}
-												>
-													{t("actions.start")}
-												</button>
-											</div>
-											)}
-											
+
 											<button
 												type="button"
 												onClick={handleDeleteDeps}

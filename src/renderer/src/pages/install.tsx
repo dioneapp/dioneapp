@@ -858,10 +858,12 @@ export default function Install({
 		async function fetchStartOptions() {
 			if (data) {
 				const port = await getCurrentPort();
-				const res = await fetch(`http://localhost:${port}/scripts/start-options/${encodeURIComponent(data.name)}`);
+				const res = await fetch(
+					`http://localhost:${port}/scripts/start-options/${encodeURIComponent(data.name)}`,
+				);
 				if (res.status === 200) {
 					const options = await res.json();
-					console.log('options', options);
+					console.log("options", options);
 					setStartOptions(options);
 				}
 			}
