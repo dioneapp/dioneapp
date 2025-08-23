@@ -10,12 +10,34 @@ import { getArch, getOS } from "../utils/system";
 const depName = "build_tools";
 const ENVIRONMENT = getAllValues();
 
+// Cache for drive detection to avoid repeated file system calls
+let cachedDrives: string[] | null = null;
+let drivesCacheTime = 0;
+const DRIVES_CACHE_TTL = 60000; // 1 minute cache
+
 // Get all available drive letters on Windows
 function getWindowsDrives(): string[] {
+	const now = Date.now();
+
+	// Return cached result if still valid
+	if (cachedDrives && (now - drivesCacheTime) < DRIVES_CACHE_TTL) {
+		return cachedDrives;
+	}
+
 	const drives: string[] = [];
-	// Check drives A-Z
+	// Check drives A-Z, but prioritize common drives first
+	const priorityDrives = ['C:', 'D:', 'E:', 'F:'];
+	const allDrives = [...priorityDrives];
+
+	// Add remaining drives
 	for (let i = 65; i <= 90; i++) {
 		const drive = String.fromCharCode(i) + ":";
+		if (!priorityDrives.includes(drive)) {
+			allDrives.push(drive);
+		}
+	}
+
+	for (const drive of allDrives) {
 		try {
 			if (fs.existsSync(drive + "\\")) {
 				drives.push(drive);
@@ -24,13 +46,20 @@ function getWindowsDrives(): string[] {
 			// Drive doesn't exist or not accessible
 		}
 	}
+
+	// Cache the result
+	cachedDrives = drives;
+	drivesCacheTime = now;
+
 	return drives;
 }
 
-// Generate VS installation paths for all drives
+// Generate VS installation paths for all drives with priority ordering
 function generateVSPaths(): string[] {
 	const paths: string[] = [];
 	const drives = getWindowsDrives();
+
+	// Prioritize newer versions and more common editions
 	const relativePaths = [
 		"\\Program Files\\Microsoft Visual Studio\\2022\\BuildTools",
 		"\\Program Files\\Microsoft Visual Studio\\2022\\Community",
@@ -50,6 +79,7 @@ function generateVSPaths(): string[] {
 		"\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise",
 	];
 
+	// Generate paths with drive priority (C: first, then others)
 	for (const drive of drives) {
 		for (const relativePath of relativePaths) {
 			paths.push(drive + relativePath);
@@ -60,24 +90,53 @@ function generateVSPaths(): string[] {
 }
 
 function findMSVCVersion(vsPath: string): string | null {
+	// Input validation
+	if (!vsPath || typeof vsPath !== 'string') {
+		logger.warn('Invalid VS path provided to findMSVCVersion');
+		return null;
+	}
+
+	if (!fs.existsSync(vsPath)) {
+		logger.debug(`VS path does not exist: ${vsPath}`);
+		return null;
+	}
+
 	const msvcPath = path.join(vsPath, "VC", "Tools", "MSVC");
 	if (fs.existsSync(msvcPath)) {
-		const versions = fs
-			.readdirSync(msvcPath)
-			.filter(
-				(dir) =>
-					fs.statSync(path.join(msvcPath, dir)).isDirectory() &&
-					/^\d+\.\d+\.\d+/.test(dir),
-			);
-		if (versions.length > 0) {
-			// Return the latest version
-			return versions.sort().reverse()[0];
+		try {
+			const versions = fs
+				.readdirSync(msvcPath)
+				.filter(
+					(dir) =>
+						fs.statSync(path.join(msvcPath, dir)).isDirectory() &&
+						/^\d+\.\d+\.\d+/.test(dir),
+				);
+			if (versions.length > 0) {
+				// Return the latest version
+				return versions.sort().reverse()[0];
+			}
+		} catch (error) {
+			logger.error(`Error reading MSVC versions from ${msvcPath}:`, error);
 		}
 	}
 	return null;
 }
 
+// Cache for VS installation detection
+let cachedVSInstallation: { path: string; msvcVersion: string } | null = null;
+let vsInstallationCacheTime = 0;
+const VS_INSTALLATION_CACHE_TTL = 300000; // 5 minutes cache
+
 function findVSInstallation(): { path: string; msvcVersion: string } | null {
+	const now = Date.now();
+
+	// Return cached result if still valid
+	if (cachedVSInstallation && (now - vsInstallationCacheTime) < VS_INSTALLATION_CACHE_TTL) {
+		return cachedVSInstallation;
+	}
+
+	let result: { path: string; msvcVersion: string } | null = null;
+
 	// First check if VS is in the PATH or environment
 	const vsInstallDir = process.env.VSINSTALLDIR;
 	if (vsInstallDir && fs.existsSync(vsInstallDir)) {
@@ -86,56 +145,194 @@ function findVSInstallation(): { path: string; msvcVersion: string } | null {
 			logger.info(
 				`Found VS installation from environment: ${vsInstallDir} with MSVC ${msvcVersion}`,
 			);
-			return { path: vsInstallDir, msvcVersion };
+			result = { path: vsInstallDir, msvcVersion };
 		}
 	}
 
-	// Check common installation paths on all drives
-	const vsPaths = generateVSPaths();
-	for (const vsPath of vsPaths) {
-		if (fs.existsSync(vsPath)) {
-			const msvcVersion = findMSVCVersion(vsPath);
-			if (msvcVersion) {
-				logger.info(
-					`Found VS installation at: ${vsPath} with MSVC ${msvcVersion}`,
-				);
-				return { path: vsPath, msvcVersion };
-			}
-		}
-	}
-
-	// Try using vswhere to find VS installations (check all drives)
-	const drives = getWindowsDrives();
-	for (const drive of drives) {
-		try {
-			const vswhereExe = path.join(
-				drive,
-				"\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe",
-			);
-			if (fs.existsSync(vswhereExe)) {
-				const output = execSync(
-					`"${vswhereExe}" -latest -property installationPath`,
-					{ encoding: "utf8" },
-				).trim();
-				if (output && fs.existsSync(output)) {
-					const msvcVersion = findMSVCVersion(output);
-					if (msvcVersion) {
-						logger.info(
-							`Found VS installation via vswhere: ${output} with MSVC ${msvcVersion}`,
-						);
-						return { path: output, msvcVersion };
-					}
+	// If not found in environment, check common installation paths
+	if (!result) {
+		const vsPaths = generateVSPaths();
+		for (const vsPath of vsPaths) {
+			if (fs.existsSync(vsPath)) {
+				const msvcVersion = findMSVCVersion(vsPath);
+				if (msvcVersion) {
+					logger.info(
+						`Found VS installation at: ${vsPath} with MSVC ${msvcVersion}`,
+					);
+					result = { path: vsPath, msvcVersion };
+					break; // Early exit on first valid installation
 				}
 			}
-		} catch (error) {
-			// vswhere not found on this drive, continue to next
 		}
 	}
 
-	return null;
+	// If still not found, try using vswhere
+	if (!result) {
+		const drives = getWindowsDrives();
+		for (const drive of drives) {
+			try {
+				const vswhereExe = path.join(
+					drive,
+					"\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vswhere.exe",
+				);
+				if (fs.existsSync(vswhereExe)) {
+					const output = execSync(
+						`"${vswhereExe}" -latest -property installationPath`,
+						{ encoding: "utf8", timeout: 10000 }, // 10 second timeout
+					).trim();
+					if (output && fs.existsSync(output)) {
+						const msvcVersion = findMSVCVersion(output);
+						if (msvcVersion) {
+							logger.info(
+								`Found VS installation via vswhere: ${output} with MSVC ${msvcVersion}`,
+							);
+							result = { path: output, msvcVersion };
+							break; // Early exit on first valid installation
+						}
+					}
+				}
+			} catch (error) {
+				logger.debug(`vswhere check failed on drive ${drive}:`, error);
+			}
+		}
+	}
+
+	// Cache the result (even if null)
+	cachedVSInstallation = result;
+	vsInstallationCacheTime = now;
+
+	return result;
+}
+
+function addWindowsSDKToPath(): void {
+	// Add Windows SDK bin directory for rc.exe
+	// Try to find Windows SDK version on all drives
+	const drives = getWindowsDrives();
+	for (const drive of drives) {
+		const windowsKitsPath = path.join(drive, "\\Program Files (x86)\\Windows Kits\\10");
+		if (fs.existsSync(windowsKitsPath)) {
+			const binPath = path.join(windowsKitsPath, "bin");
+			if (fs.existsSync(binPath)) {
+				try {
+					// Find the SDK version directories
+					const versions = fs.readdirSync(binPath).filter(dir =>
+						fs.statSync(path.join(binPath, dir)).isDirectory() &&
+						/^\d+\.\d+\.\d+\.\d+$/.test(dir)
+					);
+					if (versions.length > 0) {
+						// Use the latest version
+						const latestVersion = versions.sort().reverse()[0];
+						const rcPath = path.join(binPath, latestVersion, "x64");
+						if (fs.existsSync(path.join(rcPath, "rc.exe"))) {
+							logger.info(`Adding Windows SDK bin path for rc.exe: ${rcPath}`);
+							addValue("PATH", rcPath);
+						}
+						// Also add x86 path as fallback
+						const rcPathX86 = path.join(binPath, latestVersion, "x86");
+						if (fs.existsSync(path.join(rcPathX86, "rc.exe"))) {
+							logger.info(`Adding Windows SDK x86 bin path for rc.exe: ${rcPathX86}`);
+							addValue("PATH", rcPathX86);
+						}
+						break; // Found SDK, no need to check other drives
+					}
+				} catch (error) {
+					logger.debug(`Error reading Windows SDK versions from ${binPath}:`, error);
+				}
+			}
+		}
+	}
+}
+
+function setupVCVarsEnvironment(vsPath: string, msvcVersion: string): void {
+	// Run vcvars64.bat to get all environment variables
+	const vcvarsPath = path.join(vsPath, "VC", "Auxiliary", "Build", "vcvars64.bat");
+	if (fs.existsSync(vcvarsPath)) {
+		let tempBatFile: string | null = null;
+		try {
+			// Use a more robust approach to get environment variables
+			// Create temp file in system temp directory instead of VS directory
+			const os = require('os');
+			const tempDir = os.tmpdir();
+			tempBatFile = path.join(tempDir, `dione_vcvars_${Date.now()}_${Math.random().toString(36).substr(2, 9)}.bat`);
+
+			const batContent = `@echo off
+call "${vcvarsPath}" >nul 2>&1
+echo INCLUDE=%INCLUDE%
+echo LIB=%LIB%
+echo LIBPATH=%LIBPATH%
+echo WindowsSdkDir=%WindowsSdkDir%
+echo WindowsSDKVersion=%WindowsSDKVersion%
+echo UCRTVersion=%UCRTVersion%
+echo VCToolsInstallDir=%VCToolsInstallDir%
+echo VCToolsVersion=%VCToolsVersion%
+echo VSINSTALLDIR=%VSINSTALLDIR%
+echo VCToolsRedistDir=%VCToolsRedistDir%`;
+
+			fs.writeFileSync(tempBatFile, batContent);
+
+			const vcvarsOutput = execSync(`"${tempBatFile}"`, {
+				encoding: 'utf8',
+				shell: 'cmd.exe',
+				windowsHide: true,
+				timeout: 30000, // 30 second timeout
+			});
+
+			vcvarsOutput.split(/\r?\n/).forEach((line) => {
+				const m = line.match(/^([^=]+)=(.*)$/);
+				if (m) {
+					const key = m[1];
+					const value = m[2];
+					if (value && value !== `%${key}%`) { // Only set if value exists and is not unresolved
+						logger.info(`Setting environment variable ${key}`);
+						addValue(key, value);
+					}
+				}
+			});
+		} catch (err) {
+			logger.error(`Error setting environment variables from vcvars64.bat:`, err);
+
+			// Fallback: Try to set basic paths manually
+			const includeDir = path.join(vsPath, "VC", "Tools", "MSVC", msvcVersion, "include");
+			const libDir = path.join(vsPath, "VC", "Tools", "MSVC", msvcVersion, "lib", "x64");
+
+			if (fs.existsSync(includeDir)) {
+				logger.info("Setting INCLUDE path manually");
+				addValue("INCLUDE", includeDir);
+			}
+			if (fs.existsSync(libDir)) {
+				logger.info("Setting LIB path manually");
+				addValue("LIB", libDir);
+			}
+		} finally {
+			// Ensure temp file cleanup in all cases
+			if (tempBatFile && fs.existsSync(tempBatFile)) {
+				try {
+					fs.unlinkSync(tempBatFile);
+					logger.debug(`Cleaned up temporary file: ${tempBatFile}`);
+				} catch (cleanupErr) {
+					logger.warn(`Failed to cleanup temporary file ${tempBatFile}:`, cleanupErr);
+				}
+			}
+		}
+	}
 }
 
 function updateEnvironmentForVS(vsPath: string, msvcVersion: string) {
+	// Input validation
+	if (!vsPath || typeof vsPath !== 'string') {
+		throw new Error('Invalid VS path provided to updateEnvironmentForVS');
+	}
+
+	if (!msvcVersion || typeof msvcVersion !== 'string') {
+		throw new Error('Invalid MSVC version provided to updateEnvironmentForVS');
+	}
+
+	if (!fs.existsSync(vsPath)) {
+		throw new Error(`VS installation path does not exist: ${vsPath}`);
+	}
+
+	logger.info(`Updating environment for VS at ${vsPath} with MSVC ${msvcVersion}`);
+
 	// Add MSBuild to PATH
 	const msbuildPath = path.join(vsPath, "MSBuild", "Current", "Bin");
 	if (fs.existsSync(msbuildPath)) {
@@ -177,118 +374,38 @@ function updateEnvironmentForVS(vsPath: string, msvcVersion: string) {
 			addValue("CMAKE_CXX_COMPILER", clPath);
 		}
 	}
-	
-	// Add Windows SDK bin directory for rc.exe
-	// Try to find Windows SDK version
-	const windowsKitsPath = "C:\\Program Files (x86)\\Windows Kits\\10";
-	if (fs.existsSync(windowsKitsPath)) {
-		const binPath = path.join(windowsKitsPath, "bin");
-		if (fs.existsSync(binPath)) {
-			// Find the SDK version directories
-			const versions = fs.readdirSync(binPath).filter(dir => 
-				fs.statSync(path.join(binPath, dir)).isDirectory() && 
-				/^\d+\.\d+\.\d+\.\d+$/.test(dir)
-			);
-			if (versions.length > 0) {
-				// Use the latest version
-				const latestVersion = versions.sort().reverse()[0];
-				const rcPath = path.join(binPath, latestVersion, "x64");
-				if (fs.existsSync(path.join(rcPath, "rc.exe"))) {
-					logger.info(`Adding Windows SDK bin path for rc.exe: ${rcPath}`);
-					addValue("PATH", rcPath);
-				}
-				// Also add x86 path as fallback
-				const rcPathX86 = path.join(binPath, latestVersion, "x86");
-				if (fs.existsSync(path.join(rcPathX86, "rc.exe"))) {
-					logger.info(`Adding Windows SDK x86 bin path for rc.exe: ${rcPathX86}`);
-					addValue("PATH", rcPathX86);
-				}
-			}
-		}
+
+	// Add Windows SDK paths
+	addWindowsSDKToPath();
+
+	// Setup environment variables from vcvars64.bat
+	setupVCVarsEnvironment(vsPath, msvcVersion);
+
+	// Set additional environment variables for Python builds
+	logger.info("Setting Python build environment variables");
+	addValue("DISTUTILS_USE_SDK", "1");
+	addValue("MSSdk", "1");
+
+	// Set VS version for Python
+	if (vsPath.includes("2022")) {
+		addValue("VS170COMNTOOLS", path.join(vsPath, "Common7", "Tools"));
+	} else if (vsPath.includes("2019")) {
+		addValue("VS160COMNTOOLS", path.join(vsPath, "Common7", "Tools"));
 	}
 
-	// Run vcvars64.bat to get all environment variables
-	const vcvarsPath = path.join(vsPath, "VC", "Auxiliary", "Build", "vcvars64.bat");
-	if (fs.existsSync(vcvarsPath)) {
-		try {
-			// Use a more robust approach to get environment variables
-			const tempBatFile = path.join(vsPath, "temp_get_env.bat");
-			const batContent = `@echo off
-call "${vcvarsPath}" >nul 2>&1
-echo INCLUDE=%INCLUDE%
-echo LIB=%LIB%
-echo LIBPATH=%LIBPATH%
-echo WindowsSdkDir=%WindowsSdkDir%
-echo WindowsSDKVersion=%WindowsSDKVersion%
-echo UCRTVersion=%UCRTVersion%
-echo VCToolsInstallDir=%VCToolsInstallDir%
-echo VCToolsVersion=%VCToolsVersion%
-echo VSINSTALLDIR=%VSINSTALLDIR%
-echo VCToolsRedistDir=%VCToolsRedistDir%`;
-			
-			fs.writeFileSync(tempBatFile, batContent);
-			
-			const vcvarsOutput = execSync(`"${tempBatFile}"`, {
-				encoding: 'utf8',
-				shell: 'cmd.exe',
-				windowsHide: true,
-			});
-
-			// Clean up temp file
-			try {
-				fs.unlinkSync(tempBatFile);
-			} catch {
-				// Ignore cleanup errors
-			}
-
-			vcvarsOutput.split(/\r?\n/).forEach((line) => {
-				const m = line.match(/^([^=]+)=(.*)$/);
-				if (m) {
-					const key = m[1];
-					const value = m[2];
-					if (value && value !== `%${key}%`) { // Only set if value exists and is not unresolved
-						logger.info(`Setting environment variable ${key}`);
-						addValue(key, value);
-					}
-				}
-			});
-		} catch (err) {
-			logger.error(`Error setting environment variables from vcvars64.bat:`, err);
-			
-			// Fallback: Try to set basic paths manually
-			const includeDir = path.join(vsPath, "VC", "Tools", "MSVC", msvcVersion, "include");
-			const libDir = path.join(vsPath, "VC", "Tools", "MSVC", msvcVersion, "lib", "x64");
-			
-			if (fs.existsSync(includeDir)) {
-				logger.info("Setting INCLUDE path manually");
-				addValue("INCLUDE", includeDir);
-			}
-			if (fs.existsSync(libDir)) {
-				logger.info("Setting LIB path manually");
-				addValue("LIB", libDir);
-			}
-		}
-		
-		// Set additional environment variables for Python builds
-		logger.info("Setting Python build environment variables");
-		addValue("DISTUTILS_USE_SDK", "1");
-		addValue("MSSdk", "1");
-		
-		// Set VS version for Python
-		if (vsPath.includes("2022")) {
-			addValue("VS170COMNTOOLS", path.join(vsPath, "Common7", "Tools"));
-		} else if (vsPath.includes("2019")) {
-			addValue("VS160COMNTOOLS", path.join(vsPath, "Common7", "Tools"));
-		}
-		
-		// Add VS installation directory
-		addValue("VSINSTALLDIR", vsPath);
-	}
+	// Add VS installation directory
+	addValue("VSINSTALLDIR", vsPath);
 }
 
 export async function isInstalled(
 	binFolder: string,
 ): Promise<{ installed: boolean; reason: string }> {
+	// Input validation
+	if (!binFolder || typeof binFolder !== 'string') {
+		logger.error('Invalid binFolder provided to isInstalled');
+		return { installed: false, reason: 'invalid-input' };
+	}
+
 	const depFolder = path.join(binFolder, depName);
 	const env = getAllValues();
 
@@ -410,25 +527,67 @@ export async function install(
 	id: string,
 	io: Server,
 ): Promise<{ success: boolean }> {
+	// Input validation
+	if (!binFolder || typeof binFolder !== 'string') {
+		logger.error('Invalid binFolder provided to install');
+		io.to(id).emit("installDep", {
+			type: "error",
+			content: "Invalid installation directory provided",
+		});
+		return { success: false };
+	}
+
+	if (!id || typeof id !== 'string') {
+		logger.error('Invalid id provided to install');
+		return { success: false };
+	}
+
 	const depFolder = path.join(binFolder, depName);
 	const tempDir = path.join(binFolder, "temp");
 
 	const platform = getOS(); // window, linux, macos
 	const arch = getArch(); // amd64, arm64, x86
 
-	// First check if already installed system-wide
-	const vsInstall = findVSInstallation();
-	if (vsInstall) {
+	// Only support Windows for build tools
+	if (platform !== 'windows') {
 		io.to(id).emit("installDep", {
-			type: "log",
-			content: `Build tools already installed at ${vsInstall.path}`,
+			type: "error",
+			content: `Build tools installation is only supported on Windows, current platform: ${platform}`,
 		});
-		updateEnvironmentForVS(vsInstall.path, vsInstall.msvcVersion);
-		return { success: true };
+		return { success: false };
 	}
 
-	if (!fs.existsSync(depFolder)) {
-		fs.mkdirSync(depFolder, { recursive: true });
+	// First check if already installed system-wide
+	try {
+		const vsInstall = findVSInstallation();
+		if (vsInstall) {
+			io.to(id).emit("installDep", {
+				type: "log",
+				content: `Build tools already installed at ${vsInstall.path}`,
+			});
+			updateEnvironmentForVS(vsInstall.path, vsInstall.msvcVersion);
+			return { success: true };
+		}
+	} catch (error) {
+		logger.warn('Error checking for existing VS installation:', error);
+		// Continue with installation attempt
+	}
+
+	// Create directories with proper error handling
+	try {
+		if (!fs.existsSync(depFolder)) {
+			fs.mkdirSync(depFolder, { recursive: true });
+		}
+		if (!fs.existsSync(tempDir)) {
+			fs.mkdirSync(tempDir, { recursive: true });
+		}
+	} catch (error) {
+		logger.error('Failed to create directories:', error);
+		io.to(id).emit("installDep", {
+			type: "error",
+			content: `Failed to create installation directories: ${error}`,
+		});
+		return { success: false };
 	}
 
 	const urls: Record<string, Record<string, string>> = {
@@ -440,15 +599,20 @@ export async function install(
 	};
 
 	const url = urls[platform]?.[arch];
-	if (!fs.existsSync(tempDir)) {
-		// if temp dir does not exist, create it
-		fs.mkdirSync(tempDir, { recursive: true });
+	if (!url) {
+		io.to(id).emit("installDep", {
+			type: "error",
+			content: `No download URL found for ${depName} on ${platform} (${arch})`,
+		});
+		return { success: false };
 	}
-	const installerFile = fs.createWriteStream(
-		path.join(tempDir, `build_tools.exe`),
-	);
 
-	if (url) {
+	const installerPath = path.join(tempDir, `build_tools.exe`);
+	let installerFile: fs.WriteStream | null = null;
+
+	try {
+		installerFile = fs.createWriteStream(installerPath);
+
 		// 1. url method: install the dependency using official installer url
 		io.to(id).emit("installDep", {
 			type: "log",
@@ -459,43 +623,61 @@ export async function install(
 			headers: {
 				"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
 			},
+			timeout: 60000, // 60 second timeout
 		};
 
 		await new Promise<void>((resolve, reject) => {
-			https
-				.get(url, options, (response) => {
-					if ([301, 302].includes(response.statusCode ?? 0)) {
-						const redirectUrl = response.headers.location;
-						if (redirectUrl) {
-							https
-								.get(redirectUrl, (redirectResponse) => {
-									redirectResponse.pipe(installerFile);
-									installerFile.on("close", resolve);
-									installerFile.on("error", reject);
-								})
-								.on("error", reject);
-						} else {
-							reject(new Error("Redirect URL not found"));
-						}
-					} else if (response.statusCode === 200) {
-						io.to(id).emit("installDep", {
-							type: "log",
-							content: `${depName} installer downloaded successfully`,
-						});
-						response.pipe(installerFile);
-						installerFile.on("close", resolve);
-						installerFile.on("error", reject);
+			const request = https.get(url, options, (response) => {
+				if ([301, 302].includes(response.statusCode ?? 0)) {
+					const redirectUrl = response.headers.location;
+					if (redirectUrl) {
+						https
+							.get(redirectUrl, (redirectResponse) => {
+								redirectResponse.pipe(installerFile!);
+								installerFile!.on("close", resolve);
+								installerFile!.on("error", reject);
+							})
+							.on("error", reject);
 					} else {
-						reject(new Error(`HTTP ${response.statusCode}`));
+						reject(new Error("Redirect URL not found"));
 					}
-				})
-				.on("error", reject);
+				} else if (response.statusCode === 200) {
+					io.to(id).emit("installDep", {
+						type: "log",
+						content: `${depName} installer downloaded successfully`,
+					});
+					response.pipe(installerFile!);
+					installerFile!.on("close", resolve);
+					installerFile!.on("error", reject);
+				} else {
+					reject(new Error(`HTTP ${response.statusCode}: ${response.statusMessage}`));
+				}
+			});
+
+			request.on("error", reject);
+			request.on("timeout", () => {
+				request.destroy();
+				reject(new Error("Download timeout"));
+			});
 		});
-	} else {
+	} catch (error) {
+		logger.error('Download failed:', error);
 		io.to(id).emit("installDep", {
 			type: "error",
-			content: `No download URL found for ${depName} on ${platform} (${arch})`,
+			content: `Failed to download ${depName}: ${error}`,
 		});
+
+		// Cleanup partial download
+		if (installerFile) {
+			installerFile.destroy();
+		}
+		if (fs.existsSync(installerPath)) {
+			try {
+				fs.unlinkSync(installerPath);
+			} catch (cleanupError) {
+				logger.warn('Failed to cleanup partial download:', cleanupError);
+			}
+		}
 
 		return { success: false };
 	}
