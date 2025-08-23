@@ -27,7 +27,11 @@
 		"build:win": "npm run build && electron-builder --win --publish never",
 		"build:mac": "electron-vite build && electron-builder --mac --publish never",
 		"build:linux": "electron-vite build && electron-builder --linux --publish never",
-		"deploy": "npx auto-changelog --package --commit-limit false --commit-url https://github.com/dioneapp/dioneapp/commits/main/ --sort-commits date-desc --release-summary && npm run build && electron-builder --win --publish always"
+		"deploy": "npx auto-changelog --package --commit-limit false --commit-url https://github.com/dioneapp/dioneapp/commits/main/ --sort-commits date-desc --release-summary && npm run build && electron-builder --win --publish always",
+		"test:drives": "node test-drive-detection.js",
+		"test:build-tools": "node test-build-tools-detection.js",
+		"test:vs-env": "node test-vs-environment.js",
+		"test:integration": "node test-integrated-build-tools.js"
 	},
 	"auto-changelog": {
 		"name": "Dione v${version}",

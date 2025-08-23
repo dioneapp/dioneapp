@@ -246,18 +246,23 @@ export const executeCommand = async (
 
   if (needsBuildTools) {
     logger.info(`Command "${command}" may need build tools - initializing...`);
+    io.to(id).emit(logs, {
+      type: "log",
+      content: `🔧 Command needs build tools: ${command}`,
+    });
+
     const buildToolsReady = await buildTools.initialize();
     if (!buildToolsReady) {
       logger.warn('Build tools initialization failed - command may fail');
       io.to(id).emit(logs, {
         type: "log",
-        content: "WARNING: Build tools not available - native module compilation may fail",
+        content: "❌ WARNING: Build tools not available - native module compilation may fail",
       });
     } else {
       logger.info('Build tools ready for native compilation');
       io.to(id).emit(logs, {
         type: "log",
-        content: "Build tools initialized for native module compilation",
+        content: "✅ Build tools initialized for native module compilation",
       });
     }
   }
@@ -289,6 +294,21 @@ export const executeCommand = async (
     const enhancedEnv = needsBuildTools
       ? buildTools.getEnhancedEnvironment(baseEnv)
       : baseEnv;
+
+    // Debug logging for build tools environment
+    if (needsBuildTools) {
+      const hasVSEnv = enhancedEnv['INCLUDE'] && enhancedEnv['LIB'] && enhancedEnv['DISTUTILS_USE_SDK'];
+      logger.info(`Enhanced environment applied: ${hasVSEnv ? 'YES' : 'NO'}`);
+      if (hasVSEnv) {
+        logger.info(`INCLUDE paths: ${enhancedEnv['INCLUDE']?.split(';').length || 0}`);
+        logger.info(`LIB paths: ${enhancedEnv['LIB']?.split(';').length || 0}`);
+        logger.info(`DISTUTILS_USE_SDK: ${enhancedEnv['DISTUTILS_USE_SDK']}`);
+      }
+      io.to(id).emit(logs, {
+        type: "log",
+        content: `🔧 Enhanced environment: ${hasVSEnv ? '✅ Applied' : '❌ Missing'}`,
+      });
+    }
 
     const spawnOptions = {
       cwd: workingDir,

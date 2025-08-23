@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import logger from './logger';
+import { getEnhancedEnvironment as getBuildToolsEnv, hasVSBuildTools, getVSInfo } from '../scripts/dependencies/files/build_tools';
 
 class BuildToolsManager {
   private static instance: BuildToolsManager;
@@ -107,13 +108,34 @@ echo VCVARS_ENV_END`;
     try {
       logger.info('Initializing build tools environment...');
 
+      // First check if we have VS build tools available using the enhanced detection
+      if (!hasVSBuildTools()) {
+        logger.warn('No Visual Studio installations found - build tools may not work');
+        return false;
+      }
+
+      const vsInfo = getVSInfo();
+      logger.info(`Found VS installations: ${vsInfo.map(i => `${i.version} ${i.edition}`).join(', ')}`);
+
+      // Try to get enhanced environment from build_tools.ts
+      try {
+        const enhancedEnv = getBuildToolsEnv();
+        if (enhancedEnv && enhancedEnv.INCLUDE && enhancedEnv.LIB) {
+          this.vcvarsEnv = enhancedEnv;
+          logger.info('✅ Using enhanced Visual Studio environment from build_tools');
+          this.initialized = true;
+          return true;
+        }
+      } catch (error) {
+        logger.warn('Failed to get enhanced environment, falling back to legacy method');
+      }
+
+      // Fallback to legacy detection
       const installations = this.detectVSInstallations();
       if (installations.length === 0) {
         logger.warn('No Visual Studio installations found - build tools may not work');
         return false;
       }
-
-      logger.info(`Found VS installations: ${installations.map(i => `${i.version} ${i.edition}`).join(', ')}`);
 
       // Use the newest installation
       const latest = installations[0];
@@ -155,18 +177,30 @@ echo VCVARS_ENV_END`;
   getEnhancedEnvironment(baseEnv: Record<string, string> = {}): Record<string, string> {
     if (!this.vcvarsEnv) {
       logger.warn('Build tools not initialized - using base environment');
-      return baseEnv;
+      return {
+        ...baseEnv,
+        // Basic environment optimizations
+        PYTHONUNBUFFERED: '1',
+        NODE_NO_BUFFERING: '1',
+        FORCE_UNBUFFERED_OUTPUT: '1',
+        PYTHONIOENCODING: 'UTF-8',
+        FORCE_COLOR: '1'
+      };
     }
 
+    logger.info('Using Visual Studio enhanced environment for native builds');
     return {
       ...baseEnv,
       ...this.vcvarsEnv,
-      // Ensure these are set for better compatibility
+      // Python build optimizations
       PYTHONUNBUFFERED: '1',
       NODE_NO_BUFFERING: '1',
       FORCE_UNBUFFERED_OUTPUT: '1',
       PYTHONIOENCODING: 'UTF-8',
-      FORCE_COLOR: '1'
+      FORCE_COLOR: '1',
+      // Critical Visual C++ environment variables for Python builds
+      DISTUTILS_USE_SDK: '1',
+      MSSdk: '1'
     };
   }
 
@@ -215,6 +249,7 @@ echo VCVARS_ENV_END`;
   // Check if build tools are needed for a command
   isNativeBuildCommand(command: string): boolean {
     const buildKeywords = [
+      // Node.js package managers
       'npm install',
       'npm i ',
       'yarn install',
@@ -224,15 +259,30 @@ echo VCVARS_ENV_END`;
       'node-gyp',
       'electron-rebuild',
       'prebuild-install',
-      'python setup.py',
+      // Python package managers and tools
       'pip install',
+      'pip3 install',
+      'uv add',
+      'uv pip install',
+      'uv install',
       'conda install',
+      'mamba install',
+      'poetry install',
+      'poetry add',
+      'python setup.py',
+      'python -m pip',
+      'python3 -m pip',
+      // Build tools
       'make',
       'cmake',
       'gcc',
       'g++',
       'cl.exe',
-      'msbuild'
+      'msbuild',
+      'ninja',
+      // Rust
+      'cargo build',
+      'cargo install'
     ];
 
     const lowerCommand = command.toLowerCase();
