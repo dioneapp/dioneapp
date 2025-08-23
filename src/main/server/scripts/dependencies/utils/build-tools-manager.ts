@@ -200,33 +200,6 @@ echo VCVARS_ENV_END`;
       return false;
     }
   }
-
-  // Check if build tools are needed for a command
-  isNativeBuildCommand(command: string): boolean {
-    const buildKeywords = [
-      'npm install',
-      'npm i ',
-      'yarn install',
-      'yarn add',
-      'pnpm install',
-      'pnpm add',
-      'node-gyp',
-      'electron-rebuild',
-      'prebuild-install',
-      'python setup.py',
-      'pip install',
-      'conda install',
-      'make',
-      'cmake',
-      'gcc',
-      'g++',
-      'cl.exe',
-      'msbuild'
-    ];
-
-    const lowerCommand = command.toLowerCase();
-    return buildKeywords.some(keyword => lowerCommand.includes(keyword));
-  }
 }
 
 export default BuildToolsManager;
