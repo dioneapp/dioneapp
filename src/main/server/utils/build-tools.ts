@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import logger from './logger';
+import { readConfig } from '../../config';
 
 class BuildToolsManager {
   private static instance: BuildToolsManager;
@@ -20,36 +21,24 @@ class BuildToolsManager {
   // Detect Visual Studio installations
   private detectVSInstallations() {
     const installations: Array<{
-      version: string;
-      edition: string;
       path: string;
       vcvarsPath: string;
     }> = [];
 
-    const vsVersions = ['2022', '2019'];
-    const editions = ['Enterprise', 'Professional', 'Community', 'BuildTools'];
-
-    for (const version of vsVersions) {
-      for (const edition of editions) {
-        const paths = [
-          `C:\\Program Files\\Microsoft Visual Studio\\${version}\\${edition}`,
-          `C:\\Program Files (x86)\\Microsoft Visual Studio\\${version}\\${edition}`
-        ];
-
-        for (const vsPath of paths) {
-          const vcvarsPath = path.join(vsPath, 'VC', 'Auxiliary', 'Build', 'vcvars64.bat');
-          if (fs.existsSync(vcvarsPath)) {
-            installations.push({
-              version,
-              edition,
-              path: vsPath,
-              vcvarsPath
-            });
-          }
+    const settings = readConfig()
+    const defaultBinFolder = settings ? path.join(settings.defaultBinFolder, "bin") || path.join(process.cwd(), 'bin') : path.join(process.cwd(), 'bin');
+    const vsFolder = path.join(defaultBinFolder, 'build_tools');
+    const vcvarsPath = path.join(vsFolder, 'VC', 'Auxiliary', 'Build', 'vcvars64.bat');
+        if (fs.existsSync(vcvarsPath)) {
+          console.log(`Found VC vars at ${vcvarsPath}`);
+          installations.push({
+            path: vsFolder,
+            vcvarsPath
+          });
         }
-      }
-    }
+  
 
+    console.log(`Found VS installations: ${installations.map(i => i.path).join(', ')}`);
     return installations;
   }
 
@@ -113,11 +102,11 @@ echo VCVARS_ENV_END`;
         return false;
       }
 
-      logger.info(`Found VS installations: ${installations.map(i => `${i.version} ${i.edition}`).join(', ')}`);
+      logger.info(`Found VS installations: ${installations.join(', ')}`);
 
       // Use the newest installation
       const latest = installations[0];
-      logger.info(`Using VS ${latest.version} ${latest.edition}`);
+      logger.info(`Using VS from ${latest.path}`);
 
       // Get vcvars environment
       this.vcvarsEnv = this.getVCVarsEnvironment(latest.vcvarsPath);
@@ -127,7 +116,7 @@ echo VCVARS_ENV_END`;
       }
 
       // Set npm environment variables
-      this.vcvarsEnv.npm_config_msvs_version = latest.version;
+      this.vcvarsEnv.npm_config_msvs_version = '2022';
       this.vcvarsEnv.npm_config_node_gyp = 'node-gyp';
 
       // Try to find Python

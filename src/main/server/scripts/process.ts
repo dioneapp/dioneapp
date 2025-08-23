@@ -229,10 +229,12 @@ export const executeCommand = async (
   io: Server,
   workingDir: string,
   id: string,
+  needsBuildTools?: boolean,
   logsType?: string,
 ): Promise<{ code: number; stdout: string; stderr: string }> => {
   let stdoutData = "";
   let stderrData = "";
+  let enhancedEnv = {};
   const logs = logsType || "installUpdate";
   const ENVIRONMENT = getAllValues();
 
@@ -240,26 +242,37 @@ export const executeCommand = async (
     initDefaultEnv();
   }
 
-  // Initialize build tools if this command might need them
-  const buildTools = BuildToolsManager.getInstance();
-  const needsBuildTools = buildTools.isNativeBuildCommand(command);
+  // command options with enhanced environment for build tools
+  const baseEnv = {
+    ...ENVIRONMENT,
+    PYTHONUNBUFFERED: "1",
+    NODE_NO_BUFFERING: "1",
+    FORCE_UNBUFFERED_OUTPUT: "1",
+    PYTHONIOENCODING: "UTF-8",
+    FORCE_COLOR: "1",
+  };
 
   if (needsBuildTools) {
-    logger.info(`Command "${command}" may need build tools - initializing...`);
+    logger.info(`This script requires build tools. Initializing...`);
+    const buildTools = BuildToolsManager.getInstance();
     const buildToolsReady = await buildTools.initialize();
     if (!buildToolsReady) {
-      logger.warn('Build tools initialization failed - command may fail');
+      logger.warn('Build tools initialization failed. Compilation may fail.');
       io.to(id).emit(logs, {
         type: "log",
-        content: "WARNING: Build tools not available - native module compilation may fail",
+        content: "WARNING: Build tools initialization failed. Compilation may fail.",
       });
+      enhancedEnv = baseEnv;
     } else {
+      enhancedEnv = buildTools.getEnhancedEnvironment(ENVIRONMENT);
       logger.info('Build tools ready for native compilation');
       io.to(id).emit(logs, {
         type: "log",
         content: "Build tools initialized for native module compilation",
       });
     }
+  } else {
+    enhancedEnv = baseEnv;
   }
 
   try {
@@ -274,21 +287,6 @@ export const executeCommand = async (
 
     const isBatFile =
       executable.endsWith(".bat") || executable.endsWith(".cmd");
-
-    // command options with enhanced environment for build tools
-    const baseEnv = {
-      ...ENVIRONMENT,
-      PYTHONUNBUFFERED: "1",
-      NODE_NO_BUFFERING: "1",
-      FORCE_UNBUFFERED_OUTPUT: "1",
-      PYTHONIOENCODING: "UTF-8",
-      FORCE_COLOR: "1",
-    };
-
-    // Get enhanced environment with build tools if needed
-    const enhancedEnv = needsBuildTools
-      ? buildTools.getEnhancedEnvironment(baseEnv)
-      : baseEnv;
 
     const spawnOptions = {
       cwd: workingDir,
@@ -422,6 +420,7 @@ export const executeCommands = async (
   workingDir: string,
   io: Server,
   id: string,
+  needsBuildTools?: boolean,
 ): Promise<{ cancelled: boolean }> => {
   // reset cancellation state for a new command batch
   processWasCancelled = false;
@@ -530,7 +529,7 @@ export const executeCommands = async (
         content: `INFO: Changed working directory to: ${currentWorkingDir}`,
       });
     } else {
-      const response = await executeCommand(command, io, currentWorkingDir, id);
+      const response = await executeCommand(command, io, currentWorkingDir, id, needsBuildTools);
       if (response.code !== 0) {
         if (processWasCancelled) {
           logger.info("Process was manually cancelled");

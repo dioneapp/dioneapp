@@ -20,6 +20,9 @@ export default async function executeInstallation(
   const config = await readConfig(pathname);
   const configDir = path.dirname(pathname);
   const installation = config.installation || [];
+  const dependenciesObj = config.dependencies || {};
+  const dependencies = Object.keys(dependenciesObj);
+  const needsBuildTools = dependencies.includes("build_tools");
 
   io.to(id).emit("installUpdate", {
     type: "log",
@@ -72,7 +75,7 @@ export default async function executeInstallation(
             pythonVersion,
             envType,
           );
-          const resp = await executeCommands(envCommands, configDir, io, id);
+          const resp = await executeCommands(envCommands, configDir, io, id, needsBuildTools);
           if (resp?.cancelled) {
             io.to(id).emit("installUpdate", {
               type: "log",
@@ -83,7 +86,7 @@ export default async function executeInstallation(
           }
         } else {
           // execute commands normally
-          const resp = await executeCommands(commandsArray, configDir, io, id);
+          const resp = await executeCommands(commandsArray, configDir, io, id, needsBuildTools);
           if (resp?.cancelled) {
             io.to(id).emit("installUpdate", {
               type: "log",
@@ -120,6 +123,9 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
   const config = await readConfig(path.join(pathname, "dione.json"));
   const configDir = pathname;
   const start = config.start || [];
+  const dependenciesObj = config.dependencies || {};
+  const dependencies = Object.keys(dependenciesObj);
+  const needsBuildTools = dependencies.includes("build_tools");
 
   io.to(id).emit("installUpdate", {
     type: "log",
@@ -185,10 +191,10 @@ export async function executeStartup(pathname: string, io: Server, id: string) {
             pythonVersion,
             envType,
           );
-          response = await executeCommands(envCommands, configDir, io, id);
+          response = await executeCommands(envCommands, configDir, io, id, needsBuildTools);
         } else {
           // execute commands normally
-          response = await executeCommands(commandsArray, configDir, io, id);
+          response = await executeCommands(commandsArray, configDir, io, id, needsBuildTools);
         }
 
         if (response?.cancelled) {
