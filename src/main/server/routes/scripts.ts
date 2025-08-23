@@ -9,6 +9,7 @@ import { executeStartup } from "../scripts/execute";
 import getAllScripts, { getInstalledScript } from "../scripts/installed";
 import { stopActiveProcess } from "../scripts/process";
 import logger from "../utils/logger";
+import { readDioneConfig } from "../scripts/dependencies/dependencies";
 
 export function createScriptRouter(io: Server) {
 	const router = express.Router();
@@ -100,6 +101,7 @@ export function createScriptRouter(io: Server) {
 	// start a script by name
 	router.get("/start/:name/:id", async (req, res) => {
 		const { name, id } = req.params;
+		const selectedStart = decodeURIComponent(req.query.start as string || "");
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const root = process.cwd();
 		const config = readConfig();
@@ -114,7 +116,7 @@ export function createScriptRouter(io: Server) {
 			content: `Starting script '${sanitizedName}' on '${workingDir}'`,
 		});
 		try {
-			await executeStartup(workingDir, io, id);
+			await executeStartup(workingDir, io, id, selectedStart);
 			res.status(200).send({ message: "Script started successfully" });
 		} catch (error: any) {
 			logger.error(`Error handling start request - Full error:`, error);
@@ -126,5 +128,65 @@ export function createScriptRouter(io: Server) {
 			res.status(500).send("An error occurred while processing your request.");
 		}
 	});
+
+	// get script start options
+	router.get("/start-options/:name", async (req, res) => {
+		const name = decodeURIComponent(req.params.name);
+		const sanitizedName = name.replace(/\s+/g, "-");
+		const root = process.cwd();
+		const config = readConfig();
+		const workingDir = path.join(
+			config?.defaultInstallFolder || root,
+			"apps",
+			sanitizedName,
+		);
+
+		try {
+			// read dione file
+			const dioneFile = path.join(workingDir, "dione.json");
+			const options = await readDioneConfig(dioneFile);
+
+			if (!options.start || !Array.isArray(options.start)) {
+				return res.status(404).json({ error: "No start options found" });
+			}
+
+			// Normalizamos cada start para que siempre tenga steps
+			const starts = options.start.map((s) => {
+				if (s.commands) {
+					// Caso simple: wrap commands en un único step
+					return {
+						name: s.name,
+						catch: s.catch,
+						env: s.env,
+						steps: [
+							{
+								name: "Step 0",
+								commands: s.commands
+							}
+						]
+					};
+				} else if (s.steps) {
+					// Caso multi-step: lo dejamos tal cual
+					return {
+						name: s.name,
+						catch: s.catch,
+						env: s.env,
+						steps: s.steps
+					};
+				}
+				// Si no tiene commands ni steps, lo ignoramos
+				return null;
+			}).filter(Boolean);
+
+			return res.status(200).json({ starts });
+		} catch (error: any) {
+			logger.error(
+				`Unable to obtain start options for "${name}" script: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
+			);
+			res.status(500).send("An error occurred while processing your request.");
+		}
+	});
+
+
 	return router;
 }

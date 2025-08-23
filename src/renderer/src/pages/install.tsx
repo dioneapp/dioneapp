@@ -78,6 +78,9 @@ export default function Install({
 	// auto-install missing dependencies
 	const [installingDeps, setInstallingDeps] = useState<boolean>(false);
 
+	// start options
+	const [startOptions, setStartOptions] = useState<any>(null);
+
 	useEffect(() => {
 		async function autoInstallMissingDependencies() {
 			if (!data?.id || !data?.name) return;
@@ -469,7 +472,7 @@ export default function Install({
 		console.log(result);
 	}
 
-	async function start() {
+	async function start(selectedStart?: string) {
 		const tooMuchApps = activeApps.length >= maxApps;
 		if (tooMuchApps) {
 			showToast(
@@ -496,7 +499,7 @@ export default function Install({
 				`Starting ${data.name}`,
 			);
 			await fetch(
-				`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}`,
+				`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}${selectedStart ? `?start=${encodeURIComponent(selectedStart)}` : ""}`,
 				{
 					method: "GET",
 				},
@@ -673,13 +676,13 @@ export default function Install({
 		await download();
 	};
 
-	const handleStart = async () => {
+	const handleStart = async (selectedStart?: string) => {
 		showToast("default", t("toast.install.starting").replace("%s", data.name));
 		// only switch to logs view if we're not already there
 		if (show[data?.id] !== "logs") {
 			setShow({ [data?.id]: "logs" });
 		}
-		await start();
+		await start(selectedStart);
 	};
 
 	const handleUninstall = async (deleteDeps?: boolean) => {
@@ -851,6 +854,23 @@ export default function Install({
 		}
 	}, []);
 
+	useEffect(() => {
+		async function fetchStartOptions() {
+			if (data) {
+				const port = await getCurrentPort();
+				const res = await fetch(`http://localhost:${port}/scripts/start-options/${encodeURIComponent(data.name)}`);
+				if (res.status === 200) {
+					const options = await res.json();
+					console.log('options', options);
+					setStartOptions(options);
+				}
+			}
+		}
+		if (installed === true) {
+			fetchStartOptions();
+		}
+	}, [installed]);
+
 	return (
 		<>
 			{deleteStatus !== "" && (
@@ -928,6 +948,7 @@ export default function Install({
 									handleStart={handleStart}
 									handleUninstall={handleUninstall}
 									handleDeleteDeps={handleDeleteDeps}
+									startOptions={startOptions}
 									isLocal={isLocal}
 								/>
 							)}

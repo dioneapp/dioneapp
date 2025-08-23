@@ -119,135 +119,153 @@ export default async function executeInstallation(
   }
 }
 
-export async function executeStartup(pathname: string, io: Server, id: string) {
-  const config = await readConfig(path.join(pathname, "dione.json"));
-  const configDir = pathname;
-  const start = config.start || [];
-  const dependenciesObj = config.dependencies || {};
-  const dependencies = Object.keys(dependenciesObj);
-  const needsBuildTools = dependencies.includes("build_tools");
+export async function executeStartup(pathname: string, io: Server, id: string, startName?: string) {
+	const config = await readConfig(path.join(pathname, "dione.json"));
+	const configDir = pathname;
+	const dependenciesObj = config.dependencies || {};
+	const dependencies = Object.keys(dependenciesObj);
+	const needsBuildTools = dependencies.includes("build_tools");
 
-  io.to(id).emit("installUpdate", {
-    type: "log",
-    content: `INFO: Found ${start.length} start steps to execute`,
-  });
-
-  // process start steps sequentially
-  try {
-    let response: { cancelled?: boolean; error?: string } | undefined;
-    for (const step of start) {
+	let selectedStart;
+  if (startName) {
+    selectedStart = config.start?.find((s: any) => s.name === startName);
+    if (!selectedStart) {
       io.to(id).emit("installUpdate", {
         type: "log",
-        content: `INFO: Starting step "${step.name}"`,
+        content: `ERROR: Start option "${startName}" not found`,
       });
-      io.to(id).emit("installUpdate", {
-        type: "status",
-        status: "pending",
-        content: `${step.name}`,
-      });
-
-      if (step.commands && step.commands.length > 0) {
-        const commandsArray: string[] = Array.isArray(step.commands)
-          ? step.commands
-          : [step.commands.toString()];
-
-        if (step.catch) {
-          io.to(id).emit("installUpdate", {
-            type: "catch",
-            content: step.catch,
-          });
-          io.to(id).emit("installUpdate", {
-            type: "log",
-            content: `Watching port ${step.catch}`,
-          });
-        }
-
-        // if exists env property, create virtual environment and execute commands inside it
-        if (step.env) {
-          const envName =
-            typeof step.env === "string" ? step.env : step.env.name;
-          const envType =
-            typeof step.env === "object" && "type" in step.env
-              ? step.env.type
-              : "uv";
-          const pythonVersion =
-            typeof step.env === "object" && "version" in step.env
-              ? step.env.version
-              : "";
-          io.to(id).emit("installUpdate", {
-            type: "log",
-            content: `INFO: Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
-          });
-
-          logger.info(
-            `Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
-          );
-
-          // create virtual environment and execute commands inside it
-          const envCommands = await createVirtualEnvCommands(
-            envName,
-            commandsArray,
-            configDir,
-            pythonVersion,
-            envType,
-          );
-          response = await executeCommands(envCommands, configDir, io, id, needsBuildTools);
-        } else {
-          // execute commands normally
-          response = await executeCommands(commandsArray, configDir, io, id, needsBuildTools);
-        }
-
-        if (response?.cancelled) {
-          io.to(id).emit("installUpdate", {
-            type: "log",
-            content: "INFO: Startup cancelled - stopping remaining steps",
-          });
-          return;
-        }
-
-        if (response?.error) {
-          io.to(id).emit("installUpdate", {
-            type: "log",
-            content: `ERROR: Failed in step "${step.name}": ${response.error}`,
-          });
-          io.to(id).emit("installUpdate", {
-            type: "status",
-            status: "error",
-            content: "Error detected",
-          });
-          throw new Error(response.error);
-        }
-
-        io.to(id).emit("installUpdate", {
-          type: "log",
-          content: `INFO: Completed step "${step.name}"`,
-        });
-        io.to(id).emit("installUpdate", {
-          type: "status",
-          status: "success",
-          content: `${step.name}`,
-        });
-      }
+      return;
     }
-    // emit log to reload frontend after all actions are executed
-    // io.to(id).emit("installUpdate", {
-    // 	type: "status",
-    // 	status: "success",
-    // 	content: "Actions executed",
-    // });
-  } catch (error) {
-    io.to(id).emit("installUpdate", {
-      type: "log",
-      content: `ERROR: Failed in step: ${error}`,
-    });
-    io.to(id).emit("installUpdate", {
-      type: "status",
-      status: "error",
-      content: "Error detected",
-    });
-    throw error;
+  } else {
+    // if not specified, use the default start (first element)
+    selectedStart = config.start && config.start.length > 0 ? config.start[0] : null;
+    if (!selectedStart) {
+      io.to(id).emit("installUpdate", {
+        type: "log",
+        content: "INFO: No start options found",
+      });
+      return;
+    }
   }
+
+	io.to(id).emit("installUpdate", {
+		type: "log",
+		content: `INFO: Executing start: "${selectedStart.name}"`,
+	});
+
+	try {
+		// convert selected start commands to steps
+		const steps = selectedStart.steps
+			? selectedStart.steps
+			: selectedStart.commands
+			? [{ name: selectedStart.name, commands: selectedStart.commands }]
+			: [];
+
+		let response: { cancelled?: boolean; error?: string } | undefined;
+
+		for (const step of steps) {
+			io.to(id).emit("installUpdate", {
+				type: "log",
+				content: `INFO: Starting step ${step.name}`,
+			});
+			io.to(id).emit("installUpdate", {
+				type: "status",
+				status: "pending",
+				content: `${step.name}`,
+			});
+
+			const commandsArray: string[] = Array.isArray(step.commands)
+				? step.commands
+				: [step.commands.toString()];
+
+			if (selectedStart.catch) {
+				io.to(id).emit("installUpdate", {
+					type: "catch",
+					content: selectedStart.catch,
+				});
+				io.to(id).emit("installUpdate", {
+					type: "log",
+					content: `Watching port ${selectedStart.catch}`,
+				});
+			}
+
+			if (selectedStart.env) {
+				const envName =
+					typeof selectedStart.env === "string" ? selectedStart.env : selectedStart.env.name;
+				const envType =
+					typeof selectedStart.env === "object" && "type" in selectedStart.env
+						? selectedStart.env.type
+						: "uv";
+				const pythonVersion =
+					typeof selectedStart.env === "object" && "version" in selectedStart.env
+						? selectedStart.env.version
+						: "";
+
+				io.to(id).emit("installUpdate", {
+					type: "log",
+					content: `INFO: Using virtual environment: ${envName} with ${envType}${
+						pythonVersion ? ` (Python ${pythonVersion})` : ""
+					}`,
+				});
+
+				const envCommands = await createVirtualEnvCommands(
+					envName,
+					commandsArray,
+					configDir,
+					pythonVersion,
+					envType
+				);
+				response = await executeCommands(envCommands, configDir, io, id, needsBuildTools);
+			} else {
+				response = await executeCommands(commandsArray, configDir, io, id, needsBuildTools);
+			}
+
+			if (response?.cancelled) {
+				io.to(id).emit("installUpdate", {
+					type: "log",
+					content: "INFO: Startup cancelled - stopping remaining steps",
+				});
+				return;
+			}
+
+			if (response?.error) {
+				io.to(id).emit("installUpdate", {
+					type: "log",
+					content: `ERROR: Failed in step "${step.name}": ${response.error}`,
+				});
+				io.to(id).emit("installUpdate", {
+					type: "status",
+					status: "error",
+					content: "Error detected",
+				});
+				throw new Error(response.error);
+			}
+
+			io.to(id).emit("installUpdate", {
+				type: "log",
+				content: `INFO: Completed step "${step.name}"`,
+			});
+			io.to(id).emit("installUpdate", {
+				type: "status",
+				status: "success",
+				content: `${step.name}`,
+			});
+		}
+	} catch (error) {
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: `ERROR: Failed in default startup: ${error}`,
+		});
+		io.to(id).emit("installUpdate", {
+			type: "status",
+			status: "error",
+			content: "Error detected",
+		});
+		throw error;
+	}
 }
+
+
 
 // commands to create virtual environment
 async function createVirtualEnvCommands(
