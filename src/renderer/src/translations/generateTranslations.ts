@@ -5,7 +5,9 @@ import { GoogleGenAI } from "@google/genai";
 const apiKey = process.argv[2] || process.env.GEMINI_API_KEY;
 
 if (!apiKey) {
-	console.error("❌ Error: GEMINI_API_KEY not provided. Please pass it as a command line argument or set it as an environment variable.");
+	console.error(
+		"❌ Error: GEMINI_API_KEY not provided. Please pass it as a command line argument or set it as an environment variable.",
+	);
 	console.error("Usage: npm run generate-translations <GEMINI_API_KEY>");
 	process.exit(1);
 }
@@ -32,7 +34,7 @@ const baseContent = fs.readFileSync(baseFilePath, "utf-8");
 async function translateFile(langCode: string, langName: string) {
 	try {
 		console.log(`🔄 Translating to ${langName} (${langCode})...`);
-		
+
 		const response = await ai.models.generateContent({
 			model: "gemini-2.5-flash-lite",
 			contents: [
@@ -55,13 +57,13 @@ ${baseContent}
 		});
 
 		const translatedText = response.text?.trim() || "";
-		
+
 		if (!translatedText) {
 			throw new Error("No translation received from AI");
 		}
 
 		const outputPath = path.join(__dirname, `languages/${langCode}.ts`);
-		
+
 		fs.writeFileSync(outputPath, translatedText, "utf-8");
 
 		console.log(`✅ File generated: ${outputPath}`);
@@ -74,8 +76,10 @@ ${baseContent}
 async function main() {
 	console.log("🚀 Starting translation generation...");
 	console.log(`📁 Base file: ${baseFilePath}`);
-	console.log(`🌍 Languages to translate: ${Object.keys(languages).join(", ")}`);
-	
+	console.log(
+		`🌍 Languages to translate: ${Object.keys(languages).join(", ")}`,
+	);
+
 	const startTime = Date.now();
 	let successCount = 0;
 	let errorCount = 0;
@@ -92,12 +96,12 @@ async function main() {
 
 	const endTime = Date.now();
 	const duration = ((endTime - startTime) / 1000).toFixed(2);
-	
+
 	console.log("\n📊 Translation Summary:");
 	console.log(`✅ Successful: ${successCount}`);
 	console.log(`❌ Failed: ${errorCount}`);
 	console.log(`⏱️ Duration: ${duration}s`);
-	
+
 	if (errorCount > 0) {
 		console.error("\nSome translations failed. Please check the errors above.");
 		process.exit(1);
