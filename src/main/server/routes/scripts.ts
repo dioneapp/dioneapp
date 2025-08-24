@@ -119,7 +119,7 @@ export function createScriptRouter(io: Server) {
 
 		console.log("selected start option:", selectedStart);
 		try {
-			await executeStartup(workingDir, io, id, selectedStart, replaceCommands);
+			await executeStartup(workingDir, io, id, selectedStart !== "" ? selectedStart : undefined, replaceCommands !== "" ? replaceCommands : undefined);
 			res.status(200).send({ message: "Script started successfully" });
 		} catch (error: any) {
 			logger.error(`Error handling start request - Full error:`, error);
@@ -153,11 +153,9 @@ export function createScriptRouter(io: Server) {
 				return res.status(404).json({ error: "No start options found" });
 			}
 
-			// Normalizamos cada start para que siempre tenga steps
 			const starts = options.start
 				.map((s) => {
 					if (s.commands) {
-						// Caso simple: wrap commands en un único step
 						return {
 							name: s.name,
 							catch: s.catch,
@@ -170,7 +168,6 @@ export function createScriptRouter(io: Server) {
 							],
 						};
 					} else if (s.steps) {
-						// Caso multi-step: lo dejamos tal cual
 						return {
 							name: s.name,
 							catch: s.catch,
@@ -178,7 +175,6 @@ export function createScriptRouter(io: Server) {
 							steps: s.steps,
 						};
 					}
-					// Si no tiene commands ni steps, lo ignoramos
 					return null;
 				})
 				.filter(Boolean);

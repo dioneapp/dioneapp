@@ -126,6 +126,10 @@ export default async function executeInstallation(
 			status: "success",
 			content: "Actions executed",
 		});
+		io.to(id).emit("installUpdate", {
+			type: "installFinished",
+			content: "true",
+		});
 	} catch (error) {
 		logger.error(`Failed in step: ${error}`);
 	}
@@ -139,26 +143,26 @@ export async function executeStartup(pathname: string, io: Server, id: string, s
 	const needsBuildTools = dependencies.includes("build_tools");
 
 	let selectedStart;
-  if (startName) {
-    selectedStart = config.start?.find((s: any) => s.name.toLowerCase() === startName.toLowerCase());
-    if (!selectedStart) {
-      io.to(id).emit("installUpdate", {
-        type: "log",
-        content: `ERROR: Start option "${startName}" not found`,
-      });
-      return;
-    }
-  } else {
-    // if not specified, use the default start (first element)
-    selectedStart = config.start && config.start.length > 0 ? config.start[0] : null;
-    if (!selectedStart) {
-      io.to(id).emit("installUpdate", {
-        type: "log",
-        content: "INFO: No start options found",
-      });
-      return;
-    }
-  }
+	if (startName) {
+		selectedStart = config.start?.find((s: any) => s.name.toLowerCase() === startName.toLowerCase());
+		if (!selectedStart) {
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: `ERROR: Start option "${startName}" not found`,
+		});
+		return;
+		}
+	} else {
+		// if not specified, use the default start (first element)
+		selectedStart = config.start && config.start.length > 0 ? config.start[0] : null;
+		if (!selectedStart) {
+			io.to(id).emit("installUpdate", {
+				type: "log",
+				content: "INFO: No start options found",
+			});
+			return;
+		}
+	}
 
 	io.to(id).emit("installUpdate", {
 		type: "log",

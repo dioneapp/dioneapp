@@ -50,6 +50,8 @@ export default function Install({
 		setLocalApps,
 		notSupported,
 		sockets,
+		wasJustInstalled,
+		setWasJustInstalled,
 	} = useScriptsContext();
 
 	const { t } = useTranslation();
@@ -59,7 +61,6 @@ export default function Install({
 	const [_imgLoading, setImgLoading] = useState<boolean>(true);
 	// data stuff
 	const [installed, setInstalled] = useState<boolean>(false);
-	const [wasJustInstalled, setWasJustInstalled] = useState<boolean>(false);
 	// delete
 	const [deleteStatus, setDeleteStatus] = useState<string>("");
 	const [deleteDepsModal, setDeleteDepsModal] = useState<boolean>(false);
@@ -179,46 +180,6 @@ export default function Install({
 
 				// auto-open the app if the setting is enabled and it was just installed
 				// but only if we're not in the middle of installing dependencies
-				if (
-					config?.autoOpenAfterInstall &&
-					wasJustInstalled &&
-					!missingDependencies
-				) {
-					const port = await getCurrentPort();
-					let response: Response;
-					if (isLocal) {
-						response = await fetch(
-							`http://localhost:${port}/local/installed/${encodeURIComponent(data.name)}`,
-							{
-								method: "GET",
-								headers: {
-									"Content-Type": "application/json",
-								},
-							},
-						);
-					} else {
-						response = await fetch(
-							`http://localhost:${port}/scripts/installed/${data.name}`,
-							{
-								method: "GET",
-								headers: {
-									"Content-Type": "application/json",
-								},
-							},
-						);
-					}
-
-					if (response.ok) {
-						const isActuallyInstalled = await response.json();
-						if (isActuallyInstalled) {
-							setTimeout(async () => {
-								setShow({ [data?.id]: "logs" });
-								await start();
-								setWasJustInstalled(false);
-							}, 1000);
-						}
-					}
-				}
 			}
 		}
 		stopApp();
@@ -246,6 +207,54 @@ export default function Install({
 			setWasJustInstalled(false);
 		};
 	}, []);
+
+	useEffect(() => {
+		async function autoStart () {
+			console.log(`setting ${config?.autoOpenAfterInstall}, finished ${wasJustInstalled}, missing deps ${!missingDependencies}`)
+			if (
+				config?.autoOpenAfterInstall &&
+				wasJustInstalled &&
+				!missingDependencies
+			) {
+				const port = await getCurrentPort();
+				let response: Response;
+				if (isLocal) {
+					response = await fetch(
+						`http://localhost:${port}/local/installed/${encodeURIComponent(data.name)}`,
+						{
+							method: "GET",
+							headers: {
+								"Content-Type": "application/json",
+							},
+						},
+					);
+				} else {
+					response = await fetch(
+						`http://localhost:${port}/scripts/installed/${data.name}`,
+						{
+							method: "GET",
+							headers: {
+								"Content-Type": "application/json",
+							},
+						},
+					);
+				}
+
+				if (response.ok) {
+					const isActuallyInstalled = await response.json();
+					if (isActuallyInstalled) {
+						setTimeout(async () => {
+							setShow({ [data?.id]: "logs" });
+							await start();
+							setWasJustInstalled(false);
+						}, 1000);
+					}
+				}
+			}
+		}
+
+		autoStart();
+	}, [wasJustInstalled, installed]);
 
 	// fetch script data
 	useEffect(() => {
