@@ -1,9 +1,10 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { BadgeCheck, Download, User, ChevronDown } from "lucide-react";
+import { BadgeCheck, ChevronDown, Download, User } from "lucide-react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import Loading from "./loading-skeleton";
-import React, { useState, useRef, useEffect } from "react";
 
 interface ActionsProps {
 	data: any;
@@ -230,16 +231,16 @@ export default function ActionsComponent({
 											</div>
 											): (
 												<div className="relative" ref={dropdownRef}>
-												<button
-													type="button"
-													onClick={() => handleStart()}
-													className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-b-none rounded-lg" : "rounded-full"} focus:outline-none transition-all duration-200 cursor-pointer flex items-center gap-2`}
-												>
-													{t("actions.start")}
-												</button>
-											</div>
+													<button
+														type="button"
+														onClick={() => handleStart()}
+														className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-b-none rounded-lg" : "rounded-full"} focus:outline-none transition-all duration-200 cursor-pointer flex items-center gap-2`}
+													>
+														{t("actions.start")}
+													</button>
+												</div>
 											)}
-											
+
 											<button
 												type="button"
 												onClick={handleDeleteDeps}

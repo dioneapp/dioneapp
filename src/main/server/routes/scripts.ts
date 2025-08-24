@@ -4,12 +4,12 @@ import express from "express";
 import type { Server } from "socket.io";
 import { readConfig } from "../../config";
 import { deleteScript } from "../scripts/delete";
+import { readDioneConfig } from "../scripts/dependencies/dependencies";
 import { getScripts } from "../scripts/download";
 import { executeStartup } from "../scripts/execute";
 import getAllScripts, { getInstalledScript } from "../scripts/installed";
 import { stopActiveProcess } from "../scripts/process";
 import logger from "../utils/logger";
-import { readDioneConfig } from "../scripts/dependencies/dependencies";
 
 export function createScriptRouter(io: Server) {
 	const router = express.Router();
@@ -154,32 +154,34 @@ export function createScriptRouter(io: Server) {
 			}
 
 			// Normalizamos cada start para que siempre tenga steps
-			const starts = options.start.map((s) => {
-				if (s.commands) {
-					// Caso simple: wrap commands en un único step
-					return {
-						name: s.name,
-						catch: s.catch,
-						env: s.env,
-						steps: [
-							{
-								name: "Step 0",
-								commands: s.commands
-							}
-						]
-					};
-				} else if (s.steps) {
-					// Caso multi-step: lo dejamos tal cual
-					return {
-						name: s.name,
-						catch: s.catch,
-						env: s.env,
-						steps: s.steps
-					};
-				}
-				// Si no tiene commands ni steps, lo ignoramos
-				return null;
-			}).filter(Boolean);
+			const starts = options.start
+				.map((s) => {
+					if (s.commands) {
+						// Caso simple: wrap commands en un único step
+						return {
+							name: s.name,
+							catch: s.catch,
+							env: s.env,
+							steps: [
+								{
+									name: "Step 0",
+									commands: s.commands,
+								},
+							],
+						};
+					} else if (s.steps) {
+						// Caso multi-step: lo dejamos tal cual
+						return {
+							name: s.name,
+							catch: s.catch,
+							env: s.env,
+							steps: s.steps,
+						};
+					}
+					// Si no tiene commands ni steps, lo ignoramos
+					return null;
+				})
+				.filter(Boolean);
 
 			return res.status(200).json({ starts });
 		} catch (error: any) {
@@ -189,7 +191,6 @@ export function createScriptRouter(io: Server) {
 			res.status(500).send("An error occurred while processing your request.");
 		}
 	});
-
 
 	return router;
 }

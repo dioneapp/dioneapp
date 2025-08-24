@@ -69,16 +69,16 @@ export function setupSocket({
 			}
 			// launch iframe if server is running
 			if (
-				(type === "log" || type === "info") &&
-				(content.toLowerCase().includes("started server") ||
-					content.toLowerCase().includes("http") ||
-					content.toLowerCase().includes("127.0.0.1") ||
-					content.toLowerCase().includes("localhost") ||
-					content.toLowerCase().includes("0.0.0.0")) ||
-					content.toLowerCase().includes("0.0.0.0") ||
-					content.toLowerCase().includes("running on") ||
-					content.toLowerCase().includes("serving at") ||
-					content.toLowerCase().includes("server running")
+				((type === "log" || type === "info") &&
+					(content.toLowerCase().includes("started server") ||
+						content.toLowerCase().includes("http") ||
+						content.toLowerCase().includes("127.0.0.1") ||
+						content.toLowerCase().includes("localhost") ||
+						content.toLowerCase().includes("0.0.0.0"))) ||
+				content.toLowerCase().includes("0.0.0.0") ||
+				content.toLowerCase().includes("running on") ||
+				content.toLowerCase().includes("serving at") ||
+				content.toLowerCase().includes("server running")
 			) {
 				const match = content
 					.replace(/\x1b\[[0-9;]*m/g, "")
