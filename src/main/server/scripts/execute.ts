@@ -119,7 +119,7 @@ export default async function executeInstallation(
   }
 }
 
-export async function executeStartup(pathname: string, io: Server, id: string, startName?: string) {
+export async function executeStartup(pathname: string, io: Server, id: string, startName?: string,  replaceCommands?: Record<string, string>) {
 	const config = await readConfig(path.join(pathname, "dione.json"));
 	const configDir = pathname;
 	const dependenciesObj = config.dependencies || {};
@@ -128,7 +128,7 @@ export async function executeStartup(pathname: string, io: Server, id: string, s
 
 	let selectedStart;
   if (startName) {
-    selectedStart = config.start?.find((s: any) => s.name === startName);
+    selectedStart = config.start?.find((s: any) => s.name.toLowerCase() === startName.toLowerCase());
     if (!selectedStart) {
       io.to(id).emit("installUpdate", {
         type: "log",
@@ -174,9 +174,24 @@ export async function executeStartup(pathname: string, io: Server, id: string, s
 				content: `${step.name}`,
 			});
 
-			const commandsArray: string[] = Array.isArray(step.commands)
-				? step.commands
-				: [step.commands.toString()];
+      const commandsArray: string[] = step.commands.map((cmd: any) => {
+          let commandStr: string;
+
+          if (typeof cmd === "object") {
+            commandStr = cmd.command;
+          } else {
+            commandStr = cmd.toString();
+          }
+          if (replaceCommands && commandStr in replaceCommands) {
+            io.to(id).emit("installUpdate", {
+              type: "log",
+              content: `INFO: Replacing command "${commandStr}" with "${replaceCommands[commandStr]}"`,
+            });
+            return replaceCommands[commandStr];
+          }
+
+          return commandStr;
+      });
 
 			if (selectedStart.catch) {
 				io.to(id).emit("installUpdate", {
@@ -264,8 +279,6 @@ export async function executeStartup(pathname: string, io: Server, id: string, s
 		throw error;
 	}
 }
-
-
 
 // commands to create virtual environment
 async function createVirtualEnvCommands(

@@ -218,7 +218,7 @@ export default function ActionsComponent({
 												className="absolute left-0 mt-2 p-2 w-44 bg-white border border-white/10 rounded rounded-tl-none shadow-lg z-50 overflow-hidden">
 													{startOptions.starts.map((start, index) => (
 													<div
-														onClick={() => handleStart(start.name)}
+														onClick={() => handleStart(start)}
 														key={index}
 														className="px-2 text-white-300 hover:bg-neutral-300 rounded cursor-pointer transition-colors"
 													>

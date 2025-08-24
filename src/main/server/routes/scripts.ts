@@ -99,8 +99,9 @@ export function createScriptRouter(io: Server) {
 		}
 	});
 	// start a script by name
-	router.get("/start/:name/:id", async (req, res) => {
+	router.post("/start/:name/:id", express.json(), async (req, res) => {
 		const { name, id } = req.params;
+		const { replaceCommands } = req.body;
 		const selectedStart = decodeURIComponent(req.query.start as string || "");
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const root = process.cwd();
@@ -115,8 +116,10 @@ export function createScriptRouter(io: Server) {
 			type: "log",
 			content: `Starting script '${sanitizedName}' on '${workingDir}'`,
 		});
+
+		console.log("selected start option:", selectedStart);
 		try {
-			await executeStartup(workingDir, io, id, selectedStart);
+			await executeStartup(workingDir, io, id, selectedStart, replaceCommands);
 			res.status(200).send({ message: "Script started successfully" });
 		} catch (error: any) {
 			logger.error(`Error handling start request - Full error:`, error);
