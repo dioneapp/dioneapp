@@ -205,13 +205,17 @@ export default function ActionsComponent({
 												<button
 													type="button"
 													onClick={() => setDropdownOpen((v) => !v)}
-													className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-bl-none rounded-lg" : "rounded-full"} focus:outline-none transition-all duration-150 cursor-pointer flex items-center gap-2`}
+													className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-full rounded-bl-none" : "rounded-full"} focus:outline-none transition-all duration-150 cursor-pointer flex items-center gap-2`}
 												>
 													{t("actions.start")}
 													<ChevronDown size={16} />
 												</button>
 											{dropdownOpen && startOptions && (
-												<div className="absolute left-0 mt-2 p-2 w-44 bg-white border border-white/10 rounded-lg rounded-tl-none shadow-lg z-50 overflow-hidden">
+												<motion.div 
+												initial={{ opacity: 0, scale: 0.93, y: -10, filter: "blur(10px)" }}
+												animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.2 } }}
+												exit={{ opacity: 0, scale: 0.93, y: -10, filter: "blur(10px)" }}
+												className="absolute left-0 mt-2 p-2 w-44 bg-white border border-white/10 rounded rounded-tl-none shadow-lg z-50 overflow-hidden">
 													{startOptions.starts.map((start, index) => (
 													<div
 														onClick={() => handleStart(start.name)}
@@ -221,7 +225,7 @@ export default function ActionsComponent({
 														<span className="text-xs text-black font-semibold">{start.name}</span>
 													</div>
 													))}
-												</div>
+												</motion.div>
 											)}
 											</div>
 											): (
