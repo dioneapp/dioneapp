@@ -6,6 +6,7 @@ import { useScriptsContext } from "../contexts/ScriptsContext";
 import ScriptCard from "../home/feed/card";
 import Icon from "../icons/icon";
 import Loading from "../install/loading-skeleton";
+import { CarrouselSkeleton } from "../home/explore/featured-carrousel";
 
 export default function Installed() {
 	const { t } = useTranslation();
@@ -65,8 +66,7 @@ export default function Installed() {
 			<h1 className="text-2xl sm:text-3xl font-semibold mb-4">
 				{t("installed.title")}
 			</h1>
-			{apps.length > 0 ? (
-				loading ? (
+			{loading ? (
 					<Loading />
 				) : (
 					<>
@@ -79,11 +79,12 @@ export default function Installed() {
 						</div>
 					</>
 				)
-			) : (
-				<div className="text-center flex flex-col gap-8 justify-center items-center mt-12">
+			}
+			{apps.length === 0 && !loading && (
+				<div className="text-center flex flex-col gap-8 justify-center items-center my-12">
 					<Icon
 						name="DioDead"
-						className="w-24 h-24 opacity-80 hover:opacity-50 transition-opacity duration-1000"
+						className="w-24 h-24 opacity-80 hover:opacity-60 transition-opacity duration-1000"
 					/>
 					<div className="text-center items-center justify-center flex flex-col text-balance">
 						<h3 className="text-neutral-400 text-sm">
