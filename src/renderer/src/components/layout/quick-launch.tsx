@@ -123,7 +123,7 @@ export default function QuickLaunch({
 			>
 				<motion.div
 					className={`
-					border border-white/10 hover:opacity-80 transition-all duration-300 rounded-xl 
+					border border-white/10 hover:border-white/40 rounded-xl 
 					flex items-center justify-center overflow-hidden cursor-pointer
 					${compactMode ? "h-12 w-12" : "h-18 w-18"}
 					${isBeingDragged ? "opacity-30 scale-95" : ""}
