@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
+import { CarrouselSkeleton } from "../home/explore/featured-carrousel";
 import ScriptCard from "../home/feed/card";
 import Icon from "../icons/icon";
 import Loading from "../install/loading-skeleton";
-import { CarrouselSkeleton } from "../home/explore/featured-carrousel";
 
 export default function Installed() {
 	const { t } = useTranslation();
@@ -67,19 +67,18 @@ export default function Installed() {
 				{t("installed.title")}
 			</h1>
 			{loading ? (
-					<Loading />
-				) : (
-					<>
-						<div className="w-full last:mb-4">
-							<div className="grid grid-cols-2 gap-4">
-								{apps.map((script) => (
-									<ScriptCard key={script.id} script={script} />
-								))}
-							</div>
+				<Loading />
+			) : (
+				<>
+					<div className="w-full last:mb-4">
+						<div className="grid grid-cols-2 gap-4">
+							{apps.map((script) => (
+								<ScriptCard key={script.id} script={script} />
+							))}
 						</div>
-					</>
-				)
-			}
+					</div>
+				</>
+			)}
 			{apps.length === 0 && !loading && (
 				<div className="text-center flex flex-col gap-8 justify-center items-center my-12">
 					<Icon

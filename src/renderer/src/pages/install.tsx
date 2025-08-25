@@ -3,6 +3,7 @@ import Buttons from "@renderer/components/install/buttons";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
 import NotSupported from "@renderer/components/install/not-supported";
+import CustomCommandsModal from "@renderer/components/modals/custom-commands";
 import DeleteDepsModal from "@renderer/components/modals/delete-deps";
 import sendEvent from "@renderer/utils/events";
 import { AnimatePresence } from "framer-motion";
@@ -13,7 +14,6 @@ import { useScriptsContext } from "../components/contexts/ScriptsContext";
 import DeleteLoadingModal from "../components/modals/delete-loading";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
-import CustomCommandsModal from "@renderer/components/modals/custom-commands";
 
 export default function Install({
 	id,
@@ -84,7 +84,9 @@ export default function Install({
 	const [startOptions, setStartOptions] = useState<any>(null);
 	const [selectedStart, setSelectedStart] = useState<any>(null);
 	const [openCustomCommands, setOpenCustomCommands] = useState<boolean>(false);
-	const [customizableCommands, setCustomizableCommands] = useState<Record<string, string>>({});
+	const [customizableCommands, setCustomizableCommands] = useState<
+		Record<string, string>
+	>({});
 	const [editedCommand, setEditedCommand] = useState<string | null>(null);
 
 	useEffect(() => {
@@ -209,8 +211,10 @@ export default function Install({
 	}, []);
 
 	useEffect(() => {
-		async function autoStart () {
-			console.log(`setting ${config?.autoOpenAfterInstall}, finished ${wasJustInstalled}, missing deps ${!missingDependencies}`)
+		async function autoStart() {
+			console.log(
+				`setting ${config?.autoOpenAfterInstall}, finished ${wasJustInstalled}, missing deps ${!missingDependencies}`,
+			);
 			if (
 				config?.autoOpenAfterInstall &&
 				wasJustInstalled &&
@@ -486,7 +490,10 @@ export default function Install({
 		console.log(result);
 	}
 
-	async function start(selectedStart?: string, replaceCommands?: Record<string, string>) {
+	async function start(
+		selectedStart?: string,
+		replaceCommands?: Record<string, string>,
+	) {
 		const tooMuchApps = activeApps.length >= maxApps;
 		if (tooMuchApps) {
 			showToast(
@@ -516,7 +523,7 @@ export default function Install({
 				`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}${selectedStart ? `?start=${encodeURIComponent(selectedStart)}` : ""}`,
 				{
 					method: "POST",
-					body: JSON.stringify({ replaceCommands, }),
+					body: JSON.stringify({ replaceCommands }),
 					headers: {
 						"Content-Type": "application/json",
 					},
@@ -695,34 +702,37 @@ export default function Install({
 	};
 
 	const handleStart = async (selectedStartOpt?: any) => {
-	if (selectedStartOpt) {
-		setSelectedStart(selectedStartOpt);
-	
-		const replaceCommands: Record<string, string> = {};
-		console.log('selectedStart', selectedStartOpt);
-		(selectedStartOpt.steps as any[]).forEach(step => {
-			(step.commands as any[]).forEach(cmd => {
-			if (typeof cmd === "object" && cmd.customizable) {
-				replaceCommands[cmd.command] = cmd.command;
-			}
-			});
-		});
+		if (selectedStartOpt) {
+			setSelectedStart(selectedStartOpt);
 
-		if (Object.keys(replaceCommands).length > 0) {
-			console.log("custom commands (old -> new):", replaceCommands);
-			setCustomizableCommands(replaceCommands);
-			setOpenCustomCommands(true);
-		} else {
-			showToast("default", t("toast.install.starting").replace("%s", data.name));
-			if (show[data?.id] !== "logs") {
-				setShow({ [data?.id]: "logs" });
+			const replaceCommands: Record<string, string> = {};
+			console.log("selectedStart", selectedStartOpt);
+			(selectedStartOpt.steps as any[]).forEach((step) => {
+				(step.commands as any[]).forEach((cmd) => {
+					if (typeof cmd === "object" && cmd.customizable) {
+						replaceCommands[cmd.command] = cmd.command;
+					}
+				});
+			});
+
+			if (Object.keys(replaceCommands).length > 0) {
+				console.log("custom commands (old -> new):", replaceCommands);
+				setCustomizableCommands(replaceCommands);
+				setOpenCustomCommands(true);
+			} else {
+				showToast(
+					"default",
+					t("toast.install.starting").replace("%s", data.name),
+				);
+				if (show[data?.id] !== "logs") {
+					setShow({ [data?.id]: "logs" });
+				}
+				setSelectedStart(selectedStartOpt.name);
+				await start(selectedStartOpt.name);
 			}
-			setSelectedStart(selectedStartOpt.name);
-			await start(selectedStartOpt.name);
+		} else {
+			await start();
 		}
-	} else {
-		await start();
-	}
 	};
 
 	const handleUninstall = async (deleteDeps?: boolean) => {
@@ -914,7 +924,7 @@ export default function Install({
 	}, [installed]);
 
 	const handleEditCommand = (oldCommand: string, newValue: string) => {
-		setCustomizableCommands(prev => ({
+		setCustomizableCommands((prev) => ({
 			...prev,
 			[oldCommand]: newValue,
 		}));

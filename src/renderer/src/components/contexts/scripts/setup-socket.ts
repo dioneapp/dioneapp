@@ -127,7 +127,7 @@ export function setupSocket({
 			}
 
 			if (type === "installFinished") {
-				console.log('App finished installation');
+				console.log("App finished installation");
 				setWasJustInstalled(true);
 			}
 		},

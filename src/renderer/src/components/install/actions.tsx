@@ -202,34 +202,53 @@ export default function ActionsComponent({
 									(installed ? (
 										<div className="flex gap-2 justify-end w-full">
 											{startOptions && startOptions.starts.length > 1 ? (
-											<div className="relative" ref={dropdownRef}>
-												<button
-													type="button"
-													onClick={() => setDropdownOpen((v) => !v)}
-													className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-full rounded-bl-none" : "rounded-full"} focus:outline-none transition-all duration-150 cursor-pointer flex items-center gap-2`}
-												>
-													{t("actions.start")}
-													<ChevronDown size={16} />
-												</button>
-											{dropdownOpen && startOptions && (
-												<motion.div 
-												initial={{ opacity: 0, scale: 0.93, y: -10, filter: "blur(10px)" }}
-												animate={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.2 } }}
-												exit={{ opacity: 0, scale: 0.93, y: -10, filter: "blur(10px)" }}
-												className="absolute left-0 mt-2 p-2 w-44 bg-white border border-white/10 rounded rounded-tl-none shadow-lg z-50 overflow-hidden">
-													{startOptions.starts.map((start, index) => (
-													<div
-														onClick={() => handleStart(start)}
-														key={index}
-														className="px-2 text-white-300 hover:bg-neutral-300 rounded cursor-pointer transition-colors"
+												<div className="relative" ref={dropdownRef}>
+													<button
+														type="button"
+														onClick={() => setDropdownOpen((v) => !v)}
+														className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-full rounded-bl-none" : "rounded-full"} focus:outline-none transition-all duration-150 cursor-pointer flex items-center gap-2`}
 													>
-														<span className="text-xs text-black font-semibold">{start.name}</span>
-													</div>
-													))}
-												</motion.div>
-											)}
-											</div>
-											): (
+														{t("actions.start")}
+														<ChevronDown size={16} />
+													</button>
+													{dropdownOpen && startOptions && (
+														<motion.div
+															initial={{
+																opacity: 0,
+																scale: 0.93,
+																y: -10,
+																filter: "blur(10px)",
+															}}
+															animate={{
+																opacity: 1,
+																scale: 1,
+																y: 0,
+																filter: "blur(0px)",
+																transition: { duration: 0.2 },
+															}}
+															exit={{
+																opacity: 0,
+																scale: 0.93,
+																y: -10,
+																filter: "blur(10px)",
+															}}
+															className="absolute left-0 mt-2 p-2 w-44 bg-white border border-white/10 rounded rounded-tl-none shadow-lg z-50 overflow-hidden"
+														>
+															{startOptions.starts.map((start, index) => (
+																<div
+																	onClick={() => handleStart(start)}
+																	key={index}
+																	className="px-2 text-white-300 hover:bg-neutral-300 rounded cursor-pointer transition-colors"
+																>
+																	<span className="text-xs text-black font-semibold">
+																		{start.name}
+																	</span>
+																</div>
+															))}
+														</motion.div>
+													)}
+												</div>
+											) : (
 												<div className="relative" ref={dropdownRef}>
 													<button
 														type="button"
