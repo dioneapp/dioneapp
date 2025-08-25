@@ -135,7 +135,13 @@ export default async function executeInstallation(
 	}
 }
 
-export async function executeStartup(pathname: string, io: Server, id: string, startName?: string,  replaceCommands?: Record<string, string>) {
+export async function executeStartup(
+	pathname: string,
+	io: Server,
+	id: string,
+	startName?: string,
+	replaceCommands?: Record<string, string>,
+) {
 	const config = await readConfig(path.join(pathname, "dione.json"));
 	const configDir = pathname;
 	const dependenciesObj = config.dependencies || {};
@@ -144,17 +150,20 @@ export async function executeStartup(pathname: string, io: Server, id: string, s
 
 	let selectedStart;
 	if (startName) {
-		selectedStart = config.start?.find((s: any) => s.name.toLowerCase() === startName.toLowerCase());
+		selectedStart = config.start?.find(
+			(s: any) => s.name.toLowerCase() === startName.toLowerCase(),
+		);
 		if (!selectedStart) {
-		io.to(id).emit("installUpdate", {
-			type: "log",
-			content: `ERROR: Start option "${startName}" not found`,
-		});
-		return;
+			io.to(id).emit("installUpdate", {
+				type: "log",
+				content: `ERROR: Start option "${startName}" not found`,
+			});
+			return;
 		}
 	} else {
 		// if not specified, use the default start (first element)
-		selectedStart = config.start && config.start.length > 0 ? config.start[0] : null;
+		selectedStart =
+			config.start && config.start.length > 0 ? config.start[0] : null;
 		if (!selectedStart) {
 			io.to(id).emit("installUpdate", {
 				type: "log",
@@ -190,24 +199,24 @@ export async function executeStartup(pathname: string, io: Server, id: string, s
 				content: `${step.name}`,
 			});
 
-      const commandsArray: string[] = step.commands.map((cmd: any) => {
-          let commandStr: string;
+			const commandsArray: string[] = step.commands.map((cmd: any) => {
+				let commandStr: string;
 
-          if (typeof cmd === "object") {
-            commandStr = cmd.command;
-          } else {
-            commandStr = cmd.toString();
-          }
-          if (replaceCommands && commandStr in replaceCommands) {
-            io.to(id).emit("installUpdate", {
-              type: "log",
-              content: `INFO: Replacing command "${commandStr}" with "${replaceCommands[commandStr]}"`,
-            });
-            return replaceCommands[commandStr];
-          }
+				if (typeof cmd === "object") {
+					commandStr = cmd.command;
+				} else {
+					commandStr = cmd.toString();
+				}
+				if (replaceCommands && commandStr in replaceCommands) {
+					io.to(id).emit("installUpdate", {
+						type: "log",
+						content: `INFO: Replacing command "${commandStr}" with "${replaceCommands[commandStr]}"`,
+					});
+					return replaceCommands[commandStr];
+				}
 
-          return commandStr;
-      });
+				return commandStr;
+			});
 
 			if (selectedStart.catch) {
 				io.to(id).emit("installUpdate", {
