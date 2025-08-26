@@ -7,15 +7,15 @@ export const fr = {
 		success: "Succès",
 		pending: "En attente",
 		back: "Retour",
-		unselectAll: "Désélectionner tout",
+		unselectAll: "Tout désélectionner",
 		selectAll: "Tout sélectionner",
 	},
 
 	// authentication and access related
 	noAccess: {
-		title: "Rejoindre la liste blanche Dione",
+		title: "Rejoignez la liste blanche Dione",
 		description:
-			"Dione est en cours de construction et seul un nombre limité d'utilisateurs y a accès. Rejoignez notre liste blanche dès maintenant pour accéder aux futures versions de notre application.",
+			"Dione est en cours de développement et seul un nombre limité d'utilisateurs peut y accéder. Rejoignez notre liste blanche dès maintenant pour accéder aux futures versions de notre application.",
 		join: "Rejoindre",
 		logout: "Déconnexion",
 	},
@@ -26,12 +26,12 @@ export const fr = {
 			title: "Bienvenue sur",
 			subtitle:
 				"Merci de nous rejoindre tôt dans ce voyage. Connectez-vous à votre compte pour commencer.",
-			login: "Connexion",
+			login: "Se connecter",
 			copyLink: "Copier le lien",
 			skipLogin: "Continuer sans connexion",
 		},
 		loggingIn: {
-			title: "Connexion en cours...",
+			title: "Connexion...",
 			authError: "Impossible de s'authentifier ?",
 			goBack: "Retour",
 		},
@@ -45,7 +45,7 @@ export const fr = {
 		},
 		clipboard: {
 			success:
-				"Copié dans le presse-papiers avec succès, collez-le maintenant dans votre navigateur !",
+				"Copié dans le presse-papiers correctement, collez-le maintenant dans votre navigateur !",
 		},
 		selectPath: {
 			title: "Sélectionnez le chemin d'installation",
@@ -75,15 +75,15 @@ export const fr = {
 		stats: {
 			timeSpent: {
 				title: "Temps passé",
-				subtitle: "au cours des 7 derniers jours",
+				subtitle: "les 7 derniers jours",
 			},
 			sessions: {
 				title: "Sessions",
-				subtitle: "au cours des 7 derniers jours",
+				subtitle: "les 7 derniers jours",
 			},
 			shared: {
-				title: "Partagé",
-				subtitle: "au cours des 7 derniers jours",
+				title: "Partagés",
+				subtitle: "les 7 derniers jours",
 			},
 			streak: {
 				title: "Série",
@@ -98,9 +98,9 @@ export const fr = {
 		close: "Fermer",
 		install: {
 			downloading: "Téléchargement de %s...",
-			starting: "Démarrage de %s...",
+			starting: "Lancement de %s...",
 			uninstalling: "Désinstallation de %s...",
-			reconnecting: "Reconnexion de %s...",
+			reconnecting: "Reconnexion à %s...",
 			retrying: "Tentative de réinstallation de %s...",
 			success: {
 				stopped: "%s arrêté avec succès.",
@@ -111,12 +111,12 @@ export const fr = {
 			},
 			error: {
 				download: "Erreur lors de l'initiation du téléchargement : %s",
-				start: "Erreur lors du démarrage de %s : %s",
+				start: "Erreur lors du lancement de %s : %s",
 				stop: "Erreur lors de l'arrêt de %s : %s",
 				uninstall: "Erreur lors de la désinstallation de %s : %s",
 				serverRunning: "Le serveur est déjà en cours d'exécution.",
 				tooManyApps:
-					"Ralentissez ! Vous avez déjà 6 applications en cours d'exécution en même temps.",
+					"Ralentissez ! Vous avez déjà 6 applications en cours d'exécution simultanément.",
 			},
 		},
 	},
@@ -138,8 +138,7 @@ export const fr = {
 			title: "Mise à jour disponible",
 			description:
 				"Une nouvelle version de Dione est disponible, veuillez redémarrer l'application pour mettre à jour.",
-			tooltip:
-				"Nouvelle mise à jour disponible, veuillez redémarrer Dione pour mettre à jour.",
+			tooltip: "Nouvelle mise à jour disponible, veuillez redémarrer Dione pour mettre à jour.",
 		},
 		tooltips: {
 			library: "Bibliothèque",
@@ -166,24 +165,23 @@ export const fr = {
 					"Choisissez où les nouvelles applications seront installées par défaut",
 			},
 			binDirectory: {
-				label: "Répertoire Bin",
+				label: "Répertoire des binaires",
 				description:
-					"Choisissez où les binaires des applications seront stockés pour un accès facile",
+					"Choisissez où les binaires de l'application seront stockés pour un accès facile",
 			},
 			cleanUninstall: {
 				label: "Désinstallation propre",
 				description:
-					"Supprimer toutes les dépendances liées lors de la désinstallation des applications",
+					"Supprimez toutes les dépendances associées lors de la désinstallation des applications",
 			},
 			autoOpenAfterInstall: {
 				label: "Ouvrir automatiquement après l'installation",
 				description:
-					"Ouvrir automatiquement les applications pour la première fois après l'installation",
+					"Ouvre automatiquement les applications pour la première fois après l'installation",
 			},
 			deleteCache: {
 				label: "Supprimer le cache",
-				description:
-					"Supprimer toutes les données mises en cache des applications",
+				description: "Supprime toutes les données mises en cache des applications",
 				button: "Supprimer le cache",
 				deleting: "Suppression...",
 				deleted: "Supprimé",
@@ -196,37 +194,33 @@ export const fr = {
 				label: "Langue d'affichage",
 				description: "Choisissez votre langue d'interface préférée",
 			},
-			helpTranslate:
-				"🤔 Vous ne voyez pas votre langue ? Aidez-nous à en ajouter plus !",
+			helpTranslate: "🤔 Vous ne voyez pas votre langue ? Aidez-nous à en ajouter plus !",
 			compactView: {
 				label: "Vue compacte",
 				description:
-					"Utilisez une disposition plus condensée pour afficher plus de contenu à l'écran",
+					"Utilisez une mise en page plus condensée pour afficher plus de contenu à l'écran",
 			},
 		},
 		notifications: {
 			title: "Notifications",
 			systemNotifications: {
 				label: "Notifications système",
-				description:
-					"Afficher des notifications de bureau pour les événements importants",
+				description: "Affiche des notifications de bureau pour les événements importants",
 			},
 			installationAlerts: {
 				label: "Alertes d'installation",
-				description:
-					"Soyez informé lorsque les installations d'applications sont terminées",
+				description: "Soyez informé lorsque les installations d'applications sont terminées",
 			},
 			discordRPC: {
-				label: "Présence enrichie Discord",
-				description: "Affichez votre activité actuelle dans le statut Discord",
+				label: "Présence riche Discord",
+				description: "Affiche votre activité actuelle dans votre statut Discord",
 			},
 		},
 		privacy: {
 			title: "Confidentialité",
 			errorReporting: {
 				label: "Rapport d'erreurs",
-				description:
-					"Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes",
+				description: "Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes",
 			},
 		},
 		other: {
@@ -234,27 +228,27 @@ export const fr = {
 			disableAutoUpdate: {
 				label: "Désactiver les mises à jour automatiques",
 				description:
-					"Désactive les mises à jour automatiques. Prudence : votre application peut ne pas recevoir des corrections importantes ou des correctifs de sécurité. Cette option n'est pas recommandée pour la plupart des utilisateurs.",
+					"Désactive les mises à jour automatiques. Attention : votre application peut manquer des corrections importantes ou des correctifs de sécurité. Cette option n'est pas recommandée pour la plupart des utilisateurs.",
 			},
 			logsDirectory: {
 				label: "Répertoire des logs",
-				description: "Emplacement où sont stockés les logs des applications",
+				description: "Emplacement où sont stockés les logs de l'application",
 			},
 			submitFeedback: {
-				label: "Envoyer des commentaires",
-				description: "Signaler tout problème ou difficulté que vous rencontrez",
-				button: "Envoyer un rapport",
+				label: "Soumettre des commentaires",
+				description: "Signalez tout problème ou difficulté que vous rencontrez",
+				button: "Envoyer le rapport",
 			},
 			showOnboarding: {
-				label: "Afficher l'intégration",
+				label: "Afficher l'accueil",
 				description:
-					"Réinitialiser Dione à son état initial et afficher à nouveau l'intégration pour reconfiguration",
+					"Réinitialise Dione à son état initial et affiche à nouveau l'accueil pour une reconfiguration",
 				button: "Réinitialiser",
 			},
 			variables: {
 				label: "Variables",
-				description: "Gérer les variables des applications et leurs valeurs",
-				button: "Ouvrir les variables",
+				description: "Gérer les variables de l'application et leurs valeurs",
+				button: "Ouvrir les Variables",
 			},
 		},
 	},
@@ -265,16 +259,15 @@ export const fr = {
 		description:
 			"Veuillez fournir des détails sur ce qui s'est passé et ce que vous essayiez de faire.",
 		placeholder:
-			"Exemple : J'essayais d'installer une application lorsque cette erreur s'est produite...",
+			"Exemple : J'essayais d'installer une application quand cette erreur s'est produite...",
 		systemInformationTitle: "Informations système",
 		disclaimer:
-			"Les informations système suivantes et un identifiant anonyme seront inclus avec votre rapport.",
+			"Les informations système suivantes et un identifiant anonyme seront inclus dans votre rapport.",
 		success: "Rapport envoyé avec succès !",
 		error: "Échec de l'envoi du rapport. Veuillez réessayer.",
 		send: "Envoyer le rapport",
 		sending: "Envoi...",
-		contribute:
-			"Aidez-nous à rendre ce script compatible avec tous les appareils",
+		contribute: "Aidez-nous à rendre ce script compatible avec tous les appareils",
 	},
 
 	// quick launch component
@@ -285,9 +278,8 @@ export const fr = {
 			noMoreApps: "Aucune application disponible à ajouter",
 		},
 		selectApp: {
-			title: "Sélectionner une application",
-			description:
-				"{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
+			title: "Sélectionnez une application",
+			description: "{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
 		},
 	},
 
@@ -323,12 +315,11 @@ export const fr = {
 			seconds: "secondes...",
 		},
 		error: {
-			title: "Une erreur inattendue",
-			subtitle: "erreur",
+			title: "Une erreur",
+			subtitle: "inattendue",
 			hasOccurred: "s'est produite",
 			deps: "Dione n'a pas pu supprimer de dépendance, veuillez le faire manuellement.",
-			general:
-				"Veuillez réessayer plus tard ou consulter les logs pour plus d'informations.",
+			general: "Veuillez réessayer plus tard ou consulter les logs pour plus d'informations.",
 		},
 		loading: {
 			title: "Chargement...",
@@ -378,7 +369,7 @@ export const fr = {
 	promo: {
 		title: "Vous voulez être présenté ici ?",
 		description: "Présentez votre outil à notre communauté",
-		button: "Être présenté",
+		button: "Être mis en avant",
 	},
 
 	// installed component
@@ -393,21 +384,20 @@ export const fr = {
 	// local component
 	local: {
 		title: "Scripts locaux",
-		upload: "Téléverser un script",
+		upload: "Télécharger un script",
 		noScripts: "Aucun script trouvé",
 		deleting: "Suppression du script, veuillez patienter...",
 		uploadModal: {
-			title: "Téléverser un script",
+			title: "Télécharger un script",
 			selectFile: "Cliquez pour sélectionner un fichier",
 			selectedFile: "Fichier sélectionné",
 			scriptName: "Nom du script",
-			scriptDescription: "Description du script (optionnel)",
-			uploadFile: "Téléverser le fichier",
+			scriptDescription: "Description du script (facultatif)",
+			uploadFile: "Télécharger le fichier",
 			uploading: "Téléchargement...",
 			errors: {
-				uploadFailed: "Échec du téléversement du script. Veuillez réessayer.",
-				uploadError:
-					"Une erreur s'est produite lors du téléversement du script.",
+				uploadFailed: "Échec du téléchargement du script. Veuillez réessayer.",
+				uploadError: "Une erreur s'est produite lors du téléchargement du script.",
 			},
 		},
 	},
@@ -418,8 +408,7 @@ export const fr = {
 		errors: {
 			notArray: "Les données récupérées ne sont pas un tableau",
 			fetchFailed: "Échec de la récupération des scripts",
-			notSupported:
-				"Malheureusement, %s n'est pas pris en charge sur votre %s.",
+			notSupported: "Malheureusement %s n'est pas pris en charge sur votre %s.",
 			notSupportedTitle: "Votre appareil peut être incompatible.",
 		},
 	},

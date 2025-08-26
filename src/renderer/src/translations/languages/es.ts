@@ -7,15 +7,15 @@ export const es = {
 		success: "Éxito",
 		pending: "Pendiente",
 		back: "Atrás",
-		unselectAll: "Desseleccionar todo",
+		unselectAll: "Deseleccionar todo",
 		selectAll: "Seleccionar todo",
 	},
 
 	// authentication and access related
 	noAccess: {
-		title: "Únete a la lista anticipada de Dione",
+		title: "Únete a la lista blanca de Dione",
 		description:
-			"Dione está en construcción y solo una cantidad limitada de usuarios puede acceder a ella. Únete a nuestra lista blanca ahora para obtener acceso a futuras versiones de nuestra aplicación.",
+			"Dione está en construcción y solo una cantidad limitada de usuarios puede acceder a él, únete a nuestra lista blanca ahora para obtener acceso a futuras versiones de nuestra aplicación.",
 		join: "Unirse",
 		logout: "Cerrar sesión",
 	},
@@ -25,14 +25,14 @@ export const es = {
 		welcome: {
 			title: "Bienvenido a",
 			subtitle:
-				"Gracias por unirte temprano en este viaje. Inicia sesión en tu cuenta para empezar.",
+				"Gracias por acompañarnos desde el principio en este viaje. Inicia sesión en tu cuenta para comenzar.",
 			login: "Iniciar sesión",
 			copyLink: "Copiar enlace",
 			skipLogin: "Continuar sin iniciar sesión",
 		},
 		loggingIn: {
 			title: "Iniciando sesión...",
-			authError: "¿Error de autenticación?",
+			authError: "¿No se pudo autenticar?",
 			goBack: "Volver",
 		},
 		languageSelector: {
@@ -48,7 +48,7 @@ export const es = {
 				"¡Copiado al portapapeles correctamente, ahora pégalo en tu navegador!",
 		},
 		selectPath: {
-			title: "Seleccionar ruta de instalación",
+			title: "Selecciona la ruta de instalación",
 			button: "Seleccionar una ruta",
 			success: "Siguiente",
 		},
@@ -74,7 +74,7 @@ export const es = {
 		logout: "Cerrar sesión",
 		stats: {
 			timeSpent: {
-				title: "Tiempo dedicado",
+				title: "Tiempo invertido",
 				subtitle: "en los últimos 7 días",
 			},
 			sessions: {
@@ -103,8 +103,8 @@ export const es = {
 			reconnecting: "Reconectando %s...",
 			retrying: "Intentando instalar %s de nuevo...",
 			success: {
-				stopped: "%s detenido exitosamente.",
-				uninstalled: "%s desinstalado exitosamente.",
+				stopped: "%s detenido con éxito.",
+				uninstalled: "%s desinstalado con éxito.",
 				logsCopied: "Registros copiados al portapapeles con éxito.",
 				depsInstalled: "Dependencias instaladas con éxito.",
 				shared: "¡Enlace de descarga copiado al portapapeles!",
@@ -114,9 +114,9 @@ export const es = {
 				start: "Error al iniciar %s: %s",
 				stop: "Error al detener %s: %s",
 				uninstall: "Error al desinstalar %s: %s",
-				serverRunning: "El servidor ya está en ejecución.",
+				serverRunning: "El servidor ya se está ejecutando.",
 				tooManyApps:
-					"¡Baja el ritmo! Ya tienes 6 aplicaciones ejecutándose al mismo tiempo.",
+					"¡Calma! Ya tienes 6 aplicaciones en ejecución al mismo tiempo.",
 			},
 		},
 	},
@@ -132,14 +132,13 @@ export const es = {
 
 	// sidebar component
 	sidebar: {
-		tagline: "Explora, Instala, Innova — en 1 Clic.",
-		activeApps: "Aplicaciones activas",
+		tagline: "Explora, Instala, Innova — en 1 clic.",
+		activeApps: "Aplicaciones Activas",
 		update: {
 			title: "Actualización disponible",
 			description:
 				"Hay una nueva versión de Dione disponible, reinicia la aplicación para actualizar.",
-			tooltip:
-				"Nueva actualización disponible, reinicia Dione para actualizar.",
+			tooltip: "Nueva actualización disponible, reinicia Dione para actualizar.",
 		},
 		tooltips: {
 			library: "Biblioteca",
@@ -152,7 +151,7 @@ export const es = {
 
 	// home page
 	home: {
-		featured: "Destacados",
+		featured: "Destacado",
 		explore: "Explorar",
 	},
 
@@ -161,29 +160,29 @@ export const es = {
 		applications: {
 			title: "Aplicaciones",
 			installationDirectory: {
-				label: "Directorio de instalación",
+				label: "Directorio de Instalación",
 				description:
 					"Elige dónde se instalarán las nuevas aplicaciones por defecto",
 			},
 			binDirectory: {
-				label: "Directorio de binarios",
+				label: "Directorio de Binarios",
 				description:
 					"Elige dónde se almacenarán los binarios de la aplicación para un fácil acceso",
 			},
 			cleanUninstall: {
-				label: "Desinstalación limpia",
+				label: "Desinstalación Limpia",
 				description:
 					"Elimina todas las dependencias relacionadas al desinstalar aplicaciones",
 			},
 			autoOpenAfterInstall: {
-				label: "Abrir automáticamente después de instalar",
+				label: "Abrir Automáticamente Después de Instalar",
 				description:
 					"Abre automáticamente las aplicaciones por primera vez después de la instalación",
 			},
 			deleteCache: {
-				label: "Borrar caché",
+				label: "Borrar Caché",
 				description: "Elimina todos los datos cacheados de las aplicaciones",
-				button: "Borrar caché",
+				button: "Borrar Caché",
 				deleting: "Borrando...",
 				deleted: "Borrado",
 				error: "Error",
@@ -192,62 +191,58 @@ export const es = {
 		interface: {
 			title: "Interfaz",
 			displayLanguage: {
-				label: "Idioma de visualización",
+				label: "Idioma de Interfaz",
 				description: "Elige tu idioma de interfaz preferido",
 			},
-			helpTranslate: "🤔 ¿No ves tu idioma? ¡Ayúdanos a agregar más!",
+			helpTranslate: "🤔 ¿No ves tu idioma? ¡Ayúdanos a añadir más!",
 			compactView: {
-				label: "Vista compacta",
+				label: "Vista Compacta",
 				description:
-					"Usa un diseño más condensado para ajustar más contenido en la pantalla",
+					"Utiliza un diseño más condensado para que quepa más contenido en la pantalla",
 			},
 		},
 		notifications: {
 			title: "Notificaciones",
 			systemNotifications: {
-				label: "Notificaciones del sistema",
-				description:
-					"Muestra notificaciones de escritorio para eventos importantes",
+				label: "Notificaciones del Sistema",
+				description: "Muestra notificaciones de escritorio para eventos importantes",
 			},
 			installationAlerts: {
-				label: "Alertas de instalación",
-				description:
-					"Recibe notificaciones cuando las instalaciones de aplicaciones se completen",
+				label: "Alertas de Instalación",
+				description: "Recibe notificaciones cuando las instalaciones de aplicaciones se completen",
 			},
 			discordRPC: {
-				label: "Presencia enriquecida de Discord",
+				label: "Presencia Rica de Discord",
 				description: "Muestra tu actividad actual en el estado de Discord",
 			},
 		},
 		privacy: {
 			title: "Privacidad",
 			errorReporting: {
-				label: "Informe de errores",
-				description:
-					"Ayuda a mejorar Dione enviando informes de errores anónimos",
+				label: "Informes de Errores",
+				description: "Ayuda a mejorar Dione enviando informes de errores anónimos",
 			},
 		},
 		other: {
-			title: "Otro",
+			title: "Otros",
 			disableAutoUpdate: {
-				label: "Desactivar actualizaciones automáticas",
+				label: "Deshabilitar actualizaciones automáticas",
 				description:
-					"Desactiva las actualizaciones automáticas. Precaución: su aplicación puede perder correcciones importantes o parches de seguridad. Esta opción no se recomienda para la mayoría de los usuarios.",
+					"Deshabilita las actualizaciones automáticas. Precaución: tu aplicación puede perder correcciones importantes o parches de seguridad. Esta opción no se recomienda para la mayoría de los usuarios.",
 			},
 			logsDirectory: {
-				label: "Directorio de registros",
-				description:
-					"Ubicación donde se almacenan los registros de la aplicación",
+				label: "Directorio de Registros",
+				description: "Ubicación donde se almacenan los registros de la aplicación",
 			},
 			submitFeedback: {
-				label: "Enviar comentarios",
-				description: "Reporta cualquier problema o dificultad que encuentres",
-				button: "Enviar informe",
+				label: "Enviar Comentarios",
+				description: "Informa cualquier problema o dificultad que encuentres",
+				button: "Enviar Informe",
 			},
 			showOnboarding: {
-				label: "Mostrar tutorial",
+				label: "Mostrar Guía de Inicio",
 				description:
-					"Restablece Dione a su estado inicial y vuelve a mostrar el tutorial para reconfigurarlo",
+					"Restablece Dione a su estado inicial y muestra nuevamente la guía de inicio para la reconfiguración",
 				button: "Restablecer",
 			},
 			variables: {
@@ -260,33 +255,31 @@ export const es = {
 
 	// report form
 	report: {
-		title: "Describe el problema",
+		title: "Describe el Problema",
 		description:
 			"Por favor, proporciona detalles sobre lo que sucedió y lo que estabas intentando hacer.",
 		placeholder:
 			"Ejemplo: Estaba intentando instalar una aplicación cuando ocurrió este error...",
-		systemInformationTitle: "Información del sistema",
+		systemInformationTitle: "Información del Sistema",
 		disclaimer:
 			"La siguiente información del sistema y un ID anónimo se incluirán con tu informe.",
 		success: "¡Informe enviado con éxito!",
-		error: "Error al enviar el informe. Por favor, inténtalo de nuevo.",
+		error: "No se pudo enviar el informe. Por favor, inténtalo de nuevo.",
 		send: "Enviar Informe",
 		sending: "Enviando...",
-		contribute:
-			"Ayúdanos a hacer que este script sea compatible con todos los dispositivos",
+		contribute: "Ayúdanos a hacer que este script sea compatible con todos los dispositivos",
 	},
 
 	// quick launch component
 	quickLaunch: {
-		title: "Lanzamiento rápido",
-		addApp: "Añadir aplicación",
+		title: "Lanzamiento Rápido",
+		addApp: "Añadir App",
 		tooltips: {
 			noMoreApps: "No hay aplicaciones disponibles para añadir",
 		},
 		selectApp: {
-			title: "Seleccionar una aplicación",
-			description:
-				"{count} aplicaciones disponibles. Puedes elegir hasta {max}.",
+			title: "Seleccionar una Aplicación",
+			description: "{count} aplicaciones están disponibles. Puedes elegir hasta {max}.",
 		},
 	},
 
@@ -318,20 +311,19 @@ export const es = {
 		success: {
 			title: "Desinstalado",
 			subtitle: "con éxito",
-			closing: "Cerrando este modal en",
+			closing: "Cerrando esta ventana en",
 			seconds: "segundos...",
 		},
 		error: {
-			title: "Un error inesperado",
+			title: "Un inesperado",
 			subtitle: "error",
 			hasOccurred: "ha ocurrido",
 			deps: "Dione no ha podido eliminar ninguna dependencia, por favor hazlo manualmente.",
-			general:
-				"Por favor, inténtalo más tarde o revisa los registros para más información.",
+			general: "Por favor, inténtalo de nuevo más tarde o revisa los registros para más información.",
 		},
 		loading: {
 			title: "Cargando...",
-			wait: "Por favor, espera...",
+			wait: "Por favor espera...",
 		},
 	},
 
@@ -339,7 +331,7 @@ export const es = {
 	logs: {
 		loading: "Cargando...",
 		disclaimer:
-			"Los registros mostrados son de la aplicación en sí. Si ves un error, por favor repórtalo primero a los desarrolladores de la aplicación original.",
+			"Los registros mostrados son de la propia aplicación. Si ves un error, por favor infórmalo primero a los desarrolladores de la aplicación original.",
 		status: {
 			success: "Éxito",
 			error: "Error",
@@ -377,7 +369,7 @@ export const es = {
 	promo: {
 		title: "¿Quieres aparecer aquí?",
 		description: "Muestra tu herramienta a nuestra comunidad",
-		button: "Ser destacado",
+		button: "Aparecer",
 	},
 
 	// installed component
@@ -398,14 +390,13 @@ export const es = {
 		uploadModal: {
 			title: "Subir Script",
 			selectFile: "Haz clic para seleccionar un archivo",
-			selectedFile: "Archivo seleccionado",
-			scriptName: "Nombre del script",
-			scriptDescription: "Descripción del script (opcional)",
+			selectedFile: "Archivo Seleccionado",
+			scriptName: "Nombre del Script",
+			scriptDescription: "Descripción del Script (opcional)",
 			uploadFile: "Subir Archivo",
 			uploading: "Subiendo...",
 			errors: {
-				uploadFailed:
-					"Error al subir el script. Por favor, inténtalo de nuevo.",
+				uploadFailed: "Error al subir el script. Por favor, inténtalo de nuevo.",
 				uploadError: "Ocurrió un error al subir el script.",
 			},
 		},
@@ -417,7 +408,7 @@ export const es = {
 		errors: {
 			notArray: "Los datos obtenidos no son un array",
 			fetchFailed: "Error al obtener scripts",
-			notSupported: "Desafortunadamente, %s no es compatible con tu %s.",
+			notSupported: "Desafortunadamente %s no es compatible en tu %s.",
 			notSupportedTitle: "Tu dispositivo puede ser incompatible.",
 		},
 	},

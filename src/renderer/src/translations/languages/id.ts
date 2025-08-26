@@ -1,10 +1,10 @@
 export const id = {
 	// common actions and states
 	common: {
-		cancel: "Batal",
+		cancel: "Batalkan",
 		loading: "Memuat...",
-		error: "Error",
-		success: "Sukses",
+		error: "Kesalahan",
+		success: "Berhasil",
 		pending: "Tertunda",
 		back: "Kembali",
 		unselectAll: "Batalkan Pilihan Semua",
@@ -13,10 +13,10 @@ export const id = {
 
 	// authentication and access related
 	noAccess: {
-		title: "Bergabung dengan daftar tunggu Dione",
+		title: "Bergabung dengan daftar putih Dione",
 		description:
-			"Dione sedang dalam pengembangan dan hanya sejumlah pengguna terbatas yang dapat mengaksesnya, bergabunglah dengan daftar tunggu kami sekarang untuk mendapatkan akses ke versi aplikasi kami di masa mendatang.",
-		join: "Bergabung",
+			"Dione sedang dalam pengerjaan dan hanya sejumlah kecil pengguna yang dapat mengaksesnya, bergabunglah dengan daftar putih kami sekarang untuk mendapatkan akses ke versi aplikasi kami di masa mendatang.",
+		join: "Gabung",
 		logout: "Keluar",
 	},
 
@@ -45,7 +45,7 @@ export const id = {
 		},
 		clipboard: {
 			success:
-				"Berhasil disalin ke clipboard, sekarang tempelkan di browser Anda!",
+				"Berhasil disalin ke clipboard, sekarang tempelkan di peramban Anda!",
 		},
 		selectPath: {
 			title: "Pilih jalur instalasi",
@@ -56,9 +56,9 @@ export const id = {
 
 	// error handling
 	error: {
-		title: "Terjadi error tak terduga",
+		title: "Terjadi kesalahan tak terduga",
 		description:
-			"Kami mendeteksi error tak terduga di aplikasi, kami mohon maaf atas ketidaknyamanan ini.",
+			"Kami mendeteksi kesalahan tak terduga dalam aplikasi, kami mohon maaf atas ketidaknyamanannya.",
 		return: "Kembali",
 		report: {
 			toTeam: "Laporkan ke tim",
@@ -74,7 +74,7 @@ export const id = {
 		logout: "Keluar",
 		stats: {
 			timeSpent: {
-				title: "Waktu dihabiskan",
+				title: "Waktu yang dihabiskan",
 				subtitle: "dalam 7 hari terakhir",
 			},
 			sessions: {
@@ -99,21 +99,21 @@ export const id = {
 		install: {
 			downloading: "Mengunduh %s...",
 			starting: "Memulai %s...",
-			uninstalling: "Menghapus %s...",
-			reconnecting: "Menghubungkan ulang %s...",
+			uninstalling: "Menghapus instalasi %s...",
+			reconnecting: "Menyambung ulang %s...",
 			retrying: "Mencoba menginstal %s lagi...",
 			success: {
-				stopped: "%s berhasil dihentikan.",
-				uninstalled: "%s berhasil dihapus.",
+				stopped: "%s berhenti dengan sukses.",
+				uninstalled: "%s berhasil dihapus instalasinya.",
 				logsCopied: "Log berhasil disalin ke clipboard.",
 				depsInstalled: "Dependensi berhasil diinstal.",
 				shared: "Tautan unduhan disalin ke clipboard!",
 			},
 			error: {
-				download: "Error memulai unduhan: %s",
-				start: "Error memulai %s: %s",
-				stop: "Error menghentikan %s: %s",
-				uninstall: "Error menghapus %s: %s",
+				download: "Kesalahan memulai unduhan: %s",
+				start: "Kesalahan memulai %s: %s",
+				stop: "Kesalahan menghentikan %s: %s",
+				uninstall: "Kesalahan menghapus instalasi %s: %s",
 				serverRunning: "Server sudah berjalan.",
 				tooManyApps:
 					"Perlambat! Anda sudah menjalankan 6 aplikasi secara bersamaan.",
@@ -126,7 +126,7 @@ export const id = {
 		closing: {
 			title: "Menghentikan aplikasi...",
 			description:
-				"Dione akan tertutup secara otomatis setelah menutup semua aplikasi yang terbuka.",
+				"Dione akan ditutup secara otomatis setelah menutup semua aplikasi yang terbuka.",
 		},
 	},
 
@@ -137,9 +137,8 @@ export const id = {
 		update: {
 			title: "Pembaruan Tersedia",
 			description:
-				"Versi baru Dione tersedia, harap mulai ulang aplikasi untuk memperbarui.",
-			tooltip:
-				"Pembaruan baru tersedia, harap mulai ulang Dione untuk memperbarui.",
+				"Versi baru Dione tersedia, silakan mulai ulang aplikasi untuk memperbarui.",
+			tooltip: "Pembaruan baru tersedia, silakan mulai ulang Dione untuk memperbarui.",
 		},
 		tooltips: {
 			library: "Perpustakaan",
@@ -162,7 +161,8 @@ export const id = {
 			title: "Aplikasi",
 			installationDirectory: {
 				label: "Direktori Instalasi",
-				description: "Pilih tempat aplikasi baru akan diinstal secara default",
+				description:
+					"Pilih tempat aplikasi baru akan diinstal secara default",
 			},
 			binDirectory: {
 				label: "Direktori Bin",
@@ -185,7 +185,7 @@ export const id = {
 				button: "Hapus Cache",
 				deleting: "Menghapus...",
 				deleted: "Dihapus",
-				error: "Error",
+				error: "Kesalahan",
 			},
 		},
 		interface: {
@@ -194,19 +194,18 @@ export const id = {
 				label: "Bahasa Tampilan",
 				description: "Pilih bahasa antarmuka pilihan Anda",
 			},
-			helpTranslate:
-				"🤔 Tidak melihat bahasa Anda? Bantu kami menambahkan lebih banyak!",
+			helpTranslate: "🤔 Tidak melihat bahasa Anda? Bantu kami menambahkan lebih banyak!",
 			compactView: {
 				label: "Tampilan Ringkas",
 				description:
-					"Gunakan tata letak yang lebih ringkas untuk memuat lebih banyak konten di layar",
+					"Gunakan tata letak yang lebih terkondensasi agar muat lebih banyak konten di layar",
 			},
 		},
 		notifications: {
 			title: "Notifikasi",
 			systemNotifications: {
 				label: "Notifikasi Sistem",
-				description: "Tampilkan notifikasi desktop untuk acara penting",
+				description: "Tampilkan notifikasi desktop untuk peristiwa penting",
 			},
 			installationAlerts: {
 				label: "Peringatan Instalasi",
@@ -214,15 +213,14 @@ export const id = {
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
-				description: "Tampilkan aktivitas Anda saat ini di status Discord",
+				description: "Tampilkan aktivitas Anda saat ini dalam status Discord",
 			},
 		},
 		privacy: {
 			title: "Privasi",
 			errorReporting: {
-				label: "Pelaporan Error",
-				description:
-					"Bantu tingkatkan Dione dengan mengirim laporan error anonim",
+				label: "Pelaporan Kesalahan",
+				description: "Bantu tingkatkan Dione dengan mengirim laporan kesalahan anonim",
 			},
 		},
 		other: {
@@ -230,15 +228,15 @@ export const id = {
 			disableAutoUpdate: {
 				label: "Nonaktifkan pembaruan otomatis",
 				description:
-					"Menonaktifkan pembaruan otomatis. Hati-hati: aplikasi Anda mungkin melewatkan perbaikan penting atau patch keamanan. Opsi ini tidak disarankan untuk sebagian besar pengguna.",
+					"Menonaktifkan pembaruan otomatis. Peringatan: aplikasi Anda mungkin melewatkan perbaikan penting atau patch keamanan. Opsi ini tidak direkomendasikan untuk sebagian besar pengguna.",
 			},
 			logsDirectory: {
 				label: "Direktori Log",
-				description: "Lokasi tempat log aplikasi disimpan",
+				description: "Lokasi penyimpanan log aplikasi",
 			},
 			submitFeedback: {
 				label: "Kirim Umpan Balik",
-				description: "Laporkan masalah atau kendala yang Anda temui",
+				description: "Laporkan masalah atau kendala apa pun yang Anda temui",
 				button: "Kirim Laporan",
 			},
 			showOnboarding: {
@@ -257,20 +255,19 @@ export const id = {
 
 	// report form
 	report: {
-		title: "Deskripsikan Masalah",
+		title: "Jelaskan Masalahnya",
 		description:
-			"Harap berikan detail tentang apa yang terjadi dan apa yang Anda coba lakukan.",
+			"Harap berikan detail tentang apa yang terjadi dan apa yang coba Anda lakukan.",
 		placeholder:
-			"Contoh: Saya mencoba menginstal aplikasi ketika error ini terjadi...",
+			"Contoh: Saya mencoba menginstal aplikasi ketika kesalahan ini terjadi...",
 		systemInformationTitle: "Informasi Sistem",
 		disclaimer:
-			"Informasi sistem berikut dan ID anonim akan disertakan dengan laporan Anda.",
+			"Informasi sistem berikut dan ID anonim akan disertakan dalam laporan Anda.",
 		success: "Laporan berhasil dikirim!",
 		error: "Gagal mengirim laporan. Silakan coba lagi.",
 		send: "Kirim Laporan",
 		sending: "Mengirim...",
-		contribute:
-			"Bantu kami membuat skrip ini kompatibel dengan semua perangkat",
+		contribute: "Bantu kami membuat skrip ini kompatibel dengan semua perangkat",
 	},
 
 	// quick launch component
@@ -282,8 +279,7 @@ export const id = {
 		},
 		selectApp: {
 			title: "Pilih Aplikasi",
-			description:
-				"{count} aplikasi tersedia. Anda dapat memilih hingga {max}.",
+			description: "{count} aplikasi tersedia. Anda dapat memilih hingga {max}.",
 		},
 	},
 
@@ -293,13 +289,13 @@ export const id = {
 		installing: "Menginstal dependensi...",
 		install: "Instal",
 		logs: {
-			initializing: "Memulai pengunduhan dependensi...",
+			initializing: "Menginisialisasi unduhan dependensi...",
 			loading: "Memuat...",
 			connected: "Terhubung ke server",
 			disconnected: "Terputus dari server",
 			error: {
-				socket: "Error saat menyiapkan socket",
-				install: "❌ Error menginstal dependensi: {error}",
+				socket: "Kesalahan dalam menyiapkan soket",
+				install: "❌ Kesalahan dalam menginstal dependensi: {error}",
 			},
 			allInstalled: "Semua dependensi sudah terinstal.",
 		},
@@ -308,23 +304,22 @@ export const id = {
 	// delete loading modal
 	deleteLoading: {
 		uninstalling: {
-			title: "Menghapus Instalasi",
-			deps: "Menghapus dependensi",
+			title: "Menghapus instalasi",
+			deps: "Menghapus instalasi dependensi",
 			wait: "harap tunggu...",
 		},
 		success: {
-			title: "Telah Dihapus",
+			title: "Dihapus",
 			subtitle: "dengan sukses",
 			closing: "Menutup modal ini dalam",
 			seconds: "detik...",
 		},
 		error: {
-			title: "Terjadi error",
-			subtitle: "tak terduga",
+			title: "Tak terduga",
+			subtitle: "kesalahan",
 			hasOccurred: "telah terjadi",
-			deps: "Dione tidak dapat menghapus dependensi apa pun, harap lakukan secara manual.",
-			general:
-				"Harap coba lagi nanti atau periksa log untuk informasi lebih lanjut.",
+			deps: "Dione tidak dapat menghapus dependensi apa pun, silakan lakukan secara manual.",
+			general: "Silakan coba lagi nanti atau periksa log untuk informasi lebih lanjut.",
 		},
 		loading: {
 			title: "Memuat...",
@@ -336,10 +331,10 @@ export const id = {
 	logs: {
 		loading: "Memuat...",
 		disclaimer:
-			"Log yang ditampilkan berasal dari aplikasi itu sendiri. Jika Anda melihat error, harap laporkan terlebih dahulu ke pengembang aplikasi asli.",
+			"Log yang ditampilkan berasal dari aplikasi itu sendiri. Jika Anda melihat kesalahan, harap laporkan terlebih dahulu ke pengembang aplikasi asli.",
 		status: {
-			success: "Sukses",
-			error: "Error",
+			success: "Berhasil",
+			error: "Kesalahan",
 			pending: "Tertunda",
 		},
 	},
@@ -353,17 +348,17 @@ export const id = {
 	iframe: {
 		back: "Kembali",
 		openFolder: "Buka folder",
-		openInBrowser: "Buka di Browser",
+		openInBrowser: "Buka di Peramban",
 		openNewWindow: "Buka Jendela Baru",
 		fullscreen: "Layar Penuh",
-		stop: "Hentikan",
+		stop: "Berhenti",
 		reload: "Muat Ulang",
 		logs: "Log",
 	},
 
 	// actions component
 	actions: {
-		reconnect: "Hubungkan Ulang",
+		reconnect: "Sambungkan Ulang",
 		start: "Mulai",
 		uninstall: "Hapus Instalasi",
 		install: "Instal",
@@ -379,7 +374,7 @@ export const id = {
 
 	// installed component
 	installed: {
-		title: "Perpustakaan Anda",
+		title: "Pustaka Anda",
 		empty: {
 			title: "Anda belum menginstal aplikasi apa pun",
 			action: "Instal sekarang",
@@ -397,12 +392,12 @@ export const id = {
 			selectFile: "Klik untuk memilih file",
 			selectedFile: "File yang Dipilih",
 			scriptName: "Nama Skrip",
-			scriptDescription: "Deskripsi skrip (opsional)",
+			scriptDescription: "Deskripsi Skrip (opsional)",
 			uploadFile: "Unggah File",
 			uploading: "Mengunggah...",
 			errors: {
 				uploadFailed: "Gagal mengunggah skrip. Silakan coba lagi.",
-				uploadError: "Terjadi error saat mengunggah skrip.",
+				uploadError: "Terjadi kesalahan saat mengunggah skrip.",
 			},
 		},
 	},
