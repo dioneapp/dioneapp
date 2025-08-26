@@ -1,4 +1,4 @@
-export const en = {
+export const hi = {
 	// common actions and states
 	common: {
 		cancel: "रद्द करें",
