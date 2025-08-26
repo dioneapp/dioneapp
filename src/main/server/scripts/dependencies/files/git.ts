@@ -133,11 +133,11 @@ export async function install(
 			args: [
 				"-c",
 				`
-                cd ${tempDir} && 
+                cd "${tempDir}" && 
                 tar -xzf git-${platform}-${arch}.tar.gz && 
                 cd git-* && 
                 make configure && 
-                ./configure --prefix=${depFolder} && 
+                ./configure --prefix="${depFolder}" && 
                 make all && 
                 make install
             `,
@@ -148,11 +148,11 @@ export async function install(
 			args: [
 				"-c",
 				`
-                cd ${tempDir} && 
+                cd "${tempDir}" && 
                 tar -xzf git-${platform}-${arch}.tar.gz && 
                 cd git-* && 
                 make configure && 
-                ./configure --prefix=${depFolder} && 
+                ./configure --prefix="${depFolder}" && 
                 make all && 
                 make install
             `,

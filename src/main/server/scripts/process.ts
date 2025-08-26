@@ -77,7 +77,7 @@ async function killByPort(
 ): Promise<boolean> {
 	processWasCancelled = true;
 
-	if (!port) {
+	if (!port || port === undefined) {
 		logger.info(`Killing active process with PID ${activePID}`);
 		if (activePID) {
 			const success = await killProcess(activePID, io, id);
