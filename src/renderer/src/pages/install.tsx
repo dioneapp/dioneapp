@@ -473,7 +473,8 @@ export default function Install({
 			return;
 		}
 		try {
-			if (!data.name) return;
+			if (!data.name || !data.id) return;
+			if (isServerRunning[data?.id]) return;
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: true }));
 			addLog(data?.id, `Starting ${data.name}...`);
 
