@@ -224,13 +224,11 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	const stopCheckingRef = useRef(true);
 	const loadIframe = async (localPort: number) => {
+		stopCheckingRef.current = false;
 		let isAvailable = false;
 		while (!isAvailable) {
 			isAvailable = await isLocalAvailable(localPort);
 			if (!isAvailable) {
-				if (stopCheckingRef.current === true) {
-					break;
-				}
 				await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
 		}
