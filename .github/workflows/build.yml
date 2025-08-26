@@ -6,47 +6,17 @@ on:
         description: 'Version to release (e.g., 1.0.0)'
         required: true
         type: string
+      generate_translations:
+        description: 'Generate translations before build?'
+        required: false
+        default: 'false'
+        type: boolean
         
 permissions:
   contents: write
 
 jobs:
-  generate-translations:
-    runs-on: ubuntu-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        fetch-depth: 1
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        cache: 'npm'
-        cache-dependency-path: 'package-lock.json'
-    
-    - name: Install dependencies
-      run: npm ci --prefer-offline --no-audit --no-fund --silent --ignore-scripts
-    
-    - name: Generate translations
-      run: npm run generate-translations ${{ secrets.GEMINI_API_KEY }}
-      env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-    
-    - name: Commit generated translations
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add src/renderer/src/translations/languages/*.ts
-        git diff --staged --quiet || git commit -m "Update translations for v${{ github.event.inputs.version }}"
-    
-    - name: Push changes
-      run: git push
-
   build:
-    needs: generate-translations
     runs-on: ${{ matrix.os }}
     
     strategy:
@@ -96,6 +66,24 @@ jobs:
     - name: Install dependencies
       run: npm ci --prefer-offline --no-audit --no-fund --silent --ignore-scripts
 
+    - name: Generate translations
+      if: ${{ github.event.inputs.generate_translations == 'true' }}
+      run: npm run generate-translations ${{ secrets.GEMINI_API_KEY }}
+      env:
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    
+    - name: Commit generated translations
+      if: ${{ github.event.inputs.generate_translations == 'true' }}
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add src/renderer/src/translations/languages/*.ts
+        git diff --staged --quiet || git commit -m "Update translations for v${{ github.event.inputs.version }}"
+    
+    - name: Push changes
+      if: ${{ github.event.inputs.generate_translations == 'true' }}
+      run: git push
+
     - name: Build app
       run: ${{ matrix.build-command }}
       env:
@@ -126,7 +114,7 @@ jobs:
         compression-level: 1
 
   release:
-    needs: [generate-translations, build]
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
