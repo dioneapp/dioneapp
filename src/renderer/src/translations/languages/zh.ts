@@ -5,7 +5,7 @@ export const zh = {
 		loading: "加载中...",
 		error: "错误",
 		success: "成功",
-		pending: "进行中",
+		pending: "待定",
 		back: "返回",
 		unselectAll: "取消全选",
 		selectAll: "全选",
@@ -15,9 +15,9 @@ export const zh = {
 	noAccess: {
 		title: "加入 Dione 白名单",
 		description:
-			"Dione 正在开发中，只有有限的用户可以访问，立即加入我们的白名单，以便访问我们应用程序的未来版本。",
+			"Dione 正在开发中，只有有限数量的用户可以访问，立即加入我们的白名单，即可在未来版本中访问我们的应用程序。",
 		join: "加入",
-		logout: "退出登录",
+		logout: "登出",
 	},
 
 	// first time user experience
@@ -40,12 +40,12 @@ export const zh = {
 		},
 		ready: {
 			title: "您已准备就绪！",
-			subtitle: "很高兴您能加入我们",
+			subtitle: "很高兴您来到这里",
 			finish: "完成",
 		},
 		clipboard: {
 			success:
-				"已成功复制到剪贴板，现在粘贴到您的浏览器中！",
+				"已成功复制到剪贴板，现在将其粘贴到您的浏览器中！",
 		},
 		selectPath: {
 			title: "选择安装路径",
@@ -58,20 +58,20 @@ export const zh = {
 	error: {
 		title: "发生意外错误",
 		description:
-			"我们在应用程序中检测到意外错误，很抱歉给您带来不便。",
+			"我们检测到应用程序中发生意外错误，对此造成的不便，我们深感抱歉。",
 		return: "返回",
 		report: {
-			toTeam: "向团队报告",
+			toTeam: "报告给团队",
 			sending: "正在发送报告...",
 			success: "报告已发送！",
-			failed: "发送报告失败",
+			failed: "未能发送报告",
 		},
 	},
 
 	// account related
 	account: {
 		title: "帐户",
-		logout: "退出登录",
+		logout: "登出",
 		stats: {
 			timeSpent: {
 				title: "花费时间",
@@ -116,7 +116,7 @@ export const zh = {
 				uninstall: "卸载 %s 时出错： %s",
 				serverRunning: "服务器已在运行。",
 				tooManyApps:
-					"放慢速度！您同时运行的应用程序已过多。",
+					"放慢速度！您同时运行的应用程序已达 6 个。",
 			},
 		},
 	},
@@ -126,7 +126,7 @@ export const zh = {
 		closing: {
 			title: "正在停止应用程序...",
 			description:
-				"Dione 将在关闭所有打开的应用程序后自动关闭。",
+				"Dione 在关闭所有打开的应用程序后将自动关闭。",
 		},
 	},
 
@@ -144,7 +144,7 @@ export const zh = {
 			library: "库",
 			settings: "设置",
 			account: "帐户",
-			logout: "退出登录",
+			logout: "登出",
 			login: "登录",
 		},
 	},
@@ -165,14 +165,14 @@ export const zh = {
 					"选择新应用程序的默认安装位置",
 			},
 			binDirectory: {
-				label: "二进制目录",
+				label: "Bin 目录",
 				description:
-					"选择存储应用程序二进制文件的位置，以便于访问",
+					"选择应用程序二进制文件存储位置以便于访问",
 			},
 			cleanUninstall: {
-				label: "清洁卸载",
+				label: "干净卸载",
 				description:
-					"卸载应用程序时删除所有相关的依赖项",
+					"卸载应用程序时删除所有相关依赖项",
 			},
 			autoOpenAfterInstall: {
 				label: "安装后自动打开",
@@ -194,11 +194,11 @@ export const zh = {
 				label: "显示语言",
 				description: "选择您偏好的界面语言",
 			},
-			helpTranslate: "🤔 没看到您的语言？帮助我们添加更多！",
+			helpTranslate: "🤔 找不到您的语言？帮助我们添加更多！",
 			compactView: {
 				label: "紧凑视图",
 				description:
-					"使用更紧凑的布局，以便在屏幕上显示更多内容",
+					"使用更紧凑的布局，以便在屏幕上容纳更多内容",
 			},
 		},
 		notifications: {
@@ -228,7 +228,7 @@ export const zh = {
 			disableAutoUpdate: {
 				label: "禁用自动更新",
 				description:
-					"禁用自动更新。注意：您的应用程序可能会错过重要的修复或安全补丁。不建议大多数用户使用此选项。",
+					"禁用自动更新。警告：您的应用程序可能会错过重要的修复程序或安全补丁。不建议大多数用户使用此选项。",
 			},
 			logsDirectory: {
 				label: "日志目录",
@@ -236,13 +236,13 @@ export const zh = {
 			},
 			submitFeedback: {
 				label: "提交反馈",
-				description: "报告您遇到的任何问题或麻烦",
+				description: "报告您遇到的任何问题或困难",
 				button: "发送报告",
 			},
 			showOnboarding: {
 				label: "显示入门指南",
 				description:
-					"将 Dione 重置为其初始状态，并再次显示入门指南以重新配置",
+					"将 Dione 重置为其初始状态，并再次显示入门指南以进行重新配置",
 				button: "重置",
 			},
 			variables: {
@@ -257,17 +257,17 @@ export const zh = {
 	report: {
 		title: "描述问题",
 		description:
-			"请提供有关发生情况以及您试图做什么的详细信息。",
+			"请提供有关发生的情况以及您尝试执行的操作的详细信息。",
 		placeholder:
-			"例如：我试图安装一个应用程序，这时发生了这个错误……",
+			"例如：我尝试安装一个应用程序时出现此错误...",
 		systemInformationTitle: "系统信息",
 		disclaimer:
-			"以下系统信息和一个匿名 ID 将包含在您的报告中。",
+			"以下系统信息和匿名 ID 将包含在您的报告中。",
 		success: "报告已成功发送！",
-		error: "发送报告失败。请重试。",
+		error: "未能发送报告。请重试。",
 		send: "发送报告",
 		sending: "正在发送...",
-		contribute: "帮助我们将此脚本与所有设备兼容",
+		contribute: "帮助我们将此脚本兼容所有设备",
 	},
 
 	// quick launch component
@@ -292,7 +292,7 @@ export const zh = {
 			initializing: "正在初始化依赖项下载...",
 			loading: "加载中...",
 			connected: "已连接到服务器",
-			disconnected: "已从服务器断开连接",
+			disconnected: "已断开与服务器的连接",
 			error: {
 				socket: "设置套接字时出错",
 				install: "❌ 安装依赖项时出错： {error}",
@@ -311,15 +311,15 @@ export const zh = {
 		success: {
 			title: "已卸载",
 			subtitle: "成功",
-			closing: "关闭此模态框在",
-			seconds: "秒后...",
+			closing: "正在关闭此模态框",
+			seconds: "秒...",
 		},
 		error: {
 			title: "发生意外",
 			subtitle: "错误",
 			hasOccurred: "已发生",
-			deps: "Dione 未能删除任何依赖项，请手动操作。",
-			general: "请稍后重试或查看日志获取更多信息。",
+			deps: "Dione 未能移除任何依赖项，请手动移除。",
+			general: "请稍后重试或查看日志以获取更多信息。",
 		},
 		loading: {
 			title: "加载中...",
@@ -331,11 +331,11 @@ export const zh = {
 	logs: {
 		loading: "加载中...",
 		disclaimer:
-			"显示的日志来自应用程序本身。如果您看到错误，请先向原始应用程序的开发人员报告。",
+			"显示的日志来自应用程序本身。如果您看到错误，请首先向原始应用程序的开发者报告。",
 		status: {
 			success: "成功",
 			error: "错误",
-			pending: "进行中",
+			pending: "待定",
 		},
 	},
 
@@ -349,7 +349,7 @@ export const zh = {
 		back: "返回",
 		openFolder: "打开文件夹",
 		openInBrowser: "在浏览器中打开",
-		openNewWindow: "打开新窗口",
+		openNewWindow: "在新窗口中打开",
 		fullscreen: "全屏",
 		stop: "停止",
 		reload: "重新加载",
@@ -367,9 +367,9 @@ export const zh = {
 
 	// promo component
 	promo: {
-		title: "想在这里展示吗？",
+		title: "想在此处获得特色推荐？",
 		description: "向我们的社区展示您的工具",
-		button: "获取展示",
+		button: "获得特色推荐",
 	},
 
 	// installed component
@@ -392,12 +392,12 @@ export const zh = {
 			selectFile: "点击选择文件",
 			selectedFile: "已选文件",
 			scriptName: "脚本名称",
-			scriptDescription: "脚本描述 (可选)",
+			scriptDescription: "脚本描述（可选）",
 			uploadFile: "上传文件",
 			uploading: "正在上传...",
 			errors: {
 				uploadFailed: "脚本上传失败。请重试。",
-				uploadError: "上传脚本时发生错误。",
+				uploadError: "上传脚本时出错。",
 			},
 		},
 	},
@@ -408,7 +408,7 @@ export const zh = {
 		errors: {
 			notArray: "获取的数据不是数组",
 			fetchFailed: "获取脚本失败",
-			notSupported: "很抱歉，您的 %s 不支持 %s。",
+			notSupported: "抱歉，您的 %s 不支持 %s。",
 			notSupportedTitle: "您的设备可能不兼容。",
 		},
 	},

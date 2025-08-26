@@ -1,10 +1,10 @@
 export const id = {
 	// common actions and states
 	common: {
-		cancel: "Batalkan",
+		cancel: "Batal",
 		loading: "Memuat...",
 		error: "Kesalahan",
-		success: "Berhasil",
+		success: "Sukses",
 		pending: "Tertunda",
 		back: "Kembali",
 		unselectAll: "Batalkan Pilihan Semua",
@@ -13,17 +13,17 @@ export const id = {
 
 	// authentication and access related
 	noAccess: {
-		title: "Bergabung dengan daftar putih Dione",
+		title: "Bergabunglah dengan daftar putih Dione",
 		description:
-			"Dione sedang dalam pengerjaan dan hanya sejumlah kecil pengguna yang dapat mengaksesnya, bergabunglah dengan daftar putih kami sekarang untuk mendapatkan akses ke versi aplikasi kami di masa mendatang.",
-		join: "Gabung",
+			"Dione sedang dalam pembangunan dan hanya sejumlah pengguna yang terbatas yang dapat mengaksesnya, bergabunglah dengan daftar putih kami sekarang untuk mendapatkan akses ke versi aplikasi kami di masa mendatang.",
+		join: "Bergabung",
 		logout: "Keluar",
 	},
 
 	// first time user experience
 	firstTime: {
 		welcome: {
-			title: "Selamat Datang di",
+			title: "Selamat datang di",
 			subtitle:
 				"Terima kasih telah bergabung dengan kami di awal perjalanan ini. Masuk ke akun Anda untuk memulai.",
 			login: "Masuk",
@@ -32,7 +32,7 @@ export const id = {
 		},
 		loggingIn: {
 			title: "Masuk...",
-			authError: "Tidak dapat mengautentikasi?",
+			authError: "Tidak dapat mengotentikasi?",
 			goBack: "Kembali",
 		},
 		languageSelector: {
@@ -100,20 +100,20 @@ export const id = {
 			downloading: "Mengunduh %s...",
 			starting: "Memulai %s...",
 			uninstalling: "Menghapus instalasi %s...",
-			reconnecting: "Menyambung ulang %s...",
+			reconnecting: "Menghubungkan kembali %s...",
 			retrying: "Mencoba menginstal %s lagi...",
 			success: {
-				stopped: "%s berhenti dengan sukses.",
+				stopped: "%s berhasil dihentikan.",
 				uninstalled: "%s berhasil dihapus instalasinya.",
 				logsCopied: "Log berhasil disalin ke clipboard.",
 				depsInstalled: "Dependensi berhasil diinstal.",
 				shared: "Tautan unduhan disalin ke clipboard!",
 			},
 			error: {
-				download: "Kesalahan memulai unduhan: %s",
-				start: "Kesalahan memulai %s: %s",
-				stop: "Kesalahan menghentikan %s: %s",
-				uninstall: "Kesalahan menghapus instalasi %s: %s",
+				download: "Kesalahan saat memulai unduhan: %s",
+				start: "Kesalahan saat memulai %s: %s",
+				stop: "Kesalahan saat menghentikan %s: %s",
+				uninstall: "Kesalahan saat menghapus instalasi %s: %s",
 				serverRunning: "Server sudah berjalan.",
 				tooManyApps:
 					"Perlambat! Anda sudah menjalankan 6 aplikasi secara bersamaan.",
@@ -137,7 +137,7 @@ export const id = {
 		update: {
 			title: "Pembaruan Tersedia",
 			description:
-				"Versi baru Dione tersedia, silakan mulai ulang aplikasi untuk memperbarui.",
+				"Versi Dione baru tersedia, silakan mulai ulang aplikasi untuk memperbarui.",
 			tooltip: "Pembaruan baru tersedia, silakan mulai ulang Dione untuk memperbarui.",
 		},
 		tooltips: {
@@ -198,7 +198,7 @@ export const id = {
 			compactView: {
 				label: "Tampilan Ringkas",
 				description:
-					"Gunakan tata letak yang lebih terkondensasi agar muat lebih banyak konten di layar",
+					"Gunakan tata letak yang lebih padat untuk memuat lebih banyak konten di layar",
 			},
 		},
 		notifications: {
@@ -213,14 +213,14 @@ export const id = {
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
-				description: "Tampilkan aktivitas Anda saat ini dalam status Discord",
+				description: "Tampilkan aktivitas Anda saat ini di status Discord",
 			},
 		},
 		privacy: {
 			title: "Privasi",
 			errorReporting: {
 				label: "Pelaporan Kesalahan",
-				description: "Bantu tingkatkan Dione dengan mengirim laporan kesalahan anonim",
+				description: "Bantu tingkatkan Dione dengan mengirimkan laporan kesalahan anonim",
 			},
 		},
 		other: {
@@ -228,11 +228,11 @@ export const id = {
 			disableAutoUpdate: {
 				label: "Nonaktifkan pembaruan otomatis",
 				description:
-					"Menonaktifkan pembaruan otomatis. Peringatan: aplikasi Anda mungkin melewatkan perbaikan penting atau patch keamanan. Opsi ini tidak direkomendasikan untuk sebagian besar pengguna.",
+					"Menonaktifkan pembaruan otomatis. Peringatan: aplikasi Anda mungkin kehilangan perbaikan penting atau patch keamanan. Opsi ini tidak direkomendasikan untuk sebagian besar pengguna.",
 			},
 			logsDirectory: {
 				label: "Direktori Log",
-				description: "Lokasi penyimpanan log aplikasi",
+				description: "Lokasi tempat log aplikasi disimpan",
 			},
 			submitFeedback: {
 				label: "Kirim Umpan Balik",
@@ -242,7 +242,7 @@ export const id = {
 			showOnboarding: {
 				label: "Tampilkan onboarding",
 				description:
-					"Atur ulang Dione ke keadaan awal dan tampilkan kembali onboarding untuk konfigurasi ulang",
+					"Atur ulang Dione ke keadaan awalnya dan tampilkan kembali onboarding untuk konfigurasi ulang",
 				button: "Atur Ulang",
 			},
 			variables: {
@@ -289,13 +289,13 @@ export const id = {
 		installing: "Menginstal dependensi...",
 		install: "Instal",
 		logs: {
-			initializing: "Menginisialisasi unduhan dependensi...",
+			initializing: "Memulai pengunduhan dependensi...",
 			loading: "Memuat...",
 			connected: "Terhubung ke server",
 			disconnected: "Terputus dari server",
 			error: {
-				socket: "Kesalahan dalam menyiapkan soket",
-				install: "❌ Kesalahan dalam menginstal dependensi: {error}",
+				socket: "Kesalahan saat menyiapkan soket",
+				install: "❌ Kesalahan saat menginstal dependensi: {error}",
 			},
 			allInstalled: "Semua dependensi sudah terinstal.",
 		},
@@ -304,7 +304,7 @@ export const id = {
 	// delete loading modal
 	deleteLoading: {
 		uninstalling: {
-			title: "Menghapus instalasi",
+			title: "Menghapus Instalasi",
 			deps: "Menghapus instalasi dependensi",
 			wait: "harap tunggu...",
 		},
@@ -318,7 +318,7 @@ export const id = {
 			title: "Tak terduga",
 			subtitle: "kesalahan",
 			hasOccurred: "telah terjadi",
-			deps: "Dione tidak dapat menghapus dependensi apa pun, silakan lakukan secara manual.",
+			deps: "Dione tidak dapat menghapus dependensi apa pun, harap lakukan secara manual.",
 			general: "Silakan coba lagi nanti atau periksa log untuk informasi lebih lanjut.",
 		},
 		loading: {
@@ -333,7 +333,7 @@ export const id = {
 		disclaimer:
 			"Log yang ditampilkan berasal dari aplikasi itu sendiri. Jika Anda melihat kesalahan, harap laporkan terlebih dahulu ke pengembang aplikasi asli.",
 		status: {
-			success: "Berhasil",
+			success: "Sukses",
 			error: "Kesalahan",
 			pending: "Tertunda",
 		},
@@ -351,14 +351,14 @@ export const id = {
 		openInBrowser: "Buka di Peramban",
 		openNewWindow: "Buka Jendela Baru",
 		fullscreen: "Layar Penuh",
-		stop: "Berhenti",
+		stop: "Hentikan",
 		reload: "Muat Ulang",
 		logs: "Log",
 	},
 
 	// actions component
 	actions: {
-		reconnect: "Sambungkan Ulang",
+		reconnect: "Hubungkan Kembali",
 		start: "Mulai",
 		uninstall: "Hapus Instalasi",
 		install: "Instal",
@@ -368,13 +368,13 @@ export const id = {
 	// promo component
 	promo: {
 		title: "Ingin ditampilkan di sini?",
-		description: "Pamerkan alat Anda kepada komunitas kami",
-		button: "Dapatkan Fitur",
+		description: "Tampilkan alat Anda kepada komunitas kami",
+		button: "Dapatkan Tampilan",
 	},
 
 	// installed component
 	installed: {
-		title: "Pustaka Anda",
+		title: "Perpustakaan Anda",
 		empty: {
 			title: "Anda belum menginstal aplikasi apa pun",
 			action: "Instal sekarang",
@@ -406,7 +406,7 @@ export const id = {
 	feed: {
 		noScripts: "Tidak ada skrip yang ditemukan",
 		errors: {
-			notArray: "Data yang diambil bukan array",
+			notArray: "Data yang diambil bukan larik",
 			fetchFailed: "Gagal mengambil skrip",
 			notSupported: "Sayangnya %s tidak didukung pada %s Anda.",
 			notSupportedTitle: "Perangkat Anda mungkin tidak kompatibel.",

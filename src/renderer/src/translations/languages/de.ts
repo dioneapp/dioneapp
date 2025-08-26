@@ -7,7 +7,7 @@ export const de = {
 		success: "Erfolg",
 		pending: "Ausstehend",
 		back: "Zurück",
-		unselectAll: "Alle auswählen aufheben",
+		unselectAll: "Alle abwählen",
 		selectAll: "Alle auswählen",
 	},
 
@@ -25,15 +25,15 @@ export const de = {
 		welcome: {
 			title: "Willkommen bei",
 			subtitle:
-				"Vielen Dank, dass Sie uns so früh auf dieser Reise begleiten. Melden Sie sich bei Ihrem Konto an, um loszulegen.",
+				"Vielen Dank, dass Sie uns von Anfang an auf dieser Reise begleiten. Melden Sie sich bei Ihrem Konto an, um loszulegen.",
 			login: "Anmelden",
 			copyLink: "Link kopieren",
 			skipLogin: "Ohne Anmeldung fortfahren",
 		},
 		loggingIn: {
-			title: "Melde mich an...",
-			authError: "Konnte nicht authentifiziert werden?",
-			goBack: "Zurückgehen",
+			title: "Meldet sich an...",
+			authError: "Konnte nicht authentifizieren?",
+			goBack: "Zurück",
 		},
 		languageSelector: {
 			title: "Wählen Sie Ihre Sprache",
@@ -59,12 +59,12 @@ export const de = {
 		title: "Unerwarteter Fehler aufgetreten",
 		description:
 			"Wir haben einen unerwarteten Fehler in der Anwendung festgestellt. Wir entschuldigen uns für die Unannehmlichkeiten.",
-		return: "Zurück",
+		return: "Zurückkehren",
 		report: {
 			toTeam: "An das Team melden",
 			sending: "Bericht wird gesendet...",
 			success: "Bericht gesendet!",
-			failed: "Fehler beim Senden des Berichts",
+			failed: "Bericht konnte nicht gesendet werden",
 		},
 	},
 
@@ -97,7 +97,7 @@ export const de = {
 	toast: {
 		close: "Schließen",
 		install: {
-			downloading: "Lade %s herunter...",
+			downloading: "%s wird heruntergeladen...",
 			starting: "%s wird gestartet...",
 			uninstalling: "%s wird deinstalliert...",
 			reconnecting: "%s wird wieder verbunden...",
@@ -126,7 +126,7 @@ export const de = {
 		closing: {
 			title: "Anwendungen werden gestoppt...",
 			description:
-				"Dione wird nach dem Schließen aller offenen Anwendungen automatisch beendet.",
+				"Dione wird nach dem Schließen aller offenen Anwendungen automatisch geschlossen.",
 		},
 	},
 
@@ -137,8 +137,8 @@ export const de = {
 		update: {
 			title: "Update verfügbar",
 			description:
-				"Eine neue Version von Dione ist verfügbar, starten Sie die App neu, um das Update durchzuführen.",
-			tooltip: "Neues Update verfügbar, starten Sie Dione neu, um das Update zu installieren.",
+				"Eine neue Version von Dione ist verfügbar. Bitte starten Sie die App neu, um zu aktualisieren.",
+			tooltip: "Neues Update verfügbar, bitte starten Sie Dione neu, um zu aktualisieren.",
 		},
 		tooltips: {
 			library: "Bibliothek",
@@ -152,7 +152,7 @@ export const de = {
 	// home page
 	home: {
 		featured: "Vorgestellt",
-		explore: "Erkunden",
+		explore: "Entdecken",
 	},
 
 	// settings page
@@ -162,28 +162,28 @@ export const de = {
 			installationDirectory: {
 				label: "Installationsverzeichnis",
 				description:
-					"Wählen Sie aus, wo neue Anwendungen standardmäßig installiert werden sollen",
+					"Wählen Sie, wo neue Anwendungen standardmäßig installiert werden",
 			},
 			binDirectory: {
-				label: "Binärverzeichnis",
+				label: "Bin-Verzeichnis",
 				description:
-					"Wählen Sie aus, wo die Anwendungsbinärdateien zur einfachen Zugriff gespeichert werden sollen",
+					"Wählen Sie, wo die Anwendungsbinärdateien für einfachen Zugriff gespeichert werden sollen",
 			},
 			cleanUninstall: {
 				label: "Saubere Deinstallation",
 				description:
-					"Entfernen Sie alle zugehörigen Abhängigkeiten beim Deinstallieren von Anwendungen",
+					"Entfernen Sie alle zugehörigen Abhängigkeiten bei der Deinstallation von Anwendungen",
 			},
 			autoOpenAfterInstall: {
-				label: "Nach der Installation automatisch öffnen",
+				label: "Nach Installation automatisch öffnen",
 				description:
-					"Öffnen Sie Anwendungen nach der Installation automatisch zum ersten Mal",
+					"Öffnen Sie Anwendungen automatisch zum ersten Mal nach der Installation",
 			},
 			deleteCache: {
 				label: "Cache löschen",
-				description: "Entfernen Sie alle zwischengespeicherten Daten von Anwendungen",
+				description: "Entfernen Sie alle Cache-Daten von Anwendungen",
 				button: "Cache löschen",
-				deleting: "Lösche...",
+				deleting: "Löscht...",
 				deleted: "Gelöscht",
 				error: "Fehler",
 			},
@@ -198,7 +198,7 @@ export const de = {
 			compactView: {
 				label: "Kompakte Ansicht",
 				description:
-					"Verwenden Sie ein kompakteres Layout, um mehr Inhalte auf dem Bildschirm unterzubringen",
+					"Verwenden Sie ein dichteres Layout, um mehr Inhalt auf dem Bildschirm unterzubringen",
 			},
 		},
 		notifications: {
@@ -208,8 +208,8 @@ export const de = {
 				description: "Zeigen Sie Desktop-Benachrichtigungen für wichtige Ereignisse an",
 			},
 			installationAlerts: {
-				label: "Installationsbenachrichtigungen",
-				description: "Lassen Sie sich benachrichtigen, wenn Anwendungsinstallationen abgeschlossen sind",
+				label: "Installationswarnungen",
+				description: "Werden Sie benachrichtigt, wenn Anwendungsinstallationen abgeschlossen sind",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
@@ -228,11 +228,11 @@ export const de = {
 			disableAutoUpdate: {
 				label: "Automatische Updates deaktivieren",
 				description:
-					"Deaktiviert automatische Updates. Vorsicht: Ihre Anwendung verpasst möglicherweise wichtige Fehlerbehebungen oder Sicherheitspatches. Diese Option wird für die meisten Benutzer nicht empfohlen.",
+					"Deaktiviert automatische Updates. Vorsicht: Ihre Anwendung verpasst möglicherweise wichtige Korrekturen oder Sicherheitspatches. Diese Option wird für die meisten Benutzer nicht empfohlen.",
 			},
 			logsDirectory: {
 				label: "Protokollverzeichnis",
-				description: "Speicherort der Anwendungsprotokolle",
+				description: "Speicherort für Anwendungs protokolle",
 			},
 			submitFeedback: {
 				label: "Feedback einreichen",
@@ -242,7 +242,7 @@ export const de = {
 			showOnboarding: {
 				label: "Onboarding anzeigen",
 				description:
-					"Setzen Sie Dione auf den Anfangszustand zurück und zeigen Sie das Onboarding zur Neukonfiguration erneut an",
+					"Setzt Dione auf den Anfangszustand zurück und zeigt das Onboarding zur Neukonfiguration erneut an",
 				button: "Zurücksetzen",
 			},
 			variables: {
@@ -257,14 +257,14 @@ export const de = {
 	report: {
 		title: "Beschreiben Sie das Problem",
 		description:
-			"Bitte geben Sie Details darüber an, was passiert ist und was Sie versucht haben zu tun.",
+			"Bitte geben Sie Details an, was passiert ist und was Sie versucht haben zu tun.",
 		placeholder:
 			"Beispiel: Ich habe versucht, eine Anwendung zu installieren, als dieser Fehler auftrat...",
 		systemInformationTitle: "Systeminformationen",
 		disclaimer:
-			"Die folgenden Systeminformationen und eine anonyme ID werden Ihrem Bericht beigefügt.",
+			"Die folgenden Systeminformationen und eine anonyme ID werden mit Ihrem Bericht übermittelt.",
 		success: "Bericht erfolgreich gesendet!",
-		error: "Fehler beim Senden des Berichts. Bitte versuchen Sie es erneut.",
+		error: "Bericht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
 		send: "Bericht senden",
 		sending: "Wird gesendet...",
 		contribute: "Helfen Sie uns, dieses Skript mit allen Geräten kompatibel zu machen",
@@ -286,7 +286,7 @@ export const de = {
 	// missing dependencies modal
 	missingDeps: {
 		title: "Einige Abhängigkeiten fehlen!",
-		installing: "Installiere Abhängigkeiten...",
+		installing: "Installiert Abhängigkeiten...",
 		install: "Installieren",
 		logs: {
 			initializing: "Initialisiere Download der Abhängigkeiten...",
@@ -295,7 +295,7 @@ export const de = {
 			disconnected: "Vom Server getrennt",
 			error: {
 				socket: "Fehler beim Einrichten des Sockets",
-				install: "❌ Fehler beim Installieren von Abhängigkeiten: {error}",
+				install: "❌ Fehler bei der Installation von Abhängigkeiten: {error}",
 			},
 			allInstalled: "Alle Abhängigkeiten sind bereits installiert.",
 		},
@@ -304,14 +304,14 @@ export const de = {
 	// delete loading modal
 	deleteLoading: {
 		uninstalling: {
-			title: "Deinstalliere",
-			deps: "Deinstalliere Abhängigkeiten",
+			title: "Deinstalliert",
+			deps: "Deinstalliert Abhängigkeiten",
 			wait: "bitte warten Sie...",
 		},
 		success: {
 			title: "Deinstalliert",
 			subtitle: "erfolgreich",
-			closing: "Schließe dieses Modal in",
+			closing: "Dieses Modal wird geschlossen in",
 			seconds: "Sekunden...",
 		},
 		error: {
@@ -331,7 +331,7 @@ export const de = {
 	logs: {
 		loading: "Lädt...",
 		disclaimer:
-			"Angezeigte Protokolle stammen von der App selbst. Wenn Sie einen Fehler sehen, melden Sie ihn zuerst den Entwicklern der ursprünglichen App.",
+			"Angezeigte Protokolle stammen von der App selbst. Wenn Sie einen Fehler sehen, melden Sie ihn bitte zuerst den ursprünglichen Entwicklern der App.",
 		status: {
 			success: "Erfolg",
 			error: "Fehler",
@@ -368,7 +368,7 @@ export const de = {
 	// promo component
 	promo: {
 		title: "Möchten Sie hier vorgestellt werden?",
-		description: "Präsentieren Sie Ihr Werkzeug unserer Community",
+		description: "Zeigen Sie Ihr Tool unserer Community",
 		button: "Vorgestellt werden",
 	},
 
@@ -389,12 +389,12 @@ export const de = {
 		deleting: "Skript wird gelöscht, bitte warten Sie...",
 		uploadModal: {
 			title: "Skript hochladen",
-			selectFile: "Klicken Sie hier, um eine Datei auszuwählen",
+			selectFile: "Klicken Sie, um eine Datei auszuwählen",
 			selectedFile: "Ausgewählte Datei",
 			scriptName: "Skriptname",
 			scriptDescription: "Skriptbeschreibung (optional)",
 			uploadFile: "Datei hochladen",
-			uploading: "Wird hochgeladen...",
+			uploading: "Lädt hoch...",
 			errors: {
 				uploadFailed: "Fehler beim Hochladen des Skripts. Bitte versuchen Sie es erneut.",
 				uploadError: "Beim Hochladen des Skripts ist ein Fehler aufgetreten.",
@@ -407,7 +407,7 @@ export const de = {
 		noScripts: "Keine Skripte gefunden",
 		errors: {
 			notArray: "Abgerufene Daten sind kein Array",
-			fetchFailed: "Skripte konnten nicht abgerufen werden",
+			fetchFailed: "Fehler beim Abrufen der Skripte",
 			notSupported: "Leider wird %s auf Ihrem %s nicht unterstützt.",
 			notSupportedTitle: "Ihr Gerät ist möglicherweise inkompatibel.",
 		},
@@ -415,7 +415,7 @@ export const de = {
 
 	// search component
 	search: {
-		placeholder: "Suche nach Skripten...",
+		placeholder: "Skripte suchen...",
 		filters: {
 			audio: "Audio",
 			image: "Bild",

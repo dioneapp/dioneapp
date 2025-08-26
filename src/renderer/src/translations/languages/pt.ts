@@ -13,9 +13,9 @@ export const pt = {
 
 	// authentication and access related
 	noAccess: {
-		title: "Junte-se à lista de permissões da Dione",
+		title: "Entrar na lista de permissões da Dione",
 		description:
-			"A Dione está em construção e apenas uma quantidade limitada de usuários pode acessá-la. Junte-se à nossa lista de permissões agora para ter acesso às futuras versões do nosso aplicativo.",
+			"A Dione está em construção e apenas um número limitado de usuários pode acessá-la, entre em nossa lista de permissões agora para ter acesso às futuras versões de nosso aplicativo.",
 		join: "Entrar",
 		logout: "Sair",
 	},
@@ -23,12 +23,12 @@ export const pt = {
 	// first time user experience
 	firstTime: {
 		welcome: {
-			title: "Bem-vindo à",
+			title: "Bem-vindo(a) à",
 			subtitle:
-				"Obrigado por se juntar a nós no início desta jornada. Faça login na sua conta para começar.",
+				"Obrigado por se juntar a nós no início desta jornada. Faça login em sua conta para começar.",
 			login: "Entrar",
-			copyLink: "Copiar Link",
-			skipLogin: "Continuar sem login",
+			copyLink: "Copiar link",
+			skipLogin: "Continuar sem fazer login",
 		},
 		loggingIn: {
 			title: "Entrando...",
@@ -40,15 +40,15 @@ export const pt = {
 		},
 		ready: {
 			title: "Você está pronto!",
-			subtitle: "Ficamos felizes em ter você aqui",
-			finish: "Finalizar",
+			subtitle: "Estamos felizes em ter você aqui",
+			finish: "Concluir",
 		},
 		clipboard: {
 			success:
-				"Copiado para a área de transferência corretamente, agora cole no seu navegador!",
+				"Copiado para a área de transferência corretamente, agora cole em seu navegador!",
 		},
 		selectPath: {
-			title: "Selecione o caminho de instalação",
+			title: "Selecionar caminho de instalação",
 			button: "Selecionar um caminho",
 			success: "Próximo",
 		},
@@ -58,10 +58,10 @@ export const pt = {
 	error: {
 		title: "Ocorreu um erro inesperado",
 		description:
-			"Detectamos um erro inesperado na aplicação, pedimos desculpas pelo inconveniente.",
+			"Detectamos um erro inesperado no aplicativo, pedimos desculpas pelo inconveniente.",
 		return: "Retornar",
 		report: {
-			toTeam: "Reportar para a equipe",
+			toTeam: "Relatar à equipe",
 			sending: "Enviando relatório...",
 			success: "Relatório enviado!",
 			failed: "Falha ao enviar relatório",
@@ -105,16 +105,16 @@ export const pt = {
 			success: {
 				stopped: "%s parado com sucesso.",
 				uninstalled: "%s desinstalado com sucesso.",
-				logsCopied: "Logs copiados para a área de transferência com sucesso.",
+				logsCopied: "Logs copiados com sucesso para a área de transferência.",
 				depsInstalled: "Dependências instaladas com sucesso.",
 				shared: "Link de download copiado para a área de transferência!",
 			},
 			error: {
-				download: "Erro ao iniciar download: %s",
+				download: "Erro ao iniciar o download: %s",
 				start: "Erro ao iniciar %s: %s",
 				stop: "Erro ao parar %s: %s",
 				uninstall: "Erro ao desinstalar %s: %s",
-				serverRunning: "Servidor já está em execução.",
+				serverRunning: "O servidor já está em execução.",
 				tooManyApps:
 					"Desacelere! Você já tem 6 aplicativos em execução ao mesmo tempo.",
 			},
@@ -151,7 +151,7 @@ export const pt = {
 
 	// home page
 	home: {
-		featured: "Em Destaque",
+		featured: "Destaques",
 		explore: "Explorar",
 	},
 
@@ -175,9 +175,9 @@ export const pt = {
 					"Remova todas as dependências relacionadas ao desinstalar aplicativos",
 			},
 			autoOpenAfterInstall: {
-				label: "Abrir Automaticamente Após Instalação",
+				label: "Abrir Automaticamente Após Instalar",
 				description:
-					"Abra automaticamente os aplicativos pela primeira vez após a instalação",
+					"Abra aplicativos automaticamente pela primeira vez após a instalação",
 			},
 			deleteCache: {
 				label: "Excluir Cache",
@@ -192,20 +192,20 @@ export const pt = {
 			title: "Interface",
 			displayLanguage: {
 				label: "Idioma de Exibição",
-				description: "Escolha o idioma da interface de sua preferência",
+				description: "Escolha seu idioma de interface preferido",
 			},
-			helpTranslate: "🤔 Não está vendo seu idioma? Ajude-nos a adicionar mais!",
+			helpTranslate: "🤔 Não vê seu idioma? Ajude-nos a adicionar mais!",
 			compactView: {
 				label: "Visualização Compacta",
 				description:
-					"Use um layout mais condensado para caber mais conteúdo na tela",
+					"Use um layout mais condensado para exibir mais conteúdo na tela",
 			},
 		},
 		notifications: {
 			title: "Notificações",
 			systemNotifications: {
 				label: "Notificações do Sistema",
-				description: "Mostre notificações na área de trabalho para eventos importantes",
+				description: "Exibir notificações de desktop para eventos importantes",
 			},
 			installationAlerts: {
 				label: "Alertas de Instalação",
@@ -219,8 +219,8 @@ export const pt = {
 		privacy: {
 			title: "Privacidade",
 			errorReporting: {
-				label: "Relatórios de Erro",
-				description: "Ajude a melhorar a Dione enviando relatórios de erro anônimos",
+				label: "Relatório de Erros",
+				description: "Ajude a melhorar a Dione enviando relatórios de erros anônimos",
 			},
 		},
 		other: {
@@ -228,21 +228,21 @@ export const pt = {
 			disableAutoUpdate: {
 				label: "Desativar atualizações automáticas",
 				description:
-					"Desabilita atualizações automáticas. Cuidado: seu aplicativo pode perder correções importantes ou patches de segurança. Esta opção não é recomendada para a maioria dos usuários.",
+					"Desativa as atualizações automáticas. Cuidado: seu aplicativo pode perder correções importantes ou patches de segurança. Esta opção não é recomendada para a maioria dos usuários.",
 			},
 			logsDirectory: {
 				label: "Diretório de Logs",
-				description: "Local onde os logs dos aplicativos são armazenados",
+				description: "Local onde os logs do aplicativo são armazenados",
 			},
 			submitFeedback: {
 				label: "Enviar Feedback",
-				description: "Relate quaisquer problemas ou dificuldades que você encontrar",
+				description: "Relate quaisquer problemas ou dificuldades que encontrar",
 				button: "Enviar Relatório",
 			},
 			showOnboarding: {
 				label: "Mostrar onboarding",
 				description:
-					"Redefina a Dione para seu estado inicial e mostre novamente o onboarding para reconfiguração",
+					"Redefina a Dione para seu estado inicial e exiba novamente o onboarding para reconfiguração",
 				button: "Redefinir",
 			},
 			variables: {
@@ -306,19 +306,19 @@ export const pt = {
 		uninstalling: {
 			title: "Desinstalando",
 			deps: "Desinstalando dependências",
-			wait: "por favor, aguarde...",
+			wait: "aguarde, por favor...",
 		},
 		success: {
 			title: "Desinstalado",
 			subtitle: "com sucesso",
-			closing: "Fechando esta janela em",
+			closing: "Fechando esta modal em",
 			seconds: "segundos...",
 		},
 		error: {
 			title: "Um inesperado",
 			subtitle: "erro",
 			hasOccurred: "ocorreu",
-			deps: "A Dione não conseguiu remover nenhuma dependência, por favor, remova manualmente.",
+			deps: "A Dione não conseguiu remover nenhuma dependência, por favor, faça isso manualmente.",
 			general: "Por favor, tente novamente mais tarde ou verifique os logs para mais informações.",
 		},
 		loading: {
@@ -331,7 +331,7 @@ export const pt = {
 	logs: {
 		loading: "Carregando...",
 		disclaimer:
-			"Os logs exibidos são do próprio aplicativo. Se você vir um erro, relate-o primeiro aos desenvolvedores originais do aplicativo.",
+			"Os logs exibidos são do próprio aplicativo. Se você vir um erro, por favor, relate primeiro aos desenvolvedores originais do aplicativo.",
 		status: {
 			success: "Sucesso",
 			error: "Erro",
@@ -367,7 +367,7 @@ export const pt = {
 
 	// promo component
 	promo: {
-		title: "Quer aparecer aqui?",
+		title: "Quer ser destaque aqui?",
 		description: "Mostre sua ferramenta para nossa comunidade",
 		button: "Ser Destaque",
 	},
@@ -383,21 +383,21 @@ export const pt = {
 
 	// local component
 	local: {
-		title: "Scripts Locais",
-		upload: "Enviar Script",
+		title: "Scripts locais",
+		upload: "Carregar script",
 		noScripts: "Nenhum script encontrado",
-		deleting: "Excluindo script, por favor, aguarde...",
+		deleting: "Excluindo script, por favor aguarde...",
 		uploadModal: {
-			title: "Enviar Script",
+			title: "Carregar Script",
 			selectFile: "Clique para selecionar um arquivo",
 			selectedFile: "Arquivo Selecionado",
-			scriptName: "Nome do Script",
-			scriptDescription: "Descrição do Script (opcional)",
-			uploadFile: "Enviar Arquivo",
-			uploading: "Enviando...",
+			scriptName: "Nome do script",
+			scriptDescription: "Descrição do script (opcional)",
+			uploadFile: "Carregar Arquivo",
+			uploading: "Carregando...",
 			errors: {
-				uploadFailed: "Falha ao enviar script. Por favor, tente novamente.",
-				uploadError: "Ocorreu um erro ao enviar o script.",
+				uploadFailed: "Falha ao carregar script. Por favor, tente novamente.",
+				uploadError: "Ocorreu um erro durante o carregamento do script.",
 			},
 		},
 	},
@@ -408,7 +408,7 @@ export const pt = {
 		errors: {
 			notArray: "Os dados buscados não são um array",
 			fetchFailed: "Falha ao buscar scripts",
-			notSupported: "Infelizmente %s não é suportado no seu %s.",
+			notSupported: "Infelizmente %s não é suportado em seu %s.",
 			notSupportedTitle: "Seu dispositivo pode ser incompatível.",
 		},
 	},

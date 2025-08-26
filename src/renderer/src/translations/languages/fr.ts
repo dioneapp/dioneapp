@@ -13,7 +13,7 @@ export const fr = {
 
 	// authentication and access related
 	noAccess: {
-		title: "Rejoignez la liste blanche Dione",
+		title: "Rejoindre la liste blanche Dione",
 		description:
 			"Dione est en cours de développement et seul un nombre limité d'utilisateurs peut y accéder. Rejoignez notre liste blanche dès maintenant pour accéder aux futures versions de notre application.",
 		join: "Rejoindre",
@@ -25,13 +25,13 @@ export const fr = {
 		welcome: {
 			title: "Bienvenue sur",
 			subtitle:
-				"Merci de nous rejoindre tôt dans ce voyage. Connectez-vous à votre compte pour commencer.",
+				"Merci de nous rejoindre dès le début de ce voyage. Connectez-vous à votre compte pour commencer.",
 			login: "Se connecter",
 			copyLink: "Copier le lien",
 			skipLogin: "Continuer sans connexion",
 		},
 		loggingIn: {
-			title: "Connexion...",
+			title: "Connexion en cours...",
 			authError: "Impossible de s'authentifier ?",
 			goBack: "Retour",
 		},
@@ -45,7 +45,7 @@ export const fr = {
 		},
 		clipboard: {
 			success:
-				"Copié dans le presse-papiers correctement, collez-le maintenant dans votre navigateur !",
+				"Copié dans le presse-papiers avec succès, collez-le maintenant dans votre navigateur !",
 		},
 		selectPath: {
 			title: "Sélectionnez le chemin d'installation",
@@ -58,7 +58,7 @@ export const fr = {
 	error: {
 		title: "Une erreur inattendue s'est produite",
 		description:
-			"Nous avons détecté une erreur inattendue dans l'application, nous sommes désolés pour le désagrément.",
+			"Nous avons détecté une erreur inattendue dans l'application, nous sommes désolés pour la gêne occasionnée.",
 		return: "Retour",
 		report: {
 			toTeam: "Signaler à l'équipe",
@@ -75,15 +75,15 @@ export const fr = {
 		stats: {
 			timeSpent: {
 				title: "Temps passé",
-				subtitle: "les 7 derniers jours",
+				subtitle: "sur les 7 derniers jours",
 			},
 			sessions: {
 				title: "Sessions",
-				subtitle: "les 7 derniers jours",
+				subtitle: "sur les 7 derniers jours",
 			},
 			shared: {
 				title: "Partagés",
-				subtitle: "les 7 derniers jours",
+				subtitle: "sur les 7 derniers jours",
 			},
 			streak: {
 				title: "Série",
@@ -98,20 +98,20 @@ export const fr = {
 		close: "Fermer",
 		install: {
 			downloading: "Téléchargement de %s...",
-			starting: "Lancement de %s...",
+			starting: "Démarrage de %s...",
 			uninstalling: "Désinstallation de %s...",
-			reconnecting: "Reconnexion à %s...",
+			reconnecting: "Reconnexion de %s...",
 			retrying: "Tentative de réinstallation de %s...",
 			success: {
 				stopped: "%s arrêté avec succès.",
 				uninstalled: "%s désinstallé avec succès.",
-				logsCopied: "Logs copiés avec succès dans le presse-papiers.",
+				logsCopied: "Journaux copiés avec succès dans le presse-papiers.",
 				depsInstalled: "Dépendances installées avec succès.",
 				shared: "Lien de téléchargement copié dans le presse-papiers !",
 			},
 			error: {
-				download: "Erreur lors de l'initiation du téléchargement : %s",
-				start: "Erreur lors du lancement de %s : %s",
+				download: "Erreur lors de l'initialisation du téléchargement : %s",
+				start: "Erreur lors du démarrage de %s : %s",
 				stop: "Erreur lors de l'arrêt de %s : %s",
 				uninstall: "Erreur lors de la désinstallation de %s : %s",
 				serverRunning: "Le serveur est déjà en cours d'exécution.",
@@ -132,7 +132,7 @@ export const fr = {
 
 	// sidebar component
 	sidebar: {
-		tagline: "Explorez, Installez, Innovez — en 1 Clic.",
+		tagline: "Explorez, installez, innovez — en 1 clic.",
 		activeApps: "Applications actives",
 		update: {
 			title: "Mise à jour disponible",
@@ -151,7 +151,7 @@ export const fr = {
 
 	// home page
 	home: {
-		featured: "En vedette",
+		featured: "À la une",
 		explore: "Explorer",
 	},
 
@@ -167,7 +167,7 @@ export const fr = {
 			binDirectory: {
 				label: "Répertoire des binaires",
 				description:
-					"Choisissez où les binaires de l'application seront stockés pour un accès facile",
+					"Choisissez où les binaires des applications seront stockés pour un accès facile",
 			},
 			cleanUninstall: {
 				label: "Désinstallation propre",
@@ -177,7 +177,7 @@ export const fr = {
 			autoOpenAfterInstall: {
 				label: "Ouvrir automatiquement après l'installation",
 				description:
-					"Ouvre automatiquement les applications pour la première fois après l'installation",
+					"Ouvrez automatiquement les applications pour la première fois après l'installation",
 			},
 			deleteCache: {
 				label: "Supprimer le cache",
@@ -194,7 +194,7 @@ export const fr = {
 				label: "Langue d'affichage",
 				description: "Choisissez votre langue d'interface préférée",
 			},
-			helpTranslate: "🤔 Vous ne voyez pas votre langue ? Aidez-nous à en ajouter plus !",
+			helpTranslate: "🤔 Vous ne voyez pas votre langue ? Aidez-nous à en ajouter d'autres !",
 			compactView: {
 				label: "Vue compacte",
 				description:
@@ -205,21 +205,21 @@ export const fr = {
 			title: "Notifications",
 			systemNotifications: {
 				label: "Notifications système",
-				description: "Affiche des notifications de bureau pour les événements importants",
+				description: "Afficher des notifications de bureau pour les événements importants",
 			},
 			installationAlerts: {
 				label: "Alertes d'installation",
-				description: "Soyez informé lorsque les installations d'applications sont terminées",
+				description: "Soyez notifié lorsque les installations d'applications sont terminées",
 			},
 			discordRPC: {
 				label: "Présence riche Discord",
-				description: "Affiche votre activité actuelle dans votre statut Discord",
+				description: "Affichez votre activité actuelle dans votre statut Discord",
 			},
 		},
 		privacy: {
 			title: "Confidentialité",
 			errorReporting: {
-				label: "Rapport d'erreurs",
+				label: "Rapports d'erreurs",
 				description: "Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes",
 			},
 		},
@@ -228,26 +228,26 @@ export const fr = {
 			disableAutoUpdate: {
 				label: "Désactiver les mises à jour automatiques",
 				description:
-					"Désactive les mises à jour automatiques. Attention : votre application peut manquer des corrections importantes ou des correctifs de sécurité. Cette option n'est pas recommandée pour la plupart des utilisateurs.",
+					"Désactive les mises à jour automatiques. Attention : votre application pourrait manquer des correctifs importants ou des correctifs de sécurité. Cette option n'est pas recommandée pour la plupart des utilisateurs.",
 			},
 			logsDirectory: {
-				label: "Répertoire des logs",
-				description: "Emplacement où sont stockés les logs de l'application",
+				label: "Répertoire des journaux",
+				description: "Emplacement où les journaux des applications sont stockés",
 			},
 			submitFeedback: {
-				label: "Soumettre des commentaires",
+				label: "Soumettre un commentaire",
 				description: "Signalez tout problème ou difficulté que vous rencontrez",
 				button: "Envoyer le rapport",
 			},
 			showOnboarding: {
-				label: "Afficher l'accueil",
+				label: "Afficher l'intégration",
 				description:
-					"Réinitialise Dione à son état initial et affiche à nouveau l'accueil pour une reconfiguration",
+					"Réinitialise Dione à son état initial et affiche à nouveau l'intégration pour la reconfiguration",
 				button: "Réinitialiser",
 			},
 			variables: {
 				label: "Variables",
-				description: "Gérer les variables de l'application et leurs valeurs",
+				description: "Gérez les variables de l'application et leurs valeurs",
 				button: "Ouvrir les Variables",
 			},
 		},
@@ -259,7 +259,7 @@ export const fr = {
 		description:
 			"Veuillez fournir des détails sur ce qui s'est passé et ce que vous essayiez de faire.",
 		placeholder:
-			"Exemple : J'essayais d'installer une application quand cette erreur s'est produite...",
+			"Exemple : J'essayais d'installer une application lorsque cette erreur s'est produite...",
 		systemInformationTitle: "Informations système",
 		disclaimer:
 			"Les informations système suivantes et un identifiant anonyme seront inclus dans votre rapport.",
@@ -278,7 +278,7 @@ export const fr = {
 			noMoreApps: "Aucune application disponible à ajouter",
 		},
 		selectApp: {
-			title: "Sélectionnez une application",
+			title: "Sélectionner une application",
 			description: "{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
 		},
 	},
@@ -294,7 +294,7 @@ export const fr = {
 			connected: "Connecté au serveur",
 			disconnected: "Déconnecté du serveur",
 			error: {
-				socket: "Erreur lors de la configuration de la socket",
+				socket: "Erreur lors de la configuration du socket",
 				install: "❌ Erreur lors de l'installation des dépendances : {error}",
 			},
 			allInstalled: "Toutes les dépendances sont déjà installées.",
@@ -315,11 +315,11 @@ export const fr = {
 			seconds: "secondes...",
 		},
 		error: {
-			title: "Une erreur",
-			subtitle: "inattendue",
+			title: "Une erreur inattendue",
+			subtitle: "erreur",
 			hasOccurred: "s'est produite",
 			deps: "Dione n'a pas pu supprimer de dépendance, veuillez le faire manuellement.",
-			general: "Veuillez réessayer plus tard ou consulter les logs pour plus d'informations.",
+			general: "Veuillez réessayer plus tard ou consulter les journaux pour plus d'informations.",
 		},
 		loading: {
 			title: "Chargement...",
@@ -331,7 +331,7 @@ export const fr = {
 	logs: {
 		loading: "Chargement...",
 		disclaimer:
-			"Les logs affichés proviennent de l'application elle-même. Si vous voyez une erreur, veuillez d'abord la signaler aux développeurs de l'application d'origine.",
+			"Les journaux affichés proviennent de l'application elle-même. Si vous voyez une erreur, veuillez d'abord la signaler aux développeurs de l'application d'origine.",
 		status: {
 			success: "Succès",
 			error: "Erreur",
@@ -349,11 +349,11 @@ export const fr = {
 		back: "Retour",
 		openFolder: "Ouvrir le dossier",
 		openInBrowser: "Ouvrir dans le navigateur",
-		openNewWindow: "Ouvrir une nouvelle fenêtre",
+		openNewWindow: "Ouvrir dans une nouvelle fenêtre",
 		fullscreen: "Plein écran",
 		stop: "Arrêter",
 		reload: "Recharger",
-		logs: "Logs",
+		logs: "Journaux",
 	},
 
 	// actions component
@@ -367,7 +367,7 @@ export const fr = {
 
 	// promo component
 	promo: {
-		title: "Vous voulez être présenté ici ?",
+		title: "Vous voulez apparaître ici ?",
 		description: "Présentez votre outil à notre communauté",
 		button: "Être mis en avant",
 	},
@@ -408,7 +408,7 @@ export const fr = {
 		errors: {
 			notArray: "Les données récupérées ne sont pas un tableau",
 			fetchFailed: "Échec de la récupération des scripts",
-			notSupported: "Malheureusement %s n'est pas pris en charge sur votre %s.",
+			notSupported: "Malheureusement, %s n'est pas pris en charge sur votre %s.",
 			notSupportedTitle: "Votre appareil peut être incompatible.",
 		},
 	},

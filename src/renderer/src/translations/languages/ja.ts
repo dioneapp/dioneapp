@@ -15,7 +15,7 @@ export const ja = {
 	noAccess: {
 		title: "Dioneホワイトリストに参加する",
 		description:
-			"Dioneは現在開発中であり、アクセスできるユーザーは限られています。将来のバージョンのアプリにアクセスするために、今すぐホワイトリストに参加してください。",
+			"Dioneは現在開発中であり、アクセスできるユーザーは限られています。今すぐホワイトリストに参加して、今後のアプリバージョンにアクセスしましょう。",
 		join: "参加する",
 		logout: "ログアウト",
 	},
@@ -23,9 +23,9 @@ export const ja = {
 	// first time user experience
 	firstTime: {
 		welcome: {
-			title: "ようこそ",
+			title: "へようこそ",
 			subtitle:
-				"この旅に早期からご参加いただきありがとうございます。アカウントにログインして開始してください。",
+				"この旅に早期から参加していただきありがとうございます。アカウントにログインして開始してください。",
 			login: "ログイン",
 			copyLink: "リンクをコピー",
 			skipLogin: "ログインせずに続行",
@@ -40,7 +40,7 @@ export const ja = {
 		},
 		ready: {
 			title: "準備完了です！",
-			subtitle: "ようこそお越しくださいました",
+			subtitle: "ここにお迎えできて嬉しいです",
 			finish: "完了",
 		},
 		clipboard: {
@@ -56,14 +56,14 @@ export const ja = {
 
 	// error handling
 	error: {
-		title: "予期せぬエラーが発生しました",
+		title: "予期しないエラーが発生しました",
 		description:
-			"アプリケーションで予期せぬエラーが検出されました。ご不便をおかけして申し訳ございません。",
+			"アプリケーションで予期しないエラーが検出されました。ご迷惑をおかけして申し訳ございません。",
 		return: "戻る",
 		report: {
 			toTeam: "チームに報告",
 			sending: "レポートを送信中...",
-			success: "レポートを送信しました！",
+			success: "レポートが送信されました！",
 			failed: "レポートの送信に失敗しました",
 		},
 	},
@@ -98,25 +98,25 @@ export const ja = {
 		close: "閉じる",
 		install: {
 			downloading: "%s をダウンロード中...",
-			starting: "%s を開始中...",
+			starting: "%s を起動中...",
 			uninstalling: "%s をアンインストール中...",
 			reconnecting: "%s を再接続中...",
-			retrying: "%s を再試行中...",
+			retrying: "%s のインストールを再試行中...",
 			success: {
 				stopped: "%s は正常に停止しました。",
 				uninstalled: "%s は正常にアンインストールされました。",
-				logsCopied: "ログは正常にクリップボードにコピーされました。",
-				depsInstalled: "依存関係は正常にインストールされました。",
+				logsCopied: "ログがクリップボードに正常にコピーされました。",
+				depsInstalled: "依存関係が正常にインストールされました。",
 				shared: "ダウンロードリンクがクリップボードにコピーされました！",
 			},
 			error: {
 				download: "ダウンロードの開始エラー: %s",
-				start: "%s の開始エラー: %s",
+				start: "%s の起動エラー: %s",
 				stop: "%s の停止エラー: %s",
 				uninstall: "%s のアンインストールエラー: %s",
 				serverRunning: "サーバーは既に実行中です。",
 				tooManyApps:
-					"スローダウンしてください！一度に6つ以上のアプリが実行されています。",
+					"スローダウンしてください！既に6つのアプリが同時に実行されています。",
 			},
 		},
 	},
@@ -132,7 +132,7 @@ export const ja = {
 
 	// sidebar component
 	sidebar: {
-		tagline: "探求、インストール、革新 — 1クリックで。",
+		tagline: "探求、インストール、革新 — ワンクリックで。",
 		activeApps: "アクティブなアプリ",
 		update: {
 			title: "アップデートが利用可能です",
@@ -167,12 +167,12 @@ export const ja = {
 			binDirectory: {
 				label: "Binディレクトリ",
 				description:
-					"アプリケーションのバイナリが保存される場所を選択して、簡単にアクセスできるようにしてください",
+					"アプリケーションのバイナリが簡単にアクセスできるように保存される場所を選択してください",
 			},
 			cleanUninstall: {
 				label: "クリーンアンインストール",
 				description:
-					"アプリケーションのアンインストール時に、関連するすべての依存関係を削除します",
+					"アプリケーションをアンインストールする際に、関連するすべての依存関係を削除します",
 			},
 			autoOpenAfterInstall: {
 				label: "インストール後に自動オープン",
@@ -181,7 +181,7 @@ export const ja = {
 			},
 			deleteCache: {
 				label: "キャッシュを削除",
-				description: "アプリケーションのすべてのキャッシュデータを削除します",
+				description: "アプリケーションからすべてのキャッシュデータを削除します",
 				button: "キャッシュを削除",
 				deleting: "削除中...",
 				deleted: "削除済み",
@@ -192,13 +192,13 @@ export const ja = {
 			title: "インターフェース",
 			displayLanguage: {
 				label: "表示言語",
-				description: "希望するインターフェース言語を選択してください",
+				description: "好みのインターフェース言語を選択してください",
 			},
-			helpTranslate: "🤔 あなたの言語が表示されませんか？追加にご協力ください！",
+			helpTranslate: "🤔 あなたの言語が表示されない？ より多くの言語を追加するのを手伝ってください！",
 			compactView: {
 				label: "コンパクトビュー",
 				description:
-					"より凝縮されたレイアウトを使用して、画面により多くのコンテンツを表示します",
+					"より簡潔なレイアウトを使用して、画面により多くのコンテンツを表示します",
 			},
 		},
 		notifications: {
@@ -220,7 +220,7 @@ export const ja = {
 			title: "プライバシー",
 			errorReporting: {
 				label: "エラー報告",
-				description: "匿名のエラーレポートを送信してDioneの改善にご協力ください",
+				description: "匿名のエラーレポートを送信してDioneの改善に協力してください",
 			},
 		},
 		other: {
@@ -228,7 +228,7 @@ export const ja = {
 			disableAutoUpdate: {
 				label: "自動アップデートを無効にする",
 				description:
-					"自動アップデートを無効にします。注意：アプリケーションが重要な修正やセキュリティパッチを見逃す可能性があります。ほとんどのユーザーにはこのオプションはお勧めしません。",
+					"自動アップデートを無効にします。注意：アプリケーションが重要な修正やセキュリティパッチを見逃す可能性があります。このオプションはほとんどのユーザーには推奨されません。",
 			},
 			logsDirectory: {
 				label: "ログディレクトリ",
@@ -259,7 +259,7 @@ export const ja = {
 		description:
 			"何が起こったのか、何をしようとしていたのか、詳細を教えてください。",
 		placeholder:
-			"例：アプリケーションをインストールしようとしたときに、このエラーが発生しました...",
+			"例: アプリケーションをインストールしようとしたときにこのエラーが発生しました...",
 		systemInformationTitle: "システム情報",
 		disclaimer:
 			"以下のシステム情報と匿名IDがレポートに含まれます。",
@@ -267,7 +267,7 @@ export const ja = {
 		error: "レポートの送信に失敗しました。もう一度お試しください。",
 		send: "レポートを送信",
 		sending: "送信中...",
-		contribute: "すべてのデバイスでこのスクリプトを互換性のあるものにするために貢献してください",
+		contribute: "すべてのデバイスと互換性があるように、このスクリプトを改善するのに協力してください",
 	},
 
 	// quick launch component
@@ -275,11 +275,11 @@ export const ja = {
 		title: "クイック起動",
 		addApp: "アプリを追加",
 		tooltips: {
-			noMoreApps: "追加できるアプリはありません",
+			noMoreApps: "追加できるアプリがありません",
 		},
 		selectApp: {
 			title: "アプリを選択",
-			description: "{count} 個のアプリが利用可能です。最大 {max} 個まで選択できます。",
+			description: "%d 個のアプリが利用可能です。最大 %d 個まで選択できます。",
 		},
 	},
 
@@ -309,17 +309,17 @@ export const ja = {
 			wait: "お待ちください...",
 		},
 		success: {
-			title: "アンインストール済み",
+			title: "アンインストール完了",
 			subtitle: "正常に",
-			closing: "このモーダルを閉じています",
+			closing: "このモーダルを閉じるまで",
 			seconds: "秒...",
 		},
 		error: {
-			title: "予期せぬ",
+			title: "予期しない",
 			subtitle: "エラー",
 			hasOccurred: "が発生しました",
 			deps: "Dioneは依存関係を削除できませんでした。手動で削除してください。",
-			general: "後でもう一度お試しいただくか、ログを確認して詳細を確認してください。",
+			general: "後でもう一度お試しいただくか、ログで詳細を確認してください。",
 		},
 		loading: {
 			title: "読み込み中...",
@@ -331,7 +331,7 @@ export const ja = {
 	logs: {
 		loading: "読み込み中...",
 		disclaimer:
-			"表示されているログはアプリ自体のものです。エラーが表示された場合は、まず元のアプリの開発者に報告してください。",
+			"表示されるログはアプリ自体からのものです。エラーが表示された場合は、まず元のアプリの開発者に報告してください。",
 		status: {
 			success: "成功",
 			error: "エラー",
@@ -368,8 +368,8 @@ export const ja = {
 	// promo component
 	promo: {
 		title: "ここに掲載されたいですか？",
-		description: "コミュニティにあなたのツールを紹介してください",
-		button: "掲載してもらう",
+		description: "あなたのツールをコミュニティに紹介しましょう",
+		button: "紹介される",
 	},
 
 	// installed component
@@ -406,10 +406,10 @@ export const ja = {
 	feed: {
 		noScripts: "スクリプトが見つかりません",
 		errors: {
-			notArray: "取得したデータは配列ではありません",
+			notArray: "取得したデータが配列ではありません",
 			fetchFailed: "スクリプトの取得に失敗しました",
 			notSupported: "残念ながら %s はあなたの %s ではサポートされていません。",
-			notSupportedTitle: "お使いのデバイスは互換性がない可能性があります。",
+			notSupportedTitle: "お使いのデバイスと互換性がない可能性があります。",
 		},
 	},
 
