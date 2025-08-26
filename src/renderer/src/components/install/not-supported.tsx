@@ -1,5 +1,4 @@
 import { useTranslation } from "@renderer/translations/translationContext";
-import { openLink } from "@renderer/utils/openLink";
 import { Gpu, Monitor } from "lucide-react";
 
 export default function NotSupported({

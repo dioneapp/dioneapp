@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
-import { CarrouselSkeleton } from "../home/explore/featured-carrousel";
 import ScriptCard from "../home/feed/card";
 import Icon from "../icons/icon";
 import Loading from "../install/loading-skeleton";
