@@ -99,6 +99,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const [notSupported, setNotSupported] = useState<
 		Record<string, { reasons: string[] }>
 	>({});
+	// autoopen
+	const [wasJustInstalled, setWasJustInstalled] = useState<boolean>(false);
 
 	useEffect(() => {
 		setData(null);
@@ -222,13 +224,11 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	const stopCheckingRef = useRef(true);
 	const loadIframe = async (localPort: number) => {
+		stopCheckingRef.current = false;
 		let isAvailable = false;
 		while (!isAvailable) {
 			isAvailable = await isLocalAvailable(localPort);
 			if (!isAvailable) {
-				if (stopCheckingRef.current === true) {
-					break;
-				}
 				await new Promise((resolve) => setTimeout(resolve, 1000));
 			}
 		}
@@ -269,6 +269,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			socketsRef,
 			setAppFinished,
 			setNotSupported,
+			setWasJustInstalled,
 		});
 		socketsRef.current[appId] = {
 			socket: newSocket,
@@ -470,6 +471,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				localApps,
 				setNotSupported,
 				notSupported,
+				wasJustInstalled,
+				setWasJustInstalled,
 			}}
 		>
 			{children}

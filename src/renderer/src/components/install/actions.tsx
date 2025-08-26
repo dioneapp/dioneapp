@@ -1,6 +1,8 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { BadgeCheck, Download, User } from "lucide-react";
+import { BadgeCheck, ChevronDown, Download, User } from "lucide-react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import Loading from "./loading-skeleton";
 
@@ -14,6 +16,7 @@ interface ActionsProps {
 	isServerRunning: Record<string, boolean>;
 	handleReconnect: any;
 	handleDeleteDeps: any;
+	startOptions?: any;
 	isLocal?: boolean;
 	user?: boolean;
 }
@@ -28,9 +31,30 @@ export default function ActionsComponent({
 	isServerRunning,
 	handleReconnect,
 	handleDeleteDeps,
+	startOptions,
 	isLocal,
 }: ActionsProps) {
 	const { t } = useTranslation();
+	const [dropdownOpen, setDropdownOpen] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+
+	// Close dropdown on outside click
+	useEffect(() => {
+		function handleClickOutside(event: MouseEvent) {
+			if (
+				dropdownRef.current &&
+				!dropdownRef.current.contains(event.target as Node)
+			) {
+				setDropdownOpen(false);
+			}
+		}
+		if (dropdownOpen) {
+			document.addEventListener("mousedown", handleClickOutside);
+		}
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [dropdownOpen]);
 
 	return (
 		<>
@@ -44,7 +68,7 @@ export default function ActionsComponent({
 					stiffness: 100,
 					damping: 20,
 				}}
-				className="flex flex-col gap-6 w-full max-w-xl overflow-auto rounded-xl"
+				className="flex flex-col gap-6 w-full max-w-xl rounded-xl"
 			>
 				{data ? (
 					<motion.div
@@ -57,11 +81,13 @@ export default function ActionsComponent({
 							stiffness: 100,
 							damping: 20,
 						}}
-						className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-auto max-w-xl w-full bg-[#080808]/60 backdrop-filter backdrop-blur-sm"
+						className="rounded-xl border border-white/10 shadow-lg relative max-w-xl w-full bg-[#080808]/60 backdrop-filter backdrop-blur-sm"
 					>
 						{/* background effects */}
-						<div className="absolute top-0 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-50" />
-						<div className="relative z-10">
+						<div className="absolute w-full h-full backdrop-filter backdrop-blur-sm overflow-hidden">
+							<div className="absolute top-0 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-50" />
+						</div>
+						<div className="relative z-10 p-6">
 							<div className="flex gap-4 items-start justify-start">
 								<div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-white/10">
 									{/* biome-ignore lint/complexity/useOptionalChain: if you change && to || it will break */}
@@ -108,15 +134,6 @@ export default function ActionsComponent({
 										</div>
 										{!isLocal && (
 											<div className="flex items-start mb-auto gap-2 justify-center">
-												{/* <button
-												disabled={!user}
-												type="button"
-												onClick={() => handleShare()}
-												className="flex items-center justify-center gap-2 text-xs w-full enabled:hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-400 text-center enabled:cursor-pointer"
-											>
-												<ThumbsUp className="h-3 w-3" />
-												<span className="font-semibold">{data.likes || 0}</span>
-											</button> */}
 												<button
 													type="button"
 													className={
@@ -184,13 +201,65 @@ export default function ActionsComponent({
 								{!isServerRunning[data?.id] &&
 									(installed ? (
 										<div className="flex gap-2 justify-end w-full">
-											<button
-												type="button"
-												onClick={handleStart}
-												className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer"
-											>
-												{t("actions.start")}
-											</button>
+											{startOptions && startOptions.starts.length > 1 ? (
+												<div className="relative" ref={dropdownRef}>
+													<button
+														type="button"
+														onClick={() => setDropdownOpen((v) => !v)}
+														className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-full rounded-bl-none" : "rounded-full"} focus:outline-none transition-all duration-150 cursor-pointer flex items-center gap-2`}
+													>
+														{t("actions.start")}
+														<ChevronDown size={16} />
+													</button>
+													{dropdownOpen && startOptions && (
+														<motion.div
+															initial={{
+																opacity: 0,
+																scale: 0.93,
+																y: -10,
+																filter: "blur(10px)",
+															}}
+															animate={{
+																opacity: 1,
+																scale: 1,
+																y: 0,
+																filter: "blur(0px)",
+																transition: { duration: 0.2 },
+															}}
+															exit={{
+																opacity: 0,
+																scale: 0.93,
+																y: -10,
+																filter: "blur(10px)",
+															}}
+															className="absolute left-0 mt-2 p-2 w-44 bg-white border border-white/10 rounded rounded-tl-none shadow-lg z-50 overflow-hidden"
+														>
+															{startOptions.starts.map((start, index) => (
+																<div
+																	onClick={() => handleStart(start)}
+																	key={index}
+																	className="px-2 text-white-300 hover:bg-neutral-300 rounded cursor-pointer transition-colors"
+																>
+																	<span className="text-xs text-black font-semibold">
+																		{start.name}
+																	</span>
+																</div>
+															))}
+														</motion.div>
+													)}
+												</div>
+											) : (
+												<div className="relative" ref={dropdownRef}>
+													<button
+														type="button"
+														onClick={() => handleStart()}
+														className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-b-none rounded-lg" : "rounded-full"} focus:outline-none transition-all duration-200 cursor-pointer flex items-center gap-2`}
+													>
+														{t("actions.start")}
+													</button>
+												</div>
+											)}
+
 											<button
 												type="button"
 												onClick={handleDeleteDeps}

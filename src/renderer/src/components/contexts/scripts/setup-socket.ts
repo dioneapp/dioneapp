@@ -19,6 +19,7 @@ export function setupSocket({
 	socketsRef,
 	setAppFinished,
 	setNotSupported,
+	setWasJustInstalled,
 }: SetupSocketProps): Socket {
 	if (socketsRef.current[appId]?.socket) {
 		console.log(`Socket [${appId}] already exists`);
@@ -123,6 +124,11 @@ export function setupSocket({
 			if (content === "Script killed successfully" && !errorRef.current) {
 				stopCheckingRef.current = true;
 				showToast("success", `${data?.name || "Script"} exited successfully.`);
+			}
+
+			if (type === "installFinished") {
+				console.log("App finished installation");
+				setWasJustInstalled(true);
 			}
 		},
 	);

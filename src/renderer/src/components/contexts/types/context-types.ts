@@ -77,6 +77,8 @@ export interface ScriptsContextType {
 		React.SetStateAction<Record<string, { reasons: string[] }>>
 	>;
 	notSupported: Record<string, { reasons: string[] }>;
+	wasJustInstalled: boolean;
+	setWasJustInstalled: React.Dispatch<React.SetStateAction<boolean>>;
 	isLocal?: boolean;
 }
 
@@ -113,5 +115,6 @@ export interface SetupSocketProps {
 	setNotSupported: React.Dispatch<
 		React.SetStateAction<Record<string, { reasons: string[] }>>
 	>;
+	setWasJustInstalled: React.Dispatch<React.SetStateAction<boolean>>;
 	isLocal?: boolean;
 }

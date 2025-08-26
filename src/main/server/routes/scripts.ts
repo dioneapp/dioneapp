@@ -4,6 +4,7 @@ import express from "express";
 import type { Server } from "socket.io";
 import { readConfig } from "../../config";
 import { deleteScript } from "../scripts/delete";
+import { readDioneConfig } from "../scripts/dependencies/dependencies";
 import { getScripts } from "../scripts/download";
 import { executeStartup } from "../scripts/execute";
 import getAllScripts, { getInstalledScript } from "../scripts/installed";
@@ -98,8 +99,10 @@ export function createScriptRouter(io: Server) {
 		}
 	});
 	// start a script by name
-	router.get("/start/:name/:id", async (req, res) => {
+	router.post("/start/:name/:id", express.json(), async (req, res) => {
 		const { name, id } = req.params;
+		const { replaceCommands } = req.body;
+		const selectedStart = decodeURIComponent((req.query.start as string) || "");
 		const sanitizedName = name.replace(/\s+/g, "-");
 		const root = process.cwd();
 		const config = readConfig();
@@ -113,8 +116,16 @@ export function createScriptRouter(io: Server) {
 			type: "log",
 			content: `Starting script '${sanitizedName}' on '${workingDir}'`,
 		});
+
+		console.log("selected start option:", selectedStart);
 		try {
-			await executeStartup(workingDir, io, id);
+			await executeStartup(
+				workingDir,
+				io,
+				id,
+				selectedStart !== "" ? selectedStart : undefined,
+				replaceCommands !== "" ? replaceCommands : undefined,
+			);
 			res.status(200).send({ message: "Script started successfully" });
 		} catch (error: any) {
 			logger.error(`Error handling start request - Full error:`, error);
@@ -126,5 +137,62 @@ export function createScriptRouter(io: Server) {
 			res.status(500).send("An error occurred while processing your request.");
 		}
 	});
+
+	// get script start options
+	router.get("/start-options/:name", async (req, res) => {
+		const name = decodeURIComponent(req.params.name);
+		const sanitizedName = name.replace(/\s+/g, "-");
+		const root = process.cwd();
+		const config = readConfig();
+		const workingDir = path.join(
+			config?.defaultInstallFolder || root,
+			"apps",
+			sanitizedName,
+		);
+
+		try {
+			// read dione file
+			const dioneFile = path.join(workingDir, "dione.json");
+			const options = await readDioneConfig(dioneFile);
+
+			if (!options.start || !Array.isArray(options.start)) {
+				return res.status(404).json({ error: "No start options found" });
+			}
+
+			const starts = options.start
+				.map((s) => {
+					if (s.commands) {
+						return {
+							name: s.name,
+							catch: s.catch,
+							env: s.env,
+							steps: [
+								{
+									name: "Step 0",
+									commands: s.commands,
+								},
+							],
+						};
+					} else if (s.steps) {
+						return {
+							name: s.name,
+							catch: s.catch,
+							env: s.env,
+							steps: s.steps,
+						};
+					}
+					return null;
+				})
+				.filter(Boolean);
+
+			return res.status(200).json({ starts });
+		} catch (error: any) {
+			logger.error(
+				`Unable to obtain start options for "${name}" script: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
+			);
+			res.status(500).send("An error occurred while processing your request.");
+		}
+	});
+
 	return router;
 }

@@ -3,6 +3,7 @@ import Buttons from "@renderer/components/install/buttons";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
 import NotSupported from "@renderer/components/install/not-supported";
+import CustomCommandsModal from "@renderer/components/modals/custom-commands";
 import DeleteDepsModal from "@renderer/components/modals/delete-deps";
 import sendEvent from "@renderer/utils/events";
 import { AnimatePresence } from "framer-motion";
@@ -49,6 +50,8 @@ export default function Install({
 		setLocalApps,
 		notSupported,
 		sockets,
+		wasJustInstalled,
+		setWasJustInstalled,
 	} = useScriptsContext();
 
 	const { t } = useTranslation();
@@ -58,7 +61,6 @@ export default function Install({
 	const [_imgLoading, setImgLoading] = useState<boolean>(true);
 	// data stuff
 	const [installed, setInstalled] = useState<boolean>(false);
-	const [wasJustInstalled, setWasJustInstalled] = useState<boolean>(false);
 	// delete
 	const [deleteStatus, setDeleteStatus] = useState<string>("");
 	const [deleteDepsModal, setDeleteDepsModal] = useState<boolean>(false);
@@ -77,6 +79,14 @@ export default function Install({
 
 	// auto-install missing dependencies
 	const [installingDeps, setInstallingDeps] = useState<boolean>(false);
+
+	// start options
+	const [startOptions, setStartOptions] = useState<any>(null);
+	const [selectedStart, setSelectedStart] = useState<any>(null);
+	const [openCustomCommands, setOpenCustomCommands] = useState<boolean>(false);
+	const [customizableCommands, setCustomizableCommands] = useState<
+		Record<string, string>
+	>({});
 
 	useEffect(() => {
 		async function autoInstallMissingDependencies() {
@@ -166,51 +176,7 @@ export default function Install({
 
 			if (appFinished[data.id] === true) {
 				await handleStopApp(data.id, data.name);
-				await fetchIfDownloaded();
 				setShow({ [data.id]: "actions" });
-
-				// auto-open the app if the setting is enabled and it was just installed
-				// but only if we're not in the middle of installing dependencies
-				if (
-					config?.autoOpenAfterInstall &&
-					wasJustInstalled &&
-					!missingDependencies
-				) {
-					const port = await getCurrentPort();
-					let response: Response;
-					if (isLocal) {
-						response = await fetch(
-							`http://localhost:${port}/local/installed/${encodeURIComponent(data.name)}`,
-							{
-								method: "GET",
-								headers: {
-									"Content-Type": "application/json",
-								},
-							},
-						);
-					} else {
-						response = await fetch(
-							`http://localhost:${port}/scripts/installed/${data.name}`,
-							{
-								method: "GET",
-								headers: {
-									"Content-Type": "application/json",
-								},
-							},
-						);
-					}
-
-					if (response.ok) {
-						const isActuallyInstalled = await response.json();
-						if (isActuallyInstalled) {
-							setTimeout(async () => {
-								setShow({ [data?.id]: "logs" });
-								await start();
-								setWasJustInstalled(false);
-							}, 1000);
-						}
-					}
-				}
 			}
 		}
 		stopApp();
@@ -226,6 +192,26 @@ export default function Install({
 		start,
 		isLocal,
 	]);
+
+	useEffect(() => { 
+
+		async function handleAutoOpen() { 
+			// auto-open the app if the setting is enabled and it was just installed
+			// but only if we're not in the middle of installing dependencies
+			const oldInstall = installed;
+			const newInstall = await fetchIfDownloaded();
+			if (oldInstall === false && newInstall === true && config?.autoOpenAfterInstall && wasJustInstalled) {
+				await new Promise((resolve) => setTimeout(resolve, 300));
+				await handleStart();
+				setWasJustInstalled(false);
+			}
+		}
+
+		if (!data?.id) return;
+		if (!isServerRunning[data.id]) {
+			handleAutoOpen();
+		}
+	}, [isServerRunning]);
 
 	useEffect(() => {
 		setData(null);
@@ -359,6 +345,7 @@ export default function Install({
 			if (response.ok) {
 				const jsonData = await response.json();
 				setInstalled(jsonData);
+				return jsonData;
 			} else {
 				setError(true);
 			}
@@ -469,7 +456,10 @@ export default function Install({
 		console.log(result);
 	}
 
-	async function start() {
+	async function start(
+		selectedStart?: string,
+		replaceCommands?: Record<string, string>,
+	) {
 		const tooMuchApps = activeApps.length >= maxApps;
 		if (tooMuchApps) {
 			showToast(
@@ -496,9 +486,13 @@ export default function Install({
 				`Starting ${data.name}`,
 			);
 			await fetch(
-				`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}`,
+				`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}${selectedStart ? `?start=${encodeURIComponent(selectedStart)}` : ""}`,
 				{
-					method: "GET",
+					method: "POST",
+					body: JSON.stringify({ replaceCommands }),
+					headers: {
+						"Content-Type": "application/json",
+					},
 				},
 			);
 		} catch (error) {
@@ -673,13 +667,38 @@ export default function Install({
 		await download();
 	};
 
-	const handleStart = async () => {
-		showToast("default", t("toast.install.starting").replace("%s", data.name));
-		// only switch to logs view if we're not already there
-		if (show[data?.id] !== "logs") {
-			setShow({ [data?.id]: "logs" });
+	const handleStart = async (selectedStartOpt?: any) => {
+		if (selectedStartOpt) {
+			setSelectedStart(selectedStartOpt);
+
+			const replaceCommands: Record<string, string> = {};
+			console.log("selectedStart", selectedStartOpt);
+			(selectedStartOpt.steps as any[]).forEach((step) => {
+				(step.commands as any[]).forEach((cmd) => {
+					if (typeof cmd === "object" && cmd.customizable) {
+						replaceCommands[cmd.command] = cmd.command;
+					}
+				});
+			});
+
+			if (Object.keys(replaceCommands).length > 0) {
+				console.log("custom commands (old -> new):", replaceCommands);
+				setCustomizableCommands(replaceCommands);
+				setOpenCustomCommands(true);
+			} else {
+				showToast(
+					"default",
+					t("toast.install.starting").replace("%s", data.name),
+				);
+				if (show[data?.id] !== "logs") {
+					setShow({ [data?.id]: "logs" });
+				}
+				setSelectedStart(selectedStartOpt.name);
+				await start(selectedStartOpt.name);
+			}
+		} else {
+			await start();
 		}
-		await start();
 	};
 
 	const handleUninstall = async (deleteDeps?: boolean) => {
@@ -845,14 +864,54 @@ export default function Install({
 		}
 	}, [data]);
 
+    useEffect(() => {
+        if (!data?.id) return;
+        if (iframeAvailable && isServerRunning[data.id] && installed) {
+            loadIframe(catchPort as number);
+        }
+    }, [iframeAvailable, isServerRunning[data?.id], installed, catchPort, data?.id]);
+
 	useEffect(() => {
-		if (iframeAvailable) {
-			loadIframe(catchPort as number);
+		async function fetchStartOptions() {
+			if (data) {
+				const port = await getCurrentPort();
+				const res = await fetch(
+					`http://localhost:${port}/scripts/start-options/${encodeURIComponent(data.name)}`,
+				);
+				if (res.status === 200) {
+					const options = await res.json();
+					console.log("options", options);
+					setStartOptions(options);
+				}
+			}
 		}
-	}, []);
+		if (installed === true) {
+			fetchStartOptions();
+		}
+	}, [installed]);
+
+	const handleEditCommand = (oldCommand: string, newValue: string) => {
+		setCustomizableCommands((prev) => ({
+			...prev,
+			[oldCommand]: newValue,
+		}));
+	};
 
 	return (
 		<>
+			{openCustomCommands && (
+				<CustomCommandsModal
+					commands={customizableCommands}
+					onEdit={handleEditCommand}
+					onLaunch={() => {
+						if (customizableCommands && selectedStart) {
+							start(selectedStart.name, customizableCommands);
+						}
+						setOpenCustomCommands(false);
+					}}
+					onCancel={() => setOpenCustomCommands(false)}
+				/>
+			)}
 			{deleteStatus !== "" && (
 				<DeleteLoadingModal
 					status={deleteStatus}
@@ -928,6 +987,7 @@ export default function Install({
 									handleStart={handleStart}
 									handleUninstall={handleUninstall}
 									handleDeleteDeps={handleDeleteDeps}
+									startOptions={startOptions}
 									isLocal={isLocal}
 								/>
 							)}
