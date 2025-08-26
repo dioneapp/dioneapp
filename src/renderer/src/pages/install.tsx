@@ -193,14 +193,18 @@ export default function Install({
 		isLocal,
 	]);
 
-	useEffect(() => { 
-
-		async function handleAutoOpen() { 
+	useEffect(() => {
+		async function handleAutoOpen() {
 			// auto-open the app if the setting is enabled and it was just installed
 			// but only if we're not in the middle of installing dependencies
 			const oldInstall = installed;
 			const newInstall = await fetchIfDownloaded();
-			if (oldInstall === false && newInstall === true && config?.autoOpenAfterInstall && wasJustInstalled) {
+			if (
+				oldInstall === false &&
+				newInstall === true &&
+				config?.autoOpenAfterInstall &&
+				wasJustInstalled
+			) {
 				await new Promise((resolve) => setTimeout(resolve, 300));
 				await handleStart();
 				setWasJustInstalled(false);
@@ -864,12 +868,18 @@ export default function Install({
 		}
 	}, [data]);
 
-    useEffect(() => {
-        if (!data?.id) return;
-        if (iframeAvailable && isServerRunning[data.id] && installed) {
-            loadIframe(catchPort as number);
-        }
-    }, [iframeAvailable, isServerRunning[data?.id], installed, catchPort, data?.id]);
+	useEffect(() => {
+		if (!data?.id) return;
+		if (iframeAvailable && isServerRunning[data.id] && installed) {
+			loadIframe(catchPort as number);
+		}
+	}, [
+		iframeAvailable,
+		isServerRunning[data?.id],
+		installed,
+		catchPort,
+		data?.id,
+	]);
 
 	useEffect(() => {
 		async function fetchStartOptions() {
