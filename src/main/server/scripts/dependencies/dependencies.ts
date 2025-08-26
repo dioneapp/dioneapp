@@ -6,12 +6,6 @@ import { readConfig } from "../../../config";
 import logger from "../../utils/logger";
 import { dependencyRegistry } from "./accepted-dependencies";
 
-const config = readConfig();
-const binFolder = path.join(
-	config?.defaultBinFolder || path.join(app.getPath("userData")),
-	"bin",
-);
-
 export function readDioneConfig(filePath: string): any {
 	try {
 		const data = fs.readFileSync(filePath, "utf8");
@@ -27,6 +21,13 @@ export async function checkDependencies(dioneConfigPath: string): Promise<{
 	missing: { name: string; installed: boolean; reason: string }[];
 	error?: boolean;
 }> {
+
+	const config = readConfig();
+	const binFolder = path.join(
+		config?.defaultBinFolder || path.join(app.getPath("userData")),
+		"bin",
+	);
+
 	const dioneConfig = readDioneConfig(dioneConfigPath);
 	const dependencies = dioneConfig?.dependencies || {};
 	const needEnv = JSON.stringify(dioneConfig).includes("env");
@@ -96,6 +97,11 @@ export async function installDependency(
 	id: string,
 	io: Server,
 ) {
+	const config = readConfig();
+	const binFolder = path.join(
+		config?.defaultBinFolder || path.join(app.getPath("userData")),
+		"bin",
+	);
 	const entry = dependencyRegistry[depName];
 	if (!entry) {
 		logger.error(`Unknown dependency: ${depName}`);
@@ -129,6 +135,11 @@ export async function installDependency(
 }
 
 export async function uninstallDependency(selectedDeps: string[], io: Server) {
+	const config = readConfig();
+	const binFolder = path.join(
+		config?.defaultBinFolder || path.join(app.getPath("userData")),
+		"bin",
+	);
 	const results = await Promise.all(
 		selectedDeps.map(async (depName) => {
 			io.emit("deleteUpdate", "deleting_deps");
