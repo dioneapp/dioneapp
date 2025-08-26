@@ -87,7 +87,6 @@ export default function Install({
 	const [customizableCommands, setCustomizableCommands] = useState<
 		Record<string, string>
 	>({});
-	const [editedCommand, setEditedCommand] = useState<string | null>(null);
 
 	useEffect(() => {
 		async function autoInstallMissingDependencies() {
@@ -177,11 +176,7 @@ export default function Install({
 
 			if (appFinished[data.id] === true) {
 				await handleStopApp(data.id, data.name);
-				await fetchIfDownloaded();
 				setShow({ [data.id]: "actions" });
-
-				// auto-open the app if the setting is enabled and it was just installed
-				// but only if we're not in the middle of installing dependencies
 			}
 		}
 		stopApp();
@@ -198,6 +193,26 @@ export default function Install({
 		isLocal,
 	]);
 
+	useEffect(() => { 
+
+		async function handleAutoOpen() { 
+			// auto-open the app if the setting is enabled and it was just installed
+			// but only if we're not in the middle of installing dependencies
+			const oldInstall = installed;
+			const newInstall = await fetchIfDownloaded();
+			if (oldInstall === false && newInstall === true && config?.autoOpenAfterInstall && wasJustInstalled) {
+				await new Promise((resolve) => setTimeout(resolve, 300));
+				await handleStart();
+				setWasJustInstalled(false);
+			}
+		}
+
+		if (!data?.id) return;
+		if (!isServerRunning[data.id]) {
+			handleAutoOpen();
+		}
+	}, [isServerRunning]);
+
 	useEffect(() => {
 		setData(null);
 		setSaved(false);
@@ -209,56 +224,6 @@ export default function Install({
 			setWasJustInstalled(false);
 		};
 	}, []);
-
-	useEffect(() => {
-		async function autoStart() {
-			console.log(
-				`setting ${config?.autoOpenAfterInstall}, finished ${wasJustInstalled}, missing deps ${!missingDependencies}`,
-			);
-			if (
-				config?.autoOpenAfterInstall &&
-				wasJustInstalled &&
-				!missingDependencies
-			) {
-				const port = await getCurrentPort();
-				let response: Response;
-				if (isLocal) {
-					response = await fetch(
-						`http://localhost:${port}/local/installed/${encodeURIComponent(data.name)}`,
-						{
-							method: "GET",
-							headers: {
-								"Content-Type": "application/json",
-							},
-						},
-					);
-				} else {
-					response = await fetch(
-						`http://localhost:${port}/scripts/installed/${data.name}`,
-						{
-							method: "GET",
-							headers: {
-								"Content-Type": "application/json",
-							},
-						},
-					);
-				}
-
-				if (response.ok) {
-					const isActuallyInstalled = await response.json();
-					if (isActuallyInstalled) {
-						setTimeout(async () => {
-							setShow({ [data?.id]: "logs" });
-							await start();
-							setWasJustInstalled(false);
-						}, 1000);
-					}
-				}
-			}
-		}
-
-		autoStart();
-	}, [wasJustInstalled, installed]);
 
 	// fetch script data
 	useEffect(() => {
@@ -380,6 +345,7 @@ export default function Install({
 			if (response.ok) {
 				const jsonData = await response.json();
 				setInstalled(jsonData);
+				return jsonData;
 			} else {
 				setError(true);
 			}
@@ -898,11 +864,12 @@ export default function Install({
 		}
 	}, [data]);
 
-	useEffect(() => {
-		if (iframeAvailable) {
-			loadIframe(catchPort as number);
-		}
-	}, []);
+    useEffect(() => {
+        if (!data?.id) return;
+        if (iframeAvailable && isServerRunning[data.id] && installed) {
+            loadIframe(catchPort as number);
+        }
+    }, [iframeAvailable, isServerRunning[data?.id], installed, catchPort, data?.id]);
 
 	useEffect(() => {
 		async function fetchStartOptions() {
