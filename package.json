@@ -27,6 +27,7 @@
 		"build:win": "npm run build && electron-builder --win --publish never",
 		"build:mac": "electron-vite build && electron-builder --mac --publish never",
 		"build:linux": "electron-vite build && electron-builder --linux --publish never",
+		"generate-translations": "npx tsx src/renderer/src/translations/generateTranslations.ts",
 		"deploy": "npx auto-changelog --package --commit-limit false --commit-url https://github.com/dioneapp/dioneapp/commits/main/ --sort-commits date-desc --release-summary && npm run build && electron-builder --win --publish always"
 	},
 	"auto-changelog": {
@@ -165,6 +166,7 @@
 		"electron-vite": "^3.1.0",
 		"react": "^19.1.0",
 		"react-dom": "^19.1.0",
+		"tsx": "^4.19.2",
 		"typescript": "^5.8.3",
 		"vite": "^6.3.4"
 	}
