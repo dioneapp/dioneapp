@@ -206,6 +206,16 @@ export default function IframeComponent({
 		window.electron.ipcRenderer.send("new-window", iframeSrc);
 	};
 
+	const handleReloadIframe2 = () => {
+		const container = containerRef.current;
+		if (container) {
+			const webview = container.querySelector('webview') as Electron.WebviewTag;
+			if (webview) {
+				webview.reload();
+			}
+		}
+	};
+
 	return (
 		<div className="w-full h-full flex flex-col gap-2 p-6">
 			<motion.div
@@ -309,7 +319,7 @@ export default function IframeComponent({
 					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
-						onClick={handleReloadIframe}
+						onClick={handleReloadIframe2}
 						title={t("iframe.reload")}
 					>
 						<RotateCcw className="w-4 h-4" />
