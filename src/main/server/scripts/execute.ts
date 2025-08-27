@@ -7,6 +7,7 @@ import logger from "../utils/logger";
 import { addValue, getAllValues } from "./dependencies/environment";
 import { executeCommands } from "./process";
 import { getSystemInfo } from "./system";
+import { checkDependencies } from "./dependencies/dependencies";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
@@ -147,6 +148,48 @@ export async function executeStartup(
 	const dependenciesObj = config.dependencies || {};
 	const dependencies = Object.keys(dependenciesObj);
 	const needsBuildTools = dependencies.includes("build_tools");
+	
+	// download finished, now checking dependencies
+	const result = await checkDependencies(path.join(pathname, "dione.json"));
+	logger.info(`RESULT: ${JSON.stringify(result)}`);
+	if (result.success) {
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: "All required dependencies are installed.",
+		});
+		io.to(id).emit("installUpdate", {
+			type: "status",
+			status: "success",
+			content: "Dependencies installed",
+		});
+	} else if (result.error) {
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content:
+				"We have not been able to read the configuration file due to an error, check that Dione.json is well formulated as JSON.",
+		});
+		io.to(id).emit("installUpdate", {
+			type: "status",
+			status: "error",
+			content: "Error detected",
+		});
+
+		return;
+	} else {
+		io.to(id).emit("missingDeps", result.missing);
+		const depsList = result.missing.map((dep) => dep.name).join(", ");
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: `Installing dependencies: ${depsList}`,
+		});
+		io.to(id).emit("installUpdate", {
+			type: "status",
+			status: "pending",
+			content: "Installing dependencies...",
+		});
+
+		return;
+	}
 
 	let selectedStart;
 	if (startName) {

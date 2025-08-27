@@ -779,7 +779,9 @@ export default function Install({
 		showToast("default", t("toast.install.retrying").replace("%s", data.name));
 
 		if (sockets[data?.id]) {
-			await handleDownload();
+			if (!installed) {
+				await handleDownload();
+			}
 		} else {
 			await connectApp(data?.id, isLocal);
 			await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
