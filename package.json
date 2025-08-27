@@ -98,7 +98,8 @@
 			"createStartMenuShortcut": true,
 			"shortcutName": "Dione",
 			"allowToChangeInstallationDirectory": true,
-			"differentialPackage": false
+			"differentialPackage": false,
+			"uninstallDisplayName": "${productName}"
 		},
 		"msi": {
 			"oneClick": false,
