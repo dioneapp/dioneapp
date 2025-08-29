@@ -224,6 +224,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	const stopCheckingRef = useRef(true);
 	const loadIframe = async (localPort: number) => {
+		if (stopCheckingRef.current) return;
+
 		stopCheckingRef.current = false;
 		let isAvailable = false;
 		while (!isAvailable) {
