@@ -464,6 +464,14 @@ export default function Install({
 		selectedStart?: string,
 		replaceCommands?: Record<string, string>,
 	) {
+		if (isServerRunning[data?.id]) {
+			showToast(
+				"error",
+				t("toast.install.error.serverRunning"),
+			);
+			return;
+		}
+
 		const tooMuchApps = activeApps.length >= maxApps;
 		if (tooMuchApps) {
 			showToast(
@@ -673,6 +681,13 @@ export default function Install({
 	};
 
 	const handleStart = async (selectedStartOpt?: any) => {
+		if (isServerRunning[data?.id]) {
+			showToast(
+				"error",
+				t("toast.install.error.serverRunning"),
+			);
+			return;
+		}
 		if (selectedStartOpt) {
 			setSelectedStart(selectedStartOpt);
 
@@ -750,6 +765,7 @@ export default function Install({
 		);
 		// only switch to logs view if we're not already there
 		if (show[data?.id] !== "logs") {
+			connectApp(data?.id, isLocal);
 			setShow({ [data?.id]: "logs" });
 		}
 	};
