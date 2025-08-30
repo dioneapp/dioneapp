@@ -4,6 +4,7 @@ import LanguageSelector from "@renderer/components/first-time/onboarding/languag
 import SelectPath from "@renderer/components/first-time/onboarding/select-path";
 import ExecuteSound from "@renderer/components/first-time/sounds/sound";
 import Icon from "@renderer/components/icons/icon";
+import Titlebar from "@renderer/components/layout/titlebar";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { openLink } from "@renderer/utils/openLink";
 import {
@@ -158,7 +159,7 @@ export default function FirstTime() {
 
 	return (
 		<div className="absolute w-screen h-screen inset-0 z-50 bg-[#080808]/5 overflow-hidden">
-			<div className="absolute top-0 w-full h-6" id="titlebar" />
+			<Titlebar />
 			<ExecuteSound firstLaunch={firstLaunch || "false"} />
 			{/* background stuff */}
 			<Background />
