@@ -1,7 +1,7 @@
 import { languages } from "@renderer/translations/translationContext";
 import { useTranslation } from "@renderer/translations/translationContext";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Check } from "lucide-react";
 import { useMemo, useState } from "react";
 
 interface LanguageSelectorProps {
@@ -60,23 +60,38 @@ export default function LanguageSelector({
 						<AnimatePresence mode="sync" initial={false}>
 							<div
 								key={currentPage}
-								className="grid grid-cols-4 grid-rows-2 w-full h-full place-items-center gap-4 max-w-2xl p-4 rounded-xl bg-white/10"
+								className="grid grid-cols-4 grid-rows-2 w-full h-full place-items-center gap-4 max-w-2xl p-8 rounded-xl bg-gradient-to-r from-[#BCB1E7]/5 to-[#080808]/10 border border-white/10 backdrop-blur-sm"
 							>
 								{currentLanguages.map(([key, value]) => (
 									<motion.button
-										whileTap={{ scale: 0.95 }}
-										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.97 }}
+										whileHover={{ scale: 1.02 }}
 										type="button"
 										key={key}
-										className={`group cursor-pointer flex flex-col gap-2 items-center justify-center overflow-hidden relative rounded transition-all duration-300 focus:outline-none ${language === key ? "scale-105 shadow-lg" : ""}`}
+										className={`group cursor-pointer flex flex-col gap-3 items-center justify-center overflow-visible relative rounded-lg transition-all duration-300 focus:outline-none ${
+											language === key 
+												? "bg-gradient-to-r from-[#BCB1E7]/10 to-[#080808]/20 shadow-lg" 
+												: "hover:bg-white/5"
+										}`}
 										onClick={() => {
 											setLanguage(key as any);
 										}}
 									>
+										{language === key && (
+											<motion.div
+												initial={{ opacity: 0, scale: 0 }}
+												animate={{ opacity: 1, scale: 1 }}
+												className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-[#BCB1E7] to-[#9A8FD1] rounded-full flex items-center justify-center shadow-lg border border-white/20 z-[9999]"
+											>
+												<Check className="w-4 h-4 text-black" />
+											</motion.div>
+										)}
+										
 										<div className="relative w-full h-full">
 											{!isImageLoaded(key) && (
-												<div className="absolute inset-0 bg-white/10 border border-white/5 rounded aspect-[5/3] animate-pulse" />
+												<div className="absolute inset-0 bg-white/10 border border-white/5 rounded-lg aspect-[5/3] animate-pulse" />
 											)}
+											
 											<motion.img
 												loading="lazy"
 												decoding="async"
@@ -92,19 +107,22 @@ export default function LanguageSelector({
 																? "https://flagcdn.com/us.svg"
 																: key === "hi"
 																	? "https://flagcdn.com/in.svg"
-																	: key === "zh"
-																		? "https://flagcdn.com/cn.svg"
-																		: `https://flagcdn.com/${key}.svg`
+																: key === "ja"
+																	? "https://flagcdn.com/jp.svg"
+																: key === "zh"
+																	? "https://flagcdn.com/cn.svg"
+																	: `https://flagcdn.com/${key}.svg`
 												}
 												alt={value}
-												className={`bg-black/10 border border-white/5 w-full h-full object-cover object-center overflow-hidden rounded aspect-[5/3] transition-opacity duration-300 ${isImageLoaded(key) ? "opacity-100" : "opacity-0"}`}
+												className={`w-full h-full object-cover object-center rounded-lg transition-all duration-300 ${
+													isImageLoaded(key) ? "opacity-100" : "opacity-0"
+												}`}
 												onLoad={() => handleImageLoad(key)}
 											/>
 										</div>
-										<span className="opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 absolute bottom-0 left-0 px-2 bg-gradient-to-t from-[#080808] via-[#080808]/50 to-[#080808]/0 w-full h-10 pointer-events-none">
-											<div className="flex items-end pb-2 font-medium justify-start h-full text-sm">
-												{value}
-											</div>
+										
+										<span className="px-3 py-1 rounded-lg font-medium text-sm transition-all duration-300">
+											{value}
 										</span>
 									</motion.button>
 								))}
@@ -119,13 +137,6 @@ export default function LanguageSelector({
 							<ChevronRight className="w-6 h-6" />
 						</button>
 					</div>
-					<div className="mt-2 text-base text-neutral-300 min-h-6">
-						{language && (
-							<span className="px-3 py-1 rounded-full bg-white/10 text-white/90 font-medium">
-								{languages[language]}
-							</span>
-						)}
-					</div>
 					<a
 						href="https://github.com/dioneapp/dioneapp"
 						target="_blank"
@@ -139,7 +150,12 @@ export default function LanguageSelector({
 					<button
 						type="button"
 						onClick={onSelectLanguage}
-						className="bg-white text-black px-4 py-1 cursor-pointer hover:bg-white/80 transition-all duration-300 rounded-full text-sm font-medium"
+						disabled={!language}
+						className={`px-6 py-2 cursor-pointer transition-all duration-300 rounded-full text-sm font-medium ${
+							language 
+								? "bg-white text-black hover:opacity-80 active:scale-[0.97] shadow-lg" 
+								: "bg-white/10 text-white/50 cursor-not-allowed border border-white/10"
+						}`}
 					>
 						Next
 					</button>
