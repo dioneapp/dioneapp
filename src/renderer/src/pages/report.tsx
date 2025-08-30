@@ -95,15 +95,15 @@ export default function ReportPage() {
 					</div>
 
 					{/* submit button and status */}
-					<div className="flex items-center justify-between">
+					<div className="flex items-center justify-end">
 						{submitStatus === "success" && (
-							<p className="text-green-500 flex items-center">
+							<p className="text-green-500 flex items-center mr-4">
 								<CheckCircle className="w-5 h-5 mr-2" />
 								{t("report.success")}
 							</p>
 						)}
 						{submitStatus === "error" && (
-							<p className="text-red-500 flex items-center">
+							<p className="text-red-500 flex items-center mr-4">
 								<XCircle className="w-5 h-5 mr-2" />
 								{t("report.error")}
 							</p>
