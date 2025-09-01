@@ -758,6 +758,73 @@ export default function Install({
 		}
 	};
 
+	const handleUpdate = async () => {
+		if (isServerRunning[data?.id]) {
+			showToast(
+				"error",
+				t("toast.install.error.serverRunning"),
+			);
+			return;
+		}
+
+		try {
+			if (!data.name || !data.id) return;
+
+			showToast(
+				"default",
+				t("toast.install.updating").replace("%s", data.name),
+			);
+
+			// switch to logs view to show update progress
+			setShow({ [data?.id]: "logs" });
+			clearLogs(data?.id);
+			addLog(data?.id, `Updating ${data.name}...`);
+
+			// connect to socket for real-time updates
+			if (!sockets[data?.id]) {
+				await connectApp(data?.id, isLocal);
+				await new Promise((resolve) => setTimeout(resolve, 500));
+			}
+
+			const port = await getCurrentPort();
+			const response = await fetch(
+				`http://localhost:${port}/scripts/update/${data?.name}/${data?.id}`,
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+				},
+			);
+
+			const result = await response.json();
+
+			if (result.success) {
+				showToast(
+					"success",
+					t("toast.install.success.updated").replace("%s", data.name),
+				);
+				addLog(data?.id, "Update completed successfully");
+			} else {
+				showToast(
+					"error",
+					t("toast.install.error.update")
+						.replace("%s", data.name)
+						.replace("%s", result.message || "Unknown error"),
+				);
+				addLog(data?.id, `Update failed: ${result.message || "Unknown error"}`);
+			}
+		} catch (error) {
+			showToast(
+				"error",
+				t("toast.install.error.update")
+					.replace("%s", data.name)
+					.replace("%s", String(error)),
+			);
+			addLog(data?.id, `Error updating ${data.name}: ${error}`);
+		}
+	};
+
 	const handleReconnect = async () => {
 		showToast(
 			"default",
@@ -1016,6 +1083,7 @@ export default function Install({
 									handleStart={handleStart}
 									handleUninstall={handleUninstall}
 									handleDeleteDeps={handleDeleteDeps}
+									handleUpdate={handleUpdate}
 									startOptions={startOptions}
 									isLocal={isLocal}
 								/>

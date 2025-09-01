@@ -104,18 +104,21 @@ export const en = {
 			uninstalling: "Uninstalling %s...",
 			reconnecting: "Reconnecting %s...",
 			retrying: "Trying to install %s again...",
+			updating: "Updating %s...",
 			success: {
 				stopped: "%s stopped successfully.",
 				uninstalled: "%s uninstalled successfully.",
 				logsCopied: "Logs successfully copied to clipboard.",
 				depsInstalled: "Dependencies installed successfully.",
 				shared: "Download link copied to clipboard!",
+				updated: "%s updated successfully.",
 			},
 			error: {
 				download: "Error initiating download: %s",
 				start: "Error initiating %s: %s",
 				stop: "Error stopping %s: %s",
 				uninstall: "Error uninstalling %s: %s",
+				update: "Error updating %s: %s",
 				serverRunning: "Server is already running.",
 				tooManyApps:
 					"Slow down! You already have 6 apps running at the same time.",
@@ -364,6 +367,7 @@ export const en = {
 		start: "Start",
 		uninstall: "Uninstall",
 		install: "Install",
+		update: "Update",
 		publishedBy: "Published by",
 	},
 

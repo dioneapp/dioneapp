@@ -33,7 +33,7 @@ interface SystemUsage {
 export default function IframeComponent({
 	iframeSrc,
 	handleStop,
-	handleReloadIframe,
+	handleReloadIframe: _handleReloadIframe,
 	currentPort,
 	setShow,
 	data,

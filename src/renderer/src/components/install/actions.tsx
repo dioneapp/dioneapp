@@ -16,6 +16,7 @@ interface ActionsProps {
 	isServerRunning: Record<string, boolean>;
 	handleReconnect: any;
 	handleDeleteDeps: any;
+	handleUpdate?: any;
 	startOptions?: any;
 	isLocal?: boolean;
 	user?: boolean;
@@ -31,6 +32,7 @@ export default function ActionsComponent({
 	isServerRunning,
 	handleReconnect,
 	handleDeleteDeps,
+	handleUpdate,
 	startOptions,
 	isLocal,
 }: ActionsProps) {
@@ -258,6 +260,16 @@ export default function ActionsComponent({
 														{t("actions.start")}
 													</button>
 												</div>
+											)}
+
+											{handleUpdate && !isLocal && (
+												<button
+													type="button"
+													onClick={handleUpdate}
+													className="bg-blue-500/50 hover:bg-blue-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer"
+												>
+													{t("actions.update")}
+												</button>
 											)}
 
 											<button
