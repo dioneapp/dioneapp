@@ -102,18 +102,21 @@ export const es = {
 			uninstalling: "Desinstalando %s...",
 			reconnecting: "Reconectando %s...",
 			retrying: "Intentando instalar %s de nuevo...",
+			updating: "Actualizando %s...",
 			success: {
 				stopped: "%s detenido correctamente.",
 				uninstalled: "%s desinstalado correctamente.",
 				logsCopied: "Registros copiados correctamente al portapapeles.",
 				depsInstalled: "Dependencias instaladas correctamente.",
 				shared: "¡Enlace de descarga copiado al portapapeles!",
+				updated: "%s actualizado correctamente.",
 			},
 			error: {
 				download: "Error al iniciar la descarga: %s",
 				start: "Error al iniciar %s: %s",
 				stop: "Error al detener %s: %s",
 				uninstall: "Error al desinstalar %s: %s",
+				update: "Error al actualizar %s: %s",
 				serverRunning: "El servidor ya se está ejecutando.",
 				tooManyApps:
 					"¡Más despacio! Ya tienes 6 aplicaciones en ejecución al mismo tiempo.",
@@ -362,6 +365,7 @@ export const es = {
 		start: "Iniciar",
 		uninstall: "Desinstalar",
 		install: "Instalar",
+		update: "Actualizar",
 		publishedBy: "Publicado por",
 	},
 

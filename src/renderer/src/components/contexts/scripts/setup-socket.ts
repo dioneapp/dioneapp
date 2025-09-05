@@ -147,6 +147,19 @@ export function setupSocket({
 		setDeleteLogs((prevLogs) => [...prevLogs, message]);
 	});
 
+	socket.on("updateProgress", (message: { type: string; content: string }) => {
+		console.log("Received update progress:", message);
+		if (message.type === "log") {
+			addLog(appId, message.content);
+		} else if (message.type === "success") {
+			addLog(appId, message.content);
+			showToast("success", message.content);
+		} else if (message.type === "error") {
+			addLog(appId, message.content);
+			showToast("error", message.content);
+		}
+	});
+
 	socketsRef.current[appId] = { socket };
 	return socket;
 }

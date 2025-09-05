@@ -1,7 +1,7 @@
 import { useTranslation } from "@renderer/translations/translationContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { AlertTriangle, FolderOpen, Check } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 
 export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 	const [selectedPath, setSelectedPath] = useState<string | null>(null);
@@ -120,7 +120,7 @@ export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 							<p className="text-gray-400 text-sm leading-relaxed italic my-4">
 								{t("firstTime.selectPath.warning")}
 							</p>
-							
+
 
 							{error && (
 								<motion.div
