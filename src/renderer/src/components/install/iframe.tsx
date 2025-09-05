@@ -18,7 +18,6 @@ import { useTranslation } from "../../translations/translationContext";
 interface IframeProps {
   iframeSrc: string;
   handleStop: () => void;
-  handleReloadIframe: () => void;
   currentPort: number;
   setShow: React.Dispatch<React.SetStateAction<Record<string, string>>>;
   data: any;

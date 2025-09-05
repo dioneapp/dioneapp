@@ -766,10 +766,6 @@ export default function Install({
       setShow({ [data?.id]: "logs" });
     }
   };
-  const handleReloadIframe = async () => {
-    const iframe = document.getElementById("iframe") as HTMLIFrameElement;
-    iframe.src = iframe.src;
-  };
 
   async function onFinishInstallDeps() {
     // remove app from installed apps
