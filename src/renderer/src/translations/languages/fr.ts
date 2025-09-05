@@ -138,7 +138,8 @@ export const fr = {
 			title: "Mise à jour disponible",
 			description:
 				"Une nouvelle version de Dione est disponible, veuillez redémarrer l'application pour mettre à jour.",
-			tooltip: "Nouvelle mise à jour disponible, veuillez redémarrer Dione pour mettre à jour.",
+			tooltip:
+				"Nouvelle mise à jour disponible, veuillez redémarrer Dione pour mettre à jour.",
 		},
 		tooltips: {
 			library: "Bibliothèque",
@@ -181,7 +182,8 @@ export const fr = {
 			},
 			deleteCache: {
 				label: "Supprimer le cache",
-				description: "Supprime toutes les données mises en cache des applications",
+				description:
+					"Supprime toutes les données mises en cache des applications",
 				button: "Supprimer le cache",
 				deleting: "Suppression...",
 				deleted: "Supprimé",
@@ -194,7 +196,8 @@ export const fr = {
 				label: "Langue d'affichage",
 				description: "Choisissez votre langue d'interface préférée",
 			},
-			helpTranslate: "🤔 Vous ne voyez pas votre langue ? Aidez-nous à en ajouter d'autres !",
+			helpTranslate:
+				"🤔 Vous ne voyez pas votre langue ? Aidez-nous à en ajouter d'autres !",
 			compactView: {
 				label: "Vue compacte",
 				description:
@@ -205,22 +208,26 @@ export const fr = {
 			title: "Notifications",
 			systemNotifications: {
 				label: "Notifications système",
-				description: "Afficher des notifications de bureau pour les événements importants",
+				description:
+					"Afficher des notifications de bureau pour les événements importants",
 			},
 			installationAlerts: {
 				label: "Alertes d'installation",
-				description: "Soyez notifié lorsque les installations d'applications sont terminées",
+				description:
+					"Soyez notifié lorsque les installations d'applications sont terminées",
 			},
 			discordRPC: {
 				label: "Présence riche Discord",
-				description: "Affichez votre activité actuelle dans votre statut Discord",
+				description:
+					"Affichez votre activité actuelle dans votre statut Discord",
 			},
 		},
 		privacy: {
 			title: "Confidentialité",
 			errorReporting: {
 				label: "Rapports d'erreurs",
-				description: "Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes",
+				description:
+					"Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes",
 			},
 		},
 		other: {
@@ -232,7 +239,8 @@ export const fr = {
 			},
 			logsDirectory: {
 				label: "Répertoire des journaux",
-				description: "Emplacement où les journaux des applications sont stockés",
+				description:
+					"Emplacement où les journaux des applications sont stockés",
 			},
 			submitFeedback: {
 				label: "Soumettre un commentaire",
@@ -267,7 +275,8 @@ export const fr = {
 		error: "Échec de l'envoi du rapport. Veuillez réessayer.",
 		send: "Envoyer le rapport",
 		sending: "Envoi...",
-		contribute: "Aidez-nous à rendre ce script compatible avec tous les appareils",
+		contribute:
+			"Aidez-nous à rendre ce script compatible avec tous les appareils",
 	},
 
 	// quick launch component
@@ -279,7 +288,8 @@ export const fr = {
 		},
 		selectApp: {
 			title: "Sélectionner une application",
-			description: "{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
+			description:
+				"{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
 		},
 	},
 
@@ -319,7 +329,8 @@ export const fr = {
 			subtitle: "erreur",
 			hasOccurred: "s'est produite",
 			deps: "Dione n'a pas pu supprimer de dépendance, veuillez le faire manuellement.",
-			general: "Veuillez réessayer plus tard ou consulter les journaux pour plus d'informations.",
+			general:
+				"Veuillez réessayer plus tard ou consulter les journaux pour plus d'informations.",
 		},
 		loading: {
 			title: "Chargement...",
@@ -397,7 +408,8 @@ export const fr = {
 			uploading: "Téléchargement...",
 			errors: {
 				uploadFailed: "Échec du téléchargement du script. Veuillez réessayer.",
-				uploadError: "Une erreur s'est produite lors du téléchargement du script.",
+				uploadError:
+					"Une erreur s'est produite lors du téléchargement du script.",
 			},
 		},
 	},
@@ -408,7 +420,8 @@ export const fr = {
 		errors: {
 			notArray: "Les données récupérées ne sont pas un tableau",
 			fetchFailed: "Échec de la récupération des scripts",
-			notSupported: "Malheureusement, %s n'est pas pris en charge sur votre %s.",
+			notSupported:
+				"Malheureusement, %s n'est pas pris en charge sur votre %s.",
 			notSupportedTitle: "Votre appareil peut être incompatible.",
 		},
 	},

@@ -138,7 +138,8 @@ export const id = {
 			title: "Pembaruan Tersedia",
 			description:
 				"Versi Dione baru tersedia, silakan mulai ulang aplikasi untuk memperbarui.",
-			tooltip: "Pembaruan baru tersedia, silakan mulai ulang Dione untuk memperbarui.",
+			tooltip:
+				"Pembaruan baru tersedia, silakan mulai ulang Dione untuk memperbarui.",
 		},
 		tooltips: {
 			library: "Perpustakaan",
@@ -161,8 +162,7 @@ export const id = {
 			title: "Aplikasi",
 			installationDirectory: {
 				label: "Direktori Instalasi",
-				description:
-					"Pilih tempat aplikasi baru akan diinstal secara default",
+				description: "Pilih tempat aplikasi baru akan diinstal secara default",
 			},
 			binDirectory: {
 				label: "Direktori Bin",
@@ -194,7 +194,8 @@ export const id = {
 				label: "Bahasa Tampilan",
 				description: "Pilih bahasa antarmuka pilihan Anda",
 			},
-			helpTranslate: "🤔 Tidak melihat bahasa Anda? Bantu kami menambahkan lebih banyak!",
+			helpTranslate:
+				"🤔 Tidak melihat bahasa Anda? Bantu kami menambahkan lebih banyak!",
 			compactView: {
 				label: "Tampilan Ringkas",
 				description:
@@ -220,7 +221,8 @@ export const id = {
 			title: "Privasi",
 			errorReporting: {
 				label: "Pelaporan Kesalahan",
-				description: "Bantu tingkatkan Dione dengan mengirimkan laporan kesalahan anonim",
+				description:
+					"Bantu tingkatkan Dione dengan mengirimkan laporan kesalahan anonim",
 			},
 		},
 		other: {
@@ -267,7 +269,8 @@ export const id = {
 		error: "Gagal mengirim laporan. Silakan coba lagi.",
 		send: "Kirim Laporan",
 		sending: "Mengirim...",
-		contribute: "Bantu kami membuat skrip ini kompatibel dengan semua perangkat",
+		contribute:
+			"Bantu kami membuat skrip ini kompatibel dengan semua perangkat",
 	},
 
 	// quick launch component
@@ -279,7 +282,8 @@ export const id = {
 		},
 		selectApp: {
 			title: "Pilih Aplikasi",
-			description: "{count} aplikasi tersedia. Anda dapat memilih hingga {max}.",
+			description:
+				"{count} aplikasi tersedia. Anda dapat memilih hingga {max}.",
 		},
 	},
 
@@ -319,7 +323,8 @@ export const id = {
 			subtitle: "kesalahan",
 			hasOccurred: "telah terjadi",
 			deps: "Dione tidak dapat menghapus dependensi apa pun, harap lakukan secara manual.",
-			general: "Silakan coba lagi nanti atau periksa log untuk informasi lebih lanjut.",
+			general:
+				"Silakan coba lagi nanti atau periksa log untuk informasi lebih lanjut.",
 		},
 		loading: {
 			title: "Memuat...",

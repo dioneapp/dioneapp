@@ -138,7 +138,8 @@ export const ja = {
 			title: "アップデートが利用可能です",
 			description:
 				"Dioneの新しいバージョンが利用可能です。アップデートするにはアプリを再起動してください。",
-			tooltip: "新しいアップデートが利用可能です。アップデートするにはDioneを再起動してください。",
+			tooltip:
+				"新しいアップデートが利用可能です。アップデートするにはDioneを再起動してください。",
 		},
 		tooltips: {
 			library: "ライブラリ",
@@ -176,8 +177,7 @@ export const ja = {
 			},
 			autoOpenAfterInstall: {
 				label: "インストール後に自動オープン",
-				description:
-					"インストール後に初めてアプリケーションを自動的に開きます",
+				description: "インストール後に初めてアプリケーションを自動的に開きます",
 			},
 			deleteCache: {
 				label: "キャッシュを削除",
@@ -194,7 +194,8 @@ export const ja = {
 				label: "表示言語",
 				description: "好みのインターフェース言語を選択してください",
 			},
-			helpTranslate: "🤔 あなたの言語が表示されない？ より多くの言語を追加するのを手伝ってください！",
+			helpTranslate:
+				"🤔 あなたの言語が表示されない？ より多くの言語を追加するのを手伝ってください！",
 			compactView: {
 				label: "コンパクトビュー",
 				description:
@@ -209,7 +210,8 @@ export const ja = {
 			},
 			installationAlerts: {
 				label: "インストールアラート",
-				description: "アプリケーションのインストールが完了したときに通知を受け取ります",
+				description:
+					"アプリケーションのインストールが完了したときに通知を受け取ります",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
@@ -220,7 +222,8 @@ export const ja = {
 			title: "プライバシー",
 			errorReporting: {
 				label: "エラー報告",
-				description: "匿名のエラーレポートを送信してDioneの改善に協力してください",
+				description:
+					"匿名のエラーレポートを送信してDioneの改善に協力してください",
 			},
 		},
 		other: {
@@ -261,13 +264,13 @@ export const ja = {
 		placeholder:
 			"例: アプリケーションをインストールしようとしたときにこのエラーが発生しました...",
 		systemInformationTitle: "システム情報",
-		disclaimer:
-			"以下のシステム情報と匿名IDがレポートに含まれます。",
+		disclaimer: "以下のシステム情報と匿名IDがレポートに含まれます。",
 		success: "レポートは正常に送信されました！",
 		error: "レポートの送信に失敗しました。もう一度お試しください。",
 		send: "レポートを送信",
 		sending: "送信中...",
-		contribute: "すべてのデバイスと互換性があるように、このスクリプトを改善するのに協力してください",
+		contribute:
+			"すべてのデバイスと互換性があるように、このスクリプトを改善するのに協力してください",
 	},
 
 	// quick launch component
@@ -396,7 +399,8 @@ export const ja = {
 			uploadFile: "ファイルをアップロード",
 			uploading: "アップロード中...",
 			errors: {
-				uploadFailed: "スクリプトのアップロードに失敗しました。もう一度お試しください。",
+				uploadFailed:
+					"スクリプトのアップロードに失敗しました。もう一度お試しください。",
 				uploadError: "スクリプトのアップロード中にエラーが発生しました。",
 			},
 		},
