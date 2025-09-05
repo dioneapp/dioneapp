@@ -21,7 +21,6 @@ export async function checkDependencies(dioneConfigPath: string): Promise<{
 	missing: { name: string; installed: boolean; reason: string }[];
 	error?: boolean;
 }> {
-
 	const config = readConfig();
 	const binFolder = path.join(
 		config?.defaultBinFolder || path.join(app.getPath("userData")),

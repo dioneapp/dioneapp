@@ -49,10 +49,12 @@ export const en = {
 		},
 		selectPath: {
 			title: "Select installation path",
-			description: "This folder will contain all your installed scripts, dependencies, and project files. Choose a location that's easily accessible and has enough storage space.",
+			description:
+				"This folder will contain all your installed scripts, dependencies, and project files. Choose a location that's easily accessible and has enough storage space.",
 			button: "Select a path",
 			success: "Next",
-			warning: "Do not select the same folder where Dione is installed. This can cause conflicts and errors during updates.",
+			warning:
+				"Do not select the same folder where Dione is installed. This can cause conflicts and errors during updates.",
 		},
 	},
 

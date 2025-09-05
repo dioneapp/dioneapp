@@ -115,8 +115,7 @@ export const de = {
 				stop: "Fehler beim Stoppen von %s: %s",
 				uninstall: "Fehler beim Deinstallieren von %s: %s",
 				serverRunning: "Server läuft bereits.",
-				tooManyApps:
-					"Langsam! Sie haben bereits 6 Apps gleichzeitig laufen.",
+				tooManyApps: "Langsam! Sie haben bereits 6 Apps gleichzeitig laufen.",
 			},
 		},
 	},
@@ -138,7 +137,8 @@ export const de = {
 			title: "Update verfügbar",
 			description:
 				"Eine neue Version von Dione ist verfügbar. Bitte starten Sie die App neu, um zu aktualisieren.",
-			tooltip: "Neues Update verfügbar, bitte starten Sie Dione neu, um zu aktualisieren.",
+			tooltip:
+				"Neues Update verfügbar, bitte starten Sie Dione neu, um zu aktualisieren.",
 		},
 		tooltips: {
 			library: "Bibliothek",
@@ -194,7 +194,8 @@ export const de = {
 				label: "Anzeigesprache",
 				description: "Wählen Sie Ihre bevorzugte Oberflächensprache",
 			},
-			helpTranslate: "🤔 Ihre Sprache nicht dabei? Helfen Sie uns, mehr hinzuzufügen!",
+			helpTranslate:
+				"🤔 Ihre Sprache nicht dabei? Helfen Sie uns, mehr hinzuzufügen!",
 			compactView: {
 				label: "Kompakte Ansicht",
 				description:
@@ -205,11 +206,13 @@ export const de = {
 			title: "Benachrichtigungen",
 			systemNotifications: {
 				label: "Systembenachrichtigungen",
-				description: "Zeigen Sie Desktop-Benachrichtigungen für wichtige Ereignisse an",
+				description:
+					"Zeigen Sie Desktop-Benachrichtigungen für wichtige Ereignisse an",
 			},
 			installationAlerts: {
 				label: "Installationswarnungen",
-				description: "Werden Sie benachrichtigt, wenn Anwendungsinstallationen abgeschlossen sind",
+				description:
+					"Werden Sie benachrichtigt, wenn Anwendungsinstallationen abgeschlossen sind",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
@@ -220,7 +223,8 @@ export const de = {
 			title: "Datenschutz",
 			errorReporting: {
 				label: "Fehlerberichterstattung",
-				description: "Helfen Sie, Dione zu verbessern, indem Sie anonyme Fehlerberichte senden",
+				description:
+					"Helfen Sie, Dione zu verbessern, indem Sie anonyme Fehlerberichte senden",
 			},
 		},
 		other: {
@@ -236,7 +240,8 @@ export const de = {
 			},
 			submitFeedback: {
 				label: "Feedback einreichen",
-				description: "Melden Sie alle Probleme oder Schwierigkeiten, auf die Sie stoßen",
+				description:
+					"Melden Sie alle Probleme oder Schwierigkeiten, auf die Sie stoßen",
 				button: "Bericht senden",
 			},
 			showOnboarding: {
@@ -264,10 +269,12 @@ export const de = {
 		disclaimer:
 			"Die folgenden Systeminformationen und eine anonyme ID werden mit Ihrem Bericht übermittelt.",
 		success: "Bericht erfolgreich gesendet!",
-		error: "Bericht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+		error:
+			"Bericht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
 		send: "Bericht senden",
 		sending: "Wird gesendet...",
-		contribute: "Helfen Sie uns, dieses Skript mit allen Geräten kompatibel zu machen",
+		contribute:
+			"Helfen Sie uns, dieses Skript mit allen Geräten kompatibel zu machen",
 	},
 
 	// quick launch component
@@ -279,7 +286,8 @@ export const de = {
 		},
 		selectApp: {
 			title: "App auswählen",
-			description: "{count} Apps sind verfügbar. Sie können bis zu {max} auswählen.",
+			description:
+				"{count} Apps sind verfügbar. Sie können bis zu {max} auswählen.",
 		},
 	},
 
@@ -319,7 +327,8 @@ export const de = {
 			subtitle: "Fehler",
 			hasOccurred: "ist aufgetreten",
 			deps: "Dione konnte keine Abhängigkeit entfernen, bitte tun Sie dies manuell.",
-			general: "Bitte versuchen Sie es später erneut oder überprüfen Sie die Protokolle für weitere Informationen.",
+			general:
+				"Bitte versuchen Sie es später erneut oder überprüfen Sie die Protokolle für weitere Informationen.",
 		},
 		loading: {
 			title: "Lädt...",
@@ -396,7 +405,8 @@ export const de = {
 			uploadFile: "Datei hochladen",
 			uploading: "Lädt hoch...",
 			errors: {
-				uploadFailed: "Fehler beim Hochladen des Skripts. Bitte versuchen Sie es erneut.",
+				uploadFailed:
+					"Fehler beim Hochladen des Skripts. Bitte versuchen Sie es erneut.",
 				uploadError: "Beim Hochladen des Skripts ist ein Fehler aufgetreten.",
 			},
 		},
