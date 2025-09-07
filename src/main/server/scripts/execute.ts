@@ -4,10 +4,10 @@ import { app } from "electron";
 import type { Server } from "socket.io";
 import { readConfig as userConfig } from "../../config";
 import logger from "../utils/logger";
+import { checkDependencies } from "./dependencies/dependencies";
 import { addValue, getAllValues } from "./dependencies/environment";
 import { executeCommands } from "./process";
 import { getSystemInfo } from "./system";
-import { checkDependencies } from "./dependencies/dependencies";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
@@ -148,7 +148,7 @@ export async function executeStartup(
 	const dependenciesObj = config.dependencies || {};
 	const dependencies = Object.keys(dependenciesObj);
 	const needsBuildTools = dependencies.includes("build_tools");
-	
+
 	// download finished, now checking dependencies
 	const result = await checkDependencies(path.join(pathname, "dione.json"));
 	logger.info(`RESULT: ${JSON.stringify(result)}`);

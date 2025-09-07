@@ -209,7 +209,8 @@ export const pt = {
 			},
 			installationAlerts: {
 				label: "Alertas de Instalação",
-				description: "Seja notificado quando as instalações de aplicativos forem concluídas",
+				description:
+					"Seja notificado quando as instalações de aplicativos forem concluídas",
 			},
 			discordRPC: {
 				label: "Presença Rica do Discord",
@@ -220,7 +221,8 @@ export const pt = {
 			title: "Privacidade",
 			errorReporting: {
 				label: "Relatório de Erros",
-				description: "Ajude a melhorar a Dione enviando relatórios de erros anônimos",
+				description:
+					"Ajude a melhorar a Dione enviando relatórios de erros anônimos",
 			},
 		},
 		other: {
@@ -267,7 +269,8 @@ export const pt = {
 		error: "Falha ao enviar relatório. Por favor, tente novamente.",
 		send: "Enviar Relatório",
 		sending: "Enviando...",
-		contribute: "Ajude-nos a tornar este script compatível com todos os dispositivos",
+		contribute:
+			"Ajude-nos a tornar este script compatível com todos os dispositivos",
 	},
 
 	// quick launch component
@@ -279,7 +282,8 @@ export const pt = {
 		},
 		selectApp: {
 			title: "Selecionar um Aplicativo",
-			description: "{count} aplicativos estão disponíveis. Você pode escolher até {max}.",
+			description:
+				"{count} aplicativos estão disponíveis. Você pode escolher até {max}.",
 		},
 	},
 
@@ -319,7 +323,8 @@ export const pt = {
 			subtitle: "erro",
 			hasOccurred: "ocorreu",
 			deps: "A Dione não conseguiu remover nenhuma dependência, por favor, faça isso manualmente.",
-			general: "Por favor, tente novamente mais tarde ou verifique os logs para mais informações.",
+			general:
+				"Por favor, tente novamente mais tarde ou verifique os logs para mais informações.",
 		},
 		loading: {
 			title: "Carregando...",

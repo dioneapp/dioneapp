@@ -1,7 +1,7 @@
 import { languages } from "@renderer/translations/translationContext";
 import { useTranslation } from "@renderer/translations/translationContext";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Check } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
 interface LanguageSelectorProps {
@@ -69,8 +69,8 @@ export default function LanguageSelector({
 										type="button"
 										key={key}
 										className={`group cursor-pointer flex flex-col gap-3 items-center justify-center overflow-visible relative rounded-lg transition-all duration-300 focus:outline-none ${
-											language === key 
-												? "bg-gradient-to-r from-[#BCB1E7]/10 to-[#080808]/20 shadow-lg" 
+											language === key
+												? "bg-gradient-to-r from-[#BCB1E7]/10 to-[#080808]/20 shadow-lg"
 												: "hover:bg-white/5"
 										}`}
 										onClick={() => {
@@ -86,12 +86,12 @@ export default function LanguageSelector({
 												<Check className="w-4 h-4 text-black" />
 											</motion.div>
 										)}
-										
+
 										<div className="relative w-full h-full">
 											{!isImageLoaded(key) && (
 												<div className="absolute inset-0 bg-white/10 border border-white/5 rounded-lg aspect-[5/3] animate-pulse" />
 											)}
-											
+
 											<motion.img
 												loading="lazy"
 												decoding="async"
@@ -107,11 +107,11 @@ export default function LanguageSelector({
 																? "https://flagcdn.com/us.svg"
 																: key === "hi"
 																	? "https://flagcdn.com/in.svg"
-																: key === "ja"
-																	? "https://flagcdn.com/jp.svg"
-																: key === "zh"
-																	? "https://flagcdn.com/cn.svg"
-																	: `https://flagcdn.com/${key}.svg`
+																	: key === "ja"
+																		? "https://flagcdn.com/jp.svg"
+																		: key === "zh"
+																			? "https://flagcdn.com/cn.svg"
+																			: `https://flagcdn.com/${key}.svg`
 												}
 												alt={value}
 												className={`w-full h-full object-cover object-center rounded-lg transition-all duration-300 ${
@@ -120,7 +120,7 @@ export default function LanguageSelector({
 												onLoad={() => handleImageLoad(key)}
 											/>
 										</div>
-										
+
 										<span className="px-3 py-1 rounded-lg font-medium text-sm transition-all duration-300">
 											{value}
 										</span>
@@ -152,8 +152,8 @@ export default function LanguageSelector({
 						onClick={onSelectLanguage}
 						disabled={!language}
 						className={`px-6 py-2 cursor-pointer transition-all duration-300 rounded-full text-sm font-medium ${
-							language 
-								? "bg-white text-black hover:opacity-80 active:scale-[0.97] shadow-lg" 
+							language
+								? "bg-white text-black hover:opacity-80 active:scale-[0.97] shadow-lg"
 								: "bg-white/10 text-white/50 cursor-not-allowed border border-white/10"
 						}`}
 					>
