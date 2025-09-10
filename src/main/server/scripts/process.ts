@@ -8,6 +8,7 @@ import logger from "../utils/logger";
 import { getAllValues, initDefaultEnv } from "./dependencies/environment";
 import BuildToolsManager from "./dependencies/utils/build-tools-manager";
 import { getSystemInfo } from "./system";
+import { useGit } from "../utils/useGit";
 
 let activeProcess: any = null;
 let activePID: number | null = null;
@@ -77,13 +78,18 @@ async function killByPort(
 ): Promise<boolean> {
 	processWasCancelled = true;
 
-	if (!port || port === undefined) {
-		logger.info(`Killing active process with PID ${activePID}`);
-		if (activePID) {
-			const success = await killProcess(activePID, io, id);
-			return success;
-		}
-	}
+	if (!port || isNaN(port)) {
+        logger.warn("No valid port provided for killByPort. Attempting to kill active process...");
+        if (activePID) {
+            const success = await killProcess(activePID, io, id);
+            return success;
+        }
+        io.to(id).emit("installUpdate", {
+            type: "log",
+            content: "No valid port or active process to kill.",
+        });
+        return true;
+    }
 
 	const currentPlatform = getPlatform();
 	if (currentPlatform !== "win32") {
@@ -97,7 +103,16 @@ async function killByPort(
 						type: "log",
 						content: `ERROR listing port ${port}: ${stderr}`,
 					});
-					return resolve(false);
+
+					if (!activePID) {
+						return resolve(true); // no active process to stop
+					}
+					io.to(id).emit("installUpdate", {
+						type: "log",
+						content: `No port active found, stopping active process...`,
+					});
+					const success = await killProcess(activePID, io, id);
+					return resolve(success);
 				}
 				const pids = stdout.split(/\r?\n/).filter(Boolean).map(Number);
 				if (pids.length === 0) {
@@ -288,6 +303,12 @@ export const executeCommand = async (
 		const isBatFile =
 			executable.endsWith(".bat") || executable.endsWith(".cmd");
 
+		const isGitCommand = command.includes("git");
+
+		io.to(id).emit(logs, {
+			type: "log",
+			content: `Working on directory: ${workingDir}`,
+		});
 		const spawnOptions = {
 			cwd: workingDir,
 			shell: isWindows ? !isBatFile : true,
@@ -310,17 +331,26 @@ export const executeCommand = async (
 				});
 			}
 		} else {
-			// handle sh files
-			if (executable.endsWith(".sh")) {
-				activeProcess = spawn("bash", [executable, ...args], {
-					...spawnOptions,
-					stdio: ["pipe", "pipe", "pipe"],
-				});
+
+			if (isGitCommand) {
+				// handle git commands on linux/macos
+				const result = await useGit(command, workingDir, io, id);
+				if (result) {
+					return { code: 0, stdout: "", stderr: "" };
+				}
 			} else {
-				activeProcess = spawn(executable, args, {
-					...spawnOptions,
-					stdio: ["pipe", "pipe", "pipe"],
-				});
+				// handle sh files
+				if (executable.endsWith(".sh")) {
+					activeProcess = spawn("bash", [executable, ...args], {
+						...spawnOptions,
+						stdio: ["pipe", "pipe", "pipe"],
+					});
+				} else {
+					activeProcess = spawn(executable, args, {
+						...spawnOptions,
+						stdio: ["pipe", "pipe", "pipe"],
+					});
+				}
 			}
 		}
 
