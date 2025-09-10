@@ -464,7 +464,7 @@ async function createVirtualEnvCommands(
 		// for linux and mac
 		return [
 			`if [ ! -d "${envPath}" ]; then ${condaU} tos accept --channel main; ${condaU} create -p "${envPath}" ${pythonArg} -y; fi`,
-			`source "${condaU}" activate "${envPath}" && ${middle} && ${condaU} deactivate`,
+			`. "${condaU}" activate "${envPath}" && ${middle} && ${condaU} deactivate`,
 		];
 	}
 
@@ -486,8 +486,20 @@ async function createVirtualEnvCommands(
 	if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
 		addValue("PATH", path.join(envPath, "Scripts"));
 	}
-	return [
-		`if [ ! -d "${envPath}" ]; then uv venv ${pythonFlag} "${envName}"; fi`,
-		`source "${activateScript}" ${middle} && deactivate`,
-	];
+
+	const existsEnv = fs.existsSync(envPath);
+	if (!existsEnv) {
+		return [
+			// create new env
+			`uv venv ${pythonFlag} "${envPath}"`,
+			// use it
+			`. "${activateScript}" ${middle} && deactivate`,
+		];
+	} else {
+		return [
+			// use existing env
+			`. "${activateScript}" ${middle} && deactivate`,
+		];
+	}
+	  
 }
