@@ -13,7 +13,7 @@ export async function useGit(command: string, workingDir: string, io: Server, id
         let branch: string | undefined;
 
         // search for url
-        const urlRegex = /^(https?:\/\/|git@)[^\s]+(.git)$/;
+        const urlRegex = /^(https?:\/\/|git@)[^\s]+(?:\.git)?\/?$/;
         for (let i = 0; i < args.length; i++) {
             if (urlRegex.test(args[i])) {
                 url = args[i];
