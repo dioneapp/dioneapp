@@ -8,7 +8,6 @@ import { addValue, getAllValues, removeKey, removeValue } from "../environment";
 import { getArch, getOS } from "../utils/system";
 
 const depName = "uv";
-const ENVIRONMENT = getAllValues();
 
 export async function isInstalled(
 	binFolder: string,
@@ -179,6 +178,7 @@ export async function install(
 		content: `Running command: ${command.file} ${command.args.join(" ")}`,
 	});
 
+	const ENVIRONMENT = getAllValues();
 	const spawnOptions = {
 		cwd: depFolder,
 		shell: platform === "windows",
@@ -222,6 +222,19 @@ export async function install(
 					// update environment variables
 					const cacheDir = path.join(binFolder, "cache", depName);
 					addValue("PATH", path.join(depFolder));
+					if (platform === "linux") {
+						if (arch === "amd64") {
+							addValue("PATH", path.join(depFolder, "uv-x86_64-unknown-linux-gnu"));
+						} else {
+							addValue("PATH", path.join(depFolder, "uv-aarch64-unknown-linux-gnu"));
+						}
+					} else if (platform === "macos") {
+						if (arch === "amd64") {
+							addValue("PATH", path.join(depFolder, "uv-x86_64-apple-darwin"));
+						} else {
+							addValue("PATH", path.join(depFolder, "uv-aarch64-apple-darwin"));
+						}
+					}
 					addValue("UV_CACHE_DIR", cacheDir);
 					addValue("PIP_CACHE_DIR", path.join(binFolder, "cache", "pip"));
 
