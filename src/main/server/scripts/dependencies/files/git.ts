@@ -17,6 +17,10 @@ export async function isInstalled(
 	const depFolder = path.join(binFolder, depName);
 	const ENVIRONMENT = getAllValues();
 
+	if (getOS() === "linux" || getOS() === "macos") {
+		return { installed: true, reason: `installed` };
+	}
+
 	if (!fs.existsSync(depFolder) || fs.readdirSync(depFolder).length === 0) {
 		return { installed: false, reason: `not-installed` };
 	}
