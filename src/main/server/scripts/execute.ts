@@ -432,7 +432,7 @@ async function createVirtualEnvCommands(
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
 	const middle = commandStrings.length
-		? `&& ${commandStrings.join(" && ")}`
+		? commandStrings.join(" && ")
 		: "";
 
 	// variables
@@ -452,7 +452,14 @@ async function createVirtualEnvCommands(
 			config?.defaultBinFolder || path.join(app.getPath("userData")),
 			"bin",
 			"conda",
-			"condabin",
+			"bin",
+			"activate",
+		);
+		const condaUC = path.join(
+			config?.defaultBinFolder || path.join(app.getPath("userData")),
+			"bin",
+			"conda",
+			"bin",
 			"conda",
 		);
 		if (isWindows) {
@@ -463,8 +470,8 @@ async function createVirtualEnvCommands(
 		}
 		// for linux and mac
 		return [
-			`if [ ! -d "${envPath}" ]; then ${condaU} tos accept --channel main; ${condaU} create -p "${envPath}" ${pythonArg} -y; fi`,
-			`. "${condaU}" activate "${envPath}" && ${middle} && ${condaU} deactivate`,
+			`if [ ! -d "${envPath}" ]; then ${condaUC} create -p "${envPath}" ${pythonArg} -y; fi`,
+			`. "${condaU}" "${envPath}" && ${middle} && conda deactivate`
 		];
 	}
 
