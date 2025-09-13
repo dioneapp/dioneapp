@@ -254,7 +254,8 @@ export const pt = {
 			},
 			checkUpdates: {
 				label: "Verificar atualizações",
-				description: "Verificar atualizações e notificar quando uma nova versão estiver disponível",
+				description:
+					"Verificar atualizações e notificar quando uma nova versão estiver disponível",
 				button: "Verificar atualizações",
 			},
 		},

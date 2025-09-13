@@ -186,7 +186,6 @@ export async function inUseDependencies(
 	Object.keys(dependencies).forEach((depName) => {
 		const entry = dependencyRegistry[depName];
 		if (entry) {
-
 			if (getOS() === "linux" || getOS() === "macos") {
 				if (depName === "build_tools") {
 					return;

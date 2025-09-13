@@ -5,10 +5,10 @@ import path from "node:path";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
 import logger from "../utils/logger";
+import { useGit } from "../utils/useGit";
 import { getAllValues, initDefaultEnv } from "./dependencies/environment";
 import BuildToolsManager from "./dependencies/utils/build-tools-manager";
 import { getSystemInfo } from "./system";
-import { useGit } from "../utils/useGit";
 
 let activeProcess: any = null;
 let activePID: number | null = null;
@@ -79,17 +79,19 @@ async function killByPort(
 	processWasCancelled = true;
 
 	if (!port || isNaN(port)) {
-        logger.warn("No valid port provided for killByPort. Attempting to kill active process...");
-        if (activePID) {
-            const success = await killProcess(activePID, io, id);
-            return success;
-        }
-        io.to(id).emit("installUpdate", {
-            type: "log",
-            content: "No valid port or active process to kill.",
-        });
-        return true;
-    }
+		logger.warn(
+			"No valid port provided for killByPort. Attempting to kill active process...",
+		);
+		if (activePID) {
+			const success = await killProcess(activePID, io, id);
+			return success;
+		}
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: "No valid port or active process to kill.",
+		});
+		return true;
+	}
 
 	const currentPlatform = getPlatform();
 	if (currentPlatform !== "win32") {
@@ -331,7 +333,6 @@ export const executeCommand = async (
 				});
 			}
 		} else {
-
 			if (isGitCommand) {
 				// handle git commands on linux/macos
 				const result = await useGit(command, workingDir, io, id);

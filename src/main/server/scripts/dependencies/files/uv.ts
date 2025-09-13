@@ -224,9 +224,15 @@ export async function install(
 					addValue("PATH", path.join(depFolder));
 					if (platform === "linux") {
 						if (arch === "amd64") {
-							addValue("PATH", path.join(depFolder, "uv-x86_64-unknown-linux-gnu"));
+							addValue(
+								"PATH",
+								path.join(depFolder, "uv-x86_64-unknown-linux-gnu"),
+							);
 						} else {
-							addValue("PATH", path.join(depFolder, "uv-aarch64-unknown-linux-gnu"));
+							addValue(
+								"PATH",
+								path.join(depFolder, "uv-aarch64-unknown-linux-gnu"),
+							);
 						}
 					} else if (platform === "macos") {
 						if (arch === "amd64") {

@@ -258,7 +258,8 @@ export const es = {
 			},
 			checkUpdates: {
 				label: "Comprobar actualizaciones",
-				description: "Comprueba actualizaciones y notifica cuando una nueva versión esté disponible",
+				description:
+					"Comprueba actualizaciones y notifica cuando una nueva versión esté disponible",
 				button: "Comprobar actualizaciones",
 			},
 		},

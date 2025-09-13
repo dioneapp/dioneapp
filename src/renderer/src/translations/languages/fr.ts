@@ -260,7 +260,8 @@ export const fr = {
 			},
 			checkUpdates: {
 				label: "Vérifier les mises à jour",
-				description: "Vérifier les mises à jour et vous notifier quand une nouvelle version est disponible",
+				description:
+					"Vérifier les mises à jour et vous notifier quand une nouvelle version est disponible",
 				button: "Vérifier les mises à jour",
 			},
 		},

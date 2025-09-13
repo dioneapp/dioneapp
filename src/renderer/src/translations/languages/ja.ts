@@ -255,7 +255,8 @@ export const ja = {
 			},
 			checkUpdates: {
 				label: "アップデートを確認",
-				description: "アップデートを確認し、新しいバージョンが利用可能になったら通知します",
+				description:
+					"アップデートを確認し、新しいバージョンが利用可能になったら通知します",
 				button: "アップデートを確認",
 			},
 		},
