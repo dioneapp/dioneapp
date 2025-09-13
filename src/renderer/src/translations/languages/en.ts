@@ -256,7 +256,8 @@ export const en = {
 			},
 			checkUpdates: {
 				label: "Check for updates",
-				description: "Check for updates and notify you when a new version is available",
+				description:
+					"Check for updates and notify you when a new version is available",
 				button: "Check for updates",
 			},
 		},

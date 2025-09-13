@@ -229,7 +229,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 		stopCheckingRef.current = false;
 		isLoadingIframeRef.current = true;
-		
+
 		let isAvailable = false;
 		while (!isAvailable) {
 			isAvailable = await isLocalAvailable(localPort);
@@ -249,7 +249,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				`${data.name} has opened a preview.`,
 			);
 		}
-		
+
 		isLoadingIframeRef.current = false;
 	};
 

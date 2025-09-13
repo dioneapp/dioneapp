@@ -257,7 +257,8 @@ export const de = {
 			},
 			checkUpdates: {
 				label: "Auf Updates prüfen",
-				description: "Auf Updates prüfen und benachrichtigen, wenn eine neue Version verfügbar ist",
+				description:
+					"Auf Updates prüfen und benachrichtigen, wenn eine neue Version verfügbar ist",
 				button: "Auf Updates prüfen",
 			},
 		},

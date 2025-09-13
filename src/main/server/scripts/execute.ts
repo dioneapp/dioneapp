@@ -431,9 +431,7 @@ async function createVirtualEnvCommands(
 
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
-	const middle = commandStrings.length
-		? commandStrings.join(" && ")
-		: "";
+	const middle = commandStrings.length ? commandStrings.join(" && ") : "";
 
 	// variables
 	const variables = getAllValues();
@@ -471,7 +469,7 @@ async function createVirtualEnvCommands(
 		// for linux and mac
 		return [
 			`if [ ! -d "${envPath}" ]; then ${condaUC} create -p "${envPath}" ${pythonArg} -y; fi`,
-			`. "${condaU}" "${envPath}" && ${middle} && conda deactivate`
+			`. "${condaU}" "${envPath}" && ${middle} && conda deactivate`,
 		];
 	}
 
@@ -508,5 +506,4 @@ async function createVirtualEnvCommands(
 			`. "${activateScript}" ${middle} && deactivate`,
 		];
 	}
-	  
 }

@@ -254,7 +254,8 @@ export const id = {
 			},
 			checkUpdates: {
 				label: "Periksa pembaruan",
-				description: "Periksa pembaruan dan beri tahu Anda ketika versi baru tersedia",
+				description:
+					"Periksa pembaruan dan beri tahu Anda ketika versi baru tersedia",
 				button: "Periksa pembaruan",
 			},
 		},

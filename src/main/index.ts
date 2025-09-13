@@ -120,8 +120,12 @@ function createWindow() {
 				? { backgroundMaterial: "acrylic" }
 				: {}),
 			...(process.platform === "win32" ? { icon: getIconPath("win32") } : {}),
-			...(process.platform === "linux" ? { icon: getIconPath("linux"), vibrancy: "hud", roundedCorners: true } : {}),
-			...(process.platform === "darwin" ? { icon: getIconPath("darwin"), vibrancy: "hud" } : {}),
+			...(process.platform === "linux"
+				? { icon: getIconPath("linux"), vibrancy: "hud", roundedCorners: true }
+				: {}),
+			...(process.platform === "darwin"
+				? { icon: getIconPath("darwin"), vibrancy: "hud" }
+				: {}),
 			webPreferences: {
 				contextIsolation: true,
 				nodeIntegration: false,
@@ -173,7 +177,6 @@ function createWindow() {
 			logger.error("Error showing main window:", error);
 		}
 
-		
 		if (app.isPackaged) {
 			// check for updates
 			checkForUpdates()
@@ -506,7 +509,11 @@ app.whenReady().then(async () => {
 	if (!app.isPackaged) {
 		// in development mode, open dev tools using f12 shortcut
 		globalShortcut.register("f12", () => {
-			BrowserWindow.getFocusedWindow()?.webContents.isDevToolsOpened() ? BrowserWindow.getFocusedWindow()?.webContents.closeDevTools() : BrowserWindow.getFocusedWindow()?.webContents.openDevTools({ mode: "undocked" });
+			BrowserWindow.getFocusedWindow()?.webContents.isDevToolsOpened()
+				? BrowserWindow.getFocusedWindow()?.webContents.closeDevTools()
+				: BrowserWindow.getFocusedWindow()?.webContents.openDevTools({
+						mode: "undocked",
+					});
 		});
 	}
 
