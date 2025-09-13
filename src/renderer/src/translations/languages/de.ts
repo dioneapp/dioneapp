@@ -255,6 +255,11 @@ export const de = {
 				description: "Verwalten Sie Anwendungsvariablen und ihre Werte",
 				button: "Variablen öffnen",
 			},
+			checkUpdates: {
+				label: "Auf Updates prüfen",
+				description: "Auf Updates prüfen und benachrichtigen, wenn eine neue Version verfügbar ist",
+				button: "Auf Updates prüfen",
+			},
 		},
 	},
 

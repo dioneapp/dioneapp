@@ -710,6 +710,10 @@ app.whenReady().then(async () => {
 		autoUpdater.checkForUpdates();
 	});
 
+	ipcMain.handle("check-update-and-notify", () => {
+		autoUpdater.checkForUpdatesAndNotify();
+	});
+
 	ipcMain.on("restart_app", () => {
 		autoUpdater.quitAndInstall();
 	});
@@ -1015,11 +1019,25 @@ ipcMain.handle("check-folder-size", async (_event, folderPath) => {
 		let totalSize = 0;
 
 		async function walk(dir: string) {
-			const files = await fs.promises.readdir(dir);
+			let files: string[];
+			try {
+				files = await fs.promises.readdir(dir);
+			} catch (err) {
+				// Directory might have been deleted between readdir and stat
+				console.warn(`Failed to read directory: ${dir}`, err);
+				return;
+			}
 
 			for (const file of files) {
 				const filePath = path.join(dir, file);
-				const stat = await fs.promises.stat(filePath);
+				let stat;
+				try {
+					stat = await fs.promises.stat(filePath);
+				} catch (err) {
+					// File might have been deleted between readdir and stat
+					console.warn(`Failed to stat file: ${filePath}`, err);
+					continue;
+				}
 
 				if (stat.isDirectory()) {
 					await walk(filePath);
@@ -1033,9 +1051,14 @@ ipcMain.handle("check-folder-size", async (_event, folderPath) => {
 		return totalSize;
 	}
 
-	const sizeBytes = await getFolderSize(folderPath);
-	const sizeGB = sizeBytes / (1024 * 1024 * 1024);
-	return `${sizeGB.toFixed(2)}`;
+	try {
+		const sizeBytes = await getFolderSize(folderPath);
+		const sizeGB = sizeBytes / (1024 * 1024 * 1024);
+		return `${sizeGB.toFixed(2)}`;
+	} catch (err) {
+		console.error("Error occurred in handler for 'check-folder-size':", err);
+		return "0.00";
+	}
 });
 
 ipcMain.handle("delete-folder", async (_event, folderPath) => {

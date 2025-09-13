@@ -254,6 +254,11 @@ export const en = {
 				description: "Manage application variables and their values",
 				button: "Open Variables",
 			},
+			checkUpdates: {
+				label: "Check for updates",
+				description: "Check for updates and notify you when a new version is available",
+				button: "Check for updates",
+			},
 		},
 	},
 

@@ -252,6 +252,11 @@ export const id = {
 				description: "Kelola variabel aplikasi dan nilainya",
 				button: "Buka Variabel",
 			},
+			checkUpdates: {
+				label: "Periksa pembaruan",
+				description: "Periksa pembaruan dan beri tahu Anda ketika versi baru tersedia",
+				button: "Periksa pembaruan",
+			},
 		},
 	},
 

@@ -303,6 +303,10 @@ export default function Settings() {
 		setVariablesModal(state);
 	};
 
+	const handleCheckUpdates = () => {
+		window.electron.ipcRenderer.invoke("check-update-and-notify");
+	};
+
 	return (
 		<>
 			<div className="min-h-screen bg-background pt-4 relative">
@@ -765,6 +769,23 @@ export default function Settings() {
 															/>
 														</button>
 													</div>
+												</div>
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.other.checkUpdates.label")}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t("settings.other.checkUpdates.description")}
+														</p>
+													</div>
+													<button
+														onClick={() => handleCheckUpdates()}
+														className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+														type="button"
+													>
+														{t("settings.other.checkUpdates.button")}
+													</button>
 												</div>
 												<div className="flex justify-between w-full items-center h-full space-y-2">
 													<div className="h-full flex items-start justify-center flex-col mt-auto">

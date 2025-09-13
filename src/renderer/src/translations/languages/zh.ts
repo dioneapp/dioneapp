@@ -240,6 +240,11 @@ export const zh = {
 				description: "管理应用程序变量及其值",
 				button: "打开变量",
 			},
+			checkUpdates: {
+				label: "检查更新",
+				description: "检查更新并在有新版本可用时通知您",
+				button: "检查更新",
+			},
 		},
 	},
 

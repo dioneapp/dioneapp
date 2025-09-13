@@ -252,6 +252,11 @@ export const pt = {
 				description: "Gerencie variáveis de aplicativos e seus valores",
 				button: "Abrir Variáveis",
 			},
+			checkUpdates: {
+				label: "Verificar atualizações",
+				description: "Verificar atualizações e notificar quando uma nova versão estiver disponível",
+				button: "Verificar atualizações",
+			},
 		},
 	},
 

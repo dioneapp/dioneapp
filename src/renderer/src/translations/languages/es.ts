@@ -256,6 +256,11 @@ export const es = {
 				description: "Gestiona las variables de la aplicación y sus valores",
 				button: "Abrir Variables",
 			},
+			checkUpdates: {
+				label: "Comprobar actualizaciones",
+				description: "Comprueba actualizaciones y notifica cuando una nueva versión esté disponible",
+				button: "Comprobar actualizaciones",
+			},
 		},
 	},
 

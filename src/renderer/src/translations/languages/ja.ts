@@ -253,6 +253,11 @@ export const ja = {
 				description: "アプリケーション変数とその値を管理します",
 				button: "変数を開く",
 			},
+			checkUpdates: {
+				label: "アップデートを確認",
+				description: "アップデートを確認し、新しいバージョンが利用可能になったら通知します",
+				button: "アップデートを確認",
+			},
 		},
 	},
 
