@@ -5,6 +5,7 @@ import type { Server } from "socket.io";
 import { readConfig } from "../../../config";
 import logger from "../../utils/logger";
 import { dependencyRegistry } from "./accepted-dependencies";
+import { getOS } from "./utils/system";
 
 export function readDioneConfig(filePath: string): any {
 	try {
@@ -185,6 +186,16 @@ export async function inUseDependencies(
 	Object.keys(dependencies).forEach((depName) => {
 		const entry = dependencyRegistry[depName];
 		if (entry) {
+
+			if (getOS() === "linux" || getOS() === "macos") {
+				if (depName === "build_tools") {
+					return;
+				}
+				if (depName === "git") {
+					return;
+				}
+			}
+
 			inUse.push(depName);
 		}
 	});
