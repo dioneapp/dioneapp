@@ -37,21 +37,52 @@ export async function useGit(command: string, workingDir: string, io: Server, id
             content: `Cloning repository ${url} ${folder ? `to ${workingDir}/${folder}` : ""}${branch ? ` on branch ${branch}` : ""}`,
         });
 
-        await git.clone({
-            fs,
-            http,
-            dir: `${workingDir}/${folder}`,
-            url: url!,
-            singleBranch: true,
-            ref: branch ? branch : "main",
-            batchSize: 3,
-            onProgress: (progress) => {
-                io.to(id).emit("installUpdate", {
-                    type: "log",
-                    content: `Cloning repository... ${progress.loaded}/${progress.total !== undefined ? progress.total : progress.loaded}`,
+        let lastError: any = null;
+        let refToTry = branch ? branch : "main";
+        let result = false;
+
+        for (let attempt = 0; attempt < 2; attempt++) {
+            try {
+                await git.clone({
+                    fs,
+                    http,
+                    dir: `${workingDir}/${folder}`,
+                    url: url!,
+                    singleBranch: true,
+                    ref: refToTry,
+                    batchSize: 3,
+                    onProgress: (progress) => {
+                        io.to(id).emit("installUpdate", {
+                            type: "log",
+                            content: `Cloning repository... ${progress.loaded}/${progress.total !== undefined ? progress.total : progress.loaded}`,
+                        });
+                    },
                 });
-            },
-        });
+                result = true;
+                break;
+            } catch (err: any) {
+                lastError = err;
+                 // if main branch doesnt exist, try with master
+                if (!branch && refToTry === "main") {
+                    io.to(id).emit("installUpdate", {
+                        type: "log",
+                        content: `Branch 'main' not found, trying 'master'...`,
+                    });
+                    refToTry = "master";
+                    continue;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        if (!result) {
+            io.to(id).emit("installUpdate", {
+                type: "error",
+                content: `Failed to clone repository: ${lastError?.message || lastError}`,
+            });
+            throw lastError;
+        }
 
         return true;
     }
