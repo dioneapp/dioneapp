@@ -151,12 +151,12 @@ export async function install(
 	);
 	const commands: Record<string, { file: string; args: string[] }> = {
 		linux: {
-			file: "bash",
-			args: [`${exe} -b -u -p ${depFolder}`],
+			file: "sh",
+			args: ["-c", `chmod +x ${exe} && ${exe} -b -u -p ${depFolder}`],
 		},
 		macos: {
-			file: "bash",
-			args: [`${exe} -b -u -p ${depFolder}`],
+			file: "sh",
+			args: ["-c", `chmod +x ${exe} && ${exe} -b -u -p ${depFolder}`],
 		},
 		windows: {
 			file: exe,
@@ -235,8 +235,14 @@ export async function install(
 							? path.join(depFolder, "Scripts", "conda.exe")
 							: path.join(depFolder, "bin", "conda"),
 					);
-					addValue("PATH", path.join(depFolder));
-					addValue("PATH", path.join(depFolder, "Scripts"));
+					if (platform === "windows") {
+						addValue("PATH", path.join(depFolder));
+						addValue("PATH", path.join(depFolder, "Scripts"));
+					} else {
+						addValue("PATH", path.join(depFolder, "bin", "conda"));
+						addValue("PATH", path.join(depFolder));
+						addValue("PATH", path.join(depFolder, "bin"));
+					}
 					addValue("CONDA_ROOT", path.join(depFolder));
 					addValue("CONDARC", path.join(depFolder, ".condarc"));
 					addValue("CONDA_NO_USER_CONFIG", "1");
@@ -250,7 +256,7 @@ export async function install(
 							"condabin",
 							"conda.bat",
 						);
-						const condaU = path.join(binFolder, "conda", "bin", "activate");
+						const condaU = path.join(binFolder, "conda", "bin", "conda");
 
 						io.to(id).emit("installDep", {
 							type: "log",
@@ -259,12 +265,12 @@ export async function install(
 						try {
 							if (platform === "windows") {
 								execSync(
-									`${condaW} init --all && ${condaW} tos accept --channel main`,
+									`${condaW} tos accept --channel main && ${condaW} init --all`,
 									{ cwd: depFolder, env: ENVIRONMENT },
 								);
 							} else {
 								execSync(
-									`${condaU} init --all && ${condaU} tos accept --channel main`,
+									`${condaU} tos accept --channel main && ${condaU} init --all`,
 									{ cwd: depFolder, env: ENVIRONMENT },
 								);
 							}
