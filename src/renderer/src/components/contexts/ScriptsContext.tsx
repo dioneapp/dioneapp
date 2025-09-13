@@ -223,10 +223,13 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	};
 
 	const stopCheckingRef = useRef(true);
+	const isLoadingIframeRef = useRef(false);
 	const loadIframe = async (localPort: number) => {
-		if (stopCheckingRef.current) return;
+		if (stopCheckingRef.current || isLoadingIframeRef.current) return;
 
 		stopCheckingRef.current = false;
+		isLoadingIframeRef.current = true;
+		
 		let isAvailable = false;
 		while (!isAvailable) {
 			isAvailable = await isLocalAvailable(localPort);
@@ -246,6 +249,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				`${data.name} has opened a preview.`,
 			);
 		}
+		
+		isLoadingIframeRef.current = false;
 	};
 
 	async function connectApp(appId: string, isLocal?: boolean) {
