@@ -120,8 +120,8 @@ function createWindow() {
 				? { backgroundMaterial: "acrylic" }
 				: {}),
 			...(process.platform === "win32" ? { icon: getIconPath("win32") } : {}),
-			...(process.platform === "linux" ? { icon: getIconPath("linux") } : {}),
-			...(process.platform === "darwin" ? { icon: getIconPath("darwin") } : {}),
+			...(process.platform === "linux" ? { icon: getIconPath("linux"), vibrancy: "hud", roundedCorners: true } : {}),
+			...(process.platform === "darwin" ? { icon: getIconPath("darwin"), vibrancy: "hud" } : {}),
 			webPreferences: {
 				contextIsolation: true,
 				nodeIntegration: false,
@@ -156,7 +156,7 @@ function createWindow() {
 
 	// Remove default menu from the window
 	mainWindow.removeMenu();
-
+	mainWindow.center();
 	mainWindow.webContents.once("did-fail-load", () => {
 		logger.error("Failed to load the main window content.");
 		dialog.showErrorBox("Error", "Failed to load the main window content.");
@@ -173,15 +173,8 @@ function createWindow() {
 			logger.error("Error showing main window:", error);
 		}
 
-		if (!app.isPackaged) {
-			// in development mode, open dev tools
-			try {
-				mainWindow.webContents.openDevTools({ mode: "undocked" });
-				logger.info("Development tools opened");
-			} catch (error) {
-				logger.error("Error opening development tools:", error);
-			}
-		} else {
+		
+		if (app.isPackaged) {
 			// check for updates
 			checkForUpdates()
 				.then(() => {
@@ -509,6 +502,13 @@ app.whenReady().then(async () => {
 			BrowserWindow.getFocusedWindow()?.reload();
 		}
 	});
+
+	if (!app.isPackaged) {
+		// in development mode, open dev tools using f12 shortcut
+		globalShortcut.register("f12", () => {
+			BrowserWindow.getFocusedWindow()?.webContents.isDevToolsOpened() ? BrowserWindow.getFocusedWindow()?.webContents.closeDevTools() : BrowserWindow.getFocusedWindow()?.webContents.openDevTools({ mode: "undocked" });
+		});
+	}
 
 	// Automatically manage development shortcuts and production optimizations
 	app.on("browser-window-created", (_, window) => {
