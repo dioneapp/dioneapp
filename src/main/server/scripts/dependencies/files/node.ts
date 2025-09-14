@@ -54,22 +54,22 @@ export async function install(
 	const urls: Record<string, Record<string, string>> = {
 		linux: {
 			amd64:
-				"https://nodejs.org/download/release/latest-v22.x/node-v22.18.0-linux-x64.tar.gz",
+				"https://nodejs.org/download/release/latest-v22.x/node-v22.19.0-linux-x64.tar.gz",
 			arm64:
-				"https://nodejs.org/download/release/latest-v22.x/node-v22.18.0-linux-arm64.tar.gz",
+				"https://nodejs.org/download/release/latest-v22.x/node-v22.19.0-linux-arm64.tar.gz",
 		},
 		macos: {
 			amd64:
-				"https://nodejs.org/download/release/latest-v22.x/node-v22.18.0-darwin-x64.tar.gz",
+				"https://nodejs.org/download/release/latest-v22.x/node-v22.19.0-darwin-x64.tar.gz",
 			arm64:
-				"https://nodejs.org/download/release/latest-v22.x/node-v22.18.0-darwin-arm64.tar.gz",
+				"https://nodejs.org/download/release/latest-v22.x/node-v22.19.0-darwin-arm64.tar.gz",
 		},
 		windows: {
 			amd64:
-				"https://nodejs.org/download/release/latest-v22.x/node-v22.18.0-win-x64.zip",
+				"https://nodejs.org/download/release/latest-v22.x/node-v22.19.0-win-x64.zip",
 			arm64:
-				"https://nodejs.org/download/release/latest-v22.x/node-v22.18.0-win-arm64.zip",
-			x86: "https://nodejs.org/download/release/latest-v22.x/node-v22.18.0-win-x86.zip",
+				"https://nodejs.org/download/release/latest-v22.x/node-v22.19.0-win-arm64.zip",
+			x86: "https://nodejs.org/download/release/latest-v22.x/node-v22.19.0-win-x86.zip",
 		},
 	};
 
