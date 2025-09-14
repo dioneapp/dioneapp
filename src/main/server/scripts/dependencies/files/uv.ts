@@ -241,6 +241,7 @@ export async function install(
 							addValue("PATH", path.join(depFolder, "uv-aarch64-apple-darwin"));
 						}
 					}
+					addValue("UV_PYTHON_INSTALL_DIR", path.join(cacheDir));
 					addValue("UV_CACHE_DIR", cacheDir);
 					addValue("PIP_CACHE_DIR", path.join(binFolder, "cache", "pip"));
 
