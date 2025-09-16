@@ -17,7 +17,7 @@ export async function isInstalled(
 	const depFolder = path.join(binFolder, depName);
 	const ENVIRONMENT = getAllValues();
 
-	if (getOS() === "linux" || getOS() === "macos") {
+	if (process.platform === "linux" || process.platform === "darwin") {
 		return { installed: true, reason: `installed` };
 	}
 
