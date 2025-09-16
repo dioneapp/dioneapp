@@ -221,7 +221,8 @@ export const en = {
 			},
 			successSound: {
 				label: "Enable Success Sound",
-				description: "Enable the sound that plays when applications finish installing",
+				description:
+					"Enable the sound that plays when applications finish installing",
 			},
 		},
 		privacy: {

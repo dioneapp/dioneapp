@@ -1,7 +1,7 @@
+import successSound from "@renderer/components/first-time/sounds/success.mp3";
 import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { type Socket, io as clientIO } from "socket.io-client";
 import type { SetupSocketProps } from "../types/context-types";
-import successSound from "@renderer/components/first-time/sounds/success.mp3";
 
 export function setupSocket({
 	appId,
@@ -133,7 +133,7 @@ export function setupSocket({
 
 				if (settings.enableSuccessSound) {
 					const audioRef = new Audio(successSound);
-					audioRef.volume = 0.7
+					audioRef.volume = 0.7;
 					audioRef.currentTime = 0;
 					audioRef.loop = false;
 					audioRef.muted = false;

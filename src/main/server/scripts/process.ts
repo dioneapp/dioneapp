@@ -545,7 +545,7 @@ export const executeCommands = async (
 			const newWorkingDir = path.isAbsolute(targetDir)
 				? targetDir
 				: path.join(currentWorkingDir, targetDir);
-		
+
 			if (!fs.existsSync(newWorkingDir)) {
 				logger.error(`Directory does not exist: ${newWorkingDir}`);
 				io.to(id).emit("installUpdate", {
@@ -559,14 +559,14 @@ export const executeCommands = async (
 				});
 				continue;
 			}
-		
+
 			currentWorkingDir = newWorkingDir;
 			logger.info(`Changed working directory to: ${currentWorkingDir}`);
 			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: `INFO: Changed working directory to: ${currentWorkingDir}`,
 			});
-		
+
 			// remove the cd command
 			command = command.replace(cdRegex, "").trim();
 		}
@@ -579,7 +579,7 @@ export const executeCommands = async (
 				id,
 				needsBuildTools,
 			);
-		
+
 			if (response.code !== 0) {
 				if (processWasCancelled) {
 					logger.info("Process was manually cancelled");
@@ -593,7 +593,7 @@ export const executeCommands = async (
 					response.stderr || `Command failed with exit code ${response.code}`,
 				);
 			}
-			}
+		}
 	}
 	return { cancelled: false };
 };

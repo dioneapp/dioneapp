@@ -207,8 +207,7 @@ export const zh = {
 			},
 			successSound: {
 				label: "启用成功提示音",
-				description:
-					"启用在应用程序安装完成时播放的提示音",
+				description: "启用在应用程序安装完成时播放的提示音",
 			},
 		},
 		privacy: {
