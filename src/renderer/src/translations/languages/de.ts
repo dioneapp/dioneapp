@@ -218,6 +218,11 @@ export const de = {
 				label: "Discord Rich Presence",
 				description: "Zeigen Sie Ihre aktuelle Aktivität im Discord-Status an",
 			},
+			successSound: {
+				label: "Erfolgston aktivieren",
+				description:
+					"Aktiviert den Ton, der abgespielt wird, wenn App-Installationen abgeschlossen sind",
+			},
 		},
 		privacy: {
 			title: "Datenschutz",

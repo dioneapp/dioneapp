@@ -221,6 +221,11 @@ export const fr = {
 				description:
 					"Affichez votre activité actuelle dans votre statut Discord",
 			},
+			successSound: {
+				label: "Activer le son de réussite",
+				description:
+					"Activer le son joué lorsque les applications terminent leur installation",
+			},
 		},
 		privacy: {
 			title: "Confidentialité",

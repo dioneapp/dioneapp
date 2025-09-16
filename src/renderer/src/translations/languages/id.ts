@@ -216,6 +216,11 @@ export const id = {
 				label: "Discord Rich Presence",
 				description: "Tampilkan aktivitas Anda saat ini di status Discord",
 			},
+			successSound: {
+				label: "Aktifkan suara sukses",
+				description:
+					"Aktifkan suara yang diputar saat instalasi aplikasi selesai",
+			},
 		},
 		privacy: {
 			title: "Privasi",

@@ -205,6 +205,11 @@ export const zh = {
 				label: "Discord Rich Presence",
 				description: "在 Discord 状态中显示您的当前活动",
 			},
+			successSound: {
+				label: "启用成功提示音",
+				description:
+					"启用在应用程序安装完成时播放的提示音",
+			},
 		},
 		privacy: {
 			title: "隐私",

@@ -18,6 +18,7 @@ export interface AppConfig {
 	sendAnonymousReports: boolean;
 	enableDiscordRPC: boolean;
 	disableAutoUpdates: boolean;
+	enableSuccessSound: boolean;
 }
 
 // default config
@@ -36,6 +37,7 @@ export const defaultConfig: AppConfig = {
 	sendAnonymousReports: true,
 	enableDiscordRPC: true,
 	disableAutoUpdates: false,
+	enableSuccessSound: true,
 };
 // get config file
 export const getConfigPath = () => {

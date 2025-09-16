@@ -217,6 +217,11 @@ export const ja = {
 				label: "Discord Rich Presence",
 				description: "Discordのステータスに現在の活動を表示します",
 			},
+			successSound: {
+				label: "成功サウンドを有効化",
+				description:
+					"アプリのインストールが完了したときに再生されるサウンドを有効にします",
+			},
 		},
 		privacy: {
 			title: "プライバシー",

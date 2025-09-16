@@ -216,6 +216,11 @@ export const ru = {
 				label: "Discord Rich Presence",
 				description: "Отображать вашу текущую активность в статусе Discord",
 			},
+			successSound: {
+				label: "Включить звук успеха",
+				description:
+					"Включить звук, который воспроизводится при завершении установки приложений",
+			},
 		},
 		privacy: {
 			title: "Конфиденциальность",

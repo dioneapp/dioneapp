@@ -1,6 +1,7 @@
 import { sendDiscordReport } from "@renderer/utils/discordWebhook";
 import { type Socket, io as clientIO } from "socket.io-client";
 import type { SetupSocketProps } from "../types/context-types";
+import successSound from "@renderer/components/first-time/sounds/success.mp3";
 
 export function setupSocket({
 	appId,
@@ -129,6 +130,15 @@ export function setupSocket({
 			if (type === "installFinished") {
 				console.log("App finished installation");
 				setWasJustInstalled(true);
+
+				if (settings.enableSuccessSound) {
+					const audioRef = new Audio(successSound);
+					audioRef.volume = 0.7
+					audioRef.currentTime = 0;
+					audioRef.loop = false;
+					audioRef.muted = false;
+					audioRef.play().catch((e) => console.warn("Audio play failed:", e));
+				}
 			}
 		},
 	);

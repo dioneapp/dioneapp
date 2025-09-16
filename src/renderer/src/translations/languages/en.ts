@@ -219,6 +219,10 @@ export const en = {
 				label: "Discord Rich Presence",
 				description: "Show your current activity in Discord status",
 			},
+			successSound: {
+				label: "Enable Success Sound",
+				description: "Enable the sound that plays when applications finish installing",
+			},
 		},
 		privacy: {
 			title: "Privacy",

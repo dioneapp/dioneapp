@@ -683,6 +683,39 @@ export default function Settings() {
 														/>
 													</button>
 												</div>
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.notifications.successSound.label")}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t(
+																"settings.notifications.successSound.description",
+															)}
+														</p>
+													</div>
+													<button
+														type="button"
+														onClick={() =>
+															handleUpdate({
+																enableSuccessSound: !config.enableSuccessSound,
+															})
+														}
+														className={`relative w-12 h-6 flex items-center rounded-full p-1 transition-colors duration-300 border border-white/5 cursor-pointer ${
+															config.enableSuccessSound
+																? "bg-green-500/30"
+																: "bg-red-500/30"
+														}`}
+													>
+														<span
+															className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
+																config.enableSuccessSound
+																	? "translate-x-6"
+																	: "translate-x-0"
+															}`}
+														/>
+													</button>
+												</div>
 											</div>
 										</div>
 										{/*  */}

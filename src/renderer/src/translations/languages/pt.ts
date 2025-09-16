@@ -216,6 +216,11 @@ export const pt = {
 				label: "Presença Rica do Discord",
 				description: "Mostre sua atividade atual no status do Discord",
 			},
+			successSound: {
+				label: "Ativar som de sucesso",
+				description:
+					"Ativa o som que toca quando os aplicativos terminam de instalar",
+			},
 		},
 		privacy: {
 			title: "Privacidade",

@@ -218,6 +218,11 @@ export const es = {
 				label: "Presencia Rrica de Discord",
 				description: "Muestra tu actividad actual en el estado de Discord",
 			},
+			successSound: {
+				label: "Habilitar sonido de éxito",
+				description:
+					"Activa el sonido que se reproduce cuando las aplicaciones terminan de instalarse",
+			},
 		},
 		privacy: {
 			title: "Privacidad",

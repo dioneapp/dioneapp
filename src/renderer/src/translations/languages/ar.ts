@@ -209,6 +209,11 @@ export const ar = {
 				label: "Discord Rich Presence",
 				description: "عرض نشاطك الحالي في حالة Discord",
 			},
+			successSound: {
+				label: "تفعيل صوت النجاح",
+				description:
+					"تفعيل الصوت الذي يتم تشغيله عند اكتمال تثبيت التطبيقات",
+			},
 		},
 		privacy: {
 			title: "الخصوصية",
