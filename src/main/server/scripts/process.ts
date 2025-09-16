@@ -537,15 +537,20 @@ export const executeCommands = async (
 
 		command = command.trim();
 
-		// handle cd command
-		if (command.startsWith("cd ")) {
-			const targetDir = command.slice(3).trim();
-			currentWorkingDir = path.join(currentWorkingDir, targetDir);
-			if (!fs.existsSync(currentWorkingDir)) {
-				logger.error(`Directory does not exist: ${currentWorkingDir}`);
+		const cdRegex = /\bcd\s+([^\s;]+)/;
+		const cdMatch = command.match(cdRegex);
+
+		if (cdMatch) {
+			const targetDir = cdMatch[1].trim();
+			const newWorkingDir = path.isAbsolute(targetDir)
+				? targetDir
+				: path.join(currentWorkingDir, targetDir);
+		
+			if (!fs.existsSync(newWorkingDir)) {
+				logger.error(`Directory does not exist: ${newWorkingDir}`);
 				io.to(id).emit("installUpdate", {
 					type: "log",
-					content: `ERROR: Directory does not exist: ${currentWorkingDir}`,
+					content: `ERROR: Directory does not exist: ${newWorkingDir}`,
 				});
 				io.to(id).emit("installUpdate", {
 					type: "status",
@@ -554,12 +559,19 @@ export const executeCommands = async (
 				});
 				continue;
 			}
+		
+			currentWorkingDir = newWorkingDir;
 			logger.info(`Changed working directory to: ${currentWorkingDir}`);
 			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: `INFO: Changed working directory to: ${currentWorkingDir}`,
 			});
-		} else {
+		
+			// remove the cd command
+			command = command.replace(cdRegex, "").trim();
+		}
+
+		if (command.length > 0) {
 			const response = await executeCommand(
 				command,
 				io,
@@ -567,6 +579,7 @@ export const executeCommands = async (
 				id,
 				needsBuildTools,
 			);
+		
 			if (response.code !== 0) {
 				if (processWasCancelled) {
 					logger.info("Process was manually cancelled");
@@ -574,14 +587,13 @@ export const executeCommands = async (
 						type: "log",
 						content: "INFO: Process was manually cancelled",
 					});
-					// exit and signal cancellation to caller
 					return { cancelled: true };
 				}
 				throw new Error(
 					response.stderr || `Command failed with exit code ${response.code}`,
 				);
 			}
-		}
+			}
 	}
 	return { cancelled: false };
 };
