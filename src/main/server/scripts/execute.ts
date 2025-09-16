@@ -431,9 +431,8 @@ async function createVirtualEnvCommands(
 
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
-	const middle = commandStrings.length
-		? `&& ${commandStrings.join(" && ")}`
-		: "";
+	// join commands without leading/trailing separators; add separators conditionally where used
+	const middle = commandStrings.join(" && ");
 
 	// variables
 	const variables = getAllValues();
@@ -463,16 +462,20 @@ async function createVirtualEnvCommands(
 			"conda",
 		);
 		if (isWindows) {
+			const between = middle ? ` && ${middle} && ` : " && ";
 			return [
-				`if not exist "${envPath}" (${condaW} tos accept --channel main &&${condaW} create -p "${envPath}" ${pythonArg} -y)`,
-				`call ${condaW} activate "${envPath}" && ${middle} && call ${condaW} deactivate`,
+				`if not exist "${envPath}" (${condaW} tos accept --channel main && ${condaW} create -p "${envPath}" ${pythonArg} -y)`,
+				`call ${condaW} activate "${envPath}"${between}call ${condaW} deactivate`,
 			];
 		}
 		// for linux and mac
-		return [
-			`if [ ! -d "${envPath}" ]; then ${condaUC} create -p "${envPath}" ${pythonArg} -y; fi`,
-			`. "${condaU}" "${envPath}" && ${middle} && conda deactivate`,
-		];
+		{
+			const between = middle ? ` && ${middle} && ` : " && ";
+			return [
+				`if [ ! -d "${envPath}" ]; then ${condaUC} create -p "${envPath}" ${pythonArg} -y; fi`,
+				`. "${condaU}" "${envPath}"${between}conda deactivate`,
+			];
+		}
 	}
 
 	// default uv env
@@ -482,10 +485,13 @@ async function createVirtualEnvCommands(
 		if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
 			addValue("PATH", path.join(envPath, "Scripts"));
 		}
-		return [
-			`if not exist "${envPath}" (uv venv ${pythonFlag} "${envName}")`,
-			`call "${activateScript}" ${middle} && call "${deactivateScript}"`,
-		];
+		{
+			const between = middle ? ` ${middle} && ` : " && ";
+			return [
+				`if not exist "${envPath}" (uv venv ${pythonFlag} "${envName}")`,
+				`call "${activateScript}"${between}call "${deactivateScript}"`,
+			];
+		}
 	}
 
 	// for linux and mac
@@ -496,16 +502,20 @@ async function createVirtualEnvCommands(
 
 	const existsEnv = fs.existsSync(envPath);
 	if (!existsEnv) {
-		return [
-			// create new env
-			`uv venv ${pythonFlag} "${envPath}"`,
-			// use it
-			`. "${activateScript}" ${middle} && deactivate`,
-		];
+		{
+			const between = middle ? ` ${middle} && ` : " && ";
+			return [
+				// create new env
+				`uv venv ${pythonFlag} "${envPath}"`,
+				// use it
+				`. "${activateScript}"${between}deactivate`,
+			];
+		}
 	} else {
+		const between = middle ? ` ${middle} && ` : " && ";
 		return [
 			// use existing env
-			`. "${activateScript}" ${middle} && deactivate`,
+			`. "${activateScript}"${between}deactivate`,
 		];
 	}
 }
