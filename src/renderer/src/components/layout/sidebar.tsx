@@ -1,9 +1,9 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import {
+	Camera,
 	Library,
 	LoaderCircle,
-	LogIn,
 	MonitorDown,
 	Settings,
 	User,
@@ -11,7 +11,6 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
 import { openLink } from "../../utils/openLink";
 import { useAuthContext } from "../contexts/AuthContext";
@@ -21,7 +20,6 @@ import QuickLaunch from "./quick-launch";
 
 export default function Sidebar() {
 	const { t } = useTranslation();
-	const navigate = useNavigate();
 	const { user, loading } = useAuthContext();
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
@@ -302,6 +300,20 @@ export default function Sidebar() {
 					{config?.compactMode && (
 						<div className="mt-4 items-center gap-2 justify-center mx-auto w-full h-full flex-col flex transition-all duration-500">
 							<div className="flex flex-col gap-2 transition-all duration-400 mb-2">
+								<button
+									type="button"
+									onClick={() => window.captureScreenshot()}
+									className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center justify-center relative cursor-pointer"
+									onMouseEnter={() => setHoveredTooltip("capture")}
+									onMouseLeave={() => setHoveredTooltip(null)}
+								>
+									<Camera className="h-5 w-5" />
+									{hoveredTooltip === "capture" && (
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
+											{t("sidebar.tooltips.capture")}
+										</div>
+									)}
+								</button>
 								<Link
 									to={"/library"}
 									className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full flex gap-1 items-center justify-center transition-colors relative"
@@ -392,16 +404,19 @@ export default function Sidebar() {
 					{!config?.compactMode && (
 						<div className="flex gap-2 items-center justify-start w-full h-full">
 							{!user && (
-								<button
-									type="button"
-									className="p-2 bg-white text-black border rounded-full border-white/10 hover:bg-white/80 transition-colors flex gap-1 items-center justify-start cursor-pointer relative"
-									onClick={() => navigate("/first-time?login=true")}
-									onMouseEnter={() => setHoveredTooltip("login")}
-									onMouseLeave={() => setHoveredTooltip(null)}
-								>
-									<LogIn className="h-5 w-5" />
-									<span className="text-sm px-2 font-semibold">Login</span>
-								</button>
+								<Link
+								to={"/first-time?login=true"}
+								className="w-9 h-9 border border-white/10 hover:bg-white/80 bg-white rounded-full transition-colors flex gap-1 items-center justify-center relative cursor-pointer"
+								onMouseEnter={() => setHoveredTooltip("login")}
+								onMouseLeave={() => setHoveredTooltip(null)}
+							>
+								<User className="h-5 w-5 text-black" />
+								{hoveredTooltip === "login" && (
+									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
+										{t("sidebar.tooltips.login")}
+									</div>
+								)}
+							</Link>
 							)}
 						</div>
 					)}
@@ -417,13 +432,27 @@ export default function Sidebar() {
 									onMouseEnter={() => setHoveredTooltip("login")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
-									<LogIn className="h-4 w-4" />
+									<User className="h-4 w-4" />
 								</button>
 							)}
 						</div>
 					)}
 					{!config?.compactMode && (
 						<div className="flex gap-2 items-center justify-end w-full h-full">
+							<button
+								type="button"
+								onClick={() => (window.captureScreenshot())}
+								className="p-2 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center relative cursor-pointer"
+								onMouseEnter={() => setHoveredTooltip("capture")}
+								onMouseLeave={() => setHoveredTooltip(null)}
+							>
+								<Camera className="h-5 w-5" />
+								{hoveredTooltip === "capture" && (
+									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
+										{t("sidebar.tooltips.capture")}
+									</div>
+								)}
+							</button>
 							<Link
 								to={"/library"}
 								className="p-2 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center relative"
