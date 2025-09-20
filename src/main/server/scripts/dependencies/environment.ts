@@ -240,6 +240,13 @@ export function initDefaultEnv() {
 		if (!currentEnv.TEMP) {
 			addValue("TEMP", path.join(cacheFolder));
 		}
+
+		if (!currentEnv.TEMP) {
+			addValue("TEMP", path.join(cacheFolder));
+		}
+		if (!currentEnv.TMP) {
+			addValue("TMP", path.join(cacheFolder));
+		}
 	} else {
 		// linux/macos
 		const basicPath =
@@ -266,6 +273,13 @@ export function initDefaultEnv() {
 
 		if (!currentEnv.TRANSFORMERS_CACHE) {
 			addValue("TRANSFORMERS_CACHE", path.join(cacheFolder));
+		}
+		
+		if (!currentEnv.TEMP) {
+			addValue("TEMP", path.join(cacheFolder));
+		}
+		if (!currentEnv.TMP) {
+			addValue("TMP", path.join(cacheFolder));
 		}
 	}
 }
