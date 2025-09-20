@@ -141,6 +141,7 @@ export const zh = {
 			account: "帐户",
 			logout: "登出",
 			login: "登录",
+			capture: "捕获",
 		},
 	},
 

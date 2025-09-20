@@ -147,6 +147,7 @@ export const id = {
 			account: "Akun",
 			logout: "Keluar",
 			login: "Masuk",
+			capture: "Tangkap",
 		},
 	},
 

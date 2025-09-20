@@ -144,6 +144,7 @@ export const bn = {
 			account: "অ্যাকাউন্ট",
 			logout: "প্রস্থান",
 			login: "লগইন",
+			capture: "ক্যাপচার",
 		},
 	},
 

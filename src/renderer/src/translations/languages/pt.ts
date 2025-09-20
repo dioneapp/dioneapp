@@ -146,6 +146,7 @@ export const pt = {
 			account: "Conta",
 			logout: "Sair",
 			login: "Entrar",
+			capture: "Capturar",
 		},
 	},
 

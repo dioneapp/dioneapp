@@ -147,6 +147,7 @@ export const es = {
 			account: "Cuenta",
 			logout: "Cerrar sesión",
 			login: "Iniciar sesión",
+			capture: "Capturar",
 		},
 	},
 

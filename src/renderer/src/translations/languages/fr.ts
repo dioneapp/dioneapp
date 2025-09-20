@@ -147,6 +147,7 @@ export const fr = {
 			account: "Compte",
 			logout: "Déconnexion",
 			login: "Connexion",
+			capture: "Capturer",
 		},
 	},
 

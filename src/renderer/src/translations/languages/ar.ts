@@ -143,6 +143,7 @@ export const ar = {
 			account: "الحساب",
 			logout: "تسجيل الخروج",
 			login: "تسجيل الدخول",
+			capture: "التقاط",
 		},
 	},
 

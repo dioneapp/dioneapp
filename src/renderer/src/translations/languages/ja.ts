@@ -147,6 +147,7 @@ export const ja = {
 			account: "アカウント",
 			logout: "ログアウト",
 			login: "ログイン",
+			capture: "キャプチャ",
 		},
 	},
 

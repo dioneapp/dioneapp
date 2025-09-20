@@ -143,6 +143,7 @@ export const hi = {
 			account: "खाता",
 			logout: "लॉगआउट",
 			login: "लॉग इन करें",
+			capture: "कैप्चर",
 		},
 	},
 

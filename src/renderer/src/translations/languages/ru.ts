@@ -147,6 +147,7 @@ export const ru = {
 			account: "Аккаунт",
 			logout: "Выйти",
 			login: "Войти",
+			capture: "Захват",
 		},
 	},
 

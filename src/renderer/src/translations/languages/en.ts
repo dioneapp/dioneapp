@@ -150,6 +150,7 @@ export const en = {
 			account: "Account",
 			logout: "Logout",
 			login: "Login",
+			capture: "Capture",
 		},
 	},
 
