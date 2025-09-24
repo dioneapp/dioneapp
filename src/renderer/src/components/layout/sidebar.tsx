@@ -405,18 +405,18 @@ export default function Sidebar() {
 						<div className="flex gap-2 items-center justify-start w-full h-full">
 							{!user && (
 								<Link
-								to={"/first-time?login=true"}
-								className="w-9 h-9 border border-white/10 hover:bg-white/80 bg-white rounded-full transition-colors flex gap-1 items-center justify-center relative cursor-pointer"
-								onMouseEnter={() => setHoveredTooltip("login")}
-								onMouseLeave={() => setHoveredTooltip(null)}
-							>
-								<User className="h-5 w-5 text-black" />
-								{hoveredTooltip === "login" && (
-									<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
-										{t("sidebar.tooltips.login")}
-									</div>
-								)}
-							</Link>
+									to={"/first-time?login=true"}
+									className="w-9 h-9 border border-white/10 hover:bg-white/80 bg-white rounded-full transition-colors flex gap-1 items-center justify-center relative cursor-pointer"
+									onMouseEnter={() => setHoveredTooltip("login")}
+									onMouseLeave={() => setHoveredTooltip(null)}
+								>
+									<User className="h-5 w-5 text-black" />
+									{hoveredTooltip === "login" && (
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
+											{t("sidebar.tooltips.login")}
+										</div>
+									)}
+								</Link>
 							)}
 						</div>
 					)}
@@ -441,7 +441,7 @@ export default function Sidebar() {
 						<div className="flex gap-2 items-center justify-end w-full h-full">
 							<button
 								type="button"
-								onClick={() => (window.captureScreenshot())}
+								onClick={() => window.captureScreenshot()}
 								className="p-2 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center relative cursor-pointer"
 								onMouseEnter={() => setHoveredTooltip("capture")}
 								onMouseLeave={() => setHoveredTooltip(null)}

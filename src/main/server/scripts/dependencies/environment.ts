@@ -274,7 +274,7 @@ export function initDefaultEnv() {
 		if (!currentEnv.TRANSFORMERS_CACHE) {
 			addValue("TRANSFORMERS_CACHE", path.join(cacheFolder));
 		}
-		
+
 		if (!currentEnv.TEMP) {
 			addValue("TEMP", path.join(cacheFolder));
 		}
