@@ -1095,22 +1095,21 @@ ipcMain.handle("delete-folder", async (_event, folderPath) => {
 ipcMain.handle("capture-screenshot", async (event, options = {}) => {
 	const win = BrowserWindow.fromWebContents(event.sender);
 	if (!win) return;
-  
+
 	const image = await win.webContents.capturePage(options?.rect);
 	const buffer = image.toJPEG(100);
 	const name = `screenshot_${Date.now()}.jpg`;
 
 	const { canceled, filePath } = await dialog.showSaveDialog(win, {
-	  defaultPath: name,
-	  filters: [{ name: "JPEG", extensions: ["jpg", "jpeg"] }],
+		defaultPath: name,
+		filters: [{ name: "JPEG", extensions: ["jpg", "jpeg"] }],
 	});
-  
+
 	if (canceled || !filePath) return null;
-  
+
 	await fs.promises.writeFile(filePath, buffer);
 	return filePath;
-  });
-  
+});
 
 // Quit the application when all windows are closed, except on macOS.
 app.on("window-all-closed", async () => {
