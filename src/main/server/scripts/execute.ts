@@ -432,7 +432,7 @@ async function createVirtualEnvCommands(
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
 	// join commands without leading/trailing separators; add separators conditionally where used
-	const middle = commandStrings.join(" && ");
+	const middle = commandStrings.length > 1 ? commandStrings.join(" && ") : (commandStrings[0] || "");
 
 	// variables
 	const variables = getAllValues();
@@ -462,10 +462,9 @@ async function createVirtualEnvCommands(
 			"conda",
 		);
 		if (isWindows) {
-			const between = middle ? ` && ${middle} && ` : " && ";
 			return [
 				`if not exist "${envPath}" (${condaW} tos accept --channel main && ${condaW} create -p "${envPath}" ${pythonArg} -y)`,
-				`call ${condaW} activate "${envPath}"${between}call ${condaW} deactivate`,
+				`call ${condaW} activate "${envPath}" ${middle} && call ${condaW} deactivate`,
 			];
 		}
 		// for linux and mac
