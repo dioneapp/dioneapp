@@ -432,7 +432,10 @@ async function createVirtualEnvCommands(
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
 	// join commands without leading/trailing separators; add separators conditionally where used
-	const middle = commandStrings.length > 1 ? commandStrings.join(" && ") : (commandStrings[0] || "");
+	const middle =
+		commandStrings.length > 1
+			? commandStrings.join(" && ")
+			: commandStrings[0] || "";
 
 	// variables
 	const variables = getAllValues();
