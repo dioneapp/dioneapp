@@ -1,4 +1,5 @@
 import { Toast, type ToastProps } from "@renderer/components/layout/toast";
+import { AnimatePresence } from "framer-motion";
 import React from "react";
 
 type ToastType = Omit<ToastProps, "onClose">;
@@ -40,13 +41,13 @@ export const ToastProvider: React.FC<{
 		<ToastContext.Provider value={{ addToast, removeToast }}>
 			{children}
 			<div className="absolute bottom-0 right-0 p-4 space-y-4 max-h-screen overflow-hidden pointer-events-none">
-				{toasts.map((toast) => (
-					<div key={toast.id}>
-						<Toast {...toast} onClose={() => removeToast(toast.id)}>
+				<AnimatePresence>
+					{toasts.map((toast) => (
+						<Toast key={toast.id} {...toast} onClose={() => removeToast(toast.id)}>
 							{toast.children}
 						</Toast>
-					</div>
-				))}
+					))}
+				</AnimatePresence>
 			</div>
 		</ToastContext.Provider>
 	);

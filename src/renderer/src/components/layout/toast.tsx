@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import * as React from "react";
 
 export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -33,11 +34,15 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 		ref,
 	) => {
 		return (
-			<div
+			<motion.div
+				initial={{ opacity: 0, y: 50 }}
+				animate={{ opacity: 1, y: 0 }}
+				exit={{ opacity: 0, y: 50 }}
+				transition={{ duration: 0.3, ease: "easeInOut" }}
 				style={{ zIndex: 1000 }}
 				ref={ref}
-				className={`pointer-events-auto p-2 flex w-full max-w-md backdrop-blur-3xl backdrop-filter ${button ? "flex-col rounded-xl p-4 px-6 pb-0 gap-2" : "gap-4 rounded-xl justify-between items-center"} transition-all duration-300 ease-in-out ${variantClasses[variant]} ${className} overflow-hidden`}
-				{...props}
+				className={`pointer-events-auto p-2 flex w-full max-w-md backdrop-blur-3xl backdrop-filter ${button ? "flex-col rounded-xl p-4 px-6 pb-0 gap-2" : "gap-4 rounded-xl justify-between items-center"} ease-in-out ${variantClasses[variant]} ${className} overflow-hidden`}
+				{...props as any}
 			>
 				<div
 					className={`flex text-xs ${button ? "" : "px-6"} text-neutral-300`}
@@ -85,7 +90,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 						</button>
 					)}
 				</div>
-			</div>
+			</motion.div>
 		);
 	},
 );
