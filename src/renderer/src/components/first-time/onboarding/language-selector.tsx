@@ -64,14 +64,12 @@ export default function LanguageSelector({
 							>
 								{currentLanguages.map(([key, value]) => (
 									<motion.button
-										whileTap={{ scale: 0.97 }}
-										whileHover={{ scale: 1.02 }}
 										type="button"
 										key={key}
-										className={`group cursor-pointer flex flex-col gap-3 items-center justify-center overflow-visible relative rounded-lg transition-all duration-300 focus:outline-none ${
+										className={`group cursor-pointer flex flex-col gap-3 items-center justify-center overflow-visible relative transition-all duration-300 focus:outline-none ${
 											language === key
-												? "bg-gradient-to-r from-[#BCB1E7]/10 to-[#080808]/20 shadow-lg"
-												: "hover:bg-white/5"
+												? "hover:bg-gradient-to-l from-white/20 via-white/10 to-white/[0.01] rounded-b-none"
+												: "hover:bg-gradient-to-b from-white/20 via-white/10 to-white/[0.01] rounded-b-none"
 										}`}
 										onClick={() => {
 											setLanguage(key as any);
@@ -114,7 +112,7 @@ export default function LanguageSelector({
 																			: `https://flagcdn.com/${key}.svg`
 												}
 												alt={value}
-												className={`w-full h-full object-cover object-center rounded-lg transition-all duration-300 ${
+												className={`w-full h-full object-center object-cover aspect-[3/2] transition-all duration-300 ${
 													isImageLoaded(key) ? "opacity-100" : "opacity-0"
 												}`}
 												onLoad={() => handleImageLoad(key)}
