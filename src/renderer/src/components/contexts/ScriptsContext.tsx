@@ -394,12 +394,14 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 			if (response.status === 200) {
 				setShow({ [appId]: "actions" });
-				window.electron.ipcRenderer.invoke(
-					"notify",
-					"Stopping...",
-					`${appName} stopped successfully.`,
-				);
-				showToast("success", `Successfully stopped ${appName}`);
+				if (!wasJustInstalled) {
+					window.electron.ipcRenderer.invoke(
+						"notify",
+						"Stopping...",
+						`${appName} stopped successfully.`,
+					);
+					showToast("success", `Successfully stopped ${appName}`);
+				}
 				clearLogs(appId);
 				setIsServerRunning((prev) => ({ ...prev, [appId]: false }));
 			} else {
