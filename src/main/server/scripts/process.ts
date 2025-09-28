@@ -270,52 +270,70 @@ export const executeCommand = async (
 		// The py-cpuinfo library relies on Windows environment variables to detect CPU architecture
 		// but these may not be properly set in Dione's spawned processes, causing detection failures
 		...(process.platform === "win32" && {
-			PROCESSOR_ARCHITECTURE: process.env.PROCESSOR_ARCHITECTURE ||
+			PROCESSOR_ARCHITECTURE:
+				process.env.PROCESSOR_ARCHITECTURE ||
 				(arch() === "x64" ? "AMD64" : arch() === "ia32" ? "x86" : "AMD64"),
 			PROCESSOR_ARCHITEW6432: process.env.PROCESSOR_ARCHITEW6432 || "AMD64",
 		}),
 		// Cross-platform CUDA detection for deepspeed compatibility
 		// Set CUDA_HOME if not already set and try to detect it automatically
-		CUDA_HOME: process.env.CUDA_HOME || (() => {
-			if (process.platform === "win32") {
-				// Windows: Check standard NVIDIA GPU Computing Toolkit installation
-				const cudaBasePath = "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA";
-				const versions = ["v13.0", "v12.9", "v12.8", "v12.7", "v12.6", "v12.5", "v12.4", "v12.3", "v12.2", "v12.1", "v12.0", "v11.8", "v11.7"];
-				for (const version of versions) {
-					const cudaPath = path.join(cudaBasePath, version);
-					if (fs.existsSync(path.join(cudaPath, "bin", "nvcc.exe"))) {
-						return cudaPath;
+		CUDA_HOME:
+			process.env.CUDA_HOME ||
+			(() => {
+				if (process.platform === "win32") {
+					// Windows: Check standard NVIDIA GPU Computing Toolkit installation
+					const cudaBasePath =
+						"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA";
+					const versions = [
+						"v13.0",
+						"v12.9",
+						"v12.8",
+						"v12.7",
+						"v12.6",
+						"v12.5",
+						"v12.4",
+						"v12.3",
+						"v12.2",
+						"v12.1",
+						"v12.0",
+						"v11.8",
+						"v11.7",
+					];
+					for (const version of versions) {
+						const cudaPath = path.join(cudaBasePath, version);
+						if (fs.existsSync(path.join(cudaPath, "bin", "nvcc.exe"))) {
+							return cudaPath;
+						}
+					}
+				} else if (process.platform === "linux") {
+					// Linux: Check common CUDA installation paths
+					const commonPaths = [
+						"/usr/local/cuda",
+						"/opt/cuda",
+						"/usr/local/cuda-13.0",
+						"/usr/local/cuda-12.9",
+						"/usr/local/cuda-12.8",
+						"/usr/local/cuda-12.7",
+						"/usr/local/cuda-12.6",
+						"/usr/local/cuda-12.5",
+						"/usr/local/cuda-12.4",
+						"/usr/local/cuda-12.3",
+						"/usr/local/cuda-12.2",
+						"/usr/local/cuda-12.1",
+						"/usr/local/cuda-12.0",
+						"/usr/local/cuda-11.8",
+						"/usr/local/cuda-11.7",
+					];
+					for (const cudaPath of commonPaths) {
+						if (fs.existsSync(path.join(cudaPath, "bin", "nvcc"))) {
+							return cudaPath;
+						}
 					}
 				}
-			} else if (process.platform === "linux") {
-				// Linux: Check common CUDA installation paths
-				const commonPaths = [
-					"/usr/local/cuda",
-					"/opt/cuda",
-					"/usr/local/cuda-13.0",
-					"/usr/local/cuda-12.9",
-					"/usr/local/cuda-12.8",
-					"/usr/local/cuda-12.7",
-					"/usr/local/cuda-12.6",
-					"/usr/local/cuda-12.5",
-					"/usr/local/cuda-12.4",
-					"/usr/local/cuda-12.3",
-					"/usr/local/cuda-12.2",
-					"/usr/local/cuda-12.1",
-					"/usr/local/cuda-12.0",
-					"/usr/local/cuda-11.8",
-					"/usr/local/cuda-11.7"
-				];
-				for (const cudaPath of commonPaths) {
-					if (fs.existsSync(path.join(cudaPath, "bin", "nvcc"))) {
-						return cudaPath;
-					}
-				}
-			}
-			// Note: macOS is not included as Apple dropped CUDA support after macOS Mojave (10.14)
-			// Modern Macs use Apple Silicon (M1/M2/M3) or AMD GPUs with Metal instead of CUDA
-			return undefined;
-		})(),
+				// Note: macOS is not included as Apple dropped CUDA support after macOS Mojave (10.14)
+				// Modern Macs use Apple Silicon (M1/M2/M3) or AMD GPUs with Metal instead of CUDA
+				return undefined;
+			})(),
 		// Skip deepspeed's CUDA compatibility checks if CUDA detection fails
 		DS_BUILD_OPS: "0",
 		DS_SKIP_CUDA_CHECK: "1",

@@ -43,7 +43,11 @@ export const ToastProvider: React.FC<{
 			<div className="absolute bottom-0 right-0 p-4 space-y-4 max-h-screen overflow-hidden pointer-events-none">
 				<AnimatePresence>
 					{toasts.map((toast) => (
-						<Toast key={toast.id} {...toast} onClose={() => removeToast(toast.id)}>
+						<Toast
+							key={toast.id}
+							{...toast}
+							onClose={() => removeToast(toast.id)}
+						>
 							{toast.children}
 						</Toast>
 					))}

@@ -42,7 +42,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 				style={{ zIndex: 1000 }}
 				ref={ref}
 				className={`pointer-events-auto p-2 flex w-full max-w-md backdrop-blur-3xl backdrop-filter ${button ? "flex-col rounded-xl p-4 px-6 pb-0 gap-2" : "gap-4 rounded-xl justify-between items-center"} ease-in-out ${variantClasses[variant]} ${className} overflow-hidden`}
-				{...props as any}
+				{...(props as any)}
 			>
 				<div
 					className={`flex text-xs ${button ? "" : "px-6"} text-neutral-300`}
