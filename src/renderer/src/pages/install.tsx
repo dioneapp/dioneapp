@@ -533,15 +533,15 @@ export default function Install({
 			if (response.status === 200) {
 				setShow({ [data?.id]: "actions" });
 				setInstalled(true);
-				window.electron.ipcRenderer.invoke(
-					"notify",
-					"Stopping...",
-					`${data.name} stopped successfully.`,
-				);
-				showToast(
-					"success",
-					t("toast.install.success.stopped").replace("%s", data.name),
-				);
+				// window.electron.ipcRenderer.invoke(
+				// 	"notify",
+				// 	"Stopping...",
+				// 	`${data.name} stopped successfully.`,
+				// );
+				// showToast(
+				// 	"success",
+				// 	t("toast.install.success.stopped").replace("%s", data.name),
+				// );
 				clearLogs(data?.id);
 				await fetchIfDownloaded();
 				setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
