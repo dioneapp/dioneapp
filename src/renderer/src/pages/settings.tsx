@@ -6,7 +6,7 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { joinPath } from "@renderer/utils/path";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Folder, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { languages, useTranslation } from "../translations/translationContext";
 import { openFolder, openLink } from "../utils/openLink";
@@ -22,18 +22,44 @@ const CustomSelect = ({
 	options: { value: string; label: string }[];
 }) => {
 	const [isOpen, setIsOpen] = useState(false);
+	const containerRef = useRef<HTMLDivElement | null>(null);
+
+	useEffect(() => {
+		if (!isOpen) return;
+
+		const handleDocumentMouseDown = (event: MouseEvent) => {
+			if (
+				containerRef.current &&
+				!containerRef.current.contains(event.target as Node)
+			) {
+				setIsOpen(false);
+			}
+		};
+
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === "Escape") setIsOpen(false);
+		};
+
+		document.addEventListener("mousedown", handleDocumentMouseDown);
+		document.addEventListener("keydown", handleKeyDown);
+
+		return () => {
+			document.removeEventListener("mousedown", handleDocumentMouseDown);
+			document.removeEventListener("keydown", handleKeyDown);
+		};
+	}, [isOpen]);
 
 	return (
-		<div className="relative">
+		<div ref={containerRef} className="relative">
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
-				className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-400 flex items-center justify-between"
+				className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 cursor-pointer flex items-center justify-between"
 			>
 				<span>{options.find((opt) => opt.value === value)?.label}</span>
 				<motion.div
 					animate={{ rotate: isOpen ? 180 : 0 }}
-					transition={{ duration: 0.35 }}
+					transition={{ duration: 0.15 }}
 					className="ml-2"
 				>
 					<ChevronDown className="w-4 h-4" />
@@ -42,18 +68,13 @@ const CustomSelect = ({
 
 			<AnimatePresence>
 				{isOpen && (
-					<>
-						<div
-							className="fixed inset-0 z-40"
-							onClick={() => setIsOpen(false)}
-						/>
-						<motion.div
+					<motion.div
 							key="dropdown"
 							initial={{ opacity: 0, y: 10 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: 10 }}
-							transition={{ duration: 0.22 }}
-							className="backdrop-blur-md backdrop-filter absolute z-50 mt-2 w-44 p-2 rounded-xl border border-white/5 shadow-lg bg-[#2e2d32]/90"
+							animate={{ opacity: 1, y: 5 }}
+							exit={{ opacity: 0, y: 10, filter: "blur(10px)" }}
+							transition={{ duration: 0.15 }}
+							className="backdrop-blur-md backdrop-filter absolute z-50 mt-1 w-44 p-2 rounded-xl border border-white/5 shadow-lg bg-[#2e2d32]/90"
 						>
 							<div className="flex flex-col gap-1">
 								{options.map((option) => (
@@ -76,7 +97,6 @@ const CustomSelect = ({
 								))}
 							</div>
 						</motion.div>
-					</>
 				)}
 			</AnimatePresence>
 		</div>
