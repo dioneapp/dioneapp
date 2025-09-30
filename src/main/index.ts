@@ -507,13 +507,15 @@ app.whenReady().then(async () => {
 	});
 
 	if (!app.isPackaged) {
-		// in development mode, open dev tools using f12 shortcut
-		globalShortcut.register("f12", () => {
-			BrowserWindow.getFocusedWindow()?.webContents.isDevToolsOpened()
-				? BrowserWindow.getFocusedWindow()?.webContents.closeDevTools()
-				: BrowserWindow.getFocusedWindow()?.webContents.openDevTools({
-						mode: "undocked",
-					});
+		globalShortcut.register("Control+Shift+I", () => {
+			console.log("Ctrl+Shift+R shortcut triggered");
+			if (BrowserWindow.getFocusedWindow()?.webContents.isDevToolsOpened()) {
+				BrowserWindow.getFocusedWindow()?.webContents.closeDevTools();
+			} else {
+				BrowserWindow.getFocusedWindow()?.webContents.openDevTools({
+					mode: "undocked",
+				});
+			}
 		});
 	}
 
@@ -1117,6 +1119,16 @@ app.on("window-all-closed", async () => {
 	if (process.platform !== "darwin") {
 		app.quit();
 	}
+});
+
+// Ensure global shortcuts are released on quit
+app.on("will-quit", () => {
+    try {
+        globalShortcut.unregisterAll();
+        logger.info("All global shortcuts unregistered");
+    } catch (e) {
+        logger.warn("Failed to unregister shortcuts on quit", e);
+    }
 });
 
 autoUpdater.on("update-available", () => {
