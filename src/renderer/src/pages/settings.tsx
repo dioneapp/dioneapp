@@ -247,13 +247,17 @@ export default function Settings() {
 		}
 	};
 
-	async function handleSaveDir(setting: string) {
+	async function handleSaveDir(setting1: string, setting2?: string) {
 		const result = await window.electron.ipcRenderer.invoke(
 			"save-dir",
-			joinPath(config[setting], "apps"),
+			joinPath(config[setting1], "apps"),
 		);
 		if (!result.canceled && result.filePaths[0]) {
-			handleUpdate({ [setting]: result.filePaths[0] });
+			if (setting2) {
+				handleUpdate({ [setting1]: result.filePaths[0], [setting2]: result.filePaths[0] });
+			} else {
+				handleUpdate({ [setting1]: result.filePaths[0] });
+			}
 		}
 	}
 
@@ -339,42 +343,17 @@ export default function Settings() {
 													</div>
 													<CustomInput
 														value={joinPath(
-															config.defaultInstallFolder,
-															"apps",
+															config.defaultInstallFolder
 														)}
-														onChange={(value) =>
-															handleUpdate({ defaultInstallFolder: value })
-														}
-														onClick={() =>
-															handleSaveDir("defaultInstallFolder")
-														}
+														onChange={(value) => {
+															handleUpdate({ defaultInstallFolder: value, defaultBinFolder: value });
+														}}
+														onClick={() => {
+															handleSaveDir("defaultInstallFolder", "defaultBinFolder");
+														}}
 														onClickIcon={() =>
 															openFolder(
-																joinPath(config.defaultInstallFolder, "apps"),
-															)
-														}
-													/>
-												</div>
-												<div className="flex justify-between w-full items-center h-full space-y-2">
-													<div className="h-full flex items-start justify-center flex-col mt-auto">
-														<label className="text-neutral-200 font-medium">
-															{t("settings.applications.binDirectory.label")}
-														</label>
-														<p className="text-xs text-neutral-400 w-80">
-															{t(
-																"settings.applications.binDirectory.description",
-															)}
-														</p>
-													</div>
-													<CustomInput
-														value={joinPath(config.defaultBinFolder, "bin")}
-														onChange={(value) =>
-															handleUpdate({ defaultBinFolder: value })
-														}
-														onClick={() => handleSaveDir("defaultBinFolder")}
-														onClickIcon={() =>
-															openFolder(
-																joinPath(config.defaultBinFolder, "bin"),
+																joinPath(config.defaultInstallFolder),
 															)
 														}
 													/>
