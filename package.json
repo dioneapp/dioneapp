@@ -5,12 +5,12 @@
     "type": "git",
     "url": "https://github.com/dioneapp/dioneapp.git"
   },
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Explore, Install, Innovate — in 1 Click.",
   "main": "./out/main/index.js",
   "author": {
     "name": "Dione",
-    "email": "support@dione.app",
+    "email": "support@getdione.app",
     "url": "https://getdione.app"
   },
   "homepage": "https://getdione.app",
