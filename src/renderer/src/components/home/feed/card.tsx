@@ -18,7 +18,7 @@ interface ScriptCardProps {
 
 function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 	const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-		e.currentTarget.src = "/svgs/Profile.svg";
+		e.currentTarget.src = "/svgs/Dio.svg";
 	};
 
 	return (
@@ -57,8 +57,10 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 												backgroundRepeat: "no-repeat",
 												backgroundPosition: "center",
 												filter: "blur(15px)",
-												width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
-												height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+												width: "100%",
+												height: "100%",
+												// width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+												// height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
 											}}
 											className="rounded-full brightness-150"
 										/>
