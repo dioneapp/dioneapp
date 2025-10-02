@@ -161,7 +161,7 @@ export function initDefaultEnv() {
 	const config = readConfig();
 	const binFolder = config?.defaultBinFolder
 		? path.join(config?.defaultBinFolder, "bin")
-		: path.join(app.getPath("userData"), "bin");
+		: path.join(config?.defaultInstallFolder || app.getPath("userData"), "bin");
 
 	const ENVIRONMENT = path.join(binFolder, "VARIABLES");
 	const separator = getOS() === "windows" ? ";" : ":";
@@ -190,6 +190,7 @@ export function initDefaultEnv() {
 			"C:\\Windows\\System32",
 			"C:\\Windows",
 			"C:\\Windows\\System32\\wbem",
+			"C:\\Windows\\System32\\nvidia-smi.exe",
 			"C:\\Windows\\System32\\WindowsPowerShell\\v1.0",
 			`${path.join(appData, "..", "Local", "Microsoft", "WindowsApps")}`,
 		];
