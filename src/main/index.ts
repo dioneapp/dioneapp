@@ -531,6 +531,14 @@ app.whenReady().then(async () => {
 			logger.warn("First time using Dione");
 			writeConfig(defaultConfig);
 			return true;
+		} else {
+			if (config.defaultBinFolder !== config.defaultInstallFolder) {
+				writeConfig({
+					...config,
+					defaultBinFolder: config.defaultInstallFolder,
+					defaultInstallFolder: config.defaultInstallFolder
+				});
+			}
 		}
 		config = readConfig();
 		return false;
@@ -1033,7 +1041,7 @@ ipcMain.on("close-preview-window", () => {
 ipcMain.handle("check-folder-size", async (_event, folderPath) => {
 	const config = readConfig();
 	const defaultFolder =
-		config?.defaultBinFolder || path.join(app.getPath("userData"));
+		config?.defaultBinFolder || config?.defaultInstallFolder || path.join(app.getPath("userData"));
 
 	if (!folderPath) {
 		folderPath = path.join(defaultFolder, "bin", "cache");
@@ -1095,7 +1103,7 @@ ipcMain.handle("delete-folder", async (_event, folderPath) => {
 
 	if (!folderPath) {
 		folderPath = path.join(
-			config?.defaultBinFolder ||
+			config?.defaultBinFolder || config?.defaultInstallFolder ||
 				path.join(app.getPath("userData"), "bin", "cache"),
 		);
 	}
