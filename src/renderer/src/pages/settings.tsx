@@ -69,34 +69,34 @@ const CustomSelect = ({
 			<AnimatePresence>
 				{isOpen && (
 					<motion.div
-							key="dropdown"
-							initial={{ opacity: 0, y: 10 }}
-							animate={{ opacity: 1, y: 5 }}
-							exit={{ opacity: 0, y: 10, filter: "blur(10px)" }}
-							transition={{ duration: 0.15 }}
-							className="backdrop-blur-md backdrop-filter absolute z-50 mt-1 w-44 p-2 rounded-xl border border-white/5 shadow-lg bg-[#2e2d32]/90"
-						>
-							<div className="flex flex-col gap-1">
-								{options.map((option) => (
-									<button
-										type="button"
-										key={option.value}
-										onClick={() => {
-											onChange(option.value);
-											setIsOpen(false);
-										}}
-										className={`w-full text-left rounded-xl px-4 py-2 text-sm transition-colors duration-200 
+						key="dropdown"
+						initial={{ opacity: 0, y: 10 }}
+						animate={{ opacity: 1, y: 5 }}
+						exit={{ opacity: 0, y: 10, filter: "blur(10px)" }}
+						transition={{ duration: 0.15 }}
+						className="backdrop-blur-md backdrop-filter absolute z-50 mt-1 w-44 p-2 rounded-xl border border-white/5 shadow-lg bg-[#2e2d32]/90"
+					>
+						<div className="flex flex-col gap-1">
+							{options.map((option) => (
+								<button
+									type="button"
+									key={option.value}
+									onClick={() => {
+										onChange(option.value);
+										setIsOpen(false);
+									}}
+									className={`w-full text-left rounded-xl px-4 py-2 text-sm transition-colors duration-200 
 											${
 												option.value !== value
 													? "hover:bg-white/20 cursor-pointer text-neutral-300 hover:text-white"
 													: "bg-white/20 text-white"
 											}`}
-									>
-										{option.label}
-									</button>
-								))}
-							</div>
-						</motion.div>
+								>
+									{option.label}
+								</button>
+							))}
+						</div>
+					</motion.div>
 				)}
 			</AnimatePresence>
 		</div>
@@ -274,7 +274,10 @@ export default function Settings() {
 		);
 		if (!result.canceled && result.filePaths[0]) {
 			if (setting2) {
-				handleUpdate({ [setting1]: result.filePaths[0], [setting2]: result.filePaths[0] });
+				handleUpdate({
+					[setting1]: result.filePaths[0],
+					[setting2]: result.filePaths[0],
+				});
 			} else {
 				handleUpdate({ [setting1]: result.filePaths[0] });
 			}
@@ -362,19 +365,21 @@ export default function Settings() {
 														</p>
 													</div>
 													<CustomInput
-														value={joinPath(
-															config.defaultInstallFolder
-														)}
+														value={joinPath(config.defaultInstallFolder)}
 														onChange={(value) => {
-															handleUpdate({ defaultInstallFolder: value, defaultBinFolder: value });
+															handleUpdate({
+																defaultInstallFolder: value,
+																defaultBinFolder: value,
+															});
 														}}
 														onClick={() => {
-															handleSaveDir("defaultInstallFolder", "defaultBinFolder");
+															handleSaveDir(
+																"defaultInstallFolder",
+																"defaultBinFolder",
+															);
 														}}
 														onClickIcon={() =>
-															openFolder(
-																joinPath(config.defaultInstallFolder),
-															)
+															openFolder(joinPath(config.defaultInstallFolder))
 														}
 													/>
 												</div>
