@@ -772,7 +772,9 @@ app.whenReady().then(async () => {
 					logger.info(`Session started with ID: ${data.id}`);
 					sessionId = data.id;
 				} else {
-					logger.warn("Session start response lacked an ID; skipping sessionId set.");
+					logger.warn(
+						"Session start response lacked an ID; skipping sessionId set.",
+					);
 				}
 			} else {
 				if (data && data.error === "Database connection not available") {
@@ -1141,12 +1143,12 @@ app.on("window-all-closed", async () => {
 
 // Ensure global shortcuts are released on quit
 app.on("will-quit", () => {
-    try {
-        globalShortcut.unregisterAll();
-        logger.info("All global shortcuts unregistered");
-    } catch (e) {
-        logger.warn("Failed to unregister shortcuts on quit", e);
-    }
+	try {
+		globalShortcut.unregisterAll();
+		logger.info("All global shortcuts unregistered");
+	} catch (e) {
+		logger.warn("Failed to unregister shortcuts on quit", e);
+	}
 });
 
 autoUpdater.on("update-available", () => {

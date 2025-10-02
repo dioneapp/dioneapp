@@ -199,11 +199,18 @@ router.get("/featured", (_req, res) => {
 			} else {
 				const text = await response.text();
 				logger.warn(
-					`Dione API /scripts featured returned non-JSON (${contentType || "unknown"}).`);
-				try { data = JSON.parse(text); } catch { data = []; }
+					`Dione API /scripts featured returned non-JSON (${contentType || "unknown"}).`,
+				);
+				try {
+					data = JSON.parse(text);
+				} catch {
+					data = [];
+				}
 			}
 		} catch (e: any) {
-			logger.error(`Failed to parse featured scripts response: ${e?.message || e}`);
+			logger.error(
+				`Failed to parse featured scripts response: ${e?.message || e}`,
+			);
 			data = [];
 		}
 		if (response.status !== 200) {
@@ -258,11 +265,18 @@ router.get("/explore", (req, res) => {
 				} else {
 					const text = await response.text();
 					logger.warn(
-						`Dione API /scripts explore returned non-JSON (${contentType || "unknown"}).`);
-					try { data = JSON.parse(text); } catch { data = []; }
+						`Dione API /scripts explore returned non-JSON (${contentType || "unknown"}).`,
+					);
+					try {
+						data = JSON.parse(text);
+					} catch {
+						data = [];
+					}
 				}
 			} catch (e: any) {
-				logger.error(`Failed to parse explore scripts response: ${e?.message || e}`);
+				logger.error(
+					`Failed to parse explore scripts response: ${e?.message || e}`,
+				);
 				data = [];
 			}
 
@@ -307,8 +321,13 @@ router.get("/search/:id", (req, res) => {
 			} else {
 				const text = await response.text();
 				logger.warn(
-					`Dione API /scripts?id= returned non-JSON (${contentType || "unknown"}).`);
-				try { data = JSON.parse(text); } catch { data = []; }
+					`Dione API /scripts?id= returned non-JSON (${contentType || "unknown"}).`,
+				);
+				try {
+					data = JSON.parse(text);
+				} catch {
+					data = [];
+				}
 			}
 		} catch (e: any) {
 			logger.error(`Failed to parse search by id response: ${e?.message || e}`);
@@ -337,154 +356,168 @@ router.get("/search/:id", (req, res) => {
 });
 
 router.get("/search/name/:name", async (req, res) => {
-    if (!req.params.name) return;
-    if (req.params.name.length === 0) return;
-    async function getData() {
-        const sanitizedName = req.params.name
-            .replace(/-/g, " ")
-            .replace(/\s+/g, " ")
-            .trim();
-        const page = req.query.page ? Number.parseInt(req.query.page as string) : 1;
-        const limit = req.query.limit ? Number.parseInt(req.query.limit as string) : 20;
+	if (!req.params.name) return;
+	if (req.params.name.length === 0) return;
+	async function getData() {
+		const sanitizedName = req.params.name
+			.replace(/-/g, " ")
+			.replace(/\s+/g, " ")
+			.trim();
+		const page = req.query.page ? Number.parseInt(req.query.page as string) : 1;
+		const limit = req.query.limit
+			? Number.parseInt(req.query.limit as string)
+			: 20;
 		const orderBy = (req.query.order_by as string) || null;
 		const orderType = (req.query.order_type as string) || null;
-        if (sanitizedName) {
-            const url = new URL(`https://api.getdione.app/v1/scripts`);
-            url.searchParams.set("q", sanitizedName);
-            url.searchParams.set("page", String(page));
-            url.searchParams.set("limit", String(limit));
+		if (sanitizedName) {
+			const url = new URL(`https://api.getdione.app/v1/scripts`);
+			url.searchParams.set("q", sanitizedName);
+			url.searchParams.set("page", String(page));
+			url.searchParams.set("limit", String(limit));
 			if (orderBy) url.searchParams.set("order_by", orderBy);
 			if (orderType) url.searchParams.set("order_type", orderType);
-            const response = await fetch(url.toString(),
-                {
-                    headers: {
-                        ...(process.env.API_KEY
-                            ? { Authorization: `Bearer ${process.env.API_KEY}` }
-                            : {}),
-                    },
-                },
-            );
-            let data: any = null;
-            try {
-                const contentType = response.headers.get("content-type") || "";
-                if (contentType.includes("application/json")) {
-                    data = await response.json();
-                } else {
-                    const text = await response.text();
-                    logger.warn(
-                        `Dione API /scripts?q= returned non-JSON (${contentType || "unknown"}).`);
-                    try { data = JSON.parse(text); } catch { data = []; }
-                }
-            } catch (e: any) {
-                logger.error(`Failed to parse search by name response: ${e?.message || e}`);
-                data = [];
-            }
-            if (response.status !== 200) {
-                logger.error(
-                    `Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
-                );
-                return res.status(response.status).json({ error: response.statusText });
-            }
+			const response = await fetch(url.toString(), {
+				headers: {
+					...(process.env.API_KEY
+						? { Authorization: `Bearer ${process.env.API_KEY}` }
+						: {}),
+				},
+			});
+			let data: any = null;
+			try {
+				const contentType = response.headers.get("content-type") || "";
+				if (contentType.includes("application/json")) {
+					data = await response.json();
+				} else {
+					const text = await response.text();
+					logger.warn(
+						`Dione API /scripts?q= returned non-JSON (${contentType || "unknown"}).`,
+					);
+					try {
+						data = JSON.parse(text);
+					} catch {
+						data = [];
+					}
+				}
+			} catch (e: any) {
+				logger.error(
+					`Failed to parse search by name response: ${e?.message || e}`,
+				);
+				data = [];
+			}
+			if (response.status !== 200) {
+				logger.error(
+					`Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
+				);
+				return res.status(response.status).json({ error: response.statusText });
+			}
 
-            if (!data || !Array.isArray(data)) {
-                logger.warn(
-                    `Invalid data format from API, probably no scripts found (${sanitizedName}).`,
-                );
-                return res.send([]);
-            }
+			if (!data || !Array.isArray(data)) {
+				logger.warn(
+					`Invalid data format from API, probably no scripts found (${sanitizedName}).`,
+				);
+				return res.send([]);
+			}
 
 			const scripts = data.map((script: any) => {
-                if (
-                    script.logo_url === null ||
-                    script.logo_url === undefined ||
-                    script.logo_url === ""
-                ) {
-                    script.logo_url = generateGradient(script.name);
-                }
-                return script;
-            });
+				if (
+					script.logo_url === null ||
+					script.logo_url === undefined ||
+					script.logo_url === ""
+				) {
+					script.logo_url = generateGradient(script.name);
+				}
+				return script;
+			});
 
-            if (scripts.length === 0) {
-                return res.json({ status: 404 });
-            }
+			if (scripts.length === 0) {
+				return res.json({ status: 404 });
+			}
 
-            return res.send(scripts);
-        }
-    }
-    getData();
+			return res.send(scripts);
+		}
+	}
+	getData();
 });
 
 router.get("/search/type/:type", async (req, res) => {
-    if (!req.params.type) return;
-    if (req.params.type.length === 0) return;
-    async function getData() {
-        const type = req.params.type;
-        const page = req.query.page ? Number.parseInt(req.query.page as string) : 1;
-        const limit = req.query.limit ? Number.parseInt(req.query.limit as string) : 20;
+	if (!req.params.type) return;
+	if (req.params.type.length === 0) return;
+	async function getData() {
+		const type = req.params.type;
+		const page = req.query.page ? Number.parseInt(req.query.page as string) : 1;
+		const limit = req.query.limit
+			? Number.parseInt(req.query.limit as string)
+			: 20;
 		const orderBy = (req.query.order_by as string) || null;
 		const orderType = (req.query.order_type as string) || "desc";
 
-        const url = new URL("https://api.getdione.app/v1/scripts");
-        url.searchParams.set("tags", type);
-        url.searchParams.set("page", String(page));
+		const url = new URL("https://api.getdione.app/v1/scripts");
+		url.searchParams.set("tags", type);
+		url.searchParams.set("page", String(page));
 		url.searchParams.set("limit", String(limit));
 		if (orderBy) url.searchParams.set("order_by", orderBy);
 		if (orderType) url.searchParams.set("order_type", orderType);
-		
-        const response = await fetch(url.toString(),
-            {
-                headers: {
-                    ...(process.env.API_KEY
-                        ? { Authorization: `Bearer ${process.env.API_KEY}` }
-                        : {}),
-                },
-            },
-        );
-        let data: any = null;
-        try {
-            const contentType = response.headers.get("content-type") || "";
-            if (contentType.includes("application/json")) {
-                data = await response.json();
-            } else {
-                const text = await response.text();
-                logger.warn(
-                    `Dione API /scripts?tags= returned non-JSON (${contentType || "unknown"}).`);
-                try { data = JSON.parse(text); } catch { data = []; }
-            }
-        } catch (e: any) {
-            logger.error(`Failed to parse search by type response: ${e?.message || e}`);
-            data = [];
-        }
-        if (response.status !== 200) {
-            logger.error(
-                `Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
-            );
-            return res.status(response.status).json({ error: response.statusText });
-        }
 
-        if (!data || !Array.isArray(data)) {
-            logger.error("Invalid data format from API, probably no scripts found.");
-            return res.send([]);
-        }
+		const response = await fetch(url.toString(), {
+			headers: {
+				...(process.env.API_KEY
+					? { Authorization: `Bearer ${process.env.API_KEY}` }
+					: {}),
+			},
+		});
+		let data: any = null;
+		try {
+			const contentType = response.headers.get("content-type") || "";
+			if (contentType.includes("application/json")) {
+				data = await response.json();
+			} else {
+				const text = await response.text();
+				logger.warn(
+					`Dione API /scripts?tags= returned non-JSON (${contentType || "unknown"}).`,
+				);
+				try {
+					data = JSON.parse(text);
+				} catch {
+					data = [];
+				}
+			}
+		} catch (e: any) {
+			logger.error(
+				`Failed to parse search by type response: ${e?.message || e}`,
+			);
+			data = [];
+		}
+		if (response.status !== 200) {
+			logger.error(
+				`Unable to obtain the scripts: [ (${response.status}) ${response.statusText} ]`,
+			);
+			return res.status(response.status).json({ error: response.statusText });
+		}
+
+		if (!data || !Array.isArray(data)) {
+			logger.error("Invalid data format from API, probably no scripts found.");
+			return res.send([]);
+		}
 
 		const scripts = data.map((script: any) => {
-            if (
-                script?.logo_url === null ||
-                script?.logo_url === undefined ||
-                script?.logo_url === ""
-            ) {
-                script.logo_url = generateGradient(script.name);
-            }
-            return script;
-        });
+			if (
+				script?.logo_url === null ||
+				script?.logo_url === undefined ||
+				script?.logo_url === ""
+			) {
+				script.logo_url = generateGradient(script.name);
+			}
+			return script;
+		});
 
-        if (scripts.length === 0) {
-            return res.json({ status: 404 });
-        }
+		if (scripts.length === 0) {
+			return res.json({ status: 404 });
+		}
 
-        return res.send(scripts);
-    }
-    getData();
+		return res.send(scripts);
+	}
+	getData();
 });
 
 // update a script
