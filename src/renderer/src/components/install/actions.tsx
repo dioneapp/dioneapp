@@ -110,8 +110,10 @@ export default function ActionsComponent({
 													backgroundRepeat: "no-repeat",
 													backgroundPosition: "center",
 													filter: "blur(15px)",
-													width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
-													height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+													width: "100%",
+													height: "100%",
+													// width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
+													// height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
 												}}
 												className="h-16 w-16 bg-cover bg-center group-hover:border-white/20 transition-all duration-200"
 											/>
