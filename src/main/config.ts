@@ -90,7 +90,7 @@ export const writeConfig = (config: AppConfig) => {
 			"Warning!",
 			"To avoid potential errors when updating, please do not use the same path as the Dione executable.",
 		);
-		config.defaultBinFolder = config.defaultInstallFolder
+		config.defaultBinFolder = config.defaultInstallFolder;
 	}
 
 	const configPath = getConfigPath();
