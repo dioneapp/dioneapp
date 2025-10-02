@@ -752,12 +752,30 @@ app.whenReady().then(async () => {
 					started_at: new Date().toISOString(),
 				},
 			});
-			const data = await response.json();
+			let data: any = null;
+			try {
+				const contentType = response.headers.get("content-type") || "";
+				if (contentType.includes("application/json")) {
+					data = await response.json();
+				} else {
+					const bodyText = await response.text();
+					logger.warn(
+						`/db/events returned non-JSON (${contentType || "unknown"}). Body: ${bodyText.slice(0, 200)}`,
+					);
+					data = { raw: bodyText };
+				}
+			} catch (e: any) {
+				logger.error(`Failed to parse /db/events response: ${e?.message || e}`);
+			}
 			if (response.ok && response.status === 200) {
-				logger.info(`Session started with ID: ${data.id}`);
-				sessionId = data.id;
+				if (data && data.id) {
+					logger.info(`Session started with ID: ${data.id}`);
+					sessionId = data.id;
+				} else {
+					logger.warn("Session start response lacked an ID; skipping sessionId set.");
+				}
 			} else {
-				if (data.error === "Database connection not available") {
+				if (data && data.error === "Database connection not available") {
 					logger.error(
 						"Database connection not available, please check your environment variables and your connection.",
 					);
