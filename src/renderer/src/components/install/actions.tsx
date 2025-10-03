@@ -1,6 +1,6 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { BadgeCheck, ChevronDown, Download, User } from "lucide-react";
+import { BadgeCheck, ChevronDown, Code, Download, FileUp, Github, Globe, Laptop, User } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
@@ -139,54 +139,42 @@ export default function ActionsComponent({
 												<button
 													type="button"
 													className={
-														"flex items-center justify-center gap-2 text-xs w-full transition-colors duration-400 rounded-full text-neutral-400 text-center"
+														"flex bg-[#BCB1E7]/10 px-2 py-0.5 items-center justify-center gap-2 text-[10px] w-full transition-colors duration-400 rounded-md text-neutral-400 text-center"
 													}
 												>
-													<Download className="h-3 w-3" />
 													<span className="font-semibold">
-														{data.downloads || 0}
+														<span className="text-[8px]">v</span>{data.version || "1.0.0"}
 													</span>
 												</button>
 											</div>
 										)}
 									</div>
-									{!isLocal && (
-										<>
-											<p
-												className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-fit cursor-pointer text-justify max-w-md"
-												onClick={() => openLink(data?.script_url)}
-											>
-												<span className="w-fit h-full flex items-center justify-center">
-													<BadgeCheck size={16} />
-												</span>
-												{!isLocal &&
-													data?.script_url &&
-													data?.script_url
-														.replace(
-															/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
-															"",
-														)
-														.split("/")
-														.slice(0, 2)
-														.join("/")}
-											</p>
-											<p className="text-xs text-[#BCB1E7] flex gap-1">
-												<span className="w-fit h-full flex items-center">
-													<User size={16} />
-												</span>
-												{t("actions.publishedBy")}{" "}
-												<span
-													className="hover:underline cursor-pointer"
-													onClick={() => openLink(`${data?.author_url}`)}
-												>
-													{data?.author}
-												</span>
-											</p>
-										</>
-									)}
-									<p className="text-xs text-neutral-400 mb-4 mt-2 line-clamp-3">
+									<p className="text-xs text-neutral-400 mb-2 line-clamp-4 text-balance">
 										{data?.description}
 									</p>
+									<div className="flex gap-1 items-center justify-center text-[10px] text-neutral-400 mb-4">
+										<p>
+											{t("actions.publishedBy")}{" "}
+											<span
+												className="underline underline-offset-2 cursor-pointer text-[#BCB1E7]"
+												onClick={() => openLink(`${data?.author_url}`)}
+											>
+												{data?.author}
+											</span>
+										</p>
+										{data?.og_author && (
+										<p>
+											{t("actions.createdBy")}{" "}
+											<span
+												className="underline underline-offset-2 cursor-pointer text-[#BCB1E7]"
+												onClick={() => openLink(`${data?.author_url}`)}
+											>
+												{data?.og_author}
+											</span>
+											.
+										</p>
+										)}
+									</div>
 								</div>
 							</div>
 
