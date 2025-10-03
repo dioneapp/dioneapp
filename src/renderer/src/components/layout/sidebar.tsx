@@ -412,7 +412,7 @@ export default function Sidebar() {
 								>
 									<User className="h-5 w-5 text-black" />
 									{hoveredTooltip === "login" && (
-										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 											{t("sidebar.tooltips.login")}
 										</div>
 									)}
