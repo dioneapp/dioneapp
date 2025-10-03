@@ -536,7 +536,7 @@ app.whenReady().then(async () => {
 				writeConfig({
 					...config,
 					defaultBinFolder: config.defaultInstallFolder,
-					defaultInstallFolder: config.defaultInstallFolder
+					defaultInstallFolder: config.defaultInstallFolder,
 				});
 			}
 		}
@@ -1041,7 +1041,9 @@ ipcMain.on("close-preview-window", () => {
 ipcMain.handle("check-folder-size", async (_event, folderPath) => {
 	const config = readConfig();
 	const defaultFolder =
-		config?.defaultBinFolder || config?.defaultInstallFolder || path.join(app.getPath("userData"));
+		config?.defaultBinFolder ||
+		config?.defaultInstallFolder ||
+		path.join(app.getPath("userData"));
 
 	if (!folderPath) {
 		folderPath = path.join(defaultFolder, "bin", "cache");
@@ -1103,7 +1105,8 @@ ipcMain.handle("delete-folder", async (_event, folderPath) => {
 
 	if (!folderPath) {
 		folderPath = path.join(
-			config?.defaultBinFolder || config?.defaultInstallFolder ||
+			config?.defaultBinFolder ||
+				config?.defaultInstallFolder ||
 				path.join(app.getPath("userData"), "bin", "cache"),
 		);
 	}
