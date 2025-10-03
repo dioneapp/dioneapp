@@ -38,7 +38,6 @@ export default function ActionsComponent({
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
-	// Close dropdown on outside click
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
 			if (
@@ -97,7 +96,7 @@ export default function ActionsComponent({
 											onError={() => setImgLoading(false)}
 											src={data?.logo_url}
 											alt={`${data?.name} icon`}
-											className="h-16 w-16 object-cover object-center transition-all duration-200"
+											className="h-full w-full object-cover object-center transition-all duration-200"
 										/>
 									) : (
 										!isLocal && (
@@ -149,7 +148,7 @@ export default function ActionsComponent({
 											</div>
 										)}
 									</div>
-									<p className="text-xs text-neutral-400 mb-2 line-clamp-4 text-balance">
+									<p className="text-xs text-neutral-400 mb-2 line-clamp-4 text-justify">
 										{data?.description}
 									</p>
 									<div className="flex gap-1 items-center justify-center text-[10px] text-neutral-400 mb-4">
