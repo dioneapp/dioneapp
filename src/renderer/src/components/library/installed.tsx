@@ -20,7 +20,7 @@ export default function Installed() {
 				setLoading(false);
 				return;
 			}
-			
+
 			setApps([]);
 
 			try {
