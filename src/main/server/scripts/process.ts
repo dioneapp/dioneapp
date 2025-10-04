@@ -573,21 +573,37 @@ export const executeCommands = async (
 			}
 
 			// if object includes gpus, check if it matches current gpu vendor
+			// Only skip if explicitly incompatible - allow commands to run on GPUs not in the list
 			if ("gpus" in cmd) {
 				const allowedGpus = Array.isArray(cmd.gpus)
 					? cmd.gpus.map((g: string) => g.toLowerCase())
 					: [cmd.gpus.toLowerCase()];
 
-				if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+				// Only skip if:
+				// 1. Command is for CPU-only but we have a GPU
+				// 2. Current GPU is "unknown" - log warning but continue
+				if (allowedGpus.includes("none") || allowedGpus.includes("cpu")) {
+					// This command is specifically for CPU-only systems
+					if (currentGpu.toLowerCase() !== "cpu" && currentGpu.toLowerCase() !== "unknown") {
+						logger.info(
+							`Skipping CPU-only command on system with ${currentGpu} GPU`,
+						);
+						io.to(id).emit("installUpdate", {
+							type: "log",
+							content: `INFO: Skipping CPU-only command on system with ${currentGpu} GPU`,
+						});
+						continue; // skip command
+					}
+				} else if (currentGpu.toLowerCase() === "unknown") {
 					logger.info(
-						`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+						`Warning: Unknown GPU detected, attempting to run command anyway`,
 					);
 					io.to(id).emit("installUpdate", {
 						type: "log",
-						content: `INFO: Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+						content: `WARNING: Unknown GPU detected, attempting to run command anyway`,
 					});
-					continue; // skip command
 				}
+				// Otherwise, let the command run - it might work even on different GPUs
 			}
 
 			// if object includes command, use it
