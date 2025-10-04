@@ -1,6 +1,16 @@
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { BadgeCheck, ChevronDown, Code, Download, FileUp, Github, Globe, Laptop, User } from "lucide-react";
+import {
+	BadgeCheck,
+	ChevronDown,
+	Code,
+	Download,
+	FileUp,
+	Github,
+	Globe,
+	Laptop,
+	User,
+} from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
@@ -142,7 +152,8 @@ export default function ActionsComponent({
 													}
 												>
 													<span className="font-semibold">
-														<span className="text-[8px]">v</span>{data.version || "1.0.0"}
+														<span className="text-[8px]">v</span>
+														{data.version || "1.0.0"}
 													</span>
 												</button>
 											</div>
@@ -162,16 +173,16 @@ export default function ActionsComponent({
 											</span>
 										</p>
 										{data?.og_author && (
-										<p>
-											{t("actions.createdBy")}{" "}
-											<span
-												className="underline underline-offset-2 cursor-pointer text-[#BCB1E7]"
-												onClick={() => openLink(`${data?.author_url}`)}
-											>
-												{data?.og_author}
-											</span>
-											.
-										</p>
+											<p>
+												{t("actions.createdBy")}{" "}
+												<span
+													className="underline underline-offset-2 cursor-pointer text-[#BCB1E7]"
+													onClick={() => openLink(`${data?.author_url}`)}
+												>
+													{data?.og_author}
+												</span>
+												.
+											</p>
 										)}
 									</div>
 								</div>

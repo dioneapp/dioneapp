@@ -51,55 +51,51 @@ export async function install(
 		fs.mkdirSync(depFolder, { recursive: true });
 	}
 
-	const fallbackVersion = "v22.20.0"
+	const fallbackVersion = "v22.20.0";
 	const getLatestNodeVersion = async (): Promise<string> => {
 		return new Promise((resolve) => {
-			https.get('https://nodejs.org/dist/index.json', (response) => {
-				let data = '';
-				response.on('data', (chunk) => {
-					data += chunk;
-				});
-				response.on('end', () => {
-					try {
-						const releases = JSON.parse(data);
-						const latestV22 = releases.find((release: any) => 
-							release.version.startsWith('v22.')
-						);
-						if (latestV22) {
-							resolve(latestV22.version);
-						} else {
+			https
+				.get("https://nodejs.org/dist/index.json", (response) => {
+					let data = "";
+					response.on("data", (chunk) => {
+						data += chunk;
+					});
+					response.on("end", () => {
+						try {
+							const releases = JSON.parse(data);
+							const latestV22 = releases.find((release: any) =>
+								release.version.startsWith("v22."),
+							);
+							if (latestV22) {
+								resolve(latestV22.version);
+							} else {
+								resolve(fallbackVersion);
+							}
+						} catch (error) {
 							resolve(fallbackVersion);
 						}
-					} catch (error) {
-						resolve(fallbackVersion);
-					}
+					});
+				})
+				.on("error", () => {
+					resolve(fallbackVersion);
 				});
-			}).on('error', () => {
-				resolve(fallbackVersion);
-			});
 		});
 	};
 
 	const latestVersion = await getLatestNodeVersion();
-	
+
 	const urls: Record<string, Record<string, string>> = {
 		linux: {
-			amd64:
-				`https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-linux-x64.tar.gz`,
-			arm64:
-				`https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-linux-arm64.tar.gz`,
+			amd64: `https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-linux-x64.tar.gz`,
+			arm64: `https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-linux-arm64.tar.gz`,
 		},
 		macos: {
-			amd64:
-				`https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-darwin-x64.tar.gz`,
-			arm64:
-				`https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-darwin-arm64.tar.gz`,
+			amd64: `https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-darwin-x64.tar.gz`,
+			arm64: `https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-darwin-arm64.tar.gz`,
 		},
 		windows: {
-			amd64:
-				`https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-win-x64.zip`,
-			arm64:
-				`https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-win-arm64.zip`,
+			amd64: `https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-win-x64.zip`,
+			arm64: `https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-win-arm64.zip`,
 			x86: `https://nodejs.org/download/release/latest-v22.x/node-${latestVersion}-win-x86.zip`,
 		},
 	};
