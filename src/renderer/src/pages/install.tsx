@@ -209,6 +209,7 @@ export default function Install({
 				wasJustInstalled
 			) {
 				await new Promise((resolve) => setTimeout(resolve, 300));
+				await stopApp();
 				await handleStart();
 				setWasJustInstalled(false);
 			}
