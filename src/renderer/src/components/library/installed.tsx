@@ -16,7 +16,11 @@ export default function Installed() {
 
 	useEffect(() => {
 		const getApps = async () => {
-			if (!installedApps || installedApps.length === 0) return;
+			if (!installedApps || installedApps.length === 0) {
+				setLoading(false);
+				return;
+			}
+
 			setApps([]);
 
 			try {
