@@ -2,23 +2,22 @@
 
 **Dione** makes installing complex applications as simple as clicking a button — no terminal or technical knowledge needed.
 For developers, Dione offers a zero-friction way to distribute apps using just a JSON file.
-**App installation has never been this effortless.**
+**It has never been easier to install AI on your computer**
 
 ## Showcase
 
-![Demo](https://i.imgur.com/gUaV5qT.png)
+![Demo](https://pbs.twimg.com/media/G1S8Y01WIAAfcrl?format=jpg&name=large)
 
 
 ## Download
 
-Looking to use Dione?
-Head to our [Releases page](https://github.com/dioneapp/dioneapp/releases) and download the latest version for your platform.
+Download the latest release for your platform from the [releases page](https://github.com/dioneapp/dioneapp/releases/latest).
 
 
 ## Documentation
 
 Want to create and distribute apps with Dione?
-Check out the [official docs](https://docs.getdione.app) for a complete guide to writing scripts and packaging apps.
+Refer to the [developer documentation](https://docs.getdione.app/developer-guide/creating-a-dione-script) for comprehensive instructions on writing Dione scripts and app packaging.
 
 
 ## Contributing
@@ -28,7 +27,6 @@ If you're interested in contributing or running Dione locally, follow these step
 ### Prerequisites
 
 * [Node.js](https://nodejs.org/en/download/)
-* [npm](https://www.npmjs.com/get-npm)
 
 ### Run Locally
 
@@ -44,14 +42,16 @@ npm install
 npm run dev
 ```
 
-### Build for Production
+### Production Build
+
+Set `platform` as one of: win, mac, linux
 
 ```bash
-npm run build
+npm run build:[platform]
 ```
 
 
 ## Support & Contact
 
-* Questions? Feedback? [Join our Discord](https://getdione.app/discord)
-* Found a security issue? [support@getdione.app](mailto:support@getdione.app)
+* For questions or feedback, join our [Discord community](https://getdione.app/discord).
+* Security issues can be reported to [support@getdione.app](mailto:support@getdione.app).
