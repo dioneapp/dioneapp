@@ -69,8 +69,8 @@ export async function useGit(
 				break;
 			} catch (err: any) {
 				lastError = err;
-				// if main branch doesnt exist, try with master
-				if (!branch && refToTry === "main") {
+				if (!branch && refToTry === "main" && attempt === 0 && 
+					(err.message?.includes("not found") || err.message?.includes("does not exist") || err.message?.includes("Could not find"))) {
 					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `Branch 'main' not found, trying 'master'...`,
