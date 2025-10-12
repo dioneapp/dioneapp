@@ -177,50 +177,21 @@ function createWindow() {
 			logger.error("Error showing main window:", error);
 		}
 
-		if (app.isPackaged) {
-			// check for updates
-			checkForUpdates()
-				.then(() => {
-					logger.info("Checked for updates successfully.");
-				})
-				.catch((err) => {
-					logger.error("Error checking for updates:", err);
-				});
-		}
+		// check for updates
+		autoUpdater.checkForUpdates();
 
-		async function checkForUpdates(): Promise<void> {
-			return new Promise((resolve) => {
-				let updateDownloaded = false;
+		autoUpdater.on("update-available", () => {
+			logger.info("New update available");
+			mainWindow.webContents.send("update_available");
+		});
+		autoUpdater.on("update-downloaded", () => {
+			logger.info("New update downloaded");
+			mainWindow.webContents.send("update_downloaded");
+		});
+		autoUpdater.on("error", (err) => {
+			logger.error("Error in autoUpdater", err);
+		});
 
-				autoUpdater.on("update-available", () => {
-					logger.info("Update available, downloading...");
-					mainWindow.webContents.send("update_available");
-				});
-
-				autoUpdater.on("update-downloaded", () => {
-					logger.info("Update downloaded, installing...");
-					updateDownloaded = true;
-					mainWindow.webContents.send("update_downloaded");
-				});
-
-				autoUpdater.on("update-not-available", () => {
-					logger.info("No update available");
-					resolve();
-				});
-
-				autoUpdater.on("error", (err) => {
-					logger.error("Error in autoUpdater", err);
-					resolve();
-				});
-
-				autoUpdater.checkForUpdates();
-
-				// if in 3s doesn't have any info about update, resolve
-				setTimeout(() => {
-					if (!updateDownloaded) resolve();
-				}, 3000);
-			});
-		}
 
 		const config = readConfig();
 		const root = app.isPackaged
@@ -458,6 +429,7 @@ app.whenReady().then(async () => {
 		},
 	);
 
+	autoUpdater.autoInstallOnAppQuit = false;
 	// autoUpdater.forceDevUpdateConfig = true;
 	autoUpdater.logger = logger;
 	autoUpdater.setFeedURL({
@@ -470,7 +442,7 @@ app.whenReady().then(async () => {
 	const config = readConfig();
 	if (!config?.disableAutoUpdates) {
 		autoUpdater.autoDownload = true;
-		autoUpdater.autoInstallOnAppQuit = true;
+		autoUpdater.autoRunAppAfterInstall = true;
 	}
 
 	// initialize rpc safety
@@ -508,7 +480,7 @@ app.whenReady().then(async () => {
 
 	if (!app.isPackaged) {
 		globalShortcut.register("Control+Shift+I", () => {
-			console.log("Ctrl+Shift+R shortcut triggered");
+			console.log("Ctrl+Shift+I shortcut triggered");
 			if (BrowserWindow.getFocusedWindow()?.webContents.isDevToolsOpened()) {
 				BrowserWindow.getFocusedWindow()?.webContents.closeDevTools();
 			} else {
@@ -732,6 +704,10 @@ app.whenReady().then(async () => {
 	});
 
 	ipcMain.on("restart_app", () => {
+		autoUpdater.quitAndInstall();
+	});
+	
+	ipcMain.on("quit_and_install", () => {
 		autoUpdater.quitAndInstall();
 	});
 

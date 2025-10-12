@@ -1,10 +1,9 @@
 import { getCurrentPort } from "@renderer/utils/getPort";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
 	Camera,
+	Clock,
 	Library,
-	LoaderCircle,
-	MonitorDown,
 	Settings,
 	User,
 	X,
@@ -29,6 +28,7 @@ export default function Sidebar() {
 	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);
 	const [updateDownloaded, setUpdateDownloaded] = useState(false);
+	const [releaseNotes, setReleaseNotes] = useState<any>(null);
 
 	useEffect(() => {
 		window.electron.ipcRenderer.invoke("check-update");
@@ -84,7 +84,70 @@ export default function Sidebar() {
 		handleStopApp(appId, appName);
 	}
 
+	useEffect(() => {
+		const fetchReleaseNotes = async () => {
+			if (updateAvailable) {
+				const currentVersion = await window.electron.ipcRenderer.invoke("get-version");
+				const res = await fetch("https://api.github.com/repos/dioneapp/dioneapp/releases");
+				if (!res.ok) return;
+				const releases = await res.json();
+				const nextRelease = releases.find(
+					(rel: any) =>
+						(rel.tag_name?.replace(/^v/, "") !== currentVersion) && !rel.draft && !rel.prerelease
+				);
+				if (nextRelease) {
+					setReleaseNotes(nextRelease);
+				}
+			}
+		};
+
+		fetchReleaseNotes();
+	}, [updateAvailable]);
+
 	return (
+		<>
+		<AnimatePresence>
+		{updateDownloaded && releaseNotes &&
+			<motion.div key="update-modal" initial={{ opacity: 0, filter: "blur(10)" }} animate={{ opacity: 1, filter: "blur(0px)", backdropFilter: "blur(10px)" }} exit={{ opacity: 0, filter: "blur(10)" }} transition={{ duration: 0.2 }} style={{zIndex: 100}} className="fixed inset-0 bg-black/90 flex items-center justify-center">
+				<div className="fixed inset-0 flex items-center justify-center z-50">
+					<div className="bg-white/10 backdrop-blur-2xl rounded-xl max-w-2xl w-full p-4 flex flex-col items-start justify-center gap-6 text-center shadow-xl border border-white/5"> 
+						<div className="flex flex-col justify-center items-start gap-2">
+							<h1 className="text-center font-medium tracking-tighter text-3xl text-neutral-200 text-balance whitespace-pre-line">New update available</h1>
+							<h2 className="text-center text-neutral-400">Here's what's new</h2>
+							<div className="mt-2 bg-white/10 p-4 rounded-lg overflow-hidden flex flex-col gap-2 items-start justify-center">
+								<div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between w-full">
+									<h3 className="text-xl text-neutral-100 font-semibold text-balance break-words">
+										{releaseNotes.name}
+									</h3>
+									<span className="flex items-center gap-1 bg-white/10 rounded-full px-3 py-1 text-[10px] text-neutral-300">
+										<Clock className="h-3 w-3" />
+										{new Date(releaseNotes.published_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })} &bull; {new Date(releaseNotes.published_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+									</span>
+								</div>
+								<ul className="text-neutral-300 text-xs max-h-32 text-balance text-left list-disc pl-4 space-y-1 overflow-auto">
+									{releaseNotes.body
+										.split(/\r?\n/)
+										.filter(line => line.trim().startsWith('* '))
+										.map((line, idx) => (
+											<li key={idx}>{line.replace(/^\*\s*/, '')}</li>
+										))
+									}
+								</ul>
+							</div>
+						</div>
+						<div className="w-full flex justify-end items-center gap-2">
+							<button onClick={() => setUpdateDownloaded(false)} className="bg-white/10 hover:bg-white/15 text-neutral-300 border border-white/5 px-4 py-1 text-sm font-medium rounded-lg cursor-pointer">
+								<span>Later</span>
+							</button>
+							<button onClick={() => window.electron.ipcRenderer.send("quit_and_install")} className="bg-white hover:opacity-80 border border-white text-black px-4 py-1 text-sm font-medium rounded-lg cursor-pointer">
+								<span>Install</span>
+							</button>
+						</div>
+					</div>
+				</div>
+			</motion.div>
+		}
+		</AnimatePresence>
 		<div
 			className={`relative flex flex-col items-center justify-center border-r border-white/10 overflow-hidden ${config?.compactMode ? "max-w-24 w-24" : "max-w-70 w-70"}`}
 		>
@@ -231,63 +294,6 @@ export default function Sidebar() {
 						</div>
 					)}
 				</div>
-				{updateAvailable && !config?.compactMode && (
-					<motion.button
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ duration: 0.2 }}
-						className="h-fit bg-neutral-700/30 border border-white/5 rounded-xl backdrop-blur-3xl w-full max-w-56 my-6 active:cursor-pointer active:hover:bg-white/10 transition-colors duration-200 text-left"
-						disabled={updateAvailable}
-						onClick={() => {
-							if (updateDownloaded) {
-								window.electron.ipcRenderer.send("restart_app");
-							} else {
-								window.electron.ipcRenderer.send("download_and_restart");
-							}
-						}}
-					>
-						{updateDownloaded ? (
-							<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
-								<h1 className="font-semibold text-xl text-neutral-200">
-									{t("sidebar.update.title")}
-								</h1>
-								<h2 className="text-[10px] text-neutral-300 text-balance">
-									{t("sidebar.update.description")}
-								</h2>
-							</div>
-						) : (
-							<div className="justify-center items-start w-full h-full p-5 flex flex-col gap-1">
-								<div className="flex justify-between items-center w-full">
-									<h1 className="font-semibold text-xl text-neutral-200">
-										Downloading
-									</h1>
-									<span>
-										<LoaderCircle className="h-5 w-5 text-neutral-400 animate-spin" />
-									</span>
-								</div>
-								<h2 className="text-[10px] text-neutral-300 text-balance">
-									When the download finishes, the app will restart
-								</h2>
-							</div>
-						)}
-					</motion.button>
-				)}
-				{updateAvailable && config?.compactMode && (
-					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						transition={{ duration: 0.2 }}
-						className="w-9.5 h-9.5 bg-white hover:bg-white/80 transition-colors duration-200 rounded-full backdrop-blur-3xl mb-4 group cursor-pointer flex justify-center items-center p-2"
-					>
-						<MonitorDown className="h-5 w-5 text-black" />
-						<div
-							className="absolute left-1/2 -translate-x-1/2 bottom-0 my-16 px-6 py-4 bg-black backdrop-blur-3xl text-white text-xs shadow-lg opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-200"
-							style={{ whiteSpace: "pre-line", zIndex: 99999 }}
-						>
-							{t("sidebar.update.tooltip")}
-						</div>
-					</motion.div>
-				)}
 				{!config?.compactMode && (
 					<QuickLaunch compactMode={config?.compactMode} />
 				)}
@@ -484,5 +490,6 @@ export default function Sidebar() {
 				</div>
 			</div>
 		</div>
+		</>
 	);
 }
