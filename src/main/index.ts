@@ -192,7 +192,6 @@ function createWindow() {
 			logger.error("Error in autoUpdater", err);
 		});
 
-
 		const config = readConfig();
 		const root = app.isPackaged
 			? path.join(path.dirname(app.getPath("exe")))
@@ -706,7 +705,7 @@ app.whenReady().then(async () => {
 	ipcMain.on("restart_app", () => {
 		autoUpdater.quitAndInstall();
 	});
-	
+
 	ipcMain.on("quit_and_install", () => {
 		autoUpdater.quitAndInstall();
 	});
