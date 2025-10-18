@@ -365,7 +365,7 @@ export const executeCommand = async (
 		// await stopActiveProcess(io, id);
 
 		const currentPlatform = getPlatform();
-		const isWindows = currentPlatform === "win32"
+		const isWindows = currentPlatform === "win32";
 
 		io.to(id).emit(logs, {
 			type: "log",
