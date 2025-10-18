@@ -20,6 +20,16 @@ router.get("/", (_req, res) => {
 router.post("/update", async (req, res) => {
 	try {
 		console.log("trying to update config: ", req.body);
+
+		// Validate incoming paths: do not allow whitespace
+		if (
+			(req.body.defaultInstallFolder &&
+				/\s/.test(req.body.defaultInstallFolder)) ||
+			(req.body.defaultBinFolder && /\s/.test(req.body.defaultBinFolder))
+		) {
+			console.warn("Attempt to update config with path containing whitespace");
+			return res.status(400).send({ error: "Paths cannot contain spaces." });
+		}
 		const currentConfig = readConfig();
 		updateConfig(req.body);
 		const updatedConfig = readConfig();

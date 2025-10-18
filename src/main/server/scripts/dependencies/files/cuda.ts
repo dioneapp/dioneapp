@@ -108,7 +108,8 @@ export async function install(
 				.get(url, options, (response) => {
 					if (
 						response.statusCode &&
-						response.statusCode >= 300 && response.statusCode < 400 &&
+						response.statusCode >= 300 &&
+						response.statusCode < 400 &&
 						response.headers.location
 					) {
 						https

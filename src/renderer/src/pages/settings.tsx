@@ -273,13 +273,21 @@ export default function Settings() {
 			joinPath(config[setting1], "apps"),
 		);
 		if (!result.canceled && result.filePaths[0]) {
+			const chosen = result.filePaths[0];
+			// disallow any whitespace in path
+			if (/\s/.test(chosen)) {
+				alert(
+					"Selected path cannot contain spaces. Please choose a different folder.",
+				);
+				return;
+			}
 			if (setting2) {
 				handleUpdate({
-					[setting1]: result.filePaths[0],
-					[setting2]: result.filePaths[0],
+					[setting1]: chosen,
+					[setting2]: chosen,
 				});
 			} else {
-				handleUpdate({ [setting1]: result.filePaths[0] });
+				handleUpdate({ [setting1]: chosen });
 			}
 		}
 	}
@@ -480,7 +488,13 @@ export default function Settings() {
 																</span>
 															) : (
 																<span
-																	className={`${deleteCacheStatus === "deleted" ? "text-green-700" : deleteCacheStatus === "error" ? "text-red-500" : "text-orange-500"}`}
+																	className={`${
+																		deleteCacheStatus === "deleted"
+																			? "text-green-700"
+																			: deleteCacheStatus === "error"
+																				? "text-red-500"
+																				: "text-orange-500"
+																	}`}
 																>
 																	{deleteCacheStatus === "deleting"
 																		? t(
