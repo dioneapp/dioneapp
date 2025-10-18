@@ -1,9 +1,7 @@
-import fs from "node:fs";
-import os from "node:os";
-import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import {
 	BrowserWindow,
+	Notification,
 	Tray,
 	app,
 	dialog,
@@ -12,9 +10,11 @@ import {
 	session,
 	shell,
 } from "electron";
-import { Notification } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
+import fs from "node:fs";
+import os from "node:os";
+import path, { join } from "node:path";
 import si from "systeminformation";
 import macosIcon from "../../resources/icon.icns?asset";
 import icon from "../../resources/icon.ico?asset";
@@ -635,6 +635,12 @@ app.whenReady().then(async () => {
 			? path.join(path.dirname(app.getPath("exe")))
 			: path.join(process.cwd());
 
+		// reject paths that contain whitespace characters
+		if (typeof dirValue === "string" && /\s/.test(dirValue)) {
+			logger.warn("Directory contains whitespace which is not allowed.");
+			return false;
+		}
+
 		if (dirValue.toLowerCase() === root.toLowerCase()) {
 			logger.warn(
 				"Directory is set to the current working directory. This may cause issues.",
@@ -743,7 +749,9 @@ app.whenReady().then(async () => {
 				} else {
 					const bodyText = await response.text();
 					logger.warn(
-						`/db/events returned non-JSON (${contentType || "unknown"}). Body: ${bodyText.slice(0, 200)}`,
+						`/db/events returned non-JSON (${
+							contentType || "unknown"
+						}). Body: ${bodyText.slice(0, 200)}`,
 					);
 					data = { raw: bodyText };
 				}

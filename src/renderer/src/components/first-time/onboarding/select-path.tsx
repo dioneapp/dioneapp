@@ -18,6 +18,13 @@ export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 		if (!result.canceled) {
 			setSelectedPath(result.filePaths[0]);
 			if (result) {
+				// disallow whitespace in selected path
+				if (/\s/.test(result.filePaths[0])) {
+					setError(
+						"Selected path cannot contain spaces. Please choose a different folder.",
+					);
+					return;
+				}
 				setError(null);
 				const accept = await window.electron.ipcRenderer.invoke(
 					"check-dir",
