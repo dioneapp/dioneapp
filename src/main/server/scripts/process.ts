@@ -266,22 +266,20 @@ export const executeCommand = async (
 		FORCE_UNBUFFERED_OUTPUT: "1",
 		PYTHONIOENCODING: "UTF-8",
 		FORCE_COLOR: "1",
-		// Fix for py-cpuinfo not detecting Intel Core Ultra CPUs and other newer x86_64 processors
-		// The py-cpuinfo library relies on Windows environment variables to detect CPU architecture
-		// but these may not be properly set in Dione's spawned processes, causing detection failures
+		// fix for py-cpuinfo not detecting Intel Core Ultra CPUs and other newer x86_64 processors
 		...(process.platform === "win32" && {
 			PROCESSOR_ARCHITECTURE:
 				process.env.PROCESSOR_ARCHITECTURE ||
 				(arch() === "x64" ? "AMD64" : arch() === "ia32" ? "x86" : "AMD64"),
 			PROCESSOR_ARCHITEW6432: process.env.PROCESSOR_ARCHITEW6432 || "AMD64",
 		}),
-		// Cross-platform CUDA detection for deepspeed compatibility
-		// Set CUDA_HOME if not already set and try to detect it automatically
+		// cross-platform CUDA detection for deepspeed compatibility
+		// set CUDA_HOME if not already set and try to detect it automatically
 		CUDA_HOME:
 			process.env.CUDA_HOME ||
 			(() => {
 				if (process.platform === "win32") {
-					// Windows: Check standard NVIDIA GPU Computing Toolkit installation
+					// windows - check standard NVIDIA GPU Computing Toolkit installation
 					const cudaBasePath =
 						"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA";
 					const versions = [
@@ -306,7 +304,7 @@ export const executeCommand = async (
 						}
 					}
 				} else if (process.platform === "linux") {
-					// Linux: Check common CUDA installation paths
+					// linux - check common CUDA installation paths
 					const commonPaths = [
 						"/usr/local/cuda",
 						"/opt/cuda",
@@ -330,11 +328,10 @@ export const executeCommand = async (
 						}
 					}
 				}
-				// Note: macOS is not included as Apple dropped CUDA support after macOS Mojave (10.14)
-				// Modern Macs use Apple Silicon (M1/M2/M3) or AMD GPUs with Metal instead of CUDA
+				// macos is not included as Apple dropped CUDA support after macOS Mojave (10.14)
 				return undefined;
 			})(),
-		// Skip deepspeed's CUDA compatibility checks if CUDA detection fails
+		// set to "1" to skip CUDA check
 		DS_BUILD_OPS: "0",
 		DS_SKIP_CUDA_CHECK: "1",
 	};
@@ -368,64 +365,32 @@ export const executeCommand = async (
 		// await stopActiveProcess(io, id);
 
 		const currentPlatform = getPlatform();
-		const isWindows = currentPlatform === "win32";
-
-		// split command into executable and arguments
-		const [executable, ...args] = command.split(/\s+/);
-
-		const isBatFile =
-			executable.endsWith(".bat") || executable.endsWith(".cmd");
-
-		const isGitCommand = command.includes("git");
+		const isWindows = currentPlatform === "win32"
 
 		io.to(id).emit(logs, {
 			type: "log",
 			content: `Working on directory: ${workingDir}`,
 		});
+		const platform = getPlatform();
 		const spawnOptions = {
 			cwd: workingDir,
-			shell: isWindows ? !isBatFile : true,
+			shell: platform === "win32",
 			windowsHide: true,
 			detached: false,
 			env: enhancedEnv,
 		};
 
 		// handle bat files
-		if (isWindows) {
-			if (executable.endsWith(".bat") || executable.endsWith(".cmd")) {
-				activeProcess = spawn("cmd.exe", ["/S", "/C", command], {
-					...spawnOptions,
-					stdio: ["pipe", "pipe", "pipe"],
-				});
-			} else {
-				activeProcess = spawn(executable, args, {
-					...spawnOptions,
-					stdio: ["pipe", "pipe", "pipe"],
-				});
-			}
-		} else {
-			if (isGitCommand) {
-				// handle git commands on linux/macos
+		if (!isWindows && command.startsWith("git ")) {
+			if (!isWindows && command.startsWith("git ")) {
 				const result = await useGit(command, workingDir, io, id);
 				if (result) {
 					return { code: 0, stdout: "", stderr: "" };
 				}
-			} else {
-				// handle sh files
-				if (executable.endsWith(".sh")) {
-					activeProcess = spawn("bash", [executable, ...args], {
-						...spawnOptions,
-						stdio: ["pipe", "pipe", "pipe"],
-					});
-				} else {
-					activeProcess = spawn(executable, args, {
-						...spawnOptions,
-						stdio: ["pipe", "pipe", "pipe"],
-					});
-				}
 			}
 		}
 
+		activeProcess = spawn(command, spawnOptions);
 		activePID = activeProcess.pid;
 		logger.info(`Started process (PID: ${activePID}): ${command}`);
 		io.to(id).emit(logs, {
