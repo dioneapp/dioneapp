@@ -143,7 +143,8 @@ export async function install(
 		windows: {
 			file: exe,
 			args: [
-				`--installPath ${depFolder}`,
+				"--installPath",
+				`"${depFolder}"`,
 				"--quiet",
 				"--wait",
 				"--nocache",
