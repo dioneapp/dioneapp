@@ -315,6 +315,19 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
         }));
     }, []);
 
+    const addLogLine = useCallback((appId: string, message: string) => {
+        if (!terminalStatesRef.current[appId]) {
+            terminalStatesRef.current[appId] = new TerminalNormalizer();
+        }
+        const normalizer = terminalStatesRef.current[appId];
+        normalizer.feed(message + "\n");
+        const newLines = normalizer.getRenderableLines();
+        setLogs((prevLogs) => ({
+            ...prevLogs,
+            [appId]: newLines,
+        }));
+    }, []);
+
     const clearLogs = useCallback((appId: string) => {
         setLogs((prevLogs) => ({ ...prevLogs, [appId]: [] }));
         if (terminalStatesRef.current[appId]) {
@@ -426,7 +439,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
                 "Error...",
                 `Error stopping ${appName}: ${error}`,
             );
-            addLog(appId, `Error stopping ${appName}: ${error}`);
+            addLogLine(appId, `Error stopping ${appName}: ${error}`);
         } finally {
             disconnectApp(appId);
             setAppFinished({ [appId]: false });
@@ -483,6 +496,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
                 activeApps,
                 handleStopApp,
                 addLog,
+                addLogLine,
                 clearLogs,
                 getAllAppLogs,
                 appFinished,
