@@ -36,7 +36,7 @@ export const killProcess = async (pid: number, io: Server, id: string) => {
                     if (code === 0) {
                         io.to(id).emit("installUpdate", {
                             type: "log",
-                            content: "Script killed successfully",
+                            content: "Script killed successfully\n",
                         });
                         logger.info("Script killed successfully");
                         resolve(true);
@@ -88,7 +88,7 @@ async function killByPort(
         }
         io.to(id).emit("installUpdate", {
             type: "log",
-            content: "No valid port or active process to kill.",
+            content: "No valid port or active process to kill.\n",
         });
         return true;
     }
@@ -103,7 +103,7 @@ async function killByPort(
                     logger.error(`Error listing port ${port}: ${stderr}`);
                     io.to(id).emit("installUpdate", {
                         type: "log",
-                        content: `ERROR listing port ${port}: ${stderr}`,
+                        content: `ERROR listing port ${port}: ${stderr}\n`,
                     });
 
                     if (!activePID) {
@@ -111,7 +111,7 @@ async function killByPort(
                     }
                     io.to(id).emit("installUpdate", {
                         type: "log",
-                        content: `No port active found, stopping active process...`,
+                        content: `No port active found, stopping active process...\n`,
                     });
                     const success = await killProcess(activePID, io, id);
                     return resolve(success);
@@ -120,7 +120,7 @@ async function killByPort(
                 if (pids.length === 0) {
                     io.to(id).emit("installUpdate", {
                         type: "log",
-                        content: `No processes found on port ${port}`,
+                        content: `No processes found on port ${port}\n`,
                     });
                     if (!activePID) {
                         return resolve(true); // no active process to stop
@@ -143,7 +143,7 @@ async function killByPort(
                 ).then(async () => {
                     io.to(id).emit("installUpdate", {
                         type: "log",
-                        content: `Killed processes: ${pids.join(", ")}`,
+                        content: `Killed processes: ${pids.join(", ")}\n`,
                     });
                     if (activePID) {
                         await killProcess(activePID, io, id);
@@ -161,7 +161,7 @@ async function killByPort(
                 logger.error(`Error netstat: ${stderr}`);
                 io.to(id).emit("installUpdate", {
                     type: "log",
-                    content: `ERROR netstat: ${stderr}`,
+                    content: `ERROR netstat: ${stderr}\n`,
                 });
                 return resolve(false);
             }
@@ -180,7 +180,7 @@ async function killByPort(
             if (matches.length === 0) {
                 io.to(id).emit("installUpdate", {
                     type: "log",
-                    content: `No processes found on port ${port}`,
+                    content: `No processes found on port ${port}\n`,
                 });
                 if (!activePID) {
                     return resolve(true); // no active process to stop
@@ -201,13 +201,13 @@ async function killByPort(
                                 logger.warn(`Error killing PID ${pid}: ${killStderr}`);
                                 io.to(id).emit("installUpdate", {
                                     type: "log",
-                                    content: `ERROR killing PID ${pid}: ${killStderr}`,
+                                    content: `ERROR killing PID ${pid}: ${killStderr}\n`,
                                 });
                             } else {
                                 logger.info(`PID ${pid} killed successfully`);
                                 io.to(id).emit("installUpdate", {
                                     type: "log",
-                                    content: `PID ${pid} killed successfully`,
+                                    content: `PID ${pid} killed successfully\n`,
                                 });
                             }
                             res();
@@ -453,7 +453,7 @@ export const executeCommand = async (
                     logger.error(errorMsg);
                     io.to(id).emit(logs, {
                         type: "log",
-                        content: `ERROR: ${errorMsg}`,
+                        content: `ERROR: ${errorMsg}\n`,
                     });
                     io.to(id).emit(logs, {
                         type: "status",
@@ -476,7 +476,7 @@ export const executeCommand = async (
         });
         io.to(id).emit(logs, {
             type: "log",
-            content: `ERROR: ${errorMsg}`,
+            content: `ERROR: ${errorMsg}\n`,
         });
         return { code: -1, stdout: "", stderr: errorMsg };
     }
@@ -501,7 +501,7 @@ export const executeCommands = async (
             logger.info("Process cancelled - stopping remaining commands");
             io.to(id).emit("installUpdate", {
                 type: "log",
-                content: "INFO: Process cancelled - stopping remaining commands",
+                content: "INFO: Process cancelled - stopping remaining commands\n",
             });
             return { cancelled: true };
         }
@@ -531,7 +531,7 @@ export const executeCommands = async (
                     );
                     io.to(id).emit("installUpdate", {
                         type: "log",
-                        content: `INFO: Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+                        content: `INFO: Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}\n`,
                     });
                     continue;
                 }
@@ -549,7 +549,7 @@ export const executeCommands = async (
                     );
                     io.to(id).emit("installUpdate", {
                         type: "log",
-                        content: `INFO: Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+                        content: `INFO: Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU\n`,
                     });
                     continue; // skip command
                 }
@@ -562,7 +562,7 @@ export const executeCommands = async (
                 logger.error(`Invalid command object: ${JSON.stringify(cmd)}`);
                 io.to(id).emit("installUpdate", {
                     type: "log",
-                    content: `ERROR: Invalid command object: ${JSON.stringify(cmd)}`,
+                    content: `ERROR: Invalid command object: ${JSON.stringify(cmd)}\n`,
                 });
                 continue;
             }
@@ -586,7 +586,7 @@ export const executeCommands = async (
                 logger.error(`Directory does not exist: ${newWorkingDir}`);
                 io.to(id).emit("installUpdate", {
                     type: "log",
-                    content: `ERROR: Directory does not exist: ${newWorkingDir}`,
+                    content: `ERROR: Directory does not exist: ${newWorkingDir}\n`,
                 });
                 io.to(id).emit("installUpdate", {
                     type: "status",
