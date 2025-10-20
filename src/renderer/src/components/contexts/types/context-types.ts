@@ -11,6 +11,21 @@ export interface AuthContextType {
 }
 
 // Scripts context
+export interface ProgressStepDef {
+    id: string;
+    label: string;
+    weight: number;
+}
+
+export interface ProgressState {
+    mode: "determinate" | "indeterminate";
+    percent: number; // 0..100
+    label?: string;
+    status: "running" | "success" | "error";
+    runId?: string;
+    steps?: ProgressStepDef[];
+}
+
 export interface ScriptsContextType {
     setInstalledApps: React.Dispatch<React.SetStateAction<any[]>>;
     installedApps: any[];
@@ -80,6 +95,8 @@ export interface ScriptsContextType {
     notSupported: Record<string, { reasons: string[] }>;
     wasJustInstalled: boolean;
     setWasJustInstalled: React.Dispatch<React.SetStateAction<boolean>>;
+    progress: Record<string, ProgressState>;
+    setProgress: React.Dispatch<React.SetStateAction<Record<string, ProgressState>>>;
     isLocal?: boolean;
 }
 
@@ -117,5 +134,6 @@ export interface SetupSocketProps {
         React.SetStateAction<Record<string, { reasons: string[] }>>
     >;
     setWasJustInstalled: React.Dispatch<React.SetStateAction<boolean>>;
+    setProgress: React.Dispatch<React.SetStateAction<Record<string, ProgressState>>>;
     isLocal?: boolean;
 }

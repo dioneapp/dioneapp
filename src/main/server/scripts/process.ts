@@ -247,6 +247,7 @@ export const executeCommand = async (
     id: string,
     needsBuildTools?: boolean,
     logsType?: string,
+    options?: { onOutput?: (text: string) => void },
 ): Promise<{ code: number; stdout: string; stderr: string }> => {
     let stdoutData = "";
     let stderrData = "";
@@ -403,6 +404,7 @@ export const executeCommand = async (
             if (text) {
                 stdoutData += text;
                 io.to(id).emit(logs, { type: "log", content: text });
+                options?.onOutput?.(text);
                 logger.info(`[stdout] ${text}`);
             }
         });
@@ -432,6 +434,7 @@ export const executeCommand = async (
                     io.to(id).emit(logs, { type: "log", content: `OUT: ${text}` });
                     logger.info(`[stderr-info] ${text}`);
                 }
+                options?.onOutput?.(text);
             }
         });
 
@@ -488,6 +491,7 @@ export const executeCommands = async (
     io: Server,
     id: string,
     needsBuildTools?: boolean,
+    options?: { onOutput?: (text: string) => void },
 ): Promise<{ cancelled: boolean }> => {
     // reset cancellation state for a new command batch
     processWasCancelled = false;
@@ -614,6 +618,8 @@ export const executeCommands = async (
                 currentWorkingDir,
                 id,
                 needsBuildTools,
+                undefined,
+                options,
             );
 
             if (response.code !== 0) {
