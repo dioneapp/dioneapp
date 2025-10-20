@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import { MAX_TERMINAL_LINES } from "@renderer/utils/terminal";
+import TerminalOutput from "./TerminalOutput";
 
 interface LogsProps {
     logs: Record<string, string[]>;
@@ -75,19 +76,13 @@ export default function LogsComponent({
                 </div>
             </div>
             <motion.div className="p-10 select-text rounded-tl-xl rounded-b-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/80 hide-scrollbar">
-                <div
+                <TerminalOutput
                     id="logs"
-                    className="mx-auto max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text text-wrap pb-4"
-                    ref={(el) => {
-                        if (el) {
-                            el.scrollTop = el.scrollHeight;
-                        }
-                    }}
-                >
-                    <pre className="whitespace-pre-wrap break-words font-mono text-xs text-neutral-300 leading-5">
-                        {processedLogs.join("\n")}
-                    </pre>
-                </div>
+                    lines={processedLogs}
+                    containerClassName="mx-auto max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text pb-4"
+                    className="whitespace-pre-wrap break-words font-mono text-xs text-neutral-300 leading-5"
+                    autoScroll
+                />
                 <div className="h-px w-full bg-white/10 mb-4" />
                 {processedLogs.length >= MAX_TERMINAL_LINES && (
                     <div className="text-[11px] text-neutral-400 mt-1 mb-1 text-center max-w-sm mx-auto">
