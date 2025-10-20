@@ -12,7 +12,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Socket } from "socket.io-client";
 import { setupSocket } from "./scripts/setup-socket";
-import type { ScriptsContextType } from "./types/context-types";
+import type { ScriptsContextType, ProgressState } from "./types/context-types";
 
 const AppContext = createContext<ScriptsContextType | undefined>(undefined);
 
@@ -103,6 +103,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
     >({});
     // autoopen
     const [wasJustInstalled, setWasJustInstalled] = useState<boolean>(false);
+    // progress state
+    const [progress, setProgress] = useState<Record<string, ProgressState>>({});
 
     useEffect(() => {
         setData(null);
@@ -279,6 +281,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
             setAppFinished,
             setNotSupported,
             setWasJustInstalled,
+            setProgress,
         });
         socketsRef.current[appId] = {
             socket: newSocket,
@@ -508,6 +511,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
                 notSupported,
                 wasJustInstalled,
                 setWasJustInstalled,
+                progress,
+                setProgress,
             }}
         >
             {children}

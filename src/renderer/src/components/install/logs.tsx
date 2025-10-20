@@ -5,6 +5,7 @@ import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import { MAX_TERMINAL_LINES } from "@renderer/utils/terminal";
 import TerminalOutput from "./TerminalOutput";
+import ProgressBar from "@renderer/components/common/ProgressBar";
 
 interface LogsProps {
     logs: Record<string, string[]>;
@@ -23,7 +24,7 @@ export default function LogsComponent({
     setShow,
     appId,
 }: LogsProps) {
-    const { statusLog } = useScriptsContext();
+    const { statusLog, progress } = useScriptsContext();
     const { t } = useTranslation();
 
     const Spinner = useMemo(() => {
@@ -76,6 +77,15 @@ export default function LogsComponent({
                 </div>
             </div>
             <motion.div className="p-10 select-text rounded-tl-xl rounded-b-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/80 hide-scrollbar">
+                {/* Progress bar over terminal output */}
+                <div className="mb-4">
+                    <ProgressBar
+                        value={progress?.[appId]?.percent || 0}
+                        mode={progress?.[appId]?.mode || "indeterminate"}
+                        label={progress?.[appId]?.label}
+                        status={progress?.[appId]?.status || "running"}
+                    />
+                </div>
                 <TerminalOutput
                     id="logs"
                     lines={processedLogs}

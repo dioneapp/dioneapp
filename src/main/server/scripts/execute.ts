@@ -4,6 +4,7 @@ import { app } from "electron";
 import type { Server } from "socket.io";
 import { readConfig as userConfig } from "../../config";
 import logger from "../utils/logger";
+import { emitRunProgress, generateRunId } from "../utils/progress-emitter";
 import { checkDependencies } from "./dependencies/dependencies";
 import { addValue, getAllValues } from "./dependencies/environment";
 import { executeCommands } from "./process";
@@ -30,9 +31,28 @@ export default async function executeInstallation(
         content: `INFO: Found ${installation.length} installation steps to execute\n`,
     });
 
+    // initialize structured progress for installation run
+    const runId = generateRunId(`${id}:install`);
+    if (installation.length > 0) {
+        const stepsDef = installation.map((s: any, idx: number) => ({
+            id: `step-${idx + 1}`,
+            label: s.name || `Step ${idx + 1}`,
+            weight: 1 / installation.length,
+        }));
+        emitRunProgress(io, id, {
+            type: "run_started",
+            runId,
+            totalSteps: stepsDef.length,
+            steps: stepsDef,
+        });
+    }
+
     // process installation steps sequentially
     try {
-        for (const step of installation) {
+        for (let i = 0; i < installation.length; i++) {
+            const step = installation[i];
+            const stepId = `step-${i + 1}`;
+
             io.to(id).emit("installUpdate", {
                 type: "log",
                 content: `INFO: Starting step "${step.name}"\n`,
@@ -42,6 +62,9 @@ export default async function executeInstallation(
                 status: "pending",
                 content: `${step.name}`,
             });
+            if (installation.length > 0) {
+                emitRunProgress(io, id, { type: "step_started", runId, id: stepId });
+            }
 
             if (step.commands && step.commands.length > 0) {
                 const commandsArray: string[] = Array.isArray(step.commands)
@@ -89,6 +112,7 @@ export default async function executeInstallation(
                             content:
                                 "INFO: Installation cancelled - stopping remaining steps",
                         });
+                        emitRunProgress(io, id, { type: "run_finished", runId, success: false });
                         return;
                     }
                 } else {
@@ -106,6 +130,7 @@ export default async function executeInstallation(
                             content:
                                 "INFO: Installation cancelled - stopping remaining steps",
                         });
+                        emitRunProgress(io, id, { type: "run_finished", runId, success: false });
                         return;
                     }
                 }
@@ -119,6 +144,9 @@ export default async function executeInstallation(
                     status: "success",
                     content: `${step.name}`,
                 });
+                if (installation.length > 0) {
+                    emitRunProgress(io, id, { type: "step_finished", runId, id: stepId });
+                }
             }
         }
         // emit log to reload frontend after all actions are executed
@@ -131,8 +159,12 @@ export default async function executeInstallation(
             type: "installFinished",
             content: "true",
         });
+        if (installation.length > 0) {
+            emitRunProgress(io, id, { type: "run_finished", runId, success: true });
+        }
     } catch (error) {
         logger.error(`Failed in step: ${error}`);
+        emitRunProgress(io, id, { type: "run_finished", runId, success: false });
     }
 }
 
@@ -221,17 +253,42 @@ export async function executeStartup(
         content: `INFO: Executing start: "${selectedStart.name}"\n`,
     });
 
+    // structured progress setup for start run
+    const startStepsRaw = selectedStart.steps
+        ? selectedStart.steps
+        : selectedStart.commands
+            ? [{ name: selectedStart.name, commands: selectedStart.commands }]
+            : [];
+    const hasWaitPort = Boolean(selectedStart.catch);
+    const runId = generateRunId(`${id}:start`);
+    const stepsDef = [
+        ...startStepsRaw.map((s: any, idx: number) => ({
+            id: `step-${idx + 1}`,
+            label: s.name || `Step ${idx + 1}`,
+            weight: hasWaitPort ? 0.8 / startStepsRaw.length : 1 / startStepsRaw.length,
+        })),
+        ...(hasWaitPort
+            ? [{ id: "wait-port", label: "Wait for service", weight: 0.2 }]
+            : []),
+    ];
+    emitRunProgress(io, id, {
+        type: "run_started",
+        runId,
+        totalSteps: stepsDef.length,
+        steps: stepsDef,
+    });
+
     try {
         // convert selected start commands to steps
-        const steps = selectedStart.steps
-            ? selectedStart.steps
-            : selectedStart.commands
-                ? [{ name: selectedStart.name, commands: selectedStart.commands }]
-                : [];
+        const steps = startStepsRaw;
 
         let response: { cancelled?: boolean; error?: string } | undefined;
+        let haveMarkedServiceReady = false;
 
-        for (const step of steps) {
+        for (let i = 0; i < steps.length; i++) {
+            const step = steps[i];
+            const stepId = `step-${i + 1}`;
+
             io.to(id).emit("installUpdate", {
                 type: "log",
                 content: `INFO: Starting step ${step.name}\n`,
@@ -241,6 +298,8 @@ export async function executeStartup(
                 status: "pending",
                 content: `${step.name}`,
             });
+
+            emitRunProgress(io, id, { type: "step_started", runId, id: stepId });
 
             const commandsArray: string[] = step.commands.map((cmd: any) => {
                 let commandStr: string;
@@ -271,6 +330,26 @@ export async function executeStartup(
                     content: `Watching port ${selectedStart.catch}\n`,
                 });
             }
+
+            const outputHandler = (text: string) => {
+                if (haveMarkedServiceReady) return;
+                const plain = text.replace(/\x1b\[[0-9;]*m/g, "");
+                if (
+                    /running on|serving at|server running|localhost|127\.0\.0\.1|0\.0\.0\.0|http:\/\/|https:\/\//i.test(
+                        plain,
+                    )
+                ) {
+                    if (hasWaitPort) {
+                        emitRunProgress(io, id, {
+                            type: "step_finished",
+                            runId,
+                            id: "wait-port",
+                        });
+                        emitRunProgress(io, id, { type: "run_finished", runId, success: true });
+                        haveMarkedServiceReady = true;
+                    }
+                }
+            };
 
             if (selectedStart.env) {
                 const envName =
@@ -307,6 +386,7 @@ export async function executeStartup(
                     io,
                     id,
                     needsBuildTools,
+                    { onOutput: outputHandler },
                 );
             } else {
                 response = await executeCommands(
@@ -315,6 +395,7 @@ export async function executeStartup(
                     io,
                     id,
                     needsBuildTools,
+                    { onOutput: outputHandler },
                 );
             }
 
@@ -323,6 +404,7 @@ export async function executeStartup(
                     type: "log",
                     content: "INFO: Startup cancelled - stopping remaining steps\n",
                 });
+                emitRunProgress(io, id, { type: "run_finished", runId, success: false });
                 return;
             }
 
@@ -336,6 +418,7 @@ export async function executeStartup(
                     status: "error",
                     content: "Error detected",
                 });
+                emitRunProgress(io, id, { type: "run_finished", runId, success: false });
                 throw new Error(response.error);
             }
 
@@ -348,6 +431,17 @@ export async function executeStartup(
                 status: "success",
                 content: `${step.name}`,
             });
+
+            emitRunProgress(io, id, { type: "step_finished", runId, id: stepId });
+        }
+
+        // if we have a wait-port step and it wasn't already marked, start it now
+        if (hasWaitPort && !haveMarkedServiceReady) {
+            emitRunProgress(io, id, { type: "step_started", runId, id: "wait-port" });
+            // run_finished will be emitted by outputHandler when the service is ready
+        } else if (!hasWaitPort) {
+            // finish run when there is no wait port
+            emitRunProgress(io, id, { type: "run_finished", runId, success: true });
         }
     } catch (error) {
         io.to(id).emit("installUpdate", {
@@ -359,6 +453,7 @@ export async function executeStartup(
             status: "error",
             content: "Error detected",
         });
+        emitRunProgress(io, id, { type: "run_finished", runId, success: false });
         throw error;
     }
 }
