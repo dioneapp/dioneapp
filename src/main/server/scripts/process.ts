@@ -368,10 +368,11 @@ export const executeCommand = async (
         const currentPlatform = getPlatform();
         const isWindows = currentPlatform === "win32";
 
-        io.to(id).emit(logs, {
-            type: "log",
-            content: `Working on directory: ${workingDir}\n`,
-        });
+        // io.to(id).emit(logs, {
+        //     type: "log",
+        //     content: `Working on directory: ${workingDir}\n`,
+        // });
+        logger.info(`Working on directory: ${workingDir}`);
         const platform = getPlatform();
         const spawnOptions = {
             cwd: workingDir,
@@ -394,10 +395,11 @@ export const executeCommand = async (
         activeProcess = spawn(command, spawnOptions);
         activePID = activeProcess.pid;
         logger.info(`Started process (PID: ${activePID}): ${command}`);
-        io.to(id).emit(logs, {
-            type: "log",
-            content: `Executing: ${command}\n`,
-        });
+        // io.to(id).emit(logs, {
+        //     type: "log",
+        //     content: `Executing: ${command}\n`,
+        // });
+        logger.info(`Executing: ${command}`);
 
         activeProcess.stdout.on("data", (data: Buffer) => {
             const text = data.toString("utf8");

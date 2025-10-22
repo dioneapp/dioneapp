@@ -485,7 +485,6 @@ export default function Install({
             if (!data.name || !data.id) return;
             if (isServerRunning[data?.id]) return;
             setIsServerRunning((prev) => ({ ...prev, [data?.id]: true }));
-            addLogLine(data?.id, `Starting ${data.name}...`);
 
             // only connect if we don't already have a socket connection
             if (!sockets[data?.id]) {
@@ -885,6 +884,7 @@ export default function Install({
         if (!data?.id) return;
         if (iframeAvailable && isServerRunning[data.id] && installed) {
             loadIframe(catchPort as number);
+            addLogLine(data.id, `INFO: Preview started for ${data.name} on port ${catchPort}`);
         }
     }, [
         iframeAvailable,

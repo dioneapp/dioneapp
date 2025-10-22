@@ -248,10 +248,10 @@ export async function executeStartup(
         }
     }
 
-    io.to(id).emit("installUpdate", {
-        type: "log",
-        content: `INFO: Executing start: "${selectedStart.name}"\n`,
-    });
+    // io.to(id).emit("installUpdate", {
+    //     type: "log",
+    //     content: `INFO: Executing start: "${selectedStart.name}"\n`,
+    // });
 
     // structured progress setup for start run
     const startStepsRaw = selectedStart.steps
@@ -326,7 +326,7 @@ export async function executeStartup(
                     content: selectedStart.catch,
                 });
                 io.to(id).emit("installUpdate", {
-                    type: "log",
+                    type: "info",
                     content: `Watching port ${selectedStart.catch}\n`,
                 });
             }
