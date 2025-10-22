@@ -81,7 +81,7 @@ export default function ActionsComponent({
 							stiffness: 100,
 							damping: 20,
 						}}
-						className="rounded-xl border border-white/10 shadow-lg relative max-w-xl w-full bg-[#080808]/60 backdrop-filter backdrop-blur-sm"
+						className="rounded-xl border border-white/10 shadow-lg relative max-w-xl w-full bg-[#080808]/30 backdrop-filter backdrop-blur-sm"
 					>
 						{/* background effects */}
 						<div className="absolute w-full h-full backdrop-filter backdrop-blur-sm overflow-hidden">
