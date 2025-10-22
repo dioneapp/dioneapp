@@ -159,8 +159,11 @@ export function setupSocket({
 
     socket.on("installDep", (message: { type: string; content: string }) => {
         if (!message) return;
-        const content = message.content || "";
+        let content = message.content ?? "";
         if (content.trim().length === 0) return;
+        if (!/[\r\n]$/.test(content)) {
+            content += "\n";
+        }
         addLog(appId, content);
     });
 

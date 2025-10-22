@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { CheckCircle, Copy, ExternalLink, Loader2, Square, XCircle } from "lucide-react";
+import { Copy, ExternalLink, Square } from "lucide-react";
 import { useMemo } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
@@ -24,15 +24,8 @@ export default function LogsComponent({
     setShow,
     appId,
 }: LogsProps) {
-    const { statusLog, progress } = useScriptsContext();
+    const { progress } = useScriptsContext();
     const { t } = useTranslation();
-
-    const Spinner = useMemo(() => {
-        if (statusLog[appId]?.status === "pending" || !statusLog[appId]?.status) {
-            return <Loader2 className="h-4 w-4 animate-spin" />;
-        }
-        return null;
-    }, [statusLog[appId]?.status]);
 
     const processedLogs = useMemo(() => {
         return logs?.[appId] || [];
