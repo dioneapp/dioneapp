@@ -471,9 +471,9 @@ app.whenReady().then(async () => {
 
 	// Register global shortcuts
 	globalShortcut.register("Control+R", () => {
-		console.log("Ctrl+R shortcut triggered");
-		if (BrowserWindow.getFocusedWindow()) {
-			BrowserWindow.getFocusedWindow()?.reload();
+		if (mainWindow.isFocused()) {
+			console.log("Ctrl+R shortcut triggered");
+			mainWindow.reload();
 		}
 	});
 
