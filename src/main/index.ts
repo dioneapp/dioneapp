@@ -527,6 +527,27 @@ app.whenReady().then(async () => {
 		logger.error("Socket connection failed");
 	});
 
+	// remove temp files on exit
+	app.on("before-quit", () => {
+		try {
+			logger.info("Removing temp files on exit...");
+			const config = readConfig();
+			const binFolder = path.join(
+				config?.defaultBinFolder || path.join(app.getPath("userData")),
+				"bin",
+			);
+			const tempFolder = path.join(binFolder, "temp");
+			if (fs.existsSync(tempFolder)) {
+				fs.rmSync(tempFolder, {
+					recursive: true,
+					force: true,
+				});
+			}
+		} catch (error) {
+			logger.error("Error removing temp files on exit:", error);
+		}
+	});
+
 	ipcMain.on("ping", () => console.log("pong"));
 
 	ipcMain.handle("app:close", async () => {
