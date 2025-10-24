@@ -183,6 +183,11 @@ export function initDefaultEnv() {
 	const currentEnv = getAllValues();
 	const cacheFolder = path.join(binFolder, "cache");
 
+	addValue("GRADIO_ANALYTICS_ENABLED", "false");
+	addValue("DISABLE_TELEMETRY", "1");
+	addValue("DO_NOT_TRACK", "1");
+	addValue("HF_HUB_DISABLE_TELEMETRY", "1");
+
 	if (getOS() === "windows") {
 		// windows
 		const appData = app.getPath("appData");
@@ -236,10 +241,6 @@ export function initDefaultEnv() {
 
 		if (!currentEnv.TRANSFORMERS_CACHE) {
 			addValue("TRANSFORMERS_CACHE", path.join(cacheFolder));
-		}
-
-		if (!currentEnv.TEMP) {
-			addValue("TEMP", path.join(cacheFolder));
 		}
 
 		if (!currentEnv.TEMP) {
