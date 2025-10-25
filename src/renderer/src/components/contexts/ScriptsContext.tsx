@@ -491,7 +491,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
                 dependencyDiagnostics,
                 setDependencyDiagnostics,
                 setShow,
-
+                show,
                 showToast,
                 stopCheckingRef,
                 iframeSrc,
