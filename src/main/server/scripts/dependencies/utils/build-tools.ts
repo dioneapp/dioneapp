@@ -38,6 +38,7 @@ interface EnsureBuildToolsOptions {
     binFolder: string;
     onLog?: LogSink;
     preferredSdk?: string;
+    enableLayoutFallback?: boolean;
 }
 
 interface InstallAttemptResult {
@@ -51,6 +52,10 @@ interface InstallAttemptResult {
     error?: string;
 }
 
+interface AttemptInstallOptions {
+    enableLayoutFallback: boolean;
+}
+
 const BUILD_TOOLS_URL = "https://aka.ms/vs/17/release/vs_BuildTools.exe";
 const DEFAULT_SDK = "22621";
 const FALLBACK_SDK = "19041";
@@ -61,6 +66,21 @@ const INSTALL_MUTEX_STALE_MS = 30 * 60 * 1000;
 const INSTALL_MUTEX_RETRY_MS = 1000;
 const FILE_LOCK_EXIT_CODE = 5001;
 const START_PROCESS_LOCK_EXIT_CODE = 5002;
+const CHANNEL_MANIFEST_URL = "https://aka.ms/vs/17/release/channel";
+const MAX_CHANNEL_MANIFEST_ATTEMPTS = 3;
+const CHANNEL_MANIFEST_BACKOFF_BASE_MS = 500;
+const BOOTSTRAPPER_CACHE_RETENTION_MS = 2 * 60 * 60 * 1000;
+const CHANNEL_PARSE_ERROR_CODE = "0x80131500";
+const BUILD_TOOLS_COMPONENTS_BASE = [
+    "Microsoft.VisualStudio.Workload.VCTools",
+    "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+    "Microsoft.VisualStudio.Component.VC.CMake.Project",
+    "Microsoft.VisualStudio.Workload.MSBuildTools",
+];
+const LAYOUT_FALLBACK_ENV =
+    process.env.DIONE_ENABLE_BUILD_TOOLS_LAYOUT_FALLBACK?.toLowerCase();
+const DEFAULT_ENABLE_LAYOUT_FALLBACK =
+    LAYOUT_FALLBACK_ENV === "1" || LAYOUT_FALLBACK_ENV === "true";
 
 function logMessage(onLog: LogSink | undefined, message: string, level: LogLevel = "info") {
     if (onLog) {
@@ -336,6 +356,162 @@ async function ensureBootstrapperDownloadedUnlocked(
     } catch (error) {
         await gracefulCleanup(tempDir);
         throw error;
+    }
+}
+
+async function downloadChannelManifestContent(
+    url: string,
+    redirectCount = 0,
+): Promise<string> {
+    return await new Promise<string>((resolve, reject) => {
+        const request = https.get(
+            url,
+            {
+                headers: {
+                    "User-Agent": "DioneApp/1.0 (BuildToolsInstaller)",
+                },
+            },
+            (response) => {
+                if (
+                    response.statusCode &&
+                    [301, 302, 307, 308].includes(response.statusCode) &&
+                    response.headers.location
+                ) {
+                    response.resume();
+                    if (redirectCount >= MAX_BOOTSTRAPPER_REDIRECTS) {
+                        reject(new Error("Too many redirects while downloading channel manifest."));
+                        return;
+                    }
+                    const nextUrl = new URL(response.headers.location, url).toString();
+                    downloadChannelManifestContent(nextUrl, redirectCount + 1)
+                        .then(resolve)
+                        .catch(reject);
+                    return;
+                }
+
+                if (response.statusCode !== 200) {
+                    response.resume();
+                    reject(
+                        new Error(`Failed to download channel manifest: HTTP ${response.statusCode}`),
+                    );
+                    return;
+                }
+
+                const chunks: string[] = [];
+                response.setEncoding("utf8");
+                response.on("data", (chunk) => chunks.push(chunk));
+                response.on("end", () => resolve(chunks.join("")));
+                response.on("error", (error) => reject(error));
+            },
+        );
+
+        request.on("error", (error) => reject(error));
+    });
+}
+
+async function ensureChannelManifest(tempDir: string, onLog?: LogSink): Promise<string> {
+    const manifestPath = path.join(tempDir, "channelManifest.json");
+    let lastError: unknown;
+    await fsp.rm(manifestPath, { force: true }).catch(() => {});
+
+    for (let attempt = 0; attempt < MAX_CHANNEL_MANIFEST_ATTEMPTS; attempt += 1) {
+        if (attempt === 0) {
+            logMessage(onLog, "Prefetching Visual Studio channel manifest...");
+        } else {
+            logMessage(
+                onLog,
+                `Retrying Visual Studio channel manifest download (attempt ${attempt + 1}/${MAX_CHANNEL_MANIFEST_ATTEMPTS})...`,
+                "warn",
+            );
+        }
+
+        try {
+            const content = await downloadChannelManifestContent(CHANNEL_MANIFEST_URL);
+            JSON.parse(content);
+            await fsp.writeFile(manifestPath, content, "utf8");
+            logMessage(
+                onLog,
+                `Using locally validated Visual Studio channel manifest at ${manifestPath}`,
+            );
+            return manifestPath;
+        } catch (error) {
+            lastError = error;
+            await fsp.rm(manifestPath, { force: true }).catch(() => {});
+            const message = error instanceof Error ? error.message : String(error);
+            const isLastAttempt = attempt >= MAX_CHANNEL_MANIFEST_ATTEMPTS - 1;
+            logMessage(
+                onLog,
+                `Failed to validate Visual Studio channel manifest: ${message}`,
+                isLastAttempt ? "error" : "warn",
+            );
+
+            if (!isLastAttempt) {
+                const backoff = CHANNEL_MANIFEST_BACKOFF_BASE_MS * (attempt + 1);
+                logMessage(
+                    onLog,
+                    `Retrying channel manifest download in ${backoff} ms...`,
+                    "warn",
+                );
+                await delay(backoff);
+            }
+        }
+    }
+
+    throw new Error(
+        lastError instanceof Error
+            ? lastError.message
+            : "Unable to download Visual Studio channel manifest.",
+    );
+}
+
+function cleanupBootstrapperCache(onLog?: LogSink) {
+    if (!isWindows()) return;
+
+    const programData = process.env.ProgramData || "C:\\ProgramData";
+    const cacheDir = path.join(
+        programData,
+        "Microsoft",
+        "VisualStudio",
+        "Packages",
+        "_bootstrapper",
+    );
+
+    if (!fs.existsSync(cacheDir)) {
+        return;
+    }
+
+    const cutoff = Date.now() - BOOTSTRAPPER_CACHE_RETENTION_MS;
+    let removed = 0;
+
+    try {
+        for (const entry of fs.readdirSync(cacheDir)) {
+            if (!/^vs_setup_bootstrapper_.*\.json$/i.test(entry)) {
+                continue;
+            }
+
+            const candidate = path.join(cacheDir, entry);
+            try {
+                const stat = fs.statSync(candidate);
+                if (stat.mtimeMs >= cutoff) {
+                    fs.rmSync(candidate, { force: true });
+                    removed += 1;
+                }
+            } catch (error) {
+                logger.warn(`Failed to inspect bootstrapper cache file ${candidate}: ${error}`);
+            }
+        }
+    } catch (error) {
+        logger.warn(`Failed to enumerate Visual Studio bootstrapper cache: ${error}`);
+        return;
+    }
+
+    if (removed > 0) {
+        logMessage(
+            onLog,
+            `Cleared ${removed} Visual Studio bootstrapper manifest ${
+                removed === 1 ? "file" : "files"
+            } from ${cacheDir}.`,
+        );
     }
 }
 
@@ -735,10 +911,92 @@ function collectInstallerLogs(
     return collected;
 }
 
+function getBuildToolsComponents(sdkVersion: string): string[] {
+    return [
+        ...BUILD_TOOLS_COMPONENTS_BASE,
+        `Microsoft.VisualStudio.Component.Windows10SDK.${sdkVersion}`,
+    ];
+}
+
+function createInstallArguments(
+    installPath: string,
+    sdkVersion: string,
+    manifestPath: string,
+    options?: { layoutPath?: string; noweb?: boolean },
+): string[] {
+    const args = [
+        "--installPath",
+        installPath,
+        "--quiet",
+        "--wait",
+        "--norestart",
+        "--nocache",
+        "--locale",
+        "en-US",
+        "--channelId",
+        "VisualStudio.17.Release",
+        "--channelUri",
+        manifestPath,
+    ];
+
+    if (options?.layoutPath) {
+        args.push("--layout", options.layoutPath);
+    }
+
+    if (options?.noweb) {
+        args.push("--noweb");
+    }
+
+    for (const component of getBuildToolsComponents(sdkVersion)) {
+        args.push("--add", component);
+    }
+
+    return args;
+}
+
+function createLayoutArguments(
+    layoutPath: string,
+    sdkVersion: string,
+    manifestPath: string,
+): string[] {
+    const args = [
+        "--layout",
+        layoutPath,
+        "--lang",
+        "en-US",
+        "--channelId",
+        "VisualStudio.17.Release",
+        "--channelUri",
+        manifestPath,
+    ];
+
+    for (const component of getBuildToolsComponents(sdkVersion)) {
+        args.push("--add", component);
+    }
+
+    return args;
+}
+
+function logsContainChannelParseError(logPaths: string[]): boolean {
+    for (const logPath of logPaths) {
+        try {
+            const content = fs.readFileSync(logPath, "utf8");
+            if (content.includes(CHANNEL_PARSE_ERROR_CODE)) {
+                return true;
+            }
+        } catch (error) {
+            logger.warn(`Failed to read installer log ${logPath}: ${error}`);
+        }
+    }
+
+    return false;
+}
+
 async function attemptInstall(
     binFolder: string,
     sdkVersion: string,
-    onLog?: LogSink,
+    onLog: LogSink | undefined,
+    options: AttemptInstallOptions,
 ): Promise<InstallAttemptResult> {
     const installPath = path.join(binFolder, "build_tools");
     const tempRoot = path.join(binFolder, "temp");
@@ -780,41 +1038,24 @@ async function attemptInstall(
             };
         }
 
-        const args = [
-            "--installPath",
-            installPath,
-            "--quiet",
-            "--wait",
-            "--norestart",
-            "--nocache",
-            "--channelId",
-            "VisualStudio.17.Release",
-            "--channelUri",
-            "https://aka.ms/vs/17/release/channel",
-            "--add",
-            "Microsoft.VisualStudio.Workload.VCTools",
-            "--add",
-            "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
-            "--add",
-            "Microsoft.VisualStudio.Component.VC.CMake.Project",
-            "--add",
-            "Microsoft.VisualStudio.Workload.MSBuildTools",
-            "--add",
-            `Microsoft.VisualStudio.Component.Windows10SDK.${sdkVersion}`,
-        ];
-
         const requireRunAs = !isProcessElevated();
         const startedAt = Date.now();
-        const maxAttempts = 2;
+        const maxBootstrapAttempts = 2;
+        let dynamicAttempts = maxBootstrapAttempts;
         let lastRun: RunElevatedResult | undefined;
         let failureSummary: string | undefined;
         let logs: string[] = [];
+        let channelRetryAdded = false;
+        let lastAttemptParseError = false;
 
-        for (let attemptIndex = 0; attemptIndex < maxAttempts; attemptIndex += 1) {
+        for (let attemptIndex = 0; attemptIndex < dynamicAttempts; attemptIndex += 1) {
+            lastAttemptParseError = false;
             let bootstrap: { tempDir: string; installerPath: string } | undefined;
             try {
                 bootstrap = await ensureBootstrapperDownloadedUnlocked(binFolder, onLog);
+                const manifestPath = await ensureChannelManifest(bootstrap.tempDir, onLog);
 
+                cleanupBootstrapperCache(onLog);
                 stopVisualStudioInstallerProcesses(onLog);
 
                 logMessage(
@@ -824,6 +1065,7 @@ async function attemptInstall(
                         : "Retrying Visual Studio Build Tools installer launch...",
                 );
 
+                const args = createInstallArguments(installPath, sdkVersion, manifestPath);
                 const runResult = await runElevatedInstaller(
                     {
                         installerPath: bootstrap.installerPath,
@@ -864,6 +1106,37 @@ async function attemptInstall(
                 }
 
                 lastRun = runResult;
+
+                const interpretation = interpretExitCode(runResult.exitCode);
+                const hasParseError = logsContainChannelParseError(logs);
+
+                lastAttemptParseError = hasParseError;
+
+                if (!interpretation.success && hasParseError) {
+                    if (!channelRetryAdded) {
+                        channelRetryAdded = true;
+                        dynamicAttempts += 1;
+                        logMessage(
+                            onLog,
+                            "Detected Visual Studio channel manifest parse error (0x80131500). Clearing cached bootstrapper manifests and retrying once...",
+                            "warn",
+                        );
+                        cleanupBootstrapperCache(onLog);
+                        await delay(1000);
+                        continue;
+                    }
+
+                    failureSummary =
+                        "Visual Studio Build Tools installer failed to parse the channel manifest (0x80131500).";
+                    logMessage(
+                        onLog,
+                        "Visual Studio Build Tools installer still failed to parse the channel manifest (0x80131500) after retry.",
+                        "error",
+                    );
+                } else if (!interpretation.success && !failureSummary) {
+                    failureSummary = interpretation.summary;
+                }
+
                 break;
             } catch (error) {
                 logs = collectInstallerLogs(installPath, startedAt, onLog);
@@ -871,6 +1144,7 @@ async function attemptInstall(
                 logMessage(onLog, failureSummary, "error");
                 if (attemptIndex === 0) {
                     logMessage(onLog, "Re-downloading the bootstrapper and retrying once...", "warn");
+                    await delay(1000);
                     continue;
                 }
                 break;
@@ -897,7 +1171,15 @@ async function attemptInstall(
             };
         }
 
-        const interpretation = interpretExitCode(lastRun.exitCode);
+        let interpretation = interpretExitCode(lastRun.exitCode);
+
+        if (!interpretation.success && lastAttemptParseError) {
+            interpretation = {
+                ...interpretation,
+                summary:
+                    "Visual Studio Build Tools installer failed to parse the channel manifest (0x80131500).",
+            };
+        }
 
         if (interpretation.success) {
             logMessage(
@@ -910,6 +1192,38 @@ async function attemptInstall(
             logMessage(onLog, "Installer cancelled by the user before completion.", "warn");
         } else {
             logMessage(onLog, interpretation.summary, "error");
+        }
+
+        if (
+            !interpretation.success &&
+            options.enableLayoutFallback &&
+            lastAttemptParseError &&
+            !interpretation.uacCancelled
+        ) {
+            logMessage(
+                onLog,
+                "Falling back to an offline Visual Studio Build Tools layout (--noweb) after repeated channel manifest failures.",
+                "warn",
+            );
+            const fallbackResult = await attemptLayoutFallback(
+                binFolder,
+                installPath,
+                sdkVersion,
+                requireRunAs,
+                onLog,
+            );
+
+            if (logs.length > 0) {
+                const combinedLogs = [...logs];
+                for (const logPath of fallbackResult.logs) {
+                    if (!combinedLogs.includes(logPath)) {
+                        combinedLogs.push(logPath);
+                    }
+                }
+                fallbackResult.logs = combinedLogs;
+            }
+
+            return fallbackResult;
         }
 
         return {
@@ -926,6 +1240,201 @@ async function attemptInstall(
         if (releaseMutex) {
             await releaseMutex();
         }
+    }
+}
+
+async function attemptLayoutFallback(
+    binFolder: string,
+    installPath: string,
+    sdkVersion: string,
+    requireRunAs: boolean,
+    onLog?: LogSink,
+): Promise<InstallAttemptResult> {
+    const layoutDir = path.join(binFolder, "temp", `bt_layout_${crypto.randomUUID()}`);
+    await fsp.mkdir(layoutDir, { recursive: true });
+
+    let bootstrap: { tempDir: string; installerPath: string } | undefined;
+    let logs: string[] = [];
+    const startedAt = Date.now();
+
+    try {
+        bootstrap = await ensureBootstrapperDownloadedUnlocked(binFolder, onLog);
+        const manifestPath = await ensureChannelManifest(bootstrap.tempDir, onLog);
+
+        logMessage(
+            onLog,
+            "Creating offline Visual Studio Build Tools layout for required components...",
+        );
+
+        cleanupBootstrapperCache(onLog);
+        stopVisualStudioInstallerProcesses(onLog);
+
+        const layoutArgs = createLayoutArguments(layoutDir, sdkVersion, manifestPath);
+        const layoutResult = await runElevatedInstaller(
+            {
+                installerPath: bootstrap.installerPath,
+                args: layoutArgs,
+                workingDirectory: bootstrap.tempDir,
+                tempDir: bootstrap.tempDir,
+                requireRunAs,
+            },
+            onLog,
+        );
+
+        const layoutStdout = layoutResult.stdout.trim();
+        if (layoutStdout) {
+            logMessage(onLog, layoutStdout);
+        }
+        const layoutStderr = layoutResult.stderr.trim();
+        if (layoutStderr) {
+            logMessage(onLog, layoutStderr, "warn");
+        }
+
+        logs = collectInstallerLogs(installPath, startedAt, onLog);
+
+        if (layoutResult.fileLocked) {
+            const summary =
+                "Visual Studio Build Tools bootstrapper was locked while creating the offline layout.";
+            logMessage(onLog, summary, "error");
+            return {
+                exitCode: layoutResult.exitCode ?? 1,
+                needsReboot: false,
+                uacCancelled: layoutResult.uacCancelled,
+                summary,
+                logs,
+                success: false,
+                sdkVersion,
+                error: summary,
+            };
+        }
+
+        if (layoutResult.exitCode === 1223) {
+            const summary =
+                "Offline layout creation was cancelled before completion. Please accept the administrator prompt to continue.";
+            logMessage(onLog, summary, "warn");
+            return {
+                exitCode: layoutResult.exitCode,
+                needsReboot: false,
+                uacCancelled: true,
+                summary,
+                logs,
+                success: false,
+                sdkVersion,
+                error: summary,
+            };
+        }
+
+        if (layoutResult.exitCode !== 0) {
+            const summary = `Offline layout creation failed with exit code ${layoutResult.exitCode}.`;
+            logMessage(onLog, summary, "error");
+            return {
+                exitCode: layoutResult.exitCode,
+                needsReboot: false,
+                uacCancelled: layoutResult.uacCancelled,
+                summary,
+                logs,
+                success: false,
+                sdkVersion,
+                error: summary,
+            };
+        }
+
+        logMessage(
+            onLog,
+            "Offline layout created successfully. Installing Visual Studio Build Tools with --noweb...",
+        );
+
+        cleanupBootstrapperCache(onLog);
+        stopVisualStudioInstallerProcesses(onLog);
+
+        const installArgs = createInstallArguments(installPath, sdkVersion, manifestPath, {
+            layoutPath: layoutDir,
+            noweb: true,
+        });
+
+        const installResult = await runElevatedInstaller(
+            {
+                installerPath: bootstrap.installerPath,
+                args: installArgs,
+                workingDirectory: bootstrap.tempDir,
+                tempDir: bootstrap.tempDir,
+                requireRunAs,
+            },
+            onLog,
+        );
+
+        const installStdout = installResult.stdout.trim();
+        if (installStdout) {
+            logMessage(onLog, installStdout);
+        }
+        const installStderr = installResult.stderr.trim();
+        if (installStderr) {
+            logMessage(onLog, installStderr, "warn");
+        }
+
+        logs = collectInstallerLogs(installPath, startedAt, onLog);
+
+        if (installResult.fileLocked) {
+            const summary =
+                "Visual Studio Build Tools bootstrapper was locked during offline installation.";
+            logMessage(onLog, summary, "error");
+            return {
+                exitCode: installResult.exitCode ?? 1,
+                needsReboot: false,
+                uacCancelled: installResult.uacCancelled,
+                summary,
+                logs,
+                success: false,
+                sdkVersion,
+                error: summary,
+            };
+        }
+
+        const interpretation = interpretExitCode(installResult.exitCode);
+        let summary: string;
+
+        if (interpretation.success) {
+            summary = interpretation.needsReboot
+                ? "Microsoft Build Tools installed successfully using the offline layout. A reboot is required to finalize the installation."
+                : "Microsoft Build Tools installed successfully using the offline layout.";
+            logMessage(onLog, summary);
+        } else if (interpretation.uacCancelled) {
+            summary = interpretation.summary;
+            logMessage(onLog, summary, "warn");
+        } else {
+            summary = interpretation.summary;
+            logMessage(onLog, summary, "error");
+        }
+
+        return {
+            exitCode: installResult.exitCode,
+            needsReboot: interpretation.needsReboot,
+            uacCancelled: interpretation.uacCancelled,
+            summary,
+            logs,
+            success: interpretation.success,
+            sdkVersion,
+            error: interpretation.success ? undefined : summary,
+        };
+    } catch (error) {
+        const summary = `Offline layout fallback failed: ${error}`;
+        logMessage(onLog, summary, "error");
+        logs = collectInstallerLogs(installPath, startedAt, onLog);
+        return {
+            exitCode: 1,
+            needsReboot: false,
+            uacCancelled: false,
+            summary,
+            logs,
+            success: false,
+            sdkVersion,
+            error: summary,
+        };
+    } finally {
+        if (bootstrap) {
+            await gracefulCleanup(bootstrap.tempDir);
+        }
+        await gracefulCleanup(layoutDir);
     }
 }
 
@@ -968,7 +1477,7 @@ function readManagedMetadata(installPath: string): { sdkVersion?: string } {
 export async function ensureBuildToolsInstalled(
     options: EnsureBuildToolsOptions,
 ): Promise<BuildToolsEnsureResult> {
-    const { binFolder, onLog, preferredSdk } = options;
+    const { binFolder, onLog, preferredSdk, enableLayoutFallback: enableLayoutFallbackOption } = options;
     const installPath = path.join(binFolder, "build_tools");
 
     if (!isWindows()) {
@@ -993,8 +1502,13 @@ export async function ensureBuildToolsInstalled(
         };
     }
 
+    const enableLayoutFallback =
+        enableLayoutFallbackOption ?? DEFAULT_ENABLE_LAYOUT_FALLBACK;
+
     const desiredSdk = preferredSdk || DEFAULT_SDK;
-    let attempt = await attemptInstall(binFolder, desiredSdk, onLog);
+    let attempt = await attemptInstall(binFolder, desiredSdk, onLog, {
+        enableLayoutFallback,
+    });
 
     if (!attempt.success && !attempt.uacCancelled && desiredSdk === DEFAULT_SDK) {
         logMessage(
@@ -1003,7 +1517,9 @@ export async function ensureBuildToolsInstalled(
             "warn",
         );
         await delay(1000);
-        attempt = await attemptInstall(binFolder, FALLBACK_SDK, onLog);
+        attempt = await attemptInstall(binFolder, FALLBACK_SDK, onLog, {
+            enableLayoutFallback,
+        });
     }
 
     if (!attempt.success) {
