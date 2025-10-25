@@ -1,9 +1,12 @@
 import { execSync, spawnSync } from "node:child_process";
+import crypto from "node:crypto";
 import fs from "node:fs";
 import fsp from "node:fs/promises";
 import https from "node:https";
+import type { IncomingMessage } from "node:http";
 import os from "node:os";
 import path from "node:path";
+import { finished } from "node:stream/promises";
 import { setTimeout as delay } from "node:timers/promises";
 import logger from "../../../utils/logger";
 
@@ -51,6 +54,13 @@ interface InstallAttemptResult {
 const BUILD_TOOLS_URL = "https://aka.ms/vs/17/release/vs_BuildTools.exe";
 const DEFAULT_SDK = "22621";
 const FALLBACK_SDK = "19041";
+const MAX_BOOTSTRAPPER_REDIRECTS = 5;
+const FILE_UNLOCK_TIMEOUT_MS = 60_000;
+const INSTALL_MUTEX_TIMEOUT_MS = 5 * 60 * 1000;
+const INSTALL_MUTEX_STALE_MS = 30 * 60 * 1000;
+const INSTALL_MUTEX_RETRY_MS = 1000;
+const FILE_LOCK_EXIT_CODE = 5001;
+const START_PROCESS_LOCK_EXIT_CODE = 5002;
 
 function logMessage(onLog: LogSink | undefined, message: string, level: LogLevel = "info") {
     if (onLog) {
@@ -93,154 +103,434 @@ function isProcessElevated(): boolean {
     }
 }
 
-function formatArgumentsForPowerShell(args: string[]): string {
-    const lines = args
-        .map((arg) => {
-            const escaped = arg.replace(/`/g, "``").replace(/"/g, '""');
-            return `\t\"${escaped}\"`;
-        })
-        .join(",\n");
-    return `@(\n${lines}\n)`;
-}
-
 interface RunElevatedResult {
     exitCode: number;
     stdout: string;
     stderr: string;
     uacCancelled: boolean;
+    fileLocked: boolean;
 }
 
-function runBuildToolsInstallerElevated(
-    installerPath: string,
-    args: string[],
+interface RunElevatedInstallerOptions {
+    installerPath: string;
+    args: string[];
+    workingDirectory: string;
+    tempDir: string;
+    requireRunAs: boolean;
+}
+
+function escapeForPowerShellDoubleQuotes(value: string): string {
+    return value.replace(/`/g, "``").replace(/"/g, '""');
+}
+
+function encodeArgumentsToBase64(args: string[]): string {
+    return Buffer.from(JSON.stringify(args), "utf8").toString("base64");
+}
+
+async function downloadBootstrapperExecutable(
+    targetPath: string,
     onLog?: LogSink,
-): RunElevatedResult {
-    if (!isWindows()) {
-        throw new Error("Attempted to run elevated installer on non-Windows platform");
-    }
-
-    const tempScriptPath = path.join(
-        os.tmpdir(),
-        `dione_vs_buildtools_install_${Date.now()}_${Math.random().toString(16).slice(2)}.ps1`,
-    );
-
-    const argList = formatArgumentsForPowerShell(args);
-    const scriptContent = `
-$ErrorActionPreference = 'Stop'
-$arguments = ${argList}
-try {
-    $process = Start-Process -FilePath "${installerPath}" -ArgumentList $arguments -Verb RunAs -Wait -PassThru
-    if ($process.ExitCode -ne $null) {
-        exit $process.ExitCode
-    } else {
-        exit 0
-    }
-} catch {
-    $code = $_.Exception.HResult
-    if ($code -eq 0x800704C7) { exit 1223 }
-    throw
-}
-`.trim();
-
-    fs.writeFileSync(tempScriptPath, scriptContent, { encoding: "utf8" });
-
-    try {
-        const result = spawnSync(
-            "powershell",
-            ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", tempScriptPath],
-            { windowsHide: true, encoding: "utf8" },
-        );
-
-        const exitCode = typeof result.status === "number" ? result.status : result.signal ? 1 : 0;
-        const stdout = result.stdout?.toString() ?? "";
-        const stderr = result.stderr?.toString() ?? "";
-        const uacCancelled = exitCode === 1223;
-
-        if (result.error) {
-            logMessage(onLog, `Failed to launch installer elevated: ${result.error}`, "error");
-        }
-
-        return { exitCode, stdout, stderr, uacCancelled };
-    } finally {
-        try {
-            fs.unlinkSync(tempScriptPath);
-        } catch (error) {
-            logger.warn(`Failed to remove temporary script ${tempScriptPath}: ${error}`);
-        }
-    }
-}
-
-function runInstallerDirect(
-    installerPath: string,
-    args: string[],
-    onLog?: LogSink,
-): RunElevatedResult {
-    const result = spawnSync(installerPath, args, {
-        windowsHide: true,
-        encoding: "utf8",
-    });
-
-    const exitCode = typeof result.status === "number" ? result.status : result.signal ? 1 : 0;
-    if (result.error) {
-        logMessage(onLog, `Installer execution failed: ${result.error}`, "error");
-    }
-
-    return {
-        exitCode,
-        stdout: result.stdout?.toString() ?? "",
-        stderr: result.stderr?.toString() ?? "",
-        uacCancelled: exitCode === 1223,
-    };
-}
-
-async function downloadBootstrapper(tempDir: string, onLog?: LogSink): Promise<string> {
-    const targetPath = path.join(tempDir, "vs_BuildTools.exe");
-    ensureDirectory(tempDir);
-
-    return new Promise((resolve, reject) => {
+    url: string = BUILD_TOOLS_URL,
+    redirectCount = 0,
+): Promise<void> {
+    if (redirectCount === 0) {
         logMessage(onLog, "Downloading Visual Studio Build Tools bootstrapper...");
+    }
 
+    await fsp.mkdir(path.dirname(targetPath), { recursive: true });
+
+    const response = await new Promise<IncomingMessage>((resolve, reject) => {
         const request = https.get(
-            BUILD_TOOLS_URL,
+            url,
             {
                 headers: {
                     "User-Agent": "DioneApp/1.0 (BuildToolsInstaller)",
                 },
             },
-            (response) => {
-                if (
-                    response.statusCode &&
-                    [301, 302, 307, 308].includes(response.statusCode) &&
-                    response.headers.location
-                ) {
-                    https
-                        .get(response.headers.location, (redirectResponse) => {
-                            redirectResponse.pipe(fs.createWriteStream(targetPath));
-                            redirectResponse.on("end", () => resolve(targetPath));
-                            redirectResponse.on("error", (error) => reject(error));
-                        })
-                        .on("error", (error) => reject(error));
-                    return;
-                }
-
-                if (response.statusCode !== 200) {
-                    reject(new Error(`Failed to download bootstrapper: HTTP ${response.statusCode}`));
-                    return;
-                }
-
-                const fileStream = fs.createWriteStream(targetPath);
-                response.pipe(fileStream);
-                fileStream.on("finish", () => {
-                    fileStream.close(() => resolve(targetPath));
-                });
-                fileStream.on("error", (error) => reject(error));
-            },
+            (res) => resolve(res),
         );
-
-        request.on("error", (error) => {
-            reject(error);
-        });
+        request.on("error", (error) => reject(error));
     });
+
+    if (
+        response.statusCode &&
+        [301, 302, 307, 308].includes(response.statusCode) &&
+        response.headers.location
+    ) {
+        response.resume();
+        if (redirectCount >= MAX_BOOTSTRAPPER_REDIRECTS) {
+            throw new Error("Too many redirects while downloading bootstrapper.");
+        }
+        const nextUrl = new URL(response.headers.location, url).toString();
+        await downloadBootstrapperExecutable(targetPath, onLog, nextUrl, redirectCount + 1);
+        return;
+    }
+
+    if (response.statusCode !== 200) {
+        response.resume();
+        throw new Error(`Failed to download bootstrapper: HTTP ${response.statusCode}`);
+    }
+
+    const fileStream = fs.createWriteStream(targetPath, { flags: "wx" });
+
+    try {
+        await new Promise<void>((resolve, reject) => {
+            response.pipe(fileStream);
+            response.on("error", reject);
+            fileStream.on("error", reject);
+            fileStream.on("finish", resolve);
+        });
+
+        await finished(fileStream);
+
+        if (!fileStream.closed) {
+            await new Promise<void>((resolve, reject) => {
+                fileStream.close((err) => (err ? reject(err) : resolve()));
+            });
+        }
+
+        const handle = await fsp.open(targetPath, fs.constants.O_RDONLY);
+        try {
+            await handle.sync();
+        } finally {
+            await handle.close();
+        }
+    } catch (error) {
+        if (!fileStream.closed) {
+            fileStream.destroy();
+        }
+        response.destroy();
+        await fsp.rm(targetPath, { force: true }).catch(() => {});
+        throw error;
+    }
+}
+
+function unblockFile(filePath: string, onLog?: LogSink) {
+    if (!isWindows()) return;
+
+    const command = `try { Unblock-File -Path "${escapeForPowerShellDoubleQuotes(filePath)}" -ErrorAction SilentlyContinue } catch { }`;
+
+    try {
+        spawnSync("powershell", ["-NoProfile", "-Command", command], {
+            windowsHide: true,
+            stdio: "ignore",
+        });
+    } catch (error) {
+        logMessage(onLog, `Failed to unblock bootstrapper: ${error}`, "warn");
+    }
+}
+
+async function verifyFileUnlocked(
+    filePath: string,
+    onLog?: LogSink,
+    timeoutMs: number = FILE_UNLOCK_TIMEOUT_MS,
+): Promise<void> {
+    if (!isWindows()) return;
+
+    const escapedPath = escapeForPowerShellDoubleQuotes(filePath);
+    const start = Date.now();
+    const timeoutSeconds = Math.ceil(timeoutMs / 1000);
+    let warned = false;
+    let attempt = 0;
+
+    while (true) {
+        const script = `
+try {
+    $stream = [System.IO.File]::Open("${escapedPath}", [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::None)
+    $stream.Dispose()
+    exit 0
+} catch {
+    exit 1
+}`.trim();
+
+        const result = spawnSync("powershell", ["-NoProfile", "-Command", script], {
+            windowsHide: true,
+            encoding: "utf8",
+        });
+
+        const exitCode = typeof result.status === "number" ? result.status : result.signal ? 1 : 0;
+
+        if (exitCode === 0) {
+            return;
+        }
+
+        if (result.error) {
+            logMessage(onLog, `File lock verification failed: ${result.error}`, "warn");
+        }
+
+        if (!warned) {
+            logMessage(
+                onLog,
+                "Waiting for the Visual Studio Build Tools bootstrapper to release file handles...",
+                "warn",
+            );
+            warned = true;
+        }
+
+        if (Date.now() - start >= timeoutMs) {
+            throw new Error(
+                `Bootstrapper executable remained locked after waiting ${timeoutSeconds} seconds.`,
+            );
+        }
+
+        attempt += 1;
+        const backoff = Math.min(1000, 200 + attempt * 100);
+        await delay(backoff);
+    }
+}
+
+async function gracefulCleanup(tempDir: string): Promise<void> {
+    try {
+        await fsp.rm(tempDir, { recursive: true, force: true });
+    } catch (error) {
+        logger.warn(`Failed to clean up temporary directory ${tempDir}: ${error}`);
+    }
+}
+
+async function ensureBootstrapperDownloadedUnlocked(
+    binFolder: string,
+    onLog?: LogSink,
+): Promise<{ tempDir: string; installerPath: string }> {
+    const tempRoot = path.join(binFolder, "temp");
+    ensureDirectory(tempRoot);
+
+    const attemptId = crypto.randomUUID();
+    const tempDir = path.join(tempRoot, `bt_${attemptId}`);
+    await fsp.mkdir(tempDir, { recursive: true });
+
+    const installerPath = path.join(tempDir, `vs_BuildTools_${crypto.randomUUID()}.exe`);
+
+    try {
+        await downloadBootstrapperExecutable(installerPath, onLog);
+        unblockFile(installerPath, onLog);
+        await verifyFileUnlocked(installerPath, onLog);
+        return { tempDir, installerPath };
+    } catch (error) {
+        await gracefulCleanup(tempDir);
+        throw error;
+    }
+}
+
+async function acquireInstallMutex(
+    binFolder: string,
+    onLog?: LogSink,
+): Promise<() => Promise<void>> {
+    const tempRoot = path.join(binFolder, "temp");
+    ensureDirectory(tempRoot);
+    const lockPath = path.join(tempRoot, "build_tools.install.lock");
+    const start = Date.now();
+    let warned = false;
+
+    while (true) {
+        try {
+            const handle = await fsp.open(
+                lockPath,
+                fs.constants.O_CREAT | fs.constants.O_EXCL | fs.constants.O_RDWR,
+                0o600,
+            );
+
+            try {
+                await handle.truncate(0);
+                await handle.write(`${process.pid}\n${Date.now()}\n`);
+            } catch (writeError) {
+                logger.warn(`Failed to write install mutex metadata: ${writeError}`);
+            }
+
+            return async () => {
+                try {
+                    await handle.close();
+                } catch (closeError) {
+                    logger.warn(`Failed to close install mutex handle: ${closeError}`);
+                }
+
+                await fsp.unlink(lockPath).catch(() => {});
+            };
+        } catch (error) {
+            const err = error as NodeJS.ErrnoException;
+            if (err.code !== "EEXIST") {
+                throw err;
+            }
+
+            if (!warned) {
+                logMessage(
+                    onLog,
+                    "Another Visual Studio Build Tools installation is in progress. Waiting for it to finish...",
+                    "warn",
+                );
+                warned = true;
+            }
+
+            try {
+                const stat = await fsp.stat(lockPath);
+                if (Date.now() - stat.mtimeMs > INSTALL_MUTEX_STALE_MS) {
+                    await fsp.unlink(lockPath);
+                    continue;
+                }
+            } catch (statError) {
+                const errno = statError as NodeJS.ErrnoException;
+                if (errno.code === "ENOENT") {
+                    continue;
+                }
+                logger.warn(`Failed to inspect build tools install lock: ${statError}`);
+            }
+
+            if (Date.now() - start >= INSTALL_MUTEX_TIMEOUT_MS) {
+                throw new Error(
+                    "Another Visual Studio Build Tools installation is already running. Please try again later.",
+                );
+            }
+
+            await delay(INSTALL_MUTEX_RETRY_MS);
+        }
+    }
+}
+
+async function runElevatedInstaller(
+    options: RunElevatedInstallerOptions,
+    onLog?: LogSink,
+): Promise<RunElevatedResult> {
+    if (!isWindows()) {
+        throw new Error("Attempted to run Windows installer on non-Windows platform");
+    }
+
+    const scriptPath = path.join(
+        options.tempDir,
+        `launch_vs_buildtools_${Date.now()}_${crypto.randomUUID()}.ps1`,
+    );
+    const unlockTimeoutSeconds = Math.ceil(FILE_UNLOCK_TIMEOUT_MS / 1000);
+
+    const scriptContent = `
+param(
+    [Parameter(Mandatory = $true)][string]$InstallerPath,
+    [Parameter(Mandatory = $true)][string]$ArgumentsBase64,
+    [Parameter(Mandatory = $true)][string]$WorkingDirectory,
+    [switch]$ForceRunAs
+)
+
+$ErrorActionPreference = 'Stop'
+$lockedExitCode = ${FILE_LOCK_EXIT_CODE}
+$startProcessLockedExitCode = ${START_PROCESS_LOCK_EXIT_CODE}
+$uacCancelledCode = 1223
+
+try {
+    $argumentsJson = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($ArgumentsBase64))
+    $argumentList = ConvertFrom-Json $argumentsJson
+} catch {
+    Write-Error "Failed to parse installer arguments: $_"
+    exit 1
+}
+
+$processNames = @("vs_installer", "VisualStudioInstaller", "vs_installerservice", "vs_setup_bootstrapper", "setup", "vs_bldtools")
+foreach ($name in $processNames) {
+    try {
+        Get-Process -Name $name -ErrorAction SilentlyContinue | ForEach-Object {
+            try {
+                if (-not $_.HasExited) {
+                    $_.CloseMainWindow() | Out-Null
+                    Start-Sleep -Milliseconds 400
+                    if (-not $_.HasExited) {
+                        Stop-Process -Id $_.Id -Force
+                    }
+                }
+            } catch {}
+        }
+    } catch {}
+}
+
+try {
+    Unblock-File -Path $InstallerPath -ErrorAction SilentlyContinue
+} catch {}
+
+$stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+while ($true) {
+    try {
+        $stream = [System.IO.File]::Open($InstallerPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::None)
+        $stream.Dispose()
+        break
+    } catch {
+        if ($stopwatch.Elapsed.TotalSeconds -ge ${unlockTimeoutSeconds}) {
+            Write-Error "Installer file remained locked after ${unlockTimeoutSeconds} seconds."
+            exit $lockedExitCode
+        }
+        Start-Sleep -Milliseconds 500
+    }
+}
+
+$startParams = @{
+    FilePath = $InstallerPath
+    ArgumentList = $argumentList
+    WorkingDirectory = $WorkingDirectory
+    Wait = $true
+    PassThru = $true
+}
+
+if ($ForceRunAs.IsPresent) {
+    $startParams["Verb"] = "RunAs"
+}
+
+try {
+    $process = Start-Process @startParams
+    if ($null -ne $process.ExitCode) {
+        exit $process.ExitCode
+    } else {
+        exit 0
+    }
+} catch {
+    $hr = $_.Exception.HResult
+    if ($hr -eq -2147024864) {
+        Write-Error "Start-Process failed because the installer file is in use."
+        exit $startProcessLockedExitCode
+    }
+    if ($hr -eq -2147023673) {
+        exit $uacCancelledCode
+    }
+    throw
+}
+`.trim();
+
+    await fsp.writeFile(scriptPath, scriptContent, "utf8");
+
+    const argsBase64 = encodeArgumentsToBase64(options.args);
+    const psArguments = [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        scriptPath,
+        "-InstallerPath",
+        options.installerPath,
+        "-ArgumentsBase64",
+        argsBase64,
+        "-WorkingDirectory",
+        options.workingDirectory,
+    ];
+
+    if (options.requireRunAs) {
+        psArguments.push("-ForceRunAs");
+    }
+
+    try {
+        const result = spawnSync("powershell", psArguments, {
+            windowsHide: true,
+            encoding: "utf8",
+        });
+
+        const exitCode = typeof result.status === "number" ? result.status : result.signal ? 1 : 0;
+
+        if (result.error) {
+            logMessage(onLog, `Failed to launch installer via PowerShell: ${result.error}`, "error");
+        }
+
+        return {
+            exitCode,
+            stdout: result.stdout?.toString() ?? "",
+            stderr: result.stderr?.toString() ?? "",
+            uacCancelled: exitCode === 1223,
+            fileLocked: exitCode === FILE_LOCK_EXIT_CODE || exitCode === START_PROCESS_LOCK_EXIT_CODE,
+        };
+    } finally {
+        await fsp.rm(scriptPath, { force: true }).catch(() => {});
+    }
 }
 
 function ensureDiskSpace(targetPath: string, onLog?: LogSink): boolean {
@@ -280,7 +570,7 @@ function stopVisualStudioInstallerProcesses(onLog?: LogSink) {
     if (!isWindows()) return;
 
     const script = `
-$names = @("vs_installer", "vs_installerservice", "vs_setup_bootstrapper", "setup", "vs_bldtools")
+$names = @("vs_installer", "VisualStudioInstaller", "vs_installerservice", "vs_setup_bootstrapper", "setup", "vs_bldtools")
 foreach ($name in $names) {
     try {
         $processes = Get-Process -Name $name -ErrorAction SilentlyContinue
@@ -298,7 +588,8 @@ foreach ($name in $names) {
             }
         }
     } catch {}
-}`.trim();
+}
+Start-Sleep -Milliseconds 200`.trim();
 
     try {
         spawnSync("powershell", ["-NoProfile", "-Command", script], {
@@ -422,127 +713,192 @@ async function attemptInstall(
     onLog?: LogSink,
 ): Promise<InstallAttemptResult> {
     const installPath = path.join(binFolder, "build_tools");
-    const tempDir = path.join(binFolder, "temp");
+    const tempRoot = path.join(binFolder, "temp");
     ensureDirectory(installPath);
-    ensureDirectory(tempDir);
+    ensureDirectory(tempRoot);
 
-    if (!ensureDiskSpace(installPath, onLog)) {
-        return {
-            exitCode: 1603,
-            needsReboot: false,
-            uacCancelled: false,
-            summary: "Not enough free disk space to continue installation.",
-            logs: [],
-            success: false,
-            sdkVersion,
-            error: "Insufficient disk space",
-        };
-    }
-
-    stopVisualStudioInstallerProcesses(onLog);
-
-    let installerPath: string;
+    let releaseMutex: (() => Promise<void>) | undefined;
     try {
-        installerPath = await downloadBootstrapper(tempDir, onLog);
+        releaseMutex = await acquireInstallMutex(binFolder, onLog);
     } catch (error) {
-        const message = `Failed to download Visual Studio Build Tools: ${error}`;
-        logMessage(onLog, message, "error");
+        const summary =
+            error instanceof Error && error.message
+                ? error.message
+                : "Another Visual Studio Build Tools installation is already running.";
+        logMessage(onLog, summary, "warn");
         return {
             exitCode: 1,
             needsReboot: false,
             uacCancelled: false,
-            summary: message,
+            summary,
             logs: [],
             success: false,
             sdkVersion,
-            error: String(error),
+            error: summary,
         };
     }
 
-    const args = [
-        "--installPath",
-        installPath,
-        "--quiet",
-        "--wait",
-        "--norestart",
-        "--nocache",
-        "--channelId",
-        "VisualStudio.17.Release",
-        "--channelUri",
-        "https://aka.ms/vs/17/release/channel",
-        "--add",
-        "Microsoft.VisualStudio.Workload.VCTools",
-        "--add",
-        "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
-        "--add",
-        "Microsoft.VisualStudio.Component.VC.CMake.Project",
-        "--add",
-        "Microsoft.VisualStudio.Workload.MSBuildTools",
-        "--add",
-        `Microsoft.VisualStudio.Component.Windows10SDK.${sdkVersion}`,
-    ];
-
-    logMessage(
-        onLog,
-        `Launching Visual Studio Build Tools installer (Windows 10 SDK ${sdkVersion})...`,
-    );
-    const startTs = Date.now();
-
-    let runResult: RunElevatedResult;
     try {
-        if (isProcessElevated()) {
-            runResult = runInstallerDirect(installerPath, args, onLog);
-        } else {
-            runResult = runBuildToolsInstallerElevated(installerPath, args, onLog);
+        if (!ensureDiskSpace(installPath, onLog)) {
+            return {
+                exitCode: 1603,
+                needsReboot: false,
+                uacCancelled: false,
+                summary: "Not enough free disk space to continue installation.",
+                logs: [],
+                success: false,
+                sdkVersion,
+                error: "Insufficient disk space",
+            };
         }
-    } catch (error) {
-        const message = `Failed to execute installer: ${error}`;
-        logMessage(onLog, message, "error");
+
+        const args = [
+            "--installPath",
+            installPath,
+            "--quiet",
+            "--wait",
+            "--norestart",
+            "--nocache",
+            "--channelId",
+            "VisualStudio.17.Release",
+            "--channelUri",
+            "https://aka.ms/vs/17/release/channel",
+            "--add",
+            "Microsoft.VisualStudio.Workload.VCTools",
+            "--add",
+            "Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
+            "--add",
+            "Microsoft.VisualStudio.Component.VC.CMake.Project",
+            "--add",
+            "Microsoft.VisualStudio.Workload.MSBuildTools",
+            "--add",
+            `Microsoft.VisualStudio.Component.Windows10SDK.${sdkVersion}`,
+        ];
+
+        const requireRunAs = !isProcessElevated();
+        const startedAt = Date.now();
+        const maxAttempts = 2;
+        let lastRun: RunElevatedResult | undefined;
+        let failureSummary: string | undefined;
+        let logs: string[] = [];
+
+        for (let attemptIndex = 0; attemptIndex < maxAttempts; attemptIndex += 1) {
+            let bootstrap: { tempDir: string; installerPath: string } | undefined;
+            try {
+                bootstrap = await ensureBootstrapperDownloadedUnlocked(binFolder, onLog);
+
+                stopVisualStudioInstallerProcesses(onLog);
+
+                logMessage(
+                    onLog,
+                    attemptIndex === 0
+                        ? `Launching Visual Studio Build Tools installer (Windows 10 SDK ${sdkVersion})...`
+                        : "Retrying Visual Studio Build Tools installer launch...",
+                );
+
+                const runResult = await runElevatedInstaller(
+                    {
+                        installerPath: bootstrap.installerPath,
+                        args,
+                        workingDirectory: bootstrap.tempDir,
+                        tempDir: bootstrap.tempDir,
+                        requireRunAs,
+                    },
+                    onLog,
+                );
+
+                const stdout = runResult.stdout.trim();
+                if (stdout) {
+                    logMessage(onLog, stdout);
+                }
+                const stderr = runResult.stderr.trim();
+                if (stderr) {
+                    logMessage(onLog, stderr, "warn");
+                }
+
+                logs = collectInstallerLogs(installPath, startedAt, onLog);
+
+                if (runResult.fileLocked) {
+                    failureSummary =
+                        "Visual Studio Build Tools bootstrapper was locked by another process during launch.";
+                    logMessage(
+                        onLog,
+                        attemptIndex === 0
+                            ? `${failureSummary} Retrying with a fresh download...`
+                            : failureSummary,
+                        attemptIndex === 0 ? "warn" : "error",
+                    );
+
+                    if (attemptIndex === 0) {
+                        await delay(1000);
+                        continue;
+                    }
+                }
+
+                lastRun = runResult;
+                break;
+            } catch (error) {
+                logs = collectInstallerLogs(installPath, startedAt, onLog);
+                failureSummary = `Failed to execute Visual Studio Build Tools installer: ${error}`;
+                logMessage(onLog, failureSummary, "error");
+                if (attemptIndex === 0) {
+                    logMessage(onLog, "Re-downloading the bootstrapper and retrying once...", "warn");
+                    continue;
+                }
+                break;
+            } finally {
+                if (bootstrap) {
+                    await gracefulCleanup(bootstrap.tempDir);
+                }
+            }
+        }
+
+        if (!lastRun || lastRun.fileLocked) {
+            const summary =
+                failureSummary ??
+                "Failed to launch the Visual Studio Build Tools installer because the bootstrapper file is locked.";
+            return {
+                exitCode: lastRun?.exitCode ?? 1,
+                needsReboot: false,
+                uacCancelled: lastRun?.uacCancelled ?? false,
+                summary,
+                logs,
+                success: false,
+                sdkVersion,
+                error: summary,
+            };
+        }
+
+        const interpretation = interpretExitCode(lastRun.exitCode);
+
+        if (interpretation.success) {
+            logMessage(
+                onLog,
+                interpretation.needsReboot
+                    ? "Installer completed successfully but a reboot is required."
+                    : "Installer completed successfully.",
+            );
+        } else if (interpretation.uacCancelled) {
+            logMessage(onLog, "Installer cancelled by the user before completion.", "warn");
+        } else {
+            logMessage(onLog, interpretation.summary, "error");
+        }
+
         return {
-            exitCode: 1,
-            needsReboot: false,
-            uacCancelled: false,
-            summary: message,
-            logs: [],
-            success: false,
+            exitCode: lastRun.exitCode,
+            needsReboot: interpretation.needsReboot,
+            uacCancelled: interpretation.uacCancelled,
+            summary: interpretation.summary,
+            logs,
+            success: interpretation.success,
             sdkVersion,
-            error: String(error),
+            error: interpretation.success ? undefined : interpretation.summary,
         };
+    } finally {
+        if (releaseMutex) {
+            await releaseMutex();
+        }
     }
-
-    const logs = collectInstallerLogs(installPath, startTs, onLog);
-    const interpretation = interpretExitCode(runResult.exitCode);
-
-    if (runResult.stdout) {
-        logMessage(onLog, runResult.stdout.trim());
-    }
-    if (runResult.stderr) {
-        logMessage(onLog, runResult.stderr.trim(), "warn");
-    }
-
-    if (interpretation.success) {
-        logMessage(
-            onLog,
-            interpretation.needsReboot
-                ? "Installer completed successfully but a reboot is required."
-                : "Installer completed successfully.",
-        );
-    } else if (interpretation.uacCancelled) {
-        logMessage(onLog, "Installer cancelled by the user before completion.", "warn");
-    } else {
-        logMessage(onLog, interpretation.summary, "error");
-    }
-
-    return {
-        exitCode: runResult.exitCode,
-        needsReboot: interpretation.needsReboot,
-        uacCancelled: interpretation.uacCancelled,
-        summary: interpretation.summary,
-        logs,
-        success: interpretation.success,
-        sdkVersion,
-        error: interpretation.success ? undefined : interpretation.summary,
-    };
 }
 
 function writeManagedMarker(installPath: string, sdkVersion: string) {
@@ -806,13 +1162,23 @@ export async function uninstallManagedBuildTools(
 
     logMessage(onLog, "Starting uninstallation of Dione-managed Visual Studio Build Tools instance...");
 
+    stopVisualStudioInstallerProcesses(onLog);
+
+    const scriptTempDir = path.join(os.tmpdir(), `dione_vs_uninstall_${crypto.randomUUID()}`);
+    await fsp.mkdir(scriptTempDir, { recursive: true });
+
     let result: RunElevatedResult;
     try {
-        if (isProcessElevated()) {
-            result = runInstallerDirect(vsInstaller, args, onLog);
-        } else {
-            result = runBuildToolsInstallerElevated(vsInstaller, args, onLog);
-        }
+        result = await runElevatedInstaller(
+            {
+                installerPath: vsInstaller,
+                args,
+                workingDirectory: path.dirname(vsInstaller),
+                tempDir: scriptTempDir,
+                requireRunAs: !isProcessElevated(),
+            },
+            onLog,
+        );
     } catch (error) {
         const summary = `Failed to run vs_installer.exe: ${error}`;
         logMessage(onLog, summary, "error");
@@ -821,6 +1187,30 @@ export async function uninstallManagedBuildTools(
             summary,
             logs: [],
             error: String(error),
+        };
+    } finally {
+        await gracefulCleanup(scriptTempDir);
+    }
+
+    const stdout = result.stdout.trim();
+    if (stdout) {
+        logMessage(onLog, stdout);
+    }
+    const stderr = result.stderr.trim();
+    if (stderr) {
+        logMessage(onLog, stderr, "warn");
+    }
+
+    if (result.fileLocked) {
+        const summary =
+            "Visual Studio Installer could not be launched because the executable is locked by another process.";
+        logMessage(onLog, summary, "error");
+        return {
+            status: "failed",
+            summary,
+            exitCode: result.exitCode,
+            logs: [],
+            error: summary,
         };
     }
 
