@@ -6,7 +6,7 @@ import https from "node:https";
 import type { IncomingMessage } from "node:http";
 import os from "node:os";
 import path from "node:path";
-import { finished } from "node:stream/promises";
+import { pipeline as streamPipeline } from "node:stream/promises";
 import { setTimeout as delay } from "node:timers/promises";
 import logger from "../../../utils/logger";
 
@@ -171,36 +171,56 @@ async function downloadBootstrapperExecutable(
         throw new Error(`Failed to download bootstrapper: HTTP ${response.statusCode}`);
     }
 
-    const fileStream = fs.createWriteStream(targetPath, { flags: "wx" });
+    const tempPath = `${targetPath}.part`;
+    await fsp.rm(tempPath, { force: true }).catch(() => {});
+
+    let handle: fsp.FileHandle | undefined;
+    let writable: fs.WriteStream | undefined;
+    const cleanupPartial = async () => {
+        await fsp.rm(tempPath, { force: true }).catch(() => {});
+    };
 
     try {
-        await new Promise<void>((resolve, reject) => {
-            response.pipe(fileStream);
-            response.on("error", reject);
-            fileStream.on("error", reject);
-            fileStream.on("finish", resolve);
-        });
+        handle = await fsp.open(tempPath, "w", 0o644);
+        writable = fs.createWriteStream(null, { fd: handle.fd, autoClose: false });
 
-        await finished(fileStream);
-
-        if (!fileStream.closed) {
-            await new Promise<void>((resolve, reject) => {
-                fileStream.close((err) => (err ? reject(err) : resolve()));
-            });
+        try {
+            await streamPipeline(response, writable);
+        } catch (pipelineError) {
+            writable.destroy();
+            writable = undefined;
+            throw pipelineError;
         }
 
-        const handle = await fsp.open(targetPath, fs.constants.O_RDONLY);
         try {
             await handle.sync();
-        } finally {
-            await handle.close();
+        } catch (error) {
+            const err = error as NodeJS.ErrnoException;
+            if (!(isWindows() && err?.code === "EPERM")) {
+                throw error;
+            }
+            logMessage(
+                onLog,
+                "fsync is not permitted on the bootstrapper descriptor (EPERM). Continuing without syncing.",
+                "warn",
+            );
         }
+
+        await handle.close();
+        handle = undefined;
+
+        await fsp.rename(tempPath, targetPath);
     } catch (error) {
-        if (!fileStream.closed) {
-            fileStream.destroy();
-        }
         response.destroy();
-        await fsp.rm(targetPath, { force: true }).catch(() => {});
+        if (handle) {
+            try {
+                await handle.close();
+            } catch {}
+            handle = undefined;
+        }
+        writable?.destroy();
+        writable = undefined;
+        await cleanupPartial();
         throw error;
     }
 }
@@ -235,13 +255,21 @@ async function verifyFileUnlocked(
 
     while (true) {
         const script = `
-try {
-    $stream = [System.IO.File]::Open("${escapedPath}", [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::None)
-    $stream.Dispose()
-    exit 0
-} catch {
-    exit 1
-}`.trim();
+$path = "${escapedPath}"
+$accessModes = @([System.IO.FileAccess]::ReadWrite, [System.IO.FileAccess]::Read)
+
+foreach ($mode in $accessModes) {
+    try {
+        $stream = [System.IO.File]::Open($path, [System.IO.FileMode]::Open, $mode, [System.IO.FileShare]::None)
+        $stream.Dispose()
+        exit 0
+    } catch {
+        continue
+    }
+}
+
+exit 1
+`.trim();
 
         const result = spawnSync("powershell", ["-NoProfile", "-Command", script], {
             windowsHide: true,
