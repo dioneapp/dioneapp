@@ -66,6 +66,7 @@ const INSTALL_MUTEX_STALE_MS = 30 * 60 * 1000;
 const INSTALL_MUTEX_RETRY_MS = 1000;
 const FILE_LOCK_EXIT_CODE = 5001;
 const START_PROCESS_LOCK_EXIT_CODE = 5002;
+const MUTEX_ACQUIRE_EXIT_CODE = 5003;
 const CHANNEL_MANIFEST_URL = "https://aka.ms/vs/17/release/channel";
 const MAX_CHANNEL_MANIFEST_ATTEMPTS = 3;
 const CHANNEL_MANIFEST_BACKOFF_BASE_MS = 500;
@@ -81,6 +82,11 @@ const LAYOUT_FALLBACK_ENV =
     process.env.DIONE_ENABLE_BUILD_TOOLS_LAYOUT_FALLBACK?.toLowerCase();
 const DEFAULT_ENABLE_LAYOUT_FALLBACK =
     LAYOUT_FALLBACK_ENV === "1" || LAYOUT_FALLBACK_ENV === "true";
+const UNINSTALL_MUTEX_NAME = "Global\\DioneVSBT_Uninstall";
+const UNINSTALL_MUTEX_TIMEOUT_MS = 5 * 60 * 1000;
+const DEFAULT_UNINSTALL_LOG_DIR_NAME = "build_tools_uninstall";
+
+let uninstallInProgress = false;
 
 function logMessage(onLog: LogSink | undefined, message: string, level: LogLevel = "info") {
     if (onLog) {
@@ -129,6 +135,7 @@ interface RunElevatedResult {
     stderr: string;
     uacCancelled: boolean;
     fileLocked: boolean;
+    mutexUnavailable: boolean;
 }
 
 interface RunElevatedInstallerOptions {
@@ -137,6 +144,28 @@ interface RunElevatedInstallerOptions {
     workingDirectory: string;
     tempDir: string;
     requireRunAs: boolean;
+    mutexName?: string;
+    mutexTimeoutMs?: number;
+}
+
+interface CollectInstallerLogsOptions {
+    targetDir?: string;
+    includeInstallerLogs?: boolean;
+}
+
+interface VsWhereInstanceResult {
+    instanceId: string;
+    installationPath: string;
+    productId: string;
+}
+
+interface VisualStudioInstallerToolsResult {
+    vsInstaller?: string;
+    vsWhere?: string;
+    logs: string[];
+    needsReboot: boolean;
+    uacCancelled: boolean;
+    error?: string;
 }
 
 function escapeForPowerShellDoubleQuotes(value: string): string {
@@ -145,6 +174,22 @@ function escapeForPowerShellDoubleQuotes(value: string): string {
 
 function encodeArgumentsToBase64(args: string[]): string {
     return Buffer.from(JSON.stringify(args), "utf8").toString("base64");
+}
+
+function quoteArgumentForLogging(value: string): string {
+    if (!value) {
+        return '""';
+    }
+    if (/[\s"]/u.test(value)) {
+        return `"${value.replace(/"/g, '\\"')}"`;
+    }
+    return value;
+}
+
+function formatCommandLine(executable: string, args: string[]): string {
+    return [quoteArgumentForLogging(executable), ...args.map(quoteArgumentForLogging)]
+        .join(" ")
+        .trim();
 }
 
 async function downloadBootstrapperExecutable(
@@ -608,87 +653,122 @@ param(
     [Parameter(Mandatory = $true)][string]$InstallerPath,
     [Parameter(Mandatory = $true)][string]$ArgumentsBase64,
     [Parameter(Mandatory = $true)][string]$WorkingDirectory,
-    [switch]$ForceRunAs
+    [switch]$ForceRunAs,
+    [string]$MutexName,
+    [int]$MutexTimeoutMs = 0
 )
 
 $ErrorActionPreference = 'Stop'
 $lockedExitCode = ${FILE_LOCK_EXIT_CODE}
 $startProcessLockedExitCode = ${START_PROCESS_LOCK_EXIT_CODE}
 $uacCancelledCode = 1223
+$mutexAcquireExitCode = ${MUTEX_ACQUIRE_EXIT_CODE}
 
-try {
-    $argumentsJson = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($ArgumentsBase64))
-    $argumentList = ConvertFrom-Json $argumentsJson
-} catch {
-    Write-Error "Failed to parse installer arguments: $_"
-    exit 1
+$mutex = $null
+$mutexAcquired = $false
+$mutexTimeoutValue = if ($MutexTimeoutMs -gt 0) { $MutexTimeoutMs } else { ${UNINSTALL_MUTEX_TIMEOUT_MS} }
+
+if (-not [string]::IsNullOrWhiteSpace($MutexName)) {
+    try {
+        $mutex = New-Object System.Threading.Mutex($false, $MutexName)
+        try {
+            $mutexAcquired = $mutex.WaitOne([System.TimeSpan]::FromMilliseconds($mutexTimeoutValue), $false)
+        } catch [System.Threading.AbandonedMutexException] {
+            $mutexAcquired = $true
+        }
+        if (-not $mutexAcquired) {
+            exit $mutexAcquireExitCode
+        }
+    } catch {
+        Write-Error "Failed to acquire mutex $MutexName: $_"
+        exit $mutexAcquireExitCode
+    }
 }
 
-$processNames = @("vs_installer", "VisualStudioInstaller", "vs_installerservice", "vs_setup_bootstrapper", "setup", "vs_bldtools")
-foreach ($name in $processNames) {
+try {
     try {
-        Get-Process -Name $name -ErrorAction SilentlyContinue | ForEach-Object {
-            try {
-                if (-not $_.HasExited) {
-                    $_.CloseMainWindow() | Out-Null
-                    Start-Sleep -Milliseconds 400
+        $argumentsJson = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($ArgumentsBase64))
+        $argumentList = ConvertFrom-Json $argumentsJson
+    } catch {
+        Write-Error "Failed to parse installer arguments: $_"
+        exit 1
+    }
+
+    $processNames = @("vs_installer", "VisualStudioInstaller", "vs_installerservice", "vs_setup_bootstrapper", "setup", "vs_bldtools")
+    foreach ($name in $processNames) {
+        try {
+            Get-Process -Name $name -ErrorAction SilentlyContinue | ForEach-Object {
+                try {
                     if (-not $_.HasExited) {
-                        Stop-Process -Id $_.Id -Force
+                        $_.CloseMainWindow() | Out-Null
+                        Start-Sleep -Milliseconds 400
+                        if (-not $_.HasExited) {
+                            Stop-Process -Id $_.Id -Force
+                        }
                     }
-                }
+                } catch {}
+            }
+        } catch {}
+    }
+
+    try {
+        Unblock-File -Path $InstallerPath -ErrorAction SilentlyContinue
+    } catch {}
+
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    while ($true) {
+        try {
+            $stream = [System.IO.File]::Open($InstallerPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::None)
+            $stream.Dispose()
+            break
+        } catch {
+            if ($stopwatch.Elapsed.TotalSeconds -ge ${unlockTimeoutSeconds}) {
+                Write-Error "Installer file remained locked after ${unlockTimeoutSeconds} seconds."
+                exit $lockedExitCode
+            }
+            Start-Sleep -Milliseconds 500
+        }
+    }
+
+    $startParams = @{
+        FilePath = $InstallerPath
+        ArgumentList = $argumentList
+        WorkingDirectory = $WorkingDirectory
+        Wait = $true
+        PassThru = $true
+    }
+
+    if ($ForceRunAs.IsPresent) {
+        $startParams["Verb"] = "RunAs"
+    }
+
+    try {
+        $process = Start-Process @startParams
+        if ($null -ne $process.ExitCode) {
+            exit $process.ExitCode
+        } else {
+            exit 0
+        }
+    } catch {
+        $hr = $_.Exception.HResult
+        if ($hr -eq -2147024864) {
+            Write-Error "Start-Process failed because the installer file is in use."
+            exit $startProcessLockedExitCode
+        }
+        if ($hr -eq -2147023673) {
+            exit $uacCancelledCode
+        }
+        throw
+    }
+} finally {
+    if ($mutex -ne $null) {
+        if ($mutexAcquired) {
+            try {
+                $mutex.ReleaseMutex() | Out-Null
             } catch {}
         }
-    } catch {}
-}
-
-try {
-    Unblock-File -Path $InstallerPath -ErrorAction SilentlyContinue
-} catch {}
-
-$stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
-while ($true) {
-    try {
-        $stream = [System.IO.File]::Open($InstallerPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read, [System.IO.FileShare]::None)
-        $stream.Dispose()
-        break
-    } catch {
-        if ($stopwatch.Elapsed.TotalSeconds -ge ${unlockTimeoutSeconds}) {
-            Write-Error "Installer file remained locked after ${unlockTimeoutSeconds} seconds."
-            exit $lockedExitCode
-        }
-        Start-Sleep -Milliseconds 500
+        $mutex.Dispose()
     }
-}
-
-$startParams = @{
-    FilePath = $InstallerPath
-    ArgumentList = $argumentList
-    WorkingDirectory = $WorkingDirectory
-    Wait = $true
-    PassThru = $true
-}
-
-if ($ForceRunAs.IsPresent) {
-    $startParams["Verb"] = "RunAs"
-}
-
-try {
-    $process = Start-Process @startParams
-    if ($null -ne $process.ExitCode) {
-        exit $process.ExitCode
-    } else {
-        exit 0
-    }
-} catch {
-    $hr = $_.Exception.HResult
-    if ($hr -eq -2147024864) {
-        Write-Error "Start-Process failed because the installer file is in use."
-        exit $startProcessLockedExitCode
-    }
-    if ($hr -eq -2147023673) {
-        exit $uacCancelledCode
-    }
-    throw
 }
 `.trim();
 
@@ -713,6 +793,12 @@ try {
         psArguments.push("-ForceRunAs");
     }
 
+    if (options.mutexName) {
+        psArguments.push("-MutexName", options.mutexName);
+        const mutexTimeout = options.mutexTimeoutMs ?? UNINSTALL_MUTEX_TIMEOUT_MS;
+        psArguments.push("-MutexTimeoutMs", mutexTimeout.toString());
+    }
+
     try {
         const result = spawnSync("powershell", psArguments, {
             windowsHide: true,
@@ -730,7 +816,9 @@ try {
             stdout: result.stdout?.toString() ?? "",
             stderr: result.stderr?.toString() ?? "",
             uacCancelled: exitCode === 1223,
-            fileLocked: exitCode === FILE_LOCK_EXIT_CODE || exitCode === START_PROCESS_LOCK_EXIT_CODE,
+            fileLocked:
+                exitCode === FILE_LOCK_EXIT_CODE || exitCode === START_PROCESS_LOCK_EXIT_CODE,
+            mutexUnavailable: exitCode === MUTEX_ACQUIRE_EXIT_CODE,
         };
     } finally {
         await fsp.rm(scriptPath, { force: true }).catch(() => {});
@@ -859,50 +947,167 @@ function interpretExitCode(exitCode: number): {
     };
 }
 
+function interpretUninstallExitCode(exitCode: number, commandLine: string): {
+    success: boolean;
+    needsReboot: boolean;
+    summary: string;
+    uacCancelled: boolean;
+} {
+    if (exitCode === 0) {
+        return {
+            success: true,
+            needsReboot: false,
+            summary: "Build tools uninstalled successfully.",
+            uacCancelled: false,
+        };
+    }
+
+    if (exitCode === 3010) {
+        return {
+            success: true,
+            needsReboot: true,
+            summary:
+                "Build tools uninstallation completed. A system restart is required to finalize cleanup.",
+            uacCancelled: false,
+        };
+    }
+
+    if (exitCode === 1223) {
+        return {
+            success: false,
+            needsReboot: false,
+            summary:
+                "Uninstallation was cancelled at the elevation prompt. Please accept the administrator request to continue.",
+            uacCancelled: true,
+        };
+    }
+
+    if (exitCode === 5) {
+        return {
+            success: false,
+            needsReboot: false,
+            summary:
+                "Access denied (5) while running the Visual Studio Installer. Try running Dione as administrator or accept the UAC prompt.",
+            uacCancelled: false,
+        };
+    }
+
+    if (exitCode === 87) {
+        return {
+            success: false,
+            needsReboot: false,
+            summary: `Visual Studio Installer rejected the command line (error 87). Command: ${commandLine}`,
+            uacCancelled: false,
+        };
+    }
+
+    if (exitCode === 1603) {
+        return {
+            success: false,
+            needsReboot: false,
+            summary:
+                "Fatal error (1603) while uninstalling build tools. Ensure no other Visual Studio processes are running and review the installer logs.",
+            uacCancelled: false,
+        };
+    }
+
+    return {
+        success: false,
+        needsReboot: false,
+        summary: `Visual Studio Installer exited with code ${exitCode} while executing ${commandLine}. Review the collected logs for more details.`,
+        uacCancelled: false,
+    };
+}
+
 function collectInstallerLogs(
     installPath: string,
     startedAt: number,
     onLog?: LogSink,
+    options?: CollectInstallerLogsOptions,
 ): string[] {
-    const logsDir = path.join(installPath, "logs");
+    const logsDir = options?.targetDir ?? path.join(installPath, "logs");
     ensureDirectory(logsDir);
 
-    const tempDir = process.env.TEMP || os.tmpdir();
-    const files: Array<{ path: string; mtimeMs: number }> = [];
+    const collected: string[] = [];
+    const seenSources = new Set<string>();
+    const candidates: Array<{ path: string; mtimeMs: number }> = [];
+    const threshold = startedAt - 5 * 60 * 1000;
 
+    const addCandidate = (filePath: string) => {
+        if (!filePath || seenSources.has(filePath)) {
+            return;
+        }
+
+        try {
+            const stat = fs.statSync(filePath);
+            if (!stat.isFile()) {
+                return;
+            }
+            if (stat.mtimeMs >= threshold) {
+                candidates.push({ path: filePath, mtimeMs: stat.mtimeMs });
+                seenSources.add(filePath);
+            }
+        } catch (error) {
+            logMessage(onLog, `Failed to inspect installer log ${filePath}: ${error}`, "warn");
+        }
+    };
+
+    const tempDir = process.env.TEMP || os.tmpdir();
     try {
         for (const entry of fs.readdirSync(tempDir)) {
             if (!/^dd_.*\.log$/i.test(entry)) continue;
-            const fullPath = path.join(tempDir, entry);
-            try {
-                const stat = fs.statSync(fullPath);
-                if (stat.mtimeMs >= startedAt - 5 * 60 * 1000) {
-                    files.push({ path: fullPath, mtimeMs: stat.mtimeMs });
-                }
-            } catch {}
+            addCandidate(path.join(tempDir, entry));
         }
     } catch (error) {
         logMessage(onLog, `Failed to enumerate installer logs: ${error}`, "warn");
     }
 
-    files.sort((a, b) => b.mtimeMs - a.mtimeMs);
+    if (options?.includeInstallerLogs) {
+        const programData = process.env.ProgramData || "C:\\ProgramData";
+        const installerRoot = path.join(programData, "Microsoft", "VisualStudio", "Installer");
 
-    const collected: string[] = [];
+        const includeDirectory = (dir: string) => {
+            try {
+                for (const entry of fs.readdirSync(dir)) {
+                    if (!/\.log(\.|$)/i.test(entry)) continue;
+                    addCandidate(path.join(dir, entry));
+                }
+            } catch (error) {
+                logMessage(
+                    onLog,
+                    `Failed to enumerate Visual Studio Installer logs in ${dir}: ${error}`,
+                    "warn",
+                );
+            }
+        };
 
-    for (const file of files.slice(0, 10)) {
-        const destName = path.basename(file.path);
-        const destPath = path.join(logsDir, destName);
-        let finalPath = destPath;
+        if (fs.existsSync(installerRoot)) {
+            includeDirectory(installerRoot);
+            const nestedLogs = path.join(installerRoot, "Logs");
+            if (fs.existsSync(nestedLogs)) {
+                includeDirectory(nestedLogs);
+            }
+        }
+    }
+
+    candidates.sort((a, b) => b.mtimeMs - a.mtimeMs);
+
+    const ensureUniqueDestination = (fileName: string): string => {
+        const parsed = path.parse(fileName);
+        let candidate = path.join(logsDir, fileName);
         let counter = 1;
-        while (fs.existsSync(finalPath)) {
-            const parsed = path.parse(destPath);
-            finalPath = path.join(parsed.dir, `${parsed.name}_${counter}${parsed.ext}`);
+        while (fs.existsSync(candidate)) {
+            candidate = path.join(logsDir, `${parsed.name}_${counter}${parsed.ext}`);
             counter += 1;
         }
+        return candidate;
+    };
 
+    for (const file of candidates) {
+        const destination = ensureUniqueDestination(path.basename(file.path));
         try {
-            fs.copyFileSync(file.path, finalPath);
-            collected.push(finalPath);
+            fs.copyFileSync(file.path, destination);
+            collected.push(destination);
         } catch (error) {
             logMessage(onLog, `Failed to copy log ${file.path}: ${error}`, "warn");
         }
@@ -1638,9 +1843,7 @@ export function verifyBuildToolsPaths(installPath: string): BuildToolsVerificati
 }
 
 function resolveVsInstallerExecutable(installPath: string): string | null {
-    const candidates = [
-        path.join(installPath, "vs_installer.exe"),
-    ];
+    const candidates: string[] = [];
 
     const programFilesX86 = process.env["ProgramFiles(x86)"];
     if (programFilesX86) {
@@ -1656,6 +1859,10 @@ function resolveVsInstallerExecutable(installPath: string): string | null {
         );
     }
 
+    if (installPath) {
+        candidates.push(path.join(installPath, "vs_installer.exe"));
+    }
+
     for (const candidate of candidates) {
         if (candidate && fs.existsSync(candidate)) {
             return candidate;
@@ -1663,6 +1870,234 @@ function resolveVsInstallerExecutable(installPath: string): string | null {
     }
 
     return null;
+}
+
+function resolveVsWhereExecutable(installPath?: string): string | null {
+    const candidates: string[] = [];
+
+    const programFilesX86 = process.env["ProgramFiles(x86)"];
+    if (programFilesX86) {
+        candidates.push(
+            path.join(programFilesX86, "Microsoft Visual Studio", "Installer", "vswhere.exe"),
+        );
+    }
+
+    const programFiles = process.env.ProgramFiles;
+    if (programFiles) {
+        candidates.push(
+            path.join(programFiles, "Microsoft Visual Studio", "Installer", "vswhere.exe"),
+        );
+    }
+
+    if (installPath) {
+        candidates.push(path.join(installPath, "vswhere.exe"));
+    }
+
+    const localAppData = process.env.LOCALAPPDATA;
+    if (localAppData) {
+        candidates.push(
+            path.join(
+                localAppData,
+                "Microsoft",
+                "VisualStudio",
+                "Packages",
+                "Microsoft.VisualStudio.Setup.Configuration.Native",
+                "vswhere.exe",
+            ),
+        );
+    }
+
+    const seen = new Set<string>();
+    for (const candidate of candidates) {
+        if (!candidate) continue;
+        const normalized = candidate.toLowerCase();
+        if (seen.has(normalized)) continue;
+        seen.add(normalized);
+        if (fs.existsSync(candidate)) {
+            return candidate;
+        }
+    }
+
+    return null;
+}
+
+function queryBuildToolsInstance(
+    installPath: string,
+    vsWherePath: string,
+    onLog?: LogSink,
+): VsWhereInstanceResult | null {
+    try {
+        const args = ["-path", installPath, "-products", "*", "-format", "json"];
+        const result = spawnSync(vsWherePath, args, {
+            windowsHide: true,
+            encoding: "utf8",
+        });
+
+        if (result.error) {
+            logMessage(onLog, `vswhere execution failed: ${result.error}`, "warn");
+        }
+
+        const stdout = result.stdout?.toString().trim() ?? "";
+        if (!stdout) {
+            return null;
+        }
+
+        let parsed: unknown;
+        try {
+            parsed = JSON.parse(stdout);
+        } catch (error) {
+            logMessage(onLog, `Failed to parse vswhere output: ${error}`, "warn");
+            return null;
+        }
+
+        if (!Array.isArray(parsed) || parsed.length === 0) {
+            return null;
+        }
+
+        const instance = parsed[0] as Record<string, unknown>;
+        const productId = typeof instance.productId === "string" ? (instance.productId as string) : "";
+        const instanceId = typeof instance.instanceId === "string" ? (instance.instanceId as string) : "";
+        const installationPath =
+            typeof instance.installationPath === "string"
+                ? (instance.installationPath as string)
+                : "";
+
+        if (!instanceId || !installationPath) {
+            return null;
+        }
+
+        return {
+            instanceId,
+            installationPath,
+            productId,
+        };
+    } catch (error) {
+        logMessage(onLog, `Failed to query Visual Studio instances: ${error}`, "warn");
+        return null;
+    }
+}
+
+async function ensureVisualStudioInstallerTools(
+    installPath: string,
+    onLog: LogSink | undefined,
+    logTargetDir: string,
+): Promise<VisualStudioInstallerToolsResult> {
+    const result: VisualStudioInstallerToolsResult = {
+        logs: [],
+        needsReboot: false,
+        uacCancelled: false,
+    };
+
+    let vsInstaller = resolveVsInstallerExecutable(installPath);
+    let vsWhere = resolveVsWhereExecutable(installPath);
+
+    if (vsInstaller && vsWhere) {
+        result.vsInstaller = vsInstaller;
+        result.vsWhere = vsWhere;
+        return result;
+    }
+
+    const binRoot = path.dirname(installPath);
+    let bootstrap: { tempDir: string; installerPath: string } | undefined;
+    const startedAt = Date.now();
+
+    try {
+        logMessage(
+            onLog,
+            "Visual Studio Installer tools were not found. Attempting to repair them via the bootstrapper...",
+            "warn",
+        );
+        bootstrap = await ensureBootstrapperDownloadedUnlocked(binRoot, onLog);
+        stopVisualStudioInstallerProcesses(onLog);
+
+        const args = [
+            "--update",
+            "--quiet",
+            "--wait",
+            "--norestart",
+            "--nocache",
+            "--locale",
+            "en-US",
+        ];
+
+        const runResult = await runElevatedInstaller(
+            {
+                installerPath: bootstrap.installerPath,
+                args,
+                workingDirectory: bootstrap.tempDir,
+                tempDir: bootstrap.tempDir,
+                requireRunAs: true,
+            },
+            onLog,
+        );
+
+        const bootstrapLogs = collectInstallerLogs(
+            installPath,
+            startedAt,
+            onLog,
+            { targetDir: logTargetDir, includeInstallerLogs: true },
+        );
+        for (const logPath of bootstrapLogs) {
+            if (!result.logs.includes(logPath)) {
+                result.logs.push(logPath);
+            }
+        }
+
+        if (runResult.fileLocked) {
+            result.error =
+                "Visual Studio Installer bootstrapper was locked by another process while attempting to repair the installer.";
+            return result;
+        }
+
+        if (runResult.uacCancelled) {
+            result.uacCancelled = true;
+            result.error =
+                "Administrator approval is required to repair the Visual Studio Installer. Please accept the UAC prompt and try again.";
+            return result;
+        }
+
+        const interpretation = interpretExitCode(runResult.exitCode);
+        result.needsReboot = interpretation.needsReboot;
+        if (!interpretation.success) {
+            result.error = interpretation.summary;
+            return result;
+        }
+    } catch (error) {
+        result.error = error instanceof Error ? error.message : String(error);
+        return result;
+    } finally {
+        if (bootstrap) {
+            await gracefulCleanup(bootstrap.tempDir);
+        }
+    }
+
+    vsInstaller = resolveVsInstallerExecutable(installPath);
+    vsWhere = resolveVsWhereExecutable(installPath);
+
+    if (!vsInstaller || !vsWhere) {
+        result.error =
+            "Visual Studio Installer tools were not found after bootstrapping the installer.";
+        return result;
+    }
+
+    result.vsInstaller = vsInstaller;
+    result.vsWhere = vsWhere;
+    return result;
+}
+
+function getUninstallRemovalComponents(installPath: string): string[] {
+    const metadata = readManagedMetadata(installPath);
+    const sdkVersion =
+        typeof metadata.sdkVersion === "string" && metadata.sdkVersion.trim().length > 0
+            ? metadata.sdkVersion.trim()
+            : DEFAULT_SDK;
+
+    const components = new Set<string>([
+        ...BUILD_TOOLS_COMPONENTS_BASE,
+        `Microsoft.VisualStudio.Component.Windows10SDK.${sdkVersion}`,
+    ]);
+
+    return Array.from(components);
 }
 
 export async function uninstallManagedBuildTools(
@@ -1677,116 +2112,464 @@ export async function uninstallManagedBuildTools(
         };
     }
 
-    if (!fs.existsSync(installPath)) {
-        return {
-            status: "failed",
-            summary: "Build tools installation folder not found.",
-            logs: [],
-        };
-    }
-
-    const vsInstaller = resolveVsInstallerExecutable(installPath);
-    if (!vsInstaller) {
-        return {
-            status: "failed",
-            summary: "Could not locate vs_installer.exe to uninstall build tools.",
-            logs: [],
-        };
-    }
-
-    const args = [
-        "uninstall",
-        "--installPath",
-        installPath,
-        "--quiet",
-        "--wait",
-        "--norestart",
-        "--nocache",
-    ];
-
-    logMessage(onLog, "Starting uninstallation of Dione-managed Visual Studio Build Tools instance...");
-
-    stopVisualStudioInstallerProcesses(onLog);
-
-    const scriptTempDir = path.join(os.tmpdir(), `dione_vs_uninstall_${crypto.randomUUID()}`);
-    await fsp.mkdir(scriptTempDir, { recursive: true });
-
-    let result: RunElevatedResult;
-    try {
-        result = await runElevatedInstaller(
-            {
-                installerPath: vsInstaller,
-                args,
-                workingDirectory: path.dirname(vsInstaller),
-                tempDir: scriptTempDir,
-                requireRunAs: !isProcessElevated(),
-            },
-            onLog,
-        );
-    } catch (error) {
-        const summary = `Failed to run vs_installer.exe: ${error}`;
-        logMessage(onLog, summary, "error");
+    if (uninstallInProgress) {
+        const summary = "Another build tools uninstallation is already running.";
+        logMessage(onLog, summary, "warn");
         return {
             status: "failed",
             summary,
             logs: [],
-            error: String(error),
+        };
+    }
+
+    uninstallInProgress = true;
+
+    try {
+        if (!fs.existsSync(installPath)) {
+            const summary = "Build tools were already removed.";
+            logMessage(onLog, summary);
+            return {
+                status: "uninstalled",
+                summary,
+                logs: [],
+            };
+        }
+
+        const markerPath = path.join(installPath, ".dione-managed");
+        if (!fs.existsSync(markerPath)) {
+            const summary =
+                "The Visual Studio installation at the managed path is missing the Dione management marker. Aborting uninstall to avoid modifying user installations.";
+            logMessage(onLog, summary, "warn");
+            return {
+                status: "failed",
+                summary,
+                logs: [],
+            };
+        }
+
+        const binRoot = path.dirname(installPath);
+        const logTargetDir = path.join(binRoot, "logs", DEFAULT_UNINSTALL_LOG_DIR_NAME);
+        ensureDirectory(logTargetDir);
+
+        const aggregatedLogs = new Set<string>();
+        const appendLogs = (paths: string[]) => {
+            for (const entry of paths) {
+                if (entry && !aggregatedLogs.has(entry)) {
+                    aggregatedLogs.add(entry);
+                }
+            }
+        };
+        const emitAggregatedLogs = () => {
+            if (aggregatedLogs.size > 0) {
+                logMessage(onLog, "Collected Visual Studio Installer logs:");
+                for (const logPath of aggregatedLogs) {
+                    logMessage(onLog, `  • ${logPath}`);
+                }
+            }
+        };
+        const snapshotLogs = () => {
+            emitAggregatedLogs();
+            return Array.from(aggregatedLogs);
+        };
+
+        let needsReboot = false;
+        let uacCancelled = false;
+        let exitCode: number | undefined;
+
+        const tools = await ensureVisualStudioInstallerTools(installPath, onLog, logTargetDir);
+        appendLogs(tools.logs);
+        if (tools.needsReboot) {
+            needsReboot = true;
+        }
+        if (tools.uacCancelled) {
+            uacCancelled = true;
+        }
+
+        if (!tools.vsInstaller || !tools.vsWhere) {
+            const summary = tools.error ?? "Visual Studio Installer executable was not found.";
+            logMessage(onLog, summary, tools.uacCancelled ? "warn" : "error");
+            return {
+                status: "failed",
+                summary,
+                logs: snapshotLogs(),
+                needsReboot,
+                uacCancelled,
+            };
+        }
+
+        const vsInstallerPath = tools.vsInstaller;
+        const vsWherePath = tools.vsWhere;
+
+        let instance = queryBuildToolsInstance(installPath, vsWherePath, onLog);
+        if (!instance) {
+            logMessage(onLog, "No Visual Studio Build Tools instance found. Cleaning up leftovers.");
+            await fsp.rm(installPath, { recursive: true, force: true }).catch((error) => {
+                logMessage(onLog, `Failed to remove build tools directory: ${error}`, "warn");
+            });
+            const logsArray = snapshotLogs();
+            return {
+                status: "uninstalled",
+                summary: "Build tools were already removed.",
+                logs: logsArray,
+                needsReboot,
+                uacCancelled,
+            };
+        }
+
+        if (
+            instance.productId &&
+            instance.productId.toLowerCase() !== "microsoft.visualstudio.product.buildtools"
+        ) {
+            const summary = `The Visual Studio installation at ${installPath} is not a Build Tools instance (productId: ${instance.productId}). Aborting uninstall.`;
+            logMessage(onLog, summary, "warn");
+            return {
+                status: "failed",
+                summary,
+                logs: snapshotLogs(),
+                needsReboot,
+                uacCancelled,
+            };
+        }
+
+        logMessage(
+            onLog,
+            `Preparing to uninstall Visual Studio Build Tools instance ${instance.instanceId}.`,
+        );
+
+        const runInstallerCommand = async (
+            args: string[],
+            description: string,
+        ): Promise<{ result?: RunElevatedResult; commandLine: string; error?: Error }> => {
+            stopVisualStudioInstallerProcesses(onLog);
+            const commandLine = formatCommandLine(vsInstallerPath, args);
+            logMessage(onLog, `${description}: ${commandLine}`);
+            const tempDir = path.join(os.tmpdir(), `dione_vs_uninstall_${crypto.randomUUID()}`);
+            await fsp.mkdir(tempDir, { recursive: true });
+            const attemptStartedAt = Date.now();
+
+            let runResult: RunElevatedResult | undefined;
+            let runError: Error | undefined;
+
+            try {
+                runResult = await runElevatedInstaller(
+                    {
+                        installerPath: vsInstallerPath,
+                        args,
+                        workingDirectory: path.dirname(vsInstallerPath),
+                        tempDir,
+                        requireRunAs: true,
+                        mutexName: UNINSTALL_MUTEX_NAME,
+                        mutexTimeoutMs: UNINSTALL_MUTEX_TIMEOUT_MS,
+                    },
+                    onLog,
+                );
+            } catch (error) {
+                runError = error instanceof Error ? error : new Error(String(error));
+            } finally {
+                appendLogs(
+                    collectInstallerLogs(installPath, attemptStartedAt, onLog, {
+                        targetDir: logTargetDir,
+                        includeInstallerLogs: true,
+                    }),
+                );
+                await fsp.rm(tempDir, { recursive: true, force: true }).catch(() => {});
+            }
+
+            if (runError) {
+                return { error: runError, commandLine };
+            }
+
+            return { result: runResult!, commandLine };
+        };
+
+        const uninstallArgs = [
+            "uninstall",
+            "--installPath",
+            installPath,
+            "--quiet",
+            "--norestart",
+            "--nocache",
+            "--locale",
+            "en-US",
+        ];
+
+        const uninstallExecution = await runInstallerCommand(
+            uninstallArgs,
+            "Executing Visual Studio Installer uninstall",
+        );
+
+        if (uninstallExecution.error) {
+            const summary = `Failed to run vs_installer.exe: ${uninstallExecution.error.message}`;
+            logMessage(onLog, summary, "error");
+            return {
+                status: "failed",
+                summary,
+                logs: snapshotLogs(),
+                needsReboot,
+                uacCancelled,
+            };
+        }
+
+        const uninstallResult = uninstallExecution.result!;
+        exitCode = uninstallResult.exitCode;
+
+        if (uninstallResult.mutexUnavailable) {
+            const summary =
+                "Another Visual Studio Installer operation is already running. Close Visual Studio Installer and try again.";
+            logMessage(onLog, summary, "warn");
+            return {
+                status: "failed",
+                summary,
+                exitCode,
+                logs: snapshotLogs(),
+                needsReboot,
+                uacCancelled,
+            };
+        }
+
+        if (uninstallResult.fileLocked) {
+            const summary =
+                "Visual Studio Installer could not be launched because the executable is locked by another process.";
+            logMessage(onLog, summary, "error");
+            return {
+                status: "failed",
+                summary,
+                exitCode,
+                logs: snapshotLogs(),
+                needsReboot,
+                uacCancelled,
+            };
+        }
+
+        let interpretation = interpretUninstallExitCode(
+            uninstallResult.exitCode,
+            uninstallExecution.commandLine,
+        );
+        needsReboot ||= interpretation.needsReboot;
+        uacCancelled ||= interpretation.uacCancelled;
+
+        if (!interpretation.success && interpretation.uacCancelled) {
+            logMessage(onLog, interpretation.summary, "warn");
+            return {
+                status: "failed",
+                summary: interpretation.summary,
+                exitCode,
+                logs: snapshotLogs(),
+                needsReboot,
+                uacCancelled,
+            };
+        }
+
+        if (!interpretation.success && !interpretation.uacCancelled) {
+            instance = queryBuildToolsInstance(installPath, vsWherePath, onLog);
+            if (instance) {
+                const removalComponents = getUninstallRemovalComponents(installPath);
+                const modifyArgs = [
+                    "modify",
+                    "--installPath",
+                    installPath,
+                    "--quiet",
+                    "--norestart",
+                    "--nocache",
+                    "--locale",
+                    "en-US",
+                ];
+                for (const component of removalComponents) {
+                    modifyArgs.push("--remove", component);
+                }
+
+                const modifyExecution = await runInstallerCommand(
+                    modifyArgs,
+                    "Executing Visual Studio Installer modify fallback",
+                );
+
+                if (modifyExecution.error) {
+                    const summary = `Component removal fallback failed: ${modifyExecution.error.message}`;
+                    logMessage(onLog, summary, "error");
+                    return {
+                        status: "failed",
+                        summary,
+                        exitCode,
+                        logs: snapshotLogs(),
+                        needsReboot,
+                        uacCancelled,
+                    };
+                }
+
+                const modifyResult = modifyExecution.result!;
+                exitCode = modifyResult.exitCode;
+
+                if (modifyResult.mutexUnavailable) {
+                    const summary =
+                        "Another Visual Studio Installer operation started during component removal. Please retry.";
+                    logMessage(onLog, summary, "warn");
+                    return {
+                        status: "failed",
+                        summary,
+                        exitCode,
+                        logs: snapshotLogs(),
+                        needsReboot,
+                        uacCancelled,
+                    };
+                }
+
+                if (modifyResult.fileLocked) {
+                    const summary =
+                        "Visual Studio Installer reported that the executable was locked during component removal.";
+                    logMessage(onLog, summary, "error");
+                    return {
+                        status: "failed",
+                        summary,
+                        exitCode,
+                        logs: snapshotLogs(),
+                        needsReboot,
+                        uacCancelled,
+                    };
+                }
+
+                const modifyInterpretation = interpretUninstallExitCode(
+                    modifyResult.exitCode,
+                    modifyExecution.commandLine,
+                );
+                needsReboot ||= modifyInterpretation.needsReboot;
+                uacCancelled ||= modifyInterpretation.uacCancelled;
+
+                if (!modifyInterpretation.success) {
+                    logMessage(
+                        onLog,
+                        modifyInterpretation.summary,
+                        modifyInterpretation.uacCancelled ? "warn" : "error",
+                    );
+                    return {
+                        status: "failed",
+                        summary: modifyInterpretation.summary,
+                        exitCode,
+                        logs: snapshotLogs(),
+                        needsReboot,
+                        uacCancelled,
+                    };
+                }
+
+                const retryExecution = await runInstallerCommand(
+                    uninstallArgs,
+                    "Retrying Visual Studio Installer uninstall after component removal",
+                );
+
+                if (retryExecution.error) {
+                    const summary = `Failed to relaunch vs_installer.exe after component removal: ${retryExecution.error.message}`;
+                    logMessage(onLog, summary, "error");
+                    return {
+                        status: "failed",
+                        summary,
+                        exitCode,
+                        logs: snapshotLogs(),
+                        needsReboot,
+                        uacCancelled,
+                    };
+                }
+
+                const retryResult = retryExecution.result!;
+                exitCode = retryResult.exitCode;
+
+                if (retryResult.mutexUnavailable) {
+                    const summary =
+                        "Another Visual Studio Installer operation started during the uninstall retry. Please retry later.";
+                    logMessage(onLog, summary, "warn");
+                    return {
+                        status: "failed",
+                        summary,
+                        exitCode,
+                        logs: snapshotLogs(),
+                        needsReboot,
+                        uacCancelled,
+                    };
+                }
+
+                if (retryResult.fileLocked) {
+                    const summary =
+                        "Visual Studio Installer reported that the executable was locked during the uninstall retry.";
+                    logMessage(onLog, summary, "error");
+                    return {
+                        status: "failed",
+                        summary,
+                        exitCode,
+                        logs: snapshotLogs(),
+                        needsReboot,
+                        uacCancelled,
+                    };
+                }
+
+                interpretation = interpretUninstallExitCode(
+                    retryResult.exitCode,
+                    retryExecution.commandLine,
+                );
+                needsReboot ||= interpretation.needsReboot;
+                uacCancelled ||= interpretation.uacCancelled;
+
+                if (!interpretation.success) {
+                    logMessage(
+                        onLog,
+                        interpretation.summary,
+                        interpretation.uacCancelled ? "warn" : "error",
+                    );
+                    return {
+                        status: "failed",
+                        summary: interpretation.summary,
+                        exitCode,
+                        logs: snapshotLogs(),
+                        needsReboot,
+                        uacCancelled,
+                    };
+                }
+            }
+        }
+
+        if (!interpretation.success) {
+            logMessage(onLog, interpretation.summary, interpretation.uacCancelled ? "warn" : "error");
+            return {
+                status: "failed",
+                summary: interpretation.summary,
+                exitCode,
+                logs: snapshotLogs(),
+                needsReboot,
+                uacCancelled,
+            };
+        }
+
+        instance = queryBuildToolsInstance(installPath, vsWherePath, onLog);
+        if (instance) {
+            const summary =
+                "Visual Studio Build Tools still appear to be installed after running the uninstaller. Review the collected logs for more details.";
+            logMessage(onLog, summary, "error");
+            return {
+                status: "failed",
+                summary,
+                exitCode,
+                logs: snapshotLogs(),
+                needsReboot,
+                uacCancelled,
+            };
+        }
+
+        await fsp.rm(installPath, { recursive: true, force: true }).catch((error) => {
+            logMessage(onLog, `Failed to remove build tools directory: ${error}`, "warn");
+        });
+
+        const logsArray = snapshotLogs();
+
+        const summary = needsReboot
+            ? "Build tools uninstalled successfully. Please reboot to finalize cleanup."
+            : "Build tools uninstalled successfully.";
+
+        return {
+            status: "uninstalled",
+            summary,
+            exitCode,
+            needsReboot,
+            uacCancelled,
+            logs: logsArray,
         };
     } finally {
-        await gracefulCleanup(scriptTempDir);
+        uninstallInProgress = false;
     }
-
-    const stdout = result.stdout.trim();
-    if (stdout) {
-        logMessage(onLog, stdout);
-    }
-    const stderr = result.stderr.trim();
-    if (stderr) {
-        logMessage(onLog, stderr, "warn");
-    }
-
-    if (result.fileLocked) {
-        const summary =
-            "Visual Studio Installer could not be launched because the executable is locked by another process.";
-        logMessage(onLog, summary, "error");
-        return {
-            status: "failed",
-            summary,
-            exitCode: result.exitCode,
-            logs: [],
-            error: summary,
-        };
-    }
-
-    const interpretation = interpretExitCode(result.exitCode);
-
-    if (!interpretation.success) {
-        logMessage(onLog, interpretation.summary, interpretation.uacCancelled ? "warn" : "error");
-        return {
-            status: "failed",
-            summary: interpretation.summary,
-            exitCode: result.exitCode,
-            uacCancelled: interpretation.uacCancelled,
-            logs: [],
-        };
-    }
-
-    try {
-        await fsp.rm(installPath, { recursive: true, force: true });
-        logMessage(onLog, "Managed Visual Studio Build Tools instance removed successfully.");
-    } catch (error) {
-        logMessage(onLog, `Failed to remove build tools directory: ${error}`, "warn");
-    }
-
-    const summary = interpretation.needsReboot
-        ? "Build tools uninstallation completed. Please reboot to finish cleanup."
-        : "Build tools uninstalled successfully.";
-
-    return {
-        status: "uninstalled",
-        summary,
-        exitCode: result.exitCode,
-        needsReboot: interpretation.needsReboot,
-        logs: [],
-    };
 }
