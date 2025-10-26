@@ -1,399 +1,203 @@
-import { execFile, execSync, spawn } from "child_process";
-import fs from "fs";
-import https from "https";
 import path from "path";
 import type { Server } from "socket.io";
 import logger from "../../../utils/logger";
-import { addValue, getAllValues, removeValue } from "../environment";
-import { getArch, getOS } from "../utils/system";
+import fs from "node:fs";
+import child_process from "node:child_process";
+import {
+    ensureBuildToolsInstalled,
+    verifyBuildToolsPaths,
+} from "../utils/build-tools";
+import { getOS } from "../utils/system";
 
 const depName = "build_tools";
-const ENVIRONMENT = getAllValues();
+
+type InstallEventType = "log" | "error";
+
+type SocketEmitter = (type: InstallEventType, message: string) => void;
+
+function createSocketEmitter(io: Server, id: string): SocketEmitter {
+    return (type: InstallEventType, message: string) => {
+        if (!message) return;
+        const content = message.endsWith("\n") ? message : `${message}\n`;
+        io.to(id).emit("installDep", { type, content });
+    };
+}
+
+function broadcastDiagnostics(
+    io: Server,
+    id: string,
+    payload: Record<string, unknown>,
+) {
+    io.to(id).emit("dependencyDiagnostics", {
+        dependency: depName,
+        ...payload,
+    });
+}
 
 export async function isInstalled(
-	binFolder: string,
+    binFolder: string,
 ): Promise<{ installed: boolean; reason: string }> {
-	const depFolder = path.join(binFolder, depName);
-	const msbuild = path.join(
-		depFolder,
-		"MSBuild",
-		"Current",
-		"Bin",
-		"MSBuild.exe",
-	);
-	const env = getAllValues();
+    if (getOS() !== "windows") {
+        return { installed: true, reason: "not-required" };
+    }
 
-	if (getOS() === "linux" || getOS() === "macos") {
-		return { installed: true, reason: `installed` };
-	}
+    const installPath = path.join(binFolder, depName);
+    const verification = verifyBuildToolsPaths(installPath);
 
-	if (!fs.existsSync(depFolder) || fs.readdirSync(depFolder).length === 0) {
-		return { installed: false, reason: `not-installed` };
-	}
+    if (verification) {
+        return { installed: true, reason: "installed" };
+    }
 
-	try {
-		await new Promise<string>((resolve, reject) => {
-			execFile(msbuild, ["-version"], { env: env }, (error, stdout) => {
-				if (error) {
-					reject(error);
-				} else {
-					resolve(stdout);
-				}
-			});
-		});
-
-		return { installed: true, reason: `installed` };
-	} catch (error: any) {
-		console.log("ERROR BUILD_TOOLS", error);
-		return { installed: false, reason: `error` };
-	}
+    return { installed: false, reason: "not-installed" };
 }
 
 export async function install(
-	binFolder: string,
-	id: string,
-	io: Server,
+    binFolder: string,
+    id: string,
+    io: Server,
 ): Promise<{ success: boolean }> {
-	const depFolder = path.join(binFolder, depName);
-	const tempDir = path.join(binFolder, "temp");
+    const emit = createSocketEmitter(io, id);
 
-	const platform = getOS(); // window, linux, macos
-	const arch = getArch(); // amd64, arm64, x86
+    if (getOS() !== "windows") {
+        emit("log", "Build tools are not required on this platform. Skipping installation.");
+        broadcastDiagnostics(io, id, {
+            status: "already-installed",
+            summary: "Build tools are not required on non-Windows platforms.",
+            logs: [],
+        });
+        return { success: true };
+    }
 
-	if (!fs.existsSync(depFolder)) {
-		fs.mkdirSync(depFolder, { recursive: true });
-	}
+    const result = await ensureBuildToolsInstalled({
+        binFolder,
+        onLog: (message, level) => {
+            if (!message) return;
+            if (level === "error") {
+                emit("error", message);
+            } else if (level === "warn") {
+                emit("log", `[warn] ${message}`);
+            } else {
+                emit("log", message);
+            }
+        },
+    });
 
-	const urls: Record<string, Record<string, string>> = {
-		windows: {
-			amd64: "https://aka.ms/vs/17/release/vs_BuildTools.exe",
-			arm64: "https://aka.ms/vs/17/release/vs_BuildTools.exe",
-			x86: "https://aka.ms/vs/17/release/vs_BuildTools.exe",
-		},
-	};
+    const { verification } = result;
 
-	const url = urls[platform]?.[arch];
-	if (!fs.existsSync(tempDir)) {
-		// if temp dir does not exist, create it
-		fs.mkdirSync(tempDir, { recursive: true });
-	}
-	const installerFile = fs.createWriteStream(
-		path.join(tempDir, `build_tools.exe`),
-	);
+    if (result.logs && result.logs.length > 0) {
+        emit("log", "Installer generated the following log files:");
+        for (const logPath of result.logs) {
+            emit("log", `  • ${logPath}`);
+        }
+        emit(
+            "log",
+            "You can share these logs with support if the installation fails.",
+        );
+    }
 
-	if (url) {
-		// 1. url method: install the dependency using official installer url
-		io.to(id).emit("installDep", {
-			type: "log",
-			content: `Downloading ${depName} for ${platform} (${arch}) using URL method...`,
-		});
+    if (result.needsReboot) {
+        emit(
+            "log",
+            "A system restart is required to finalize the Visual Studio Build Tools installation.",
+        );
+    }
 
-		const options = {
-			headers: {
-				"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-			},
-		};
+    if (result.status === "failed") {
+        emit("error", result.summary);
+    } else {
+        emit("log", result.summary);
+    }
 
-		await new Promise<void>((resolve, reject) => {
-			https
-				.get(url, options, (response) => {
-					if ([301, 302].includes(response.statusCode ?? 0)) {
-						const redirectUrl = response.headers.location;
-						if (redirectUrl) {
-							https
-								.get(redirectUrl, (redirectResponse) => {
-									redirectResponse.pipe(installerFile);
-									installerFile.on("close", resolve);
-									installerFile.on("error", reject);
-								})
-								.on("error", reject);
-						} else {
-							reject(new Error("Redirect URL not found"));
-						}
-					} else if (response.statusCode === 200) {
-						io.to(id).emit("installDep", {
-							type: "log",
-							content: `${depName} installer downloaded successfully`,
-						});
-						response.pipe(installerFile);
-						installerFile.on("close", resolve);
-						installerFile.on("error", reject);
-					} else {
-						reject(new Error(`HTTP ${response.statusCode}`));
-					}
-				})
-				.on("error", reject);
-		});
-	} else {
-		io.to(id).emit("installDep", {
-			type: "error",
-			content: `No download URL found for ${depName} on ${platform} (${arch})`,
-		});
+    if (verification) {
+        emit("log", `cl.exe located at: ${verification.clPath}`);
+        emit("log", `cmake.exe located at: ${verification.cmakePath}`);
+    }
 
-		return { success: false };
-	}
+    broadcastDiagnostics(io, id, {
+        status: result.status,
+        exitCode: result.exitCode,
+        needsReboot: Boolean(result.needsReboot),
+        uacCancelled: Boolean(result.uacCancelled),
+        summary: result.summary,
+        logs: result.logs,
+        sdkVersion: result.sdkVersion,
+        installPath: verification?.installPath,
+        vcvarsPath: verification?.vcvarsPath,
+        clPath: verification?.clPath,
+        cmakePath: verification?.cmakePath,
+        msvcVersion: verification?.msvcVersion,
+    });
 
-	io.to(id).emit("installDep", {
-		type: "log",
-		content: `Running installer for ${depName}...`,
-	});
-
-	const exe = path.join(tempDir, `build_tools.exe`);
-	const commands = {
-		windows: {
-			file: exe,
-			args: [
-				"--installPath",
-				`"${depFolder}"`,
-				"--quiet",
-				"--wait",
-				"--nocache",
-				"--norestart",
-				"--includeRecommended",
-				"--add",
-				"Microsoft.VisualStudio.Workload.VCTools",
-				"--add",
-				"Microsoft.VisualStudio.Component.VC.CMake.Project",
-			],
-		},
-	};
-
-	// 2. run the installer/ command line method
-	const command = commands[platform];
-	if (!command) {
-		io.to(id).emit("installDep", {
-			type: "error",
-			content: `Unsupported platform: ${platform}`,
-		});
-		return { success: false };
-	}
-
-	io.to(id).emit("installDep", {
-		type: "log",
-		content: `Running command: ${command.file} ${command.args.join(" ")}`,
-	});
-
-	const spawnOptions = {
-		cwd: depFolder,
-		shell: platform === "windows",
-		windowsHide: true,
-		detached: false,
-		env: {
-			...ENVIRONMENT,
-			PYTHONUNBUFFERED: "1",
-			NODE_NO_BUFFERING: "1",
-			FORCE_UNBUFFERED_OUTPUT: "1",
-			PYTHONIOENCODING: "UTF-8",
-		},
-	};
-
-	try {
-		await new Promise<void>((resolve, reject) => {
-			const child = spawn(command.file, command.args, spawnOptions);
-
-			child.stdout.on("data", (data) => {
-				io.to(id).emit("installDep", { type: "log", content: data.toString() });
-			});
-
-			child.stderr.on("data", (data) => {
-				io.to(id).emit("installDep", {
-					type: "error",
-					content: data.toString(),
-				});
-				logger.error(
-					`Error during installation of ${depName}: ${data.toString()}`,
-				);
-			});
-
-			child.on("close", (code) => {
-				console.log(`Installer exited with code ${code}`);
-				if (code === 0) {
-					io.to(id).emit("installDep", {
-						type: "log",
-						content: `${depName} installed successfully`,
-					});
-
-					// update environment variables
-					addValue("PATH", path.join(depFolder, "MSBuild", "Current", "Bin"));
-					addValue(
-						"PATH",
-						path.join(
-							depFolder,
-							"Common7",
-							"IDE",
-							"CommonExtensions",
-							"Microsoft",
-							"CMake",
-							"CMake",
-							"bin",
-						),
-					);
-					addValue(
-						"CMAKE_PREFIX_PATH",
-						path.join(
-							depFolder,
-							"Common7",
-							"IDE",
-							"CommonExtensions",
-							"Microsoft",
-							"CMake",
-							"CMake",
-						),
-					);
-					addValue(
-						"CMAKE_MODULE_PATH",
-						path.join(
-							depFolder,
-							"Common7",
-							"IDE",
-							"CommonExtensions",
-							"Microsoft",
-							"CMake",
-							"CMake",
-						),
-					);
-					addValue(
-						"CMAKE_C_COMPILER",
-						path.join(
-							depFolder,
-							"VC",
-							"Tools",
-							"MSVC",
-							"14.44.35207",
-							"bin",
-							"Hostx64",
-							"x64",
-							"cl.exe",
-						),
-					);
-					addValue(
-						"CMAKE_CXX_COMPILER",
-						path.join(
-							depFolder,
-							"VC",
-							"Tools",
-							"MSVC",
-							"14.44.35207",
-							"bin",
-							"Hostx64",
-							"x64",
-							"cl.exe",
-						),
-					);
-					addValue(
-						"PATH",
-						path.join(
-							depFolder,
-							"VC",
-							"Tools",
-							"MSVC",
-							"14.44.35207",
-							"bin",
-							"Hostx64",
-							"x64",
-						),
-					);
-
-					try {
-						const vcvarsOutput = execSync(
-							`"${path.join(depFolder, "VC", "Auxiliary", "Build", "vcvars64.bat")}" && set`,
-							{ shell: "cmd.exe", env: ENVIRONMENT },
-						).toString();
-
-						vcvarsOutput.split(/\r?\n/).forEach((line) => {
-							const m = line.match(/^([^=]+)=(.*)$/);
-							if (m) {
-								const key = m[1];
-								const value = m[2];
-								if (
-									[
-										"INCLUDE",
-										"LIB",
-										"LIBPATH",
-										"WindowsSdkDir",
-										"WindowsSDKVersion",
-										"UCRTVersion",
-									].includes(key)
-								) {
-									logger.info(`Setting environment variable ${key}=${value}`);
-									addValue(key, value);
-								}
-							}
-						});
-					} catch (err) {
-						logger.error(
-							`Error setting environment variables for ${depName}:`,
-							err,
-						);
-					}
-
-					resolve();
-				} else {
-					reject(new Error(`Installer exited with code ${code}`));
-				}
-			});
-		});
-	} catch (error) {
-		logger.error(`Error running installer for ${depName}:`, error);
-		io.to(id).emit("installDep", {
-			type: "error",
-			content: `Error running installer for ${depName}: ${error}`,
-		});
-		return { success: false };
-	}
-
-	return { success: true };
+    const success = result.status !== "failed";
+    return { success };
 }
 
 export async function uninstall(binFolder: string): Promise<void> {
-	const depFolder = path.join(binFolder, depName);
+    if (getOS() !== "windows") {
+        return;
+    }
 
-	if (fs.existsSync(depFolder)) {
-		logger.info(`Removing ${depName} folder in ${depFolder}...`);
-		try {
-			await new Promise<void>((resolve, reject) => {
-				const child = spawn("powershell", [
-					"-Command",
-					`Start-Process -FilePath "C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vs_installer.exe" -ArgumentList "uninstall","--installPath","${depFolder}","--quiet","--nocache" -Verb RunAs -Wait`,
-				]);
+    const installPath = path.join(binFolder, depName);
+    const vsExePath = path.join("C:", "Program Files (x86)", "Microsoft Visual Studio", "Installer", "vs_installer.exe");
 
-				child.stdout.on("data", (data) => {
-					logger.info(data.toString());
-				});
+    // check if vs_installer.exe exists before proceeding
+    if (!fs.existsSync(vsExePath)) {
+        const msg = `Build Tools uninstall could not find vs_installer.exe at path: ${vsExePath}`;
+        logger.error(msg);
+        throw new Error(msg);
+    }
 
-				child.stderr.on("data", (data) => {
-					logger.error(`Error during uninstallation: ${data.toString()}`);
-				});
+    const uninstallArgs = [
+        "uninstall",
+        "--installPath", installPath,
+        "--quiet",
+        "--norestart"
+    ];
 
-				child.on("close", (code) => {
-					console.log(`Installer exited with code ${code}`);
-					if (code === 0) {
-						resolve();
-					} else {
-						reject(new Error(`Installer exited with code ${code}`));
-					}
-				});
-			});
-		} catch (error) {
-			logger.error(`Error running installer for ${depName}:`, error);
-		}
-		logger.info(`Removing ${depName} from environment variables...`);
-		removeValue(path.join(depFolder, "MSBuild", "Current", "Bin"), "PATH");
-		removeValue(
-			path.join(
-				depFolder,
-				"Common7",
-				"IDE",
-				"CommonExtensions",
-				"Microsoft",
-				"CMake",
-				"CMake",
-				"bin",
-			),
-			"PATH",
-		);
-		logger.info(`${depName} uninstalled successfully`);
-	} else {
-		throw new Error(`Dependency ${depName} is not installed`);
-	}
+    try {
+        const quotedExe = `"${vsExePath}"`;
+        const psCommand =
+            `Start-Process -FilePath ${quotedExe} -ArgumentList '${uninstallArgs.map(s => s.replace(/'/g, "''")).join("','")}' -Wait -Verb RunAs`;
+
+        const spawnResult = child_process.spawnSync(
+            "powershell.exe",
+            [
+                "-NoProfile",
+                "-ExecutionPolicy", "Bypass",
+                "-Command", psCommand
+            ],
+            {
+                stdio: "inherit",
+                shell: false,
+                windowsHide: false,
+            }
+        );
+
+        if (spawnResult.error) {
+            logger.error(`Build Tools uninstall failed to start: ${spawnResult.error}`);
+            throw new Error(`Build Tools uninstall failed to start: ${spawnResult.error instanceof Error ? spawnResult.error.message : String(spawnResult.error)}`);
+        }
+        if (typeof spawnResult.status === "number" && spawnResult.status !== 0) {
+            let stderrMsg = "";
+            if (spawnResult.stderr) {
+                try {
+                    stderrMsg = typeof spawnResult.stderr === "string"
+                        ? spawnResult.stderr
+                        : spawnResult.stderr.toString();
+                } catch { /* ignore */ }
+            }
+            logger.error(
+                `Build Tools uninstall failed with exit code ${spawnResult.status}` +
+                (stderrMsg ? `: ${stderrMsg}` : "")
+            );
+            throw new Error(
+                `vs_installer.exe uninstall failed with exit code ${spawnResult.status}` +
+                (stderrMsg ? `: ${stderrMsg}` : "")
+            );
+        }
+        logger.info("Build Tools uninstall completed successfully.");
+    } catch (e: any) {
+        logger.error(`Exception while running uninstall: ${e && e.message ? e.message : e}`);
+        throw new Error(`Build Tools uninstall command failed: ${e && e.message ? e.message : e}`);
+    }
 }
