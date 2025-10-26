@@ -695,7 +695,7 @@ if (-not [string]::IsNullOrWhiteSpace($MutexName)) {
             exit $mutexAcquireExitCode
         }
     } catch {
-        Write-Error "Failed to acquire mutex $MutexName: $_"
+        Write-Error ("Failed to acquire mutex " + $MutexName + ": " + $_)
         exit $mutexAcquireExitCode
     }
 }
