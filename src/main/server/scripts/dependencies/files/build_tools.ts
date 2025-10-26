@@ -1,9 +1,10 @@
 import path from "path";
 import type { Server } from "socket.io";
 import logger from "../../../utils/logger";
+import fs from "node:fs";
+import child_process from "node:child_process";
 import {
     ensureBuildToolsInstalled,
-    uninstallManagedBuildTools,
     verifyBuildToolsPaths,
 } from "../utils/build-tools";
 import { getOS } from "../utils/system";
@@ -137,17 +138,66 @@ export async function uninstall(binFolder: string): Promise<void> {
     }
 
     const installPath = path.join(binFolder, depName);
-    const result = await uninstallManagedBuildTools(installPath, (message, level) => {
-        if (level === "error") {
-            logger.error(message);
-        } else if (level === "warn") {
-            logger.warn(message);
-        } else {
-            logger.info(message);
-        }
-    });
+    const vsExePath = path.join("C:", "Program Files (x86)", "Microsoft Visual Studio", "Installer", "vs_installer.exe");
 
-    if (result.status === "failed") {
-        throw new Error(result.summary);
+    // check if vs_installer.exe exists before proceeding
+    if (!fs.existsSync(vsExePath)) {
+        const msg = `Build Tools uninstall could not find vs_installer.exe at path: ${vsExePath}`;
+        logger.error(msg);
+        throw new Error(msg);
+    }
+
+    const uninstallArgs = [
+        "uninstall",
+        "--installPath", installPath,
+        "--quiet",
+        "--norestart"
+    ];
+
+    try {
+        const quotedExe = `"${vsExePath}"`;
+        const psCommand =
+            `Start-Process -FilePath ${quotedExe} -ArgumentList '${uninstallArgs.map(s => s.replace(/'/g, "''")).join("','")}' -Wait -Verb RunAs`;
+
+        const spawnResult = child_process.spawnSync(
+            "powershell.exe",
+            [
+                "-NoProfile",
+                "-ExecutionPolicy", "Bypass",
+                "-Command", psCommand
+            ],
+            {
+                stdio: "inherit",
+                shell: false,
+                windowsHide: false,
+            }
+        );
+
+        if (spawnResult.error) {
+            logger.error(`Build Tools uninstall failed to start: ${spawnResult.error}`);
+            throw new Error(`Build Tools uninstall failed to start: ${spawnResult.error instanceof Error ? spawnResult.error.message : String(spawnResult.error)}`);
+        }
+        if (typeof spawnResult.status === "number" && spawnResult.status !== 0) {
+            let stderrMsg = "";
+            if (spawnResult.stderr) {
+                try {
+                    stderrMsg = typeof spawnResult.stderr === "string"
+                        ? spawnResult.stderr
+                        : spawnResult.stderr.toString();
+                } catch { /* ignore */ }
+            }
+            logger.error(
+                `Build Tools uninstall failed with exit code ${spawnResult.status}` +
+                (stderrMsg ? `: ${stderrMsg}` : "")
+            );
+            throw new Error(
+                `vs_installer.exe uninstall failed with exit code ${spawnResult.status}` +
+                (stderrMsg ? `: ${stderrMsg}` : "")
+            );
+        }
+        logger.info("Build Tools uninstall completed successfully.");
+    } catch (e: any) {
+        logger.error(`Exception while running uninstall: ${e && e.message ? e.message : e}`);
+        throw new Error(`Build Tools uninstall command failed: ${e && e.message ? e.message : e}`);
     }
 }
