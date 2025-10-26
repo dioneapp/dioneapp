@@ -202,7 +202,7 @@ async function downloadBootstrapperExecutable(
 
     try {
         handle = await fsp.open(tempPath, "w", 0o644);
-        writable = fs.createWriteStream(null, { fd: handle.fd, autoClose: false });
+        writable = fs.createWriteStream(tempPath, { fd: handle.fd, autoClose: false });
 
         try {
             await streamPipeline(response, writable);

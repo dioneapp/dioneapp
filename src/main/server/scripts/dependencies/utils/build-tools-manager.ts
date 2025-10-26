@@ -10,7 +10,6 @@ import { type BuildToolsVerification, verifyBuildToolsPaths } from "./build-tool
 class BuildToolsManager {
     private static instance: BuildToolsManager;
     private vcvarsEnv: Record<string, string> | null = null;
-    private verification: BuildToolsVerification | null = null;
     private initialized = false;
 
     private constructor() {}
@@ -150,7 +149,6 @@ echo VCVARS_ENV_END`;
             vcvarsEnv.PATH = merged;
 
             this.vcvarsEnv = vcvarsEnv;
-            this.verification = verification;
             this.initialized = true;
 
             logger.info("✅ Build tools environment initialized successfully");
