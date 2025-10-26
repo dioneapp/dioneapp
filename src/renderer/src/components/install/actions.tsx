@@ -100,26 +100,6 @@ export default function ActionsComponent({
 											className="h-16 w-16 object-cover object-center transition-all duration-200"
 										/>
 									) : (
-										!isLocal && (
-											<div
-												style={{
-													backgroundImage:
-														data?.logo_url ||
-														"linear-gradient(to right, #BCB1E7, #9A8FD1)",
-													backgroundSize: "100%",
-													backgroundRepeat: "no-repeat",
-													backgroundPosition: "center",
-													filter: "blur(15px)",
-													width: "100%",
-													height: "100%",
-													// width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
-													// height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
-												}}
-												className="h-16 w-16 bg-cover bg-center group-hover:border-white/20 transition-all duration-200"
-											/>
-										)
-									)}
-									{isLocal && (
 										<div className="h-16 w-16 bg-cover bg-center group-hover:border-white/20 transition-all duration-200 flex items-center justify-center bg-neutral-900">
 											<span className="text-white/70 font-semibold text-xl">
 												{data?.name?.charAt(0)?.toUpperCase() || "?"}

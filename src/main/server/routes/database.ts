@@ -6,22 +6,6 @@ import logger from "../utils/logger";
 const router = express.Router();
 router.use(express.json());
 
-// generate gradients for logo if is null
-function generateGradient(input: string): string {
-	if (!input) return "";
-	let h = 2166136261;
-	for (let i = 0; i < input.length; i++)
-		h = Math.imul(h ^ input.charCodeAt(i), 16777619);
-	const a = h >>> 0,
-		hue = a % 360;
-	const s = 60 + ((a >> 5) % 10);
-	const l1 = 48 + ((a >> 9) % 6),
-		l2 = 56 + ((a >> 12) % 6),
-		l3 = 64 + ((a >> 15) % 6);
-	const ang = 100 + (a % 201);
-	return `linear-gradient(${ang}deg, hsl(${hue}, ${s}%, ${l1}%) 0%, hsl(${hue}, ${s}%, ${l2}%) 50%, hsl(${hue}, ${s}%, ${l3}%) 100%)`;
-}
-
 // auth
 router.get("/user/:id", async (req, res) => {
 	if (!supabase) {
@@ -286,7 +270,7 @@ router.get("/explore", (req, res) => {
 
 			const scripts = data.map((script: any) => ({
 				...script,
-				logo_url: script.logo_url || generateGradient(script.name),
+				logo_url: script.logo_url || "no-logo",
 			}));
 
 			res.json(scripts);
@@ -347,7 +331,7 @@ router.get("/search/:id", (req, res) => {
 			script?.logo_url === "" ||
 			!script
 		) {
-			script.logo_url = generateGradient(script?.name);
+			script.logo_url = "no-logo";
 		}
 		res.send(script);
 		return;
@@ -425,7 +409,7 @@ router.get("/search/name/:name", async (req, res) => {
 					script.logo_url === undefined ||
 					script.logo_url === ""
 				) {
-					script.logo_url = generateGradient(script.name);
+					script.logo_url = "no-logo";
 				}
 				return script;
 			});
@@ -506,7 +490,7 @@ router.get("/search/type/:type", async (req, res) => {
 				script?.logo_url === undefined ||
 				script?.logo_url === ""
 			) {
-				script.logo_url = generateGradient(script.name);
+				script.logo_url = "no-logo";
 			}
 			return script;
 		});

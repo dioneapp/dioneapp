@@ -160,25 +160,6 @@ export default function QuickLaunch({
 								className="h-full w-full object-cover bg-neutral-800/50 backdrop-blur-sm"
 							/>
 						) : (
-							!app.isLocal && (
-								<div
-									className="h-full w-full object-cover"
-									style={{
-										backgroundImage:
-											app?.logo_url ||
-											"linear-gradient(to right, #BCB1E7, #9A8FD1)",
-										backgroundSize: "100%",
-										backgroundRepeat: "no-repeat",
-										backgroundPosition: "center",
-										filter: "blur(15px)",
-										width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
-										height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
-									}}
-								/>
-							)
-						)}
-
-						{app.isLocal && (
 							<div className="h-full w-full bg-neutral-900 flex items-center justify-center">
 								<span className="text-white/80 font-semibold text-lg">
 									{app.name?.charAt(0)?.toUpperCase() || "?"}

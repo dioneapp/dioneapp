@@ -42,33 +42,6 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 						object-center group-hover:border-white/20 bg-neutral-800/50"
 							/>
 						) : (
-							<>
-								{!script.isLocal && (
-									<div
-										className="h-16 w-16 rounded-xl border border-white/10 backdrop-blur-3xl bg-cover bg-center 
-						group-hover:border-white/20 overflow-hidden"
-									>
-										<div
-											style={{
-												backgroundImage:
-													script?.logo_url ||
-													"linear-gradient(to right, #BCB1E7, #9A8FD1)",
-												backgroundSize: "100%",
-												backgroundRepeat: "no-repeat",
-												backgroundPosition: "center",
-												filter: "blur(15px)",
-												width: "100%",
-												height: "100%",
-												// width: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
-												// height: `${Math.floor(Math.random() * (96 - 48 + 1) + 48)}px`,
-											}}
-											className="rounded-full brightness-150"
-										/>
-									</div>
-								)}
-							</>
-						)}
-						{!script.logo_url && script.isLocal && (
 							<div
 								className="h-16 w-16 rounded-xl border border-white/10 backdrop-blur-3xl bg-cover bg-center 
 						group-hover:border-white/20 items-center justify-center flex bg-neutral-900"
