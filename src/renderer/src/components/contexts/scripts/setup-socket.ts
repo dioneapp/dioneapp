@@ -270,8 +270,11 @@ export function setupSocket({
 					);
 				if (match) {
 					loadIframe(Number.parseInt(match[1]));
-					setCatchPort(Number.parseInt(match[1]));
-					setIframeAvailable(true);
+					setCatchPort((prev) => ({
+						...prev,
+						[appId]: Number.parseInt(match[1]),
+					}));
+					setIframeAvailable((prev) => ({ ...prev, [appId]: true }));
 				}
 			}
 			if (type === "log") {
@@ -319,9 +322,9 @@ export function setupSocket({
 			}
 			if (type === "catch") {
 				stopCheckingRef.current = false;
-				setIframeAvailable(false);
+				setIframeAvailable((prev) => ({ ...prev, [appId]: false }));
 				// loadIframe(Number.parseInt(content));
-				setCatchPort(Number.parseInt(content));
+				setCatchPort((prev) => ({ ...prev, [appId]: Number.parseInt(content) }));
 			}
 
 			if (content === "Script killed successfully" && !errorRef.current) {

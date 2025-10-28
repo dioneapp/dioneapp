@@ -81,9 +81,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const [dependencyDiagnostics, setDependencyDiagnostics] =
 		useState<DependencyDiagnosticsState>({});
 	// iframe stuff
-	const [catchPort, setCatchPort] = useState<number>();
-	const [iframeSrc, setIframeSrc] = useState<string>("");
-	const [iframeAvailable, setIframeAvailable] = useState<boolean>(false);
+	const [catchPort, setCatchPort] = useState<Record<string, number>>({});
+	const [iframeSrc, setIframeSrc] = useState<Record<string, string>>({});
+	const [iframeAvailable, setIframeAvailable] = useState<Record<string, boolean>>({});
 	// data stuff
 	const [data, setData] = useState<any | undefined>(undefined);
 	// show
@@ -249,9 +249,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		}
 		if (isAvailable) {
 			stopCheckingRef.current = true;
-			setIframeSrc(`http://localhost:${localPort}`);
+			setIframeSrc((prev) => ({ ...prev, [data?.id]: `http://localhost:${localPort}` }));
 			setShow({ [data?.id]: "iframe" });
-			setIframeAvailable(true);
+			setIframeAvailable((prev) => ({ ...prev, [data?.id]: true }));
 			showToast("default", `${data.name || "Script"} has opened a preview.`);
 			window.electron.ipcRenderer.invoke(
 				"notify",
@@ -428,7 +428,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		try {
 			const port = await getCurrentPort();
 			const response = await fetch(
-				`http://localhost:${port}/scripts/stop/${appName}/${appId}/${catchPort}`,
+				`http://localhost:${port}/scripts/stop/${appName}/${appId}/${catchPort[appId]}`,
 				{
 					method: "GET",
 				},

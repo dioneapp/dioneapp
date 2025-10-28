@@ -525,7 +525,7 @@ export default function Install({
 			console.log("stopping...");
 			const port = await getCurrentPort();
 			const response = await fetch(
-				`http://localhost:${port}/scripts/stop/${data.name}/${data.id}/${catchPort}`,
+				`http://localhost:${port}/scripts/stop/${data.name}/${data.id}/${catchPort[data.id]}`,
 				{
 					method: "GET",
 				},
@@ -762,7 +762,7 @@ export default function Install({
 		);
 		// only switch to logs view if we're not already there
 		if (show[data?.id] !== "logs") {
-			connectApp(data?.id, isLocal);
+			// connectApp(data?.id, isLocal); // commented out to avoid duplicate logs when an app finished installation and is reconnecting to start
 			setShow({ [data?.id]: "logs" });
 		}
 	};
@@ -882,12 +882,14 @@ export default function Install({
 
 	useEffect(() => {
 		if (!data?.id) return;
-		if (iframeAvailable && isServerRunning[data.id] && installed) {
-			loadIframe(catchPort as number);
-			addLogLine(
-				data.id,
-				`INFO: Preview started for ${data.name} on port ${catchPort}`,
-			);
+		if (iframeAvailable[data.id] && isServerRunning[data.id] && installed) {
+			loadIframe(catchPort[data.id]);
+			const logText = `INFO: Preview started for ${data.name} on port ${catchPort[data.id]}`;
+
+			// avoid duplicate log lines
+			if (!logs[data.id]?.includes(logText)) {
+				addLogLine(data.id, logText);
+			}
 		}
 	}, [
 		iframeAvailable,
@@ -984,9 +986,9 @@ export default function Install({
 						<AnimatePresence>
 							{show[data?.id] === "iframe" && (
 								<IframeComponent
-									iframeSrc={iframeSrc}
+									iframeSrc={iframeSrc[data?.id]}
 									handleStop={() => stopApp()}
-									currentPort={catchPort as number}
+									currentPort={catchPort[data.id]}
 									setShow={setShow}
 									data={data}
 								/>
@@ -996,7 +998,7 @@ export default function Install({
 									logs={logs}
 									copyLogsToClipboard={copyLogsToClipboard}
 									handleStop={() => stopApp()}
-									iframeAvailable={iframeAvailable}
+									iframeAvailable={iframeAvailable[data?.id]}
 									setShow={setShow}
 									appId={data?.id}
 								/>

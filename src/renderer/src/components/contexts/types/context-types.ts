@@ -65,8 +65,8 @@ export interface ScriptsContextType {
 	data: any;
 	error: boolean;
 	setError: React.Dispatch<React.SetStateAction<boolean>>;
-	setIframeAvailable: React.Dispatch<React.SetStateAction<boolean>>;
-	iframeAvailable: boolean;
+	setIframeAvailable: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	iframeAvailable: Record<string, boolean>;
 	setMissingDependencies: React.Dispatch<React.SetStateAction<any>>;
 	missingDependencies: any;
 	dependencyDiagnostics: DependencyDiagnosticsState;
@@ -85,10 +85,10 @@ export interface ScriptsContextType {
 		removeAfter?: number,
 	) => void;
 	stopCheckingRef: React.MutableRefObject<boolean>;
-	iframeSrc: string;
-	setIframeSrc: React.Dispatch<React.SetStateAction<string>>;
-	catchPort: number | undefined;
-	setCatchPort: React.Dispatch<React.SetStateAction<number | undefined>>;
+	iframeSrc: Record<string, string>;
+	setIframeSrc: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+	catchPort: Record<string, number>;
+	setCatchPort: React.Dispatch<React.SetStateAction<Record<string, number>>>;
 	exitRef: boolean;
 	setExitRef: React.Dispatch<React.SetStateAction<boolean>>;
 	apps: any[];
@@ -136,10 +136,10 @@ export interface SetupSocketProps {
 	setDependencyDiagnostics: React.Dispatch<
 		React.SetStateAction<DependencyDiagnosticsState>
 	>;
-	setIframeAvailable: React.Dispatch<React.SetStateAction<boolean>>;
-	setCatchPort: React.Dispatch<React.SetStateAction<number | undefined>>;
+	setIframeAvailable: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	setCatchPort: React.Dispatch<React.SetStateAction<Record<string, number>>>;
 	loadIframe: (port: number) => void;
-	setIframeSrc: React.Dispatch<React.SetStateAction<string>>;
+	setIframeSrc: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 	errorRef: React.MutableRefObject<boolean>;
 	showToast: (
 		variant: "default" | "success" | "error" | "warning",
