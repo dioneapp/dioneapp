@@ -83,7 +83,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	// iframe stuff
 	const [catchPort, setCatchPort] = useState<Record<string, number>>({});
 	const [iframeSrc, setIframeSrc] = useState<Record<string, string>>({});
-	const [iframeAvailable, setIframeAvailable] = useState<Record<string, boolean>>({});
+	const [iframeAvailable, setIframeAvailable] = useState<
+		Record<string, boolean>
+	>({});
 	// data stuff
 	const [data, setData] = useState<any | undefined>(undefined);
 	// show
@@ -249,7 +251,10 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		}
 		if (isAvailable) {
 			stopCheckingRef.current = true;
-			setIframeSrc((prev) => ({ ...prev, [data?.id]: `http://localhost:${localPort}` }));
+			setIframeSrc((prev) => ({
+				...prev,
+				[data?.id]: `http://localhost:${localPort}`,
+			}));
 			setShow({ [data?.id]: "iframe" });
 			setIframeAvailable((prev) => ({ ...prev, [data?.id]: true }));
 			showToast("default", `${data.name || "Script"} has opened a preview.`);
