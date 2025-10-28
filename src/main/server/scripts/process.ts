@@ -337,26 +337,64 @@ export const executeCommand = async (
 		DS_SKIP_CUDA_CHECK: "1",
 	};
 
-	if (needsBuildTools) {
+	// if (needsBuildTools) {
+	// 	logger.info(`This script requires build tools. Initializing...`);
+	// 	const buildTools = BuildToolsManager.getInstance();
+	// 	const buildToolsReady = await buildTools.initialize();
+	// 	if (!buildToolsReady) {
+	// 		logger.warn("Build tools initialization failed. Compilation may fail.");
+	// 		io.to(id).emit(logs, {
+	// 			type: "log",
+	// 			content:
+	// 				"WARNING: Build tools initialization failed. Compilation may fail.\n",
+	// 		});
+	// 		enhancedEnv = baseEnv;
+	// 	} else {
+	// 		enhancedEnv = buildTools.getEnhancedEnvironment(ENVIRONMENT);
+	// 		logger.info("Build tools ready for native compilation");
+	// 		io.to(id).emit(logs, {
+	// 			type: "log",
+	// 			content: "Build tools initialized for native module compilation\n",
+	// 		});
+	// 	}
+	// } else {
+	// 	enhancedEnv = baseEnv;
+	// }
+
+	// avoid re-initializing using cache
+	const _cacheKey = "__buildToolsEnv";
+	const _fnAny = executeCommand as unknown as Record<string, any>;
+
+	const initializeBuildTools = async () => {
 		logger.info(`This script requires build tools. Initializing...`);
 		const buildTools = BuildToolsManager.getInstance();
 		const buildToolsReady = await buildTools.initialize();
+
 		if (!buildToolsReady) {
 			logger.warn("Build tools initialization failed. Compilation may fail.");
 			io.to(id).emit(logs, {
 				type: "log",
-				content:
-					"WARNING: Build tools initialization failed. Compilation may fail.\n",
+				content: "WARNING: Build tools initialization failed. Compilation may fail.\n",
 			});
-			enhancedEnv = baseEnv;
-		} else {
-			enhancedEnv = buildTools.getEnhancedEnvironment(ENVIRONMENT);
-			logger.info("Build tools ready for native compilation");
-			io.to(id).emit(logs, {
-				type: "log",
-				content: "Build tools initialized for native module compilation\n",
-			});
+			return baseEnv;
 		}
+
+		logger.info("Build tools ready for native compilation");
+		io.to(id).emit(logs, {
+			type: "log",
+			content: "Build tools initialized for native module compilation\n",
+		});
+		return buildTools.getEnhancedEnvironment(ENVIRONMENT);
+	};
+
+	if (needsBuildTools) {
+		// initialize once per process and reuse the enhanced env for subsequent commands
+		if (!_fnAny[_cacheKey]) {
+			_fnAny[_cacheKey] = await initializeBuildTools();
+		} else {
+			logger.info("Reusing cached build tools environment");
+		}
+		enhancedEnv = _fnAny[_cacheKey];
 	} else {
 		enhancedEnv = baseEnv;
 	}
