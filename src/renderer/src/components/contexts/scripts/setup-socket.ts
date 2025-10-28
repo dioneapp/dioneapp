@@ -324,7 +324,10 @@ export function setupSocket({
 				stopCheckingRef.current = false;
 				setIframeAvailable((prev) => ({ ...prev, [appId]: false }));
 				// loadIframe(Number.parseInt(content));
-				setCatchPort((prev) => ({ ...prev, [appId]: Number.parseInt(content) }));
+				setCatchPort((prev) => ({
+					...prev,
+					[appId]: Number.parseInt(content),
+				}));
 			}
 
 			if (content === "Script killed successfully" && !errorRef.current) {

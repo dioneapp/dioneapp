@@ -374,7 +374,8 @@ export const executeCommand = async (
 			logger.warn("Build tools initialization failed. Compilation may fail.");
 			io.to(id).emit(logs, {
 				type: "log",
-				content: "WARNING: Build tools initialization failed. Compilation may fail.\n",
+				content:
+					"WARNING: Build tools initialization failed. Compilation may fail.\n",
 			});
 			return baseEnv;
 		}

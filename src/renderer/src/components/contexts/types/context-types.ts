@@ -65,7 +65,9 @@ export interface ScriptsContextType {
 	data: any;
 	error: boolean;
 	setError: React.Dispatch<React.SetStateAction<boolean>>;
-	setIframeAvailable: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	setIframeAvailable: React.Dispatch<
+		React.SetStateAction<Record<string, boolean>>
+	>;
 	iframeAvailable: Record<string, boolean>;
 	setMissingDependencies: React.Dispatch<React.SetStateAction<any>>;
 	missingDependencies: any;
@@ -136,7 +138,9 @@ export interface SetupSocketProps {
 	setDependencyDiagnostics: React.Dispatch<
 		React.SetStateAction<DependencyDiagnosticsState>
 	>;
-	setIframeAvailable: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	setIframeAvailable: React.Dispatch<
+		React.SetStateAction<Record<string, boolean>>
+	>;
 	setCatchPort: React.Dispatch<React.SetStateAction<Record<string, number>>>;
 	loadIframe: (port: number) => void;
 	setIframeSrc: React.Dispatch<React.SetStateAction<Record<string, string>>>;
