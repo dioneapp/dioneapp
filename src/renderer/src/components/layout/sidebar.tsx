@@ -1,3 +1,4 @@
+import GeneratedIcon from "@renderer/components/icons/generated-icon";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, Clock, Library, Settings, User, X } from "lucide-react";
@@ -130,7 +131,7 @@ export default function Sidebar() {
 									</h2>
 									<div className="mt-2 bg-white/10 p-4 rounded-lg overflow-hidden flex flex-col gap-2 items-start justify-center">
 										<div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between w-full">
-											<h3 className="text-xl text-neutral-100 font-semibold text-balance break-words">
+											<h3 className="text-xl text-neutral-100 font-semibold text-balance wrap-break-word">
 												{releaseNotes.name}
 											</h3>
 											<span className="flex items-center gap-1 bg-white/10 rounded-full px-3 py-1 text-[10px] text-neutral-300">
@@ -180,7 +181,7 @@ export default function Sidebar() {
 			<div
 				className={`relative flex flex-col items-center justify-center border-r border-white/10 overflow-hidden ${config?.compactMode ? "max-w-24 w-24" : "max-w-70 w-70"}`}
 			>
-				<div className="absolute bottom-0 bg-gradient-to-t rounded-full -mb-28 blur-3xl from-white/50 to-transparent w-full h-24" />
+				<div className="absolute bottom-0 bg-linear-to-t rounded-full -mb-28 blur-3xl from-white/50 to-transparent w-full h-24" />
 				<div className="absolute -top-10 -left-14 bg-[#BCB1E7] blur-3xl max-w-64 w-full h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" />
 				<div className="flex flex-col items-center justify-start h-full w-full p-4 z-50 px-6">
 					<div
@@ -267,7 +268,7 @@ export default function Sidebar() {
 														className={`${config?.compactMode ? "w-12 h-12 rounded-xl flex items-center justify-center" : "w-full h-10 rounded-lg flex items-center gap-3 px-3"} group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group`}
 													>
 														<div
-															className={`${config?.compactMode ? "w-8 h-8" : "w-6 h-6"} overflow-hidden flex-shrink-0 rounded-lg`}
+															className={`${config?.compactMode ? "w-8 h-8" : "w-6 h-6"} overflow-hidden shrink-0 rounded-lg`}
 														>
 															{!app.isLocal ? (
 																<>
@@ -289,12 +290,7 @@ export default function Sidebar() {
 																	)}
 																</>
 															) : (
-																<div className="w-full h-full bg-neutral-900 flex items-center justify-center">
-																	<span className="text-white/80 font-semibold text-sm">
-																		{app.data.name?.charAt(0)?.toUpperCase() ||
-																			"?"}
-																	</span>
-																</div>
+																<GeneratedIcon name={app.data.name} className="w-full h-full" roundedClassName="rounded-lg" />
 															)}
 														</div>
 														{!config?.compactMode && (
@@ -327,7 +323,7 @@ export default function Sidebar() {
 						<QuickLaunch compactMode={config?.compactMode} />
 					)}
 					<div
-						className={`mt-auto h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-gradient-to-l ${!config?.compactMode ? "mb-4" : ""}`}
+						className={`mt-auto h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-linear-to-l ${!config?.compactMode ? "mb-4" : ""}`}
 					/>
 					<div
 						className={`mb-4 flex gap-2 items-center justify-center w-full h-fit group transition-all duration-500 ${loading ? "[&_div_div]:opacity-100 [&_div_div]:blur-none [&_div_div]:mt-0" : "hover:[&_div_div]:opacity-100 hover:[&_div_div]:blur-none [&_div_div]:-mt-24 hover:[&_div_div]:mt-0 [&_div_div]:opacity-0 [&_div_div]:blur-lg"} ${config?.compactMode ? "flex-col" : ""}`}

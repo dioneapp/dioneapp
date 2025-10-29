@@ -1,3 +1,4 @@
+import GeneratedIcon from "@renderer/components/icons/generated-icon";
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
 import { BadgeCheck, ChevronDown, Download, User } from "lucide-react";
@@ -89,7 +90,7 @@ export default function ActionsComponent({
 						</div>
 						<div className="relative z-10 p-6">
 							<div className="flex gap-4 items-start justify-start">
-								<div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-xl border border-white/10">
+								<div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-white/10">
 									{/* biome-ignore lint/complexity/useOptionalChain: if you change && to || it will break */}
 									{data?.logo_url && data?.logo_url?.startsWith("http") ? (
 										<img
@@ -100,11 +101,7 @@ export default function ActionsComponent({
 											className="h-16 w-16 object-cover object-center transition-all duration-200"
 										/>
 									) : (
-										<div className="h-16 w-16 bg-cover bg-center group-hover:border-white/20 transition-all duration-200 flex items-center justify-center bg-neutral-900">
-											<span className="text-white/70 font-semibold text-xl">
-												{data?.name?.charAt(0)?.toUpperCase() || "?"}
-											</span>
-										</div>
+										<GeneratedIcon name={data?.name} className="h-16 w-16" />
 									)}
 								</div>
 								<div className="flex flex-col items-start w-full">

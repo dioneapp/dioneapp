@@ -1,3 +1,4 @@
+import GeneratedIcon from "@renderer/components/icons/generated-icon";
 import { useCustomDrag } from "@renderer/utils/quick-launch/use-custom-drag";
 import { AnimatePresence, type Variants, motion } from "framer-motion";
 import { Plus, X } from "lucide-react";
@@ -160,11 +161,7 @@ export default function QuickLaunch({
 								className="h-full w-full object-cover bg-neutral-800/50 backdrop-blur-sm"
 							/>
 						) : (
-							<div className="h-full w-full bg-neutral-900 flex items-center justify-center">
-								<span className="text-white/80 font-semibold text-lg">
-									{app.name?.charAt(0)?.toUpperCase() || "?"}
-								</span>
-							</div>
+							<GeneratedIcon name={app.name} className="h-full w-full" roundedClassName="rounded-xl" />
 						)}
 					</Link>
 				</motion.div>
@@ -319,11 +316,7 @@ export default function QuickLaunch({
 								)
 							)}
 							{dragState.draggedApp.isLocal && (
-								<div className="h-full w-full bg-neutral-900 flex items-center justify-center">
-									<span className="text-white/80 font-semibold text-lg">
-										{dragState.draggedApp.name?.charAt(0)?.toUpperCase() || "?"}
-									</span>
-								</div>
+								<GeneratedIcon name={dragState.draggedApp.name} className="h-full w-full" roundedClassName="rounded-xl" />
 							)}
 						</div>
 						<div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
@@ -408,11 +401,7 @@ export default function QuickLaunch({
 															className="h-full w-full object-cover"
 														/>
 													) : (
-														<div className="h-full w-full bg-neutral-900 flex items-center justify-center">
-															<span className="text-white/80 font-semibold text-lg">
-																{app.name?.charAt(0)?.toUpperCase() || "?"}
-															</span>
-														</div>
+														<GeneratedIcon name={app.name} className="h-full w-full" roundedClassName="rounded-xl" />
 													)}
 												</motion.div>
 												{app.name ? (
