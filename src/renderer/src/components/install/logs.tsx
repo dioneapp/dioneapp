@@ -118,7 +118,7 @@ export default function LogsComponent({
 					</div>
 				</div>
 			</motion.div>
-			<div className="text-[10px] text-neutral-500 mt-2 mb-2 text-center mx-auto justify-center items-center flex">
+			<div className="text-[11px] text-neutral-500 mt-2 mb-2 text-center mx-auto justify-center items-center flex">
 				{t("logs.disclaimer")}
 			</div>
 		</motion.div>
