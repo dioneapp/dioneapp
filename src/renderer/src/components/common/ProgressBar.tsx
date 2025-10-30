@@ -50,8 +50,8 @@ export default function ProgressBar({
 						(status === "error"
 							? "Error"
 							: status === "success"
-								? "Completado"
-								: "Ejecutando...")}
+								? "Completed"
+								: "Running...")}
 				</span>
 				{mode === "determinate" && (
 					<span className="text-neutral-400">{Math.round(clamped)}%</span>

@@ -77,7 +77,7 @@ export default function LogsComponent({
 					className="whitespace-pre-wrap break-words font-mono text-xs text-left flex gap-1 flex-col text-neutral-400 leading-5"
 					autoScroll
 				/>
-				<div className="my-4">
+				<div className="mb-4">
 					<ProgressBar
 						value={progress?.[appId]?.percent || 0}
 						mode={progress?.[appId]?.mode || "indeterminate"}
