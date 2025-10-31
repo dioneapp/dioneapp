@@ -2,6 +2,7 @@ type GeneratedIconProps = {
 	name?: string | null;
 	className?: string;
 	roundedClassName?: string;
+	isSidebarIcon?: boolean;
 };
 
 function hashString(str: string): number {
@@ -57,6 +58,7 @@ export default function GeneratedIcon({
 	name,
 	className = "",
 	roundedClassName = "rounded-xl",
+	isSidebarIcon = false,
 }: GeneratedIconProps) {
 	const safeName = name ?? "?";
 	const initials = getInitials(safeName);
@@ -71,7 +73,7 @@ export default function GeneratedIcon({
 			}}
 		>
 			<span
-				className="text-white/95 drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] font-semibold"
+				className={`text-white/95 drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)] font-semibold ${isSidebarIcon ? "text-[10px]" : ""}`}
 				style={{
 					letterSpacing: "0.5px",
 				}}
