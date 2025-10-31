@@ -273,19 +273,18 @@ export default function Sidebar() {
 															{!app.isLocal ? (
 																<>
 																	{app.data.logo_url?.startsWith(
-																		"linear-gradient",
+																		"http",
 																	) ? (
-																		<div
-																			style={{
-																				backgroundImage: app.data.logo_url,
-																			}}
-																			className="w-full h-full bg-cover bg-center rounded-lg"
-																		/>
-																	) : (
 																		<img
 																			src={app.data.logo_url}
 																			alt={app.data.name}
 																			className="w-full h-full object-cover rounded-lg"
+																		/>
+																	) : (
+																		<GeneratedIcon
+																			name={app.data.name}
+																			className="h-full w-full border border-white/10 group-hover:border-white/20"
+																			isSidebarIcon
 																		/>
 																	)}
 																</>
@@ -309,14 +308,6 @@ export default function Sidebar() {
 														)}
 													</Link>
 												</div>
-												{index <
-													activeApps.slice(0, config?.compactMode ? 4 : 6)
-														.length -
-														1 && (
-													<div
-														className={`${config?.compactMode ? "w-8 mx-auto" : "w-full"} h-px bg-white/10 my-2`}
-													/>
-												)}
 											</div>
 										))}
 								</div>
