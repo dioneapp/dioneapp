@@ -54,7 +54,7 @@ export default function Install({
 		notSupported,
 		sockets,
 		wasJustInstalled,
-		setWasJustInstalled
+		setWasJustInstalled,
 	} = useScriptsContext();
 
 	const { t } = useTranslation();
@@ -192,7 +192,7 @@ export default function Install({
 							console.log("socket already present and connected for", data?.id);
 						}
 					} catch (err) {
-						console.warn('error connecting socket before auto-open', err);
+						console.warn("error connecting socket before auto-open", err);
 					}
 
 					// avoid duplicate log lines

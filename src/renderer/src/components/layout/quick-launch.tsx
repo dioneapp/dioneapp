@@ -161,7 +161,11 @@ export default function QuickLaunch({
 								className="h-full w-full object-cover bg-neutral-800/50 backdrop-blur-sm"
 							/>
 						) : (
-							<GeneratedIcon name={app.name} className="h-full w-full" roundedClassName="rounded-xl" />
+							<GeneratedIcon
+								name={app.name}
+								className="h-full w-full"
+								roundedClassName="rounded-xl"
+							/>
 						)}
 					</Link>
 				</motion.div>
@@ -316,7 +320,11 @@ export default function QuickLaunch({
 								)
 							)}
 							{dragState.draggedApp.isLocal && (
-								<GeneratedIcon name={dragState.draggedApp.name} className="h-full w-full" roundedClassName="rounded-xl" />
+								<GeneratedIcon
+									name={dragState.draggedApp.name}
+									className="h-full w-full"
+									roundedClassName="rounded-xl"
+								/>
 							)}
 						</div>
 						<div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
@@ -401,7 +409,11 @@ export default function QuickLaunch({
 															className="h-full w-full object-cover"
 														/>
 													) : (
-														<GeneratedIcon name={app.name} className="h-full w-full" roundedClassName="rounded-xl" />
+														<GeneratedIcon
+															name={app.name}
+															className="h-full w-full"
+															roundedClassName="rounded-xl"
+														/>
 													)}
 												</motion.div>
 												{app.name ? (
