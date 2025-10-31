@@ -28,6 +28,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const socketsRef = useRef<{
 		[key: string]: { socket: Socket; isLocal?: boolean };
 	}>({});
+	const connectingRef = useRef<Record<string, Promise<void> | null>>({});
 	const socketRef = useRef<any>(null);
 	const terminalStatesRef = useRef<Record<string, TerminalNormalizer>>({});
 	const [exitRef, setExitRef] = useState<boolean>(false);
@@ -269,59 +270,114 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	};
 
 	async function connectApp(appId: string, isLocal?: boolean) {
-		if (socketsRef.current[appId]) return;
+		// reuse existing connection attempt
+		if (connectingRef.current[appId]) {
+			return connectingRef.current[appId];
+		}
 
-		const port = await getCurrentPort();
-		const newSocket = setupSocket({
-			appId,
-			addLog,
-			port,
-			setMissingDependencies,
-			setDependencyDiagnostics,
-			setIframeAvailable,
-			setCatchPort,
-			loadIframe,
-			setIframeSrc,
-			errorRef,
-			showToast,
-			stopCheckingRef,
-			statusLog,
-			setStatusLog,
-			setDeleteLogs,
-			data,
-			socketsRef,
-			setAppFinished,
-			setNotSupported,
-			setWasJustInstalled,
-			setProgress,
-		});
-		socketsRef.current[appId] = {
-			socket: newSocket,
-			isLocal,
-		};
-		setSockets({ ...socketsRef.current });
+		const connectPromise = (async () => {
+			const existing = socketsRef.current[appId];
+			if (existing && existing.socket) {
+				try {
+					// already fully connected -> nothing to do
+					if (existing.socket.connected) {
+						return;
+					}
+					// try reconnecting existing socket
+					if (typeof existing.socket.connect === "function") {
+						console.log(`Reconnecting socket for ${appId}...`);
+						existing.socket.connect();
+						setSockets({ ...socketsRef.current });
+						// wait for connection or timeout
+						await new Promise<void>((resolve) => {
+							const to = setTimeout(() => {
+								console.warn(`Timeout waiting for socket ${appId} to connect`);
+								resolve();
+							}, 2000);
+							existing.socket.once("connect", () => {
+								clearTimeout(to);
+								resolve();
+							});
+						});
+						if (existing.socket.connected) return;
+					}
+				} catch (err) {
+					console.warn("Reconnect attempt failed, will recreate socket:", err);
+				}
+
+				// cleanup dead socket
+				try {
+					if (existing.socket && typeof existing.socket.disconnect === "function") {
+						existing.socket.disconnect();
+					}
+				} catch (e) {
+					/* ignore */
+				}
+				delete socketsRef.current[appId];
+				setSockets({ ...socketsRef.current });
+			}
+
+			const port = await getCurrentPort();
+			const newSocket = setupSocket({
+				appId,
+				addLog,
+				port,
+				setMissingDependencies,
+				setDependencyDiagnostics,
+				setIframeAvailable,
+				setCatchPort,
+				loadIframe,
+				setIframeSrc,
+				errorRef,
+				showToast,
+				stopCheckingRef,
+				statusLog,
+				setStatusLog,
+				setDeleteLogs,
+				data,
+				socketsRef,
+				setAppFinished,
+				setNotSupported,
+				setWasJustInstalled,
+				setProgress,
+			});
+			socketsRef.current[appId] = {
+				socket: newSocket,
+				isLocal,
+			};
+			setSockets({ ...socketsRef.current });
+		})();
+
+		connectingRef.current[appId] = connectPromise;
+		try {
+			await connectPromise;
+		} finally {
+			connectingRef.current[appId] = null;
+		}
 	}
 
 	function disconnectApp(appId: string) {
-		const socketToClose = socketsRef.current[appId];
-		if (!socketToClose) return;
+        const socketToClose = socketsRef.current[appId];
+        if (!socketToClose) return;
 
-		socketToClose.socket.disconnect();
-		delete socketsRef.current[appId];
-		setSockets({ ...socketsRef.current });
+        socketToClose.socket.disconnect();
+        delete socketsRef.current[appId];
+        setSockets({ ...socketsRef.current });
+		// clear any pending connection promise so future connects start fresh
+		connectingRef.current[appId] === null;
 
-		setDependencyDiagnostics((prev) => {
-			if (!prev[appId]) return prev;
-			const next = { ...prev };
-			delete next[appId];
-			return next;
-		});
+        setDependencyDiagnostics((prev) => {
+            if (!prev[appId]) return prev;
+            const next = { ...prev };
+            delete next[appId];
+            return next;
+        });
 
-		setActiveApps((prev) => {
-			const filtered = prev.filter((app) => app.appId !== appId);
-			return filtered;
-		});
-	}
+        setActiveApps((prev) => {
+            const filtered = prev.filter((app) => app.appId !== appId);
+            return filtered;
+        });
+    }
 
 	// multiple logs
 	const addLog = useCallback((appId: string, message: string) => {

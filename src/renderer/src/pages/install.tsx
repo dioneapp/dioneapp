@@ -54,7 +54,7 @@ export default function Install({
 		notSupported,
 		sockets,
 		wasJustInstalled,
-		setWasJustInstalled,
+		setWasJustInstalled
 	} = useScriptsContext();
 
 	const { t } = useTranslation();
@@ -177,9 +177,31 @@ export default function Install({
 		async function stopApp() {
 			if (!data?.id) return;
 
+			console.log("appFinished", appFinished);
 			if (appFinished[data.id] === true) {
+				// stop app on finished
 				await handleStopApp(data.id, data.name);
-				setShow({ [data.id]: "actions" });
+				if (config?.autoOpenAfterInstall) {
+					// ensure socket connection
+					try {
+						if (!sockets[data?.id] || !sockets[data?.id]?.socket?.connected) {
+							await connectApp(data?.id, isLocal);
+							// wait a moment for socket to connect
+							await new Promise((resolve) => setTimeout(resolve, 500));
+						} else {
+							console.log("socket already present and connected for", data?.id);
+						}
+					} catch (err) {
+						console.warn('error connecting socket before auto-open', err);
+					}
+
+					// avoid duplicate log lines
+					if (!isServerRunning[data.id]) {
+						await start();
+					}
+				} else {
+					setShow({ [data.id]: "actions" });
+				}
 			}
 		}
 		stopApp();
@@ -195,31 +217,6 @@ export default function Install({
 		start,
 		isLocal,
 	]);
-
-	useEffect(() => {
-		async function handleAutoOpen() {
-			// auto-open the app if the setting is enabled and it was just installed
-			// but only if we're not in the middle of installing dependencies
-			const oldInstall = installed;
-			const newInstall = await fetchIfDownloaded();
-			if (
-				oldInstall === false &&
-				newInstall === true &&
-				config?.autoOpenAfterInstall &&
-				wasJustInstalled
-			) {
-				await new Promise((resolve) => setTimeout(resolve, 300));
-				await stopApp();
-				await handleStart();
-				setWasJustInstalled(false);
-			}
-		}
-
-		if (!data?.id) return;
-		if (!isServerRunning[data.id]) {
-			handleAutoOpen();
-		}
-	}, [isServerRunning]);
 
 	useEffect(() => {
 		setData(null);
@@ -492,22 +489,25 @@ export default function Install({
 				await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
 			}
 
-			const port = await getCurrentPort();
-			window.electron.ipcRenderer.invoke(
-				"notify",
-				"Starting...",
-				`Starting ${data.name}`,
-			);
-			await fetch(
-				`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}${selectedStart ? `?start=${encodeURIComponent(selectedStart)}` : ""}`,
-				{
-					method: "POST",
-					body: JSON.stringify({ replaceCommands }),
-					headers: {
-						"Content-Type": "application/json",
+			if (!isServerRunning[data?.id]) {
+				setShow({ [data?.id]: "logs" });
+				const port = await getCurrentPort();
+				window.electron.ipcRenderer.invoke(
+					"notify",
+					"Starting...",
+					`Starting ${data.name}`,
+				);
+				await fetch(
+					`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}${selectedStart ? `?start=${encodeURIComponent(selectedStart)}` : ""}`,
+					{
+						method: "POST",
+						body: JSON.stringify({ replaceCommands }),
+						headers: {
+							"Content-Type": "application/json",
+						},
 					},
-				},
-			);
+				);
+			}
 		} catch (error) {
 			showToast(
 				"error",
