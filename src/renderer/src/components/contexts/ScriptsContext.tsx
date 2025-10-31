@@ -307,7 +307,10 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 				// cleanup dead socket
 				try {
-					if (existing.socket && typeof existing.socket.disconnect === "function") {
+					if (
+						existing.socket &&
+						typeof existing.socket.disconnect === "function"
+					) {
 						existing.socket.disconnect();
 					}
 				} catch (e) {
@@ -357,27 +360,27 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	}
 
 	function disconnectApp(appId: string) {
-        const socketToClose = socketsRef.current[appId];
-        if (!socketToClose) return;
+		const socketToClose = socketsRef.current[appId];
+		if (!socketToClose) return;
 
-        socketToClose.socket.disconnect();
-        delete socketsRef.current[appId];
-        setSockets({ ...socketsRef.current });
+		socketToClose.socket.disconnect();
+		delete socketsRef.current[appId];
+		setSockets({ ...socketsRef.current });
 		// clear any pending connection promise so future connects start fresh
 		connectingRef.current[appId] === null;
 
-        setDependencyDiagnostics((prev) => {
-            if (!prev[appId]) return prev;
-            const next = { ...prev };
-            delete next[appId];
-            return next;
-        });
+		setDependencyDiagnostics((prev) => {
+			if (!prev[appId]) return prev;
+			const next = { ...prev };
+			delete next[appId];
+			return next;
+		});
 
-        setActiveApps((prev) => {
-            const filtered = prev.filter((app) => app.appId !== appId);
-            return filtered;
-        });
-    }
+		setActiveApps((prev) => {
+			const filtered = prev.filter((app) => app.appId !== appId);
+			return filtered;
+		});
+	}
 
 	// multiple logs
 	const addLog = useCallback((appId: string, message: string) => {
