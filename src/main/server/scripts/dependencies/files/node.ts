@@ -273,6 +273,7 @@ export async function install(
 					// update environment variables
 					const cacheDir = path.join(binFolder, "cache", depName);
 					addValue("PATH", path.join(depFolder));
+					addValue("PATH", path.join(depFolder, "node_modules"));
 					addValue("NPM_CONFIG_CACHE", path.join(cacheDir));
 					addValue(
 						"NPM_CONFIG_STORE_DIR",
