@@ -43,7 +43,10 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 						object-center group-hover:border-white/20 bg-neutral-800/50"
 							/>
 						) : (
-							<GeneratedIcon name={script.name} className="h-16 w-16 border border-white/10 group-hover:border-white/20" />
+							<GeneratedIcon
+								name={script.name}
+								className="h-16 w-16 border border-white/10 group-hover:border-white/20"
+							/>
 						)}
 						<div className="flex flex-col gap-1 flex-1 min-w-0">
 							<h2 className="text-xl sm:text-2xl text-white font-medium truncate">
