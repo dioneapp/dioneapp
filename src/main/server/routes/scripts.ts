@@ -11,6 +11,8 @@ import getAllScripts, { getInstalledScript } from "../scripts/installed";
 import { stopActiveProcess } from "../scripts/process";
 import logger from "../utils/logger";
 
+const activeStarts = new Map<string, boolean>();
+
 export function createScriptRouter(io: Server) {
 	const router = express.Router();
 	router.use(express.json());
@@ -111,14 +113,23 @@ export function createScriptRouter(io: Server) {
 			"apps",
 			sanitizedName,
 		);
-		logger.info(`Starting script '${sanitizedName}' on '${workingDir}'`);
-		io.to(id).emit("installUpdate", {
-			type: "log",
-			content: `Starting script '${sanitizedName}' on '${workingDir}'\n`,
-		});
+		const key = `${sanitizedName}:${id}`;
 
-		console.log("selected start option:", selectedStart);
+		// if already starting, ignore duplicate request
+		if (activeStarts.get(key)) {
+			logger.info(`Start request ignored: already starting ${key}`);
+			return res.status(409).send({ message: "Start already in progress" });
+		}
+		activeStarts.set(key, true);
+
 		try {
+			logger.info(`Starting script '${sanitizedName}' on '${workingDir}'`);
+			io.to(id).emit("installUpdate", {
+				type: "log",
+				content: `Starting script '${sanitizedName}' on '${workingDir}'\n`,
+			});
+
+			console.log("selected start option:", selectedStart);
 			await executeStartup(
 				workingDir,
 				io,
@@ -135,6 +146,8 @@ export function createScriptRouter(io: Server) {
 				`Error handling start request: [ (${error.code || "No code"}) ${error.message || error.details || "No details"} ]`,
 			);
 			res.status(500).send("An error occurred while processing your request.");
+		} finally {
+			activeStarts.delete(key);
 		}
 	});
 
