@@ -272,9 +272,7 @@ export default function Sidebar() {
 														>
 															{!app.isLocal ? (
 																<>
-																	{app.data.logo_url?.startsWith(
-																		"http",
-																	) ? (
+																	{app.data.logo_url?.startsWith("http") ? (
 																		<img
 																			src={app.data.logo_url}
 																			alt={app.data.name}
