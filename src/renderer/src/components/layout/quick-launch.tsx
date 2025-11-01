@@ -124,7 +124,7 @@ export default function QuickLaunch({
 			>
 				<motion.div
 					className={`
-					border border-white/10 hover:border-white/40 rounded-xl 
+					border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl 
 					flex items-center justify-center overflow-hidden cursor-pointer
 					${compactMode ? "h-12 w-12" : "h-18 w-18"}
 					${isBeingDragged ? "opacity-30 scale-95" : ""}
@@ -391,7 +391,7 @@ export default function QuickLaunch({
 												className="flex flex-col items-center p-3 rounded-xl transition-colors w-full cursor-pointer"
 											>
 												<motion.div
-													className={`h-16 w-16 mb-2 ${app?.logo_url ? "border border-white/10" : ""} rounded-xl flex items-center justify-center overflow-hidden`}
+													className={`h-16 w-16 mb-2 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl flex items-center justify-center overflow-hidden`}
 													whileHover={{ scale: 1.05 }}
 													whileTap={{ scale: 0.95 }}
 												>
