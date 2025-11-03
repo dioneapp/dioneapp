@@ -5,6 +5,7 @@ import configRouter from "./config";
 // routers
 import databaseRouter from "./database";
 import { createDependenciesRouter } from "./dependencies";
+import filesRouter from "./files";
 import { createLocalScriptsRouter } from "./local";
 import { createScriptRouter } from "./scripts";
 import searchBarRouter from "./searchbar";
@@ -36,4 +37,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 
 	// variables stuff
 	server.use("/variables", createVariablesRouter());
+
+	// files stuff
+	server.use("/files", filesRouter);
 };

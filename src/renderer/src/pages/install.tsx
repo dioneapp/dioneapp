@@ -1,5 +1,6 @@
 import ActionsComponent from "@renderer/components/install/actions";
 import Buttons from "@renderer/components/install/buttons";
+import WorkspaceEditor from "@renderer/components/install/editor";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
 import NotSupported from "@renderer/components/install/not-supported";
@@ -992,6 +993,9 @@ export default function Install({
 									setShow={setShow}
 									data={data}
 								/>
+							)}{" "}
+							{show[data?.id] === "editor" && (
+								<WorkspaceEditor data={data} setShow={setShow} />
 							)}{" "}
 							{show[data?.id] === "logs" && (
 								<LogsComponent
