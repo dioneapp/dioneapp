@@ -185,58 +185,69 @@ export default function ActionsComponent({
 													<button
 														type="button"
 														onClick={() => setDropdownOpen((v) => !v)}
-														className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-full rounded-bl-none" : "rounded-full"} focus:outline-none transition-all duration-150 cursor-pointer flex items-center gap-2`}
+														className="bg-white hover:bg-white/80 text-black font-semibold py-1 pl-4 pr-3 text-sm rounded-full focus:outline-none transition-all duration-200 cursor-pointer flex items-center gap-2"
 													>
 														{t("actions.start")}
-														<ChevronDown size={16} />
+														<motion.div
+															animate={{ rotate: dropdownOpen ? 180 : 0 }}
+															transition={{ duration: 0.2 }}
+														>
+															<ChevronDown size={16} />
+														</motion.div>
 													</button>
 													{dropdownOpen && startOptions && (
 														<motion.div
 															initial={{
 																opacity: 0,
-																scale: 0.93,
-																y: -10,
-																filter: "blur(10px)",
+																scale: 0.95,
+																y: -5,
 															}}
 															animate={{
 																opacity: 1,
 																scale: 1,
 																y: 0,
-																filter: "blur(0px)",
-																transition: { duration: 0.2 },
 															}}
 															exit={{
 																opacity: 0,
-																scale: 0.93,
-																y: -10,
-																filter: "blur(10px)",
+																scale: 0.95,
+																y: -5,
 															}}
-															className="absolute left-0 mt-2 p-2 w-44 bg-white border border-white/10 rounded rounded-tl-none shadow-lg z-50 overflow-hidden"
+															transition={{ duration: 0.15 }}
+															className="absolute left-0 mt-2 w-50 bg-[#1a1a1a] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden backdrop-blur-md"
 														>
-															{startOptions.starts.map((start, index) => (
-																<div
-																	onClick={() => handleStart(start)}
-																	key={index}
-																	className="px-2 text-white-300 hover:bg-neutral-300 rounded cursor-pointer transition-colors"
-																>
-																	<span className="text-xs text-black font-semibold">
-																		{start.name}
-																	</span>
-																</div>
-															))}
+															<div className="p-1">
+																{startOptions.starts.map((start, index) => (
+																	<button
+																		type="button"
+																		onClick={() => {
+																			handleStart(start);
+																			setDropdownOpen(false);
+																		}}
+																		key={index}
+																		className="w-full px-3 py-1 text-left text-white hover:bg-white/10 rounded-md cursor-pointer transition-colors duration-150 flex flex-col gap-1"
+																	>
+																		<span className="text-sm font-semibold">
+																			{start.name}
+																		</span>
+																		{start.description && (
+																			<span className="text-xs text-neutral-400">
+																				{start.description}
+																			</span>
+																		)}
+																	</button>
+																))}
+															</div>
 														</motion.div>
 													)}
 												</div>
 											) : (
-												<div className="relative" ref={dropdownRef}>
-													<button
-														type="button"
-														onClick={() => handleStart()}
-														className={`bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm ${dropdownOpen ? "rounded-b-none rounded-lg" : "rounded-full"} focus:outline-none transition-all duration-200 cursor-pointer flex items-center gap-2`}
-													>
-														{t("actions.start")}
-													</button>
-												</div>
+												<button
+													type="button"
+													onClick={() => handleStart()}
+													className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none transition-all duration-200 cursor-pointer"
+												>
+													{t("actions.start")}
+												</button>
 											)}
 
 											<button
