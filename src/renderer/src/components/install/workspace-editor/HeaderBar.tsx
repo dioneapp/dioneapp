@@ -1,10 +1,10 @@
 import {
-    ArrowLeft,
-    ExternalLink,
-    Loader2,
-    Pencil,
-    RefreshCcw,
-    Save,
+	ArrowLeft,
+	ExternalLink,
+	Loader2,
+	Pencil,
+	RefreshCcw,
+	Save,
 } from "lucide-react";
 import type { FileNode } from "./types";
 
@@ -51,9 +51,14 @@ const HeaderBar = ({
 				<span>Back</span>
 			</button>
 			<div className="flex min-w-0 flex-1 items-center gap-2 text-[11px]">
-				<span className="truncate font-semibold text-neutral-100">{workspaceName}</span>
+				<span className="truncate font-semibold text-neutral-100">
+					{workspaceName}
+				</span>
 				<span className="hidden text-neutral-500 sm:inline">•</span>
-				<span className="hidden min-w-0 truncate text-neutral-400 sm:inline" title={rootPath}>
+				<span
+					className="hidden min-w-0 truncate text-neutral-400 sm:inline"
+					title={rootPath}
+				>
 					{rootPath || "Resolving workspace..."}
 				</span>
 				{activeNode && (
@@ -129,7 +134,12 @@ const HeaderBar = ({
 				<button
 					type="button"
 					onClick={onSaveFile}
-					disabled={!isDirty || isSaving || !selectedFileNode || selectedFileNode.type !== "file"}
+					disabled={
+						!isDirty ||
+						isSaving ||
+						!selectedFileNode ||
+						selectedFileNode.type !== "file"
+					}
 					className={primaryButtonClass}
 				>
 					{isSaving ? (

@@ -23,7 +23,10 @@ const ContextMenu = ({
 }: ContextMenuProps) => {
 	if (!state.visible || !state.node) return null;
 
-	const handleClick = (event: MouseEvent<HTMLButtonElement>, action: () => void) => {
+	const handleClick = (
+		event: MouseEvent<HTMLButtonElement>,
+		action: () => void,
+	) => {
 		event.stopPropagation();
 		action();
 		onClose();

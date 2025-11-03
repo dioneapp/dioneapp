@@ -1,15 +1,11 @@
 import {
-    ChevronDown,
-    ChevronRight,
-    FileText,
-    Folder,
-    Loader2,
+	ChevronDown,
+	ChevronRight,
+	FileText,
+	Folder,
+	Loader2,
 } from "lucide-react";
-import {
-    type KeyboardEvent,
-    type MouseEvent,
-    type ReactNode,
-} from "react";
+import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import type { FileNode } from "./types";
 import { getFileIconColor } from "./utils";
 
@@ -73,7 +69,10 @@ const FileTree = ({
 			}`;
 
 			return (
-				<div key={node.relativePath || node.name} className="text-xs text-neutral-200">
+				<div
+					key={node.relativePath || node.name}
+					className="text-xs text-neutral-200"
+				>
 					<div
 						role="button"
 						tabIndex={0}
@@ -109,7 +108,9 @@ const FileTree = ({
 							) : (
 								<FileText
 									className={`h-4 w-4 ${
-										isDisabled ? "text-neutral-600" : fileIconColor ?? "text-neutral-300"
+										isDisabled
+											? "text-neutral-600"
+											: (fileIconColor ?? "text-neutral-300")
 									}`}
 								/>
 							)}

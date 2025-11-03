@@ -1,8 +1,8 @@
+import fs from "node:fs";
+import path from "node:path";
 import { app } from "electron";
 import express from "express";
 import { fileTypeFromBuffer } from "file-type/core";
-import fs from "node:fs";
-import path from "node:path";
 import { readConfig } from "../../config";
 import logger from "../utils/logger";
 
@@ -171,9 +171,7 @@ const getAppBaseDirectories = (): string[] => {
 	}
 	const fallbackApps = path.resolve(fallbackRoot, APP_FOLDER_NAME);
 	if (
-		!directories.some(
-			(dir) => dir.toLowerCase() === fallbackApps.toLowerCase(),
-		)
+		!directories.some((dir) => dir.toLowerCase() === fallbackApps.toLowerCase())
 	) {
 		directories.push(fallbackApps);
 	}
@@ -234,7 +232,11 @@ const inspectDirectoryMetadata = (
 				dione?.script?.name,
 				dione?.slug,
 			];
-			if (potentialNames.some((value) => matchNameCandidate(value, candidateNames))) {
+			if (
+				potentialNames.some((value) =>
+					matchNameCandidate(value, candidateNames),
+				)
+			) {
 				nameMatch = true;
 			}
 		} catch (error) {
@@ -339,7 +341,8 @@ const toRelativePath = (root: string, absolute: string) => {
 router.get("/root/:appName", async (req, res) => {
 	try {
 		const appName = decodeURIComponent(req.params.appName);
-		const appId = typeof req.query.appId === "string" ? req.query.appId : undefined;
+		const appId =
+			typeof req.query.appId === "string" ? req.query.appId : undefined;
 		const appRoot = resolveAppRoot(appName, appId);
 
 		if (!fs.existsSync(appRoot)) {
@@ -362,7 +365,8 @@ router.get("/root/:appName", async (req, res) => {
 router.get("/list/:appName", async (req, res) => {
 	try {
 		const appName = decodeURIComponent(req.params.appName);
-		const appId = typeof req.query.appId === "string" ? req.query.appId : undefined;
+		const appId =
+			typeof req.query.appId === "string" ? req.query.appId : undefined;
 		const appRoot = resolveAppRoot(appName, appId);
 
 		const dirParam = typeof req.query.dir === "string" ? req.query.dir : "";
@@ -392,9 +396,15 @@ router.get("/list/:appName", async (req, res) => {
 		return res.send({ entries: mappedEntries });
 	} catch (error: any) {
 		const message = error?.message || "Failed to list directory";
-		const status = message === "Application directory not found" || message === "Directory not found" ? 404 : 400;
+		const status =
+			message === "Application directory not found" ||
+			message === "Directory not found"
+				? 404
+				: 400;
 		if (status === 404) {
-			logger.warn(`Directory lookup failed for ${req.params.appName}: ${message}`);
+			logger.warn(
+				`Directory lookup failed for ${req.params.appName}: ${message}`,
+			);
 		} else {
 			logger.error("Failed to list directory", error);
 		}
@@ -405,7 +415,8 @@ router.get("/list/:appName", async (req, res) => {
 router.get("/content/:appName", async (req, res) => {
 	try {
 		const appName = decodeURIComponent(req.params.appName);
-		const appId = typeof req.query.appId === "string" ? req.query.appId : undefined;
+		const appId =
+			typeof req.query.appId === "string" ? req.query.appId : undefined;
 		const appRoot = resolveAppRoot(appName, appId);
 
 		const fileParam = typeof req.query.file === "string" ? req.query.file : "";
@@ -435,7 +446,10 @@ router.get("/content/:appName", async (req, res) => {
 				const detectedType = await fileTypeFromBuffer(buffer);
 				if (detectedType && typeof detectedType.mime === "string") {
 					const detectedMime = detectedType.mime.toLowerCase();
-					const isMedia = detectedMime.startsWith("image/") || detectedMime.startsWith("audio/") || detectedMime.startsWith("video/");
+					const isMedia =
+						detectedMime.startsWith("image/") ||
+						detectedMime.startsWith("audio/") ||
+						detectedMime.startsWith("video/");
 					if (isMedia) {
 						mimeType = detectedType.mime;
 						canPreview = true;
@@ -450,7 +464,9 @@ router.get("/content/:appName", async (req, res) => {
 				}
 			} catch (error) {
 				const message = (error as Error)?.message || "Unknown error";
-				logger.warn(`Media type detection failed for ${targetFile}: ${message}`);
+				logger.warn(
+					`Media type detection failed for ${targetFile}: ${message}`,
+				);
 			}
 
 			if (!canPreview && buffer.length >= 12) {
@@ -476,7 +492,12 @@ router.get("/content/:appName", async (req, res) => {
 		if (looksBinary) {
 			const fallbackMime = extension ? mediaMimeMap[extension] : undefined;
 			const resolvedMime = mimeType || fallbackMime;
-			if (resolvedMime && (resolvedMime.startsWith("image/") || resolvedMime.startsWith("audio/") || resolvedMime.startsWith("video/"))) {
+			if (
+				resolvedMime &&
+				(resolvedMime.startsWith("image/") ||
+					resolvedMime.startsWith("audio/") ||
+					resolvedMime.startsWith("video/"))
+			) {
 				return res.send({
 					content: buffer.toString("base64"),
 					encoding: "base64",
@@ -497,7 +518,11 @@ router.get("/content/:appName", async (req, res) => {
 			"File not found",
 			"Requested path is not a file",
 		];
-		const status = notFoundMessages.includes(message) ? 404 : message === "Binary files are not supported" ? 415 : 400;
+		const status = notFoundMessages.includes(message)
+			? 404
+			: message === "Binary files are not supported"
+				? 415
+				: 400;
 		if (status === 404) {
 			logger.warn(`File access failed for ${req.params.appName}: ${message}`);
 		} else if (status === 415) {
@@ -512,7 +537,8 @@ router.get("/content/:appName", async (req, res) => {
 router.post("/save/:appName", async (req, res) => {
 	try {
 		const appName = decodeURIComponent(req.params.appName);
-		const appId = typeof req.query.appId === "string" ? req.query.appId : undefined;
+		const appId =
+			typeof req.query.appId === "string" ? req.query.appId : undefined;
 		const appRoot = resolveAppRoot(appName, appId);
 
 		const { file, content } = req.body ?? {};
@@ -533,7 +559,11 @@ router.post("/save/:appName", async (req, res) => {
 		return res.send({ success: true });
 	} catch (error: any) {
 		const message = error?.message || "Failed to save file";
-		const status = message === "Application directory not found" || message === "Target file does not exist" ? 404 : 400;
+		const status =
+			message === "Application directory not found" ||
+			message === "Target file does not exist"
+				? 404
+				: 400;
 		if (status === 404) {
 			logger.warn(`Save rejected for ${req.params.appName}: ${message}`);
 		} else {
@@ -546,20 +576,26 @@ router.post("/save/:appName", async (req, res) => {
 router.post("/create/:appName", async (req, res) => {
 	try {
 		const appName = decodeURIComponent(req.params.appName);
-		const appId = typeof req.query.appId === "string" ? req.query.appId : undefined;
+		const appId =
+			typeof req.query.appId === "string" ? req.query.appId : undefined;
 		const appRoot = resolveAppRoot(appName, appId);
 
 		const { parent, name, type } = req.body ?? {};
 		if (type !== "file" && type !== "directory") {
-			return res.status(400).send({ error: "Entry type must be file or directory" });
+			return res
+				.status(400)
+				.send({ error: "Entry type must be file or directory" });
 		}
 		if (!isValidEntryName(name)) {
 			return res.status(400).send({ error: "Invalid entry name" });
 		}
 
-		const parentRelative = typeof parent === "string" ? normalizeRelative(parent) : "";
+		const parentRelative =
+			typeof parent === "string" ? normalizeRelative(parent) : "";
 		const parentAbsolute = resolveWithinRoot(appRoot, parentRelative);
-		const parentStats = await fs.promises.stat(parentAbsolute).catch(() => null);
+		const parentStats = await fs.promises
+			.stat(parentAbsolute)
+			.catch(() => null);
 		if (!parentStats || !parentStats.isDirectory()) {
 			return res.status(400).send({ error: "Parent directory does not exist" });
 		}
@@ -598,7 +634,8 @@ router.post("/create/:appName", async (req, res) => {
 router.post("/rename/:appName", async (req, res) => {
 	try {
 		const appName = decodeURIComponent(req.params.appName);
-		const appId = typeof req.query.appId === "string" ? req.query.appId : undefined;
+		const appId =
+			typeof req.query.appId === "string" ? req.query.appId : undefined;
 		const appRoot = resolveAppRoot(appName, appId);
 
 		const { path: pathParam, name } = req.body ?? {};
@@ -615,7 +652,9 @@ router.post("/rename/:appName", async (req, res) => {
 		}
 
 		const currentAbsolute = resolveWithinRoot(appRoot, currentRelative);
-		const currentStats = await fs.promises.stat(currentAbsolute).catch(() => null);
+		const currentStats = await fs.promises
+			.stat(currentAbsolute)
+			.catch(() => null);
 		if (!currentStats) {
 			return res.status(404).send({ error: "Source entry not found" });
 		}
@@ -624,14 +663,17 @@ router.post("/rename/:appName", async (req, res) => {
 		const targetRelative = joinRelativePath(parentRelative, name.trim());
 		const targetAbsolute = resolveWithinRoot(appRoot, targetRelative);
 
-		const sameLocation = currentAbsolute.toLowerCase() === targetAbsolute.toLowerCase();
+		const sameLocation =
+			currentAbsolute.toLowerCase() === targetAbsolute.toLowerCase();
 		if (!sameLocation) {
 			const targetExists = await fs.promises
 				.stat(targetAbsolute)
 				.then(() => true)
 				.catch(() => false);
 			if (targetExists) {
-				return res.status(409).send({ error: "A file or folder with that name already exists" });
+				return res
+					.status(409)
+					.send({ error: "A file or folder with that name already exists" });
 			}
 		}
 
@@ -658,7 +700,8 @@ router.post("/rename/:appName", async (req, res) => {
 router.post("/delete/:appName", async (req, res) => {
 	try {
 		const appName = decodeURIComponent(req.params.appName);
-		const appId = typeof req.query.appId === "string" ? req.query.appId : undefined;
+		const appId =
+			typeof req.query.appId === "string" ? req.query.appId : undefined;
 		const appRoot = resolveAppRoot(appName, appId);
 
 		const { path: pathParam } = req.body ?? {};
@@ -678,7 +721,10 @@ router.post("/delete/:appName", async (req, res) => {
 		}
 
 		// remove file or directory (recursive for directories)
-		await fs.promises.rm(targetAbsolute, { recursive: stats.isDirectory(), force: false });
+		await fs.promises.rm(targetAbsolute, {
+			recursive: stats.isDirectory(),
+			force: false,
+		});
 
 		return res.send({ success: true });
 	} catch (error: any) {

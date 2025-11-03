@@ -1,7 +1,7 @@
 import {
-    fileIconColorMap,
-    invalidNamePattern,
-    languageByExtension,
+	fileIconColorMap,
+	invalidNamePattern,
+	languageByExtension,
 } from "./constants";
 import type { FileNode } from "./types";
 
@@ -24,7 +24,7 @@ export const getExtensionKey = (name: string) => {
 	if (lower === "dockerfile") return "docker";
 	if (lower.endsWith(".d.ts")) return "ts";
 	const parts = lower.split(".");
-	return parts.length > 1 ? parts.pop() ?? "" : "";
+	return parts.length > 1 ? (parts.pop() ?? "") : "";
 };
 
 export const getFileIconColor = (name: string) => {
@@ -33,7 +33,9 @@ export const getFileIconColor = (name: string) => {
 };
 
 export const isValidEntryNameClient = (value: string) =>
-	typeof value === "string" && value.trim().length > 0 && !invalidNamePattern.test(value);
+	typeof value === "string" &&
+	value.trim().length > 0 &&
+	!invalidNamePattern.test(value);
 
 export const getLanguageFromPath = (filePath: string | null) => {
 	if (!filePath) return "plaintext";
@@ -44,7 +46,7 @@ export const getLanguageFromPath = (filePath: string | null) => {
 	if (lower === "makefile") return "makefile";
 	if (lower.endsWith(".d.ts")) return "typescript";
 	const key = getExtensionKey(fileName);
-	return key ? languageByExtension[key] ?? "plaintext" : "plaintext";
+	return key ? (languageByExtension[key] ?? "plaintext") : "plaintext";
 };
 
 export const updateTreeNode = (
@@ -66,8 +68,12 @@ export const updateTreeNode = (
 	});
 };
 
-export const findNodeByPath = (nodes: FileNode[], targetPath: string | null): FileNode | undefined => {
-	if (targetPath === null || typeof targetPath === "undefined") return undefined;
+export const findNodeByPath = (
+	nodes: FileNode[],
+	targetPath: string | null,
+): FileNode | undefined => {
+	if (targetPath === null || typeof targetPath === "undefined")
+		return undefined;
 	for (const node of nodes) {
 		if (node.relativePath === targetPath) {
 			return node;

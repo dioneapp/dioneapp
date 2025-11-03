@@ -10,16 +10,16 @@ import {
 	useState,
 } from "react";
 import { useScriptsContext } from "../../contexts/ScriptsContext";
-import {
-	mediaMimeMap,
-	previewableMediaExtensions,
-	unsupportedExtensions,
-} from "./constants";
 import ContextMenu from "./ContextMenu";
 import EntryNameDialog from "./EntryNameDialog";
 import FileTree from "./FileTree";
 import HeaderBar from "./HeaderBar";
 import PreviewPane from "./PreviewPane";
+import {
+	mediaMimeMap,
+	previewableMediaExtensions,
+	unsupportedExtensions,
+} from "./constants";
 import type {
 	ContextMenuState,
 	EditorViewProps,
@@ -48,18 +48,18 @@ const initialContextMenuState: ContextMenuState = {
 
 type EntryDialogState =
 	| {
-		mode: "create";
-		entryType: "file" | "directory";
-		parentPath: string;
-		initialName: string;
-	}
+			mode: "create";
+			entryType: "file" | "directory";
+			parentPath: string;
+			initialName: string;
+	  }
 	| {
-		mode: "rename";
-		targetPath: string;
-		targetType: "file" | "directory";
-		parentPath: string;
-		initialName: string;
-	};
+			mode: "rename";
+			targetPath: string;
+			targetType: "file" | "directory";
+			parentPath: string;
+			initialName: string;
+	  };
 
 export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 	const { showToast } = useScriptsContext();
@@ -69,7 +69,9 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 	const [activePath, setActivePath] = useState<string | null>(null);
 	const [expandedPaths, setExpandedPaths] = useState<string[]>([]);
 	const expandedPathsRef = useRef<string[]>([]);
-	const [contextMenu, setContextMenu] = useState<ContextMenuState>(initialContextMenuState);
+	const [contextMenu, setContextMenu] = useState<ContextMenuState>(
+		initialContextMenuState,
+	);
 	const [fileContent, setFileContent] = useState<string>("");
 	const [initialContent, setInitialContent] = useState<string>("");
 	const [fileEncoding, setFileEncoding] = useState<FileEncoding>(null);
@@ -128,9 +130,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				setIsLoadingTree(true);
 				setTree((prev) =>
 					prev.map((node) =>
-						node.relativePath === ""
-							? { ...node, isLoading: true }
-							: node,
+						node.relativePath === "" ? { ...node, isLoading: true } : node,
 					),
 				);
 			} else {
@@ -161,7 +161,9 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 					throw error;
 				}
 
-				const payload = (await response.json()) as { entries: FileEntryResponse[] };
+				const payload = (await response.json()) as {
+					entries: FileEntryResponse[];
+				};
 				setWorkspaceError(null);
 				const expandedSet = new Set(expandedPathsRef.current);
 
@@ -174,12 +176,17 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 						const nextChildren: FileNode[] = payload.entries.map((entry) => {
 							const existing = existingChildrenMap.get(entry.relativePath);
 							if (entry.type === "directory") {
-								const shouldBeExpanded = existing?.expanded ?? expandedSet.has(entry.relativePath);
+								const shouldBeExpanded =
+									existing?.expanded ?? expandedSet.has(entry.relativePath);
 								return {
 									...entry,
-									children: shouldBeExpanded ? existing?.children ?? [] : existing?.children ?? [],
+									children: shouldBeExpanded
+										? (existing?.children ?? [])
+										: (existing?.children ?? []),
 									expanded: shouldBeExpanded,
-									loaded: shouldBeExpanded ? existing?.loaded ?? false : false,
+									loaded: shouldBeExpanded
+										? (existing?.loaded ?? false)
+										: false,
 									isLoading: false,
 									isUnsupported: false,
 									isPreviewable: false,
@@ -188,7 +195,9 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 							}
 
 							const extensionKey = getExtensionKey(entry.name);
-							const isPreviewable = extensionKey ? previewableMediaExtensions.has(extensionKey) : false;
+							const isPreviewable = extensionKey
+								? previewableMediaExtensions.has(extensionKey)
+								: false;
 							const isBinary = unsupportedExtensions.has(extensionKey ?? "");
 							// Mark both media files and binary files as unsupported (disabled)
 							const isUnsupported = isPreviewable || isBinary;
@@ -326,7 +335,9 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			if (node.type !== "directory") return;
 			const targetPath = node.relativePath;
 			if (!node.loaded) {
-				setExpandedPaths((prev) => (prev.includes(targetPath) ? prev : [...prev, targetPath]));
+				setExpandedPaths((prev) =>
+					prev.includes(targetPath) ? prev : [...prev, targetPath],
+				);
 				void loadDirectory(targetPath);
 				return;
 			}
@@ -356,16 +367,23 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			setActivePath(node.relativePath);
 			if (node.isUnsupported) {
 				const extensionKey = getExtensionKey(node.name);
-				const isMediaFile = extensionKey ? previewableMediaExtensions.has(extensionKey) : false;
+				const isMediaFile = extensionKey
+					? previewableMediaExtensions.has(extensionKey)
+					: false;
 				if (isMediaFile) {
 					showToast("warning", "Media files cannot be opened in the editor.");
 				} else {
-					showToast("warning", "This file type can't be opened in the editor yet.");
+					showToast(
+						"warning",
+						"This file type can't be opened in the editor yet.",
+					);
 				}
 				return;
 			}
 			if (isDirty && node.relativePath !== selectedFile) {
-				const confirmLeave = window.confirm("You have unsaved changes. Continue without saving?");
+				const confirmLeave = window.confirm(
+					"You have unsaved changes. Continue without saving?",
+				);
 				if (!confirmLeave) {
 					return;
 				}
@@ -406,10 +424,16 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				const payload = (await response.json()) as FileContentResponse;
 				if (payload.encoding === "base64") {
 					const extensionKey = getExtensionKey(node.name);
-					const fallbackMime = extensionKey ? mediaMimeMap[extensionKey] : undefined;
-					const mimeType = payload.mimeType || fallbackMime || "application/octet-stream";
-					const encodedContent = typeof payload.content === "string" ? payload.content : "";
-					const previewData = encodedContent ? `data:${mimeType};base64,${encodedContent}` : null;
+					const fallbackMime = extensionKey
+						? mediaMimeMap[extensionKey]
+						: undefined;
+					const mimeType =
+						payload.mimeType || fallbackMime || "application/octet-stream";
+					const encodedContent =
+						typeof payload.content === "string" ? payload.content : "";
+					const previewData = encodedContent
+						? `data:${mimeType};base64,${encodedContent}`
+						: null;
 					setFileEncoding("base64");
 					setFileMimeType(mimeType);
 					setFilePreviewUrl(previewData);
@@ -426,7 +450,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 						updateTreeNode(prev, node.relativePath, (current) => ({
 							...current,
 							isUnsupported: false,
-						}))
+						})),
 					);
 				}
 			} catch (error: any) {
@@ -441,7 +465,9 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				const message = error?.message || "Failed to load file";
 				if (status === 415) {
 					const extensionKey = getExtensionKey(node.name);
-					const isMediaFile = extensionKey ? previewableMediaExtensions.has(extensionKey) : false;
+					const isMediaFile = extensionKey
+						? previewableMediaExtensions.has(extensionKey)
+						: false;
 					setTree((prev) =>
 						updateTreeNode(prev, node.relativePath, (current) => ({
 							...current,
@@ -452,7 +478,10 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 					if (isMediaFile) {
 						showToast("warning", "Media files cannot be opened in the editor.");
 					} else {
-						showToast("warning", message || "This file type can't be opened in the editor yet.");
+						showToast(
+							"warning",
+							message || "This file type can't be opened in the editor yet.",
+						);
 					}
 				} else {
 					if (previousState.file === node.relativePath || !previousState.file) {
@@ -512,7 +541,14 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		} finally {
 			setIsSaving(false);
 		}
-	}, [data?.id, data?.name, fileContent, fileEncoding, selectedFile, showToast]);
+	}, [
+		data?.id,
+		data?.name,
+		fileContent,
+		fileEncoding,
+		selectedFile,
+		showToast,
+	]);
 
 	const handleReloadFile = useCallback(() => {
 		if (!selectedFileNode || selectedFileNode.type !== "file") return;
@@ -534,11 +570,16 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			}
 			if (node.isUnsupported) {
 				const extensionKey = getExtensionKey(node.name);
-				const isMediaFile = extensionKey ? previewableMediaExtensions.has(extensionKey) : false;
+				const isMediaFile = extensionKey
+					? previewableMediaExtensions.has(extensionKey)
+					: false;
 				if (isMediaFile) {
 					showToast("warning", "Media files cannot be opened in the editor.");
 				} else {
-					showToast("warning", "This file type can't be opened in the editor yet.");
+					showToast(
+						"warning",
+						"This file type can't be opened in the editor yet.",
+					);
 				}
 				return;
 			}
@@ -572,9 +613,11 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 	const handleOpenNodeFolder = useCallback(
 		(node: FileNode) => {
 			if (!node.absolutePath) return;
-			window.electron.ipcRenderer.invoke("open-dir", node.absolutePath).catch(() => {
-				showToast("error", "Unable to open location");
-			});
+			window.electron.ipcRenderer
+				.invoke("open-dir", node.absolutePath)
+				.catch(() => {
+					showToast("error", "Unable to open location");
+				});
 		},
 		[showToast],
 	);
@@ -586,7 +629,9 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				showToast("warning", "Cannot delete workspace root");
 				return;
 			}
-			const confirmDelete = window.confirm(`Delete "${node.name}"? This cannot be undone.`);
+			const confirmDelete = window.confirm(
+				`Delete "${node.name}"? This cannot be undone.`,
+			);
 			if (!confirmDelete) return;
 			try {
 				const port = await getCurrentPort();
@@ -659,7 +704,8 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				return;
 			}
 			const parentPath = getTargetDirectoryPath();
-			const suggestedName = entryType === "file" ? "untitled.txt" : "New Folder";
+			const suggestedName =
+				entryType === "file" ? "untitled.txt" : "New Folder";
 			setEntryDialog({
 				mode: "create",
 				entryType,
@@ -778,7 +824,10 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 					setFilePreviewUrl(null);
 					setFileError(null);
 				}
-				showToast("success", entryDialog.entryType === "file" ? "File created" : "Folder created");
+				showToast(
+					"success",
+					entryDialog.entryType === "file" ? "File created" : "Folder created",
+				);
 				closeEntryDialog();
 				return;
 			}
@@ -832,7 +881,10 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			closeEntryDialog();
 		} catch (error: any) {
 			const status = error?.status ?? 0;
-			const fallbackMessage = entryDialog.mode === "create" ? "Failed to create entry" : "Failed to rename entry";
+			const fallbackMessage =
+				entryDialog.mode === "create"
+					? "Failed to create entry"
+					: "Failed to rename entry";
 			const message = error?.message || fallbackMessage;
 			if (status === 409 || status === 400) {
 				setEntryDialogError(message);
@@ -855,11 +907,12 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		showToast,
 	]);
 
-
 	const handleBackToPreview = useCallback(() => {
 		if (!data?.id) return;
 		if (isDirty) {
-			const confirmLeave = window.confirm("You have unsaved changes. Leave the editor?");
+			const confirmLeave = window.confirm(
+				"You have unsaved changes. Leave the editor?",
+			);
 			if (!confirmLeave) {
 				return;
 			}
@@ -873,7 +926,8 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 	}, [rootPath]);
 
 	const language = useMemo(
-		() => (fileEncoding === "utf8" ? getLanguageFromPath(selectedFile) : "plaintext"),
+		() =>
+			fileEncoding === "utf8" ? getLanguageFromPath(selectedFile) : "plaintext",
 		[fileEncoding, selectedFile],
 	);
 
@@ -881,7 +935,12 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		(event: MouseEvent<HTMLDivElement>, node: FileNode) => {
 			event.preventDefault();
 			event.stopPropagation();
-			setContextMenu({ visible: true, x: event.clientX, y: event.clientY, node });
+			setContextMenu({
+				visible: true,
+				x: event.clientX,
+				y: event.clientY,
+				node,
+			});
 		},
 		[],
 	);
@@ -926,11 +985,12 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				: "Create folder"
 			: "Rename"
 		: "Confirm";
-	const entryDialogPlaceholder = entryDialog?.mode === "create"
-		? entryDialog.entryType === "file"
-			? "example.ts"
-			: "New Folder"
-		: undefined;
+	const entryDialogPlaceholder =
+		entryDialog?.mode === "create"
+			? entryDialog.entryType === "file"
+				? "example.ts"
+				: "New Folder"
+			: undefined;
 
 	return (
 		<div
@@ -964,7 +1024,10 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 							<span className="truncate text-[11px] font-semibold uppercase tracking-wide text-neutral-200">
 								{workspaceName}
 							</span>
-							<span className="truncate text-[10px] font-normal uppercase tracking-normal text-neutral-500" title={rootPath}>
+							<span
+								className="truncate text-[10px] font-normal uppercase tracking-normal text-neutral-500"
+								title={rootPath}
+							>
 								{rootPath || "Resolving path..."}
 							</span>
 						</div>
@@ -989,7 +1052,9 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 							>
 								<FolderPlus className="h-3.5 w-3.5" />
 							</button>
-							{isLoadingTree && <Loader2 className="h-3 w-3 animate-spin text-neutral-300" />}
+							{isLoadingTree && (
+								<Loader2 className="h-3 w-3 animate-spin text-neutral-300" />
+							)}
 						</div>
 					</div>
 					<div className="h-full overflow-y-auto pb-4">
