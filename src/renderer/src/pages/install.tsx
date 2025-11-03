@@ -91,6 +91,9 @@ export default function Install({
 		Record<string, string>
 	>({});
 
+	// state
+	const [executing, setExecuting] = useState<"start" | "install" | null>(null);
+
 	useEffect(() => {
 		async function autoInstallMissingDependencies() {
 			if (!data?.id || !data?.name) return;
@@ -378,6 +381,7 @@ export default function Install({
 		}
 		clearLogs(data?.id);
 		setIsServerRunning((prev) => ({ ...prev, [data?.id]: true }));
+		setExecuting("install");
 		// only switch to logs view if we're not already there
 		if (show[data?.id] !== "logs") {
 			setShow({ [data?.id]: "logs" });
@@ -482,6 +486,7 @@ export default function Install({
 			if (!data.name || !data.id) return;
 			if (isServerRunning[data?.id]) return;
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: true }));
+			setExecuting("start");
 
 			// only connect if we don't already have a socket connection
 			if (!sockets[data?.id]) {
@@ -871,6 +876,7 @@ export default function Install({
 	const stopApp = async () => {
 		await fetchIfDownloaded();
 		await handleStopApp(data.id, data.name);
+		setExecuting(null);
 		window.electron.ipcRenderer.send("close-preview-window");
 	};
 
@@ -1001,6 +1007,7 @@ export default function Install({
 									iframeAvailable={iframeAvailable[data?.id]}
 									setShow={setShow}
 									appId={data?.id}
+									executing={executing}
 								/>
 							)}{" "}
 							{show[data?.id] === "actions" && (

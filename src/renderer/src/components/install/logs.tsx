@@ -2,7 +2,7 @@ import ProgressBar from "@renderer/components/common/ProgressBar";
 import { MAX_TERMINAL_LINES } from "@renderer/utils/terminal";
 import { motion } from "framer-motion";
 import { Copy, ExternalLink, Square } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import TerminalOutput from "./TerminalOutput";
@@ -14,6 +14,7 @@ interface LogsProps {
 	iframeAvailable: boolean;
 	setShow: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 	appId: string;
+	executing: string | null;
 }
 
 export default function LogsComponent({
@@ -23,6 +24,7 @@ export default function LogsComponent({
 	iframeAvailable,
 	setShow,
 	appId,
+	executing,
 }: LogsProps) {
 	const { progress } = useScriptsContext();
 	const { t } = useTranslation();
@@ -30,6 +32,10 @@ export default function LogsComponent({
 	const processedLogs = useMemo(() => {
 		return logs?.[appId] || [];
 	}, [logs, appId]);
+
+	useEffect(() => {
+		console.log(progress?.[appId]?.steps?.length);
+	}, [progress?.[appId]?.steps?.length]);
 
 	return (
 		<motion.div
@@ -77,14 +83,16 @@ export default function LogsComponent({
 					className="whitespace-pre-wrap break-words font-mono text-xs text-left flex gap-1 flex-col text-neutral-400 leading-5"
 					autoScroll
 				/>
-				<div className="mb-4">
-					<ProgressBar
-						value={progress?.[appId]?.percent || 0}
-						mode={progress?.[appId]?.mode || "indeterminate"}
-						label={progress?.[appId]?.label}
-						status={progress?.[appId]?.status || "running"}
-					/>
-				</div>
+				{progress && progress[appId]?.steps && progress[appId].steps.length > 1 && executing !== "start" && (
+					<div className="mb-4">
+						<ProgressBar
+							value={progress?.[appId]?.percent || 0}
+							mode={progress?.[appId]?.mode || "indeterminate"}
+							label={progress?.[appId]?.label}
+							status={progress?.[appId]?.status || "running"}
+						/>
+					</div>
+				)}
 				{processedLogs.length >= MAX_TERMINAL_LINES && (
 					<div className="text-[11px] text-neutral-400 mt-1 mb-1 text-center max-w-sm mx-auto">
 						Showing last {MAX_TERMINAL_LINES.toLocaleString()} lines
