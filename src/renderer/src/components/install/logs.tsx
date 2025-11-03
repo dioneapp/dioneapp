@@ -83,16 +83,19 @@ export default function LogsComponent({
 					className="whitespace-pre-wrap break-words font-mono text-xs text-left flex gap-1 flex-col text-neutral-400 leading-5"
 					autoScroll
 				/>
-				{progress && progress[appId]?.steps && progress[appId].steps.length > 1 && executing !== "start" && (
-					<div className="mb-4">
-						<ProgressBar
-							value={progress?.[appId]?.percent || 0}
-							mode={progress?.[appId]?.mode || "indeterminate"}
-							label={progress?.[appId]?.label}
-							status={progress?.[appId]?.status || "running"}
-						/>
-					</div>
-				)}
+				{progress &&
+					progress[appId]?.steps &&
+					progress[appId].steps.length > 1 &&
+					executing !== "start" && (
+						<div className="mb-4">
+							<ProgressBar
+								value={progress?.[appId]?.percent || 0}
+								mode={progress?.[appId]?.mode || "indeterminate"}
+								label={progress?.[appId]?.label}
+								status={progress?.[appId]?.status || "running"}
+							/>
+						</div>
+					)}
 				{processedLogs.length >= MAX_TERMINAL_LINES && (
 					<div className="text-[11px] text-neutral-400 mt-1 mb-1 text-center max-w-sm mx-auto">
 						Showing last {MAX_TERMINAL_LINES.toLocaleString()} lines
