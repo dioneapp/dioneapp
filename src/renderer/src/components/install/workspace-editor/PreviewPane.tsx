@@ -204,7 +204,8 @@ const PreviewPane = ({
 							defineCustomTheme(monacoInstance);
 						}}
 						options={{
-							fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace",
+							fontFamily:
+								"'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', monospace",
 							fontLigatures: true,
 							fontSize: 13,
 							tabSize: 2,
