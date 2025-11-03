@@ -126,10 +126,16 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		const isActive = activeApps.some((app) => app.appId === data.id);
 		console.log("app is active?:", isActive);
 
-		if (isActive) {
-			setShow({ [data?.id]: "logs" });
+		const currentView = show[data.id];
+		if (
+			isActive &&
+			currentView !== "logs" &&
+			currentView !== "iframe" &&
+			currentView !== "editor"
+		) {
+			setShow({ [data.id]: "logs" });
 		}
-	}, [activeApps, data?.id]);
+	}, [activeApps, data?.id, show]);
 
 	const handleReloadQuickLaunch = async () => {
 		try {

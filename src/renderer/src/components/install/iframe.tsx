@@ -1,4 +1,3 @@
-import { getCurrentPort } from "@renderer/utils/getPort";
 import { motion } from "framer-motion";
 import {
 	ArrowLeft,
@@ -88,16 +87,9 @@ export default function IframeComponent({
 		}
 	};
 
-	const handleOpenFolder = async () => {
-		const port = await getCurrentPort();
-		const settings = await fetch(`http://localhost:${port}/config`).then(
-			(res) => res.json(),
-		);
-		const sanitizedName = data.name.replace(/\s+/g, "-");
-		window.electron.ipcRenderer.invoke(
-			"open-dir",
-			`${settings.defaultInstallFolder}/apps/${sanitizedName}`,
-		);
+	const handleOpenEditor = () => {
+		if (!data?.id) return;
+		setShow({ [data.id]: "editor" });
 	};
 
 	useEffect(() => {
@@ -123,14 +115,14 @@ export default function IframeComponent({
 
 		return (
 			<div
-				className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded-md flex-shrink-0 relative"
+				className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded-md shrink-0 relative"
 				onMouseEnter={() => setIsHovered(true)}
 				onMouseLeave={() => setIsHovered(false)}
 			>
 				<span className="text-xs text-neutral-300 font-medium">{label}</span>
 				<div className="w-20 h-2 bg-white/10 rounded-full overflow-hidden">
 					<motion.div
-						className="h-full bg-gradient-to-r from-[#A395D9] to-[#C1B8E3]"
+						className="h-full bg-linear-to-r from-[#A395D9] to-[#C1B8E3]"
 						style={{ width: `${percentage}%` }}
 						animate={{
 							scale: isHovered ? 1.05 : 1,
@@ -245,7 +237,7 @@ export default function IframeComponent({
 					</button>
 					<button
 						type="button"
-						onClick={handleOpenFolder}
+						onClick={handleOpenEditor}
 						className="p-1.5 hover:bg-white/10 border border-white/10 transition-colors rounded-md cursor-pointer relative group"
 						title={t("iframe.openFolder")}
 					>
