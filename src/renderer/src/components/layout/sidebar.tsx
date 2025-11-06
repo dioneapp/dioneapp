@@ -245,7 +245,7 @@ export default function Sidebar() {
 								>
 									{activeApps
 										?.slice(0, config?.compactMode ? 6 : 4)
-										.map((app, index) => (
+										.map((app) => (
 											<div
 												key={app.appId}
 												className={`${config?.compactMode ? "w-full flex justify-center" : "w-full"}`}
