@@ -936,10 +936,10 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			event.preventDefault();
 			event.stopPropagation();
 			setContextMenu({
-				visible: true,
-				x: event.clientX,
-				y: event.clientY,
-				node,
+			visible: true,
+			x: event.clientX,
+			y: event.clientY,
+			node,
 			});
 		},
 		[],
