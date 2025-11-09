@@ -1,6 +1,5 @@
 import ActionsComponent from "@renderer/components/install/actions";
 import Buttons from "@renderer/components/install/buttons";
-import WorkspaceEditor from "../components/editor/editor";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
 import NotSupported from "@renderer/components/install/not-supported";
@@ -12,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useScriptsContext } from "../components/contexts/ScriptsContext";
+import WorkspaceEditor from "../components/editor/editor";
 import DeleteLoadingModal from "../components/modals/delete-loading";
 import { useTranslation } from "../translations/translationContext";
 import { getCurrentPort } from "../utils/getPort";
