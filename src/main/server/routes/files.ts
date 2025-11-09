@@ -2,9 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { app } from "electron";
 import express from "express";
-import { fileTypeFromBuffer } from "file-type/core";
 import { readConfig } from "../../config";
 import logger from "../utils/logger";
+import FileType from "file-type";
 
 const router = express.Router();
 
@@ -138,11 +138,11 @@ const buildCandidateNames = (rawName: string) => {
 
 const buildNameCandidateSet = (names: string[]) => {
 	const set = new Set<string>();
-	names.forEach((name) => {
-		createNameVariants(name).forEach((variant) => {
+	for (const name of names) {
+		for (const variant of createNameVariants(name)) {
 			set.add(variant.toLowerCase());
-		});
-	});
+		}
+	}
 	return set;
 };
 
@@ -443,7 +443,7 @@ router.get("/content/:appName", async (req, res) => {
 
 		if (!canPreview) {
 			try {
-				const detectedType = await fileTypeFromBuffer(buffer);
+				const detectedType = await FileType.fromBuffer(buffer);
 				if (detectedType && typeof detectedType.mime === "string") {
 					const detectedMime = detectedType.mime.toLowerCase();
 					const isMedia =
