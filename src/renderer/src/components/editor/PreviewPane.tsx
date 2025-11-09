@@ -6,7 +6,7 @@ import "monaco-editor/esm/vs/language/css/monaco.contribution";
 import "monaco-editor/esm/vs/language/html/monaco.contribution";
 import "monaco-editor/esm/vs/language/json/monaco.contribution";
 import "monaco-editor/esm/vs/language/typescript/monaco.contribution";
-import "monaco-editor/min/vs/editor/editor.main.css";
+// import "monaco-editor/min/vs/editor/editor.main.css";
 import type { FileEncoding, FileNode } from "./utils/types";
 
 loader.config({ monaco });
