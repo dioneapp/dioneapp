@@ -49,7 +49,7 @@ const FileTree = ({
 			const indent = node.isRoot ? 8 : 12 + depth * 16;
 			const fileIconColor =
 				node.type === "file" ? getFileIconColor(node.name) : undefined;
-			const rowClass = `group flex w-full items-center justify-between gap-2 rounded-md px-2 py-1 transition-colors ${
+			const rowClass = `group flex w-full items-center justify-between gap-2 px-2 py-1 active:rounded-md transition-colors ${
 				isDisabled
 					? isActive
 						? "bg-white/5 text-neutral-400 cursor-not-allowed"
@@ -124,7 +124,7 @@ const FileTree = ({
 								)}
 							</span>
 							{node.type === "file" && node.isUnsupported && (
-								<span className="ml-2 rounded bg-neutral-800 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-neutral-500">
+								<span className="ml-2 bg-neutral-800 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-neutral-500">
 									{node.isPreviewable ? "Media" : "Binary"}
 								</span>
 							)}
