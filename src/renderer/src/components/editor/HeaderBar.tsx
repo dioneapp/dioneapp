@@ -43,9 +43,7 @@ const HeaderBar = ({
 	onSaveFile,
 }: HeaderBarProps) => {
 	return (
-		<div
-			className="mt-12 flex w-full items-center gap-3 border-y border-white/10 bg-neutral-950/75 py-3 px-4 text-xs text-neutral-300 shadow-lg backdrop-blur"
-		>
+		<div className="mt-12 flex w-full items-center gap-3 border-y border-white/10 bg-neutral-950/75 py-3 px-4 text-xs text-neutral-300 shadow-lg backdrop-blur">
 			<button type="button" onClick={onBack} className={baseButtonClass}>
 				<ArrowLeft className="h-3.5 w-3.5" />
 				<span>Back</span>

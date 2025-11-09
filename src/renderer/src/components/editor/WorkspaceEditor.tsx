@@ -1005,10 +1005,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 						{workspaceName}
 					</span>
 					<span className="text-neutral-500">•</span>
-					<span
-						className="min-w-0 truncate text-neutral-400"
-						title={rootPath}
-					>
+					<span className="min-w-0 truncate text-neutral-400" title={rootPath}>
 						{rootPath || "Resolving workspace..."}
 					</span>
 				</div>
