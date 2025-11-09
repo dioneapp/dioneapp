@@ -354,7 +354,7 @@ router.get("/search/name/:name", async (req, res) => {
 		const orderBy = (req.query.order_by as string) || null;
 		const orderType = (req.query.order_type as string) || null;
 		if (sanitizedName) {
-			const url = new URL(`https://api.getdione.app/v1/scripts`);
+			const url = new URL('https://api.getdione.app/v1/scripts');
 			url.searchParams.set("q", sanitizedName);
 			url.searchParams.set("page", String(page));
 			url.searchParams.set("limit", String(limit));
