@@ -1002,17 +1002,6 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 					if (contextMenu.visible) handleContextMenuClose();
 				}}
 		>
-			<div className="fixed top-0 left-0 p-4">
-				<div className="flex items-center justify-start text-xs gap-2">
-					<span className="truncate font-semibold text-neutral-100">
-						{workspaceName}
-					</span>
-					<span className="text-neutral-500">•</span>
-					<span className="min-w-0 truncate text-neutral-400" title={rootPath}>
-						{rootPath || "Resolving workspace..."}
-					</span>
-				</div>
-			</div>
 			<HeaderBar
 				rootPath={rootPath}
 				activeNode={activeNode}
