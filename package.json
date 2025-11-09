@@ -139,6 +139,7 @@
     "electron-store": "^10.0.1",
     "electron-updater": "^6.6.2",
     "express": "^5.1.0",
+    "file-type": "^21.0.0",
     "framer-motion": "^12.9.4",
     "get-port": "^7.1.0",
     "isomorphic-git": "^1.30.1",
