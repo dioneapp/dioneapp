@@ -6,8 +6,8 @@ import {
 	Loader2,
 } from "lucide-react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
-import type { FileNode } from "./types";
-import { getFileIconColor } from "./utils";
+import type { FileNode } from "./utils/types";
+import { getFileIconColor } from "./utils/utils";
 
 interface FileTreeProps {
 	nodes: FileNode[];
@@ -73,15 +73,15 @@ const FileTree = ({
 					key={node.relativePath || node.name}
 					className="text-xs text-neutral-200"
 				>
-					<div
-						role="button"
+					<button
+						type="button"
 						tabIndex={0}
 						onClick={() => onRowClick(node)}
-						onContextMenu={(event) => {
+						onContextMenu={(event: any) => {
 							if (isContextMenuVisible) event.stopPropagation();
 							onContextMenu(event, node);
 						}}
-						onKeyDown={(event) => onKeyDown(event, node)}
+						onKeyDown={(event: any) => onKeyDown(event, node)}
 						className={rowClass}
 						style={{ paddingLeft: `${indent}px` }}
 					>
@@ -129,7 +129,7 @@ const FileTree = ({
 								</span>
 							)}
 						</span>
-					</div>
+					</button>
 					{node.expanded && node.children && node.children.length > 0 && (
 						<div>{renderNodes(node.children, depth + 1)}</div>
 					)}

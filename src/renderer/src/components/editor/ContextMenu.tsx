@@ -1,6 +1,6 @@
 import { Copy, ExternalLink, Pencil, RefreshCcw } from "lucide-react";
 import type { MouseEvent } from "react";
-import type { ContextMenuState } from "./types";
+import type { ContextMenuState } from "./utils/types";
 
 interface ContextMenuProps {
 	state: ContextMenuState;

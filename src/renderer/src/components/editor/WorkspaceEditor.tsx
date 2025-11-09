@@ -9,7 +9,7 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { useScriptsContext } from "../../contexts/ScriptsContext";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 import ContextMenu from "./ContextMenu";
 import EntryNameDialog from "./EntryNameDialog";
 import FileTree from "./FileTree";
@@ -19,7 +19,7 @@ import {
 	mediaMimeMap,
 	previewableMediaExtensions,
 	unsupportedExtensions,
-} from "./constants";
+} from "./utils/constants";
 import type {
 	ContextMenuState,
 	EditorViewProps,
@@ -27,7 +27,7 @@ import type {
 	FileEncoding,
 	FileEntryResponse,
 	FileNode,
-} from "./types";
+} from "./utils/types";
 import {
 	findNodeByPath,
 	getExtensionKey,
@@ -37,7 +37,7 @@ import {
 	normalizeRelativePath,
 	parseErrorResponse,
 	updateTreeNode,
-} from "./utils";
+} from "./utils/utils";
 
 const initialContextMenuState: ContextMenuState = {
 	visible: false,
@@ -857,11 +857,11 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				setExpandedPaths((prev) => {
 					const next = new Set(prev);
 					const prefix = `${payload.previousPath}/`;
-					Array.from(next).forEach((path) => {
+					for (const path of next) {
 						if (path === payload.previousPath || path.startsWith(prefix)) {
 							next.delete(path);
 						}
-					});
+					}
 					next.add(parentPath);
 					next.add(newPath);
 					return Array.from(next);
@@ -994,13 +994,26 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 
 	return (
 		<div
-			className="flex h-full w-full flex-col gap-4 p-6"
+			className="flex h-full w-full flex-col"
 			onClick={() => {
 				if (contextMenu.visible) handleContextMenuClose();
 			}}
 		>
+			<div className="fixed top-0 left-0 p-4">
+				<div className="flex items-center justify-start text-xs gap-2">
+					<span className="truncate font-semibold text-neutral-100">
+						{workspaceName}
+					</span>
+					<span className="text-neutral-500">•</span>
+					<span
+						className="min-w-0 truncate text-neutral-400"
+						title={rootPath}
+					>
+						{rootPath || "Resolving workspace..."}
+					</span>
+				</div>
+			</div>
 			<HeaderBar
-				workspaceName={workspaceName}
 				rootPath={rootPath}
 				activeNode={activeNode}
 				selectedFileNode={selectedFileNode}
@@ -1017,8 +1030,8 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				onSaveFile={handleSaveFile}
 			/>
 
-			<div className="flex h-full flex-1 overflow-hidden rounded-lg border border-white/10 bg-neutral-950/65 shadow-inner">
-				<div className="w-72 shrink-0 border-r border-white/10 bg-neutral-950/80">
+			<div className="flex h-full flex-1 overflow-hidden bg-neutral-950/65">
+				<div className="w-64 shrink-0 border-r border-white/10 bg-neutral-950/80">
 					<div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
 						<div className="flex min-w-0 flex-col">
 							<span className="truncate text-[11px] font-semibold uppercase tracking-wide text-neutral-200">
@@ -1037,7 +1050,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 								onClick={() => {
 									openCreateEntryDialog("file");
 								}}
-								className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50"
+								className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
 								title="New file"
 							>
 								<FilePlus className="h-3.5 w-3.5" />
@@ -1047,7 +1060,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 								onClick={() => {
 									openCreateEntryDialog("directory");
 								}}
-								className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50"
+								className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
 								title="New folder"
 							>
 								<FolderPlus className="h-3.5 w-3.5" />
@@ -1057,7 +1070,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 							)}
 						</div>
 					</div>
-					<div className="h-full overflow-y-auto pb-4">
+					<div className="h-full overflow-y-auto pb-24">
 						{workspaceError ? (
 							<div className="flex h-full flex-col gap-3 px-3 py-4 text-xs text-neutral-400">
 								<span>{workspaceError}</span>

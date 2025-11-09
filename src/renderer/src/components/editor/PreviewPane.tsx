@@ -7,7 +7,7 @@ import "monaco-editor/esm/vs/language/html/monaco.contribution";
 import "monaco-editor/esm/vs/language/json/monaco.contribution";
 import "monaco-editor/esm/vs/language/typescript/monaco.contribution";
 import "monaco-editor/min/vs/editor/editor.main.css";
-import type { FileEncoding, FileNode } from "./types";
+import type { FileEncoding, FileNode } from "./utils/types";
 
 loader.config({ monaco });
 
@@ -125,6 +125,7 @@ const PreviewPane = ({
 		if (fileMimeType.startsWith("audio/")) {
 			return (
 				<div className="flex h-full items-center justify-center bg-neutral-950">
+					{/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
 					<audio controls src={filePreviewUrl} className="w-full max-w-xl">
 						Your browser does not support the audio element.
 					</audio>
@@ -135,6 +136,7 @@ const PreviewPane = ({
 		if (fileMimeType.startsWith("video/")) {
 			return (
 				<div className="flex h-full items-center justify-center bg-black">
+					{/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
 					<video src={filePreviewUrl} controls className="max-h-full w-full">
 						Your browser does not support the video element.
 					</video>
@@ -167,7 +169,7 @@ const PreviewPane = ({
 							</span>
 						)}
 						{isDirty && (
-							<span className="rounded-md bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300">
+							<span className="rounded-full bg-amber-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-300">
 								Unsaved
 							</span>
 						)}
@@ -199,7 +201,7 @@ const PreviewPane = ({
 						value={fileContent}
 						onChange={(value) => onContentChange(value ?? "")}
 						language={language}
-						height="100%"
+						className="h-full overflow-auto"
 						beforeMount={(monacoInstance) => {
 							defineCustomTheme(monacoInstance);
 						}}
@@ -212,7 +214,7 @@ const PreviewPane = ({
 							minimap: { enabled: false },
 							scrollBeyondLastLine: false,
 							automaticLayout: true,
-							padding: { top: 16, bottom: 16 },
+							padding: { top: 16, bottom: 250 },
 							cursorBlinking: "smooth",
 							cursorSmoothCaretAnimation: "on",
 							smoothScrolling: true,

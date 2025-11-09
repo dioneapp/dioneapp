@@ -1,6 +1,6 @@
 import ActionsComponent from "@renderer/components/install/actions";
 import Buttons from "@renderer/components/install/buttons";
-import WorkspaceEditor from "@renderer/components/install/editor";
+import WorkspaceEditor from "../components/editor/editor";
 import IframeComponent from "@renderer/components/install/iframe";
 import LogsComponent from "@renderer/components/install/logs";
 import NotSupported from "@renderer/components/install/not-supported";
@@ -355,9 +355,8 @@ export default function Install({
 				const jsonData = await response.json();
 				setInstalled(jsonData);
 				return jsonData;
-			} else {
-				setError(true);
 			}
+			setError(true);
 		}
 	}
 
@@ -696,13 +695,13 @@ export default function Install({
 
 			const replaceCommands: Record<string, string> = {};
 			console.log("selectedStart", selectedStartOpt);
-			(selectedStartOpt.steps as any[]).forEach((step) => {
-				(step.commands as any[]).forEach((cmd) => {
+			for (const step of selectedStartOpt.steps as any[]) {
+				for (const cmd of step.commands as any[]) {
 					if (typeof cmd === "object" && cmd.customizable) {
 						replaceCommands[cmd.command] = cmd.command;
 					}
-				});
-			});
+				}
+			}
 
 			if (Object.keys(replaceCommands).length > 0) {
 				console.log("custom commands (old -> new):", replaceCommands);
