@@ -989,7 +989,6 @@ function interpretExitCode(exitCode: number): {
 	};
 }
 
-
 function collectInstallerLogs(
 	installPath: string,
 	startedAt: number,

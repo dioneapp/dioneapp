@@ -2,9 +2,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { app } from "electron";
 import express from "express";
+import FileType from "file-type";
 import { readConfig } from "../../config";
 import logger from "../utils/logger";
-import FileType from "file-type";
 
 const router = express.Router();
 
