@@ -27,7 +27,7 @@ OllamaRouter.get("/models", async (req, res) => {
 });
 
 OllamaRouter.post("/chat", async (req, res) => {
-    const isOllamaOpen = await fetch("http://localhost:11434/health", { method: "GET" }).then(res => res.ok);
+    const isOllamaOpen = await fetch("http://localhost:11434", { method: "GET" }).then(res => res.ok);
     if (!isOllamaOpen) {
         logger.ai("Ollama is not open");
         res.status(500).json({ error: 'Ollama is not open' });
