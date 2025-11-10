@@ -39,7 +39,8 @@ export default function AI() {
         <div className="group relative">
           <AnimatePresence mode="wait">
           {open ? (
-            <motion.div initial={{ backdropFilter: "blur(10px)", filter: 'blur(10px)', x: 15, opacity: 0 }} animate={{ backdropFilter: "blur(10px)", filter: 'blur(0px)', x: 0, opacity: 1 }} exit={{ backdropFilter: "blur(0px)", filter: 'blur(10px)', x: 15, opacity: 0 }} transition={{ duration: 0.2 }}  key="open-div" className="flex items-center justify-end w-90 gap-2 rounded-full">
+            <motion.div initial={{ backdropFilter: "blur(10px)", filter: 'blur(10px)', x: 15, opacity: 0 }} animate={{ backdropFilter: "blur(10px)", filter: 'blur(0px)', x: 0, opacity: 1 }} exit={{ backdropFilter: "blur(0px)", filter: 'blur(10px)', x: 15, opacity: 0 }} transition={{ duration: 0.2 }}  key="open-div" 
+            className="flex items-center justify-end w-90 gap-2 rounded-full">
               <motion.div
                 className="absolute inset-0 -z-10 rounded-full blur"
                 style={{
@@ -106,13 +107,17 @@ export default function AI() {
         </div>
     </div>
     {open && (
-        <div className="fixed bottom-24 right-6" style={{zIndex: 1001}}>
-          {messages.length !== 0 && (
-            <div id="logs" className="backdrop-blur-3xl rounded-2xl rounded-b-none p-4 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto" style={{scrollbarWidth: 'none'}}>
+        <div className="fixed bottom-20 right-6" style={{zIndex: 1001}}>
+          {ollamaStatus === "closed" && (
+            <div className="w-fit text-[11px] mb-2 flex items-center justify-end ml-auto gap-2 backdrop-blur-3xl rounded-full overflow-hidden">
+              <span className="bg-red-500/10 px-2 text-red-500 font-semibold">Ollama not found</span>
+            </div>
+          )}
+          {messages.length > 1 && (
+            <div id="logs" className="backdrop-blur-3xl rounded-xl p-4 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto" style={{scrollbarWidth: 'none'}}>
                 <div className="space-y-3">
                     {messages.map((message: any, index: number) => (
                         <div key={index}>
-                            <hr className="border-white/20 mx-0 my-2" />
                             <div className="text-sm" style={{scrollSnapAlign: 'start'}}>
                                 <span className="text-neutral-400 mr-2">AI - {new Date(message.created_at || Date.now()).toLocaleTimeString()}:</span>
                                 {message.content || (message.message?.content || 'No content')}
@@ -121,11 +126,6 @@ export default function AI() {
                     ))}
                     <div ref={logsEndRef} />
                 </div>
-            </div>
-          )}
-          {ollamaStatus === "closed" && (
-            <div className="w-fit text-[11px] flex items-center justify-center gap-2 backdrop-blur-3xl">
-              <span className="bg-yellow-500/20 rounded-full px-2 text-yellow-600 font-semibold ">Ollama not found</span>
             </div>
           )}
         </div>
