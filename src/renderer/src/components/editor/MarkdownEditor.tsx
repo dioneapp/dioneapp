@@ -1,11 +1,11 @@
 import Editor, { loader } from "@monaco-editor/react";
 import {
-    AlertCircle,
-    AlertTriangle,
-    GripVertical,
-    Info,
-    Lightbulb,
-    XCircle,
+	AlertCircle,
+	AlertTriangle,
+	GripVertical,
+	Info,
+	Lightbulb,
+	XCircle,
 } from "lucide-react";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -98,7 +98,8 @@ const MarkdownEditor = ({
 		if (!isDraggingRef.current || !containerRef.current) return;
 
 		const containerRect = containerRef.current.getBoundingClientRect();
-		const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+		const newWidth =
+			((e.clientX - containerRect.left) / containerRect.width) * 100;
 
 		// Constrain between 20% and 80%
 		const constrainedWidth = Math.max(20, Math.min(80, newWidth));
@@ -185,13 +186,15 @@ const MarkdownEditor = ({
 				style={{ width: `${100 - editorWidth}%` }}
 			>
 				<div className="flex items-center border-b border-white/10 bg-neutral-950/80 px-3 py-1.5 shrink-0">
-					<span className="text-xs font-semibold text-neutral-300">Preview</span>
+					<span className="text-xs font-semibold text-neutral-300">
+						Preview
+					</span>
 				</div>
-				<div 
+				<div
 					className="flex-1 overflow-y-auto overflow-x-hidden bg-[#0a0a0a]"
-					style={{ userSelect: 'text' }}
+					style={{ userSelect: "text" }}
 				>
-					<div className="markdown-preview p-6" style={{ userSelect: 'text' }}>
+					<div className="markdown-preview p-6" style={{ userSelect: "text" }}>
 						<div className="mx-auto max-w-4xl pb-24">
 							<ReactMarkdown
 								remarkPlugins={[remarkGfm, remarkGithubBlockquoteAlert]}
@@ -199,7 +202,9 @@ const MarkdownEditor = ({
 								components={{
 									blockquote: ({ children }) => {
 										// Check if this is a GitHub alert
-										const childArray = Array.isArray(children) ? children : [children];
+										const childArray = Array.isArray(children)
+											? children
+											: [children];
 										const firstChild = childArray[0];
 
 										// Try to detect alert type from the structure
@@ -218,8 +223,10 @@ const MarkdownEditor = ({
 												else if (text.includes("[!TIP]")) alertType = "tip";
 												else if (text.includes("[!IMPORTANT]"))
 													alertType = "important";
-												else if (text.includes("[!WARNING]")) alertType = "warning";
-												else if (text.includes("[!CAUTION]")) alertType = "caution";
+												else if (text.includes("[!WARNING]"))
+													alertType = "warning";
+												else if (text.includes("[!CAUTION]"))
+													alertType = "caution";
 											}
 										}
 
@@ -258,8 +265,12 @@ const MarkdownEditor = ({
 															child &&
 															"props" in child
 														) {
-															const text = String((child.props as any)?.children || "");
-															return !text.includes(`[!${alertType?.toUpperCase()}]`);
+															const text = String(
+																(child.props as any)?.children || "",
+															);
+															return !text.includes(
+																`[!${alertType?.toUpperCase()}]`,
+															);
 														}
 														return true;
 													})
@@ -271,7 +282,9 @@ const MarkdownEditor = ({
 												>
 													<div className="mb-2 flex items-center gap-2 font-semibold">
 														{icons[alertType as keyof typeof icons]}
-														<span>{labels[alertType as keyof typeof labels]}</span>
+														<span>
+															{labels[alertType as keyof typeof labels]}
+														</span>
 													</div>
 													<div className="ml-6">{filteredChildren}</div>
 												</div>
