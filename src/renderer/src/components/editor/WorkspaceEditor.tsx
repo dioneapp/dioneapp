@@ -38,6 +38,7 @@ import {
 	parseErrorResponse,
 	updateTreeNode,
 } from "./utils/utils";
+import AI from "../ai/ai";
 
 const initialContextMenuState: ContextMenuState = {
 	visible: false,
@@ -993,11 +994,13 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			: undefined;
 
 	return (
-		<div
-			className="flex h-full w-full flex-col"
-			onClick={() => {
-				if (contextMenu.visible) handleContextMenuClose();
-			}}
+		<>
+			<AI />
+			<div
+				className="flex h-full w-full flex-col"
+				onClick={() => {
+					if (contextMenu.visible) handleContextMenuClose();
+				}}
 		>
 			<div className="fixed top-0 left-0 p-4">
 				<div className="flex items-center justify-start text-xs gap-2">
@@ -1170,5 +1173,6 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				}}
 			/>
 		</div>
+		</>
 	);
 }
