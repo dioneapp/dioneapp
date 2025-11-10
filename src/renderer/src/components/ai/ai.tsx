@@ -1,12 +1,13 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { useState, useEffect, useRef } from "react"
-import { X } from "lucide-react"
+import { TriangleAlert, X } from "lucide-react"
 import { getCurrentPort } from "@renderer/utils/getPort"
 
 export default function AI() {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [messages, setMessages] = useState<string[]>([])
+    const [ollamaStatus, setOllamaStatus] = useState("")
     const logsEndRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -22,17 +23,23 @@ export default function AI() {
         },
         body: JSON.stringify({ prompt, model: 'llama3.2' }),
     });
+
+      if (response.status === 500) {
+        console.log("ollama is closed")
+        setOllamaStatus("closed")
+      }
+
         const data = await response.json();
         setMessages((prev) => [...prev, data]);
     }
 
   return (
     <>
-    <div className="fixed bottom-8 right-8" style={{ zIndex: 1000, transition: 'all 0.3s ease' }}>
+    <div className="fixed bottom-6 right-6" style={{ zIndex: 1000 }}>
         <div className="group relative">
           <AnimatePresence mode="wait">
           {open ? (
-            <motion.div key="open-div" className="flex items-center justify-end w-90 gap-2">
+            <motion.div initial={{ backdropFilter: "blur(10px)", filter: 'blur(10px)', x: 15, opacity: 0 }} animate={{ backdropFilter: "blur(10px)", filter: 'blur(0px)', x: 0, opacity: 1 }} exit={{ backdropFilter: "blur(0px)", filter: 'blur(10px)', x: 15, opacity: 0 }} transition={{ duration: 0.2 }}  key="open-div" className="flex items-center justify-end w-90 gap-2 rounded-full">
               <motion.div
                 className="absolute inset-0 -z-10 rounded-full blur"
                 style={{
@@ -40,7 +47,6 @@ export default function AI() {
                   backgroundSize: "400% 400%",
                   opacity: 0.4,
                 }}
-                initial={{ opacity: 0.3, transition: { duration: 0.2 } }}
                 animate={{
                   backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
                   transition: {
@@ -49,17 +55,11 @@ export default function AI() {
                     repeat: Number.POSITIVE_INFINITY,
                   }
                 }}
-                transition={{ duration: 0.2 }}
-                exit={{ opacity: 0, transition: { duration: 0.2 } }}
               />
               <motion.input
                 type="text"
                 autoFocus
-                initial={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
-                animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, x: 20, filter: 'blur(10px)' }}
-                transition={{ duration: 0.2 }}
-                className="w-full h-10 px-4 text-sm rounded-full text-white placeholder-white/50 focus:outline-none"
+                className="w-full h-10 px-4 text-sm rounded-full text-white/90 placeholder-white/50 focus:outline-none"
                 placeholder="Ask AI..."
                 onKeyDown={(e) => {
                   if (e.key === 'Escape') {
@@ -71,8 +71,8 @@ export default function AI() {
                   }
                 }}
               />
-              <motion.button initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}} transition={{duration: 0.2}} type="button" onClick={() => setOpen(false)} className="cursor-pointer w-12 h-10 rounded-full bg-white/10 backdrop-blur-3xl border border-white/10 flex items-center justify-center" title="Close">
-                    <X />
+              <motion.button initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}} transition={{duration: 0.2}} type="button" onClick={() => setOpen(false)} className="cursor-pointer w-12 h-10 pr-4 flex items-center justify-center m-auto" title="Close">
+                    <X color="#fff" opacity="0.7" className="hover:bg-white/10 rounded" />
                 </motion.button>
             </motion.div>
           ) : (
@@ -106,14 +106,15 @@ export default function AI() {
         </div>
     </div>
     {open && (
-        <div className="fixed bottom-24 right-8" style={{zIndex: 1001}}>
-            <div id="logs" className="bg-black/20 backdrop-blur-3xl rounded-2xl rounded-b-none p-4 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto border-x border-white/5" style={{scrollbarWidth: 'none'}}>
+        <div className="fixed bottom-24 right-6" style={{zIndex: 1001}}>
+          {messages.length !== 0 && (
+            <div id="logs" className="backdrop-blur-3xl rounded-2xl rounded-b-none p-4 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto" style={{scrollbarWidth: 'none'}}>
                 <div className="space-y-3">
                     {messages.map((message: any, index: number) => (
                         <div key={index}>
                             <hr className="border-white/20 mx-0 my-2" />
                             <div className="text-sm" style={{scrollSnapAlign: 'start'}}>
-                                <span className="text-neutral-400 mr-2">AI - {new Date(message.created_at).toLocaleTimeString()}:</span>
+                                <span className="text-neutral-400 mr-2">AI - {new Date(message.created_at || Date.now()).toLocaleTimeString()}:</span>
                                 {message.content || (message.message?.content || 'No content')}
                             </div>
                         </div>
@@ -121,6 +122,12 @@ export default function AI() {
                     <div ref={logsEndRef} />
                 </div>
             </div>
+          )}
+          {ollamaStatus === "closed" && (
+            <div className="w-fit text-[11px] flex items-center justify-center gap-2 backdrop-blur-3xl">
+              <span className="bg-yellow-500/20 rounded-full px-2 text-yellow-600 font-semibold ">Ollama not found</span>
+            </div>
+          )}
         </div>
     )}
     </>
