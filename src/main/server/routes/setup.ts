@@ -10,6 +10,7 @@ import { createLocalScriptsRouter } from "./local";
 import { createScriptRouter } from "./scripts";
 import searchBarRouter from "./searchbar";
 import { createVariablesRouter } from "./variables";
+import AIRouter from "./ai/ai";
 
 export const setupRoutes = (server: Express, io: Server) => {
 	server.get("/", (_req, res) => {
@@ -40,4 +41,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 
 	// files stuff
 	server.use("/files", filesRouter);
+
+	// ai
+	server.use("/ai", AIRouter);
 };

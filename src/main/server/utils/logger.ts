@@ -3,6 +3,12 @@ import path from "node:path";
 import { app } from "electron";
 import winston from "winston";
 
+declare module 'winston' {
+  interface Logger {
+    ai: winston.LeveledLogMethod;
+  }
+}
+
 const logsDir = path.join(app.getPath("logs"));
 
 if (!fs.existsSync(logsDir)) {
@@ -11,6 +17,10 @@ if (!fs.existsSync(logsDir)) {
 
 const logger = winston.createLogger({
 	level: "info",
+	levels: {
+        ...winston.config.npm.levels,
+		ai: 2,
+	},
 	format: winston.format.combine(
 		winston.format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
 		winston.format.printf(({ timestamp, level, message }) => {
@@ -26,6 +36,10 @@ const logger = winston.createLogger({
 		new winston.transports.File({
 			filename: path.join(logsDir, "error.log"),
 			level: "error",
+		}),
+		new winston.transports.File({
+			filename: path.join(logsDir, "ai.log"),
+			level: "ai",
 		}),
 	],
 });
