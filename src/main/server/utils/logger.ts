@@ -3,10 +3,10 @@ import path from "node:path";
 import { app } from "electron";
 import winston from "winston";
 
-declare module 'winston' {
-  interface Logger {
-    ai: winston.LeveledLogMethod;
-  }
+declare module "winston" {
+	interface Logger {
+		ai: winston.LeveledLogMethod;
+	}
 }
 
 const logsDir = path.join(app.getPath("logs"));
@@ -18,7 +18,7 @@ if (!fs.existsSync(logsDir)) {
 const logger = winston.createLogger({
 	level: "info",
 	levels: {
-        ...winston.config.npm.levels,
+		...winston.config.npm.levels,
 		ai: 2,
 	},
 	format: winston.format.combine(
