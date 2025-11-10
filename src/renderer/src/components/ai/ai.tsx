@@ -1,7 +1,8 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { useState, useEffect, useRef } from "react"
-import { TriangleAlert, X } from "lucide-react"
+import { X } from "lucide-react"
 import { getCurrentPort } from "@renderer/utils/getPort"
+import Messages from "./messages"
 
 export default function AI() {
     const [open, setOpen] = useState(false)
@@ -46,7 +47,7 @@ export default function AI() {
                 style={{
                   background: "linear-gradient(45deg, #7c3aed, #6d28d9, #a855f7, #d946ef, #ec4899)",
                   backgroundSize: "400% 400%",
-                  opacity: 0.4,
+                  opacity: 0.3,
                 }}
                 animate={{
                   backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
@@ -113,19 +114,9 @@ export default function AI() {
               <span className="bg-red-500/10 px-2 text-red-500 font-semibold">Ollama not found</span>
             </div>
           )}
-          {messages.length > 1 && (
+          {messages.length > 0 && (
             <div id="logs" className="backdrop-blur-3xl rounded-xl p-4 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto" style={{scrollbarWidth: 'none'}}>
-                <div className="space-y-3">
-                    {messages.map((message: any, index: number) => (
-                        <div key={index}>
-                            <div className="text-sm" style={{scrollSnapAlign: 'start'}}>
-                                <span className="text-neutral-400 mr-2">AI - {new Date(message.created_at || Date.now()).toLocaleTimeString()}:</span>
-                                {message.content || (message.message?.content || 'No content')}
-                            </div>
-                        </div>
-                    ))}
-                    <div ref={logsEndRef} />
-                </div>
+                <Messages messages={messages} logsEndRef={logsEndRef} />
             </div>
           )}
         </div>
