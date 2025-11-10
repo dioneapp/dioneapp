@@ -7,6 +7,7 @@ import "monaco-editor/esm/vs/language/html/monaco.contribution";
 import "monaco-editor/esm/vs/language/json/monaco.contribution";
 import "monaco-editor/esm/vs/language/typescript/monaco.contribution";
 // import "monaco-editor/min/vs/editor/editor.main.css";
+import MarkdownEditor from "./MarkdownEditor";
 import type { FileEncoding, FileNode } from "./utils/types";
 
 loader.config({ monaco });
@@ -92,6 +93,12 @@ const PreviewPane = ({
 	onReloadFile,
 	onContentChange,
 }: PreviewPaneProps) => {
+	// Check if this is a markdown file
+	const isMarkdownFile =
+		selectedFileNode &&
+		(selectedFileNode.name.endsWith(".md") ||
+			selectedFileNode.name.endsWith(".markdown"));
+
 	if (!selectedFileNode || selectedFileNode.type !== "file") {
 		return (
 			<div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-neutral-300">
@@ -154,29 +161,27 @@ const PreviewPane = ({
 
 	return (
 		<>
-			<div className="flex items-center justify-between border-b border-white/10 px-4 py-2 text-xs text-neutral-300">
+			<div className="flex items-center justify-between border-b border-white/10 px-4 py-2 text-xs text-neutral-300 min-h-10">
 				<span className="truncate" title={selectedFileNode.absolutePath}>
 					{selectedFileNode.relativePath}
 				</span>
-				{(isDirty || fileEncoding === "base64") && (
-					<div className="flex items-center gap-2">
-						{fileEncoding === "base64" && (
-							<span
-								className="rounded-md bg-neutral-800 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-400"
-								title={fileMimeType ?? undefined}
-							>
-								Preview only
-							</span>
-						)}
-						{isDirty && (
-							<span className="rounded-full bg-amber-500/10 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-amber-300">
-								Unsaved
-							</span>
-						)}
-					</div>
-				)}
+				<div className="flex items-center gap-2 min-w-0">
+					{fileEncoding === "base64" && (
+						<span
+							className="rounded-md bg-neutral-800 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-400 whitespace-nowrap"
+							title={fileMimeType ?? undefined}
+						>
+							Preview only
+						</span>
+					)}
+					{isDirty && (
+						<span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300 whitespace-nowrap">
+							Unsaved
+						</span>
+					)}
+				</div>
 			</div>
-			<div className="relative flex-1">
+			<div className="relative flex-1 overflow-hidden">
 				{isLoadingFile ? (
 					<div className="flex h-full items-center justify-center">
 						<Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
@@ -195,6 +200,14 @@ const PreviewPane = ({
 					</div>
 				) : fileEncoding === "base64" ? (
 					renderMediaPreview()
+				) : isMarkdownFile && fileEncoding === "utf8" ? (
+					<div className="h-full w-full">
+						<MarkdownEditor
+							content={fileContent}
+							filePath={selectedFileNode.relativePath}
+							onContentChange={onContentChange}
+						/>
+					</div>
 				) : (
 					<Editor
 						key={selectedFileNode.relativePath}
