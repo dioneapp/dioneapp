@@ -1,8 +1,8 @@
-import { AnimatePresence, motion } from "framer-motion"
-import { useState, useEffect, useRef } from "react"
-import { X } from "lucide-react"
-import { getCurrentPort } from "@renderer/utils/getPort"
-import Messages from "./messages"
+import { getCurrentPort } from "@renderer/utils/getPort";
+import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import Messages from "./messages";
 
 export default function AI({ getContext }: { getContext: () => any }) {
     const [open, setOpen] = useState(false)
@@ -11,9 +11,9 @@ export default function AI({ getContext }: { getContext: () => any }) {
     const [ollamaStatus, setOllamaStatus] = useState("")
     const logsEndRef = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-        logsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages])
+	useEffect(() => {
+		logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	}, [messages]);
 
     const chat = async (prompt: string) => {
      const port = await getCurrentPort();
@@ -26,14 +26,14 @@ export default function AI({ getContext }: { getContext: () => any }) {
         body: JSON.stringify({ prompt, model: 'llama3.2', context: context.context, name: context.name, path: context.path }),
     });
 
-      if (response.status === 500) {
-        console.log("ollama is closed")
-        setOllamaStatus("closed")
-      }
+		if (response.status === 500) {
+			console.log("ollama is closed");
+			setOllamaStatus("closed");
+		}
 
-        const data = await response.json();
-        setMessages((prev) => [...prev, data]);
-    }
+		const data = await response.json();
+		setMessages((prev) => [...prev, data]);
+	};
 
   return (
     <>
