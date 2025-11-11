@@ -1002,34 +1002,39 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			context: fileContent,
 			name: selectedFileNode?.relativePath,
 			path: selectedFileNode?.absolutePath,
-		}
-	}
+		};
+	};
 
 	return (
 		<>
-			<AI getContext={getContext} workspaceName={workspaceName} nodes={tree} workspacePath={rootPath}/>
+			<AI
+				getContext={getContext}
+				workspaceName={workspaceName}
+				nodes={tree}
+				workspacePath={rootPath}
+			/>
 			<div
 				className="flex h-full w-full flex-col"
 				onClick={() => {
 					if (contextMenu.visible) handleContextMenuClose();
 				}}
-		>
-			<HeaderBar
-				rootPath={rootPath}
-				// activeNode={activeNode}
-				selectedFileNode={selectedFileNode}
-				isDirty={isDirty}
-				isSaving={isSaving}
-				// isLoadingTree={isLoadingTree}
-				onBack={handleBackToPreview}
-				onOpenInExplorer={handleOpenInExplorer}
-				// onRefreshWorkspace={handleRefreshWorkspace}
-				// onRename={() => {
-				// 	openRenameEntryDialog();
-				// }}
-				onReloadFile={handleReloadFile}
-				onSaveFile={handleSaveFile}
-			/>
+			>
+				<HeaderBar
+					rootPath={rootPath}
+					// activeNode={activeNode}
+					selectedFileNode={selectedFileNode}
+					isDirty={isDirty}
+					isSaving={isSaving}
+					// isLoadingTree={isLoadingTree}
+					onBack={handleBackToPreview}
+					onOpenInExplorer={handleOpenInExplorer}
+					// onRefreshWorkspace={handleRefreshWorkspace}
+					// onRename={() => {
+					// 	openRenameEntryDialog();
+					// }}
+					onReloadFile={handleReloadFile}
+					onSaveFile={handleSaveFile}
+				/>
 
 				<div className="flex h-full flex-1 overflow-hidden bg-neutral-950/65">
 					<div className="w-64 shrink-0 border-r border-white/10 bg-neutral-950/80">
