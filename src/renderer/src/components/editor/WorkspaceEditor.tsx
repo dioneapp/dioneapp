@@ -9,6 +9,7 @@ import {
 	useRef,
 	useState,
 } from "react";
+import AI from "../ai/ai";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import ContextMenu from "./ContextMenu";
 import EntryNameDialog from "./EntryNameDialog";
@@ -38,7 +39,6 @@ import {
 	parseErrorResponse,
 	updateTreeNode,
 } from "./utils/utils";
-import AI from "../ai/ai";
 
 const initialContextMenuState: ContextMenuState = {
 	visible: false,
@@ -1031,149 +1031,149 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				onSaveFile={handleSaveFile}
 			/>
 
-			<div className="flex h-full flex-1 overflow-hidden bg-neutral-950/65">
-				<div className="w-64 shrink-0 border-r border-white/10 bg-neutral-950/80">
-					<div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
-						<div className="flex min-w-0 flex-col">
-							<span className="truncate text-[11px] font-semibold uppercase tracking-wide text-neutral-200">
-								{workspaceName}
-							</span>
-							<span
-								className="truncate text-[10px] font-normal uppercase tracking-normal text-neutral-500"
-								title={rootPath}
-							>
-								{rootPath || "Resolving path..."}
-							</span>
+				<div className="flex h-full flex-1 overflow-hidden bg-neutral-950/65">
+					<div className="w-64 shrink-0 border-r border-white/10 bg-neutral-950/80">
+						<div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
+							<div className="flex min-w-0 flex-col">
+								<span className="truncate text-[11px] font-semibold uppercase tracking-wide text-neutral-200">
+									{workspaceName}
+								</span>
+								<span
+									className="truncate text-[10px] font-normal uppercase tracking-normal text-neutral-500"
+									title={rootPath}
+								>
+									{rootPath || "Resolving path..."}
+								</span>
+							</div>
+							<div className="flex items-center gap-1">
+								<button
+									type="button"
+									onClick={() => {
+										openCreateEntryDialog("file");
+									}}
+									className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
+									title="New file"
+								>
+									<FilePlus className="h-3.5 w-3.5" />
+								</button>
+								<button
+									type="button"
+									onClick={() => {
+										openCreateEntryDialog("directory");
+									}}
+									className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
+									title="New folder"
+								>
+									<FolderPlus className="h-3.5 w-3.5" />
+								</button>
+								{isLoadingTree && (
+									<Loader2 className="h-3 w-3 animate-spin text-neutral-300" />
+								)}
+							</div>
 						</div>
-						<div className="flex items-center gap-1">
-							<button
-								type="button"
-								onClick={() => {
-									openCreateEntryDialog("file");
-								}}
-								className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
-								title="New file"
-							>
-								<FilePlus className="h-3.5 w-3.5" />
-							</button>
-							<button
-								type="button"
-								onClick={() => {
-									openCreateEntryDialog("directory");
-								}}
-								className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
-								title="New folder"
-							>
-								<FolderPlus className="h-3.5 w-3.5" />
-							</button>
-							{isLoadingTree && (
-								<Loader2 className="h-3 w-3 animate-spin text-neutral-300" />
+						<div className="h-full overflow-y-auto pb-24">
+							{workspaceError ? (
+								<div className="flex h-full flex-col gap-3 px-3 py-4 text-xs text-neutral-400">
+									<span>{workspaceError}</span>
+									<button
+										type="button"
+										onClick={handleRefreshWorkspace}
+										className="self-start rounded-md border border-white/10 px-3 py-1 text-neutral-200 transition-colors hover:bg-white/10"
+									>
+										Retry
+									</button>
+								</div>
+							) : (
+								<FileTree
+									nodes={tree}
+									selectedFile={selectedFile}
+									activePath={activePath}
+									isContextMenuVisible={contextMenu.visible}
+									isDirty={isDirty}
+									onRowClick={handleRowClick}
+									onKeyDown={handleTreeItemKeyDown}
+									onContextMenu={handleContextMenuOpen}
+								/>
 							)}
 						</div>
 					</div>
-					<div className="h-full overflow-y-auto pb-24">
-						{workspaceError ? (
-							<div className="flex h-full flex-col gap-3 px-3 py-4 text-xs text-neutral-400">
+					<div className="relative flex flex-1 flex-col bg-[#0a0a0a]">
+						{selectedFileNode && selectedFileNode.type === "file" ? (
+							<PreviewPane
+								selectedFileNode={selectedFileNode}
+								fileEncoding={fileEncoding}
+								fileContent={fileContent}
+								fileMimeType={fileMimeType}
+								filePreviewUrl={filePreviewUrl}
+								fileError={fileError}
+								isLoadingFile={isLoadingFile}
+								isDirty={isDirty}
+								language={language}
+								onReloadFile={handleReloadFile}
+								onContentChange={setFileContent}
+							/>
+						) : workspaceError ? (
+							<div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-neutral-300">
+								<FolderPlus className="h-8 w-8 text-neutral-500" />
 								<span>{workspaceError}</span>
 								<button
 									type="button"
 									onClick={handleRefreshWorkspace}
-									className="self-start rounded-md border border-white/10 px-3 py-1 text-neutral-200 transition-colors hover:bg-white/10"
+									className="rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
 								>
 									Retry
 								</button>
 							</div>
 						) : (
-							<FileTree
-								nodes={tree}
-								selectedFile={selectedFile}
-								activePath={activePath}
-								isContextMenuVisible={contextMenu.visible}
+							<PreviewPane
+								fileEncoding={fileEncoding}
+								fileContent={fileContent}
+								fileMimeType={fileMimeType}
+								filePreviewUrl={filePreviewUrl}
+								fileError={fileError}
+								isLoadingFile={isLoadingFile}
 								isDirty={isDirty}
-								onRowClick={handleRowClick}
-								onKeyDown={handleTreeItemKeyDown}
-								onContextMenu={handleContextMenuOpen}
+								language={language}
+								onReloadFile={handleReloadFile}
+								onContentChange={setFileContent}
 							/>
 						)}
 					</div>
 				</div>
-				<div className="relative flex flex-1 flex-col bg-[#0a0a0a]">
-					{selectedFileNode && selectedFileNode.type === "file" ? (
-						<PreviewPane
-							selectedFileNode={selectedFileNode}
-							fileEncoding={fileEncoding}
-							fileContent={fileContent}
-							fileMimeType={fileMimeType}
-							filePreviewUrl={filePreviewUrl}
-							fileError={fileError}
-							isLoadingFile={isLoadingFile}
-							isDirty={isDirty}
-							language={language}
-							onReloadFile={handleReloadFile}
-							onContentChange={setFileContent}
-						/>
-					) : workspaceError ? (
-						<div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-neutral-300">
-							<FolderPlus className="h-8 w-8 text-neutral-500" />
-							<span>{workspaceError}</span>
-							<button
-								type="button"
-								onClick={handleRefreshWorkspace}
-								className="rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
-							>
-								Retry
-							</button>
-						</div>
-					) : (
-						<PreviewPane
-							fileEncoding={fileEncoding}
-							fileContent={fileContent}
-							fileMimeType={fileMimeType}
-							filePreviewUrl={filePreviewUrl}
-							fileError={fileError}
-							isLoadingFile={isLoadingFile}
-							isDirty={isDirty}
-							language={language}
-							onReloadFile={handleReloadFile}
-							onContentChange={setFileContent}
-						/>
-					)}
-				</div>
-			</div>
 
-			<ContextMenu
-				state={contextMenu}
-				onCopyPath={() => {
-					if (contextMenu.node) void handleCopyNodePath(contextMenu.node);
-				}}
-				onOpenFolder={() => {
-					if (contextMenu.node) handleOpenNodeFolder(contextMenu.node);
-				}}
-				onReloadFile={handleReloadNode}
-				onRename={() => {
-					if (contextMenu.node) openRenameEntryDialog(contextMenu.node);
-				}}
-				onDelete={() => {
-					if (contextMenu.node) void handleDeleteEntry(contextMenu.node);
-				}}
-				onClose={handleContextMenuClose}
-			/>
-			<EntryNameDialog
-				open={!!entryDialog}
-				title={entryDialogTitle}
-				description={entryDialogDescription}
-				value={entryDialogValue}
-				placeholder={entryDialogPlaceholder}
-				error={entryDialogError}
-				isSubmitting={isEntryDialogSubmitting}
-				confirmLabel={entryDialogConfirmLabel}
-				onChange={(value) => setEntryDialogValue(value)}
-				onCancel={handleEntryDialogCancel}
-				onConfirm={() => {
-					void handleEntryDialogConfirm();
-				}}
-			/>
-		</div>
+				<ContextMenu
+					state={contextMenu}
+					onCopyPath={() => {
+						if (contextMenu.node) void handleCopyNodePath(contextMenu.node);
+					}}
+					onOpenFolder={() => {
+						if (contextMenu.node) handleOpenNodeFolder(contextMenu.node);
+					}}
+					onReloadFile={handleReloadNode}
+					onRename={() => {
+						if (contextMenu.node) openRenameEntryDialog(contextMenu.node);
+					}}
+					onDelete={() => {
+						if (contextMenu.node) void handleDeleteEntry(contextMenu.node);
+					}}
+					onClose={handleContextMenuClose}
+				/>
+				<EntryNameDialog
+					open={!!entryDialog}
+					title={entryDialogTitle}
+					description={entryDialogDescription}
+					value={entryDialogValue}
+					placeholder={entryDialogPlaceholder}
+					error={entryDialogError}
+					isSubmitting={isEntryDialogSubmitting}
+					confirmLabel={entryDialogConfirmLabel}
+					onChange={(value) => setEntryDialogValue(value)}
+					onCancel={handleEntryDialogCancel}
+					onConfirm={() => {
+						void handleEntryDialogConfirm();
+					}}
+				/>
+			</div>
 		</>
 	);
 }
