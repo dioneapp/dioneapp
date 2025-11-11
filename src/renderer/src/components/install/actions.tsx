@@ -1,7 +1,7 @@
 import GeneratedIcon from "@renderer/components/icons/generated-icon";
 import { openLink } from "@renderer/utils/openLink";
 import { motion } from "framer-motion";
-import { BadgeCheck, ChevronDown, Download, User } from "lucide-react";
+import { BadgeCheck, ChevronDown, CodeXml, Download, User } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
@@ -20,6 +20,7 @@ interface ActionsProps {
 	startOptions?: any;
 	isLocal?: boolean;
 	user?: boolean;
+	setShow: any;
 }
 
 export default function ActionsComponent({
@@ -34,6 +35,7 @@ export default function ActionsComponent({
 	handleDeleteDeps,
 	startOptions,
 	isLocal,
+	setShow,
 }: ActionsProps) {
 	const { t } = useTranslation();
 	const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -56,6 +58,11 @@ export default function ActionsComponent({
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, [dropdownOpen]);
+
+	const handleOpenEditor = () => {
+		if (!data?.id) return;
+		setShow({ [data.id]: "editor" });
+	};
 
 	return (
 		<>
@@ -179,7 +186,13 @@ export default function ActionsComponent({
 								)}
 								{!isServerRunning[data?.id] &&
 									(installed ? (
-										<div className="flex gap-2 justify-end w-full">
+										<div className="flex gap-2 justify-end items-center w-full">
+											<div className="flex justify-start items-center w-full">
+												<button title="Open code editor" onClick={handleOpenEditor} type="button" className="bg-neutral-500/20 flex items-center justify-center text-neutral-300 hover:bg-neutral-500/40 font-medium gap-2 py-1 px-3 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer">
+													<CodeXml size={16} />
+													Code
+												</button>
+											</div>	
 											{startOptions && startOptions.starts.length > 1 ? (
 												<div className="relative" ref={dropdownRef}>
 													<button
