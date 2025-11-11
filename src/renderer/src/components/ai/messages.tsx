@@ -22,15 +22,15 @@ export default function Messages({
 						AI -{" "}
 						{new Date(message.created_at || Date.now()).toLocaleTimeString()}:
 					</span>
-					{message?.message?.tool_calls && message?.message?.tool_calls?.length > 0 && (
-						<div key={message?.message?.tool_calls[0].function.index}>
-							{message?.message?.tool_calls[0].function.name === "read_file" && (
-								<span className="text-neutral-400">
-									Reading files...
-								</span>
-							)}
-						</div>
-					)}
+					{message?.message?.tool_calls &&
+						message?.message?.tool_calls?.length > 0 && (
+							<div key={message?.message?.tool_calls[0].function.index}>
+								{message?.message?.tool_calls[0].function.name ===
+									"read_file" && (
+									<span className="text-neutral-400">Reading files...</span>
+								)}
+							</div>
+						)}
 					<div className="prose prose-invert max-w-none text-[13px] leading-relaxed">
 						<ReactMarkdown
 							remarkPlugins={[remarkGfm]}

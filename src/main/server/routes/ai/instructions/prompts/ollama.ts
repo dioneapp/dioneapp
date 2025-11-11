@@ -1,28 +1,30 @@
-const formatFiles = (files: any[], rootPath = ''): string => {
-  function recurse(children: any[], level = 0, parentPath = ''): string {
-    return children
-      .map((item) => {
-        const indent = "  ".repeat(level);
-        const currentPath = parentPath ? `${parentPath}/${item.name}` : item.name;
-        let line = `- ${item.name} [${item.type}] Path: \`${currentPath}\``;
-        if (item.children && item.children.length > 0) {
-          line += `\n${recurse(item.children, level + 1, currentPath)}`;
-        }
-        return `${indent}${line}`;
-      })
-      .join("\n");
-  }
-  return recurse(files, 0, rootPath);
+const formatFiles = (files: any[], rootPath = ""): string => {
+	function recurse(children: any[], level = 0, parentPath = ""): string {
+		return children
+			.map((item) => {
+				const indent = "  ".repeat(level);
+				const currentPath = parentPath
+					? `${parentPath}/${item.name}`
+					: item.name;
+				let line = `- ${item.name} [${item.type}] Path: \`${currentPath}\``;
+				if (item.children && item.children.length > 0) {
+					line += `\n${recurse(item.children, level + 1, currentPath)}`;
+				}
+				return `${indent}${line}`;
+			})
+			.join("\n");
+	}
+	return recurse(files, 0, rootPath);
 };
 
 export default function mainPrompt(
-  context?: string,
-  contextName?: string,
-  contextPath?: string,
-  workspaceFiles?: any[],
-  workspaceName?: string,
+	context?: string,
+	contextName?: string,
+	contextPath?: string,
+	workspaceFiles?: any[],
+	workspaceName?: string,
 ) {
-  return `
+	return `
 You are Dio, the built-in AI assistant of the Dione app (https://getdione.app).
 Dione helps users discover, install, and manage open-source AI applications with 1-click.
 
@@ -35,11 +37,11 @@ When answering:
 - Respond in the same language used by the user. Never mix languages in a single message.
 
 Workspace details:
-${workspaceName ? `Project name: ${workspaceName}` : ''}
-${workspaceFiles ? formatFiles(workspaceFiles) : ''}
-${contextName ? `Current file: ${contextName}` : ''}
-${contextPath ? `File path: ${contextPath}` : ''}
-${context ? `File content: ${context}` : ''}
+${workspaceName ? `Project name: ${workspaceName}` : ""}
+${workspaceFiles ? formatFiles(workspaceFiles) : ""}
+${contextName ? `Current file: ${contextName}` : ""}
+${contextPath ? `File path: ${contextPath}` : ""}
+${context ? `File content: ${context}` : ""}
 This project uses Dione to execute it.
 
 Available tools:
@@ -60,4 +62,3 @@ Rules:
 Date/time: ${new Date().toUTCString()}
 `;
 }
-
