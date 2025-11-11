@@ -4,7 +4,7 @@ import { X } from "lucide-react"
 import { getCurrentPort } from "@renderer/utils/getPort"
 import Messages from "./messages"
 
-export default function AI() {
+export default function AI({ getContext }: { getContext: () => any }) {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [messages, setMessages] = useState<string[]>([])
@@ -17,12 +17,13 @@ export default function AI() {
 
     const chat = async (prompt: string) => {
      const port = await getCurrentPort();
+     const context = getContext();
      const response = await fetch(`http://localhost:${port}/ai/ollama/chat`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt, model: 'llama3.2' }),
+        body: JSON.stringify({ prompt, model: 'llama3.2', context: context.context, name: context.name, path: context.path }),
     });
 
       if (response.status === 500) {
@@ -115,7 +116,7 @@ export default function AI() {
             </div>
           )}
           {messages.length > 0 && (
-            <div id="logs" className="backdrop-blur-3xl rounded-xl p-4 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto" style={{scrollbarWidth: 'none'}}>
+            <div className="backdrop-blur-3xl rounded-xl p-4 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto" style={{scrollbarWidth: 'none'}}>
                 <Messages messages={messages} logsEndRef={logsEndRef} />
             </div>
           )}

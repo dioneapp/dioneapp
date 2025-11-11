@@ -35,8 +35,8 @@ OllamaRouter.post("/chat", async (req, res) => {
     }
 
     try {
-        const { model, prompt } = req.body
-        const systemprompt = await getSysPrompt()
+        const { model, prompt, context, name, path } = req.body
+        const systemprompt = getSysPrompt(context, name, path)
         const messages = [{role: "system", content: systemprompt}, { role: "user", content: prompt }];
         logger.ai(`Chat started, model: ${model}, prompt: ${prompt}`);
         
