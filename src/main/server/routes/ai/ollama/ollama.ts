@@ -1,6 +1,7 @@
 import express from "express";
 import logger from "../../../utils/logger";
 import { getSysPrompt } from "../instructions/instructions";
+import { getTools, readFile } from "./tools";
 const { Ollama } = require("ollama");
 
 const OllamaRouter = express.Router();
@@ -29,30 +30,41 @@ OllamaRouter.get("/models", async (req, res) => {
 });
 
 OllamaRouter.post("/chat", async (req, res) => {
-	const isOllamaOpen = await fetch("http://localhost:11434", {
-		method: "GET",
-	}).then((res) => res.ok);
-	if (!isOllamaOpen) {
-		logger.ai("Ollama is not open");
-		res.status(500).json({ error: "Ollama is not open" });
-		return;
-	}
-
-    try {
-        const { model, prompt, context, name, path } = req.body
-        const systemprompt = getSysPrompt(context, name, path)
-        const messages = [{role: "system", content: systemprompt}, { role: "user", content: prompt }];
-        logger.ai(`Chat started, model: ${model}, prompt: ${prompt}`);
-        
-        const response = await ollama.chat({ model, messages });
-        const responseText = response.message?.content || 'No content in response';
-        logger.ai(`Response from ${model}: ${responseText.substring(0, 200)}${responseText.length > 200 ? '...' : ''}`);
-        
-        res.json(response);
-    } catch (error) {
-        logger.error(`Chat error: ${error}`);
-        res.status(500).json({ error: 'Failed to process chat request' });
-    }
+  try {
+    const { model, prompt, context, name, path, workspaceName, workspaceFiles, workspacePath } = req.body;
+	const tools = await getTools();
+    const systemprompt = getSysPrompt(context, name, path, workspaceFiles, workspaceName);
+    const messages = [{role: "system", content: systemprompt}, { role: "user", content: prompt }];
+    const finalResponse = await handleOllamaChat({ model, messages, tools, workspacePath });
+    res.json(finalResponse);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to process chat request' });
+  }
 });
 
+async function handleOllamaChat({ model, messages, tools, workspacePath }) {
+  let response = await ollama.chat({ model, messages, tools });
+  // repeat until no more tool calls
+  while (
+    response.message?.tool_calls &&
+    response.message.tool_calls.length > 0
+  ) {
+    for (const call of response.message.tool_calls) {
+      if (call.function.name === "read_file") {
+        const safePath = call.function.arguments.file_path;
+        const fileContents = readFile(safePath, workspacePath);
+        messages.push({
+          role: "tool",
+          name: call.function.name,
+          content: fileContents,
+          tool_call_id: call.id
+        });
+      }
+    }
+    // call ollama again after fulfilling the previous tool calls
+    response = await ollama.chat({ model, messages, tools });
+  }
+  // if no more tool calls, return response
+  return response;
+}
 export default OllamaRouter;
