@@ -188,11 +188,16 @@ export default function ActionsComponent({
 									(installed ? (
 										<div className="flex gap-2 justify-end items-center w-full">
 											<div className="flex justify-start items-center w-full">
-												<button title="Open code editor" onClick={handleOpenEditor} type="button" className="bg-neutral-500/20 flex items-center justify-center text-neutral-300 hover:bg-neutral-500/40 font-medium gap-2 py-1 px-3 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer">
+												<button
+													title="Open code editor"
+													onClick={handleOpenEditor}
+													type="button"
+													className="bg-neutral-500/20 flex items-center justify-center text-neutral-300 hover:bg-neutral-500/40 font-medium gap-2 py-1 px-3 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer"
+												>
 													<CodeXml size={16} />
 													Code
 												</button>
-											</div>	
+											</div>
 											{startOptions && startOptions.starts.length > 1 ? (
 												<div className="relative" ref={dropdownRef}>
 													<button
