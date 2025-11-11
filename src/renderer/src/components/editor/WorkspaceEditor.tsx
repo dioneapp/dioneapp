@@ -63,7 +63,7 @@ type EntryDialogState =
 	  };
 
 export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
-	const { showToast } = useScriptsContext();
+	const { showToast, isServerRunning } = useScriptsContext();
 	const [rootPath, setRootPath] = useState<string>("");
 	const [tree, setTree] = useState<FileNode[]>([]);
 	const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -918,7 +918,11 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				return;
 			}
 		}
-		setShow({ [data.id]: "iframe" });
+		if (isServerRunning[data.id]) {
+			setShow({ [data.id]: "iframe" });
+		} else {
+			setShow({ [data.id]: "actions" });
+		}
 	}, [data?.id, isDirty, setShow]);
 
 	const handleOpenInExplorer = useCallback(() => {
@@ -993,9 +997,17 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				: "New Folder"
 			: undefined;
 
+	const getContext = () => {
+		return {
+			context: fileContent,
+			name: selectedFileNode?.relativePath,
+			path: selectedFileNode?.absolutePath,
+		}
+	}
+
 	return (
 		<>
-			<AI />
+			<AI getContext={getContext}/>
 			<div
 				className="flex h-full w-full flex-col"
 				onClick={() => {
@@ -1004,17 +1016,17 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		>
 			<HeaderBar
 				rootPath={rootPath}
-				activeNode={activeNode}
+				// activeNode={activeNode}
 				selectedFileNode={selectedFileNode}
 				isDirty={isDirty}
 				isSaving={isSaving}
-				isLoadingTree={isLoadingTree}
+				// isLoadingTree={isLoadingTree}
 				onBack={handleBackToPreview}
 				onOpenInExplorer={handleOpenInExplorer}
-				onRefreshWorkspace={handleRefreshWorkspace}
-				onRename={() => {
-					openRenameEntryDialog();
-				}}
+				// onRefreshWorkspace={handleRefreshWorkspace}
+				// onRename={() => {
+				// 	openRenameEntryDialog();
+				// }}
 				onReloadFile={handleReloadFile}
 				onSaveFile={handleSaveFile}
 			/>
