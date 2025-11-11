@@ -14,6 +14,7 @@ import Loading from "./pages/loading";
 import NoAccess from "./pages/no-access";
 import Report from "./pages/report";
 import Settings from "./pages/settings";
+import QuickAI from "./pages/quick-ai";
 import { TranslationProvider } from "./translations/translationContext";
 
 function App() {
@@ -30,6 +31,11 @@ function App() {
 			if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "r") {
 				e.preventDefault(); // prevent browser refresh
 				navigate("/report");
+			}
+			// check for ctrl+k
+			if (e.ctrlKey && e.key.toLowerCase() === "k") {
+				e.preventDefault(); // prevent browser refresh
+				navigate("/quick-ai");
 			}
 		};
 
@@ -73,6 +79,7 @@ function App() {
 		"/no_access": NoAccess,
 		"/account": Account,
 		"/report": Report,
+		"/quick-ai": QuickAI,
 	};
 
 	const getPage = () => {
