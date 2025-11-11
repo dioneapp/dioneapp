@@ -1007,7 +1007,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 
 	return (
 		<>
-			<AI getContext={getContext}/>
+			<AI getContext={getContext} workspaceName={workspaceName} nodes={tree} workspacePath={rootPath}/>
 			<div
 				className="flex h-full w-full flex-col"
 				onClick={() => {
