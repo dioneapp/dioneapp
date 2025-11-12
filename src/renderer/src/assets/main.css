@@ -208,7 +208,7 @@ a:disabled {
 }
 
 .prose p {
-	margin: 0.75em 0;
+	margin-bottom: 0.75em;
 }
 
 .prose strong {
@@ -271,15 +271,18 @@ a:disabled {
 	margin: 1rem 0;
 }
 
+.prose code {
+	user-select: all;
+}
+
 .prose h1,
 .prose h2,
 .prose h3 {
 	font-weight: 600;
-	margin-top: 1.2em;
+	margin-top: 1em;
 	margin-bottom: 0.5em;
 	line-height: 1.25;
 }
-
 .prose h1 {
 	font-size: 1.6rem;
 }
