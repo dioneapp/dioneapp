@@ -17,6 +17,6 @@ export const getSysPrompt = (
 			contextFiles,
 			contextProject,
 		);
-	} 
+	}
 	return generalPrompt();
 };
