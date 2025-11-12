@@ -34,12 +34,13 @@ OllamaRouter.post("/chat", async (req, res) => {
 		const {
 			model,
 			prompt,
-			context,
-			name,
-			path,
-			workspaceName,
-			workspaceFiles,
-			workspacePath,
+			context = "",
+			name = "",
+			path = "",
+			workspaceName = "",
+			workspaceFiles = [],
+			workspacePath = "",
+			quickAI = false
 		} = req.body;
 		const tools = await getTools();
 		const systemprompt = getSysPrompt(
@@ -48,32 +49,39 @@ OllamaRouter.post("/chat", async (req, res) => {
 			path,
 			workspaceFiles,
 			workspaceName,
+			quickAI
 		);
 		const messages = [
 			{ role: "system", content: systemprompt },
 			{ role: "user", content: prompt },
 		];
+		logger.ai(`Chat request (prompt): ${prompt}`);
+		logger.ai(`Chat request (systemprompt): ${systemprompt}`);
 		const finalResponse = await handleOllamaChat({
 			model,
 			messages,
 			tools,
 			workspacePath,
+			quickAI,
 		});
+		logger.ai(`Chat response: ${JSON.stringify(finalResponse)}`);
 		res.json(finalResponse);
 	} catch (error) {
-		res.status(500).json({ error: "Failed to process chat request" });
+		logger.error(`Error processing chat request: ${error}`);
+		res.status(500).json({ error: `Failed to process chat request: ${error}` });
 	}
 });
 
-async function handleOllamaChat({ model, messages, tools, workspacePath }) {
-	let response = await ollama.chat({ model, messages, tools });
+async function handleOllamaChat({ model, messages, tools, workspacePath, quickAI }) {
+	let response = await ollama.chat({ model, messages, tools: quickAI ? [] : tools });
 	// repeat until no more tool calls
 	while (
 		response.message?.tool_calls &&
 		response.message.tool_calls.length > 0
 	) {
 		for (const call of response.message.tool_calls) {
-			if (call.function.name === "read_file") {
+			if (call.function.name === "read_file" && !quickAI) {
+				logger.ai(`Using tools: ${JSON.stringify(call.function)}`);
 				const safePath = call.function.arguments.file_path;
 				const fileContents = readFile(safePath, workspacePath);
 				messages.push({
@@ -85,7 +93,7 @@ async function handleOllamaChat({ model, messages, tools, workspacePath }) {
 			}
 		}
 		// call ollama again after fulfilling the previous tool calls
-		response = await ollama.chat({ model, messages, tools });
+		response = await ollama.chat({ model, messages, tools: quickAI ? [] : tools });
 	}
 	// if no more tool calls, return response
 	return response;

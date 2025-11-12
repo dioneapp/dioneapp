@@ -1,4 +1,5 @@
-import mainPrompt from "./prompts/ollama";
+import codePrompt from "./prompts/code";
+import generalPrompt from "./prompts/general";
 
 export const getSysPrompt = (
 	context?: string,
@@ -6,12 +7,16 @@ export const getSysPrompt = (
 	contextPath?: string,
 	contextFiles?: string[],
 	contextProject?: string,
+	quickAI?: boolean,
 ) => {
-	return mainPrompt(
-		context,
-		contextName,
-		contextPath,
-		contextFiles,
-		contextProject,
-	);
+	if (!quickAI) {
+		return codePrompt(
+			context,
+			contextName,
+			contextPath,
+			contextFiles,
+			contextProject,
+		);
+	} 
+	return generalPrompt();
 };
