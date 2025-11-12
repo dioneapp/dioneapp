@@ -275,9 +275,16 @@ function createWindow() {
 		}
 	});
 
+	// open external links in default browser
 	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
 		shell.openExternal(url);
 		return { action: "deny" };
+	});
+	mainWindow.webContents.on("will-navigate", (event, url) => {
+		if (url !== mainWindow.webContents.getURL()) {
+			event.preventDefault();
+			shell.openExternal(url);
+		}
 	});
 
 	const gotTheLock = app.requestSingleInstanceLock();
