@@ -63,8 +63,8 @@ export const getLogs = () => {
 
 Object.assign(logger, {
 	ai: (message: string) => {
-		aiLogger.log('ai', message);
-	}
+		aiLogger.log("ai", message);
+	},
 });
 
 logger.info(`Saving logs to ${logsDir}`);
