@@ -40,7 +40,7 @@ OllamaRouter.post("/chat", async (req, res) => {
 			workspaceName = "",
 			workspaceFiles = [],
 			workspacePath = "",
-			quickAI = false
+			quickAI = false,
 		} = req.body;
 		const tools = await getTools();
 		const systemprompt = getSysPrompt(
@@ -49,7 +49,7 @@ OllamaRouter.post("/chat", async (req, res) => {
 			path,
 			workspaceFiles,
 			workspaceName,
-			quickAI
+			quickAI,
 		);
 		const messages = [
 			{ role: "system", content: systemprompt },
@@ -72,8 +72,18 @@ OllamaRouter.post("/chat", async (req, res) => {
 	}
 });
 
-async function handleOllamaChat({ model, messages, tools, workspacePath, quickAI }) {
-	let response = await ollama.chat({ model, messages, tools: quickAI ? [] : tools });
+async function handleOllamaChat({
+	model,
+	messages,
+	tools,
+	workspacePath,
+	quickAI,
+}) {
+	let response = await ollama.chat({
+		model,
+		messages,
+		tools: quickAI ? [] : tools,
+	});
 	// repeat until no more tool calls
 	while (
 		response.message?.tool_calls &&
@@ -93,7 +103,11 @@ async function handleOllamaChat({ model, messages, tools, workspacePath, quickAI
 			}
 		}
 		// call ollama again after fulfilling the previous tool calls
-		response = await ollama.chat({ model, messages, tools: quickAI ? [] : tools });
+		response = await ollama.chat({
+			model,
+			messages,
+			tools: quickAI ? [] : tools,
+		});
 	}
 	// if no more tool calls, return response
 	return response;
