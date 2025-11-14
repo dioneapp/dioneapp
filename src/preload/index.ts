@@ -13,6 +13,21 @@ const api = {
 	getSystemUsage: () => {
 		return electronAPI.ipcRenderer.invoke("get-system-usage");
 	},
+	getNetworkAddress: (port?: number) => {
+		return electronAPI.ipcRenderer.invoke("get-network-address", port);
+	},
+	startTunnel: (type: "localtunnel" | "cloudflare", port?: number) => {
+		return electronAPI.ipcRenderer.invoke("start-tunnel", type, port);
+	},
+	stopTunnel: () => {
+		return electronAPI.ipcRenderer.invoke("stop-tunnel");
+	},
+	getCurrentTunnel: () => {
+		return electronAPI.ipcRenderer.invoke("get-current-tunnel");
+	},
+	isTunnelActive: () => {
+		return electronAPI.ipcRenderer.invoke("is-tunnel-active");
+	},
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

@@ -267,6 +267,7 @@ export const executeCommand = async (
 		FORCE_UNBUFFERED_OUTPUT: "1",
 		PYTHONIOENCODING: "UTF-8",
 		FORCE_COLOR: "1",
+		GRADIO_SERVER_NAME: "0.0.0.0", // Allow Gradio to accept connections from network
 		// fix for py-cpuinfo not detecting Intel Core Ultra CPUs and other newer x86_64 processors
 		...(process.platform === "win32" && {
 			PROCESSOR_ARCHITECTURE:

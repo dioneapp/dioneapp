@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import {
 	ArrowLeft,
-	ExternalLink,
 	Folder,
 	Maximize2,
 	PictureInPicture,
 	RotateCcw,
+	Share2,
 	Square,
 	SquareTerminal,
 	X,
@@ -13,6 +13,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
+import NetworkShareModal from "../modals/network-share";
 
 interface IframeProps {
 	iframeSrc: string;
@@ -43,6 +44,7 @@ export default function IframeComponent({
 		disk: 0,
 	});
 	const [isFullscreen, setIsFullscreen] = useState(false);
+	const [showNetworkShareModal, setShowNetworkShareModal] = useState(false);
 
 	useEffect(() => {
 		const updateSystemUsage = async () => {
@@ -61,10 +63,6 @@ export default function IframeComponent({
 
 		return () => clearInterval(interval);
 	}, []);
-
-	const handleOpenInBrowser = () => {
-		window.open(`http://localhost:${currentPort || "3000"}`, "_blank");
-	};
 
 	const handleEnterFullscreen = () => {
 		const container = document.getElementById(
@@ -219,9 +217,10 @@ export default function IframeComponent({
 						type="button"
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={() => navigate("/")}
+						title="Back"
 					>
 						<ArrowLeft className="w-4 h-4 " />
-						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 							{t("iframe.back")}
 						</div>
 					</button>
@@ -229,9 +228,10 @@ export default function IframeComponent({
 						type="button"
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={() => setShow({ [data.id]: "logs" })}
+						title="Logs"
 					>
 						<SquareTerminal className="w-4 h-4 " />
-						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 							{t("iframe.logs")}
 						</div>
 					</button>
@@ -242,28 +242,23 @@ export default function IframeComponent({
 						title={t("iframe.openFolder")}
 					>
 						<Folder className="w-4 h-4" />
-						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 							{t("iframe.openFolder")}
 						</div>
 					</button>
-					<div className="flex items-center border border-white/10 bg-white/5 rounded-md relative">
-						<div className="flex items-center pl-2 pr-1.5 py-1 gap-2">
-							<span className="text-sm text-neutral-300">
-								{currentPort || "3000"}
-							</span>
-						</div>
+
 						<button
 							type="button"
-							onClick={handleOpenInBrowser}
-							className="p-1.5 hover:bg-white/10 border-l border-white/10 transition-colors rounded-r-md cursor-pointer group relative"
-							title={t("iframe.openInBrowser")}
+							onClick={() => setShowNetworkShareModal(true)}
+							className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+							title="Share on network"
 						>
-							<ExternalLink className="w-4 h-4" />
-							<div className="absolute z-50 -top-9 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
-								{t("iframe.openInBrowser")}
+							<Share2 className="w-4 h-4" />
+							<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+								Share on network
 							</div>
 						</button>
-					</div>
+			
 				</div>
 
 				<div className="flex gap-1 justify-start items-center flex-1">
@@ -292,7 +287,7 @@ export default function IframeComponent({
 						onClick={handleOpenNewWindow}
 					>
 						<PictureInPicture className="w-4 h-4" />
-						<div className="absolute bottom-full left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute bottom-full left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 							{t("iframe.openNewWindow")}
 						</div>
 					</motion.button>
@@ -303,7 +298,7 @@ export default function IframeComponent({
 						}
 					>
 						<Maximize2 className="w-4 h-4" />
-						<div className="absolute bottom-full left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute bottom-full left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 							{t("iframe.fullscreen")}
 						</div>
 					</motion.button>
@@ -313,7 +308,7 @@ export default function IframeComponent({
 						title={t("iframe.reload")}
 					>
 						<RotateCcw className="w-4 h-4" />
-						<div className="absolute z-50 -top-5 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute z-50 -top-5 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 							{t("iframe.reload")}
 						</div>
 					</motion.button>
@@ -322,7 +317,7 @@ export default function IframeComponent({
 						onClick={handleStop}
 						title={t("iframe.stop")}
 					>
-						<div className="absolute z-50 -top-5 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
+						<div className="absolute z-50 -top-5 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 							{t("iframe.stop")}
 						</div>
 						<Square className="w-4 h-4 text-black" />
@@ -359,6 +354,13 @@ export default function IframeComponent({
 					style={{ width: "100%", height: "100%", border: 0 }}
 				/>
 			</motion.div>
+
+			{showNetworkShareModal && (
+				<NetworkShareModal 
+					onClose={() => setShowNetworkShareModal(false)} 
+					targetPort={currentPort}
+				/>
+			)}
 		</div>
 	);
 }

@@ -348,7 +348,7 @@ export default function Settings() {
 				<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
 					<main className="flex flex-col gap-6 py-5">
 						{/* background */}
-						<div className="absolute top-0 left-0 w-full h-full bg-gradient-to-bl from-[#BCB1E7] to-[#080808] opacity-15 rounded-3xl blur-3xl z-0" />
+						<div className="absolute top-0 left-0 w-full h-full bg-linear-to-bl from-[#BCB1E7] to-[#080808] opacity-15 rounded-3xl blur-3xl z-0" />
 						<div>
 							<div className="flex flex-col space-y-4 h-full">
 								{config && (

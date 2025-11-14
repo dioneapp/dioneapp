@@ -1,19 +1,23 @@
 import {
-	ArrowLeft,
-	ExternalLink,
-	Loader2,
-	RefreshCcw,
-	Save,
+    ArrowLeft,
+    ExternalLink,
+    Loader2,
+    RefreshCcw,
+    Save,
 } from "lucide-react";
 import type { FileNode } from "./utils/types";
 
 interface HeaderBarProps {
 	rootPath: string;
+	activeNode: FileNode | undefined;
 	selectedFileNode: FileNode | undefined;
 	isDirty: boolean;
 	isSaving: boolean;
+	isLoadingTree: boolean;
 	onBack: () => void;
 	onOpenInExplorer: () => void;
+	onRefreshWorkspace: () => void;
+	onRename: () => void;
 	onReloadFile: () => void;
 	onSaveFile: () => void;
 }
@@ -25,11 +29,15 @@ const saveButtonClass =
 
 const HeaderBar = ({
 	rootPath,
+	activeNode: _activeNode,
 	selectedFileNode,
 	isDirty,
 	isSaving,
+	isLoadingTree: _isLoadingTree,
 	onBack,
 	onOpenInExplorer,
+	onRefreshWorkspace: _onRefreshWorkspace,
+	onRename: _onRename,
 	onReloadFile,
 	onSaveFile,
 }: HeaderBarProps) => {

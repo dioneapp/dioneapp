@@ -1,45 +1,52 @@
-import fs from "node:fs";
-import os from "node:os";
-import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import {
-	BrowserWindow,
-	Notification,
-	Tray,
-	app,
-	dialog,
-	globalShortcut,
-	ipcMain,
-	session,
-	shell,
+    BrowserWindow,
+    Notification,
+    Tray,
+    app,
+    dialog,
+    globalShortcut,
+    ipcMain,
+    session,
+    shell,
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
+import fs from "node:fs";
+import os from "node:os";
+import path, { join } from "node:path";
 import si from "systeminformation";
 import macosIcon from "../../resources/icon.icns?asset";
 import icon from "../../resources/icon.ico?asset";
 import linuxIcon from "../../resources/icon.png?asset";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
 import {
-	destroyPresence,
-	initializeDiscordPresence,
-	updatePresence,
+    destroyPresence,
+    initializeDiscordPresence,
+    updatePresence,
 } from "./discord/presence";
 import {
-	deleteExpiresAt,
-	deleteId,
-	deleteToken,
-	getExpiresAt,
-	getId,
-	getToken,
-	saveExpiresAt,
-	saveId,
-	saveToken,
+    deleteExpiresAt,
+    deleteId,
+    deleteToken,
+    getExpiresAt,
+    getId,
+    getToken,
+    saveExpiresAt,
+    saveId,
+    saveToken,
 } from "./security/secure-tokens";
 import { initDefaultEnv } from "./server/scripts/dependencies/environment";
 import { start as startServer, stop as stopServer } from "./server/server";
 import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
+import { getLocalNetworkIP } from "./utils/network";
+import {
+    getCurrentTunnel,
+    isTunnelActive,
+    startLocaltunnel,
+    stopTunnel,
+} from "./utils/tunnel";
 
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
@@ -850,6 +857,64 @@ app.whenReady().then(async () => {
 	// Handle reactivation of the app (e.g., clicking the dock icon on macOS)
 	app.on("activate", () => {
 		if (BrowserWindow.getAllWindows().length === 0) createWindow();
+	});
+
+	// Get network address for sharing
+	ipcMain.handle("get-network-address", async (_event, port?: number) => {
+		const networkIP = getLocalNetworkIP();
+		const currentPort = port || getCurrentPort();
+		
+		if (!networkIP || !currentPort) {
+			return null;
+		}
+		
+		return {
+			ip: networkIP,
+			port: currentPort,
+			url: `http://${networkIP}:${currentPort}`,
+		};
+	});
+
+	// Start tunnel (Localtunnel)
+	ipcMain.handle("start-tunnel", async (_event, type: "localtunnel", port?: number) => {
+		try {
+			const currentPort = port || getCurrentPort();
+			if (!currentPort) {
+				throw new Error("Server port not available");
+			}
+
+			logger.info(`Starting ${type} tunnel...`);
+
+			const tunnelInfo = await startLocaltunnel(currentPort);
+
+			logger.info(`Tunnel started: ${tunnelInfo.url}`);
+			return tunnelInfo;
+		} catch (error) {
+			logger.error("Failed to start tunnel:", error);
+			throw error;
+		}
+	});
+
+	// Stop tunnel
+	ipcMain.handle("stop-tunnel", async () => {
+		try {
+			await stopTunnel();
+			logger.info("Tunnel stopped successfully");
+			return true;
+		} catch (error) {
+			logger.error("Failed to stop tunnel:", error);
+			throw error;
+		}
+	});
+
+	// Get current tunnel info
+	ipcMain.handle("get-current-tunnel", () => {
+		return getCurrentTunnel();
+	});
+
+	// Check if tunnel is active
+	ipcMain.handle("is-tunnel-active", () => {
+		return isTunnelActive();
 	});
 
 	ipcMain.handle("send-discord-report", async (_, data) => {

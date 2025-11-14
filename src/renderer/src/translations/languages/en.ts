@@ -439,4 +439,41 @@ export const en = {
 			chat: "Chat",
 		},
 	},
+
+	// network share modal
+	networkShare: {
+		title: "Share",
+		modes: {
+			local: "Local",
+			public: "Public",
+			connecting: "Connecting...",
+		},
+		warning: {
+			title: "Public Access",
+			description:
+				"Creates a public URL accessible from anywhere. Share only with trusted people.",
+		},
+		local: {
+			shareUrl: "Share URL",
+			urlDescription: "Share this URL with devices on your local network",
+			localNetwork: "Local Network:",
+			description:
+				"This URL works on devices connected to the same network.",
+		},
+		public: {
+			shareUrl: "Public URL",
+			urlDescription: "Share this URL with anyone, anywhere in the world",
+			passwordTitle: "First-Time Password",
+			visitorMessage:
+				"Visitors may need to enter this once per device to access the tunnel.",
+			stopSharing: "Stop Sharing",
+		},
+		errors: {
+			noAddress: "Unable to get network address. Please check your connection.",
+			loadFailed: "Failed to load network information.",
+			noUrl: "No URL available to copy.",
+			copyFailed: "Failed to copy to clipboard.",
+			tunnelFailed: "Failed to start tunnel",
+		},
+	},
 } as const;
