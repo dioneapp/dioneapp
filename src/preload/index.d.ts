@@ -5,6 +5,7 @@ interface TunnelInfo {
 	type: "localtunnel";
 	status: "active" | "connecting" | "error";
 	password?: string;
+	shortUrl?: string;
 }
 
 interface CustomAPI {

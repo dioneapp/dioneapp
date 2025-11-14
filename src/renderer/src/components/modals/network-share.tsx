@@ -16,6 +16,7 @@ interface TunnelInfo {
 	type: "localtunnel" | "cloudflare";
 	status: "active" | "connecting" | "error";
 	password?: string;
+	shortUrl?: string;
 }
 
 export default function NetworkShareModal({
@@ -85,6 +86,25 @@ export default function NetworkShareModal({
 				"localtunnel",
 				port || undefined,
 			);
+
+			try {
+				const response = await fetch("https://api.getdione.app/v1/share", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						Authorization: `Bearer ${import.meta.env.VITE_API_PRIVATE_KEY}`,
+					},
+					body: JSON.stringify({ url: tunnel.url }),
+				});
+
+				if (response.ok) {
+					const data = await response.json();
+					tunnel.shortUrl = data.shortUrl;
+				}
+			} catch (err) {
+				console.error("Error creating shortened URL:", err);
+			}
+
 			setTunnelInfo(tunnel);
 			setShareMode("public");
 		} catch (err: any) {
@@ -112,7 +132,8 @@ export default function NetworkShareModal({
 		if (shareMode === "local") {
 			urlToCopy = localUrl;
 		} else if (tunnelInfo) {
-			urlToCopy = tunnelInfo.url;
+			// Prioritize short URL if available
+			urlToCopy = tunnelInfo.shortUrl || tunnelInfo.url;
 		}
 
 		if (!urlToCopy) {
@@ -269,37 +290,34 @@ export default function NetworkShareModal({
 										)}
 
 										{shareMode === "public" && tunnelInfo && (
-											<div className="space-y-3">
-												<div className="space-y-2">
-													<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
-														{t("networkShare.public.shareUrl") || "Public URL"}
-													</label>
-													<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
-														<input
-															type="text"
-															readOnly
-															value={tunnelInfo.url}
-															className="flex-1 bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
-														/>
-														<button
-															type="button"
-															onClick={handleCopy}
-															className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
-														>
-															{copied ? (
-																<Check className="w-4 h-4 text-green-400" />
-															) : (
-																<Copy className="w-4 h-4 text-neutral-400" />
-															)}
-														</button>
-													</div>
-													<p className="text-xs text-neutral-500">
-														{t("networkShare.public.urlDescription") ||
-															"Share this URL with anyone, anywhere in the world"}
-													</p>
+										<div className="space-y-3">
+											<div className="space-y-2">
+												<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+													{t("networkShare.public.shareUrl")}
+												</label>
+												<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
+													<input
+														type="text"
+														readOnly
+														value={tunnelInfo.shortUrl || tunnelInfo.url}
+														className="flex-1 bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
+													/>
+													<button
+														type="button"
+														onClick={handleCopy}
+														className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
+													>
+														{copied ? (
+															<Check className="w-4 h-4 text-green-400" />
+														) : (
+															<Copy className="w-4 h-4 text-neutral-400" />
+														)}
+													</button>
 												</div>
-
-												{tunnelInfo.password && (
+												<p className="text-xs text-neutral-500">
+													{t("networkShare.public.urlDescription")}
+												</p>
+											</div>												{tunnelInfo.password && (
 													<div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 space-y-2">
 														<p className="text-purple-200 text-xs font-medium">
 															{t("networkShare.public.passwordTitle")}
