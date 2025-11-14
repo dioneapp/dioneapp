@@ -1,4 +1,4 @@
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { getBackendPort } from "@renderer/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Messages from "./messages";
@@ -25,7 +25,7 @@ export default function AI({
 	}, [messages]);
 
 	const chat = async (prompt: string) => {
-		const port = await getCurrentPort();
+		const port = await getBackendPort();
 		const context = getContext();
 		const files = nodes.map((node) => ({
 			name: node.name,

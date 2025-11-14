@@ -2,13 +2,13 @@ import { useTranslation } from "@renderer/translations/translationContext";
 import { apiFetch } from "@renderer/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
 import {
-	type KeyboardEvent,
-	type MouseEvent,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
+    type KeyboardEvent,
+    type MouseEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 import AI from "../ai/ai";
 import { useScriptsContext } from "../contexts/ScriptsContext";
@@ -18,26 +18,26 @@ import FileTree from "./FileTree";
 import HeaderBar from "./HeaderBar";
 import PreviewPane from "./PreviewPane";
 import {
-	mediaMimeMap,
-	previewableMediaExtensions,
-	unsupportedExtensions,
+    mediaMimeMap,
+    previewableMediaExtensions,
+    unsupportedExtensions,
 } from "./utils/constants";
 import type {
-	ContextMenuState,
-	EditorViewProps,
-	FileContentResponse,
-	FileEncoding,
-	FileEntryResponse,
-	FileNode,
+    ContextMenuState,
+    EditorViewProps,
+    FileContentResponse,
+    FileEncoding,
+    FileEntryResponse,
+    FileNode,
 } from "./utils/types";
 import {
-	findNodeByPath,
-	getExtensionKey,
-	getLanguageFromPath,
-	getParentPath,
-	isValidEntryNameClient,
-	normalizeRelativePath,
-	updateTreeNode,
+    findNodeByPath,
+    getExtensionKey,
+    getLanguageFromPath,
+    getParentPath,
+    isValidEntryNameClient,
+    normalizeRelativePath,
+    updateTreeNode,
 } from "./utils/utils";
 
 const initialContextMenuState: ContextMenuState = {
@@ -1105,50 +1105,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 						)}
 					</div>
 				</div>
-				<div className="relative flex flex-1 flex-col bg-[#0a0a0a]">
-					{selectedFileNode && selectedFileNode.type === "file" ? (
-						<PreviewPane
-							selectedFileNode={selectedFileNode}
-							fileEncoding={fileEncoding}
-							fileContent={fileContent}
-							fileMimeType={fileMimeType}
-							filePreviewUrl={filePreviewUrl}
-							fileError={fileError}
-							isLoadingFile={isLoadingFile}
-							isDirty={isDirty}
-							language={language}
-							onReloadFile={handleReloadFile}
-							onContentChange={setFileContent}
-						/>
-					) : workspaceError ? (
-						<div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-neutral-300">
-							<FolderPlus className="h-8 w-8 text-neutral-500" />
-							<span>{workspaceError}</span>
-							<button
-								type="button"
-								onClick={handleRefreshWorkspace}
-								className="rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
-							>
-								{t("workspaceEditor.retry")}
-							</button>
-						</div>
-					) : (
-						<PreviewPane
-							fileEncoding={fileEncoding}
-							fileContent={fileContent}
-							fileMimeType={fileMimeType}
-							filePreviewUrl={filePreviewUrl}
-							fileError={fileError}
-							isLoadingFile={isLoadingFile}
-							isDirty={isDirty}
-							language={language}
-							onReloadFile={handleReloadFile}
-							onContentChange={setFileContent}
-						/>
-					)}
-				</div>
-			</div>
-      
+
 				<ContextMenu
 					state={contextMenu}
 					onCopyPath={() => {
