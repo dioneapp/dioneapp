@@ -302,7 +302,8 @@ export default function Sidebar() {
 																	{app.data.name}
 																</p>
 																<p className="text-xs text-neutral-400 truncate">
-																	{app.data.description || t("runningApps.running")}
+																	{app.data.description ||
+																		t("runningApps.running")}
 																</p>
 															</div>
 														)}

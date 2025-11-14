@@ -95,7 +95,7 @@ const PreviewPane = ({
 	onContentChange,
 }: PreviewPaneProps) => {
 	const { t } = useTranslation();
-	
+
 	// Check if this is a markdown file
 	const isMarkdownFile =
 		selectedFileNode &&

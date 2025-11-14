@@ -1,10 +1,10 @@
 import { useTranslation } from "@renderer/translations/translationContext";
 import {
-    ChevronDown,
-    ChevronRight,
-    FileText,
-    Folder,
-    Loader2,
+	ChevronDown,
+	ChevronRight,
+	FileText,
+	Folder,
+	Loader2,
 } from "lucide-react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import type { FileNode } from "./utils/types";
@@ -126,11 +126,13 @@ const FileTree = ({
 									/>
 								)}
 							</span>
-						{node.type === "file" && node.isUnsupported && (
-							<span className="ml-2 bg-neutral-800 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-neutral-500">
-								{node.isPreviewable ? t("fileTree.media") : t("fileTree.binary")}
-							</span>
-						)}
+							{node.type === "file" && node.isUnsupported && (
+								<span className="ml-2 bg-neutral-800 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-neutral-500">
+									{node.isPreviewable
+										? t("fileTree.media")
+										: t("fileTree.binary")}
+								</span>
+							)}
 						</span>
 					</button>
 					{node.expanded && node.children && node.children.length > 0 && (

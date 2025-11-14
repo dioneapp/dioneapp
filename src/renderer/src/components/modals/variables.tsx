@@ -77,7 +77,9 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 			if (!res.ok) {
 				const err = await res.json().catch(() => null);
 				throw new Error(
-					err?.error || res.statusText || t("toastMessages.failedToAddVariable"),
+					err?.error ||
+						res.statusText ||
+						t("toastMessages.failedToAddVariable"),
 				);
 			}
 			showToast("success", t("toastMessages.variableAdded"));
@@ -96,9 +98,9 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	// remove whole key
 	const handleRemoveKey = async (key: string) => {
 		try {
-				const res = await apiFetch(`/variables/${encodeURIComponent(key)}`, {
-					method: "DELETE",
-				});
+			const res = await apiFetch(`/variables/${encodeURIComponent(key)}`, {
+				method: "DELETE",
+			});
 			if (!res.ok) throw new Error(t("toastMessages.failedToRemoveVariable"));
 			showToast("success", t("toastMessages.variableRemoved"));
 			await fetchVariables();
@@ -111,12 +113,12 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	// remove a specific value from a key (used for PATH components)
 	const handleRemoveValue = async (key: string, value: any) => {
 		try {
-				const res = await apiFetch(
-					`/variables/${encodeURIComponent(key)}/${encodeURIComponent(value)}`,
-					{
-						method: "DELETE",
-					},
-				);
+			const res = await apiFetch(
+				`/variables/${encodeURIComponent(key)}/${encodeURIComponent(value)}`,
+				{
+					method: "DELETE",
+				},
+			);
 			if (!res.ok) throw new Error(t("toastMessages.failedToRemoveValue"));
 			showToast("success", t("toastMessages.valueRemoved"));
 			await fetchVariables();
@@ -324,7 +326,9 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 							onClick={() => setNewVariableModalOpen(!newVariableModalOpen)}
 							className="w-full rounded-full bg-white/10 px-4 p-1 mr-2 flex justify-center items-center gap-2 hover:bg-white/20 cursor-pointer"
 						>
-							<span className="text-xs text-neutral-300">{t("variables.addKey")}</span>
+							<span className="text-xs text-neutral-300">
+								{t("variables.addKey")}
+							</span>
 						</button>
 						<button
 							onClick={() => handleCopy("general")}

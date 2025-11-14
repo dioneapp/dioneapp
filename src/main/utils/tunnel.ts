@@ -13,7 +13,6 @@ export interface TunnelInfo {
 	password?: string;
 }
 
-
 async function getLocaltunnelPassword(): Promise<string | undefined> {
 	try {
 		const response = await fetch("https://loca.lt/mytunnelpassword");
@@ -26,7 +25,6 @@ async function getLocaltunnelPassword(): Promise<string | undefined> {
 	}
 	return undefined;
 }
-
 
 export async function startLocaltunnel(port: number): Promise<TunnelInfo> {
 	try {
@@ -71,7 +69,6 @@ export async function startLocaltunnel(port: number): Promise<TunnelInfo> {
 		throw new Error(`Failed to start Localtunnel: ${error}`);
 	}
 }
-
 
 export async function stopTunnel(): Promise<void> {
 	try {

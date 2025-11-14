@@ -461,8 +461,7 @@ export const en = {
 			shareUrl: "Share URL",
 			urlDescription: "Share this URL with devices on your local network",
 			localNetwork: "Local Network:",
-			description:
-				"This URL works on devices connected to the same network.",
+			description: "This URL works on devices connected to the same network.",
 		},
 		public: {
 			shareUrl: "Public URL",

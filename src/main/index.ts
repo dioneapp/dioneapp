@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import os from "node:os";
+import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import {
 	BrowserWindow,
@@ -12,9 +15,6 @@ import {
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
-import fs from "node:fs";
-import os from "node:os";
-import path, { join } from "node:path";
 import si from "systeminformation";
 import macosIcon from "../../resources/icon.icns?asset";
 import icon from "../../resources/icon.ico?asset";
@@ -103,7 +103,10 @@ let mainWindow: BrowserWindow;
 let port: number;
 let sessionId: string;
 
-const updateBackendPortState = (nextPort: number, options?: { broadcast?: boolean }) => {
+const updateBackendPortState = (
+	nextPort: number,
+	options?: { broadcast?: boolean },
+) => {
 	process.env.DIONE_BACKEND_PORT = String(nextPort);
 	if (options?.broadcast && mainWindow && !mainWindow.isDestroyed()) {
 		mainWindow.webContents.send("backend-port-changed", nextPort);
@@ -861,40 +864,46 @@ app.whenReady().then(async () => {
 	});
 
 	// Get network address for sharing
-	ipcMain.handle("get-network-address", async (_event, requestedPort?: number) => {
-		const networkIP = getLocalNetworkIP();
-		const resolvedPort = requestedPort ?? port;
-
-		if (!networkIP || !resolvedPort) {
-			return null;
-		}
-
-		return {
-			ip: networkIP,
-			port: resolvedPort,
-			url: `http://${networkIP}:${resolvedPort}`,
-		};
-	});
-
-	// Start tunnel (Localtunnel)
-	ipcMain.handle("start-tunnel", async (_event, type: "localtunnel", requestedPort?: number) => {
-		try {
+	ipcMain.handle(
+		"get-network-address",
+		async (_event, requestedPort?: number) => {
+			const networkIP = getLocalNetworkIP();
 			const resolvedPort = requestedPort ?? port;
-			if (!resolvedPort) {
-				throw new Error("Server port not available");
+
+			if (!networkIP || !resolvedPort) {
+				return null;
 			}
 
-			logger.info(`Starting ${type} tunnel...`);
+			return {
+				ip: networkIP,
+				port: resolvedPort,
+				url: `http://${networkIP}:${resolvedPort}`,
+			};
+		},
+	);
 
-			const tunnelInfo = await startLocaltunnel(resolvedPort);
+	// Start tunnel (Localtunnel)
+	ipcMain.handle(
+		"start-tunnel",
+		async (_event, type: "localtunnel", requestedPort?: number) => {
+			try {
+				const resolvedPort = requestedPort ?? port;
+				if (!resolvedPort) {
+					throw new Error("Server port not available");
+				}
 
-			logger.info(`Tunnel started: ${tunnelInfo.url}`);
-			return tunnelInfo;
-		} catch (error) {
-			logger.error("Failed to start tunnel:", error);
-			throw error;
-		}
-	});
+				logger.info(`Starting ${type} tunnel...`);
+
+				const tunnelInfo = await startLocaltunnel(resolvedPort);
+
+				logger.info(`Tunnel started: ${tunnelInfo.url}`);
+				return tunnelInfo;
+			} catch (error) {
+				logger.error("Failed to start tunnel:", error);
+				throw error;
+			}
+		},
+	);
 
 	// Stop tunnel
 	ipcMain.handle("stop-tunnel", async () => {

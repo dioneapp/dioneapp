@@ -6,7 +6,7 @@ export default function SureNotLogin({
 	onLogin,
 }: { onSkip: () => void; onLogin: () => void }) {
 	const { t } = useTranslation();
-	
+
 	return (
 		<section className="min-h-screen min-w-screen flex flex-col items-center justify-center px-4">
 			<div className="flex justify-start items-center gap-4 w-screen h-full pl-12">
@@ -48,7 +48,9 @@ export default function SureNotLogin({
 						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute right-24 -top-24 w-34 h-44 bg-pink-800/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
-								<h2 className="font-semibold text-3xl">{t("loginFeatures.features.customReports.title")}</h2>
+								<h2 className="font-semibold text-3xl">
+									{t("loginFeatures.features.customReports.title")}
+								</h2>
 								<p className="text-neutral-400 text-wrap text-sm mt-auto">
 									{t("loginFeatures.features.customReports.description")}
 								</p>
@@ -57,7 +59,9 @@ export default function SureNotLogin({
 						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute right-24  w-34 h-44 bg-zinc-600/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
-								<h2 className="font-semibold text-3xl">{t("loginFeatures.features.createProfile.title")}</h2>
+								<h2 className="font-semibold text-3xl">
+									{t("loginFeatures.features.createProfile.title")}
+								</h2>
 								<p className="text-neutral-400 text-wrap text-sm mt-auto">
 									{t("loginFeatures.features.createProfile.description")}
 								</p>
@@ -66,7 +70,9 @@ export default function SureNotLogin({
 						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute left-12 w-34 h-44 bg-[#BCB1E7]/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
-								<h2 className="font-semibold text-3xl">{t("loginFeatures.features.syncData.title")}</h2>
+								<h2 className="font-semibold text-3xl">
+									{t("loginFeatures.features.syncData.title")}
+								</h2>
 								<p className="text-neutral-400 text-wrap text-sm mt-auto">
 									{t("loginFeatures.features.syncData.description")}
 								</p>
@@ -86,7 +92,9 @@ export default function SureNotLogin({
 						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute right-0 top-0 w-24 h-44 bg-red-300/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
-								<h2 className="font-semibold text-3xl">{t("loginFeatures.features.giveOutLikes.title")}</h2>
+								<h2 className="font-semibold text-3xl">
+									{t("loginFeatures.features.giveOutLikes.title")}
+								</h2>
 								<p className="text-neutral-400 text-wrap text-sm mt-auto">
 									{t("loginFeatures.features.giveOutLikes.description")}
 								</p>
@@ -95,7 +103,9 @@ export default function SureNotLogin({
 						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute left-0 -bottom-20 w-24 h-44 bg-white/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
-								<h2 className="font-semibold text-3xl">{t("loginFeatures.features.publishScripts.title")}</h2>
+								<h2 className="font-semibold text-3xl">
+									{t("loginFeatures.features.publishScripts.title")}
+								</h2>
 								<p className="text-neutral-400 text-wrap text-sm mt-auto">
 									{t("loginFeatures.features.publishScripts.description")}
 								</p>
@@ -104,7 +114,9 @@ export default function SureNotLogin({
 						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute left-0 -bottom-20 w-24 h-44 bg-blue-300/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
-								<h2 className="font-semibold text-3xl">{t("loginFeatures.features.achieveGoals.title")}</h2>
+								<h2 className="font-semibold text-3xl">
+									{t("loginFeatures.features.achieveGoals.title")}
+								</h2>
 								<p className="text-neutral-400 text-wrap text-sm mt-auto">
 									{t("loginFeatures.features.achieveGoals.description")}
 								</p>
@@ -113,7 +125,9 @@ export default function SureNotLogin({
 						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
 							<div className="absolute right-0 -top-20 w-44 h-44 bg-green-300/20 rounded-full blur-3xl" />
 							<div className="p-4 flex flex-col gap-2 h-full">
-								<h2 className="font-semibold text-3xl">{t("loginFeatures.features.getNewswire.title")}</h2>
+								<h2 className="font-semibold text-3xl">
+									{t("loginFeatures.features.getNewswire.title")}
+								</h2>
 								<p className="text-neutral-400 text-wrap text-sm mt-auto">
 									{t("loginFeatures.features.getNewswire.description")}
 								</p>
