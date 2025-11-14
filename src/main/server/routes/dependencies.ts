@@ -1,13 +1,11 @@
-import path from "node:path";
-import { app } from "electron";
 import express from "express";
 import type { Server } from "socket.io";
-import { readConfig } from "../../config";
 import {
 	inUseDependencies,
 	installDependency,
 	uninstallDependency,
 } from "../scripts/dependencies/dependencies";
+import { resolveScriptPaths } from "../scripts/utils/paths";
 import logger from "../utils/logger";
 
 export const createDependenciesRouter = (io: Server) => {
@@ -97,12 +95,12 @@ export const createDependenciesRouter = (io: Server) => {
 	router.post(
 		"/in-use",
 		async (req: express.Request, res: express.Response) => {
-			const root = app.isPackaged
-				? path.join(path.dirname(app.getPath("exe")))
-				: path.join(process.cwd());
-			const sanitizedName = req.body.dioneFile.replace(/\s+/g, "-");
-			const settings = readConfig();
-			const dioneFile = `${path.join(settings?.defaultInstallFolder || root, "apps", sanitizedName, "dione.json")}`;
+			const scriptName = req.body?.dioneFile;
+			if (typeof scriptName !== "string" || scriptName.trim() === "") {
+				res.status(400).json({ error: "dioneFile is required" });
+				return;
+			}
+			const { dioneFile } = resolveScriptPaths(scriptName);
 			const result = await inUseDependencies(dioneFile);
 
 			console.log(`Dependencies in use: ${result}`);

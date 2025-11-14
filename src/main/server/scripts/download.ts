@@ -1,14 +1,13 @@
 import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
-import { app } from "electron";
 import type { Server } from "socket.io";
-import { readConfig } from "../../config";
 import { supabase } from "../utils/database";
 import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies/dependencies";
 import executeInstallation from "./execute";
 import { checkSystem } from "./system";
+import { resolveScriptPaths } from "./utils/paths";
 
 export async function getScripts(id: string, io: Server, force?: boolean) {
 	if (!supabase) {
@@ -42,16 +41,7 @@ export async function getScripts(id: string, io: Server, force?: boolean) {
 			return null;
 		}
 
-		const root = app.isPackaged
-			? path.join(path.dirname(app.getPath("exe")))
-			: path.join(process.cwd());
-		const sanitizedName = data.name.replace(/\s+/g, "-");
-		const settings = readConfig();
-		const saveDirectory = path.join(
-			settings?.defaultInstallFolder || root,
-			"apps",
-			sanitizedName,
-		);
+		const { workingDir: saveDirectory } = resolveScriptPaths(data.name);
 		const script_url = data.script_url;
 		const commit_hashes = data.commit_hash || {};
 		const commit = commit_hashes[data.version] || "";

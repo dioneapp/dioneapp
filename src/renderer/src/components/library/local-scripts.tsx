@@ -1,5 +1,5 @@
 import { useTranslation } from "@renderer/translations/translationContext";
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiFetch, apiJson } from "@renderer/utils/api";
 import { useToast } from "@renderer/utils/useToast";
 import { useEffect, useState } from "react";
 import { useScriptsContext } from "../contexts/ScriptsContext";
@@ -21,9 +21,7 @@ export default function LocalScripts() {
 	>([]);
 
 	const fetchScripts = async () => {
-		const port = await getCurrentPort();
-		const response = await fetch(`http://localhost:${port}/local/`);
-		const data = (await response.json()).map((script: Script) => ({
+		const data = (await apiJson<Script[]>("/local/")).map((script) => ({
 			...script,
 			isLocal: true,
 		}));
@@ -40,20 +38,15 @@ export default function LocalScripts() {
 	};
 
 	const deleteScript = async (name: string) => {
-		const port = await getCurrentPort();
-
 		addToast({
 			variant: "default",
 			children: t("local.deleting"),
 			fixed: "true",
 		});
 
-		await fetch(
-			`http://localhost:${port}/local/delete/${encodeURIComponent(name)}`,
-			{
-				method: "DELETE",
-			},
-		);
+		await apiFetch(`/local/delete/${encodeURIComponent(name)}`, {
+			method: "DELETE",
+		});
 		fetchScripts();
 		handleReloadQuickLaunch();
 	};

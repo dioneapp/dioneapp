@@ -1,4 +1,4 @@
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiJson } from "@renderer/utils/api";
 import {
 	type ReactNode,
 	createContext,
@@ -105,30 +105,23 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 		return getNestedTranslation(translations[language], key);
 	};
 
-	async function fetchConfig() {
-		const port = await getCurrentPort();
-		const response = await fetch(`http://localhost:${port}/config`);
-		const data = await response.json();
-		return data;
-	}
+	const fetchConfig = async () => {
+		return apiJson<Record<string, unknown>>("/config");
+	};
 
 	const handleUpdateSettings = async (newConfig: Partial<any>) => {
 		if (!newConfig.language) return;
-		const port = await getCurrentPort();
 		const config = await fetchConfig();
 		if (newConfig.language === config.language) return;
-		const response = await fetch(`http://localhost:${port}/config/update`, {
+		const response = await apiJson<Record<string, any>>("/config/update", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({ ...config, ...newConfig }),
 		});
-
-		if (!response.ok) throw new Error("Failed to update config");
-		const updatedConfig = await response.json();
-		setLanguage(updatedConfig.language);
-		localStorage.setItem("language", updatedConfig.language);
+		setLanguage(response.language);
+		localStorage.setItem("language", response.language);
 	};
 
 	// save language preference

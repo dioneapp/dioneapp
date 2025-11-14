@@ -1,3 +1,4 @@
+import { useTranslation } from "@renderer/translations/translationContext";
 import {
 	ArrowLeft,
 	ExternalLink,
@@ -9,11 +10,15 @@ import type { FileNode } from "./utils/types";
 
 interface HeaderBarProps {
 	rootPath: string;
+	activeNode: FileNode | undefined;
 	selectedFileNode: FileNode | undefined;
 	isDirty: boolean;
 	isSaving: boolean;
+	isLoadingTree: boolean;
 	onBack: () => void;
 	onOpenInExplorer: () => void;
+	onRefreshWorkspace: () => void;
+	onRename: () => void;
 	onReloadFile: () => void;
 	onSaveFile: () => void;
 }
@@ -25,26 +30,32 @@ const saveButtonClass =
 
 const HeaderBar = ({
 	rootPath,
+	activeNode: _activeNode,
 	selectedFileNode,
 	isDirty,
 	isSaving,
+	isLoadingTree: _isLoadingTree,
 	onBack,
 	onOpenInExplorer,
+	onRefreshWorkspace: _onRefreshWorkspace,
+	onRename: _onRename,
 	onReloadFile,
 	onSaveFile,
 }: HeaderBarProps) => {
+	const { t } = useTranslation();
+
 	return (
 		<div className="flex w-full items-center gap-2 border-b border-white/10 bg-neutral-950/75 pt-12 pb-3 px-4 text-xs text-neutral-300 shadow-lg backdrop-blur">
 			<button type="button" onClick={onBack} className={baseButtonClass}>
 				<ArrowLeft className="h-3.5 w-3.5" />
-				<span>Back</span>
+				<span>{t("headerBar.back")}</span>
 			</button>
 			<button
 				type="button"
 				onClick={onOpenInExplorer}
 				disabled={!rootPath}
 				className={baseButtonClass}
-				title="Open in explorer"
+				title={t("headerBar.openInExplorer")}
 			>
 				<ExternalLink className="h-3.5 w-3.5" />
 			</button>
@@ -72,7 +83,7 @@ const HeaderBar = ({
 				) : (
 					<Save className="h-3.5 w-3.5" />
 				)}
-				<span>Save</span>
+				<span>{t("headerBar.save")}</span>
 			</button>
 		</div>
 	);

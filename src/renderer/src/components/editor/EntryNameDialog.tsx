@@ -1,3 +1,4 @@
+import { useTranslation } from "@renderer/translations/translationContext";
 import { Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 
@@ -28,6 +29,7 @@ const EntryNameDialog = ({
 	onCancel,
 	onConfirm,
 }: EntryNameDialogProps) => {
+	const { t } = useTranslation();
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -74,7 +76,7 @@ const EntryNameDialog = ({
 					}}
 				>
 					<label className="flex flex-col gap-2 text-sm text-neutral-200">
-						<span>Name</span>
+						<span>{t("entryDialog.name")}</span>
 						<input
 							ref={inputRef}
 							type="text"
@@ -92,7 +94,7 @@ const EntryNameDialog = ({
 							onClick={onCancel}
 							className="inline-flex items-center gap-2 rounded-md border border-white/10 px-3 py-1.5 text-sm text-neutral-200 transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/40"
 						>
-							Cancel
+							{t("common.cancel")}
 						</button>
 						<button
 							type="submit"

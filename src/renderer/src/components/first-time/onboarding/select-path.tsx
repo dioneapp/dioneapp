@@ -88,7 +88,7 @@ export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 					>
 						<div className="bg-gradient-to-r from-[#BCB1E7]/5 to-[#080808]/10 border border-white/10 rounded-xl p-8 backdrop-blur-sm">
 							<h3 className="text-white font-semibold text-lg text-center mb-6">
-								Choose Installation Location
+								{t("selectPath.chooseLocation")}
 							</h3>
 							<div className="w-full h-32 mb-6">
 								<button
@@ -102,7 +102,7 @@ export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 													<FolderOpen className="w-8 h-8 text-[#BCB1E7]" />
 												</div>
 												<span className="text-white font-medium text-sm mb-2">
-													Change Path
+													{t("selectPath.changePath")}
 												</span>
 												<div className="text-center">
 													<p className="text-white font-mono text-xs break-all bg-black/20 rounded px-2 py-1 max-w-full">

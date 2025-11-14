@@ -1,6 +1,6 @@
 import { useAuthContext } from "@renderer/components/contexts/AuthContext";
+import { apiJson } from "@renderer/utils/api";
 import sendEvent from "@renderer/utils/events";
-import { getCurrentPort } from "@renderer/utils/getPort";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -20,22 +20,8 @@ export default function FeaturedCarousel() {
 
 	useEffect(() => {
 		const fetchScripts = async () => {
-			const port = await getCurrentPort();
-			if (!port) return;
-
 			try {
-				const response = await fetch(`http://localhost:${port}/db/featured`, {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				});
-
-				if (!response.ok) {
-					throw new Error(`HTTP error! status: ${response.status}`);
-				}
-
-				const data = await response.json();
+				const data = await apiJson<Script[]>("/db/featured");
 				if (Array.isArray(data)) {
 					// prior scripts should be at the top
 					const sorted = [
@@ -273,7 +259,7 @@ export function CarrouselSkeleton() {
 				<div className="absolute w-full h-full">
 					<div className="w-full h-72 flex rounded-xl relative overflow-hidden border border-white/5">
 						<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
-						<div className="absolute inset-0 w-full h-full bg-gradient-to-br from-neutral-600/20 to-neutral-900/10" />
+						<div className="absolute inset-0 w-full h-full bg-linear-to-br from-neutral-600/20 to-neutral-900/10" />
 						<div className="z-50 absolute inset-0 p-10">
 							<div className="flex w-full h-full flex-col justify-start items-center">
 								<div className="w-full h-full flex justify-end">

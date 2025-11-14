@@ -1,4 +1,4 @@
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiFetch, getBackendPort } from "@renderer/utils/api";
 import { TerminalNormalizer } from "@renderer/utils/terminal";
 import { useToast } from "@renderer/utils/useToast";
 import {
@@ -11,6 +11,7 @@ import {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Socket } from "socket.io-client";
+import { useTranslation } from "../../translations/translationContext";
 import { setupSocket } from "./scripts/setup-socket";
 import type {
 	DependencyDiagnosticsState,
@@ -21,6 +22,7 @@ import type {
 const AppContext = createContext<ScriptsContextType | undefined>(undefined);
 
 export function ScriptsContext({ children }: { children: React.ReactNode }) {
+	const { t } = useTranslation();
 	// socket ref
 	const [sockets, setSockets] = useState<
 		Record<string, { socket: Socket; isLocal?: boolean }>
@@ -139,14 +141,10 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	const handleReloadQuickLaunch = async () => {
 		try {
-			const port = await getCurrentPort();
-
 			// get all installed apps
-			const installedResponse = await fetch(
-				`http://localhost:${port}/scripts/installed`,
-			);
+			const installedResponse = await apiFetch("/scripts/installed");
 			if (!installedResponse.ok) {
-				throw new Error("Failed to fetch installed apps");
+				throw new Error(t("runningApps.failedToFetchInstalledApps"));
 			}
 
 			const installedData = await installedResponse.json();
@@ -169,8 +167,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 						}
 
 						// try to get from db
-						const dbResponse = await fetch(
-							`http://localhost:${port}/db/search/name/${encodeURIComponent(appName)}`,
+						const dbResponse = await apiFetch(
+							`/db/search/name/${encodeURIComponent(appName)}`,
 						);
 
 						if (dbResponse.ok) {
@@ -186,8 +184,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 						}
 
 						// if not in db, assume it's local
-						const localResponse = await fetch(
-							`http://localhost:${port}/local/get_app/${encodeURIComponent(appName)}`,
+						const localResponse = await apiFetch(
+							`/local/get_app/${encodeURIComponent(appName)}`,
 						);
 
 						if (localResponse.ok) {
@@ -222,7 +220,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			);
 		} catch (error) {
 			console.error("Error in handleReloadQuickLaunch:", error);
-			showToast("error", "Failed to reload quick launch apps");
+			showToast("error", t("runningApps.failedToReloadQuickLaunch"));
 		}
 	};
 
@@ -326,7 +324,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				setSockets({ ...socketsRef.current });
 			}
 
-			const port = await getCurrentPort();
+			const port = await getBackendPort();
 			const newSocket = setupSocket({
 				appId,
 				addLog,
@@ -436,17 +434,16 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		async function fetchAppInfo() {
 			const appIds = Object.keys(sockets);
 			if (appIds.length === 0) return;
-			const port = await getCurrentPort();
 
 			// get app info
 			Promise.all(
 				appIds.map((appId) => {
 					const isLocal = sockets[appId]?.isLocal || false;
-					const url = isLocal
-						? `http://localhost:${port}/local/get_id/${encodeURIComponent(appId)}`
-						: `http://localhost:${port}/db/search/${encodeURIComponent(appId)}`;
+					const endpoint = isLocal
+						? `/local/get_id/${encodeURIComponent(appId)}`
+						: `/db/search/${encodeURIComponent(appId)}`;
 
-					return fetch(url)
+					return apiFetch(endpoint)
 						.then((res) => {
 							if (!res.ok) throw new Error(`Error getting app info ${appId}`);
 							return res.json();
@@ -476,7 +473,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		if (!pathname.includes("/install") && isServerRunning[data?.id]) {
 			showToast(
 				"default",
-				"There is an application running in the background.",
+				t("runningApps.thereIsAnAppRunningInBackground"),
 				"false",
 				true,
 				"Return",
@@ -496,9 +493,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	const handleStopApp = async (appId: string, appName: string) => {
 		try {
-			const port = await getCurrentPort();
-			const response = await fetch(
-				`http://localhost:${port}/scripts/stop/${appName}/${appId}/${catchPort[appId]}`,
+			const response = await apiFetch(
+				`/scripts/stop/${appName}/${appId}/${catchPort[appId]}`,
 				{
 					method: "GET",
 				},

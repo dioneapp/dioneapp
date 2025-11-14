@@ -421,6 +421,10 @@ export const en = {
 	// feed component
 	feed: {
 		noScripts: "No scripts found",
+		loadingMore: "Loading more...",
+		reachedEnd: "You have reached the end.",
+		notEnoughApps: "If you think there are not enough apps,",
+		helpAddMore: "please help us to add more",
 		errors: {
 			notArray: "Fetched data is not an array",
 			fetchFailed: "Failed to fetch scripts",
@@ -438,5 +442,346 @@ export const en = {
 			video: "Video",
 			chat: "Chat",
 		},
+	},
+
+	// network share modal
+	networkShare: {
+		title: "Share",
+		modes: {
+			local: "Local",
+			public: "Public",
+			connecting: "Connecting...",
+		},
+		warning: {
+			title: "Public Access",
+			description:
+				"Creates a public URL accessible from anywhere. Share only with trusted people.",
+		},
+		local: {
+			shareUrl: "Share URL",
+			urlDescription: "Share this URL with devices on your local network",
+			localNetwork: "Local Network:",
+			description: "This URL works on devices connected to the same network.",
+		},
+		public: {
+			shareUrl: "Public URL",
+			urlDescription: "Share this URL with anyone, anywhere in the world",
+			passwordTitle: "First-Time Password",
+			visitorMessage:
+				"Visitors may need to enter this once per device to access the tunnel.",
+			stopSharing: "Stop Sharing",
+		},
+		errors: {
+			noAddress: "Unable to get network address. Please check your connection.",
+			loadFailed: "Failed to load network information.",
+			noUrl: "No URL available to copy.",
+			copyFailed: "Failed to copy to clipboard.",
+			tunnelFailed: "Failed to start tunnel",
+		},
+	},
+
+	// login features modal
+	loginFeatures: {
+		title: "You are missing features",
+		description: "Log in to Dione so you don't miss out on these features.",
+		login: "Log in",
+		skip: "Skip",
+		features: {
+			customReports: {
+				title: "Send custom reports",
+				description:
+					"Send custom reports from within the application, making support faster in case of errors.",
+			},
+			createProfile: {
+				title: "Create a profile",
+				description:
+					"Create a profile for the Dione community to get to know you.",
+			},
+			syncData: {
+				title: "Sync your data",
+				description: "Sync your data across all your devices.",
+			},
+			earlyBirds: {
+				title: "Get early birds updates",
+				description:
+					"Get early birds updates and new features before anyone else.",
+			},
+			giveOutLikes: {
+				title: "Give out likes",
+				description:
+					"Leave likes to the apps you like the most, so more people will use them!",
+			},
+			publishScripts: {
+				title: "Publish scripts",
+				description: "Publish your scripts and share them with the world.",
+			},
+			achieveGoals: {
+				title: "Achieve goals",
+				description:
+					"Achieve goals like using Dione for 7 days to get free gifts",
+			},
+			getNewswire: {
+				title: "Get newswire",
+				description:
+					"Receive updates via email so you don't miss out on new features.",
+			},
+		},
+	},
+
+	// editor component
+	editor: {
+		selectFile: "Select a file to start editing",
+		previewNotAvailable: "Preview not available for this file.",
+		mediaNotSupported: "Preview for this media type is not supported yet.",
+		previewOnly: "Preview only",
+		unsaved: "Unsaved",
+		retry: "Retry",
+		editorLabel: "Editor",
+	},
+
+	// sidebar links
+	links: {
+		discord: "Discord",
+		github: "GitHub",
+		dione: "Dione",
+		builtWith: "built with",
+	},
+
+	// update notifications
+	updates: {
+		later: "Later",
+		install: "Install",
+	},
+
+	// iframe actions
+	iframeActions: {
+		shareOnNetwork: "Share on network",
+	},
+
+	// version info
+	versions: {
+		node: "Node",
+		electron: "Electron",
+		chromium: "Chromium",
+	},
+
+	// connection messages
+	connection: {
+		retryLater: "We are having connection problems, please try again later.",
+	},
+
+	// variables modal
+	variables: {
+		title: "Environment Variables",
+		addKey: "Add key",
+		searchPlaceholder: "Search variables...",
+		keyPlaceholder: "Key (e.g. MY_VAR)",
+		valuePlaceholder: "Value",
+		copyAll: "Copy all to clipboard",
+		confirm: "Confirm",
+		copyPath: "Copy path",
+		copyFullValue: "Copy full value",
+		deleteKey: "Delete key",
+	},
+
+	// custom commands modal
+	customCommands: {
+		title: "Launch with custom parameters",
+		launch: "Launch",
+	},
+
+	// context menu
+	contextMenu: {
+		copyPath: "Copy path",
+		open: "Open",
+		reload: "Reload",
+		rename: "Rename",
+		delete: "Delete",
+	},
+
+	// file tree
+	fileTree: {
+		noFiles: "No files found in this workspace.",
+		media: "Media",
+		binary: "Binary",
+	},
+
+	// entry name dialog
+	entryDialog: {
+		name: "Name",
+		createFile: "Create file",
+		createFolder: "Create folder",
+		renameFile: "Rename file",
+		renameFolder: "Rename folder",
+		createInRoot: "This will be created in the workspace root.",
+		createInside: "This will be created inside {path}.",
+		currentLocation: "Current location: {path}.",
+		currentLocationRoot: "Current location: workspace root.",
+		rename: "Rename",
+		placeholderFile: "example.ts",
+		placeholderFolder: "New Folder",
+	},
+
+	// workspace editor
+	workspaceEditor: {
+		newFile: "New file",
+		newFolder: "New folder",
+		retry: "Retry",
+		back: "Back",
+		save: "Save",
+		openInExplorer: "Open in explorer",
+		resolvingPath: "Resolving path...",
+		workspace: "Workspace",
+	},
+
+	// header bar
+	headerBar: {
+		back: "Back",
+		openInExplorer: "Open in explorer",
+		save: "Save",
+	},
+
+	// settings page footer
+	settingsFooter: {
+		builtWithLove: "built with ♥",
+		getDioneWebsite: "getdione.app",
+		port: "Port",
+		node: "Node:",
+		electron: "Electron:",
+		chromium: "Chrome:",
+	},
+
+	// notifications
+	notifications: {
+		enabled: {
+			title: "Notifications enabled",
+			description: "You will receive notifications for important events.",
+		},
+		learnMore: "Learn more",
+	},
+
+	// language selector
+	languageSelector: {
+		next: "Next",
+	},
+
+	// onboarding - select path
+	selectPath: {
+		chooseLocation: "Choose Installation Location",
+		changePath: "Change Path",
+	},
+
+	// browser compatibility
+	browserCompatibility: {
+		audioNotSupported: "Your browser does not support the audio element.",
+		videoNotSupported: "Your browser does not support the video element.",
+	},
+
+	// library card
+	library: {
+		official: "Official",
+	},
+
+	// sidebar updates
+	sidebarUpdate: {
+		newUpdateAvailable: "New update available",
+		whatsNew: "Here's what's new",
+	},
+
+	// iframe component labels
+	iframeLabels: {
+		back: "Back",
+		logs: "Logs",
+		disk: "Disk",
+		editor: "Editor",
+	},
+
+	// progress component
+	progress: {
+		running: "Running...",
+	},
+
+	// toast messages
+	toastMessages: {
+		copiedToClipboard: "Copied to clipboard!",
+		keyAndValueRequired: "Key and value are required",
+		variableAdded: "Variable added",
+		failedToAddVariable: "Failed to add variable",
+		variableRemoved: "Variable removed",
+		failedToRemoveVariable: "Failed to remove variable",
+		valueRemoved: "Value removed",
+		failedToRemoveValue: "Failed to remove value",
+		pathCopiedToClipboard: "Path copied to clipboard",
+		failedToCopyPath: "Failed to copy path",
+		unableToOpenLocation: "Unable to open location",
+		cannotDeleteWorkspaceRoot: "Cannot delete workspace root",
+		deleted: "Deleted",
+		failedToDeleteEntry: "Failed to delete entry",
+		workspaceNotAvailable: "Workspace is not available",
+		selectFileOrFolderToRename: "Select a file or folder to rename",
+		cannotRenameWorkspaceRoot: "Cannot rename the workspace root",
+		entryRenamed: "Entry renamed",
+		fileSavedSuccessfully: "File saved successfully",
+		failedToSaveFile: "Failed to save file",
+		mediaFilesCannotBeOpened: "Media files cannot be opened in the editor.",
+		binaryFilesCannotBeOpened:
+			"Binary and executable files cannot be opened in the editor.",
+		thisFileTypeCannotBeEdited: "This file type cannot be edited yet.",
+	},
+
+	// error messages
+	errorMessages: {
+		workspaceNotFound: "Workspace not found",
+		failedToLoadWorkspace: "Failed to load workspace",
+		failedToLoadDirectory: "Failed to load directory",
+		unableToOpenWorkspace: "Unable to open workspace",
+		failedToLoadFile: "Failed to load file",
+		nameCannotBeEmpty: "Name cannot be empty",
+		nameContainsInvalidCharacters: "Name contains invalid characters",
+		failedToCreateEntry: "Failed to create entry",
+		failedToRenameEntry: "Failed to rename entry",
+	},
+
+	// file operations
+	fileOperations: {
+		fileCreated: "File created",
+		folderCreated: "Folder created",
+		untitledFile: "untitled.txt",
+		newFolder: "New Folder",
+	},
+
+	// confirmation dialogs
+	confirmDialogs: {
+		removeValue: "Are you sure you want to remove",
+		thisValue: "this value",
+		keyAndAllValues: "the key and all its values",
+		from: "from",
+	},
+
+	// network share modal
+	networkShareErrors: {
+		failedToLoadNetworkInfo: "Failed to load network information.",
+		failedToStartTunnel: "Failed to start tunnel",
+		failedToCopyToClipboard: "Failed to copy to clipboard.",
+	},
+
+	// feed component
+	feedErrors: {
+		invalidDataFormat: "Invalid data format from API",
+		failedToFetchScripts: "Failed to fetch scripts",
+	},
+
+	// upload script modal
+	uploadScript: {
+		fileLoadedLocally: "File loaded locally",
+	},
+
+	// running apps
+	runningApps: {
+		running: "Running",
+		thereIsAnAppRunningInBackground:
+			"There is an application running in the background.",
+		failedToReloadQuickLaunch: "Failed to reload quick launch apps",
+		failedToFetchInstalledApps: "Failed to fetch installed apps",
 	},
 } as const;

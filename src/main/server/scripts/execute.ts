@@ -14,6 +14,50 @@ async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
 	return JSON.parse(config);
 }
+
+async function patchNetworkAccess(configDir: string) {
+	try {
+		// Find all Python files in the directory
+		const files = await fs.promises.readdir(configDir, { recursive: true });
+		const pyFiles = files.filter((f) => f.toString().endsWith(".py"));
+
+		for (const file of pyFiles) {
+			const filePath = path.join(configDir, file.toString());
+
+			try {
+				let content = await fs.promises.readFile(filePath, "utf8");
+				let modified = false;
+
+				// pattern 1: demo.launch(server_name="127.0.0.1"
+				if (content.includes('server_name="127.0.0.1"')) {
+					content = content.replace(
+						/server_name="127\.0\.0\.1"/g,
+						'server_name="0.0.0.0"',
+					);
+					modified = true;
+				}
+
+				// pattern 2: demo.launch(server_name='127.0.0.1'
+				if (content.includes("server_name='127.0.0.1'")) {
+					content = content.replace(
+						/server_name='127\.0\.0\.1'/g,
+						"server_name='0.0.0.0'",
+					);
+					modified = true;
+				}
+
+				if (modified) {
+					await fs.promises.writeFile(filePath, content, "utf8");
+					logger.info(`Patched network access in: ${file}`);
+				}
+			} catch (error) {
+				logger.debug(`Could not patch ${file}: ${error}`);
+			}
+		}
+	} catch (error) {
+		logger.error("Error patching network access:", error);
+	}
+}
 export default async function executeInstallation(
 	pathname: string,
 	io: Server,
@@ -188,6 +232,9 @@ export async function executeStartup(
 	const dependenciesObj = config.dependencies || {};
 	const dependencies = Object.keys(dependenciesObj);
 	const needsBuildTools = dependencies.includes("build_tools");
+
+	// Patch Gradio/Streamlit files to allow network access
+	await patchNetworkAccess(configDir);
 
 	// download finished, now checking dependencies
 	const result = await checkDependencies(path.join(pathname, "dione.json"));

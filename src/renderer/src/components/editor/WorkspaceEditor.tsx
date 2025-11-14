@@ -1,4 +1,5 @@
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { useTranslation } from "@renderer/translations/translationContext";
+import { apiFetch } from "@renderer/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
 import {
 	type KeyboardEvent,
@@ -36,7 +37,6 @@ import {
 	getParentPath,
 	isValidEntryNameClient,
 	normalizeRelativePath,
-	parseErrorResponse,
 	updateTreeNode,
 } from "./utils/utils";
 
@@ -64,6 +64,7 @@ type EntryDialogState =
 
 export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 	const { showToast, isServerRunning } = useScriptsContext();
+	const { t } = useTranslation();
 	const [rootPath, setRootPath] = useState<string>("");
 	const [tree, setTree] = useState<FileNode[]>([]);
 	const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -144,7 +145,6 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			}
 
 			try {
-				const port = await getCurrentPort();
 				const params = new URLSearchParams();
 				if (targetPath) {
 					params.set("dir", targetPath);
@@ -152,19 +152,11 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				if (data?.id) {
 					params.set("appId", data.id);
 				}
-				const response = await fetch(
-					`http://localhost:${port}/files/list/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
+				const payload = await apiFetch(
+					`/files/list/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
+				).then(
+					(res) => res.json() as Promise<{ entries: FileEntryResponse[] }>,
 				);
-				if (!response.ok) {
-					const info = await parseErrorResponse(response);
-					const error = new Error(info.message);
-					(error as any).status = info.status;
-					throw error;
-				}
-
-				const payload = (await response.json()) as {
-					entries: FileEntryResponse[];
-				};
 				setWorkspaceError(null);
 				const expandedSet = new Set(expandedPathsRef.current);
 
@@ -231,13 +223,21 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				const status = error?.status ?? 0;
 				if (isRootPath) {
 					if (status === 404) {
-						setWorkspaceError(error?.message || "Workspace not found");
+						setWorkspaceError(
+							error?.message || t("errorMessages.workspaceNotFound"),
+						);
 					} else {
-						showToast("error", error?.message || "Failed to load workspace");
+						showToast(
+							"error",
+							error?.message || t("errorMessages.failedToLoadWorkspace"),
+						);
 					}
 					setTree([]);
 				} else {
-					showToast("error", error?.message || "Failed to load directory");
+					showToast(
+						"error",
+						error?.message || t("errorMessages.failedToLoadDirectory"),
+					);
 					setTree((prev) =>
 						updateTreeNode(prev, targetPath, (node) => ({
 							...node,
@@ -273,21 +273,13 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		resetState();
 
 		try {
-			const port = await getCurrentPort();
 			const params = new URLSearchParams();
 			if (data?.id) {
 				params.set("appId", data.id);
 			}
-			const response = await fetch(
-				`http://localhost:${port}/files/root/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
-			);
-			if (!response.ok) {
-				const info = await parseErrorResponse(response);
-				const error = new Error(info.message);
-				(error as any).status = info.status;
-				throw error;
-			}
-			const payload = (await response.json()) as { rootPath: string };
+			const payload = await apiFetch(
+				`/files/root/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
+			).then((res) => res.json() as Promise<{ rootPath: string }>);
 			setRootPath(payload.rootPath);
 			setTree([
 				{
@@ -408,21 +400,13 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			setFilePreviewUrl(null);
 
 			try {
-				const port = await getCurrentPort();
 				const params = new URLSearchParams({ file: node.relativePath });
 				if (data?.id) {
 					params.set("appId", data.id);
 				}
-				const response = await fetch(
-					`http://localhost:${port}/files/content/${encodeURIComponent(data.name)}?${params.toString()}`,
-				);
-				if (!response.ok) {
-					const info = await parseErrorResponse(response);
-					const error = new Error(info.message);
-					(error as any).status = info.status;
-					throw error;
-				}
-				const payload = (await response.json()) as FileContentResponse;
+				const payload = await apiFetch(
+					`/files/content/${encodeURIComponent(data.name)}?${params.toString()}`,
+				).then((res) => res.json() as Promise<FileContentResponse>);
 				if (payload.encoding === "base64") {
 					const extensionKey = getExtensionKey(node.name);
 					const fallbackMime = extensionKey
@@ -516,25 +500,18 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		}
 		setIsSaving(true);
 		try {
-			const port = await getCurrentPort();
 			const params = new URLSearchParams();
 			if (data?.id) {
 				params.set("appId", data.id);
 			}
-			const response = await fetch(
-				`http://localhost:${port}/files/save/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
+			await apiFetch(
+				`/files/save/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ file: selectedFile, content: fileContent }),
 				},
 			);
-			if (!response.ok) {
-				const info = await parseErrorResponse(response);
-				const error = new Error(info.message);
-				(error as any).status = info.status;
-				throw error;
-			}
 			setInitialContent(fileContent);
 			showToast("success", "File saved successfully");
 		} catch (error: any) {
@@ -635,21 +612,16 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			);
 			if (!confirmDelete) return;
 			try {
-				const port = await getCurrentPort();
 				const params = new URLSearchParams();
 				if (data?.id) params.set("appId", data.id);
-				const response = await fetch(
-					`http://localhost:${port}/files/delete/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
+				await apiFetch(
+					`/files/delete/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
 					{
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({ path: node.relativePath }),
 					},
 				);
-				if (!response.ok) {
-					const info = await parseErrorResponse(response);
-					throw new Error(info.message);
-				}
 				const parentPath = getParentPath(node.relativePath);
 				await loadDirectory(parentPath);
 				setExpandedPaths((prev) => {
@@ -779,15 +751,14 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		const appId = data.id;
 
 		try {
-			const port = await getCurrentPort();
 			const params = new URLSearchParams();
 			if (appId) {
 				params.set("appId", appId);
 			}
 
 			if (entryDialog.mode === "create") {
-				const response = await fetch(
-					`http://localhost:${port}/files/create/${encodeURIComponent(workspaceName)}${params.toString() ? `?${params.toString()}` : ""}`,
+				const payload = await apiFetch(
+					`/files/create/${encodeURIComponent(workspaceName)}${params.toString() ? `?${params.toString()}` : ""}`,
 					{
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
@@ -797,14 +768,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 							type: entryDialog.entryType,
 						}),
 					},
-				);
-				if (!response.ok) {
-					const info = await parseErrorResponse(response);
-					const error = new Error(info.message);
-					(error as any).status = info.status;
-					throw error;
-				}
-				const payload = (await response.json()) as { entry: FileEntryResponse };
+				).then((res) => res.json() as Promise<{ entry: FileEntryResponse }>);
 				await loadDirectory(entryDialog.parentPath);
 				const createdPath = payload.entry.relativePath;
 				setExpandedPaths((prev) => {
@@ -833,24 +797,20 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				return;
 			}
 
-			const response = await fetch(
-				`http://localhost:${port}/files/rename/${encodeURIComponent(workspaceName)}${params.toString() ? `?${params.toString()}` : ""}`,
+			const payload = await apiFetch(
+				`/files/rename/${encodeURIComponent(workspaceName)}${params.toString() ? `?${params.toString()}` : ""}`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ path: entryDialog.targetPath, name: trimmed }),
 				},
+			).then(
+				(res) =>
+					res.json() as Promise<{
+						entry: FileEntryResponse;
+						previousPath: string;
+					}>,
 			);
-			if (!response.ok) {
-				const info = await parseErrorResponse(response);
-				const error = new Error(info.message);
-				(error as any).status = info.status;
-				throw error;
-			}
-			const payload = (await response.json()) as {
-				entry: FileEntryResponse;
-				previousPath: string;
-			};
 			const newPath = payload.entry.relativePath;
 			const parentPath = getParentPath(newPath);
 			await loadDirectory(parentPath);
@@ -964,37 +924,37 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		[contextMenu.visible, handleContextMenuClose, handleTreeItemActivate],
 	);
 
-	const workspaceName = data?.name || "Workspace";
+	const workspaceName = data?.name || t("workspaceEditor.workspace");
 	const entryDialogTitle = entryDialog
 		? entryDialog.mode === "create"
 			? entryDialog.entryType === "file"
-				? "Create file"
-				: "Create folder"
+				? t("entryDialog.createFile")
+				: t("entryDialog.createFolder")
 			: entryDialog.targetType === "directory"
-				? "Rename folder"
-				: "Rename file"
+				? t("entryDialog.renameFolder")
+				: t("entryDialog.renameFile")
 		: "";
 	const entryDialogDescription = entryDialog
 		? entryDialog.mode === "create"
 			? entryDialog.parentPath
-				? `This will be created inside ${entryDialog.parentPath}.`
-				: "This will be created in the workspace root."
+				? `${t("entryDialog.createInside").replace("{path}", entryDialog.parentPath)}`
+				: t("entryDialog.createInRoot")
 			: entryDialog.parentPath
-				? `Current location: ${entryDialog.parentPath}.`
-				: "Current location: workspace root."
+				? `${t("entryDialog.currentLocation").replace("{path}", entryDialog.parentPath)}`
+				: t("entryDialog.currentLocationRoot")
 		: undefined;
 	const entryDialogConfirmLabel = entryDialog
 		? entryDialog.mode === "create"
 			? entryDialog.entryType === "file"
-				? "Create file"
-				: "Create folder"
-			: "Rename"
-		: "Confirm";
+				? t("entryDialog.createFile")
+				: t("entryDialog.createFolder")
+			: t("entryDialog.rename")
+		: t("variables.confirm");
 	const entryDialogPlaceholder =
 		entryDialog?.mode === "create"
 			? entryDialog.entryType === "file"
-				? "example.ts"
-				: "New Folder"
+				? t("entryDialog.placeholderFile")
+				: t("entryDialog.placeholderFolder")
 			: undefined;
 
 	const getContext = () => {
@@ -1047,7 +1007,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 									className="truncate text-[10px] font-normal uppercase tracking-normal text-neutral-500"
 									title={rootPath}
 								>
-									{rootPath || "Resolving path..."}
+									{rootPath || t("workspaceEditor.resolvingPath")}
 								</span>
 							</div>
 							<div className="flex items-center gap-1">
@@ -1057,7 +1017,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 										openCreateEntryDialog("file");
 									}}
 									className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
-									title="New file"
+									title={t("workspaceEditor.newFile")}
 								>
 									<FilePlus className="h-3.5 w-3.5" />
 								</button>
@@ -1067,7 +1027,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 										openCreateEntryDialog("directory");
 									}}
 									className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
-									title="New folder"
+									title={t("workspaceEditor.newFolder")}
 								>
 									<FolderPlus className="h-3.5 w-3.5" />
 								</button>
@@ -1126,7 +1086,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 									onClick={handleRefreshWorkspace}
 									className="rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
 								>
-									Retry
+									{t("workspaceEditor.retry")}
 								</button>
 							</div>
 						) : (
@@ -1145,7 +1105,50 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 						)}
 					</div>
 				</div>
-
+				<div className="relative flex flex-1 flex-col bg-[#0a0a0a]">
+					{selectedFileNode && selectedFileNode.type === "file" ? (
+						<PreviewPane
+							selectedFileNode={selectedFileNode}
+							fileEncoding={fileEncoding}
+							fileContent={fileContent}
+							fileMimeType={fileMimeType}
+							filePreviewUrl={filePreviewUrl}
+							fileError={fileError}
+							isLoadingFile={isLoadingFile}
+							isDirty={isDirty}
+							language={language}
+							onReloadFile={handleReloadFile}
+							onContentChange={setFileContent}
+						/>
+					) : workspaceError ? (
+						<div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-neutral-300">
+							<FolderPlus className="h-8 w-8 text-neutral-500" />
+							<span>{workspaceError}</span>
+							<button
+								type="button"
+								onClick={handleRefreshWorkspace}
+								className="rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
+							>
+								{t("workspaceEditor.retry")}
+							</button>
+						</div>
+					) : (
+						<PreviewPane
+							fileEncoding={fileEncoding}
+							fileContent={fileContent}
+							fileMimeType={fileMimeType}
+							filePreviewUrl={filePreviewUrl}
+							fileError={fileError}
+							isLoadingFile={isLoadingFile}
+							isDirty={isDirty}
+							language={language}
+							onReloadFile={handleReloadFile}
+							onContentChange={setFileContent}
+						/>
+					)}
+				</div>
+			</div>
+      
 				<ContextMenu
 					state={contextMenu}
 					onCopyPath={() => {

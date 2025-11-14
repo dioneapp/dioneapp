@@ -1,18 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
-import { app } from "electron";
-import { readConfig } from "../../config";
 import logger from "../utils/logger";
+import { ensureAppsRootExists, resolveScriptPaths } from "./utils/paths";
 
 export default async function getAllScripts() {
-	const root = app.isPackaged
-		? path.join(path.dirname(app.getPath("exe")))
-		: path.join(process.cwd());
-	const config = readConfig();
-	const scriptsDir = path.join(config?.defaultInstallFolder || root, "apps");
-
+	let scriptsDir: string;
 	try {
-		await fs.promises.mkdir(scriptsDir, { recursive: true });
+		scriptsDir = await ensureAppsRootExists();
 	} catch (error) {
 		logger.error("Error creating apps directory:", error);
 		return JSON.stringify({ apps: [] });
@@ -55,16 +49,7 @@ export default async function getAllScripts() {
 }
 
 export async function getInstalledScript(name: string) {
-	const root = app.isPackaged
-		? path.join(path.dirname(app.getPath("exe")))
-		: path.join(process.cwd());
-	const config = readConfig();
-	const sanitizedName = name.replace(/\s+/g, "-");
-	const scriptDir = path.join(
-		config?.defaultInstallFolder || root,
-		"apps",
-		sanitizedName,
-	);
+	const { workingDir: scriptDir } = resolveScriptPaths(name);
 
 	try {
 		const files = await fs.promises.readdir(scriptDir, {

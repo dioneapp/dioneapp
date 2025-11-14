@@ -1,5 +1,7 @@
-import { languages } from "@renderer/translations/translationContext";
-import { useTranslation } from "@renderer/translations/translationContext";
+import {
+	languages,
+	useTranslation,
+} from "@renderer/translations/translationContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -155,7 +157,7 @@ export default function LanguageSelector({
 								: "bg-white/10 text-white/50 cursor-not-allowed border border-white/10"
 						}`}
 					>
-						Next
+						{t("languageSelector.next")}
 					</button>
 				</div>
 			</div>

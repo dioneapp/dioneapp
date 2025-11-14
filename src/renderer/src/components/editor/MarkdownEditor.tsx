@@ -1,4 +1,5 @@
 import Editor, { loader } from "@monaco-editor/react";
+import { useTranslation } from "@renderer/translations/translationContext";
 import {
 	AlertCircle,
 	AlertTriangle,
@@ -83,6 +84,7 @@ const MarkdownEditor = ({
 	filePath,
 	onContentChange,
 }: MarkdownEditorProps) => {
+	const { t } = useTranslation();
 	const [editorWidth, setEditorWidth] = useState(50); // Percentage
 	const containerRef = useRef<HTMLDivElement>(null);
 	const isDraggingRef = useRef(false);
@@ -132,7 +134,9 @@ const MarkdownEditor = ({
 				style={{ width: `${editorWidth}%` }}
 			>
 				<div className="flex items-center border-b border-white/10 bg-neutral-950/80 px-3 py-1.5 shrink-0">
-					<span className="text-xs font-semibold text-neutral-300">Editor</span>
+					<span className="text-xs font-semibold text-neutral-300">
+						{t("editor.editorLabel")}
+					</span>
 				</div>
 				<div className="flex-1 overflow-hidden">
 					<Editor

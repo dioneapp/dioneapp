@@ -1,22 +1,12 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { app } from "electron";
 import type { Response } from "express";
-import { readConfig } from "../../config";
 import { removeValue } from "./dependencies/environment";
+import { resolveScriptPaths } from "./utils/paths";
 
 export async function deleteScript(name: string, res: Response) {
 	try {
-		// sanitize name
-		const sanitizedName = name.replace(/\s+/g, "-");
-
-		// delete script dirs
-		const root = app.isPackaged
-			? path.join(path.dirname(app.getPath("exe")))
-			: path.join(process.cwd());
-		const config = readConfig();
-		const appsDir = path.join(config?.defaultInstallFolder || root, "apps");
-		const appDir = path.join(appsDir, sanitizedName);
+		const { workingDir: appDir } = resolveScriptPaths(name);
 		const dioneFile = path.join(appDir, "dione.json");
 		const dioneData = await fs.readFile(dioneFile, "utf-8");
 		const dioneJson = JSON.parse(dioneData);

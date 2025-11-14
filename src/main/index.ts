@@ -38,8 +38,14 @@ import {
 } from "./security/secure-tokens";
 import { initDefaultEnv } from "./server/scripts/dependencies/environment";
 import { start as startServer, stop as stopServer } from "./server/server";
-import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
+import { getLocalNetworkIP } from "./utils/network";
+import {
+	getCurrentTunnel,
+	isTunnelActive,
+	startLocaltunnel,
+	stopTunnel,
+} from "./utils/tunnel";
 
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
@@ -96,6 +102,27 @@ if (process.env.NODE_ENV === "development" && process.platform === "win32") {
 let mainWindow: BrowserWindow;
 let port: number;
 let sessionId: string;
+
+const updateBackendPortState = (
+	nextPort: number,
+	options?: { broadcast?: boolean },
+) => {
+	process.env.DIONE_BACKEND_PORT = String(nextPort);
+	if (options?.broadcast && mainWindow && !mainWindow.isDestroyed()) {
+		mainWindow.webContents.send("backend-port-changed", nextPort);
+	}
+};
+
+const buildWindowOpenHandler = (
+	_targetContents: Electron.WebContents | null | undefined,
+): ((
+	details: Electron.HandlerDetails,
+) => Electron.WindowOpenHandlerResponse) => {
+	return (details: Electron.HandlerDetails) => {
+		shell.openExternal(details.url);
+		return { action: "deny" };
+	};
+};
 
 // Creates the main application window with specific configurations.
 function createWindow() {
@@ -268,24 +295,37 @@ function createWindow() {
 
 	app.on("web-contents-created", (_e, contents) => {
 		if (contents.getType() === "webview") {
-			contents.setWindowOpenHandler((details) => {
-				shell.openExternal(details.url);
-				return { action: "deny" };
+			contents.setWindowOpenHandler(buildWindowOpenHandler(contents));
+
+			contents.session.on("will-download", (_event, item) => {
+				const fileName = item.getFilename() || "download";
+				const savePath = dialog.showSaveDialogSync(mainWindow, {
+					title: "Save File",
+					buttonLabel: "Save",
+					defaultPath: path.join(app.getPath("downloads"), fileName),
+				});
+
+				if (savePath) {
+					item.setSavePath(savePath);
+				} else {
+					item.cancel();
+				}
 			});
 		}
 	});
 
-	// open external links in default browser
-	mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-		shell.openExternal(url);
-		return { action: "deny" };
-	});
+
 	mainWindow.webContents.on("will-navigate", (event, url) => {
 		if (url !== mainWindow.webContents.getURL()) {
 			event.preventDefault();
 			shell.openExternal(url);
 		}
 	});
+
+	mainWindow.webContents.setWindowOpenHandler(
+		buildWindowOpenHandler(mainWindow.webContents),
+	);
+
 
 	const gotTheLock = app.requestSingleInstanceLock();
 	if (!gotTheLock) {
@@ -474,6 +514,7 @@ app.whenReady().then(async () => {
 
 	// start backend
 	port = await startServer();
+	updateBackendPortState(port);
 
 	// create window
 	await createWindow();
@@ -719,12 +760,6 @@ app.whenReady().then(async () => {
 		await shell.openPath(path);
 	});
 
-	// Retrieve the current port
-	ipcMain.handle("get-current-port", async () => {
-		const port = await getCurrentPort();
-		return port;
-	});
-
 	// Open external links
 	ipcMain.handle("open-external-link", (_event, url) => {
 		shell.openExternal(url);
@@ -852,6 +887,70 @@ app.whenReady().then(async () => {
 		if (BrowserWindow.getAllWindows().length === 0) createWindow();
 	});
 
+	// Get network address for sharing
+	ipcMain.handle(
+		"get-network-address",
+		async (_event, requestedPort?: number) => {
+			const networkIP = getLocalNetworkIP();
+			const resolvedPort = requestedPort ?? port;
+
+			if (!networkIP || !resolvedPort) {
+				return null;
+			}
+
+			return {
+				ip: networkIP,
+				port: resolvedPort,
+				url: `http://${networkIP}:${resolvedPort}`,
+			};
+		},
+	);
+
+	// Start tunnel (Localtunnel)
+	ipcMain.handle(
+		"start-tunnel",
+		async (_event, type: "localtunnel", requestedPort?: number) => {
+			try {
+				const resolvedPort = requestedPort ?? port;
+				if (!resolvedPort) {
+					throw new Error("Server port not available");
+				}
+
+				logger.info(`Starting ${type} tunnel...`);
+
+				const tunnelInfo = await startLocaltunnel(resolvedPort);
+
+				logger.info(`Tunnel started: ${tunnelInfo.url}`);
+				return tunnelInfo;
+			} catch (error) {
+				logger.error("Failed to start tunnel:", error);
+				throw error;
+			}
+		},
+	);
+
+	// Stop tunnel
+	ipcMain.handle("stop-tunnel", async () => {
+		try {
+			await stopTunnel();
+			logger.info("Tunnel stopped successfully");
+			return true;
+		} catch (error) {
+			logger.error("Failed to stop tunnel:", error);
+			throw error;
+		}
+	});
+
+	// Get current tunnel info
+	ipcMain.handle("get-current-tunnel", () => {
+		return getCurrentTunnel();
+	});
+
+	// Check if tunnel is active
+	ipcMain.handle("is-tunnel-active", () => {
+		return isTunnelActive();
+	});
+
 	ipcMain.handle("send-discord-report", async (_, data) => {
 		if (!app.isPackaged) {
 			return "dev-mode";
@@ -937,11 +1036,8 @@ app.whenReady().then(async () => {
 					setTimeout(reject, 10000, new Error("Server stop timeout")),
 				),
 			]);
-			const port = await startServer();
-			// refresh environment variables
-			// if (os.platform() === "win32") {
-			// 	refreshPathFromSystem();
-			// }
+			port = await startServer();
+			updateBackendPortState(port, { broadcast: true });
 			logger.info(`Backend restarted successfully on port ${port}`);
 			return port;
 		} catch (error) {
@@ -1029,10 +1125,9 @@ ipcMain.on("new-window", (_event, url) => {
 	previewWindow.maximize();
 	previewWindow.focus();
 
-	previewWindow.webContents.setWindowOpenHandler(({ url }) => {
-		shell.openExternal(url);
-		return { action: "deny" };
-	});
+	previewWindow.webContents.setWindowOpenHandler(
+		buildWindowOpenHandler(previewWindow.webContents),
+	);
 
 	previewWindow.on("close", () => {
 		console.log("Closing preview window...");

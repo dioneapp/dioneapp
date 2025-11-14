@@ -1,5 +1,5 @@
 import GeneratedIcon from "@renderer/components/icons/generated-icon";
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiJson } from "@renderer/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, Clock, Library, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -65,11 +65,13 @@ export default function Sidebar() {
 		if (cachedConfig) setConfig(JSON.parse(cachedConfig));
 
 		const fetchConfig = async () => {
-			const port = await getCurrentPort();
-			const res = await fetch(`http://localhost:${port}/config`);
-			const data = await res.json();
-			setConfig(data);
-			localStorage.setItem("config", JSON.stringify(data));
+			try {
+				const data = await apiJson<any>("/config");
+				setConfig(data);
+				localStorage.setItem("config", JSON.stringify(data));
+			} catch (error) {
+				console.error("Failed to load config: ", error);
+			}
 		};
 		fetchConfig();
 	}, []);
@@ -124,10 +126,10 @@ export default function Sidebar() {
 							<div className="bg-white/10 backdrop-blur-2xl rounded-xl max-w-2xl w-full p-4 flex flex-col items-start justify-center gap-6 text-center shadow-xl border border-white/5">
 								<div className="flex flex-col justify-center items-start gap-2">
 									<h1 className="text-center font-medium tracking-tighter text-3xl text-neutral-200 text-balance whitespace-pre-line">
-										New update available
+										{t("sidebarUpdate.newUpdateAvailable")}
 									</h1>
 									<h2 className="text-center text-neutral-400">
-										Here's what's new
+										{t("sidebarUpdate.whatsNew")}
 									</h2>
 									<div className="mt-2 bg-white/10 p-4 rounded-lg overflow-hidden flex flex-col gap-2 items-start justify-center">
 										<div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between w-full">
@@ -162,7 +164,7 @@ export default function Sidebar() {
 										onClick={() => setUpdateDownloaded(false)}
 										className="bg-white/10 hover:bg-white/15 text-neutral-300 border border-white/5 px-4 py-1 text-sm font-medium rounded-lg cursor-pointer"
 									>
-										<span>Later</span>
+										<span>{t("updates.later")}</span>
 									</button>
 									<button
 										onClick={() =>
@@ -170,7 +172,7 @@ export default function Sidebar() {
 										}
 										className="bg-white hover:opacity-80 border border-white text-black px-4 py-1 text-sm font-medium rounded-lg cursor-pointer"
 									>
-										<span>Install</span>
+										<span>{t("updates.install")}</span>
 									</button>
 								</div>
 							</div>
@@ -195,7 +197,7 @@ export default function Sidebar() {
 							{!config?.compactMode && <Icon name="Dio" className="h-8 w-8" />}
 							{!config?.compactMode && (
 								<div className="flex gap-1.5 justify-center items-center">
-									<h1 className="font-semibold text-3xl">Dione</h1>
+									<h1 className="font-semibold text-3xl">{t("links.dione")}</h1>
 								</div>
 							)}
 						</Link>
@@ -213,7 +215,7 @@ export default function Sidebar() {
 								>
 									<Icon name="Discord" className="h-4 w-4" />
 
-									<span className="font-semibold">Discord</span>
+									<span className="font-semibold">{t("links.discord")}</span>
 								</button>
 
 								<button
@@ -223,7 +225,7 @@ export default function Sidebar() {
 								>
 									<Icon name="GitHub" className="h-4 w-4" />
 
-									<span className="font-semibold">GitHub</span>
+									<span className="font-semibold">{t("links.github")}</span>
 								</button>
 							</div>
 						)}
@@ -300,7 +302,8 @@ export default function Sidebar() {
 																	{app.data.name}
 																</p>
 																<p className="text-xs text-neutral-400 truncate">
-																	{app.data.description || "Running"}
+																	{app.data.description ||
+																		t("runningApps.running")}
 																</p>
 															</div>
 														)}

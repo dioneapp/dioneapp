@@ -1,5 +1,5 @@
 import { useTranslation } from "@renderer/translations/translationContext";
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiFetch } from "@renderer/utils/api";
 import { openLink } from "@renderer/utils/openLink";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Loading from "../loading-skeleton";
@@ -32,15 +32,13 @@ export default function List({
 			if (!hasMore || loadingRef.current) return;
 
 			loadingRef.current = true;
-			const port = await getCurrentPort();
-			if (!port) return;
 
 			try {
-				const url = new URL(`http://localhost:${port}${endpoint}`);
-				url.searchParams.append("page", pageNum.toString());
-				url.searchParams.append("limit", limit.toString());
+				const url = new URL(endpoint, "http://localhost");
+				url.searchParams.set("page", pageNum.toString());
+				url.searchParams.set("limit", limit.toString());
 
-				const response = await fetch(url.toString(), {
+				const response = await apiFetch(`${url.pathname}${url.search}`, {
 					method: "GET",
 					headers: { "Content-Type": "application/json" },
 				});
@@ -129,7 +127,7 @@ export default function List({
 
 			{loading && scripts.length > 0 && (
 				<div className="text-center text-neutral-500 text-sm mt-4">
-					Loading more...
+					{t("feed.loadingMore")}
 				</div>
 			)}
 
@@ -141,9 +139,9 @@ export default function List({
 
 			{!loading && !error && !hasMore && (
 				<div className="text-center text-neutral-500 text-sm flex flex-col gap-2 mt-12">
-					<span>You have reached the end.</span>
+					<span>{t("feed.reachedEnd")}</span>
 					<span className="text-neutral-400">
-						If you think there are not enough apps,{" "}
+						{t("feed.notEnoughApps")}{" "}
 						<span
 							onClick={() =>
 								openLink(
@@ -152,7 +150,7 @@ export default function List({
 							}
 							className="cursor-pointer hover:text-neutral-200 underline underline-offset-4 text-neutral-300 transition-colors duration-300"
 						>
-							please help us to add more
+							{t("feed.helpAddMore")}
 						</span>
 						.
 					</span>

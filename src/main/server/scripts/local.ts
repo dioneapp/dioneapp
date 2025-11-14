@@ -1,26 +1,23 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
-import { app } from "electron";
 import type { Server } from "socket.io";
-import { readConfig } from "../../config";
 import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies/dependencies";
 import executeInstallation from "./execute";
 import { checkSystem } from "./system";
+import { getAppsRoot, sanitizeScriptName } from "./utils/paths";
 
-const root = app.isPackaged
-	? path.join(path.dirname(app.getPath("exe")))
-	: path.join(process.cwd());
-const config = readConfig();
-const appFolder = path.join(config?.defaultInstallFolder || root, "apps");
+const getAppFolder = () => {
+	const folder = getAppsRoot();
+	if (!fs.existsSync(folder)) {
+		fs.mkdirSync(folder, { recursive: true });
+	}
+	return folder;
+};
 
 export async function getAllLocalScripts() {
-	const scriptsPath = path.join(appFolder);
-	if (!fs.existsSync(scriptsPath)) {
-		fs.mkdirSync(scriptsPath);
-	}
-
+	const scriptsPath = getAppFolder();
 	const scripts = fs.readdirSync(scriptsPath);
 	const scriptsInfo: {
 		id: string;
@@ -44,8 +41,8 @@ export async function getAllLocalScripts() {
 
 // check if scripts are installed on APPS folder
 export async function getInstalledLocalScript(name: string) {
-	const sanitizedName = name.replace(/\s+/g, "-");
-	const scriptPath = path.join(appFolder, sanitizedName);
+	const sanitizedName = sanitizeScriptName(name);
+	const scriptPath = path.join(getAppFolder(), sanitizedName);
 	try {
 		const files = await fs.promises.readdir(scriptPath);
 		const filtered = files.filter(
@@ -59,8 +56,8 @@ export async function getInstalledLocalScript(name: string) {
 
 // check script data on APPS folder
 export async function getLocalApps(name: string) {
-	const sanitizedName = name.replace(/\s+/g, "-");
-	const scriptPath = path.join(appFolder, sanitizedName);
+	const sanitizedName = sanitizeScriptName(name);
+	const scriptPath = path.join(getAppFolder(), sanitizedName);
 	const scriptInfo = JSON.parse(
 		fs.readFileSync(path.join(scriptPath, "app_info.json"), "utf-8"),
 	);
@@ -69,9 +66,10 @@ export async function getLocalApps(name: string) {
 }
 
 export async function getLocalScriptById(id: string) {
-	const scripts = fs.readdirSync(appFolder);
+	const baseFolder = getAppFolder();
+	const scripts = fs.readdirSync(baseFolder);
 	for (const script of scripts) {
-		const scriptPath = path.join(appFolder, script);
+		const scriptPath = path.join(baseFolder, script);
 		const appInfoPath = path.join(scriptPath, "app_info.json");
 		if (fs.existsSync(appInfoPath)) {
 			const appInfo = JSON.parse(fs.readFileSync(appInfoPath, "utf-8"));
@@ -85,12 +83,14 @@ export async function getLocalScriptById(id: string) {
 // install script on APPS folder
 export async function loadLocalScript(name: string, io: Server) {
 	// get script from scripts folder
-	const scriptPath = path.join(appFolder, name.replace(/\s+/g, "-"));
+	const baseFolder = getAppFolder();
+	const sanitizedName = sanitizeScriptName(name);
+	const scriptPath = path.join(baseFolder, sanitizedName);
 	const dioneFilePath = path.join(scriptPath, "dione.json");
 	const appInfoPath = path.join(scriptPath, "app_info.json");
 
 	// copy script to apps folder
-	const appPath = path.join(appFolder, name.replace(/\s+/g, "-"));
+	const appPath = path.join(baseFolder, sanitizedName);
 
 	if (!fs.existsSync(appPath)) {
 		fs.mkdirSync(appPath, { recursive: true });
@@ -182,12 +182,12 @@ export async function uploadLocalScript(
 		id: randomUUID(),
 	};
 	const dioneConfigContent = JSON.parse(fs.readFileSync(filePath, "utf-8"));
-	const sanitizedName = name.replace(/\s+/g, "-");
+	const sanitizedName = sanitizeScriptName(name);
 	const id = appInfoContent.id;
 
 	logger.info(`Uploading script '${name}' with ID '${id}'`);
 
-	const scriptPath = path.join(appFolder, sanitizedName);
+	const scriptPath = path.join(getAppFolder(), sanitizedName);
 	fs.mkdirSync(scriptPath, { recursive: true });
 	fs.writeFileSync(
 		path.join(scriptPath, "dione.json"),
@@ -203,7 +203,7 @@ export async function uploadLocalScript(
 
 // delete script from SCRIPTS folder
 export async function deleteLocalScript(name: string) {
-	const sanitizedName = name.replace(/\s+/g, "-");
-	const scriptPath = path.join(appFolder, sanitizedName);
+	const sanitizedName = sanitizeScriptName(name);
+	const scriptPath = path.join(getAppFolder(), sanitizedName);
 	fs.rmSync(scriptPath, { recursive: true });
 }

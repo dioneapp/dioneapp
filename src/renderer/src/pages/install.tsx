@@ -14,7 +14,7 @@ import { useScriptsContext } from "../components/contexts/ScriptsContext";
 import WorkspaceEditor from "../components/editor/editor";
 import DeleteLoadingModal from "../components/modals/delete-loading";
 import { useTranslation } from "../translations/translationContext";
-import { getCurrentPort } from "../utils/getPort";
+import { apiFetch, apiJson } from "../utils/api";
 
 export default function Install({
 	id,
@@ -98,7 +98,6 @@ export default function Install({
 	useEffect(() => {
 		async function autoInstallMissingDependencies() {
 			if (!data?.id || !data?.name) return;
-			const port = await getCurrentPort();
 			const missing = (missingDependencies || [])
 				.filter((dep: any) => !dep.installed)
 				.map((dep: any) => dep.name);
@@ -116,17 +115,14 @@ export default function Install({
 				`installing required dependencies: ${missing.join(", ")}`,
 			);
 			try {
-				const response = await fetch(
-					`http://localhost:${port}/deps/install/${data.id}`,
-					{
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({
-							dependencies: missing,
-							nameFolder: data.name.replace(/\s+/g, "-"),
-						}),
-					},
-				);
+				const response = await apiFetch(`/deps/install/${data.id}`, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						dependencies: missing,
+						nameFolder: data.name.replace(/\s+/g, "-"),
+					}),
+				});
 				if (!response.ok) {
 					throw new Error(String(response.status));
 				}
@@ -240,22 +236,8 @@ export default function Install({
 			if (!id) return;
 			if (isLocal) return;
 			try {
-				const port = await getCurrentPort();
-				const response = await fetch(
-					`http://localhost:${port}/db/search/${id}`,
-					{
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-						},
-					},
-				);
-				if (response.ok) {
-					const script = await response.json();
-					setData(script);
-				} else {
-					throw new Error("Failed to fetch data");
-				}
+				const script = await apiJson(`/db/search/${id}`);
+				setData(script);
 			} catch (error) {
 				setError(true);
 				console.error("Error fetching data:", error);
@@ -269,18 +251,11 @@ export default function Install({
 			if (!id) return;
 			if (!isLocal) return;
 			try {
-				const port = await getCurrentPort();
 				console.log("id", id);
-				const response = await fetch(
-					`http://localhost:${port}/local/get_app/${encodeURIComponent(id)}`,
+				const script = await apiJson(
+					`/local/get_app/${encodeURIComponent(id)}`,
 				);
-				if (response.ok) {
-					const script = await response.json();
-					setData(script);
-				} else {
-					console.log("response", response);
-					throw new Error("Failed to fetch data");
-				}
+				setData(script);
 			} catch (error) {
 				setError(true);
 				console.error("Error fetching data:", error);
@@ -311,53 +286,22 @@ export default function Install({
 	// get settings
 	useEffect(() => {
 		async function getSettings() {
-			const port = await getCurrentPort();
-			const response = await fetch(`http://localhost:${port}/config`, {
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-				},
-			});
-			if (response.ok) {
-				const config = await response.json();
-				setConfig(config);
-			}
+			const config = await apiJson("/config");
+			setConfig(config);
 		}
 		getSettings();
 	}, []);
 
 	async function fetchIfDownloaded() {
 		if (data?.name) {
-			const port = await getCurrentPort();
-			let response: Response;
-			if (isLocal) {
-				response = await fetch(
-					`http://localhost:${port}/local/installed/${encodeURIComponent(data.name)}`,
-					{
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-						},
-					},
-				);
-			} else {
-				response = await fetch(
-					`http://localhost:${port}/scripts/installed/${data.name}`,
-					{
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-						},
-					},
-				);
-			}
-			if (response.ok) {
-				const jsonData = await response.json();
-				setInstalled(jsonData);
-				return jsonData;
-			}
-			setError(true);
+			const endpoint = isLocal
+				? `/local/installed/${encodeURIComponent(data.name)}`
+				: `/scripts/installed/${data.name}`;
+			const jsonData = await apiJson<boolean>(endpoint);
+			setInstalled(jsonData);
+			return jsonData;
 		}
+		return false;
 	}
 
 	useEffect(() => {
@@ -395,7 +339,6 @@ export default function Install({
 		}
 
 		try {
-			const port = await getCurrentPort();
 			window.electron.ipcRenderer.invoke(
 				"notify",
 				"Downloading...",
@@ -403,19 +346,16 @@ export default function Install({
 			);
 
 			if (isLocal) {
-				await fetch(`http://localhost:${port}/local/load/${data.name}`, {
+				await apiFetch(`/local/load/${data.name}`, {
 					method: "GET",
 				});
 			} else {
 				if (force) {
-					await fetch(
-						`http://localhost:${port}/scripts/download/${id}?force=true`,
-						{
-							method: "GET",
-						},
-					);
+					await apiFetch(`/scripts/download/${id}?force=true`, {
+						method: "GET",
+					});
 				} else {
-					await fetch(`http://localhost:${port}/scripts/download/${id}`, {
+					await apiFetch(`/scripts/download/${id}`, {
 						method: "GET",
 					});
 				}
@@ -443,20 +383,16 @@ export default function Install({
 
 	async function updateDownloadsCount() {
 		if (!data?.id) return;
-		const port = await getCurrentPort();
-		const response = await fetch(
-			`http://localhost:${port}/db/update-script/${data.id}`,
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					downloads: data.downloads + 1,
-					updated_at: new Date().toISOString(),
-				}),
+		const response = await apiFetch(`/db/update-script/${data.id}`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
 			},
-		);
+			body: JSON.stringify({
+				downloads: data.downloads + 1,
+				updated_at: new Date().toISOString(),
+			}),
+		});
 
 		if (!response.ok) {
 			throw new Error("Failed to update downloads count");
@@ -496,14 +432,13 @@ export default function Install({
 
 			if (!isServerRunning[data?.id]) {
 				setShow({ [data?.id]: "logs" });
-				const port = await getCurrentPort();
 				window.electron.ipcRenderer.invoke(
 					"notify",
 					"Starting...",
 					`Starting ${data.name}`,
 				);
-				await fetch(
-					`http://localhost:${port}/scripts/start/${data?.name}/${data?.id}${selectedStart ? `?start=${encodeURIComponent(selectedStart)}` : ""}`,
+				await apiFetch(
+					`/scripts/start/${data?.name}/${data?.id}${selectedStart ? `?start=${encodeURIComponent(selectedStart)}` : ""}`,
 					{
 						method: "POST",
 						body: JSON.stringify({ replaceCommands }),
@@ -528,9 +463,8 @@ export default function Install({
 	async function stop(type?: string) {
 		try {
 			console.log("stopping...");
-			const port = await getCurrentPort();
-			const response = await fetch(
-				`http://localhost:${port}/scripts/stop/${data.name}/${data.id}/${catchPort[data.id]}`,
+			const response = await apiFetch(
+				`/scripts/stop/${data.name}/${data.id}/${catchPort[data.id]}`,
 				{
 					method: "GET",
 				},
@@ -579,24 +513,23 @@ export default function Install({
 
 	async function uninstall(deleteDeps?: boolean) {
 		try {
-			const port = await getCurrentPort();
 			setDeleteStatus("deleting");
 			if (deleteDeps) {
 				setDeleteStatus("deleting_deps");
-				const response = await fetch(
-					`http://localhost:${port}/deps/uninstall`,
-					{
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({
-							dioneFile: encodeURIComponent(data.name),
-							selectedDeps: selectedDeps,
-						}),
-					},
-				);
-				const result = await response.json();
+				const result = await apiJson<{
+					success?: boolean;
+					reasons?: string[];
+					error?: string;
+				}>("/deps/uninstall", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						dioneFile: encodeURIComponent(data.name),
+						selectedDeps,
+					}),
+				});
 				if (result.success) {
-					await uninstallApp(port);
+					await uninstallApp();
 				} else {
 					setDeleteStatus("error_deps");
 					window.electron.ipcRenderer.invoke(
@@ -614,7 +547,7 @@ export default function Install({
 					);
 				}
 			} else {
-				await uninstallApp(port);
+				await uninstallApp();
 			}
 		} catch (error) {
 			setDeleteStatus("error");
@@ -631,13 +564,10 @@ export default function Install({
 		handleReloadQuickLaunch();
 	}
 
-	async function uninstallApp(port: number) {
-		const response = await fetch(
-			`http://localhost:${port}/scripts/delete/${data.name}`,
-			{
-				method: "GET",
-			},
-		);
+	async function uninstallApp() {
+		const response = await apiFetch(`/scripts/delete/${data.name}`, {
+			method: "GET",
+		});
 		if (response.status === 200) {
 			setDeleteStatus("deleted");
 			window.electron.ipcRenderer.invoke(
@@ -733,13 +663,11 @@ export default function Install({
 
 	async function checkInUse() {
 		if (!data?.name) return;
-		const port = await getCurrentPort();
-		const response = await fetch(`http://localhost:${port}/deps/in-use`, {
+		const result = await apiJson<{ result?: string[] }>("/deps/in-use", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ dioneFile: data?.name }),
 		});
-		const result = await response.json();
 		setInUseDeps(result.result || []);
 		setSelectedDeps(result.result || []);
 		return result.result || [];
@@ -754,7 +682,7 @@ export default function Install({
 				setDeleteDepsModal(!deleteDepsModal);
 			} else {
 				console.log(`DEPS: ${JSON.stringify(deps)}`);
-				console.log(`${deps.length} deps in use`);
+				console.log(`${deps?.length ?? 0} deps in use`);
 				await uninstall(false);
 			}
 		}
@@ -908,14 +836,14 @@ export default function Install({
 	useEffect(() => {
 		async function fetchStartOptions() {
 			if (data) {
-				const port = await getCurrentPort();
-				const res = await fetch(
-					`http://localhost:${port}/scripts/start-options/${encodeURIComponent(data.name)}`,
-				);
-				if (res.status === 200) {
-					const options = await res.json();
+				try {
+					const options = await apiJson(
+						`/scripts/start-options/${encodeURIComponent(data.name)}`,
+					);
 					console.log("options", options);
 					setStartOptions(options);
+				} catch (error) {
+					console.error("Failed to fetch start options", error);
 				}
 			}
 		}

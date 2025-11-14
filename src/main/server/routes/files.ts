@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { app } from "electron";
 import express from "express";
-import FileType from "file-type";
+import { fileTypeFromBuffer } from "file-type";
 import { readConfig } from "../../config";
 import logger from "../utils/logger";
 
@@ -443,7 +443,7 @@ router.get("/content/:appName", async (req, res) => {
 
 		if (!canPreview) {
 			try {
-				const detectedType = await FileType.fromBuffer(buffer);
+				const detectedType = await fileTypeFromBuffer(buffer);
 				if (detectedType && typeof detectedType.mime === "string") {
 					const detectedMime = detectedType.mime.toLowerCase();
 					const isMedia =
