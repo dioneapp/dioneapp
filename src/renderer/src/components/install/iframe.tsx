@@ -149,13 +149,15 @@ export default function IframeComponent({
 		if (container && iframeSrc) {
 			container.innerHTML = "";
 
-			// create webview
+			// create regular webview with download support
 			const webview = document.createElement("webview") as Electron.WebviewTag;
 			webview.setAttribute("allowpopups", "");
+			webview.setAttribute("webpreferences", "allowRunningInsecureContent");
 			webview.id = "iframe";
 			webview.style.width = "100%";
 			webview.style.height = "100%";
 			webview.style.border = "0";
+			webview.partition = "persist:webview";
 			webview.useragent =
 				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36";
 
