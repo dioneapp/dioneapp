@@ -1,9 +1,8 @@
 import Messages from "@renderer/components/ai/messages";
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { getBackendPort } from "@renderer/utils/api";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import { useState } from "react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 export default function QuickAI() {
 	const [messages, setMessages] = useState<{ role: string; content: string }[]>(
@@ -18,7 +17,7 @@ export default function QuickAI() {
 		setMessages((prev) => [...prev, userMessage]);
 
 		try {
-			const port = await getCurrentPort();
+			const port = await getBackendPort();
 			const response = await fetch(`http://localhost:${port}/ai/ollama/chat`, {
 				method: "POST",
 				headers: {

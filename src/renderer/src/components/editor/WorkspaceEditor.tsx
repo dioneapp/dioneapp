@@ -2,13 +2,13 @@ import { useTranslation } from "@renderer/translations/translationContext";
 import { apiFetch } from "@renderer/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
 import {
-	type KeyboardEvent,
-	type MouseEvent,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
+    type KeyboardEvent,
+    type MouseEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 import AI from "../ai/ai";
 import { useScriptsContext } from "../contexts/ScriptsContext";
@@ -18,26 +18,26 @@ import FileTree from "./FileTree";
 import HeaderBar from "./HeaderBar";
 import PreviewPane from "./PreviewPane";
 import {
-	mediaMimeMap,
-	previewableMediaExtensions,
-	unsupportedExtensions,
+    mediaMimeMap,
+    previewableMediaExtensions,
+    unsupportedExtensions,
 } from "./utils/constants";
 import type {
-	ContextMenuState,
-	EditorViewProps,
-	FileContentResponse,
-	FileEncoding,
-	FileEntryResponse,
-	FileNode,
+    ContextMenuState,
+    EditorViewProps,
+    FileContentResponse,
+    FileEncoding,
+    FileEntryResponse,
+    FileNode,
 } from "./utils/types";
 import {
-	findNodeByPath,
-	getExtensionKey,
-	getLanguageFromPath,
-	getParentPath,
-	isValidEntryNameClient,
-	normalizeRelativePath,
-	updateTreeNode,
+    findNodeByPath,
+    getExtensionKey,
+    getLanguageFromPath,
+    getParentPath,
+    isValidEntryNameClient,
+    normalizeRelativePath,
+    updateTreeNode,
 } from "./utils/utils";
 
 const initialContextMenuState: ContextMenuState = {
