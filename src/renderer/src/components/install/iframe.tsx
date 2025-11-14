@@ -217,7 +217,7 @@ export default function IframeComponent({
 						type="button"
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={() => navigate("/")}
-						title="Back"
+						title={t("iframeLabels.back")}
 					>
 						<ArrowLeft className="w-4 h-4 " />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
@@ -228,7 +228,7 @@ export default function IframeComponent({
 						type="button"
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={() => setShow({ [data.id]: "logs" })}
-						title="Logs"
+						title={t("iframeLabels.logs")}
 					>
 						<SquareTerminal className="w-4 h-4 " />
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
@@ -247,19 +247,17 @@ export default function IframeComponent({
 						</div>
 					</button>
 
-						<button
-							type="button"
-							onClick={() => setShowNetworkShareModal(true)}
-							className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
-							title="Share on network"
-						>
-							<Share2 className="w-4 h-4" />
-							<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-								Share on network
-							</div>
-						</button>
-			
-				</div>
+					<button
+						type="button"
+						onClick={() => setShowNetworkShareModal(true)}
+						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						title={t("iframeActions.shareOnNetwork")}
+					>
+						<Share2 className="w-4 h-4" />
+						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+							{t("iframeActions.shareOnNetwork")}
+						</div>
+					</button>				</div>
 
 				<div className="flex gap-1 justify-start items-center flex-1">
 					{systemUsage.cpu !== undefined && (
@@ -274,7 +272,7 @@ export default function IframeComponent({
 					)}
 					{systemUsage.disk !== undefined && (
 						<UsageIndicator
-							label="Disk"
+							label={t("iframeLabels.disk")}
 							percentage={systemUsage.disk}
 							absoluteValue={`${systemUsage.disk?.toFixed(1) || 0}G`}
 						/>

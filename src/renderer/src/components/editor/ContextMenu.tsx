@@ -1,3 +1,4 @@
+import { useTranslation } from "@renderer/translations/translationContext";
 import { Copy, ExternalLink, Pencil, RefreshCcw } from "lucide-react";
 import type { MouseEvent } from "react";
 import { createPortal } from "react-dom";
@@ -22,6 +23,8 @@ const ContextMenu = ({
 	onDelete,
 	onClose,
 }: ContextMenuProps) => {
+	const { t } = useTranslation();
+
 	if (!state.visible || !state.node) return null;
 
 	const handleClick = (
@@ -51,7 +54,7 @@ const ContextMenu = ({
 				onClick={(event) => handleClick(event, onCopyPath)}
 			>
 				<Copy className="h-4 w-4" />
-				<span>Copy path</span>
+				<span>{t("contextMenu.copyPath")}</span>
 			</button>
 
 			{isDirectory ? (
@@ -61,7 +64,7 @@ const ContextMenu = ({
 					onClick={(event) => handleClick(event, onOpenFolder)}
 				>
 					<ExternalLink className="h-4 w-4" />
-					<span>Open</span>
+					<span>{t("contextMenu.open")}</span>
 				</button>
 			) : (
 				<button
@@ -70,7 +73,7 @@ const ContextMenu = ({
 					onClick={(event) => handleClick(event, onReloadFile)}
 				>
 					<RefreshCcw className="h-4 w-4" />
-					<span>Reload</span>
+					<span>{t("contextMenu.reload")}</span>
 				</button>
 			)}
 
@@ -80,7 +83,7 @@ const ContextMenu = ({
 				onClick={(event) => handleClick(event, onRename)}
 			>
 				<Pencil className="h-4 w-4" />
-				<span>Rename</span>
+				<span>{t("contextMenu.rename")}</span>
 			</button>
 
 			<button
@@ -88,7 +91,7 @@ const ContextMenu = ({
 				className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-rose-400 hover:bg-white/5 cursor-pointer"
 				onClick={(event) => handleClick(event, onDelete)}
 			>
-				<span>Delete</span>
+				<span>{t("contextMenu.delete")}</span>
 			</button>
 		</div>
 	);

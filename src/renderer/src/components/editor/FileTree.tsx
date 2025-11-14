@@ -1,9 +1,10 @@
+import { useTranslation } from "@renderer/translations/translationContext";
 import {
-	ChevronDown,
-	ChevronRight,
-	FileText,
-	Folder,
-	Loader2,
+    ChevronDown,
+    ChevronRight,
+    FileText,
+    Folder,
+    Loader2,
 } from "lucide-react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 import type { FileNode } from "./utils/types";
@@ -30,12 +31,14 @@ const FileTree = ({
 	onKeyDown,
 	onContextMenu,
 }: FileTreeProps) => {
+	const { t } = useTranslation();
+
 	const renderNodes = (list: FileNode[], depth = 0): ReactNode => {
 		if (!list || list.length === 0) {
 			if (depth === 0) {
 				return (
 					<div className="px-3 py-2 text-xs text-neutral-400">
-						No files found in this workspace.
+						{t("fileTree.noFiles")}
 					</div>
 				);
 			}
@@ -123,11 +126,11 @@ const FileTree = ({
 									/>
 								)}
 							</span>
-							{node.type === "file" && node.isUnsupported && (
-								<span className="ml-2 bg-neutral-800 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-neutral-500">
-									{node.isPreviewable ? "Media" : "Binary"}
-								</span>
-							)}
+						{node.type === "file" && node.isUnsupported && (
+							<span className="ml-2 bg-neutral-800 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-neutral-500">
+								{node.isPreviewable ? t("fileTree.media") : t("fileTree.binary")}
+							</span>
+						)}
 						</span>
 					</button>
 					{node.expanded && node.children && node.children.length > 0 && (

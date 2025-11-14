@@ -1,3 +1,5 @@
+import { useTranslation } from "@renderer/translations/translationContext";
+
 interface ProgressBarProps {
 	value?: number; // 0..100
 	mode?: "determinate" | "indeterminate";
@@ -11,6 +13,7 @@ export default function ProgressBar({
 	label,
 	status = "running",
 }: ProgressBarProps) {
+	const { t } = useTranslation();
 	const clamped = Math.max(0, Math.min(100, value));
 
 	const color =
@@ -48,10 +51,10 @@ export default function ProgressBar({
 				<span className="truncate max-w-[80%]">
 					{label ||
 						(status === "error"
-							? "Error"
+							? t("common.error")
 							: status === "success"
-								? "Completed"
-								: "Running...")}
+								? t("logs.status.success")
+								: t("progress.running"))}
 				</span>
 				{mode === "determinate" && (
 					<span className="text-neutral-400">{Math.round(clamped)}%</span>

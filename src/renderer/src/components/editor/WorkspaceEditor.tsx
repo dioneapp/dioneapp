@@ -1,13 +1,14 @@
+import { useTranslation } from "@renderer/translations/translationContext";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
 import {
-	type KeyboardEvent,
-	type MouseEvent,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
+    type KeyboardEvent,
+    type MouseEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import ContextMenu from "./ContextMenu";
@@ -16,27 +17,27 @@ import FileTree from "./FileTree";
 import HeaderBar from "./HeaderBar";
 import PreviewPane from "./PreviewPane";
 import {
-	mediaMimeMap,
-	previewableMediaExtensions,
-	unsupportedExtensions,
+    mediaMimeMap,
+    previewableMediaExtensions,
+    unsupportedExtensions,
 } from "./utils/constants";
 import type {
-	ContextMenuState,
-	EditorViewProps,
-	FileContentResponse,
-	FileEncoding,
-	FileEntryResponse,
-	FileNode,
+    ContextMenuState,
+    EditorViewProps,
+    FileContentResponse,
+    FileEncoding,
+    FileEntryResponse,
+    FileNode,
 } from "./utils/types";
 import {
-	findNodeByPath,
-	getExtensionKey,
-	getLanguageFromPath,
-	getParentPath,
-	isValidEntryNameClient,
-	normalizeRelativePath,
-	parseErrorResponse,
-	updateTreeNode,
+    findNodeByPath,
+    getExtensionKey,
+    getLanguageFromPath,
+    getParentPath,
+    isValidEntryNameClient,
+    normalizeRelativePath,
+    parseErrorResponse,
+    updateTreeNode,
 } from "./utils/utils";
 
 const initialContextMenuState: ContextMenuState = {
@@ -63,6 +64,7 @@ type EntryDialogState =
 
 export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 	const { showToast } = useScriptsContext();
+	const { t } = useTranslation();
 	const [rootPath, setRootPath] = useState<string>("");
 	const [tree, setTree] = useState<FileNode[]>([]);
 	const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -230,13 +232,13 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				const status = error?.status ?? 0;
 				if (isRootPath) {
 					if (status === 404) {
-						setWorkspaceError(error?.message || "Workspace not found");
+						setWorkspaceError(error?.message || t("errorMessages.workspaceNotFound"));
 					} else {
-						showToast("error", error?.message || "Failed to load workspace");
+						showToast("error", error?.message || t("errorMessages.failedToLoadWorkspace"));
 					}
 					setTree([]);
 				} else {
-					showToast("error", error?.message || "Failed to load directory");
+					showToast("error", error?.message || t("errorMessages.failedToLoadDirectory"));
 					setTree((prev) =>
 						updateTreeNode(prev, targetPath, (node) => ({
 							...node,
@@ -959,37 +961,37 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		[contextMenu.visible, handleContextMenuClose, handleTreeItemActivate],
 	);
 
-	const workspaceName = data?.name || "Workspace";
+	const workspaceName = data?.name || t("workspaceEditor.workspace");
 	const entryDialogTitle = entryDialog
 		? entryDialog.mode === "create"
 			? entryDialog.entryType === "file"
-				? "Create file"
-				: "Create folder"
+				? t("entryDialog.createFile")
+				: t("entryDialog.createFolder")
 			: entryDialog.targetType === "directory"
-				? "Rename folder"
-				: "Rename file"
+				? t("entryDialog.renameFolder")
+				: t("entryDialog.renameFile")
 		: "";
 	const entryDialogDescription = entryDialog
 		? entryDialog.mode === "create"
 			? entryDialog.parentPath
-				? `This will be created inside ${entryDialog.parentPath}.`
-				: "This will be created in the workspace root."
+				? `${t("entryDialog.createInside").replace("{path}", entryDialog.parentPath)}`
+				: t("entryDialog.createInRoot")
 			: entryDialog.parentPath
-				? `Current location: ${entryDialog.parentPath}.`
-				: "Current location: workspace root."
+				? `${t("entryDialog.currentLocation").replace("{path}", entryDialog.parentPath)}`
+				: t("entryDialog.currentLocationRoot")
 		: undefined;
 	const entryDialogConfirmLabel = entryDialog
 		? entryDialog.mode === "create"
 			? entryDialog.entryType === "file"
-				? "Create file"
-				: "Create folder"
-			: "Rename"
-		: "Confirm";
+				? t("entryDialog.createFile")
+				: t("entryDialog.createFolder")
+			: t("entryDialog.rename")
+		: t("variables.confirm");
 	const entryDialogPlaceholder =
 		entryDialog?.mode === "create"
 			? entryDialog.entryType === "file"
-				? "example.ts"
-				: "New Folder"
+				? t("entryDialog.placeholderFile")
+				: t("entryDialog.placeholderFolder")
 			: undefined;
 
 	return (
@@ -1027,7 +1029,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 								className="truncate text-[10px] font-normal uppercase tracking-normal text-neutral-500"
 								title={rootPath}
 							>
-								{rootPath || "Resolving path..."}
+								{rootPath || t("workspaceEditor.resolvingPath")}
 							</span>
 						</div>
 						<div className="flex items-center gap-1">
@@ -1037,7 +1039,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 									openCreateEntryDialog("file");
 								}}
 								className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
-								title="New file"
+								title={t("workspaceEditor.newFile")}
 							>
 								<FilePlus className="h-3.5 w-3.5" />
 							</button>
@@ -1047,7 +1049,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 									openCreateEntryDialog("directory");
 								}}
 								className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
-								title="New folder"
+								title={t("workspaceEditor.newFolder")}
 							>
 								<FolderPlus className="h-3.5 w-3.5" />
 							</button>
@@ -1065,7 +1067,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 									onClick={handleRefreshWorkspace}
 									className="self-start rounded-md border border-white/10 px-3 py-1 text-neutral-200 transition-colors hover:bg-white/10"
 								>
-									Retry
+									{t("workspaceEditor.retry")}
 								</button>
 							</div>
 						) : (
@@ -1106,7 +1108,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 								onClick={handleRefreshWorkspace}
 								className="rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
 							>
-								Retry
+								{t("workspaceEditor.retry")}
 							</button>
 						</div>
 					) : (

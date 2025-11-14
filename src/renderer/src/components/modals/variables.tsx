@@ -1,3 +1,4 @@
+import { useTranslation } from "@renderer/translations/translationContext";
 import { getCurrentPort } from "@renderer/utils/getPort";
 import { useToast } from "@renderer/utils/useToast";
 import { motion } from "framer-motion";
@@ -9,6 +10,7 @@ interface Variable {
 }
 
 export default function VariablesModal({ onClose }: { onClose: () => void }) {
+	const { t } = useTranslation();
 	const [variables, setVariables] = useState<Variable>({});
 	const [loading, setLoading] = useState(true);
 	const [copied, setCopied] = useState<{ [key: string]: boolean }>({});
@@ -64,7 +66,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	// add a new key/value
 	const handleAddVariable = async () => {
 		if (!newKey.trim() || !newValue.trim()) {
-			showToast("error", "Key and value are required");
+			showToast("error", t("toastMessages.keyAndValueRequired"));
 			return;
 		}
 		setSaving(true);
@@ -78,17 +80,17 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 			if (!res.ok) {
 				const err = await res.json().catch(() => null);
 				throw new Error(
-					err?.error || res.statusText || "Failed to add variable",
+					err?.error || res.statusText || t("toastMessages.failedToAddVariable"),
 				);
 			}
-			showToast("success", "Variable added");
+			showToast("success", t("toastMessages.variableAdded"));
 			setNewKey("");
 			setNewValue("");
 			setNewVariableModalOpen(false);
 			await fetchVariables();
 		} catch (e) {
 			console.error(e);
-			showToast("error", "Failed to add variable");
+			showToast("error", t("toastMessages.failedToAddVariable"));
 		} finally {
 			setSaving(false);
 		}
@@ -104,12 +106,12 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 					method: "DELETE",
 				},
 			);
-			if (!res.ok) throw new Error("Failed to remove key");
-			showToast("success", "Variable removed");
+			if (!res.ok) throw new Error(t("toastMessages.failedToRemoveVariable"));
+			showToast("success", t("toastMessages.variableRemoved"));
 			await fetchVariables();
 		} catch (e) {
 			console.error(e);
-			showToast("error", "Failed to remove variable");
+			showToast("error", t("toastMessages.failedToRemoveVariable"));
 		}
 	};
 
@@ -123,12 +125,12 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 					method: "DELETE",
 				},
 			);
-			if (!res.ok) throw new Error("Failed to remove value");
-			showToast("success", "Value removed");
+			if (!res.ok) throw new Error(t("toastMessages.failedToRemoveValue"));
+			showToast("success", t("toastMessages.valueRemoved"));
 			await fetchVariables();
 		} catch (e) {
 			console.error(e);
-			showToast("error", "Failed to remove value");
+			showToast("error", t("toastMessages.failedToRemoveValue"));
 		}
 	};
 
@@ -152,7 +154,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 				value = variables;
 			}
 			await navigator.clipboard.writeText(JSON.stringify(value, null, 2));
-			showToast("success", "Copied to clipboard!");
+			showToast("success", t("toastMessages.copiedToClipboard"));
 			setCopied({ [key]: true });
 			setTimeout(() => setCopied({ [key]: false }), 1000);
 		} catch (error) {
@@ -234,7 +236,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 							<button
 								onClick={() => handleCopy(index + 1, path)}
 								className="opacity-0 group-hover:opacity-100 p-1 rounded text-neutral-400 hover:text-white transition-all flex-shrink-0"
-								title="Copy path"
+								title={t("variables.copyPath")}
 							>
 								{copied[index + 1] ? (
 									<Check className="w-3 h-3" />
@@ -282,7 +284,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 				<div className="flex items-center justify-between p-6 border-b border-white/10">
 					<div className="flex items-center gap-4">
 						<h2 className="text-xl font-semibold text-white">
-							Environment Variables
+							{t("variables.title")}
 						</h2>
 						<span className="text-sm text-neutral-400 bg-white/10 px-2 py-1 rounded-full">
 							{Object.keys(filteredVariables).length} variables
@@ -293,18 +295,19 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 						<div className="absolute inset-0 z-[2500] flex items-center justify-center bg-black/60">
 							<div className="bg-neutral-800 border border-white/10 rounded-lg p-4 max-w-lg w-full mx-4">
 								<p className="text-sm text-neutral-300 mb-3">
-									Are you sure you want to remove{" "}
+									{t("confirmDialogs.removeValue")}{" "}
 									{pendingRemove.value
-										? "this value"
-										: "the key and all its values"}{" "}
-									from <span className="font-mono">{pendingRemove.key}</span>?
+										? t("confirmDialogs.thisValue")
+										: t("confirmDialogs.keyAndAllValues")}{" "}
+									{t("confirmDialogs.from")}{" "}
+									<span className="font-mono">{pendingRemove.key}</span>?
 								</p>
 								<div className="flex justify-end gap-2">
 									<button
 										onClick={() => setPendingRemove(null)}
 										className="px-4 text-sm py-1 rounded-full bg-white/5"
 									>
-										Cancel
+										{t("common.cancel")}
 									</button>
 									<button
 										onClick={async () => {
@@ -318,7 +321,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 										}}
 										className="px-4 text-sm py-1 rounded-full bg-red-600/50 hover:bg-red-600/60 text-white"
 									>
-										Confirm
+										{t("variables.confirm")}
 									</button>
 								</div>
 							</div>
@@ -329,12 +332,12 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 							onClick={() => setNewVariableModalOpen(!newVariableModalOpen)}
 							className="w-full rounded-full bg-white/10 px-4 p-1 mr-2 flex justify-center items-center gap-2 hover:bg-white/20 cursor-pointer"
 						>
-							<span className="text-xs text-neutral-300">Add key</span>
+							<span className="text-xs text-neutral-300">{t("variables.addKey")}</span>
 						</button>
 						<button
 							onClick={() => handleCopy("general")}
 							className="p-1 hover:text-white rounded-lg transition-colors text-neutral-400"
-							title="Copy all to clipboard"
+							title={t("variables.copyAll")}
 						>
 							{copied["general"] ? (
 								<Check className="w-4 h-4" />
@@ -355,7 +358,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
 						<input
 							type="text"
-							placeholder="Search variables..."
+							placeholder={t("variables.searchPlaceholder")}
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
 							className="w-full bg-white/10 border border-white/5 text-white placeholder-neutral-400 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#BCB1E7] focus:border-[#BCB1E7]/50"
@@ -367,13 +370,13 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 						<div className="w-full mx-auto space-y-3">
 							<input
 								type="text"
-								placeholder="Key (e.g. MY_VAR)"
+								placeholder={t("variables.keyPlaceholder")}
 								value={newKey}
 								onChange={(e) => setNewKey(e.target.value)}
 								className="w-full bg-white/10 border border-white/10 text-white placeholder-neutral-400 px-3 py-2 rounded-lg focus:outline-none pointer-events-auto"
 							/>
 							<textarea
-								placeholder="Value"
+								placeholder={t("variables.valuePlaceholder")}
 								value={newValue}
 								onChange={(e) => setNewValue(e.target.value)}
 								className="w-full bg-white/10 border border-white/10 text-white placeholder-neutral-400 px-3 py-2 rounded-lg focus:outline-none h-24 resize-none pointer-events-auto"
@@ -383,14 +386,14 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 									onClick={() => setNewVariableModalOpen(false)}
 									className="px-4 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white text-sm disabled:opacity-60"
 								>
-									Cancel
+									{t("common.cancel")}
 								</button>
 								<button
 									onClick={handleAddVariable}
 									disabled={saving}
 									className="px-4 py-1 rounded-full bg-white hover:bg-white/80 text-black text-sm disabled:opacity-60"
 								>
-									{saving ? "Adding..." : "Add variable"}
+									{saving ? "Adding..." : t("variables.confirm")}
 								</button>
 							</div>
 						</div>
@@ -418,7 +421,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 											<button
 												onClick={() => handleCopy(key, value)}
 												className="p-1 rounded text-neutral-400 hover:text-white flex-shrink-0"
-												title="Copy full value"
+												title={t("variables.copyFullValue")}
 											>
 												{copied[key] ? (
 													<Check className="w-3 h-3" />
@@ -429,7 +432,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 											<button
 												onClick={() => setPendingRemove({ key })}
 												className="p-1 rounded text-red-400 hover:text-red-200 flex-shrink-0"
-												title="Delete key"
+												title={t("variables.deleteKey")}
 											>
 												<Trash className="w-3 h-3" />
 											</button>

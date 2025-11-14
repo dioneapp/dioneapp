@@ -2,25 +2,27 @@ import { getCurrentPort } from "@renderer/utils/getPort";
 import { TerminalNormalizer } from "@renderer/utils/terminal";
 import { useToast } from "@renderer/utils/useToast";
 import {
-	createContext,
-	useCallback,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Socket } from "socket.io-client";
+import { useTranslation } from "../../translations/translationContext";
 import { setupSocket } from "./scripts/setup-socket";
 import type {
-	DependencyDiagnosticsState,
-	ProgressState,
-	ScriptsContextType,
+    DependencyDiagnosticsState,
+    ProgressState,
+    ScriptsContextType,
 } from "./types/context-types";
 
 const AppContext = createContext<ScriptsContextType | undefined>(undefined);
 
 export function ScriptsContext({ children }: { children: React.ReactNode }) {
+	const { t } = useTranslation();
 	// socket ref
 	const [sockets, setSockets] = useState<
 		Record<string, { socket: Socket; isLocal?: boolean }>
@@ -146,7 +148,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				`http://localhost:${port}/scripts/installed`,
 			);
 			if (!installedResponse.ok) {
-				throw new Error("Failed to fetch installed apps");
+				throw new Error(t("runningApps.failedToFetchInstalledApps"));
 			}
 
 			const installedData = await installedResponse.json();
@@ -222,7 +224,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			);
 		} catch (error) {
 			console.error("Error in handleReloadQuickLaunch:", error);
-			showToast("error", "Failed to reload quick launch apps");
+			showToast("error", t("runningApps.failedToReloadQuickLaunch"));
 		}
 	};
 
@@ -476,7 +478,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		if (!pathname.includes("/install") && isServerRunning[data?.id]) {
 			showToast(
 				"default",
-				"There is an application running in the background.",
+				t("runningApps.thereIsAnAppRunningInBackground"),
 				"false",
 				true,
 				"Return",

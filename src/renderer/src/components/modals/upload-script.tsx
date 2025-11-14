@@ -33,7 +33,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 			const port = await getCurrentPort();
 
 			const response = await fetch(
-				`http://localhost:${port}/local/upload/${encodeURIComponent(scriptFile)}/${scriptName}/${scriptDescription || "File loaded locally"}`,
+				`http://localhost:${port}/local/upload/${encodeURIComponent(scriptFile)}/${scriptName}/${scriptDescription || t("uploadScript.fileLoadedLocally")}`,
 				{
 					method: "POST",
 				},

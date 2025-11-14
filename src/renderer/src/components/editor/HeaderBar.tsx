@@ -1,9 +1,10 @@
+import { useTranslation } from "@renderer/translations/translationContext";
 import {
-    ArrowLeft,
-    ExternalLink,
-    Loader2,
-    RefreshCcw,
-    Save,
+	ArrowLeft,
+	ExternalLink,
+	Loader2,
+	RefreshCcw,
+	Save,
 } from "lucide-react";
 import type { FileNode } from "./utils/types";
 
@@ -41,18 +42,20 @@ const HeaderBar = ({
 	onReloadFile,
 	onSaveFile,
 }: HeaderBarProps) => {
+	const { t } = useTranslation();
+
 	return (
 		<div className="flex w-full items-center gap-2 border-b border-white/10 bg-neutral-950/75 pt-12 pb-3 px-4 text-xs text-neutral-300 shadow-lg backdrop-blur">
 			<button type="button" onClick={onBack} className={baseButtonClass}>
 				<ArrowLeft className="h-3.5 w-3.5" />
-				<span>Back</span>
+				<span>{t("headerBar.back")}</span>
 			</button>
 			<button
 				type="button"
 				onClick={onOpenInExplorer}
 				disabled={!rootPath}
 				className={baseButtonClass}
-				title="Open in explorer"
+				title={t("headerBar.openInExplorer")}
 			>
 				<ExternalLink className="h-3.5 w-3.5" />
 			</button>
@@ -80,7 +83,7 @@ const HeaderBar = ({
 				) : (
 					<Save className="h-3.5 w-3.5" />
 				)}
-				<span>Save</span>
+				<span>{t("headerBar.save")}</span>
 			</button>
 		</div>
 	);
