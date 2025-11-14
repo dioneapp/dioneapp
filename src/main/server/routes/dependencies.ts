@@ -1,9 +1,9 @@
 import express from "express";
 import type { Server } from "socket.io";
 import {
-    inUseDependencies,
-    installDependency,
-    uninstallDependency,
+	inUseDependencies,
+	installDependency,
+	uninstallDependency,
 } from "../scripts/dependencies/dependencies";
 import { resolveScriptPaths } from "../scripts/utils/paths";
 import logger from "../utils/logger";

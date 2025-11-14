@@ -1,12 +1,12 @@
 import Editor, { loader } from "@monaco-editor/react";
 import { useTranslation } from "@renderer/translations/translationContext";
 import {
-    AlertCircle,
-    AlertTriangle,
-    GripVertical,
-    Info,
-    Lightbulb,
-    XCircle,
+	AlertCircle,
+	AlertTriangle,
+	GripVertical,
+	Info,
+	Lightbulb,
+	XCircle,
 } from "lucide-react";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -134,7 +134,9 @@ const MarkdownEditor = ({
 				style={{ width: `${editorWidth}%` }}
 			>
 				<div className="flex items-center border-b border-white/10 bg-neutral-950/80 px-3 py-1.5 shrink-0">
-					<span className="text-xs font-semibold text-neutral-300">{t("editor.editorLabel")}</span>
+					<span className="text-xs font-semibold text-neutral-300">
+						{t("editor.editorLabel")}
+					</span>
 				</div>
 				<div className="flex-1 overflow-hidden">
 					<Editor

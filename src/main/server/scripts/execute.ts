@@ -1,6 +1,6 @@
-import { app } from "electron";
 import fs from "node:fs";
 import path from "node:path";
+import { app } from "electron";
 import type { Server } from "socket.io";
 import { readConfig as userConfig } from "../../config";
 import logger from "../utils/logger";
@@ -15,34 +15,39 @@ async function readConfig(pathname: string) {
 	return JSON.parse(config);
 }
 
-
 async function patchNetworkAccess(configDir: string) {
 	try {
 		// Find all Python files in the directory
 		const files = await fs.promises.readdir(configDir, { recursive: true });
-		const pyFiles = files.filter((f) => f.toString().endsWith('.py'));
-		
+		const pyFiles = files.filter((f) => f.toString().endsWith(".py"));
+
 		for (const file of pyFiles) {
 			const filePath = path.join(configDir, file.toString());
-			
+
 			try {
-				let content = await fs.promises.readFile(filePath, 'utf8');
+				let content = await fs.promises.readFile(filePath, "utf8");
 				let modified = false;
-				
+
 				// pattern 1: demo.launch(server_name="127.0.0.1"
 				if (content.includes('server_name="127.0.0.1"')) {
-					content = content.replace(/server_name="127\.0\.0\.1"/g, 'server_name="0.0.0.0"');
+					content = content.replace(
+						/server_name="127\.0\.0\.1"/g,
+						'server_name="0.0.0.0"',
+					);
 					modified = true;
 				}
-				
+
 				// pattern 2: demo.launch(server_name='127.0.0.1'
 				if (content.includes("server_name='127.0.0.1'")) {
-					content = content.replace(/server_name='127\.0\.0\.1'/g, "server_name='0.0.0.0'");
+					content = content.replace(
+						/server_name='127\.0\.0\.1'/g,
+						"server_name='0.0.0.0'",
+					);
 					modified = true;
 				}
-				
+
 				if (modified) {
-					await fs.promises.writeFile(filePath, content, 'utf8');
+					await fs.promises.writeFile(filePath, content, "utf8");
 					logger.info(`Patched network access in: ${file}`);
 				}
 			} catch (error) {
@@ -50,7 +55,7 @@ async function patchNetworkAccess(configDir: string) {
 			}
 		}
 	} catch (error) {
-		logger.error('Error patching network access:', error);
+		logger.error("Error patching network access:", error);
 	}
 }
 export default async function executeInstallation(

@@ -1,8 +1,8 @@
+import fs from "node:fs";
+import path from "node:path";
 import { app } from "electron";
 import express from "express";
 import { fileTypeFromBuffer } from "file-type";
-import fs from "node:fs";
-import path from "node:path";
 import { readConfig } from "../../config";
 import logger from "../utils/logger";
 

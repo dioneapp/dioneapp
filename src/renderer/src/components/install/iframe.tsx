@@ -246,7 +246,6 @@ export default function IframeComponent({
 							{t("iframe.openFolder")}
 						</div>
 					</button>
-
 					<button
 						type="button"
 						onClick={() => setShowNetworkShareModal(true)}
@@ -257,7 +256,8 @@ export default function IframeComponent({
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 							{t("iframeActions.shareOnNetwork")}
 						</div>
-					</button>				</div>
+					</button>{" "}
+				</div>
 
 				<div className="flex gap-1 justify-start items-center flex-1">
 					{systemUsage.cpu !== undefined && (
@@ -354,8 +354,8 @@ export default function IframeComponent({
 			</motion.div>
 
 			{showNetworkShareModal && (
-				<NetworkShareModal 
-					onClose={() => setShowNetworkShareModal(false)} 
+				<NetworkShareModal
+					onClose={() => setShowNetworkShareModal(false)}
 					targetPort={currentPort}
 				/>
 			)}

@@ -516,17 +516,18 @@ export default function Install({
 			setDeleteStatus("deleting");
 			if (deleteDeps) {
 				setDeleteStatus("deleting_deps");
-				const result = await apiJson<{ success?: boolean; reasons?: string[]; error?: string }>(
-					"/deps/uninstall",
-					{
-						method: "POST",
-						headers: { "Content-Type": "application/json" },
-						body: JSON.stringify({
-							dioneFile: encodeURIComponent(data.name),
-							selectedDeps,
-						}),
-					},
-				);
+				const result = await apiJson<{
+					success?: boolean;
+					reasons?: string[];
+					error?: string;
+				}>("/deps/uninstall", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						dioneFile: encodeURIComponent(data.name),
+						selectedDeps,
+					}),
+				});
 				if (result.success) {
 					await uninstallApp();
 				} else {
@@ -564,12 +565,9 @@ export default function Install({
 	}
 
 	async function uninstallApp() {
-		const response = await apiFetch(
-			`/scripts/delete/${data.name}`,
-			{
-				method: "GET",
-			},
-		);
+		const response = await apiFetch(`/scripts/delete/${data.name}`, {
+			method: "GET",
+		});
 		if (response.status === 200) {
 			setDeleteStatus("deleted");
 			window.electron.ipcRenderer.invoke(
