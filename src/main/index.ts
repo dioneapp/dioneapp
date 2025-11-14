@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import os from "node:os";
+import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import {
 	BrowserWindow,
@@ -12,9 +15,6 @@ import {
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
-import fs from "node:fs";
-import os from "node:os";
-import path, { join } from "node:path";
 import si from "systeminformation";
 import macosIcon from "../../resources/icon.icns?asset";
 import icon from "../../resources/icon.ico?asset";
@@ -113,11 +113,11 @@ const updateBackendPortState = (
 	}
 };
 
-
-
 const buildWindowOpenHandler = (
 	_targetContents: Electron.WebContents | null | undefined,
-): ((details: Electron.HandlerDetails) => Electron.WindowOpenHandlerResponse) => {
+): ((
+	details: Electron.HandlerDetails,
+) => Electron.WindowOpenHandlerResponse) => {
 	return (details: Electron.HandlerDetails) => {
 		shell.openExternal(details.url);
 		return { action: "deny" };
@@ -296,7 +296,7 @@ function createWindow() {
 	app.on("web-contents-created", (_e, contents) => {
 		if (contents.getType() === "webview") {
 			contents.setWindowOpenHandler(buildWindowOpenHandler(contents));
-			
+
 			contents.session.on("will-download", (_event, item) => {
 				const fileName = item.getFilename() || "download";
 				const savePath = dialog.showSaveDialogSync(mainWindow, {
