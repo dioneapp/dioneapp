@@ -1,10 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import logger from "../utils/logger";
-import {
-    ensureAppsRootExists,
-    resolveScriptPaths,
-} from "./utils/paths";
+import { ensureAppsRootExists, resolveScriptPaths } from "./utils/paths";
 
 export default async function getAllScripts() {
 	let scriptsDir: string;

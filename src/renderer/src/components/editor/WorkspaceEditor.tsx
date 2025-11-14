@@ -153,7 +153,9 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				}
 				const payload = await apiFetch(
 					`/files/list/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
-				).then((res) => res.json() as Promise<{ entries: FileEntryResponse[] }>);
+				).then(
+					(res) => res.json() as Promise<{ entries: FileEntryResponse[] }>,
+				);
 				setWorkspaceError(null);
 				const expandedSet = new Set(expandedPathsRef.current);
 
@@ -220,13 +222,21 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				const status = error?.status ?? 0;
 				if (isRootPath) {
 					if (status === 404) {
-						setWorkspaceError(error?.message || t("errorMessages.workspaceNotFound"));
+						setWorkspaceError(
+							error?.message || t("errorMessages.workspaceNotFound"),
+						);
 					} else {
-						showToast("error", error?.message || t("errorMessages.failedToLoadWorkspace"));
+						showToast(
+							"error",
+							error?.message || t("errorMessages.failedToLoadWorkspace"),
+						);
 					}
 					setTree([]);
 				} else {
-					showToast("error", error?.message || t("errorMessages.failedToLoadDirectory"));
+					showToast(
+						"error",
+						error?.message || t("errorMessages.failedToLoadDirectory"),
+					);
 					setTree((prev) =>
 						updateTreeNode(prev, targetPath, (node) => ({
 							...node,
@@ -757,9 +767,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 							type: entryDialog.entryType,
 						}),
 					},
-				).then((res) =>
-					res.json() as Promise<{ entry: FileEntryResponse }>,
-				);
+				).then((res) => res.json() as Promise<{ entry: FileEntryResponse }>);
 				await loadDirectory(entryDialog.parentPath);
 				const createdPath = payload.entry.relativePath;
 				setExpandedPaths((prev) => {
@@ -795,11 +803,12 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ path: entryDialog.targetPath, name: trimmed }),
 				},
-			).then((res) =>
-				res.json() as Promise<{
-					entry: FileEntryResponse;
-					previousPath: string;
-				}>,
+			).then(
+				(res) =>
+					res.json() as Promise<{
+						entry: FileEntryResponse;
+						previousPath: string;
+					}>,
 			);
 			const newPath = payload.entry.relativePath;
 			const parentPath = getParentPath(newPath);

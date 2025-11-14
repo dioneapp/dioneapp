@@ -1,4 +1,7 @@
-import { languages, useTranslation } from "@renderer/translations/translationContext";
+import {
+	languages,
+	useTranslation,
+} from "@renderer/translations/translationContext";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";

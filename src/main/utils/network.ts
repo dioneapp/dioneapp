@@ -4,11 +4,11 @@ import logger from "../server/utils/logger";
 export function getLocalNetworkIP(): string | null {
 	try {
 		const nets = networkInterfaces();
-		
+
 		for (const name of Object.keys(nets)) {
 			const netInterface = nets[name];
 			if (!netInterface) continue;
-			
+
 			for (const net of netInterface) {
 				// Skip internal (localhost) and IPv6 addresses
 				const familyV4Value = typeof net.family === "string" ? "IPv4" : 4;
@@ -17,7 +17,7 @@ export function getLocalNetworkIP(): string | null {
 				}
 			}
 		}
-		
+
 		return null;
 	} catch (error) {
 		logger.error("Error getting local network IP:", error);
@@ -39,11 +39,11 @@ export function getAllNetworkAddresses(): Array<{
 			family: string;
 			internal: boolean;
 		}> = [];
-		
+
 		for (const name of Object.keys(nets)) {
 			const netInterface = nets[name];
 			if (!netInterface) continue;
-			
+
 			for (const net of netInterface) {
 				const familyV4Value = typeof net.family === "string" ? "IPv4" : 4;
 				if (net.family === familyV4Value) {
@@ -56,7 +56,7 @@ export function getAllNetworkAddresses(): Array<{
 				}
 			}
 		}
-		
+
 		return addresses;
 	} catch (error) {
 		logger.error("Error getting all network addresses:", error);

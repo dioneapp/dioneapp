@@ -113,16 +113,13 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 		if (!newConfig.language) return;
 		const config = await fetchConfig();
 		if (newConfig.language === config.language) return;
-		const response = await apiJson<Record<string, any>>(
-			"/config/update",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ ...config, ...newConfig }),
+		const response = await apiJson<Record<string, any>>("/config/update", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
 			},
-		);
+			body: JSON.stringify({ ...config, ...newConfig }),
+		});
 		setLanguage(response.language);
 		localStorage.setItem("language", response.language);
 	};

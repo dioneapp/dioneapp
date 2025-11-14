@@ -43,11 +43,10 @@ export default function Installed() {
 						appsToFetch.map((app) =>
 							apiJson<any[]>(
 								`/db/search/name/${encodeURIComponent(app.name)}`,
-							)
-								.then((data) => {
-									cachedData[app.name] = data;
-									allAppsData.push(...data);
-								}),
+							).then((data) => {
+								cachedData[app.name] = data;
+								allAppsData.push(...data);
+							}),
 						),
 					);
 

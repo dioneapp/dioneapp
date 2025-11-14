@@ -13,16 +13,13 @@ interface EventHeaders {
 
 async function sendEvent(headers: EventHeaders) {
 	try {
-		const data = await apiJson<{ id?: string; error?: string }>(
-			"/db/events",
-			{
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					...headers,
-				},
+		const data = await apiJson<{ id?: string; error?: string }>("/db/events", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				...headers,
 			},
-		);
+		});
 		if (data.id) {
 			console.log(`Event sent with ID: ${data.id}`);
 			return data;
