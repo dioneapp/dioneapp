@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import os from "node:os";
-import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import {
 	BrowserWindow,
@@ -15,6 +12,9 @@ import {
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
+import fs from "node:fs";
+import os from "node:os";
+import path, { join } from "node:path";
 import si from "systeminformation";
 import macosIcon from "../../resources/icon.icns?asset";
 import icon from "../../resources/icon.ico?asset";
@@ -111,6 +111,17 @@ const updateBackendPortState = (
 	if (options?.broadcast && mainWindow && !mainWindow.isDestroyed()) {
 		mainWindow.webContents.send("backend-port-changed", nextPort);
 	}
+};
+
+
+
+const buildWindowOpenHandler = (
+	_targetContents: Electron.WebContents | null | undefined,
+): ((details: Electron.HandlerDetails) => Electron.WindowOpenHandlerResponse) => {
+	return (details: Electron.HandlerDetails) => {
+		shell.openExternal(details.url);
+		return { action: "deny" };
+	};
 };
 
 // Creates the main application window with specific configurations.
@@ -284,9 +295,21 @@ function createWindow() {
 
 	app.on("web-contents-created", (_e, contents) => {
 		if (contents.getType() === "webview") {
-			contents.setWindowOpenHandler((details) => {
-				shell.openExternal(details.url);
-				return { action: "deny" };
+			contents.setWindowOpenHandler(buildWindowOpenHandler(contents));
+			
+			contents.session.on("will-download", (_event, item) => {
+				const fileName = item.getFilename() || "download";
+				const savePath = dialog.showSaveDialogSync(mainWindow, {
+					title: "Save File",
+					buttonLabel: "Save",
+					defaultPath: path.join(app.getPath("downloads"), fileName),
+				});
+
+				if (savePath) {
+					item.setSavePath(savePath);
+				} else {
+					item.cancel();
+				}
 			});
 		}
 	});
@@ -1101,10 +1124,9 @@ ipcMain.on("new-window", (_event, url) => {
 	previewWindow.maximize();
 	previewWindow.focus();
 
-	previewWindow.webContents.setWindowOpenHandler(({ url }) => {
-		shell.openExternal(url);
-		return { action: "deny" };
-	});
+	previewWindow.webContents.setWindowOpenHandler(
+		buildWindowOpenHandler(previewWindow.webContents),
+	);
 
 	previewWindow.on("close", () => {
 		console.log("Closing preview window...");
