@@ -1,14 +1,14 @@
 import { useTranslation } from "@renderer/translations/translationContext";
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiFetch } from "@renderer/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
 import {
-    type KeyboardEvent,
-    type MouseEvent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
+	type KeyboardEvent,
+	type MouseEvent,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
 } from "react";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import ContextMenu from "./ContextMenu";
@@ -17,27 +17,26 @@ import FileTree from "./FileTree";
 import HeaderBar from "./HeaderBar";
 import PreviewPane from "./PreviewPane";
 import {
-    mediaMimeMap,
-    previewableMediaExtensions,
-    unsupportedExtensions,
+	mediaMimeMap,
+	previewableMediaExtensions,
+	unsupportedExtensions,
 } from "./utils/constants";
 import type {
-    ContextMenuState,
-    EditorViewProps,
-    FileContentResponse,
-    FileEncoding,
-    FileEntryResponse,
-    FileNode,
+	ContextMenuState,
+	EditorViewProps,
+	FileContentResponse,
+	FileEncoding,
+	FileEntryResponse,
+	FileNode,
 } from "./utils/types";
 import {
-    findNodeByPath,
-    getExtensionKey,
-    getLanguageFromPath,
-    getParentPath,
-    isValidEntryNameClient,
-    normalizeRelativePath,
-    parseErrorResponse,
-    updateTreeNode,
+	findNodeByPath,
+	getExtensionKey,
+	getLanguageFromPath,
+	getParentPath,
+	isValidEntryNameClient,
+	normalizeRelativePath,
+	updateTreeNode,
 } from "./utils/utils";
 
 const initialContextMenuState: ContextMenuState = {
@@ -145,7 +144,6 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			}
 
 			try {
-				const port = await getCurrentPort();
 				const params = new URLSearchParams();
 				if (targetPath) {
 					params.set("dir", targetPath);
@@ -153,19 +151,9 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				if (data?.id) {
 					params.set("appId", data.id);
 				}
-				const response = await fetch(
-					`http://localhost:${port}/files/list/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
-				);
-				if (!response.ok) {
-					const info = await parseErrorResponse(response);
-					const error = new Error(info.message);
-					(error as any).status = info.status;
-					throw error;
-				}
-
-				const payload = (await response.json()) as {
-					entries: FileEntryResponse[];
-				};
+				const payload = await apiFetch(
+					`/files/list/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
+				).then((res) => res.json() as Promise<{ entries: FileEntryResponse[] }>);
 				setWorkspaceError(null);
 				const expandedSet = new Set(expandedPathsRef.current);
 
@@ -274,21 +262,13 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		resetState();
 
 		try {
-			const port = await getCurrentPort();
 			const params = new URLSearchParams();
 			if (data?.id) {
 				params.set("appId", data.id);
 			}
-			const response = await fetch(
-				`http://localhost:${port}/files/root/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
-			);
-			if (!response.ok) {
-				const info = await parseErrorResponse(response);
-				const error = new Error(info.message);
-				(error as any).status = info.status;
-				throw error;
-			}
-			const payload = (await response.json()) as { rootPath: string };
+			const payload = await apiFetch(
+				`/files/root/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
+			).then((res) => res.json() as Promise<{ rootPath: string }>);
 			setRootPath(payload.rootPath);
 			setTree([
 				{
@@ -409,21 +389,13 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			setFilePreviewUrl(null);
 
 			try {
-				const port = await getCurrentPort();
 				const params = new URLSearchParams({ file: node.relativePath });
 				if (data?.id) {
 					params.set("appId", data.id);
 				}
-				const response = await fetch(
-					`http://localhost:${port}/files/content/${encodeURIComponent(data.name)}?${params.toString()}`,
-				);
-				if (!response.ok) {
-					const info = await parseErrorResponse(response);
-					const error = new Error(info.message);
-					(error as any).status = info.status;
-					throw error;
-				}
-				const payload = (await response.json()) as FileContentResponse;
+				const payload = await apiFetch(
+					`/files/content/${encodeURIComponent(data.name)}?${params.toString()}`,
+				).then((res) => res.json() as Promise<FileContentResponse>);
 				if (payload.encoding === "base64") {
 					const extensionKey = getExtensionKey(node.name);
 					const fallbackMime = extensionKey
@@ -517,25 +489,18 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		}
 		setIsSaving(true);
 		try {
-			const port = await getCurrentPort();
 			const params = new URLSearchParams();
 			if (data?.id) {
 				params.set("appId", data.id);
 			}
-			const response = await fetch(
-				`http://localhost:${port}/files/save/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
+			await apiFetch(
+				`/files/save/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ file: selectedFile, content: fileContent }),
 				},
 			);
-			if (!response.ok) {
-				const info = await parseErrorResponse(response);
-				const error = new Error(info.message);
-				(error as any).status = info.status;
-				throw error;
-			}
 			setInitialContent(fileContent);
 			showToast("success", "File saved successfully");
 		} catch (error: any) {
@@ -636,21 +601,16 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			);
 			if (!confirmDelete) return;
 			try {
-				const port = await getCurrentPort();
 				const params = new URLSearchParams();
 				if (data?.id) params.set("appId", data.id);
-				const response = await fetch(
-					`http://localhost:${port}/files/delete/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
+				await apiFetch(
+					`/files/delete/${encodeURIComponent(data.name)}${params.toString() ? `?${params.toString()}` : ""}`,
 					{
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({ path: node.relativePath }),
 					},
 				);
-				if (!response.ok) {
-					const info = await parseErrorResponse(response);
-					throw new Error(info.message);
-				}
 				const parentPath = getParentPath(node.relativePath);
 				await loadDirectory(parentPath);
 				setExpandedPaths((prev) => {
@@ -780,15 +740,14 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 		const appId = data.id;
 
 		try {
-			const port = await getCurrentPort();
 			const params = new URLSearchParams();
 			if (appId) {
 				params.set("appId", appId);
 			}
 
 			if (entryDialog.mode === "create") {
-				const response = await fetch(
-					`http://localhost:${port}/files/create/${encodeURIComponent(workspaceName)}${params.toString() ? `?${params.toString()}` : ""}`,
+				const payload = await apiFetch(
+					`/files/create/${encodeURIComponent(workspaceName)}${params.toString() ? `?${params.toString()}` : ""}`,
 					{
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
@@ -798,14 +757,9 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 							type: entryDialog.entryType,
 						}),
 					},
+				).then((res) =>
+					res.json() as Promise<{ entry: FileEntryResponse }>,
 				);
-				if (!response.ok) {
-					const info = await parseErrorResponse(response);
-					const error = new Error(info.message);
-					(error as any).status = info.status;
-					throw error;
-				}
-				const payload = (await response.json()) as { entry: FileEntryResponse };
 				await loadDirectory(entryDialog.parentPath);
 				const createdPath = payload.entry.relativePath;
 				setExpandedPaths((prev) => {
@@ -834,24 +788,19 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				return;
 			}
 
-			const response = await fetch(
-				`http://localhost:${port}/files/rename/${encodeURIComponent(workspaceName)}${params.toString() ? `?${params.toString()}` : ""}`,
+			const payload = await apiFetch(
+				`/files/rename/${encodeURIComponent(workspaceName)}${params.toString() ? `?${params.toString()}` : ""}`,
 				{
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ path: entryDialog.targetPath, name: trimmed }),
 				},
+			).then((res) =>
+				res.json() as Promise<{
+					entry: FileEntryResponse;
+					previousPath: string;
+				}>,
 			);
-			if (!response.ok) {
-				const info = await parseErrorResponse(response);
-				const error = new Error(info.message);
-				(error as any).status = info.status;
-				throw error;
-			}
-			const payload = (await response.json()) as {
-				entry: FileEntryResponse;
-				previousPath: string;
-			};
 			const newPath = payload.entry.relativePath;
 			const parentPath = getParentPath(newPath);
 			await loadDirectory(parentPath);

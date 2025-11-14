@@ -1,4 +1,4 @@
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiFetch } from "@renderer/utils/api";
 import {
 	deleteExpiresAt,
 	deleteId,
@@ -53,8 +53,7 @@ export function AuthContextProvider({
 	}, []);
 
 	async function refreshSession(token: string) {
-		const port = await getCurrentPort();
-		const response = await fetch(`http://localhost:${port}/db/refresh-token`, {
+		const response = await apiFetch("/db/refresh-token", {
 			headers: {
 				api_key: import.meta.env.LOCAL_API_KEY || "",
 				accessToken: token,
@@ -75,8 +74,7 @@ export function AuthContextProvider({
 	}
 
 	async function fetchUser(id: string) {
-		const port = await getCurrentPort();
-		const response = await fetch(`http://localhost:${port}/db/user/${id}`, {
+		const response = await apiFetch(`/db/user/${id}`, {
 			headers: {
 				api_key: import.meta.env.LOCAL_API_KEY || "", // use this env variable to access the local API key
 			},

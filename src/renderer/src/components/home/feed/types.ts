@@ -12,4 +12,5 @@ export interface Script {
 	isLocal?: boolean;
 	official?: boolean;
 	version?: string;
+	order?: string;
 }

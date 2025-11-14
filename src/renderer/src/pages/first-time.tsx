@@ -5,7 +5,7 @@ import SelectPath from "@renderer/components/first-time/onboarding/select-path";
 import ExecuteSound from "@renderer/components/first-time/sounds/sound";
 import Icon from "@renderer/components/icons/icon";
 import Titlebar from "@renderer/components/layout/titlebar";
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiJson } from "@renderer/utils/api";
 import { openLink } from "@renderer/utils/openLink";
 import {
 	saveExpiresAt,
@@ -101,18 +101,13 @@ export default function FirstTime() {
 	useEffect(() => {
 		if (authToken && refreshToken) {
 			async function setSessionAPI(token: string, refreshToken: string) {
-				const port = await getCurrentPort();
-				const response = await fetch(
-					`http://localhost:${port}/db/set-session`,
-					{
-						headers: {
-							accessToken: token,
-							refreshToken: refreshToken,
-							api_key: import.meta.env.LOCAL_API_KEY || "",
-						},
+				const data = await apiJson<any>("/db/set-session", {
+					headers: {
+						accessToken: token,
+						refreshToken: refreshToken,
+						api_key: import.meta.env.LOCAL_API_KEY || "",
 					},
-				);
-				const data = await response.json();
+				});
 				if (data.session) {
 					window.electron.ipcRenderer.send("start-session", {
 						user: data.user,
@@ -138,13 +133,11 @@ export default function FirstTime() {
 	}, [authToken, refreshToken]);
 
 	async function getUser(id: string) {
-		const port = await getCurrentPort();
-		const response = await fetch(`http://localhost:${port}/db/user/${id}`, {
+		const data = await apiJson<any>(`/db/user/${id}`, {
 			headers: {
 				api_key: import.meta.env.LOCAL_API_KEY || "",
 			},
 		});
-		const data = await response.json();
 		setUser(data[0]);
 		await saveId(data[0].id);
 	}
@@ -211,7 +204,7 @@ export default function FirstTime() {
 											duration: 0.5,
 											ease: "easeOut",
 										}}
-										className="bg-clip-text text-transparent bg-gradient-to-t from-white/80 via-[#BCB1E7] to-[#BCB1E7] inline-block"
+										className="bg-clip-text text-transparent bg-linear-to-t from-white/80 via-[#BCB1E7] to-[#BCB1E7] inline-block"
 									>
 										{char}
 									</motion.span>
@@ -245,7 +238,7 @@ export default function FirstTime() {
 										repeat: Number.POSITIVE_INFINITY,
 										repeatDelay: 1.5,
 									}}
-									className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+									className="absolute inset-0 bg-linear-to-r from-transparent via-white/20 to-transparent"
 								/>
 								<span className="relative z-10">
 									{t("firstTime.welcome.login")}

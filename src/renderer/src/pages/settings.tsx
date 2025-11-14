@@ -2,7 +2,7 @@ import { useAuthContext } from "@renderer/components/contexts/AuthContext";
 import { useScriptsContext } from "@renderer/components/contexts/ScriptsContext";
 import VariablesModal from "@renderer/components/modals/variables";
 import AnimatedCount from "@renderer/utils/animate-count";
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiFetch, apiJson, getBackendPort } from "@renderer/utils/api";
 import { joinPath } from "@renderer/utils/path";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Folder, Trash2 } from "lucide-react";
@@ -162,7 +162,7 @@ export default function Settings() {
 
 	useEffect(() => {
 		const fetchPort = async () => {
-			const currentPort = await getCurrentPort();
+			const currentPort = await getBackendPort();
 			setPort(currentPort);
 		};
 		fetchPort();
@@ -177,10 +177,8 @@ export default function Settings() {
 	}, []);
 
 	useEffect(() => {
-		if (port) {
-			fetchConfig();
-		}
-	}, [port]);
+		fetchConfig();
+	}, []);
 
 	useEffect(() => {
 		fetchCacheSize();
@@ -197,29 +195,26 @@ export default function Settings() {
 	}
 
 	async function fetchConfig() {
-		if (port) {
-			fetch(`http://localhost:${port}/config`)
-				.then((res) => res.json())
-				.then((data) => setConfig(data))
-				.catch((err) => console.error("Failed to load config:", err));
+		try {
+			const data = await apiJson<any>("/config");
+			setConfig(data);
+		} catch (err) {
+			console.error("Failed to load config:", err);
 		}
 	}
 
 	// handle to update config
 	const handleUpdate = async (newConfig: Partial<any>) => {
-		if (!port || !config) return;
+		if (!config) return;
 		console.log("new config:", JSON.stringify({ ...config, ...newConfig }));
 		try {
-			const response = await fetch(`http://localhost:${port}/config/update`, {
+			const updatedConfig = await apiJson<any>("/config/update", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({ ...config, ...newConfig }),
 			});
-
-			if (!response.ok) throw new Error("Failed to update config");
-			const updatedConfig = await response.json();
 
 			// update language in translation context if language changed
 			if (newConfig.language && newConfig.language !== config.language) {
@@ -308,7 +303,7 @@ export default function Settings() {
 
 	async function handleResetSettings() {
 		localStorage.clear();
-		await fetch(`http://localhost:${port}/config/delete`, {
+		await apiFetch("/config/delete", {
 			method: "POST",
 		});
 		await window.electron.ipcRenderer.invoke("check-first-launch");

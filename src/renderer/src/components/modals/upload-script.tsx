@@ -1,4 +1,4 @@
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiFetch } from "@renderer/utils/api";
 import { FileText, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
@@ -30,10 +30,10 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 		setError(null);
 
 		try {
-			const port = await getCurrentPort();
-
-			const response = await fetch(
-				`http://localhost:${port}/local/upload/${encodeURIComponent(scriptFile)}/${scriptName}/${scriptDescription || t("uploadScript.fileLoadedLocally")}`,
+			const response = await apiFetch(
+				`/local/upload/${encodeURIComponent(scriptFile)}/${encodeURIComponent(scriptName)}/${encodeURIComponent(
+					scriptDescription || t("uploadScript.fileLoadedLocally"),
+				)}`,
 				{
 					method: "POST",
 				},

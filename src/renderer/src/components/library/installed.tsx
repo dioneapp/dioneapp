@@ -1,4 +1,4 @@
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiJson } from "@renderer/utils/api";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "../../translations/translationContext";
@@ -24,7 +24,6 @@ export default function Installed() {
 			setApps([]);
 
 			try {
-				const port = await getCurrentPort();
 				const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
 
 				const normalizeName = (name: string) =>
@@ -42,10 +41,9 @@ export default function Installed() {
 
 					await Promise.all(
 						appsToFetch.map((app) =>
-							fetch(
-								`http://localhost:${port}/db/search/name/${encodeURIComponent(app.name)}`,
+							apiJson<any[]>(
+								`/db/search/name/${encodeURIComponent(app.name)}`,
 							)
-								.then((res) => (res.ok ? res.json() : []))
 								.then((data) => {
 									cachedData[app.name] = data;
 									allAppsData.push(...data);
@@ -54,6 +52,7 @@ export default function Installed() {
 					);
 
 					setApps(allAppsData);
+					localStorage.setItem(CACHE_KEY, JSON.stringify(cachedData));
 				}
 			} catch (error) {
 				console.error("Error loading apps:", error);

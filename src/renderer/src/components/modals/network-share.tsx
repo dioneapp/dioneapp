@@ -1,8 +1,8 @@
+import { getBackendPort } from "@renderer/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
-import { getCurrentPort } from "../../utils/getPort";
 
 interface NetworkShareModalProps {
 	onClose: () => void;
@@ -38,7 +38,7 @@ export default function NetworkShareModal({ onClose, targetPort }: NetworkShareM
 		try {
 			setError(null);
 
-			const currentPort = targetPort || await getCurrentPort();
+			const currentPort = targetPort || (await getBackendPort());
 			setPort(currentPort);
 
 			const networkInfo = await window.electron.ipcRenderer.invoke(
