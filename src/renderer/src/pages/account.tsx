@@ -4,7 +4,7 @@ import { Calendar, Clock, Flame, LogOut, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../components/contexts/AuthContext";
 import { useTranslation } from "../translations/translationContext";
-import { getCurrentPort } from "../utils/getPort";
+import { apiFetch } from "../utils/api";
 
 export default function Account() {
 	const { t } = useTranslation();
@@ -17,10 +17,8 @@ export default function Account() {
 
 	useEffect(() => {
 		async function getData() {
-			const port = await getCurrentPort();
 			if (!user) return;
-			const response = await fetch(`http://localhost:${port}/db/events`, {
-				method: "GET",
+			const response = await apiFetch("/db/events", {
 				headers: {
 					user: user.id,
 				},
@@ -36,7 +34,7 @@ export default function Account() {
 			}
 		}
 		getData();
-	}, []);
+	}, [user]);
 
 	function getHoursInApp(data: any) {
 		if (!data?.sessions?.length) {

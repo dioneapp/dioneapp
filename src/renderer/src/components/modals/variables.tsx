@@ -1,5 +1,5 @@
 import { useTranslation } from "@renderer/translations/translationContext";
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiFetch, apiJson } from "@renderer/utils/api";
 import { useToast } from "@renderer/utils/useToast";
 import { motion } from "framer-motion";
 import { Check, Copy, Search, Trash, X } from "lucide-react";
@@ -48,9 +48,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	const fetchVariables = async () => {
 		setLoading(true);
 		try {
-			const port = await getCurrentPort();
-			const response = await fetch(`http://localhost:${port}/variables`);
-			const data = await response.json();
+			const data = await apiJson<Variable>("/variables");
 			setVariables(data);
 		} catch (error) {
 			console.error("Failed to fetch variables:", error);
@@ -71,8 +69,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 		}
 		setSaving(true);
 		try {
-			const port = await getCurrentPort();
-			const res = await fetch(`http://localhost:${port}/variables`, {
+			const res = await apiFetch("/variables", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ key: newKey, value: newValue }),
@@ -99,13 +96,9 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	// remove whole key
 	const handleRemoveKey = async (key: string) => {
 		try {
-			const port = await getCurrentPort();
-			const res = await fetch(
-				`http://localhost:${port}/variables/${encodeURIComponent(key)}`,
-				{
+				const res = await apiFetch(`/variables/${encodeURIComponent(key)}`, {
 					method: "DELETE",
-				},
-			);
+				});
 			if (!res.ok) throw new Error(t("toastMessages.failedToRemoveVariable"));
 			showToast("success", t("toastMessages.variableRemoved"));
 			await fetchVariables();
@@ -118,13 +111,12 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	// remove a specific value from a key (used for PATH components)
 	const handleRemoveValue = async (key: string, value: any) => {
 		try {
-			const port = await getCurrentPort();
-			const res = await fetch(
-				`http://localhost:${port}/variables/${encodeURIComponent(key)}/${encodeURIComponent(value)}`,
-				{
-					method: "DELETE",
-				},
-			);
+				const res = await apiFetch(
+					`/variables/${encodeURIComponent(key)}/${encodeURIComponent(value)}`,
+					{
+						method: "DELETE",
+					},
+				);
 			if (!res.ok) throw new Error(t("toastMessages.failedToRemoveValue"));
 			showToast("success", t("toastMessages.valueRemoved"));
 			await fetchVariables();
@@ -227,7 +219,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 				<div className="space-y-1">
 					{paths.map((path, index) => (
 						<div key={index} className="flex items-center gap-2 group">
-							<span className="text-neutral-500 text-xs w-6 flex-shrink-0">
+							<span className="text-neutral-500 text-xs w-6 shrink-0">
 								{index + 1}.
 							</span>
 							<code className="flex-1 text-sm bg-white/5 px-2 py-1 rounded border border-white/10 break-all">
@@ -235,7 +227,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 							</code>
 							<button
 								onClick={() => handleCopy(index + 1, path)}
-								className="opacity-0 group-hover:opacity-100 p-1 rounded text-neutral-400 hover:text-white transition-all flex-shrink-0"
+								className="opacity-0 group-hover:opacity-100 p-1 rounded text-neutral-400 hover:text-white transition-all shrink-0"
 								title={t("variables.copyPath")}
 							>
 								{copied[index + 1] ? (
@@ -264,7 +256,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	return (
 		<motion.div
 			id="modal"
-			className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-sm flex items-center p-4 justify-center overflow-hidden"
+			className="fixed inset-0 z-2000 bg-black/80 backdrop-blur-sm flex items-center p-4 justify-center overflow-hidden"
 			style={{
 				isolation: "isolate",
 				willChange: "backdrop-filter",
@@ -292,7 +284,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 					</div>
 					{/* remove alert */}
 					{pendingRemove && (
-						<div className="absolute inset-0 z-[2500] flex items-center justify-center bg-black/60">
+						<div className="absolute inset-0 z-2500 flex items-center justify-center bg-black/60">
 							<div className="bg-neutral-800 border border-white/10 rounded-lg p-4 max-w-lg w-full mx-4">
 								<p className="text-sm text-neutral-300 mb-3">
 									{t("confirmDialogs.removeValue")}{" "}
@@ -420,7 +412,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 										<div className="flex items-center gap-2">
 											<button
 												onClick={() => handleCopy(key, value)}
-												className="p-1 rounded text-neutral-400 hover:text-white flex-shrink-0"
+												className="p-1 rounded text-neutral-400 hover:text-white shrink-0"
 												title={t("variables.copyFullValue")}
 											>
 												{copied[key] ? (
@@ -431,7 +423,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 											</button>
 											<button
 												onClick={() => setPendingRemove({ key })}
-												className="p-1 rounded text-red-400 hover:text-red-200 flex-shrink-0"
+												className="p-1 rounded text-red-400 hover:text-red-200 shrink-0"
 												title={t("variables.deleteKey")}
 											>
 												<Trash className="w-3 h-3" />
@@ -446,7 +438,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 														key={index}
 														className="flex items-center gap-2 group"
 													>
-														<span className="text-neutral-500 text-xs w-6 flex-shrink-0">
+														<span className="text-neutral-500 text-xs w-6 shrink-0">
 															{index + 1}.
 														</span>
 														<>

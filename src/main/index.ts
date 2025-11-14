@@ -1,14 +1,14 @@
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import {
-    BrowserWindow,
-    Notification,
-    Tray,
-    app,
-    dialog,
-    globalShortcut,
-    ipcMain,
-    session,
-    shell,
+	BrowserWindow,
+	Notification,
+	Tray,
+	app,
+	dialog,
+	globalShortcut,
+	ipcMain,
+	session,
+	shell,
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
@@ -21,31 +21,30 @@ import icon from "../../resources/icon.ico?asset";
 import linuxIcon from "../../resources/icon.png?asset";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
 import {
-    destroyPresence,
-    initializeDiscordPresence,
-    updatePresence,
+	destroyPresence,
+	initializeDiscordPresence,
+	updatePresence,
 } from "./discord/presence";
 import {
-    deleteExpiresAt,
-    deleteId,
-    deleteToken,
-    getExpiresAt,
-    getId,
-    getToken,
-    saveExpiresAt,
-    saveId,
-    saveToken,
+	deleteExpiresAt,
+	deleteId,
+	deleteToken,
+	getExpiresAt,
+	getId,
+	getToken,
+	saveExpiresAt,
+	saveId,
+	saveToken,
 } from "./security/secure-tokens";
 import { initDefaultEnv } from "./server/scripts/dependencies/environment";
 import { start as startServer, stop as stopServer } from "./server/server";
-import { getCurrentPort } from "./server/utils/getPort";
 import logger, { getLogs } from "./server/utils/logger";
 import { getLocalNetworkIP } from "./utils/network";
 import {
-    getCurrentTunnel,
-    isTunnelActive,
-    startLocaltunnel,
-    stopTunnel,
+	getCurrentTunnel,
+	isTunnelActive,
+	startLocaltunnel,
+	stopTunnel,
 } from "./utils/tunnel";
 
 // remove so we can register each time as we run the app.
@@ -103,6 +102,13 @@ if (process.env.NODE_ENV === "development" && process.platform === "win32") {
 let mainWindow: BrowserWindow;
 let port: number;
 let sessionId: string;
+
+const updateBackendPortState = (nextPort: number, options?: { broadcast?: boolean }) => {
+	process.env.DIONE_BACKEND_PORT = String(nextPort);
+	if (options?.broadcast && mainWindow && !mainWindow.isDestroyed()) {
+		mainWindow.webContents.send("backend-port-changed", nextPort);
+	}
+};
 
 // Creates the main application window with specific configurations.
 function createWindow() {
@@ -481,6 +487,7 @@ app.whenReady().then(async () => {
 
 	// start backend
 	port = await startServer();
+	updateBackendPortState(port);
 
 	// create window
 	await createWindow();
@@ -726,12 +733,6 @@ app.whenReady().then(async () => {
 		await shell.openPath(path);
 	});
 
-	// Retrieve the current port
-	ipcMain.handle("get-current-port", async () => {
-		const port = await getCurrentPort();
-		return port;
-	});
-
 	// Open external links
 	ipcMain.handle("open-external-link", (_event, url) => {
 		shell.openExternal(url);
@@ -860,32 +861,32 @@ app.whenReady().then(async () => {
 	});
 
 	// Get network address for sharing
-	ipcMain.handle("get-network-address", async (_event, port?: number) => {
+	ipcMain.handle("get-network-address", async (_event, requestedPort?: number) => {
 		const networkIP = getLocalNetworkIP();
-		const currentPort = port || getCurrentPort();
-		
-		if (!networkIP || !currentPort) {
+		const resolvedPort = requestedPort ?? port;
+
+		if (!networkIP || !resolvedPort) {
 			return null;
 		}
-		
+
 		return {
 			ip: networkIP,
-			port: currentPort,
-			url: `http://${networkIP}:${currentPort}`,
+			port: resolvedPort,
+			url: `http://${networkIP}:${resolvedPort}`,
 		};
 	});
 
 	// Start tunnel (Localtunnel)
-	ipcMain.handle("start-tunnel", async (_event, type: "localtunnel", port?: number) => {
+	ipcMain.handle("start-tunnel", async (_event, type: "localtunnel", requestedPort?: number) => {
 		try {
-			const currentPort = port || getCurrentPort();
-			if (!currentPort) {
+			const resolvedPort = requestedPort ?? port;
+			if (!resolvedPort) {
 				throw new Error("Server port not available");
 			}
 
 			logger.info(`Starting ${type} tunnel...`);
 
-			const tunnelInfo = await startLocaltunnel(currentPort);
+			const tunnelInfo = await startLocaltunnel(resolvedPort);
 
 			logger.info(`Tunnel started: ${tunnelInfo.url}`);
 			return tunnelInfo;
@@ -1002,11 +1003,8 @@ app.whenReady().then(async () => {
 					setTimeout(reject, 10000, new Error("Server stop timeout")),
 				),
 			]);
-			const port = await startServer();
-			// refresh environment variables
-			// if (os.platform() === "win32") {
-			// 	refreshPathFromSystem();
-			// }
+			port = await startServer();
+			updateBackendPortState(port, { broadcast: true });
 			logger.info(`Backend restarted successfully on port ${port}`);
 			return port;
 		} catch (error) {

@@ -1,5 +1,5 @@
 import GeneratedIcon from "@renderer/components/icons/generated-icon";
-import { getCurrentPort } from "@renderer/utils/getPort";
+import { apiJson } from "@renderer/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, Clock, Library, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -65,11 +65,13 @@ export default function Sidebar() {
 		if (cachedConfig) setConfig(JSON.parse(cachedConfig));
 
 		const fetchConfig = async () => {
-			const port = await getCurrentPort();
-			const res = await fetch(`http://localhost:${port}/config`);
-			const data = await res.json();
-			setConfig(data);
-			localStorage.setItem("config", JSON.stringify(data));
+			try {
+				const data = await apiJson<any>("/config");
+				setConfig(data);
+				localStorage.setItem("config", JSON.stringify(data));
+			} catch (error) {
+				console.error("Failed to load config: ", error);
+			}
 		};
 		fetchConfig();
 	}, []);

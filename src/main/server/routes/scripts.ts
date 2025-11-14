@@ -1,14 +1,12 @@
-import path from "node:path";
-import { app } from "electron";
 import express from "express";
 import type { Server } from "socket.io";
-import { readConfig } from "../../config";
 import { deleteScript } from "../scripts/delete";
 import { readDioneConfig } from "../scripts/dependencies/dependencies";
 import { getScripts } from "../scripts/download";
 import { executeStartup } from "../scripts/execute";
 import getAllScripts, { getInstalledScript } from "../scripts/installed";
 import { stopActiveProcess } from "../scripts/process";
+import { resolveScriptPaths } from "../scripts/utils/paths";
 import logger from "../utils/logger";
 
 const activeStarts = new Map<string, boolean>();
@@ -60,10 +58,9 @@ export function createScriptRouter(io: Server) {
 	// delete a script by name
 	router.get("/delete/:name", async (req, res) => {
 		const { name } = req.params;
-		const sanitizedName = name.replace(/\s+/g, "-");
 
 		try {
-			const response = await deleteScript(sanitizedName, res);
+			const response = await deleteScript(name, res);
 			return response;
 		} catch (error: any) {
 			logger.error(
@@ -75,16 +72,7 @@ export function createScriptRouter(io: Server) {
 	// stop a script by name
 	router.get("/stop/:name/:id/:port", async (req, res) => {
 		const { name, id, port } = req.params;
-		const sanitizedName = name.replace(/\s+/g, "-");
-		const root = app.isPackaged
-			? path.join(path.dirname(app.getPath("exe")))
-			: path.join(process.cwd());
-		const config = readConfig();
-		const workingDir = path.join(
-			config?.defaultInstallFolder || root,
-			"apps",
-			sanitizedName,
-		);
+		const { sanitizedName, workingDir } = resolveScriptPaths(name);
 		logger.info(`Stopping script '${sanitizedName}' on '${workingDir}'`);
 		try {
 			const success = await stopActiveProcess(io, id, port);
@@ -101,18 +89,11 @@ export function createScriptRouter(io: Server) {
 		}
 	});
 	// start a script by name
-	router.post("/start/:name/:id", express.json(), async (req, res) => {
+	router.post("/start/:name/:id", async (req, res) => {
 		const { name, id } = req.params;
 		const { replaceCommands } = req.body;
 		const selectedStart = decodeURIComponent((req.query.start as string) || "");
-		const sanitizedName = name.replace(/\s+/g, "-");
-		const root = process.cwd();
-		const config = readConfig();
-		const workingDir = path.join(
-			config?.defaultInstallFolder || root,
-			"apps",
-			sanitizedName,
-		);
+		const { sanitizedName, workingDir } = resolveScriptPaths(name);
 		const key = `${sanitizedName}:${id}`;
 
 		// if already starting, ignore duplicate request
@@ -154,18 +135,9 @@ export function createScriptRouter(io: Server) {
 	// get script start options
 	router.get("/start-options/:name", async (req, res) => {
 		const name = decodeURIComponent(req.params.name);
-		const sanitizedName = name.replace(/\s+/g, "-");
-		const root = process.cwd();
-		const config = readConfig();
-		const workingDir = path.join(
-			config?.defaultInstallFolder || root,
-			"apps",
-			sanitizedName,
-		);
+		const { dioneFile } = resolveScriptPaths(name);
 
 		try {
-			// read dione file
-			const dioneFile = path.join(workingDir, "dione.json");
 			const options = await readDioneConfig(dioneFile);
 
 			if (!options.start || !Array.isArray(options.start)) {
