@@ -7,6 +7,7 @@ import "monaco-editor/esm/vs/language/html/monaco.contribution";
 import "monaco-editor/esm/vs/language/json/monaco.contribution";
 import "monaco-editor/esm/vs/language/typescript/monaco.contribution";
 // import "monaco-editor/min/vs/editor/editor.main.css";
+import { useTranslation } from "@renderer/translations/translationContext";
 import MarkdownEditor from "./MarkdownEditor";
 import type { FileEncoding, FileNode } from "./utils/types";
 
@@ -93,6 +94,8 @@ const PreviewPane = ({
 	onReloadFile,
 	onContentChange,
 }: PreviewPaneProps) => {
+	const { t } = useTranslation();
+	
 	// Check if this is a markdown file
 	const isMarkdownFile =
 		selectedFileNode &&
@@ -103,7 +106,7 @@ const PreviewPane = ({
 		return (
 			<div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-neutral-300">
 				<Folder className="h-8 w-8 text-neutral-500" />
-				<span>Select a file to start editing</span>
+				<span>{t("editor.selectFile")}</span>
 			</div>
 		);
 	}
@@ -112,7 +115,7 @@ const PreviewPane = ({
 		if (!fileMimeType || !filePreviewUrl) {
 			return (
 				<div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-neutral-300">
-					<span>Preview not available for this file.</span>
+					<span>{t("editor.previewNotAvailable")}</span>
 				</div>
 			);
 		}
@@ -134,7 +137,7 @@ const PreviewPane = ({
 				<div className="flex h-full items-center justify-center bg-neutral-950">
 					{/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
 					<audio controls src={filePreviewUrl} className="w-full max-w-xl">
-						Your browser does not support the audio element.
+						{t("browserCompatibility.audioNotSupported")}
 					</audio>
 				</div>
 			);
@@ -145,7 +148,7 @@ const PreviewPane = ({
 				<div className="flex h-full items-center justify-center bg-black">
 					{/* biome-ignore lint/a11y/useMediaCaption: <explanation> */}
 					<video src={filePreviewUrl} controls className="max-h-full w-full">
-						Your browser does not support the video element.
+						{t("browserCompatibility.videoNotSupported")}
 					</video>
 				</div>
 			);
@@ -153,7 +156,7 @@ const PreviewPane = ({
 
 		return (
 			<div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-neutral-300">
-				<span>Preview for this media type is not supported yet.</span>
+				<span>{t("editor.mediaNotSupported")}</span>
 				<span className="text-xs text-neutral-500">{fileMimeType}</span>
 			</div>
 		);
@@ -171,12 +174,12 @@ const PreviewPane = ({
 							className="rounded-md bg-neutral-800 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-400 whitespace-nowrap"
 							title={fileMimeType ?? undefined}
 						>
-							Preview only
+							{t("editor.previewOnly")}
 						</span>
 					)}
 					{isDirty && (
 						<span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300 whitespace-nowrap">
-							Unsaved
+							{t("editor.unsaved")}
 						</span>
 					)}
 				</div>
@@ -195,7 +198,7 @@ const PreviewPane = ({
 							className="flex items-center gap-2 rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
 						>
 							<RefreshCcw className="h-3.5 w-3.5" />
-							<span>Retry</span>
+							<span>{t("editor.retry")}</span>
 						</button>
 					</div>
 				) : fileEncoding === "base64" ? (

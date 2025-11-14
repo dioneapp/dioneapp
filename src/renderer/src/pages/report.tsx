@@ -74,19 +74,19 @@ export default function ReportPage() {
 								<span className="ml-2">{window.electron.process.platform}</span>
 							</div>
 							<div>
-								<span className="text-neutral-400">Node:</span>
+								<span className="text-neutral-400">{t("settingsFooter.node")}</span>
 								<span className="ml-2">
 									{window.electron.process.versions.node}
 								</span>
 							</div>
 							<div>
-								<span className="text-neutral-400">Electron:</span>
+								<span className="text-neutral-400">{t("settingsFooter.electron")}</span>
 								<span className="ml-2">
 									{window.electron.process.versions.electron}
 								</span>
 							</div>
 							<div>
-								<span className="text-neutral-400">Chrome:</span>
+								<span className="text-neutral-400">{t("settingsFooter.chromium")}</span>
 								<span className="ml-2">
 									{window.electron.process.versions.chrome}
 								</span>

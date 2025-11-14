@@ -1,3 +1,5 @@
+import { useTranslation } from "@renderer/translations/translationContext";
+
 export default function CustomCommandsModal({
 	commands,
 	onEdit,
@@ -9,13 +11,15 @@ export default function CustomCommandsModal({
 	onLaunch: () => void;
 	onCancel: () => void;
 }) {
+	const { t } = useTranslation();
+
 	return (
 		<div className="absolute inset-0 w-full h-full z-50 backdrop-blur-sm bg-[#080808]">
 			<div className="w-full h-full flex justify-center items-center">
 				<div className="relative max-w-xl w-full border border-white/10 rounded-xl bg-[#080808] flex flex-col gap-4">
 					<div className="p-6 flex flex-col gap-2 relative z-10">
 						<h2 className="text-lg font-semibold text-white">
-							Launch with custom parameters
+							{t("customCommands.title")}
 						</h2>
 						<ul className="w-full rounded text-sm text-neutral-300 font-mono flex flex-col gap-2 max-h-64 overflow-y-auto">
 							{Object.entries(commands).map(([oldCommand, newCommand]) => (
@@ -36,13 +40,13 @@ export default function CustomCommandsModal({
 								onClick={onCancel}
 								className="cursor-pointer bg-white/10 hover:bg-white/20 text-neutral-200 font-medium rounded-full p-1 px-4 text-sm"
 							>
-								Cancel
+								{t("common.cancel")}
 							</button>
 							<button
 								onClick={onLaunch}
 								className="cursor-pointer bg-white hover:bg-white/80 text-black font-semibold rounded-full p-1 px-4 text-sm"
 							>
-								Launch
+								{t("customCommands.launch")}
 							</button>
 						</div>
 					</div>

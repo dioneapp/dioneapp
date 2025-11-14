@@ -235,19 +235,19 @@ export default function Settings() {
 				<toast launch="dione://action=navigate&amp;contentId=351" activationType="protocol">
 					<visual>
 						<binding template="ToastGeneric">
-							<text>Notifications enabled</text>
-							<text>You will receive notifications for important events.</text>
+							<text>${t("notifications.enabled.title")}</text>
+							<text>${t("notifications.enabled.description")}</text>
 						</binding>
 					</visual>
 					<actions>
-						<action content="Learn more" activationType="protocol" arguments="https://getdione.app/docs" />
+						<action content="${t("notifications.learnMore")}" activationType="protocol" arguments="https://getdione.app/docs" />
 					</actions>
 				</toast>
 				`;
 				window.electron.ipcRenderer.invoke(
 					"notify",
-					"Notifications enabled",
-					"You will receive notifications for important events.",
+					t("notifications.enabled.title"),
+					t("notifications.enabled.description"),
 					xml as string,
 				);
 			}
@@ -938,7 +938,7 @@ export default function Settings() {
 											v{packVersion || "0.0.0"}
 										</button>
 										<p>
-											Port{" "}
+											{t("settingsFooter.port")}{" "}
 											<button
 												type="button"
 												onClick={() => openLink(`http://localhost:${port}`)}
