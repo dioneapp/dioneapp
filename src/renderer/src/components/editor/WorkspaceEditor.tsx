@@ -1,15 +1,7 @@
 import { useTranslation } from "@renderer/translations/translationContext";
 import { apiFetch } from "@renderer/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
-import {
-	type KeyboardEvent,
-	type MouseEvent,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import AI from "../ai/ai";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import ContextMenu from "./ContextMenu";
 import EntryNameDialog from "./EntryNameDialog";
@@ -17,27 +9,28 @@ import FileTree from "./FileTree";
 import HeaderBar from "./HeaderBar";
 import PreviewPane from "./PreviewPane";
 import {
-	mediaMimeMap,
-	previewableMediaExtensions,
-	unsupportedExtensions,
+    mediaMimeMap,
+    previewableMediaExtensions,
+    unsupportedExtensions,
 } from "./utils/constants";
 import type {
-	ContextMenuState,
-	EditorViewProps,
-	FileContentResponse,
-	FileEncoding,
-	FileEntryResponse,
-	FileNode,
+    ContextMenuState,
+    EditorViewProps,
+    FileContentResponse,
+    FileEncoding,
+    FileEntryResponse,
+    FileNode,
 } from "./utils/types";
 import {
-	findNodeByPath,
-	getExtensionKey,
-	getLanguageFromPath,
-	getParentPath,
-	isValidEntryNameClient,
-	normalizeRelativePath,
-	updateTreeNode,
+    findNodeByPath,
+    getExtensionKey,
+    getLanguageFromPath,
+    getParentPath,
+    isValidEntryNameClient,
+    normalizeRelativePath,
+    updateTreeNode,
 } from "./utils/utils";
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 
 const initialContextMenuState: ContextMenuState = {
 	visible: false,
@@ -62,7 +55,7 @@ type EntryDialogState =
 	  };
 
 export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
-	const { showToast } = useScriptsContext();
+	const { showToast, isServerRunning } = useScriptsContext();
 	const { t } = useTranslation();
 	const [rootPath, setRootPath] = useState<string>("");
 	const [tree, setTree] = useState<FileNode[]>([]);
@@ -877,7 +870,11 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				return;
 			}
 		}
-		setShow({ [data.id]: "iframe" });
+		if (isServerRunning[data.id]) {
+			setShow({ [data.id]: "iframe" });
+		} else {
+			setShow({ [data.id]: "actions" });
+		}
 	}, [data?.id, isDirty, setShow]);
 
 	const handleOpenInExplorer = useCallback(() => {
@@ -952,29 +949,44 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				: t("entryDialog.placeholderFolder")
 			: undefined;
 
+	const getContext = () => {
+		return {
+			context: fileContent,
+			name: selectedFileNode?.relativePath,
+			path: selectedFileNode?.absolutePath,
+		};
+	};
+
 	return (
-		<div
-			className="flex h-full w-full flex-col"
-			onClick={() => {
-				if (contextMenu.visible) handleContextMenuClose();
-			}}
-		>
-			<HeaderBar
-				rootPath={rootPath}
-				activeNode={activeNode}
-				selectedFileNode={selectedFileNode}
-				isDirty={isDirty}
-				isSaving={isSaving}
-				isLoadingTree={isLoadingTree}
-				onBack={handleBackToPreview}
-				onOpenInExplorer={handleOpenInExplorer}
-				onRefreshWorkspace={handleRefreshWorkspace}
-				onRename={() => {
-					openRenameEntryDialog();
-				}}
-				onReloadFile={handleReloadFile}
-				onSaveFile={handleSaveFile}
+		<>
+			<AI
+				getContext={getContext}
+				workspaceName={workspaceName}
+				nodes={tree}
+				workspacePath={rootPath}
 			/>
+			<div
+				className="flex h-full w-full flex-col"
+				onClick={() => {
+					if (contextMenu.visible) handleContextMenuClose();
+				}}
+			>
+				<HeaderBar
+					rootPath={rootPath}
+					activeNode={activeNode}
+					selectedFileNode={selectedFileNode}
+					isDirty={isDirty}
+					isSaving={isSaving}
+					isLoadingTree={isLoadingTree}
+					onBack={handleBackToPreview}
+					onOpenInExplorer={handleOpenInExplorer}
+					onRefreshWorkspace={handleRefreshWorkspace}
+					onRename={() => {
+						openRenameEntryDialog();
+					}}
+					onReloadFile={handleReloadFile}
+					onSaveFile={handleSaveFile}
+				/>
 
 			<div className="flex h-full flex-1 overflow-hidden bg-neutral-950/65">
 				<div className="w-64 shrink-0 border-r border-white/10 bg-neutral-950/80">
@@ -1086,38 +1098,39 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 				</div>
 			</div>
 
-			<ContextMenu
-				state={contextMenu}
-				onCopyPath={() => {
-					if (contextMenu.node) void handleCopyNodePath(contextMenu.node);
-				}}
-				onOpenFolder={() => {
-					if (contextMenu.node) handleOpenNodeFolder(contextMenu.node);
-				}}
-				onReloadFile={handleReloadNode}
-				onRename={() => {
-					if (contextMenu.node) openRenameEntryDialog(contextMenu.node);
-				}}
-				onDelete={() => {
-					if (contextMenu.node) void handleDeleteEntry(contextMenu.node);
-				}}
-				onClose={handleContextMenuClose}
-			/>
-			<EntryNameDialog
-				open={!!entryDialog}
-				title={entryDialogTitle}
-				description={entryDialogDescription}
-				value={entryDialogValue}
-				placeholder={entryDialogPlaceholder}
-				error={entryDialogError}
-				isSubmitting={isEntryDialogSubmitting}
-				confirmLabel={entryDialogConfirmLabel}
-				onChange={(value) => setEntryDialogValue(value)}
-				onCancel={handleEntryDialogCancel}
-				onConfirm={() => {
-					void handleEntryDialogConfirm();
-				}}
-			/>
-		</div>
+				<ContextMenu
+					state={contextMenu}
+					onCopyPath={() => {
+						if (contextMenu.node) void handleCopyNodePath(contextMenu.node);
+					}}
+					onOpenFolder={() => {
+						if (contextMenu.node) handleOpenNodeFolder(contextMenu.node);
+					}}
+					onReloadFile={handleReloadNode}
+					onRename={() => {
+						if (contextMenu.node) openRenameEntryDialog(contextMenu.node);
+					}}
+					onDelete={() => {
+						if (contextMenu.node) void handleDeleteEntry(contextMenu.node);
+					}}
+					onClose={handleContextMenuClose}
+				/>
+				<EntryNameDialog
+					open={!!entryDialog}
+					title={entryDialogTitle}
+					description={entryDialogDescription}
+					value={entryDialogValue}
+					placeholder={entryDialogPlaceholder}
+					error={entryDialogError}
+					isSubmitting={isEntryDialogSubmitting}
+					confirmLabel={entryDialogConfirmLabel}
+					onChange={(value) => setEntryDialogValue(value)}
+					onCancel={handleEntryDialogCancel}
+					onConfirm={() => {
+						void handleEntryDialogConfirm();
+					}}
+				/>
+			</div>
+		</>
 	);
 }

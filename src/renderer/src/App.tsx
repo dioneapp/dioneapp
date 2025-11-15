@@ -12,6 +12,7 @@ import Install from "./pages/install";
 import Library from "./pages/library";
 import Loading from "./pages/loading";
 import NoAccess from "./pages/no-access";
+import QuickAI from "./pages/quick-ai";
 import Report from "./pages/report";
 import Settings from "./pages/settings";
 import { TranslationProvider } from "./translations/translationContext";
@@ -30,6 +31,11 @@ function App() {
 			if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "r") {
 				e.preventDefault(); // prevent browser refresh
 				navigate("/report");
+			}
+			// check for ctrl+k
+			if (e.ctrlKey && e.key.toLowerCase() === "k") {
+				e.preventDefault(); // prevent browser refresh
+				navigate("/quick-ai");
 			}
 		};
 
@@ -73,6 +79,7 @@ function App() {
 		"/no_access": NoAccess,
 		"/account": Account,
 		"/report": Report,
+		"/quick-ai": QuickAI,
 	};
 
 	const getPage = () => {

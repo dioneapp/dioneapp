@@ -140,7 +140,7 @@ function createWindow() {
 			fullscreenable: false,
 			maximizable: true,
 			fullscreen: false,
-			frame: process.platform === "darwin" ? true : false,
+			frame: process.platform === "darwin",
 			// vibrancy: "fullscreen-ui", // macos
 			backgroundColor: "rgba(0, 0, 0, 0.88)",
 			...(process.platform === "win32"
@@ -296,7 +296,6 @@ function createWindow() {
 	app.on("web-contents-created", (_e, contents) => {
 		if (contents.getType() === "webview") {
 			contents.setWindowOpenHandler(buildWindowOpenHandler(contents));
-
 			contents.session.on("will-download", (_event, item) => {
 				const fileName = item.getFilename() || "download";
 				const savePath = dialog.showSaveDialogSync(mainWindow, {
@@ -314,9 +313,17 @@ function createWindow() {
 		}
 	});
 
+	mainWindow.webContents.on("will-navigate", (event, url) => {
+		if (url !== mainWindow.webContents.getURL()) {
+			event.preventDefault();
+			shell.openExternal(url);
+		}
+	});
+
 	mainWindow.webContents.setWindowOpenHandler(
 		buildWindowOpenHandler(mainWindow.webContents),
 	);
+
 
 	const gotTheLock = app.requestSingleInstanceLock();
 	if (!gotTheLock) {
@@ -373,8 +380,8 @@ app.whenReady().then(async () => {
 
 				// Guardar el origen del request para usar en onHeadersReceived
 				const requestOrigin =
-					details.requestHeaders?.["origin"]?.[0] ||
-					details.requestHeaders?.["Origin"]?.[0];
+					details.requestHeaders?.origin?.[0] ||
+					details.requestHeaders?.Origin?.[0];
 				if (requestOrigin && details.id) {
 					requestOrigins.set(details.id.toString(), requestOrigin);
 				}
@@ -394,7 +401,9 @@ app.whenReady().then(async () => {
 			// only apply configurations for localhost/127.0.0.1
 			if (url.hostname === "localhost" || url.hostname === "127.0.0.1") {
 				// clean
+				// biome-ignore lint/performance/noDelete: <explanation>
 				delete headers["Access-Control-Allow-Origin"];
+				// biome-ignore lint/performance/noDelete: <explanation>
 				delete headers["access-control-allow-origin"];
 				// get request origin
 				const requestOrigin = details.id
@@ -813,7 +822,7 @@ app.whenReady().then(async () => {
 				logger.error(`Failed to parse /db/events response: ${e?.message || e}`);
 			}
 			if (response.ok && response.status === 200) {
-				if (data && data.id) {
+				if (data || data.id) {
 					logger.info(`Session started with ID: ${data.id}`);
 					sessionId = data.id;
 				} else {

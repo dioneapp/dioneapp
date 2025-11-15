@@ -198,3 +198,103 @@ a:active {
 a:disabled {
 	cursor: default;
 }
+
+/* prose stuff */
+.prose {
+	font-family: system-ui, sans-serif;
+	line-height: 1.7;
+	max-width: 65ch;
+	word-wrap: break-word;
+}
+
+.prose p {
+	margin-bottom: 0.75em;
+}
+
+.prose strong {
+	font-weight: 600;
+}
+
+.prose em {
+	font-style: italic;
+}
+
+.prose a {
+	color: #bcb1e7;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	transition: color 0.15s ease-in-out;
+}
+
+.prose a:hover {
+	color: #bcb1e7;
+}
+
+.prose ul,
+.prose ol {
+	margin: 0.75em 0;
+	padding-left: 1.5rem;
+}
+
+.prose ul {
+	list-style-type: disc;
+}
+
+.prose ol {
+	list-style-type: decimal;
+}
+
+.prose ul ul,
+.prose ol ol,
+.prose ul ol,
+.prose ol ul {
+	margin-top: 0.25em;
+	margin-bottom: 0.25em;
+}
+
+.prose li {
+	margin: 0.35em 0;
+	padding-left: 0.25em;
+}
+
+.prose li::marker {
+	color: #bcb1e7;
+}
+
+.prose blockquote {
+	border-left: 4px solid #93c5fd;
+	padding-left: 1rem;
+	color: #374151;
+	font-style: italic;
+	background: #f9fafb;
+	border-radius: 0.5rem;
+	margin: 1rem 0;
+}
+
+.prose code {
+	user-select: all;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+	font-weight: 600;
+	margin-top: 1em;
+	margin-bottom: 0.5em;
+	line-height: 1.25;
+}
+.prose h1 {
+	font-size: 1.6rem;
+}
+.prose h2 {
+	font-size: 1.35rem;
+}
+.prose h3 {
+	font-size: 1.15rem;
+}
+
+.prose hr {
+	border: none;
+	border-top: 1px solid #e5e7eb;
+	margin: 1.5rem 0;
+}

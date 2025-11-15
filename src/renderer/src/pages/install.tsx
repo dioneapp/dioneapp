@@ -954,6 +954,7 @@ export default function Install({
 									handleDeleteDeps={handleDeleteDeps}
 									startOptions={startOptions}
 									isLocal={isLocal}
+									setShow={setShow}
 								/>
 							)}
 						</AnimatePresence>
