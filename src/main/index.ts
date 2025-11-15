@@ -324,7 +324,6 @@ function createWindow() {
 		buildWindowOpenHandler(mainWindow.webContents),
 	);
 
-
 	const gotTheLock = app.requestSingleInstanceLock();
 	if (!gotTheLock) {
 		app.quit();
