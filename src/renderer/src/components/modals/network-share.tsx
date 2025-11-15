@@ -290,34 +290,35 @@ export default function NetworkShareModal({
 										)}
 
 										{shareMode === "public" && tunnelInfo && (
-										<div className="space-y-3">
-											<div className="space-y-2">
-												<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
-													{t("networkShare.public.shareUrl")}
-												</label>
-												<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
-													<input
-														type="text"
-														readOnly
-														value={tunnelInfo.shortUrl || tunnelInfo.url}
-														className="flex-1 bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
-													/>
-													<button
-														type="button"
-														onClick={handleCopy}
-														className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
-													>
-														{copied ? (
-															<Check className="w-4 h-4 text-green-400" />
-														) : (
-															<Copy className="w-4 h-4 text-neutral-400" />
-														)}
-													</button>
-												</div>
-												<p className="text-xs text-neutral-500">
-													{t("networkShare.public.urlDescription")}
-												</p>
-											</div>												{tunnelInfo.password && (
+											<div className="space-y-3">
+												<div className="space-y-2">
+													<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+														{t("networkShare.public.shareUrl")}
+													</label>
+													<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
+														<input
+															type="text"
+															readOnly
+															value={tunnelInfo.shortUrl || tunnelInfo.url}
+															className="flex-1 bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
+														/>
+														<button
+															type="button"
+															onClick={handleCopy}
+															className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
+														>
+															{copied ? (
+																<Check className="w-4 h-4 text-green-400" />
+															) : (
+																<Copy className="w-4 h-4 text-neutral-400" />
+															)}
+														</button>
+													</div>
+													<p className="text-xs text-neutral-500">
+														{t("networkShare.public.urlDescription")}
+													</p>
+												</div>{" "}
+												{tunnelInfo.password && (
 													<div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 space-y-2">
 														<p className="text-purple-200 text-xs font-medium">
 															{t("networkShare.public.passwordTitle")}
@@ -345,7 +346,6 @@ export default function NetworkShareModal({
 														</p>
 													</div>
 												)}
-
 												<div className="flex items-center justify-end pt-1">
 													<button
 														type="button"
