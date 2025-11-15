@@ -46,13 +46,6 @@ import {
 	startLocaltunnel,
 	stopTunnel,
 } from "./utils/tunnel";
-import { getLocalNetworkIP } from "./utils/network";
-import {
-	getCurrentTunnel,
-	isTunnelActive,
-	startLocaltunnel,
-	stopTunnel,
-} from "./utils/tunnel";
 
 // remove so we can register each time as we run the app.
 app.removeAsDefaultProtocolClient("dione");
@@ -303,22 +296,6 @@ function createWindow() {
 	app.on("web-contents-created", (_e, contents) => {
 		if (contents.getType() === "webview") {
 			contents.setWindowOpenHandler(buildWindowOpenHandler(contents));
-
-			contents.session.on("will-download", (_event, item) => {
-				const fileName = item.getFilename() || "download";
-				const savePath = dialog.showSaveDialogSync(mainWindow, {
-					title: "Save File",
-					buttonLabel: "Save",
-					defaultPath: path.join(app.getPath("downloads"), fileName),
-				});
-
-				if (savePath) {
-					item.setSavePath(savePath);
-				} else {
-					item.cancel();
-				}
-			contents.setWindowOpenHandler(buildWindowOpenHandler(contents));
-
 			contents.session.on("will-download", (_event, item) => {
 				const fileName = item.getFilename() || "download";
 				const savePath = dialog.showSaveDialogSync(mainWindow, {
@@ -335,7 +312,6 @@ function createWindow() {
 			});
 		}
 	});
-
 
 	mainWindow.webContents.on("will-navigate", (event, url) => {
 		if (url !== mainWindow.webContents.getURL()) {
