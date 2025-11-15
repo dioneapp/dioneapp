@@ -1,5 +1,7 @@
 import { useTranslation } from "@renderer/translations/translationContext";
 import { apiFetch } from "@renderer/utils/api";
+import { useTranslation } from "@renderer/translations/translationContext";
+import { apiFetch } from "@renderer/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
 import {
     type KeyboardEvent,
@@ -9,7 +11,15 @@ import {
     useMemo,
     useRef,
     useState,
+    type KeyboardEvent,
+    type MouseEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
+import AI from "../ai/ai";
 import AI from "../ai/ai";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import ContextMenu from "./ContextMenu";
@@ -21,6 +31,9 @@ import {
     mediaMimeMap,
     previewableMediaExtensions,
     unsupportedExtensions,
+    mediaMimeMap,
+    previewableMediaExtensions,
+    unsupportedExtensions,
 } from "./utils/constants";
 import type {
     ContextMenuState,
@@ -29,8 +42,21 @@ import type {
     FileEncoding,
     FileEntryResponse,
     FileNode,
+    ContextMenuState,
+    EditorViewProps,
+    FileContentResponse,
+    FileEncoding,
+    FileEntryResponse,
+    FileNode,
 } from "./utils/types";
 import {
+    findNodeByPath,
+    getExtensionKey,
+    getLanguageFromPath,
+    getParentPath,
+    isValidEntryNameClient,
+    normalizeRelativePath,
+    updateTreeNode,
     findNodeByPath,
     getExtensionKey,
     getLanguageFromPath,
