@@ -1,11 +1,11 @@
 import { useAuthContext } from "@renderer/components/contexts/AuthContext";
+import Icon from "@renderer/components/icons/icon";
 import { apiJson } from "@renderer/utils/api";
 import sendEvent from "@renderer/utils/events";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Script } from "../feed/types";
-import Icon from "@renderer/components/icons/icon";
 
 export default function FeaturedCarousel() {
 	const [scripts, setScripts] = useState<Script[]>([]);
@@ -16,8 +16,8 @@ export default function FeaturedCarousel() {
 	const { user } = useAuthContext();
 	const navigate = useNavigate();
 	const intervalRef = useRef<NodeJS.Timeout | null>(null);
-	
-	let interval = 12000; 
+
+	const interval = 12000;
 
 	useEffect(() => {
 		const fetchScripts = async () => {
@@ -117,7 +117,10 @@ export default function FeaturedCarousel() {
 					<div key={activeItem.id} className="absolute w-full h-full">
 						<div className="w-full h-72 flex transition-all duration-200 rounded-xl relative overflow-hidden group border border-white/5 cursor-pointer">
 							{activeItem.type === "announcement" ? (
-								<div onClick={() => navigate("/quick-ai")} className="absolute inset-0 w-full h-full bg-black/20 backdrop-blur-lg flex items-center justify-center">
+								<div
+									onClick={() => navigate("/quick-ai")}
+									className="absolute inset-0 w-full h-full bg-black/20 backdrop-blur-lg flex items-center justify-center"
+								>
 									<Announcements />
 								</div>
 							) : (
@@ -144,7 +147,7 @@ export default function FeaturedCarousel() {
 											}}
 											transition={{
 												duration: 16,
-												repeat: Infinity,
+												repeat: Number.POSITIVE_INFINITY,
 												ease: "linear",
 											}}
 										/>
@@ -171,7 +174,7 @@ export default function FeaturedCarousel() {
 											}}
 											transition={{
 												duration: 48,
-												repeat: Infinity,
+												repeat: Number.POSITIVE_INFINITY,
 												ease: "linear",
 											}}
 										/>
@@ -272,21 +275,37 @@ export function CarrouselSkeleton() {
 export const Announcements = () => {
 	return (
 		<div className="w-full h-full relative">
-			<div className="absolute blur-3xl inset-0 w-full h-full bg-linear-to-tl from-white/20 via-white/10 to-black "/>
+			<div className="absolute blur-3xl inset-0 w-full h-full bg-linear-to-tl from-white/20 via-white/10 to-black " />
 			<div className="z-50 absolute top-0 right-0 m-10 p-6 bg-black/70 border border-white/5 backdrop-blur-3xl rounded-xl">
 				<Icon name="Dio" />
 			</div>
 			<div className="z-50 absolute inset-0 p-10">
 				<div className="flex flex-col justify-end gap-2 h-full w-full">
-					<h2 className="text-4xl font-semibold tracking-tight">Introducing Dio AI</h2>
+					<h2 className="text-4xl font-semibold tracking-tight">
+						Introducing Dio AI
+					</h2>
 					<p className="text-sm text-neutral-300 text-pretty">
-						<span className="text-neutral-200 font-medium">an AI tool that runs entirely on your system</span> (thanks to Ollama) <span className="text-neutral-200 font-medium">to help you with all your problems within Dione</span>. It can help you resolve an error within the terminal, edit an app's code, or interact with any app.
+						<span className="text-neutral-200 font-medium">
+							an AI tool that runs entirely on your system
+						</span>{" "}
+						(thanks to Ollama){" "}
+						<span className="text-neutral-200 font-medium">
+							to help you with all your problems within Dione
+						</span>
+						. It can help you resolve an error within the terminal, edit an
+						app's code, or interact with any app.
 					</p>
 					<p className="text-sm text-neutral-300 text-pretty">
-						You can <span className="font-medium text-[#BCB1E7]">use CTRL+K</span> to quickly use Dio, <span className="font-medium text-[#BCB1E7]">or click on the purple icon</span> inside the terminal or code editor.
+						You can{" "}
+						<span className="font-medium text-[#BCB1E7]">use CTRL+K</span> to
+						quickly use Dio,{" "}
+						<span className="font-medium text-[#BCB1E7]">
+							or click on the purple icon
+						</span>{" "}
+						inside the terminal or code editor.
 					</p>
 				</div>
 			</div>
 		</div>
-	)
-}
+	);
+};
