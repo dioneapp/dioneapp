@@ -1,6 +1,15 @@
 import { useTranslation } from "@renderer/translations/translationContext";
 import { apiFetch } from "@renderer/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
+import {
+	type KeyboardEvent,
+	type MouseEvent,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
 import AI from "../ai/ai";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import ContextMenu from "./ContextMenu";
@@ -9,28 +18,27 @@ import FileTree from "./FileTree";
 import HeaderBar from "./HeaderBar";
 import PreviewPane from "./PreviewPane";
 import {
-    mediaMimeMap,
-    previewableMediaExtensions,
-    unsupportedExtensions,
+	mediaMimeMap,
+	previewableMediaExtensions,
+	unsupportedExtensions,
 } from "./utils/constants";
 import type {
-    ContextMenuState,
-    EditorViewProps,
-    FileContentResponse,
-    FileEncoding,
-    FileEntryResponse,
-    FileNode,
+	ContextMenuState,
+	EditorViewProps,
+	FileContentResponse,
+	FileEncoding,
+	FileEntryResponse,
+	FileNode,
 } from "./utils/types";
 import {
-    findNodeByPath,
-    getExtensionKey,
-    getLanguageFromPath,
-    getParentPath,
-    isValidEntryNameClient,
-    normalizeRelativePath,
-    updateTreeNode,
+	findNodeByPath,
+	getExtensionKey,
+	getLanguageFromPath,
+	getParentPath,
+	isValidEntryNameClient,
+	normalizeRelativePath,
+	updateTreeNode,
 } from "./utils/utils";
-import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 
 const initialContextMenuState: ContextMenuState = {
 	visible: false,
@@ -988,115 +996,115 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 					onSaveFile={handleSaveFile}
 				/>
 
-			<div className="flex h-full flex-1 overflow-hidden bg-neutral-950/65">
-				<div className="w-64 shrink-0 border-r border-white/10 bg-neutral-950/80">
-					<div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
-						<div className="flex min-w-0 flex-col">
-							<span className="truncate text-[11px] font-semibold uppercase tracking-wide text-neutral-200">
-								{workspaceName}
-							</span>
-							<span
-								className="truncate text-[10px] font-normal uppercase tracking-normal text-neutral-500"
-								title={rootPath}
-							>
-								{rootPath || t("workspaceEditor.resolvingPath")}
-							</span>
+				<div className="flex h-full flex-1 overflow-hidden bg-neutral-950/65">
+					<div className="w-64 shrink-0 border-r border-white/10 bg-neutral-950/80">
+						<div className="flex items-center justify-between border-b border-white/10 px-3 py-2">
+							<div className="flex min-w-0 flex-col">
+								<span className="truncate text-[11px] font-semibold uppercase tracking-wide text-neutral-200">
+									{workspaceName}
+								</span>
+								<span
+									className="truncate text-[10px] font-normal uppercase tracking-normal text-neutral-500"
+									title={rootPath}
+								>
+									{rootPath || t("workspaceEditor.resolvingPath")}
+								</span>
+							</div>
+							<div className="flex items-center gap-1">
+								<button
+									type="button"
+									onClick={() => {
+										openCreateEntryDialog("file");
+									}}
+									className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
+									title={t("workspaceEditor.newFile")}
+								>
+									<FilePlus className="h-3.5 w-3.5" />
+								</button>
+								<button
+									type="button"
+									onClick={() => {
+										openCreateEntryDialog("directory");
+									}}
+									className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
+									title={t("workspaceEditor.newFolder")}
+								>
+									<FolderPlus className="h-3.5 w-3.5" />
+								</button>
+								{isLoadingTree && (
+									<Loader2 className="h-3 w-3 animate-spin text-neutral-300" />
+								)}
+							</div>
 						</div>
-						<div className="flex items-center gap-1">
-							<button
-								type="button"
-								onClick={() => {
-									openCreateEntryDialog("file");
-								}}
-								className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
-								title={t("workspaceEditor.newFile")}
-							>
-								<FilePlus className="h-3.5 w-3.5" />
-							</button>
-							<button
-								type="button"
-								onClick={() => {
-									openCreateEntryDialog("directory");
-								}}
-								className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
-								title={t("workspaceEditor.newFolder")}
-							>
-								<FolderPlus className="h-3.5 w-3.5" />
-							</button>
-							{isLoadingTree && (
-								<Loader2 className="h-3 w-3 animate-spin text-neutral-300" />
+						<div className="h-full overflow-y-auto pb-24">
+							{workspaceError ? (
+								<div className="flex h-full flex-col gap-3 px-3 py-4 text-xs text-neutral-400">
+									<span>{workspaceError}</span>
+									<button
+										type="button"
+										onClick={handleRefreshWorkspace}
+										className="self-start rounded-md border border-white/10 px-3 py-1 text-neutral-200 transition-colors hover:bg-white/10"
+									>
+										{t("workspaceEditor.retry")}
+									</button>
+								</div>
+							) : (
+								<FileTree
+									nodes={tree}
+									selectedFile={selectedFile}
+									activePath={activePath}
+									isContextMenuVisible={contextMenu.visible}
+									isDirty={isDirty}
+									onRowClick={handleRowClick}
+									onKeyDown={handleTreeItemKeyDown}
+									onContextMenu={handleContextMenuOpen}
+								/>
 							)}
 						</div>
 					</div>
-					<div className="h-full overflow-y-auto pb-24">
-						{workspaceError ? (
-							<div className="flex h-full flex-col gap-3 px-3 py-4 text-xs text-neutral-400">
+					<div className="relative flex flex-1 flex-col bg-[#0a0a0a]">
+						{selectedFileNode && selectedFileNode.type === "file" ? (
+							<PreviewPane
+								selectedFileNode={selectedFileNode}
+								fileEncoding={fileEncoding}
+								fileContent={fileContent}
+								fileMimeType={fileMimeType}
+								filePreviewUrl={filePreviewUrl}
+								fileError={fileError}
+								isLoadingFile={isLoadingFile}
+								isDirty={isDirty}
+								language={language}
+								onReloadFile={handleReloadFile}
+								onContentChange={setFileContent}
+							/>
+						) : workspaceError ? (
+							<div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-neutral-300">
+								<FolderPlus className="h-8 w-8 text-neutral-500" />
 								<span>{workspaceError}</span>
 								<button
 									type="button"
 									onClick={handleRefreshWorkspace}
-									className="self-start rounded-md border border-white/10 px-3 py-1 text-neutral-200 transition-colors hover:bg-white/10"
+									className="rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
 								>
 									{t("workspaceEditor.retry")}
 								</button>
 							</div>
 						) : (
-							<FileTree
-								nodes={tree}
-								selectedFile={selectedFile}
-								activePath={activePath}
-								isContextMenuVisible={contextMenu.visible}
+							<PreviewPane
+								fileEncoding={fileEncoding}
+								fileContent={fileContent}
+								fileMimeType={fileMimeType}
+								filePreviewUrl={filePreviewUrl}
+								fileError={fileError}
+								isLoadingFile={isLoadingFile}
 								isDirty={isDirty}
-								onRowClick={handleRowClick}
-								onKeyDown={handleTreeItemKeyDown}
-								onContextMenu={handleContextMenuOpen}
+								language={language}
+								onReloadFile={handleReloadFile}
+								onContentChange={setFileContent}
 							/>
 						)}
 					</div>
 				</div>
-				<div className="relative flex flex-1 flex-col bg-[#0a0a0a]">
-					{selectedFileNode && selectedFileNode.type === "file" ? (
-						<PreviewPane
-							selectedFileNode={selectedFileNode}
-							fileEncoding={fileEncoding}
-							fileContent={fileContent}
-							fileMimeType={fileMimeType}
-							filePreviewUrl={filePreviewUrl}
-							fileError={fileError}
-							isLoadingFile={isLoadingFile}
-							isDirty={isDirty}
-							language={language}
-							onReloadFile={handleReloadFile}
-							onContentChange={setFileContent}
-						/>
-					) : workspaceError ? (
-						<div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-neutral-300">
-							<FolderPlus className="h-8 w-8 text-neutral-500" />
-							<span>{workspaceError}</span>
-							<button
-								type="button"
-								onClick={handleRefreshWorkspace}
-								className="rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
-							>
-								{t("workspaceEditor.retry")}
-							</button>
-						</div>
-					) : (
-						<PreviewPane
-							fileEncoding={fileEncoding}
-							fileContent={fileContent}
-							fileMimeType={fileMimeType}
-							filePreviewUrl={filePreviewUrl}
-							fileError={fileError}
-							isLoadingFile={isLoadingFile}
-							isDirty={isDirty}
-							language={language}
-							onReloadFile={handleReloadFile}
-							onContentChange={setFileContent}
-						/>
-					)}
-				</div>
-			</div>
 
 				<ContextMenu
 					state={contextMenu}
