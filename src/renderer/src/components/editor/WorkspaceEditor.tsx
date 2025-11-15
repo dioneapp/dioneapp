@@ -1,25 +1,6 @@
 import { useTranslation } from "@renderer/translations/translationContext";
 import { apiFetch } from "@renderer/utils/api";
-import { useTranslation } from "@renderer/translations/translationContext";
-import { apiFetch } from "@renderer/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
-import {
-    type KeyboardEvent,
-    type MouseEvent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-    type KeyboardEvent,
-    type MouseEvent,
-    useCallback,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
-import AI from "../ai/ai";
 import AI from "../ai/ai";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import ContextMenu from "./ContextMenu";
@@ -31,17 +12,8 @@ import {
     mediaMimeMap,
     previewableMediaExtensions,
     unsupportedExtensions,
-    mediaMimeMap,
-    previewableMediaExtensions,
-    unsupportedExtensions,
 } from "./utils/constants";
 import type {
-    ContextMenuState,
-    EditorViewProps,
-    FileContentResponse,
-    FileEncoding,
-    FileEntryResponse,
-    FileNode,
     ContextMenuState,
     EditorViewProps,
     FileContentResponse,
@@ -57,14 +29,8 @@ import {
     isValidEntryNameClient,
     normalizeRelativePath,
     updateTreeNode,
-    findNodeByPath,
-    getExtensionKey,
-    getLanguageFromPath,
-    getParentPath,
-    isValidEntryNameClient,
-    normalizeRelativePath,
-    updateTreeNode,
 } from "./utils/utils";
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
 
 const initialContextMenuState: ContextMenuState = {
 	visible: false,
@@ -1007,17 +973,17 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 			>
 				<HeaderBar
 					rootPath={rootPath}
-					// activeNode={activeNode}
+					activeNode={activeNode}
 					selectedFileNode={selectedFileNode}
 					isDirty={isDirty}
 					isSaving={isSaving}
-					// isLoadingTree={isLoadingTree}
+					isLoadingTree={isLoadingTree}
 					onBack={handleBackToPreview}
 					onOpenInExplorer={handleOpenInExplorer}
-					// onRefreshWorkspace={handleRefreshWorkspace}
-					// onRename={() => {
-					// 	openRenameEntryDialog();
-					// }}
+					onRefreshWorkspace={handleRefreshWorkspace}
+					onRename={() => {
+						openRenameEntryDialog();
+					}}
 					onReloadFile={handleReloadFile}
 					onSaveFile={handleSaveFile}
 				/>
