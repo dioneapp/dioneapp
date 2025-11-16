@@ -156,9 +156,7 @@ export async function shortenUrl(url: string): Promise<string | null> {
 		const recentTimestamps = timestamps.filter((t) => now - t < oneHour);
 
 		if (recentTimestamps.length >= 10) {
-			logger.warn(
-				"Rate limit exceeded for URL shortening (max 10 per hour)",
-			);
+			logger.warn("Rate limit exceeded for URL shortening (max 10 per hour)");
 			return null;
 		}
 
