@@ -3,6 +3,7 @@ import type { Tunnel } from "localtunnel";
 import localtunnel from "localtunnel";
 import { machineIdSync } from "node-machine-id";
 import logger from "../server/utils/logger";
+import { supabase } from "../server/utils/database";
 
 let activeTunnel: Tunnel | null = null;
 let currentTunnelUrl: string | null = null;
@@ -135,10 +136,7 @@ function isValidUrl(url: string): boolean {
 
 export async function shortenUrl(url: string): Promise<string | null> {
 	try {
-		const supabaseUrl = process.env.VITE_DB_URL;
-		const supabaseKey = process.env.VITE_DB_KEY;
-
-		if (!supabaseUrl || !supabaseKey) {
+		if (!supabase) {
 			logger.warn("Supabase not configured, skipping URL shortening");
 			return null;
 		}
@@ -163,10 +161,7 @@ export async function shortenUrl(url: string): Promise<string | null> {
 		recentTimestamps.push(now);
 		urlCreationCache.set(machineId, recentTimestamps);
 
-		const supabase = createClient(supabaseUrl, supabaseKey);
-
 		const shortId = Math.random().toString(36).substring(2, 14);
-
 		const { data, error } = await supabase
 			.from("shared_urls")
 			.insert({
