@@ -1,52 +1,52 @@
-import { electronApp, is, optimizer } from "@electron-toolkit/utils";
-import { config as dotenvConfig } from "dotenv";
-import {
-    BrowserWindow,
-    Notification,
-    Tray,
-    app,
-    dialog,
-    globalShortcut,
-    ipcMain,
-    session,
-    shell,
-} from "electron";
-import { autoUpdater } from "electron-updater";
-import { machineIdSync } from "node-machine-id";
 import fs from "node:fs";
 import os from "node:os";
 import path, { join } from "node:path";
+import { electronApp, is, optimizer } from "@electron-toolkit/utils";
+import { config as dotenvConfig } from "dotenv";
+import {
+	BrowserWindow,
+	Notification,
+	Tray,
+	app,
+	dialog,
+	globalShortcut,
+	ipcMain,
+	session,
+	shell,
+} from "electron";
+import { autoUpdater } from "electron-updater";
+import { machineIdSync } from "node-machine-id";
 import si from "systeminformation";
 import macosIcon from "../../resources/icon.icns?asset";
 import icon from "../../resources/icon.ico?asset";
 import linuxIcon from "../../resources/icon.png?asset";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
 import {
-    destroyPresence,
-    initializeDiscordPresence,
-    updatePresence,
+	destroyPresence,
+	initializeDiscordPresence,
+	updatePresence,
 } from "./discord/presence";
 import {
-    deleteExpiresAt,
-    deleteId,
-    deleteToken,
-    getExpiresAt,
-    getId,
-    getToken,
-    saveExpiresAt,
-    saveId,
-    saveToken,
+	deleteExpiresAt,
+	deleteId,
+	deleteToken,
+	getExpiresAt,
+	getId,
+	getToken,
+	saveExpiresAt,
+	saveId,
+	saveToken,
 } from "./security/secure-tokens";
 import { initDefaultEnv } from "./server/scripts/dependencies/environment";
 import { start as startServer, stop as stopServer } from "./server/server";
 import logger, { getLogs } from "./server/utils/logger";
 import { getLocalNetworkIP } from "./utils/network";
 import {
-    getCurrentTunnel,
-    isTunnelActive,
-    shortenUrl,
-    startLocaltunnel,
-    stopTunnel,
+	getCurrentTunnel,
+	isTunnelActive,
+	shortenUrl,
+	startLocaltunnel,
+	stopTunnel,
 } from "./utils/tunnel";
 
 dotenvConfig();
