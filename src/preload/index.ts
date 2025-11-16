@@ -28,6 +28,9 @@ const api = {
 	isTunnelActive: () => {
 		return electronAPI.ipcRenderer.invoke("is-tunnel-active");
 	},
+	shortenUrl: (url: string) => {
+		return electronAPI.ipcRenderer.invoke("shorten-url", url);
+	},
 };
 
 // Use `contextBridge` APIs to expose Electron APIs to

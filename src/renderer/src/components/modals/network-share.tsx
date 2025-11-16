@@ -88,18 +88,9 @@ export default function NetworkShareModal({
 			);
 
 			try {
-				const response = await fetch("https://api.getdione.app/v1/share", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-						Authorization: `Bearer ${import.meta.env.VITE_API_PRIVATE_KEY}`,
-					},
-					body: JSON.stringify({ url: tunnel.url }),
-				});
-
-				if (response.ok) {
-					const data = await response.json();
-					tunnel.shortUrl = data.shortUrl;
+				const shortUrl = await window.api.shortenUrl(tunnel.url);
+				if (shortUrl) {
+					tunnel.shortUrl = shortUrl;
 				}
 			} catch (err) {
 				console.error("Error creating shortened URL:", err);

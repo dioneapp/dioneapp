@@ -23,6 +23,7 @@ interface CustomAPI {
 	stopTunnel: () => Promise<boolean>;
 	getCurrentTunnel: () => Promise<TunnelInfo | null>;
 	isTunnelActive: () => Promise<boolean>;
+	shortenUrl: (url: string) => Promise<string | null>;
 }
 
 declare global {

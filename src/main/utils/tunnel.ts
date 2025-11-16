@@ -1,10 +1,14 @@
+import { createClient } from "@supabase/supabase-js";
 import type { Tunnel } from "localtunnel";
 import localtunnel from "localtunnel";
+import { machineIdSync } from "node-machine-id";
 import logger from "../server/utils/logger";
 
 let activeTunnel: Tunnel | null = null;
 let currentTunnelUrl: string | null = null;
 let currentTunnelPassword: string | undefined = undefined;
+
+const urlCreationCache = new Map<string, number[]>();
 
 export interface TunnelInfo {
 	url: string;
@@ -88,9 +92,6 @@ export async function stopTunnel(): Promise<void> {
 	}
 }
 
-/**
- * Get the current tunnel info
- */
 export function getCurrentTunnel(): TunnelInfo | null {
 	if (currentTunnelUrl) {
 		return {
@@ -105,4 +106,88 @@ export function getCurrentTunnel(): TunnelInfo | null {
 
 export function isTunnelActive(): boolean {
 	return activeTunnel !== null;
+}
+
+function isValidUrl(url: string): boolean {
+	try {
+		const parsed = new URL(url);
+
+		if (!["http:", "https:"].includes(parsed.protocol)) {
+			return false;
+		}
+
+		const hostname = parsed.hostname.toLowerCase();
+		if (
+			hostname === "localhost" ||
+			hostname.startsWith("127.") ||
+			hostname.startsWith("192.168.") ||
+			hostname.startsWith("10.") ||
+			hostname.match(/^172\.(1[6-9]|2[0-9]|3[0-1])\./)
+		) {
+			return false;
+		}
+
+		return true;
+	} catch {
+		return false;
+	}
+}
+
+export async function shortenUrl(url: string): Promise<string | null> {
+	try {
+		const supabaseUrl = process.env.VITE_DB_URL;
+		const supabaseKey = process.env.VITE_DB_KEY;
+
+		if (!supabaseUrl || !supabaseKey) {
+			logger.warn("Supabase not configured, skipping URL shortening");
+			return null;
+		}
+
+		if (!isValidUrl(url)) {
+			logger.warn("Invalid URL format or blocked URL");
+			return null;
+		}
+
+		const machineId = machineIdSync();
+		const now = Date.now();
+		const oneHour = 60 * 60 * 1000;
+
+		const timestamps = urlCreationCache.get(machineId) || [];
+		const recentTimestamps = timestamps.filter((t) => now - t < oneHour);
+
+		if (recentTimestamps.length >= 10) {
+			logger.warn(
+				"Rate limit exceeded for URL shortening (max 10 per hour)",
+			);
+			return null;
+		}
+
+		recentTimestamps.push(now);
+		urlCreationCache.set(machineId, recentTimestamps);
+
+		const supabase = createClient(supabaseUrl, supabaseKey);
+
+		const shortId = Math.random().toString(36).substring(2, 14);
+
+		const { data, error } = await supabase
+			.from("shared_urls")
+			.insert({
+				id: shortId,
+				long_url: url,
+				created_at: new Date().toISOString(),
+			})
+			.select()
+			.single();
+
+		if (error) {
+			logger.error("Failed to create shortened URL:", error);
+			return null;
+		}
+
+		logger.info(`Created shortened URL: ${data.id}`);
+		return `https://getdione.app/share/${data.id}`;
+	} catch (error) {
+		logger.error("Error shortening URL:", error);
+		return null;
+	}
 }
