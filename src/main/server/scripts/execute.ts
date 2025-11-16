@@ -17,41 +17,23 @@ async function readConfig(pathname: string) {
 
 async function patchNetworkAccess(configDir: string) {
 	try {
-		// Find all Python files in the directory
-		const files = await fs.promises.readdir(configDir, { recursive: true });
-		const pyFiles = files.filter((f) => f.toString().endsWith(".py"));
+		const files = await fs.promises.readdir(configDir, { withFileTypes: true });
+		const pyFiles = files.filter((f) => f.isFile() && f.name.endsWith(".py"));
 
 		for (const file of pyFiles) {
-			const filePath = path.join(configDir, file.toString());
+			const filePath = path.join(configDir, file.name);
 
 			try {
-				let content = await fs.promises.readFile(filePath, "utf8");
-				let modified = false;
-
-				// pattern 1: demo.launch(server_name="127.0.0.1"
-				if (content.includes('server_name="127.0.0.1"')) {
-					content = content.replace(
-						/server_name="127\.0\.0\.1"/g,
-						'server_name="0.0.0.0"',
-					);
-					modified = true;
-				}
-
-				// pattern 2: demo.launch(server_name='127.0.0.1'
-				if (content.includes("server_name='127.0.0.1'")) {
-					content = content.replace(
-						/server_name='127\.0\.0\.1'/g,
-						"server_name='0.0.0.0'",
-					);
-					modified = true;
-				}
+				const content = await fs.promises.readFile(filePath, "utf8");
+				const modified = content.includes("server_name='127.0.0.1'") || content.includes('server_name="127.0.0.1"');
 
 				if (modified) {
-					await fs.promises.writeFile(filePath, content, "utf8");
-					logger.info(`Patched network access in: ${file}`);
+					const patchedContent = content.replace(/server_name=('|")127\.0\.0\.1('|")/g, '$10.0.0.0$2');
+					await fs.promises.writeFile(filePath, patchedContent, "utf8");
+					logger.info(`Patched network access in: ${file.name}`);
 				}
 			} catch (error) {
-				logger.debug(`Could not patch ${file}: ${error}`);
+				logger.error(`Could not patch ${file.name}: ${error}`);
 			}
 		}
 	} catch (error) {
