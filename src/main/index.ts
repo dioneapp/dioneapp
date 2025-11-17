@@ -963,11 +963,11 @@ app.whenReady().then(async () => {
 	});
 
 	ipcMain.handle("send-discord-report", async (_, data) => {
-		if (!app.isPackaged) {
+		if (is.dev) {
 			return "dev-mode";
 		}
 		try {
-			const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+			const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
 			if (!webhookUrl) {
 				throw new Error("Discord webhook URL not configured");
 			}
