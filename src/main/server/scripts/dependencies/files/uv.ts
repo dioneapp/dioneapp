@@ -244,7 +244,6 @@ export async function install(
 					addValue("UV_PYTHON_INSTALL_DIR", path.join(cacheDir));
 					addValue("UV_CACHE_DIR", cacheDir);
 					addValue("PIP_CACHE_DIR", path.join(binFolder, "cache", "pip"));
-
 					resolve();
 				} else {
 					reject(new Error(`Installer exited with code ${code}`));

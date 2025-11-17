@@ -9,6 +9,7 @@ import { checkDependencies } from "./dependencies/dependencies";
 import { addValue, getAllValues } from "./dependencies/environment";
 import { executeCommands } from "./process";
 import { getSystemInfo } from "./system";
+import { getArch, getOS } from "./dependencies/utils/system";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
@@ -649,21 +650,41 @@ async function createVirtualEnvCommands(
 	}
 
 	const existsEnv = fs.existsSync(envPath);
+	const arch = getArch();
+	const platform = getOS();
+	const uvFolder =
+		platform === "linux"
+			? arch === "amd64"
+				? "uv-x86_64-unknown-linux-gnu"
+				: "uv-aarch64-unknown-linux-gnu"
+			: platform === "macos"
+			? arch === "amd64"
+				? "uv-x86_64-apple-darwin"
+				: "uv-aarch64-apple-darwin"
+			: "";
+
+	const uvPath = path.join(
+		config?.defaultBinFolder || path.join(app.getPath("userData")),
+		"bin",
+		"uv",
+		uvFolder,
+		process.platform === "win32" ? "uv.exe" : "uv"  
+	);
+
 	if (!existsEnv) {
 		{
 			const between = middle ? ` ${middle} && ` : " && ";
 			return [
 				// create new env
-				`uv venv ${pythonFlag} "${envPath}"`,
+				`${uvPath} venv ${pythonFlag} "${envPath}"`,
 				// use it
 				`. "${activateScript}"${between}deactivate`,
 			];
 		}
-	} else {
-		const between = middle ? ` ${middle} && ` : " && ";
-		return [
-			// use existing env
-			`. "${activateScript}"${between}deactivate`,
-		];
 	}
+	const between = middle ? ` ${middle} && ` : " && ";
+	return [
+		// use existing env
+		`. "${activateScript}"${between}deactivate`,
+	];
 }
