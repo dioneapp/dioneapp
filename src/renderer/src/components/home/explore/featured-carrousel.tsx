@@ -274,7 +274,7 @@ export function CarrouselSkeleton() {
 
 export const Announcements = () => {
 	return (
-		<div className="w-full h-full relative">
+		<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="w-full h-full relative">
 			<div className="absolute blur-3xl inset-0 w-full h-full bg-linear-to-tl from-white/20 via-white/10 to-black " />
 			<div className="z-50 absolute top-0 right-0 m-10 p-6 bg-black/70 border border-white/5 backdrop-blur-3xl rounded-xl">
 				<Icon name="Dio" />
@@ -306,6 +306,6 @@ export const Announcements = () => {
 					</p>
 				</div>
 			</div>
-		</div>
+		</motion.div>
 	);
 };
