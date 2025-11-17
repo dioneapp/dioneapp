@@ -1,4 +1,3 @@
-import { createClient } from "@supabase/supabase-js";
 import type { Tunnel } from "localtunnel";
 import localtunnel from "localtunnel";
 import { machineIdSync } from "node-machine-id";

@@ -15,7 +15,7 @@ export default function AI({
 	workspacePath: string;
 }) {
 	const [open, setOpen] = useState(false);
-	const [loading, setLoading] = useState(false);
+	// const [loading, setLoading] = useState(false);
 	const [messages, setMessages] = useState<string[]>([]);
 	const [ollamaStatus, setOllamaStatus] = useState("");
 	const logsEndRef = useRef<HTMLDivElement>(null);

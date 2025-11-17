@@ -11,11 +11,11 @@ const ollama = new Ollama({
 	url: "http://localhost:11434",
 });
 
-OllamaRouter.get("/", (req, res) => {
+OllamaRouter.get("/", (_req, res) => {
 	res.json({ message: "Ollama API is working" });
 });
 
-OllamaRouter.get("/models", async (req, res) => {
+OllamaRouter.get("/models", async (_req, res) => {
 	try {
 		const response = await ollama.list();
 		const modelNames = response.models
