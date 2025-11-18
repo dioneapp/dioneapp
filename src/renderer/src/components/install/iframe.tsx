@@ -355,12 +355,11 @@ export default function IframeComponent({
 				/>
 			</motion.div>
 
-			{showNetworkShareModal && (
-				<NetworkShareModal
-					onClose={() => setShowNetworkShareModal(false)}
-					targetPort={currentPort}
-				/>
-			)}
+			<NetworkShareModal
+				isOpen={showNetworkShareModal}
+				onClose={() => setShowNetworkShareModal(false)}
+				targetPort={currentPort}
+			/>
 		</div>
 	);
 }
