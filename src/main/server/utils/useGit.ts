@@ -41,12 +41,13 @@ export async function useGit(
 		// clone the repository
 		io.to(id).emit("installUpdate", {
 			type: "log",
-			content: `Cloning repository ${url} ${folder ? `to ${workingDir}/${folder}` : ""}${branch ? ` on branch ${branch}` : ""}`,
+			content: `Cloning repository ${url} ${folder ? `to ${workingDir}/${folder}` : ""}${branch ? ` on branch ${branch}` : ""}\n`,
 		});
 
 		let lastError: any = null;
 		let refToTry = branch ? branch : "main";
 		let result = false;
+		let lastProgressEmit = 0;
 
 		for (let attempt = 0; attempt < 2; attempt++) {
 			try {
@@ -57,15 +58,25 @@ export async function useGit(
 					url: url!,
 					singleBranch: true,
 					ref: refToTry,
-					batchSize: 3,
+					batchSize: 10,
 					onProgress: (progress) => {
-						io.to(id).emit("installUpdate", {
-							type: "log",
-							content: `Cloning repository... ${progress.loaded}/${progress.total !== undefined ? progress.total : progress.loaded}`,
-						});
+						const now = Date.now();
+						if (now - lastProgressEmit > 100) {
+							lastProgressEmit = now;
+							const total = progress.total ? `/${progress.total}` : "";
+							const percentage = progress.total ? ` (${Math.round((progress.loaded / progress.total) * 100)}%)` : "";
+							io.to(id).emit("installUpdate", {
+								type: "log",
+								content: `\rCloning repository... ${progress.loaded}${total}${percentage}`,
+							});
+						}
 					},
 				});
 				result = true;
+				io.to(id).emit("installUpdate", {
+					type: "log",
+					content: "\n",
+				});
 				break;
 			} catch (err: any) {
 				lastError = err;
@@ -79,7 +90,7 @@ export async function useGit(
 				) {
 					io.to(id).emit("installUpdate", {
 						type: "log",
-						content: `Branch 'main' not found, trying 'master'...`,
+						content: `\nBranch 'main' not found, trying 'master'...`,
 					});
 					refToTry = "master";
 					continue;
@@ -92,7 +103,7 @@ export async function useGit(
 		if (!result) {
 			io.to(id).emit("installUpdate", {
 				type: "error",
-				content: `Failed to clone repository: ${lastError?.message || lastError}`,
+				content: `\nFailed to clone repository: ${lastError?.message || lastError}`,
 			});
 			throw lastError;
 		}

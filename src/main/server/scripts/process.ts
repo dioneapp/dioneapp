@@ -416,19 +416,17 @@ export const executeCommand = async (
 		const platform = getPlatform();
 		const spawnOptions = {
 			cwd: workingDir,
-			shell: platform === "win32",
+			shell: true,
 			windowsHide: true,
 			detached: false,
 			env: enhancedEnv,
 		};
 
-		// handle bat files
+		// handle git commands
 		if (!isWindows && command.startsWith("git ")) {
-			if (!isWindows && command.startsWith("git ")) {
-				const result = await useGit(command, workingDir, io, id);
-				if (result) {
-					return { code: 0, stdout: "", stderr: "" };
-				}
+			const result = await useGit(command, workingDir, io, id);
+			if (result) {
+				return { code: 0, stdout: "", stderr: "" };
 			}
 		}
 

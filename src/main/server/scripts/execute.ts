@@ -613,15 +613,15 @@ async function createVirtualEnvCommands(
 		);
 		if (isWindows) {
 			return [
-				`if not exist "${envPath}" (${condaW} tos accept --channel main && ${condaW} create -p "${envPath}" ${pythonArg} -y)`,
-				`call ${condaW} activate "${envPath}" ${middle} && call ${condaW} deactivate`,
+				`if not exist "${envPath}" ("${condaW}" tos accept --channel main && "${condaW}" create -p "${envPath}" ${pythonArg} -y)`,
+				`call "${condaW}" activate "${envPath}" ${middle} && call "${condaW}" deactivate`,
 			];
 		}
 		// for linux and mac
 		{
 			const between = middle ? ` && ${middle} && ` : " && ";
 			return [
-				`if [ ! -d "${envPath}" ]; then ${condaUC} create -p "${envPath}" ${pythonArg} -y; fi`,
+				`if [ ! -d "${envPath}" ]; then "${condaUC}" create -p "${envPath}" ${pythonArg} -y; fi`,
 				`. "${condaU}" "${envPath}"${between}conda deactivate`,
 			];
 		}
@@ -676,7 +676,7 @@ async function createVirtualEnvCommands(
 			const between = middle ? ` ${middle} && ` : " && ";
 			return [
 				// create new env
-				`${uvPath} venv ${pythonFlag} "${envPath}"`,
+				`"${uvPath}" venv ${pythonFlag} "${envPath}"`,
 				// use it
 				`. "${activateScript}"${between}deactivate`,
 			];
