@@ -16,7 +16,7 @@ export default function AI({
 }) {
 	const [open, setOpen] = useState(false);
 	// const [loading, setLoading] = useState(false);
-	const [messages, setMessages] = useState<string[]>([]);
+	const [messages, setMessages] = useState<any[]>([]);
 	const [ollamaStatus, setOllamaStatus] = useState("");
 	const logsEndRef = useRef<HTMLDivElement>(null);
 
@@ -164,7 +164,7 @@ export default function AI({
 							</span>
 						</div>
 					)}
-					{messages.length > 0 && (
+					{!messages[0].error && (
 						<div
 							className="backdrop-blur-3xl bg-neutral-900/40 rounded-2xl p-4 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto"
 							style={{ scrollbarWidth: "none" }}
