@@ -30,11 +30,6 @@
     "generate-translations": "npx tsx src/renderer/src/translations/generateTranslations.ts",
     "deploy": "npx auto-changelog --package --commit-limit false --commit-url https://github.com/dioneapp/dioneapp/commits/main/ --sort-commits date-desc --release-summary && npm run build && electron-builder --win --publish always"
   },
-  "auto-changelog": {
-    "name": "Dione v${version}",
-    "template": "compact",
-    "hideCredit": true
-  },
   "build": {
     "appId": "dione",
     "productName": "Dione",
