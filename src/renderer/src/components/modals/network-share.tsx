@@ -9,6 +9,8 @@ interface NetworkShareModalProps {
 	isOpen: boolean;
 	onClose: () => void;
 	targetPort?: number;
+	tunnelInfo: TunnelInfo | null;
+	setTunnelInfo: React.Dispatch<React.SetStateAction<any | null>>;
 }
 
 type ShareMode = "local" | "public";
@@ -25,11 +27,12 @@ export default function NetworkShareModal({
 	isOpen,
 	onClose,
 	targetPort,
+	tunnelInfo,
+	setTunnelInfo,
 }: NetworkShareModalProps) {
 	const { t } = useTranslation();
 	const [shareMode, setShareMode] = useState<ShareMode>("local");
 	const [localUrl, setLocalUrl] = useState<string>("");
-	const [tunnelInfo, setTunnelInfo] = useState<TunnelInfo | null>(null);
 	const [copied, setCopied] = useState(false);
 	const [initialLoading, setInitialLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);

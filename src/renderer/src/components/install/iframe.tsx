@@ -8,6 +8,7 @@ import {
 	Share2,
 	Square,
 	SquareTerminal,
+	Wifi,
 	X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -21,6 +22,13 @@ interface IframeProps {
 	currentPort: number;
 	setShow: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 	data: any;
+}
+
+interface TunnelInfo {
+	url: string;
+	type: "localtunnel";
+	status: "active" | "connecting" | "error";
+	password?: string;
 }
 
 interface SystemUsage {
@@ -43,6 +51,7 @@ export default function IframeComponent({
 		ram: { percent: 0, usedGB: 0 },
 		disk: 0,
 	});
+	const [tunnelInfo, setTunnelInfo] = useState<TunnelInfo | null>(null);
 	const [isFullscreen, setIsFullscreen] = useState(false);
 	const [showNetworkShareModal, setShowNetworkShareModal] = useState(false);
 
@@ -53,7 +62,7 @@ export default function IframeComponent({
 					await window.electron.ipcRenderer.invoke("get-system-usage");
 				setSystemUsage(usage);
 			} catch (error) {
-				console.error("Failed to get system usage:", error);
+				console.error("Failed to get system usage", error);
 			}
 		};
 
@@ -62,6 +71,20 @@ export default function IframeComponent({
 		const interval = setInterval(updateSystemUsage, 2000);
 
 		return () => clearInterval(interval);
+	}, []);
+
+	useEffect(() => {
+		const updateTunnelInfo = async () => {
+			try {
+				const tunnel =
+					await window.electron.ipcRenderer.invoke("get-current-tunnel");
+				setTunnelInfo(tunnel);
+			} catch (error) {
+				console.error("Failed to get tunnel info", error);
+			}
+		};
+
+		updateTunnelInfo();
 	}, []);
 
 	const handleEnterFullscreen = () => {
@@ -282,6 +305,11 @@ export default function IframeComponent({
 				</div>
 
 				<div className="flex gap-1">
+					{tunnelInfo && (
+						<div onClick={() => setShowNetworkShareModal(!showNetworkShareModal)} className="cursor-pointer hover:bg-[#BCB1E7]/80 transition-colors duration-200 flex items-center gap-1.5 mr-1 px-4 rounded-md text-xs bg-[#BCB1E7] text-black backdrop-blur-xl font-bold shrink-0 relative">
+							<Wifi className="w-4 h-4" strokeWidth={3} />
+						</div>
+					)}
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleOpenNewWindow}
@@ -359,6 +387,8 @@ export default function IframeComponent({
 				isOpen={showNetworkShareModal}
 				onClose={() => setShowNetworkShareModal(false)}
 				targetPort={currentPort}
+				tunnelInfo={tunnelInfo}
+				setTunnelInfo={setTunnelInfo}
 			/>
 		</div>
 	);
