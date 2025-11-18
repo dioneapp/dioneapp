@@ -2,7 +2,9 @@ import { getBackendPort } from "@renderer/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
 import { useTranslation } from "../../translations/translationContext";
+import DioLogo from "../../assets/svgs/Dio.svg";
 
 interface NetworkShareModalProps {
 	onClose: () => void;
@@ -241,6 +243,17 @@ export default function NetworkShareModal({
 									<>
 										{shareMode === "local" && localUrl && (
 											<div className="space-y-3">
+											<div className="flex items-center justify-center pb-2">
+												<div className="bg-black/30 p-4 rounded-xl border border-white/5">
+													<QRCodeSVG
+														value={localUrl}
+														size={180}
+														level="H"
+														fgColor="#ffffff"
+														bgColor="transparent"
+														/>
+													</div>
+												</div>
 												<div className="space-y-2">
 													<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
 														{t("networkShare.local.shareUrl") || "Share URL"}
@@ -282,6 +295,17 @@ export default function NetworkShareModal({
 
 										{shareMode === "public" && tunnelInfo && (
 											<div className="space-y-3">
+											<div className="flex items-center justify-center pb-2">
+												<div className="bg-black/30 p-4 rounded-xl border border-white/5">
+													<QRCodeSVG
+														value={tunnelInfo.shortUrl || tunnelInfo.url}
+														size={180}
+														level="H"
+														fgColor="#ffffff"
+														bgColor="transparent"
+														/>
+													</div>
+												</div>
 												<div className="space-y-2">
 													<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
 														{t("networkShare.public.shareUrl")}

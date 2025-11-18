@@ -151,6 +151,7 @@
     "node-vibrant": "^4.0.3",
     "ollama": "^0.6.2",
     "pidtree": "^0.6.0",
+    "qrcode.react": "^4.2.0",
     "react-markdown": "^10.1.0",
     "react-router-dom": "^7.5.3",
     "react-syntax-highlighter": "^16.1.0",
