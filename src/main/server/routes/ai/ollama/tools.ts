@@ -18,7 +18,7 @@ const availableTools = [
 					},
 					file: {
 						type: "string",
-						description: "The file path",
+						description: "The file name with extension",
 					},
 				},
 				required: ["project", "file"],
