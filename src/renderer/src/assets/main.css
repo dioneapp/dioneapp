@@ -29,16 +29,19 @@ body {
 		right: 100%;
 		width: 0%;
 	}
+
 	10% {
 		left: 0%;
 		right: 75%;
 		width: 25%;
 	}
+
 	90% {
 		right: 0%;
 		left: 75%;
 		width: 25%;
 	}
+
 	100% {
 		left: 100%;
 		right: 0%;
@@ -54,6 +57,7 @@ body {
 	position: relative;
 	padding: 5px;
 }
+
 .loader:before {
 	content: "";
 	border: 1px solid #ffffff1e;
@@ -64,6 +68,7 @@ body {
 	bottom: -3px;
 	left: -4px;
 }
+
 .loader .loaderBar {
 	position: absolute;
 	border-radius: 10px;
@@ -129,28 +134,23 @@ iframe::-webkit-scrollbar-thumb {
 }
 
 #logs {
-	-webkit-mask-image: linear-gradient(
-		to bottom,
-		transparent 0%,
-		black 2%,
-		black 96%,
-		transparent 100%
-	);
-	mask-image: linear-gradient(
-		to bottom,
-		transparent 0%,
-		black 2%,
-		black 96%,
-		transparent 100%
-	);
+	-webkit-mask-image: linear-gradient(to bottom,
+			transparent 0%,
+			black 2%,
+			black 96%,
+			transparent 100%);
+	mask-image: linear-gradient(to bottom,
+			transparent 0%,
+			black 2%,
+			black 96%,
+			transparent 100%);
 }
 
 #main {
 	border: none !important;
 	box-shadow: none !important;
 	outline: none !important;
-	transition: opacity 0.8s cubic-bezier(0.42, 0, 0.58, 1), transform 0.8s
-		cubic-bezier(0.42, 0, 0.58, 1);
+	transition: opacity 0.8s cubic-bezier(0.42, 0, 0.58, 1), transform 0.8s cubic-bezier(0.42, 0, 0.58, 1);
 	opacity: 1;
 	transform: scale(1);
 }
@@ -171,6 +171,7 @@ body:has(#modal) .page-transition {
 		filter: blur(10px);
 		transform: scale(0.98) translateZ(0);
 	}
+
 	100% {
 		opacity: 1;
 		filter: blur(0);
@@ -181,59 +182,112 @@ body:has(#modal) .page-transition {
 button {
 	transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 button:active {
 	transform: scale(0.97);
 }
+
 button:disabled {
 	cursor: default;
 	transform: scale(0.0);
 }
+
 a {
 	transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
 	cursor: pointer;
 }
+
 a:active {
 	transform: scale(0.97);
 }
+
 a:disabled {
 	cursor: default;
 }
 
 /* prose stuff */
 .prose {
-	font-family: system-ui, sans-serif;
-	line-height: 1.7;
-	max-width: 65ch;
-	word-wrap: break-word;
+	color: #d1d1d1;
 }
 
-.prose p {
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+	color: #e7e7e7;
+	margin-top: .5em;
 	margin-bottom: 0.75em;
-}
-
-.prose strong {
 	font-weight: 600;
-}
-
-.prose em {
-	font-style: italic;
+	font-size: 1.5rem;
 }
 
 .prose a {
 	color: #bcb1e7;
 	text-decoration: underline;
-	text-underline-offset: 2px;
-	transition: color 0.15s ease-in-out;
 }
 
-.prose a:hover {
+.prose p,
+.prose ul,
+.prose ol {
+	margin-bottom: 1em;
+}
+
+.prose ul,
+.prose ol {
+	margin-left: 1.25em;
+}
+
+.prose blockquote {
+	border-left: 3px solid #bcb1e7;
+	padding-left: 1em;
+	color: #bcb1e7;
+	margin-bottom: 1em;
+	font-style: italic;
+}
+
+.prose code {
+	background-color: #171515;
+	color: #bcb1e7;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 0.9em;
+	user-select: all;
+}
+
+.prose pre {
+	background-color: #171515;
+	color: #bcb1e7;
+	padding: 1em;
+	border-radius: 5px;
+	overflow-x: auto;
+	margin-bottom: 1em;
+	font-size: 0.9em;
+}
+
+.prose table {
+	border-collapse: collapse;
+	width: 100%;
+	margin-bottom: 1em;
+}
+
+.prose th,
+.prose td {
+	border: 1px solid #ffffff5e;
+	padding: 0.5em 0.8em;
+	text-align: left;
+	color: #d1d1d1;
+}
+
+.prose th {
+	background: #201c35;
 	color: #bcb1e7;
 }
 
 .prose ul,
 .prose ol {
-	margin: 0.75em 0;
-	padding-left: 1.5rem;
+	margin-bottom: 1em;
 }
 
 .prose ul {
@@ -244,57 +298,11 @@ a:disabled {
 	list-style-type: decimal;
 }
 
-.prose ul ul,
-.prose ol ol,
-.prose ul ol,
-.prose ol ul {
-	margin-top: 0.25em;
-	margin-bottom: 0.25em;
-}
-
 .prose li {
-	margin: 0.35em 0;
-	padding-left: 0.25em;
+	margin-bottom: 0.4em;
 }
 
-.prose li::marker {
+.prose ul li::marker {
 	color: #bcb1e7;
-}
-
-.prose blockquote {
-	border-left: 4px solid #93c5fd;
-	padding-left: 1rem;
-	color: #374151;
-	font-style: italic;
-	background: #f9fafb;
-	border-radius: 0.5rem;
-	margin: 1rem 0;
-}
-
-.prose code {
-	user-select: all;
-}
-
-.prose h1,
-.prose h2,
-.prose h3 {
-	font-weight: 600;
-	margin-top: 1em;
-	margin-bottom: 0.5em;
-	line-height: 1.25;
-}
-.prose h1 {
-	font-size: 1.6rem;
-}
-.prose h2 {
-	font-size: 1.35rem;
-}
-.prose h3 {
-	font-size: 1.15rem;
-}
-
-.prose hr {
-	border: none;
-	border-top: 1px solid #e5e7eb;
-	margin: 1.5rem 0;
+	font-size: 1.1em;
 }
