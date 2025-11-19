@@ -1,7 +1,7 @@
 import express from "express";
 import logger from "../../../utils/logger";
 import { getSysPrompt } from "../instructions/instructions";
-import { getTools, readFile } from "./tools";
+import { getTools, read_file } from "./tools";
 const { Ollama } = require("ollama");
 
 const OllamaRouter = express.Router();
@@ -82,7 +82,7 @@ async function handleOllamaChat({
 	let response = await ollama.chat({
 		model,
 		messages,
-		tools: quickAI ? [] : tools,
+		tools: tools,
 	});
 	// repeat until no more tool calls
 	while (
@@ -90,10 +90,11 @@ async function handleOllamaChat({
 		response.message.tool_calls.length > 0
 	) {
 		for (const call of response.message.tool_calls) {
-			if (call.function.name === "read_file" && !quickAI) {
+			if (call.function.name === "read_file") {
 				logger.ai(`Using tools: ${JSON.stringify(call.function)}`);
-				const safePath = call.function.arguments.file_path;
-				const fileContents = readFile(safePath, workspacePath);
+				const project = call.function.arguments.project;
+				const file = call.function.arguments.file;
+				const fileContents = read_file(project, file);
 				messages.push({
 					role: "tool",
 					name: call.function.name,

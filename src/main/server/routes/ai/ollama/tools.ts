@@ -1,22 +1,27 @@
 import fs from "node:fs";
 import path from "node:path";
 import logger from "../../../utils/logger";
+import { resolveScriptPaths } from "../../../scripts/utils/paths";
 
 const availableTools = [
 	{
 		type: "function",
 		function: {
 			name: "read_file",
-			description: "Read and return contents of the given file path",
+			description: "Reads content from a specific file in a project. ONLY use this when the user explicitly asks to read a file or asks about a specific project's codebase. Do NOT use for general knowledge questions.",
 			parameters: {
 				type: "object",
 				properties: {
-					file_path: {
+					project: {
 						type: "string",
-						description: "The path to the file to read",
+						description: "The project name",
+					},
+					file: {
+						type: "string",
+						description: "The file path",
 					},
 				},
-				required: ["file_path"],
+				required: ["project", "file"],
 			},
 		},
 	},
@@ -26,23 +31,35 @@ export function getTools() {
 	return availableTools;
 }
 
-export function readFile(file_name: string, workspacePath: string) {
-	const full_path = path.normalize(path.join(workspacePath, file_name));
-	if (!fs.existsSync(full_path)) {
-		// if file not found in workspace path, search for it
-		const files = fs.readdirSync(workspacePath);
-		const foundFile = files.find((file) => file === file_name);
-		if (foundFile) {
-			const foundPath = path.join(workspacePath, foundFile);
-			logger.ai(`Reading file: ${foundPath}`);
-			const fileContents = fs.readFileSync(foundPath, "utf8");
-			return fileContents;
+export function read_file(project: string, file: string) {
+	try {
+		if (!project || !file || project === "None" || file === "None") {
+			return "Error: You called the tool with empty parameters. Please ask the user for the project and file name first.";
 		}
-	} else {
-		logger.ai(`Reading file: ${full_path}`);
-		const fileContents = fs.readFileSync(full_path, "utf8");
-		return fileContents;
+
+		logger.ai(`Reading file: ${file}`);
+		const dir = resolveScriptPaths(project).workingDir;
+		let pathToRead = path.join(dir, file);
+
+		if (fs.existsSync(pathToRead)) {
+			return fs.readFileSync(pathToRead, "utf8");
+		}
+
+		for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+			const p = path.join(dir, e.name, file);
+			if ((e.isFile() && e.name === file) || (e.isDirectory() && fs.existsSync(p))) {
+				pathToRead = p;
+				logger.ai(`Found file: ${pathToRead}`);
+				return fs.readFileSync(pathToRead, "utf8");
+			}
+		}
+
+		logger.ai(`File not found: ${file} in ${dir}`);
+		return `Error: File "${file}" not found in project "${project}"`;
+
+	} catch (err: any) {
+		const errorMsg = `Error reading file "${file}": ${err.message || err}`;
+		logger.ai(errorMsg);
+		return errorMsg;
 	}
-	logger.ai(`File not found: ${full_path}`);
-	return "File not found";
 }
