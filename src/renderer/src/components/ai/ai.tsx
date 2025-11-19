@@ -164,7 +164,7 @@ export default function AI({
 							</span>
 						</div>
 					)}
-					{!messages[0].error && (
+					{messages && messages.length > 0 && !messages[0]?.error && (
 						<div
 							className="backdrop-blur-3xl bg-neutral-900/40 rounded-2xl p-4 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto"
 							style={{ scrollbarWidth: "none" }}

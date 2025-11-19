@@ -82,23 +82,16 @@ export default function Messages({
 												});
 											};
 											return (
-												<div className="relative group my-3 rounded-lg overflow-hidden">
+												<div className="relative group rounded-lg overflow-hidden text-wrap break-all">
 													<button
 														type="button"
 														onClick={handleCopy}
 														aria-label="Copy code"
-														className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 cursor-pointer bg-gray-800 text-gray-200 text-xs px-2.5 py-1 rounded transition-opacity"
+														className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 cursor-pointer bg-white/10 backdrop-blur-3xl border border-white/5 text-xs px-4 py-1 rounded-full transition-opacity text-wrap break-all"
 													>
 														{copied ? "Copied!" : "Copy"}
 													</button>
-													<SyntaxHighlighter
-														style={atomDark}
-														language={match ? match[1] : undefined}
-														PreTag="div"
-														{...props}
-													>
-														{codeText}
-													</SyntaxHighlighter>
+													{codeText}
 												</div>
 											);
 										};
@@ -107,7 +100,7 @@ export default function Messages({
 											<CodeBlockWithCopy />
 										) : (
 											<code
-												className="bg-neutral-800 rounded text-sm font-mono"
+												className="bg-neutral-800 rounded text-sm font-mono text-wrap break-all"
 												{...props}
 											>
 												{children}
