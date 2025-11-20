@@ -64,7 +64,9 @@ export async function useGit(
 						if (now - lastProgressEmit > 100) {
 							lastProgressEmit = now;
 							const total = progress.total ? `/${progress.total}` : "";
-							const percentage = progress.total ? ` (${Math.round((progress.loaded / progress.total) * 100)}%)` : "";
+							const percentage = progress.total
+								? ` (${Math.round((progress.loaded / progress.total) * 100)}%)`
+								: "";
 							io.to(id).emit("installUpdate", {
 								type: "log",
 								content: `\rCloning repository... ${progress.loaded}${total}${percentage}`,

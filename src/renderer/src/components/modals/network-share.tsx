@@ -1,8 +1,8 @@
 import { getBackendPort } from "@renderer/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, X } from "lucide-react";
-import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 
 interface NetworkShareModalProps {
@@ -190,10 +190,11 @@ export default function NetworkShareModal({
 											if (tunnelInfo) stopActiveTunnel();
 											setShareMode("local");
 										}}
-										className={`px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${shareMode === "local"
-											? "bg-white text-black shadow-sm"
-											: "text-neutral-400 hover:text-neutral-200"
-											}`}
+										className={`px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
+											shareMode === "local"
+												? "bg-white text-black shadow-sm"
+												: "text-neutral-400 hover:text-neutral-200"
+										}`}
 									>
 										{t("networkShare.modes.local")}
 									</button>
@@ -207,10 +208,11 @@ export default function NetworkShareModal({
 											}
 										}}
 										disabled={startingTunnel}
-										className={`px-4 py-2.5 cursor-pointer rounded-md text-sm font-medium transition-all duration-200 ${shareMode === "public"
-											? "bg-white text-black shadow-sm"
-											: "text-neutral-400 hover:text-neutral-200"
-											} ${startingTunnel ? "opacity-50 cursor-not-allowed" : ""}`}
+										className={`px-4 py-2.5 cursor-pointer rounded-md text-sm font-medium transition-all duration-200 ${
+											shareMode === "public"
+												? "bg-white text-black shadow-sm"
+												: "text-neutral-400 hover:text-neutral-200"
+										} ${startingTunnel ? "opacity-50 cursor-not-allowed" : ""}`}
 									>
 										{t("networkShare.modes.public")}
 									</button>
@@ -262,7 +264,8 @@ export default function NetworkShareModal({
 														</div>
 														<div className="space-y-2">
 															<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
-																{t("networkShare.local.shareUrl") || "Share URL"}
+																{t("networkShare.local.shareUrl") ||
+																	"Share URL"}
 															</label>
 															<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
 																<input

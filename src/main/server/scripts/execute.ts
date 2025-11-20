@@ -7,9 +7,9 @@ import logger from "../utils/logger";
 import { emitRunProgress, generateRunId } from "../utils/progress-emitter";
 import { checkDependencies } from "./dependencies/dependencies";
 import { addValue, getAllValues } from "./dependencies/environment";
+import { getArch, getOS } from "./dependencies/utils/system";
 import { executeCommands } from "./process";
 import { getSystemInfo } from "./system";
-import { getArch, getOS } from "./dependencies/utils/system";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
@@ -26,10 +26,15 @@ async function patchNetworkAccess(configDir: string) {
 
 			try {
 				const content = await fs.promises.readFile(filePath, "utf8");
-				const modified = content.includes("server_name='127.0.0.1'") || content.includes('server_name="127.0.0.1"');
+				const modified =
+					content.includes("server_name='127.0.0.1'") ||
+					content.includes('server_name="127.0.0.1"');
 
 				if (modified) {
-					const patchedContent = content.replace(/server_name=('|")127\.0\.0\.1('|")/g, '$10.0.0.0$2');
+					const patchedContent = content.replace(
+						/server_name=('|")127\.0\.0\.1('|")/g,
+						"$10.0.0.0$2",
+					);
 					await fs.promises.writeFile(filePath, patchedContent, "utf8");
 					logger.info(`Patched network access in: ${file.name}`);
 				}
@@ -658,17 +663,17 @@ async function createVirtualEnvCommands(
 				? "uv-x86_64-unknown-linux-gnu"
 				: "uv-aarch64-unknown-linux-gnu"
 			: platform === "macos"
-			? arch === "amd64"
-				? "uv-x86_64-apple-darwin"
-				: "uv-aarch64-apple-darwin"
-			: "";
+				? arch === "amd64"
+					? "uv-x86_64-apple-darwin"
+					: "uv-aarch64-apple-darwin"
+				: "";
 
 	const uvPath = path.join(
 		config?.defaultBinFolder || path.join(app.getPath("userData")),
 		"bin",
 		"uv",
 		uvFolder,
-		process.platform === "win32" ? "uv.exe" : "uv"  
+		process.platform === "win32" ? "uv.exe" : "uv",
 	);
 
 	if (!existsEnv) {

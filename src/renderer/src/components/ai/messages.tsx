@@ -45,10 +45,10 @@ export default function Messages({
 								<div className="mb-2">
 									{message?.message?.tool_calls[0].function.name ===
 										"read_file" && (
-											<span className="text-xs text-gray-500 dark:text-gray-400">
-												Reading files...
-											</span>
-										)}
+										<span className="text-xs text-gray-500 dark:text-gray-400">
+											Reading files...
+										</span>
+									)}
 								</div>
 							)}
 						<div

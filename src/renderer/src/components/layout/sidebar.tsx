@@ -396,10 +396,10 @@ export default function Sidebar() {
 									) : (
 										<>
 											{!avatarError &&
-												user?.avatar_url &&
-												user?.avatar_url !== "" &&
-												user?.avatar_url !== null &&
-												user?.avatar_url !== undefined ? (
+											user?.avatar_url &&
+											user?.avatar_url !== "" &&
+											user?.avatar_url !== null &&
+											user?.avatar_url !== undefined ? (
 												<img
 													src={user?.avatar_url}
 													alt="user avatar"
