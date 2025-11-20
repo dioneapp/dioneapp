@@ -5,9 +5,9 @@ import * as cuda from "./files/cuda";
 import * as ffmpeg from "./files/ffmpeg";
 import * as git from "./files/git";
 import * as node from "./files/node";
+import * as ollama from "./files/ollama";
 import * as pnpm from "./files/pnpm";
 import * as uv from "./files/uv";
-import * as ollama from "./files/ollama";
 
 export const dependencyRegistry: Record<
 	string,

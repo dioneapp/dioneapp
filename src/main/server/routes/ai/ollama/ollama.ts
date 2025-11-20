@@ -1,15 +1,18 @@
+import { type ChildProcess, spawn } from "child_process";
+import fs from "fs";
+import path from "path";
+import { app } from "electron";
 import express from "express";
+import type { Server as SocketIOServer } from "socket.io";
+import { readConfig } from "../../../../config";
+import {
+	checkOneDependency,
+	installDependency,
+} from "../../../scripts/dependencies/dependencies";
+import { killProcess } from "../../../scripts/process";
 import logger from "../../../utils/logger";
 import { getSysPrompt } from "../instructions/instructions";
 import { getTools, read_file } from "./tools";
-import { checkOneDependency, installDependency } from "../../../scripts/dependencies/dependencies";
-import path from "path";
-import { app } from "electron";
-import { readConfig } from "../../../../config";
-import { Server as SocketIOServer } from "socket.io";
-import { killProcess } from "../../../scripts/process";
-import { ChildProcess, spawn } from "child_process";
-import fs from "fs";
 const { Ollama } = require("ollama");
 
 let activeProcess: ChildProcess | null = null;
@@ -27,19 +30,21 @@ export function createOllamaRouter(io: SocketIOServer) {
 	});
 
 	OllamaRouter.get("/isinstalled", async (_req, res) => {
-		logger.ai("Checking if Ollama is installed...")
+		logger.ai("Checking if Ollama is installed...");
 		const config = readConfig();
 		const binFolder = path.join(
 			config?.defaultBinFolder || path.join(app.getPath("userData")),
 			"bin",
 		);
 		const result = await checkOneDependency("ollama", binFolder);
-		logger.ai(`Ollama is installed?: ${result.installed}, reason: ${result.reason}`);
+		logger.ai(
+			`Ollama is installed?: ${result.installed}, reason: ${result.reason}`,
+		);
 		res.json(result);
 	});
 
 	OllamaRouter.post("/install", async (_req, res) => {
-		logger.ai("Installing Ollama...")
+		logger.ai("Installing Ollama...");
 		let installed = false;
 		const result = await installDependency("ollama", "ollama", io);
 		if (result.success) {
@@ -54,7 +59,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 		const config = readConfig();
 		const binFolder = path.join(
 			config?.defaultBinFolder || path.join(app.getPath("userData")),
-			"bin"
+			"bin",
 		);
 		const ollamaDir = path.join(binFolder, "ollama");
 		const command = "ollama serve";
@@ -113,7 +118,6 @@ export function createOllamaRouter(io: SocketIOServer) {
 		res.json({ message: "Ollama server stopped" });
 	});
 
-
 	// ollama routes
 
 	OllamaRouter.get("/models", async (_req, res) => {
@@ -171,11 +175,21 @@ export function createOllamaRouter(io: SocketIOServer) {
 			logger.error(`Error processing chat request: ${error}`);
 
 			if (error.message.includes("not found")) {
-				res.status(500).json({ error: "Model Not Found", message: "Model Not Found, please select a valid model." });
+				res
+					.status(500)
+					.json({
+						error: "Model Not Found",
+						message: "Model Not Found, please select a valid model.",
+					});
 				return;
 			}
 
-			res.status(500).json({ error: `Unexpected error`, message: `Unexpected error: ${error}` });
+			res
+				.status(500)
+				.json({
+					error: `Unexpected error`,
+					message: `Unexpected error: ${error}`,
+				});
 		}
 	});
 

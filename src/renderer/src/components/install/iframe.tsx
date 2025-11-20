@@ -306,7 +306,10 @@ export default function IframeComponent({
 
 				<div className="flex gap-1">
 					{tunnelInfo && (
-						<div onClick={() => setShowNetworkShareModal(!showNetworkShareModal)} className="cursor-pointer hover:bg-[#BCB1E7]/80 transition-colors duration-200 flex items-center gap-1.5 mr-1 px-4 rounded-md text-xs bg-[#BCB1E7] text-black backdrop-blur-xl font-bold shrink-0 relative">
+						<div
+							onClick={() => setShowNetworkShareModal(!showNetworkShareModal)}
+							className="cursor-pointer hover:bg-[#BCB1E7]/80 transition-colors duration-200 flex items-center gap-1.5 mr-1 px-4 rounded-md text-xs bg-[#BCB1E7] text-black backdrop-blur-xl font-bold shrink-0 relative"
+						>
 							<Wifi className="w-4 h-4" strokeWidth={3} />
 						</div>
 					)}

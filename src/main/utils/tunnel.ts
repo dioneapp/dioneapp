@@ -1,8 +1,8 @@
 import type { Tunnel } from "localtunnel";
 import localtunnel from "localtunnel";
 import { machineIdSync } from "node-machine-id";
-import logger from "../server/utils/logger";
 import { supabase } from "../server/utils/database";
+import logger from "../server/utils/logger";
 
 let activeTunnel: Tunnel | null = null;
 let currentTunnelUrl: string | null = null;

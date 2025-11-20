@@ -1,14 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
-import logger from "../../../utils/logger";
 import { resolveScriptPaths } from "../../../scripts/utils/paths";
+import logger from "../../../utils/logger";
 
 const availableTools = [
 	{
 		type: "function",
 		function: {
 			name: "read_file",
-			description: "Reads content from a specific file in a project. ONLY use this when the user explicitly asks to read a file or asks about a specific project's codebase. Do NOT use for general knowledge questions.",
+			description:
+				"Reads content from a specific file in a project. ONLY use this when the user explicitly asks to read a file or asks about a specific project's codebase. Do NOT use for general knowledge questions.",
 			parameters: {
 				type: "object",
 				properties: {
@@ -47,7 +48,10 @@ export function read_file(project: string, file: string) {
 
 		for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
 			const p = path.join(dir, e.name, file);
-			if ((e.isFile() && e.name === file) || (e.isDirectory() && fs.existsSync(p))) {
+			if (
+				(e.isFile() && e.name === file) ||
+				(e.isDirectory() && fs.existsSync(p))
+			) {
 				pathToRead = p;
 				logger.ai(`Found file: ${pathToRead}`);
 				return fs.readFileSync(pathToRead, "utf8");
@@ -56,7 +60,6 @@ export function read_file(project: string, file: string) {
 
 		logger.ai(`File not found: ${file} in ${dir}`);
 		return `Error: File "${file}" not found in project "${project}"`;
-
 	} catch (err: any) {
 		const errorMsg = `Error reading file "${file}": ${err.message || err}`;
 		logger.ai(errorMsg);
