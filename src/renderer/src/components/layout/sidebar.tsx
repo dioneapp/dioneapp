@@ -246,7 +246,8 @@ export default function Sidebar() {
 									className={`${config?.compactMode ? "flex flex-col gap-2 items-center" : "flex flex-col gap-2"}`}
 								>
 									{activeApps
-										?.slice(0, config?.compactMode ? 6 : 4)
+										?.filter((app) => app.appId !== "ollama")
+										.slice(0, config?.compactMode ? 6 : 4)
 										.map((app) => (
 											<div
 												key={app.appId}
@@ -257,14 +258,14 @@ export default function Sidebar() {
 												>
 													<button
 														type="button"
-														onClick={() => stopApp(app.appId, app.data.name)}
+														onClick={() => stopApp(app.appId, app.data?.name)}
 														className="absolute -top-1 -right-1 h-5 w-5 bg-red-500/40 hover:bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex items-center justify-center backdrop-blur-sm"
 													>
 														<X className="h-3 w-3 text-white" />
 													</button>
 													<Link
 														to={{
-															pathname: `/install/${app.isLocal ? app.data.name : app.appId}`,
+															pathname: `/install/${app.isLocal ? app.data?.name : app.appId}`,
 															search: `?isLocal=${app.isLocal}`,
 														}}
 														className={`${config?.compactMode ? "w-12 h-12 rounded-xl flex items-center justify-center" : "w-full h-10 rounded-lg flex items-center gap-3 px-3"} group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group`}
@@ -282,7 +283,7 @@ export default function Sidebar() {
 																		/>
 																	) : (
 																		<GeneratedIcon
-																			name={app.data.name}
+																			name={app?.data?.name || app.appId}
 																			className="h-full w-full border border-white/10 group-hover:border-white/20"
 																			isSidebarIcon
 																		/>
@@ -290,7 +291,7 @@ export default function Sidebar() {
 																</>
 															) : (
 																<GeneratedIcon
-																	name={app.data.name}
+																	name={app?.data?.name}
 																	className="w-full h-full"
 																	roundedClassName="rounded-lg"
 																/>
@@ -299,10 +300,10 @@ export default function Sidebar() {
 														{!config?.compactMode && (
 															<div className="flex-1 min-w-0">
 																<p className="text-sm font-medium text-white truncate">
-																	{app.data.name}
+																	{app?.data?.name || app.appId}
 																</p>
 																<p className="text-xs text-neutral-400 truncate">
-																	{app.data.description ||
+																	{app?.data?.description ||
 																		t("runningApps.running")}
 																</p>
 															</div>
@@ -395,10 +396,10 @@ export default function Sidebar() {
 									) : (
 										<>
 											{!avatarError &&
-											user?.avatar_url &&
-											user?.avatar_url !== "" &&
-											user?.avatar_url !== null &&
-											user?.avatar_url !== undefined ? (
+												user?.avatar_url &&
+												user?.avatar_url !== "" &&
+												user?.avatar_url !== null &&
+												user?.avatar_url !== undefined ? (
 												<img
 													src={user?.avatar_url}
 													alt="user avatar"

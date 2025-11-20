@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import type { Server } from "socket.io";
 
-import AIRouter from "./ai/ai";
+import { createAIRouter } from "./ai/ai";
 import configRouter from "./config";
 // routers
 import databaseRouter from "./database";
@@ -43,5 +43,5 @@ export const setupRoutes = (server: Express, io: Server) => {
 	server.use("/files", filesRouter);
 
 	// ai
-	server.use("/ai", AIRouter);
+	server.use("/ai", createAIRouter(io));
 };

@@ -437,34 +437,40 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 			// get app info
 			Promise.all(
-				appIds.map((appId) => {
-					const isLocal = sockets[appId]?.isLocal || false;
-					const endpoint = isLocal
-						? `/local/get_id/${encodeURIComponent(appId)}`
-						: `/db/search/${encodeURIComponent(appId)}`;
+				appIds
+					.filter((appId) => appId !== "ollama")
+					.map((appId) => {
+						const isLocal = sockets[appId]?.isLocal || false;
+						const endpoint = isLocal
+							? `/local/get_id/${encodeURIComponent(appId)}`
+							: `/db/search/${encodeURIComponent(appId)}`;
 
-					return apiFetch(endpoint)
-						.then((res) => {
-							if (!res.ok) throw new Error(`Error getting app info ${appId}`);
-							return res.json();
-						})
-						.then((data) => ({
-							appId,
-							data,
-							isLocal,
-						}))
-						.catch((error) => {
-							console.error(error);
-							return {
+						return apiFetch(endpoint)
+							.then((res) => {
+								if (!res.ok) throw new Error(`Error getting app info ${appId}`);
+								return res.json();
+							})
+							.then((data) => ({
 								appId,
-								data: null,
+								data,
 								isLocal,
-							};
-						});
-				}),
-			).then((results) => {
-				setActiveApps(results);
-			});
+							}))
+							.catch((error) => {
+								console.error(error);
+								return {
+									appId,
+									data: null,
+									isLocal,
+								};
+							});
+					}),
+			)
+				.then((results) => {
+					setActiveApps(results);
+				})
+				.catch((error) => {
+					console.error("Error fetching app info for active apps:", error);
+				});
 		}
 		fetchAppInfo();
 	}, [sockets]);
@@ -479,10 +485,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${
-							sockets[data.id]?.isLocal
-								? encodeURIComponent(data.name)
-								: data.id
+						`/install/${sockets[data.id]?.isLocal
+							? encodeURIComponent(data.name)
+							: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},

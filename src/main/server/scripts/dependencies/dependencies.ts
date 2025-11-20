@@ -17,6 +17,18 @@ export function readDioneConfig(filePath: string): any {
 	}
 }
 
+export async function checkOneDependency(
+	depName: string,
+	binFolder: string,
+): Promise<{ installed: boolean; reason: string }> {
+	const entry = dependencyRegistry[depName];
+	if (!entry) {
+		return { installed: false, reason: "not-installed" };
+	}
+
+	return entry.isInstalled(binFolder);
+}
+
 export async function checkDependencies(dioneConfigPath: string): Promise<{
 	success: boolean;
 	missing: { name: string; installed: boolean; reason: string }[];

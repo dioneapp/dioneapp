@@ -1,10 +1,13 @@
 import express from "express";
-import OllamaRouter from "./ollama/ollama";
+import { createOllamaRouter } from "./ollama/ollama";
+import { Server as SocketIOServer } from "socket.io";
 
-const AIRouter = express.Router();
-AIRouter.use(express.json());
+export function createAIRouter(io: SocketIOServer) {
+    const AIRouter = express.Router();
+    AIRouter.use(express.json());
 
-// handle ollama calls
-AIRouter.use("/ollama", OllamaRouter);
+    // handle ollama calls
+    AIRouter.use("/ollama", createOllamaRouter(io));
 
-export default AIRouter;
+    return AIRouter;
+}

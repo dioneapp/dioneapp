@@ -7,6 +7,7 @@ import * as git from "./files/git";
 import * as node from "./files/node";
 import * as pnpm from "./files/pnpm";
 import * as uv from "./files/uv";
+import * as ollama from "./files/ollama";
 
 export const dependencyRegistry: Record<
 	string,
@@ -31,4 +32,5 @@ export const dependencyRegistry: Record<
 	pnpm,
 	build_tools,
 	cuda,
+	ollama,
 };

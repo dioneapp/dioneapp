@@ -2,115 +2,224 @@ import express from "express";
 import logger from "../../../utils/logger";
 import { getSysPrompt } from "../instructions/instructions";
 import { getTools, read_file } from "./tools";
+import { checkOneDependency, installDependency } from "../../../scripts/dependencies/dependencies";
+import path from "path";
+import { app } from "electron";
+import { readConfig } from "../../../../config";
+import { Server as SocketIOServer } from "socket.io";
+import { killProcess } from "../../../scripts/process";
+import { ChildProcess, spawn } from "child_process";
+import fs from "fs";
 const { Ollama } = require("ollama");
 
-const OllamaRouter = express.Router();
-OllamaRouter.use(express.json());
+let activeProcess: ChildProcess | null = null;
 
-const ollama = new Ollama({
-	url: "http://localhost:11434",
-});
+export function createOllamaRouter(io: SocketIOServer) {
+	const OllamaRouter = express.Router();
+	OllamaRouter.use(express.json());
 
-OllamaRouter.get("/", (_req, res) => {
-	res.json({ message: "Ollama API is working" });
-});
+	const ollama = new Ollama({
+		url: "http://localhost:11434",
+	});
 
-OllamaRouter.get("/models", async (_req, res) => {
-	try {
-		const response = await ollama.list();
-		const modelNames = response.models
-			.map((m: { name: string }) => m.name)
-			.join(", ");
-		logger.ai(`Available models: ${modelNames}`);
-		res.json(response);
-	} catch (error) {
-		logger.error(`Error fetching models: ${error}`);
-		res.status(500).json({ error: "Failed to fetch models" });
-	}
-});
+	OllamaRouter.get("/", (_req, res) => {
+		res.json({ message: "Ollama API is working" });
+	});
 
-OllamaRouter.post("/chat", async (req, res) => {
-	try {
-		const {
-			model,
-			prompt,
-			context = "",
-			name = "",
-			path = "",
-			workspaceName = "",
-			workspaceFiles = [],
-			workspacePath = "",
-			quickAI = false,
-		} = req.body;
-		const tools = await getTools();
-		const systemprompt = getSysPrompt(
-			context,
-			name,
-			path,
-			workspaceFiles,
-			workspaceName,
-			quickAI,
+	OllamaRouter.get("/isinstalled", async (_req, res) => {
+		logger.ai("Checking if Ollama is installed...")
+		const config = readConfig();
+		const binFolder = path.join(
+			config?.defaultBinFolder || path.join(app.getPath("userData")),
+			"bin",
 		);
-		const messages = [
-			{ role: "system", content: systemprompt },
-			{ role: "user", content: prompt },
-		];
-		logger.ai(`Chat request (prompt): ${prompt}`);
-		logger.ai(`Chat request (systemprompt): ${systemprompt}`);
-		const finalResponse = await handleOllamaChat({
-			model,
-			messages,
-			tools,
-			workspacePath,
-			quickAI,
-		});
-		logger.ai(`Chat response: ${JSON.stringify(finalResponse)}`);
-		res.json(finalResponse);
-	} catch (error) {
-		logger.error(`Error processing chat request: ${error}`);
-		res.status(500).json({ error: `Failed to process chat request: ${error}` });
-	}
-});
+		const result = await checkOneDependency("ollama", binFolder);
+		logger.ai(`Ollama is installed?: ${result.installed}, reason: ${result.reason}`);
+		res.json(result);
+	});
 
-async function handleOllamaChat({
-	model,
-	messages,
-	tools,
-	workspacePath,
-	quickAI,
-}) {
-	let response = await ollama.chat({
+	OllamaRouter.post("/install", async (_req, res) => {
+		logger.ai("Installing Ollama...")
+		let installed = false;
+		const result = await installDependency("ollama", "ollama", io);
+		if (result.success) {
+			installed = true;
+		}
+		logger.ai(`Installation finished.`);
+		res.json({ installed });
+	});
+
+	OllamaRouter.post("/start", async (_req, res) => {
+		logger.ai("Starting Ollama...");
+		const config = readConfig();
+		const binFolder = path.join(
+			config?.defaultBinFolder || path.join(app.getPath("userData")),
+			"bin"
+		);
+		const ollamaDir = path.join(binFolder, "ollama");
+		const command = "ollama serve";
+
+		if (!fs.existsSync(ollamaDir)) {
+			logger.ai("Ollama directory does not exist.");
+			return res.status(400).json({ error: "Ollama directory does not exist" });
+		}
+
+		if (activeProcess) {
+			logger.ai("Ollama server already running.");
+			return res.status(400).json({ error: "Ollama server already running" });
+		}
+
+		try {
+			activeProcess = spawn(command, { cwd: ollamaDir, shell: true });
+
+			if (!activeProcess) {
+				res.status(500).json({ error: "Failed to start Ollama server" });
+				return;
+			}
+
+			activeProcess?.stdout?.on("data", (data) => {
+				const text = data.toString("utf8");
+				logger.ai(`[ollama stdout] ${text}`);
+			});
+
+			activeProcess?.stderr?.on("data", (data) => {
+				const text = data.toString("utf8");
+				logger.ai(`[ollama stderr] ${text}`);
+			});
+
+			activeProcess.on("exit", (code) => {
+				logger.ai(`Ollama server exited with code ${code}`);
+				activeProcess = null;
+			});
+
+			logger.ai(`Ollama server started with PID ${activeProcess.pid}`);
+
+			res.json({ message: "Ollama server started", pid: activeProcess.pid });
+		} catch (error) {
+			logger.error(`Error starting Ollama server: ${(error as Error).message}`);
+			res.status(500).json({ error: "Failed to start Ollama server" });
+		}
+	});
+
+	OllamaRouter.post("/stop", async (_req, res) => {
+		if (!activeProcess || !activeProcess.pid) {
+			logger.ai("No Ollama server running.");
+			return res.status(400).json({ error: "No Ollama server running" });
+		}
+
+		await killProcess(activeProcess.pid, io, "ollama");
+		activeProcess = null;
+
+		res.json({ message: "Ollama server stopped" });
+	});
+
+
+	// ollama routes
+
+	OllamaRouter.get("/models", async (_req, res) => {
+		try {
+			const response = await ollama.list();
+			const modelNames = response.models
+				.map((m: { name: string }) => m.name)
+				.join(", ");
+			logger.ai(`Available models: ${modelNames}`);
+			res.json(response);
+		} catch (error) {
+			logger.error(`Error fetching models: ${error}`);
+			res.status(500).json({ error: "Failed to fetch models" });
+		}
+	});
+
+	OllamaRouter.post("/chat", async (req, res) => {
+		try {
+			const {
+				model,
+				prompt,
+				context = "",
+				name = "",
+				path = "",
+				workspaceName = "",
+				workspaceFiles = [],
+				workspacePath = "",
+				quickAI = false,
+			} = req.body;
+			const tools = await getTools();
+			const systemprompt = getSysPrompt(
+				context,
+				name,
+				path,
+				workspaceFiles,
+				workspaceName,
+				quickAI,
+			);
+			const messages = [
+				{ role: "system", content: systemprompt },
+				{ role: "user", content: prompt },
+			];
+			logger.ai(`Chat request (prompt): ${prompt}`);
+			logger.ai(`Chat request (systemprompt): ${systemprompt}`);
+			const finalResponse = await handleOllamaChat({
+				model,
+				messages,
+				tools,
+				workspacePath,
+				quickAI,
+			});
+			logger.ai(`Chat response: ${JSON.stringify(finalResponse)}`);
+			res.json(finalResponse);
+		} catch (error: any) {
+			logger.error(`Error processing chat request: ${error}`);
+
+			if (error.message.includes("not found")) {
+				res.status(500).json({ error: "Model Not Found", message: "Model Not Found, please select a valid model." });
+				return;
+			}
+
+			res.status(500).json({ error: `Unexpected error`, message: `Unexpected error: ${error}` });
+		}
+	});
+
+	async function handleOllamaChat({
 		model,
 		messages,
-		tools: tools,
-	});
-	// repeat until no more tool calls
-	while (
-		response.message?.tool_calls &&
-		response.message.tool_calls.length > 0
-	) {
-		for (const call of response.message.tool_calls) {
-			if (call.function.name === "read_file") {
-				logger.ai(`Using tools: ${JSON.stringify(call.function)}`);
-				const project = call.function.arguments.project;
-				const file = call.function.arguments.file;
-				const fileContents = read_file(project, file);
-				messages.push({
-					role: "tool",
-					name: call.function.name,
-					content: fileContents,
-					tool_call_id: call.id,
-				});
-			}
-		}
-		// call ollama again after fulfilling the previous tool calls
-		response = await ollama.chat({
+		tools,
+		workspacePath,
+		quickAI,
+	}) {
+		let response = await ollama.chat({
 			model,
 			messages,
-			tools: quickAI ? [] : tools,
+			tools: tools,
 		});
+		// repeat until no more tool calls
+		while (
+			response.message?.tool_calls &&
+			response.message.tool_calls.length > 0
+		) {
+			for (const call of response.message.tool_calls) {
+				if (call.function.name === "read_file") {
+					logger.ai(`Using tools: ${JSON.stringify(call.function)}`);
+					const project = call.function.arguments.project;
+					const file = call.function.arguments.file;
+					const fileContents = read_file(project, file);
+					messages.push({
+						role: "tool",
+						name: call.function.name,
+						content: fileContents,
+						tool_call_id: call.id,
+					});
+				}
+			}
+			// call ollama again after fulfilling the previous tool calls
+			response = await ollama.chat({
+				model,
+				messages,
+				tools: quickAI ? [] : tools,
+			});
+		}
+		// if no more tool calls, return response
+		return response;
 	}
-	// if no more tool calls, return response
-	return response;
+
+	return OllamaRouter;
 }
-export default OllamaRouter;

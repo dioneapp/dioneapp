@@ -2,6 +2,7 @@ import { Maximize, Minimize as Minimize2, Minus, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "../../translations/translationContext";
 import { useScriptsContext } from "../contexts/ScriptsContext";
+import { apiFetch } from "@renderer/utils/api";
 
 export default function Titlebar() {
 	const { t } = useTranslation();
@@ -17,6 +18,7 @@ export default function Titlebar() {
 				setShowModal(true);
 				setExitRef(true);
 			} else {
+				await apiFetch("/ai/ollama/stop", { method: "POST" });
 				window.electron.ipcRenderer.invoke("app:close");
 			}
 		} else {
