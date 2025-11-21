@@ -6,19 +6,19 @@ import ExecuteSound from "@renderer/components/first-time/sounds/sound";
 import Icon from "@renderer/components/icons/icon";
 import Titlebar from "@renderer/components/layout/titlebar";
 import { apiJson } from "@renderer/utils/api";
-import { openLink } from "@renderer/utils/openLink";
 import {
 	saveExpiresAt,
 	saveId,
 	saveRefreshToken,
 } from "@renderer/utils/secure-tokens";
-import { useToast } from "@renderer/utils/useToast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link as LinkIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useAuthContext } from "../components/contexts/AuthContext";
-import { useTranslation } from "../translations/translationContext";
+import { useAuthContext } from "../components/contexts/auth-context";
+import { useTranslation } from "../translations/translation-context";
+import { openLink } from "../utils/open-link";
+import { useToast } from "../utils/use-toast";
 
 export default function FirstTime() {
 	const { t } = useTranslation();

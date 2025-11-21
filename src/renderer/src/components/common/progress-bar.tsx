@@ -1,4 +1,4 @@
-import { useTranslation } from "@renderer/translations/translationContext";
+import { useTranslation } from "../../translations/translation-context";
 
 interface ProgressBarProps {
 	value?: number; // 0..100

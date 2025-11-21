@@ -1,7 +1,7 @@
 import { apiFetch } from "@renderer/utils/api";
 import { Maximize, Minimize as Minimize2, Minus, X } from "lucide-react";
 import { useState } from "react";
-import { useTranslation } from "../../translations/translationContext";
+import { useTranslation } from "../../translations/translation-context";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function Titlebar() {

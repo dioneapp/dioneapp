@@ -1,4 +1,3 @@
-import { useAuthContext } from "@renderer/components/contexts/AuthContext";
 import { useScriptsContext } from "@renderer/components/contexts/ScriptsContext";
 import VariablesModal from "@renderer/components/modals/variables";
 import AnimatedCount from "@renderer/utils/animate-count";
@@ -8,8 +7,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Folder, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { languages, useTranslation } from "../translations/translationContext";
-import { openFolder, openLink } from "../utils/openLink";
+import { useAuthContext } from "../components/contexts/auth-context";
+import { languages, useTranslation } from "../translations/translation-context";
+import { openFolder, openLink } from "../utils/open-link";
 
 // custom dropdown component
 const CustomSelect = ({

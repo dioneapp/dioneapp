@@ -1,4 +1,4 @@
-import { useTranslation } from "@renderer/translations/translationContext";
+import { useTranslation } from "../../translations/translation-context";
 
 export default function CustomCommandsModal({
 	commands,

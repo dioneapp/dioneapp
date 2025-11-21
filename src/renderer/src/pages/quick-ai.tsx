@@ -1,5 +1,4 @@
 import Messages from "@renderer/components/ai/messages";
-import ProgressBar from "@renderer/components/common/ProgressBar";
 import { useScriptsContext } from "@renderer/components/contexts/ScriptsContext";
 import Icon from "@renderer/components/icons/icon";
 import { apiFetch, getBackendPort } from "@renderer/utils/api";
@@ -16,6 +15,7 @@ import {
 	Square,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import ProgressBar from "../components/common/progress-bar";
 
 export default function QuickAI() {
 	const [messages, setMessages] = useState<{ role: string; content: string }[]>(

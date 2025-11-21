@@ -1,7 +1,7 @@
 import { apiJson } from "@renderer/utils/api";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "../../translations/translationContext";
+import { useTranslation } from "../../translations/translation-context";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import ScriptCard from "../home/feed/card";
 import Icon from "../icons/icon";

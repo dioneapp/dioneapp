@@ -1,4 +1,3 @@
-import { useTranslation } from "@renderer/translations/translationContext";
 import { apiFetch } from "@renderer/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
 import {
@@ -10,13 +9,14 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { useTranslation } from "../../translations/translation-context";
 import AI from "../ai/ai";
 import { useScriptsContext } from "../contexts/ScriptsContext";
-import ContextMenu from "./ContextMenu";
-import EntryNameDialog from "./EntryNameDialog";
-import FileTree from "./FileTree";
-import HeaderBar from "./HeaderBar";
-import PreviewPane from "./PreviewPane";
+import ContextMenu from "./context-menu";
+import EntryNameDialog from "./entry-name-dialog";
+import FileTree from "./file-tree";
+import HeaderBar from "./header-bar";
+import PreviewPane from "./preview-panel";
 import {
 	mediaMimeMap,
 	previewableMediaExtensions,

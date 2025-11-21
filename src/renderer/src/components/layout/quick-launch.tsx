@@ -4,7 +4,7 @@ import { AnimatePresence, type Variants, motion } from "framer-motion";
 import { Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "../../translations/translationContext";
+import { useTranslation } from "../../translations/translation-context";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function QuickLaunch({

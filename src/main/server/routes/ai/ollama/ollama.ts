@@ -144,7 +144,6 @@ export function createOllamaRouter(io: SocketIOServer) {
 				path = "",
 				workspaceName = "",
 				workspaceFiles = [],
-				workspacePath = "",
 				quickAI = false,
 			} = req.body;
 			const tools = await getTools();
@@ -166,7 +165,6 @@ export function createOllamaRouter(io: SocketIOServer) {
 				model,
 				messages,
 				tools,
-				workspacePath,
 				quickAI,
 			});
 			logger.ai(`Chat response: ${JSON.stringify(finalResponse)}`);
@@ -197,7 +195,6 @@ export function createOllamaRouter(io: SocketIOServer) {
 		model,
 		messages,
 		tools,
-		workspacePath,
 		quickAI,
 	}) {
 		let response = await ollama.chat({

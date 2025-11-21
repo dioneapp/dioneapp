@@ -7,8 +7,8 @@ import "monaco-editor/esm/vs/language/html/monaco.contribution";
 import "monaco-editor/esm/vs/language/json/monaco.contribution";
 import "monaco-editor/esm/vs/language/typescript/monaco.contribution";
 // import "monaco-editor/min/vs/editor/editor.main.css";
-import { useTranslation } from "@renderer/translations/translationContext";
-import MarkdownEditor from "./MarkdownEditor";
+import { useTranslation } from "../../translations/translation-context";
+import MarkdownEditor from "./markdown-editor";
 import type { FileEncoding, FileNode } from "./utils/types";
 
 loader.config({ monaco });

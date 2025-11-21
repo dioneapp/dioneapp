@@ -1,7 +1,7 @@
-import { useTranslation } from "@renderer/translations/translationContext";
 import { Copy, ExternalLink, Pencil, RefreshCcw } from "lucide-react";
 import type { MouseEvent } from "react";
 import { createPortal } from "react-dom";
+import { useTranslation } from "../../translations/translation-context";
 import type { ContextMenuState } from "./utils/types";
 
 interface ContextMenuProps {

@@ -1,7 +1,7 @@
-import { useTranslation } from "@renderer/translations/translationContext";
 import { apiFetch, apiJson } from "@renderer/utils/api";
-import { useToast } from "@renderer/utils/useToast";
 import { useEffect, useState } from "react";
+import { useTranslation } from "../../translations/translation-context";
+import { useToast } from "../../utils/use-toast";
 import { useScriptsContext } from "../contexts/ScriptsContext";
 import ScriptCard from "../home/feed/card";
 import type { Script } from "../home/feed/types";

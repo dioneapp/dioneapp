@@ -1,5 +1,4 @@
 import Editor, { loader } from "@monaco-editor/react";
-import { useTranslation } from "@renderer/translations/translationContext";
 import {
 	AlertCircle,
 	AlertTriangle,
@@ -15,6 +14,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 import remarkGithubBlockquoteAlert from "remark-github-blockquote-alert";
+import { useTranslation } from "../../translations/translation-context";
 import "./markdown-preview.css";
 
 loader.config({ monaco });

@@ -1,7 +1,7 @@
-import { useTranslation } from "@renderer/translations/translationContext";
 import { apiFetch } from "@renderer/utils/api";
-import { openLink } from "@renderer/utils/openLink";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "../../../translations/translation-context";
+import { openLink } from "../../../utils/open-link";
 import Loading from "../loading-skeleton";
 import ScriptCard from "./card";
 import type { Script } from "./types";

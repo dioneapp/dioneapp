@@ -413,7 +413,6 @@ export const executeCommand = async (
 		//     content: `Working on directory: ${workingDir}\n`,
 		// });
 		logger.info(`Working on directory: ${workingDir}`);
-		const platform = getPlatform();
 		const spawnOptions = {
 			cwd: workingDir,
 			shell: true,

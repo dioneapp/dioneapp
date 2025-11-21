@@ -1,9 +1,9 @@
-import { useTranslation } from "@renderer/translations/translationContext";
 import { apiFetch, apiJson } from "@renderer/utils/api";
-import { useToast } from "@renderer/utils/useToast";
 import { motion } from "framer-motion";
 import { Check, Copy, Search, Trash, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "../../translations/translation-context";
+import { useToast } from "../../utils/use-toast";
 
 interface Variable {
 	[key: string]: any;

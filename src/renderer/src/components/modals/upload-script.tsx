@@ -1,7 +1,7 @@
 import { apiFetch } from "@renderer/utils/api";
 import { FileText, X } from "lucide-react";
 import { useState } from "react";
-import { useTranslation } from "../../translations/translationContext";
+import { useTranslation } from "../../translations/translation-context";
 
 export default function UploadModal({ onClose }: { onClose: () => void }) {
 	const { t } = useTranslation();

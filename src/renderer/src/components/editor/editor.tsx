@@ -1,1 +1,1 @@
-export { default } from "./WorkspaceEditor";
+export { default } from "./workspace-editor";

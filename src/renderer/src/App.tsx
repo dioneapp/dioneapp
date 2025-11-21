@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuthContext } from "./components/contexts/AuthContext";
+import { useAuthContext } from "./components/contexts/auth-context";
 import { ErrorBoundary } from "./components/layout/error-handler";
 import Sidebar from "./components/layout/sidebar";
 import Titlebar from "./components/layout/titlebar";
@@ -15,7 +15,7 @@ import NoAccess from "./pages/no-access";
 import QuickAI from "./pages/quick-ai";
 import Report from "./pages/report";
 import Settings from "./pages/settings";
-import { TranslationProvider } from "./translations/translationContext";
+import { TranslationProvider } from "./translations/translation-context";
 
 function App() {
 	const { user } = useAuthContext();

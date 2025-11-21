@@ -9,11 +9,11 @@ import sendEvent from "@renderer/utils/events";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../components/contexts/AuthContext";
+import { useAuthContext } from "../components/contexts/auth-context";
 import { useScriptsContext } from "../components/contexts/ScriptsContext";
 import WorkspaceEditor from "../components/editor/editor";
 import DeleteLoadingModal from "../components/modals/delete-loading";
-import { useTranslation } from "../translations/translationContext";
+import { useTranslation } from "../translations/translation-context";
 import { apiFetch, apiJson } from "../utils/api";
 
 export default function Install({
