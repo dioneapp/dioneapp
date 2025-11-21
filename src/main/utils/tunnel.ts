@@ -1,5 +1,6 @@
 import type { Tunnel } from "localtunnel";
 import localtunnel from "localtunnel";
+import { nanoid } from "nanoid";
 import { machineIdSync } from "node-machine-id";
 import { supabase } from "../server/utils/database";
 import logger from "../server/utils/logger";
@@ -166,31 +167,50 @@ export async function shortenUrl(url: string): Promise<string | null> {
 		recentTimestamps.push(now);
 		urlCreationCache.set(machineId, recentTimestamps);
 
-		const shortId = Math.random().toString(36).substring(2, 14);
-		const { data, error } = await supabase
-			.from("shared_urls")
-			.insert({
-				id: shortId,
-				long_url: url,
-				created_at: new Date().toISOString(),
-			})
-			.select()
-			.single();
+		let attempts = 0;
+		const maxAttempts = 5;
 
-		if (error) {
-			logger.error("Failed to create shortened URL:", error);
-			return null;
+		while (attempts < maxAttempts) {
+			const shortId = nanoid(10);
+
+			const { data: existing } = await supabase
+				.from("shared_urls")
+				.select("id")
+				.eq("id", shortId)
+				.single();
+
+			if (!existing) {
+				const { data, error } = await supabase
+					.from("shared_urls")
+					.insert({
+						id: shortId,
+						long_url: url,
+						created_at: new Date().toISOString(),
+					})
+					.select()
+					.single();
+
+				if (error) {
+					logger.error("Failed to create shortened URL:", error);
+					return null;
+				}
+
+				const shortUrl = `https://getdione.app/share/${data.id}`;
+
+				if (url === currentTunnelUrl) {
+					currentShortUrl = shortUrl;
+				}
+
+				logger.info(`Created shortened URL: ${data.id}`);
+				return shortUrl;
+			}
+
+			attempts++;
+			logger.warn(`ID collision detected (${shortId}), retrying... (${attempts}/${maxAttempts})`);
 		}
 
-		const shortUrl = `https://getdione.app/share/${data.id}`;
-
-		// If this is for the current tunnel, save it
-		if (url === currentTunnelUrl) {
-			currentShortUrl = shortUrl;
-		}
-
-		logger.info(`Created shortened URL: ${data.id}`);
-		return shortUrl;
+		logger.error("Failed to generate unique shortened URL after maximum attempts");
+		return null;
 	} catch (error) {
 		logger.error("Error shortening URL:", error);
 		return null;

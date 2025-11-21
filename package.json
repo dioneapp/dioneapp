@@ -142,6 +142,7 @@
     "lucide-react": "^0.523.0",
     "minimal-discord-rpc": "^1.0.4",
     "monaco-editor": "^0.53.0",
+    "nanoid": "^5.1.6",
     "node-machine-id": "^1.1.12",
     "node-vibrant": "^4.0.3",
     "ollama": "^0.6.2",
