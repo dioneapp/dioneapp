@@ -157,18 +157,17 @@ export default function NetworkShareModal({
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
-					className="fixed bottom-0 left-0 right-0 w-full h-screen bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 overflow-hidden"
+					className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
 					onClick={onClose}
 				>
-					<div className="flex flex justify-end items-end mt-auto w-full min-w-full max-w-md overflow-hidden mt-16">
-						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: 20 }}
-							transition={{ duration: 0.2 }}
-							className="bg-neutral-900/50 rounded-xl rounded-b-none backdrop-blur-3xl border border-white/5 flex flex-col justify-center w-full max-w-md mx-auto pb-4"
-							onClick={(e) => e.stopPropagation()}
-						>
+					<motion.div
+						initial={{ opacity: 0, scale: 0.95 }}
+						animate={{ opacity: 1, scale: 1 }}
+						exit={{ opacity: 0, scale: 0.95 }}
+						transition={{ duration: 0.2 }}
+						className="w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-neutral-900 shadow-2xl"
+						onClick={(e) => e.stopPropagation()}
+					>
 							<div className="flex w-full items-center justify-between px-5 py-4">
 								<h3 className="text-base font-semibold text-white">
 									{t("networkShare.title")}
@@ -329,7 +328,7 @@ export default function NetworkShareModal({
 																<button
 																	type="button"
 																	onClick={handleCopy}
-																	className="p-1.5 cursor-pointer hover:bg-white/10 rounded-md transition-colors cursor-pointer"
+																	className="p-1.5 cursor-pointer hover:bg-white/10 rounded-md transition-colors"
 																>
 																	{copied ? (
 																		<Check className="w-4 h-4 text-green-400" />
@@ -360,7 +359,7 @@ export default function NetworkShareModal({
 																			setCopied(true);
 																			setTimeout(() => setCopied(false), 2000);
 																		}}
-																		className="p-1 cursor-pointer hover:bg-white/10 rounded transition-colors cursor-pointer"
+																		className="p-1 cursor-pointer hover:bg-white/10 rounded transition-colors"
 																	>
 																		<Copy className="w-3.5 h-3.5 text-purple-300" />
 																	</button>
@@ -374,7 +373,7 @@ export default function NetworkShareModal({
 															<button
 																type="button"
 																onClick={stopActiveTunnel}
-																className="text-xs cursor-pointer px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-md transition-colors font-medium cursor-pointer"
+																className="text-xs cursor-pointer px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-md transition-colors font-medium"
 															>
 																{t("networkShare.public.stopSharing")}
 															</button>
@@ -385,8 +384,7 @@ export default function NetworkShareModal({
 										))}
 								</div>
 							</div>
-						</motion.div>
-					</div>
+					</motion.div>
 				</motion.div>
 			)}
 		</AnimatePresence>

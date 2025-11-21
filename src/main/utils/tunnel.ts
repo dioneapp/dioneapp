@@ -6,6 +6,7 @@ import logger from "../server/utils/logger";
 
 let activeTunnel: Tunnel | null = null;
 let currentTunnelUrl: string | null = null;
+let currentShortUrl: string | null = null;
 let currentTunnelPassword: string | undefined = undefined;
 
 const urlCreationCache = new Map<string, number[]>();
@@ -15,6 +16,7 @@ export interface TunnelInfo {
 	type: "localtunnel";
 	status: "active" | "connecting" | "error";
 	password?: string;
+	shortUrl?: string;
 }
 
 async function getLocaltunnelPassword(): Promise<string | undefined> {
@@ -47,12 +49,14 @@ export async function startLocaltunnel(port: number): Promise<TunnelInfo> {
 
 		activeTunnel = tunnel;
 		currentTunnelUrl = tunnel.url;
+		currentShortUrl = null;
 		currentTunnelPassword = password;
 
 		tunnel.on("close", () => {
 			logger.info("Localtunnel closed");
 			activeTunnel = null;
 			currentTunnelUrl = null;
+			currentShortUrl = null;
 			currentTunnelPassword = undefined;
 		});
 
@@ -83,6 +87,7 @@ export async function stopTunnel(): Promise<void> {
 		}
 
 		currentTunnelUrl = null;
+		currentShortUrl = null;
 		currentTunnelPassword = undefined;
 
 		logger.info("Tunnel stopped");
@@ -99,6 +104,7 @@ export function getCurrentTunnel(): TunnelInfo | null {
 			type: "localtunnel",
 			status: "active",
 			password: currentTunnelPassword,
+			shortUrl: currentShortUrl || undefined,
 		};
 	}
 	return null;
@@ -176,8 +182,15 @@ export async function shortenUrl(url: string): Promise<string | null> {
 			return null;
 		}
 
+		const shortUrl = `https://getdione.app/share/${data.id}`;
+
+		// If this is for the current tunnel, save it
+		if (url === currentTunnelUrl) {
+			currentShortUrl = shortUrl;
+		}
+
 		logger.info(`Created shortened URL: ${data.id}`);
-		return `https://getdione.app/share/${data.id}`;
+		return shortUrl;
 	} catch (error) {
 		logger.error("Error shortening URL:", error);
 		return null;

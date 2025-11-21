@@ -8,7 +8,6 @@ import {
 	Share2,
 	Square,
 	SquareTerminal,
-	Wifi,
 	X,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -278,6 +277,9 @@ export default function IframeComponent({
 						title={t("iframeActions.shareOnNetwork")}
 					>
 						<Share2 className="w-4 h-4" />
+						{tunnelInfo && (
+							<div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border border-neutral-900 animate-pulse" />
+						)}
 						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 							{t("iframeActions.shareOnNetwork")}
 						</div>
@@ -305,14 +307,6 @@ export default function IframeComponent({
 				</div>
 
 				<div className="flex gap-1">
-					{tunnelInfo && (
-						<div
-							onClick={() => setShowNetworkShareModal(!showNetworkShareModal)}
-							className="cursor-pointer hover:bg-[#BCB1E7]/80 transition-colors duration-200 flex items-center gap-1.5 mr-1 px-4 rounded-md text-xs bg-[#BCB1E7] text-black backdrop-blur-xl font-bold shrink-0 relative"
-						>
-							<Wifi className="w-4 h-4" strokeWidth={3} />
-						</div>
-					)}
 					<motion.button
 						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 						onClick={handleOpenNewWindow}
