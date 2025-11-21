@@ -1,6 +1,6 @@
+import { readDioneConfig } from "@/server/scripts/dependencies/dependencies";
 import logger from "@/server/utils/logger";
 import si from "systeminformation";
-import { readDioneConfig } from "./dependencies/dependencies";
 
 export async function getSystemInfo() {
 	let os;

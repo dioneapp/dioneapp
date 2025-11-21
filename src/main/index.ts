@@ -1,3 +1,31 @@
+import { defaultConfig, deleteConfig, readConfig, writeConfig } from "@/config";
+import {
+	destroyPresence,
+	initializeDiscordPresence,
+	updatePresence,
+} from "@/discord/presence";
+import {
+	deleteExpiresAt,
+	deleteId,
+	deleteToken,
+	getExpiresAt,
+	getId,
+	getToken,
+	saveExpiresAt,
+	saveId,
+	saveToken,
+} from "@/security/secure-tokens";
+import { initDefaultEnv } from "@/server/scripts/dependencies/environment";
+import { start as startServer, stop as stopServer } from "@/server/server";
+import logger, { getLogs } from "@/server/utils/logger";
+import { getLocalNetworkIP } from "@/utils/network";
+import {
+	getCurrentTunnel,
+	isTunnelActive,
+	shortenUrl,
+	startLocaltunnel,
+	stopTunnel,
+} from "@/utils/tunnel";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import macosIcon from "@resources/icon.icns?asset";
 import icon from "@resources/icon.ico?asset";
@@ -20,34 +48,6 @@ import fs from "node:fs";
 import os from "node:os";
 import path, { join } from "node:path";
 import si from "systeminformation";
-import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
-import {
-	destroyPresence,
-	initializeDiscordPresence,
-	updatePresence,
-} from "./discord/presence";
-import {
-	deleteExpiresAt,
-	deleteId,
-	deleteToken,
-	getExpiresAt,
-	getId,
-	getToken,
-	saveExpiresAt,
-	saveId,
-	saveToken,
-} from "./security/secure-tokens";
-import { initDefaultEnv } from "./server/scripts/dependencies/environment";
-import { start as startServer, stop as stopServer } from "./server/server";
-import logger, { getLogs } from "./server/utils/logger";
-import { getLocalNetworkIP } from "./utils/network";
-import {
-	getCurrentTunnel,
-	isTunnelActive,
-	shortenUrl,
-	startLocaltunnel,
-	stopTunnel,
-} from "./utils/tunnel";
 
 dotenvConfig();
 

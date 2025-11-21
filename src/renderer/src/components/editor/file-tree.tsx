@@ -1,3 +1,5 @@
+import type { FileNode } from "@/components/editor/utils/types";
+import { getFileIconColor } from "@/components/editor/utils/utils";
 import { useTranslation } from "@/translations/translation-context";
 import {
 	ChevronDown,
@@ -7,8 +9,6 @@ import {
 	Loader2,
 } from "lucide-react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
-import type { FileNode } from "./utils/types";
-import { getFileIconColor } from "./utils/utils";
 
 interface FileTreeProps {
 	nodes: FileNode[];

@@ -1,6 +1,6 @@
+import sound from "@/components/first-time/sounds/intro.mp3";
 import { Volume2, VolumeX } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import sound from "./intro.mp3";
 
 const ExecuteSound = ({ firstLaunch }: { firstLaunch: string }) => {
 	const [isMuted, setIsMuted] = useState(() => {

@@ -1,10 +1,10 @@
+import ScriptCard from "@/components/home/feed/card";
+import type { Script } from "@/components/home/feed/types";
 import Loading from "@/components/home/loading-skeleton";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import ScriptCard from "./card";
-import type { Script } from "./types";
 
 interface ScriptListProps {
 	endpoint: string;

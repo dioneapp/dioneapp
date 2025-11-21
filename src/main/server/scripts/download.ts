@@ -1,13 +1,13 @@
+import { checkDependencies } from "@/server/scripts/dependencies/dependencies";
+import executeInstallation from "@/server/scripts/execute";
+import { checkSystem } from "@/server/scripts/system";
+import { resolveScriptPaths } from "@/server/scripts/utils/paths";
 import { supabase } from "@/server/utils/database";
 import logger from "@/server/utils/logger";
 import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
 import type { Server } from "socket.io";
-import { checkDependencies } from "./dependencies/dependencies";
-import executeInstallation from "./execute";
-import { checkSystem } from "./system";
-import { resolveScriptPaths } from "./utils/paths";
 
 export async function getScripts(id: string, io: Server, force?: boolean) {
 	if (!supabase) {

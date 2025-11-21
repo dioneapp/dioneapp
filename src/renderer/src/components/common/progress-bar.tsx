@@ -33,7 +33,7 @@ export default function ProgressBar({
 	return (
 		<div className="w-full flex flex-col gap-1.5 select-none">
 			<div
-				className={`w-full h-[4px] rounded-full overflow-hidden ${trackColor} relative`}
+				className={`w-full h-1 rounded-full overflow-hidden ${trackColor} relative`}
 			>
 				{mode === "determinate" ? (
 					<div
@@ -42,7 +42,7 @@ export default function ProgressBar({
 					/>
 				) : (
 					<div className="absolute inset-0 overflow-hidden">
-						<div className="h-full w-1/3 animate-[progress_1.2s_ease-in-out_infinite] bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+						<div className="h-full w-1/3 animate-[progress_1.2s_ease-in-out_infinite] bg-linear-to-r from-transparent via-white/30 to-transparent" />
 					</div>
 				)}
 			</div>

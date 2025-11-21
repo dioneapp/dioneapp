@@ -1,8 +1,8 @@
 import { readConfig } from "@/config";
+import { getOS } from "@/server/scripts/dependencies/utils/system";
 import { app } from "electron";
 import fs from "fs";
 import path from "path";
-import { getOS } from "./utils/system";
 
 function splitKeyValue(line: string): [string, string] | null {
 	const index = line.indexOf("=");

@@ -1,3 +1,15 @@
+import { ar } from "@/translations/languages/ar";
+import { bn } from "@/translations/languages/bn";
+import { de } from "@/translations/languages/de";
+import { en } from "@/translations/languages/en";
+import { es } from "@/translations/languages/es";
+import { fr } from "@/translations/languages/fr";
+import { hi } from "@/translations/languages/hi";
+import { id } from "@/translations/languages/id";
+import { ja } from "@/translations/languages/ja";
+import { pt } from "@/translations/languages/pt";
+import { ru } from "@/translations/languages/ru";
+import { zh } from "@/translations/languages/zh";
 import { apiJson } from "@/utils/api";
 import {
 	type ReactNode,
@@ -6,18 +18,6 @@ import {
 	useEffect,
 	useState,
 } from "react";
-import { ar } from "./languages/ar";
-import { bn } from "./languages/bn";
-import { de } from "./languages/de";
-import { en } from "./languages/en";
-import { es } from "./languages/es";
-import { fr } from "./languages/fr";
-import { hi } from "./languages/hi";
-import { id } from "./languages/id";
-import { ja } from "./languages/ja";
-import { pt } from "./languages/pt";
-import { ru } from "./languages/ru";
-import { zh } from "./languages/zh";
 
 // available languages
 export const languages = {

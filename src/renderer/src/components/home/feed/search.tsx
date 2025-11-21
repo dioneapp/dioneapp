@@ -1,7 +1,7 @@
+import ScriptList from "@/components/home/feed/feed";
 import { useTranslation } from "@/translations/translation-context";
 import { Image, MessageCircle, Search, Video, Volume2 } from "lucide-react";
 import { useState } from "react";
-import ScriptList from "./feed";
 
 export default function SearchBar() {
 	const { t } = useTranslation();

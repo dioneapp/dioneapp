@@ -1,7 +1,7 @@
+import Messages from "@/components/ai/messages";
 import { getBackendPort } from "@/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import Messages from "./messages";
 
 export default function AI({
 	getContext,

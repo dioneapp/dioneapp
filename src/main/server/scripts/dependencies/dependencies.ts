@@ -1,11 +1,11 @@
 import { readConfig } from "@/config";
+import { dependencyRegistry } from "@/server/scripts/dependencies/accepted-dependencies";
+import { getOS } from "@/server/scripts/dependencies/utils/system";
 import logger from "@/server/utils/logger";
 import { app } from "electron";
 import fs from "node:fs";
 import path from "node:path";
 import type { Server } from "socket.io";
-import { dependencyRegistry } from "./accepted-dependencies";
-import { getOS } from "./utils/system";
 
 export function readDioneConfig(filePath: string): any {
 	try {

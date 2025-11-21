@@ -2,8 +2,8 @@ import {
 	fileIconColorMap,
 	invalidNamePattern,
 	languageByExtension,
-} from "./constants";
-import type { FileNode } from "./types";
+} from "@/components/editor/utils/constants";
+import type { FileNode } from "@/components/editor/utils/types";
 
 export const normalizeRelativePath = (value: string) =>
 	value

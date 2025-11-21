@@ -1,3 +1,4 @@
+import type { AuthContextType } from "@/components/contexts/types/context-types";
 import { apiFetch } from "@/utils/api";
 import {
 	deleteExpiresAt,
@@ -12,7 +13,6 @@ import {
 } from "@/utils/secure-tokens";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { AuthContextType } from "./types/context-types";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

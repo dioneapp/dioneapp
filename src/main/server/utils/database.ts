@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
+import logger from "@/server/utils/logger";
 import { createClient } from "@supabase/supabase-js";
-import logger from "./logger";
 
 let supabase: ReturnType<typeof createClient> | null = null;
 
@@ -28,3 +28,4 @@ try {
 }
 
 export { supabase };
+

@@ -1,5 +1,5 @@
-import codePrompt from "./prompts/code";
-import generalPrompt from "./prompts/general";
+import codePrompt from "@/server/routes/ai/instructions/prompts/code";
+import generalPrompt from "@/server/routes/ai/instructions/prompts/general";
 
 export const getSysPrompt = (
 	context?: string,

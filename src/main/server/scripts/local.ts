@@ -1,12 +1,12 @@
+import { checkDependencies } from "@/server/scripts/dependencies/dependencies";
+import executeInstallation from "@/server/scripts/execute";
+import { checkSystem } from "@/server/scripts/system";
+import { getAppsRoot, sanitizeScriptName } from "@/server/scripts/utils/paths";
 import logger from "@/server/utils/logger";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import type { Server } from "socket.io";
-import { checkDependencies } from "./dependencies/dependencies";
-import executeInstallation from "./execute";
-import { checkSystem } from "./system";
-import { getAppsRoot, sanitizeScriptName } from "./utils/paths";
 
 const getAppFolder = () => {
 	const folder = getAppsRoot();

@@ -1,6 +1,6 @@
+import logger from "@/server/utils/logger";
 import { execSync } from "child_process";
 import os from "node:os";
-import logger from "./logger";
 
 function queryRegistry(path: string, value: string): string | null {
 	try {

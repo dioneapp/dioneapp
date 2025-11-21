@@ -1,14 +1,14 @@
 import { readConfig } from "@/config";
+import {
+	type BuildToolsVerification,
+	verifyBuildToolsPaths,
+} from "@/server/scripts/dependencies/utils/build-tools";
 import logger from "@/server/utils/logger";
 import { app } from "electron";
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import {
-	type BuildToolsVerification,
-	verifyBuildToolsPaths,
-} from "./build-tools";
 
 class BuildToolsManager {
 	private static instance: BuildToolsManager;

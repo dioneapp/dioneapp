@@ -1,4 +1,4 @@
-import { apiJson } from "./api";
+import { apiJson } from "@/utils/api";
 
 interface EventHeaders {
 	id?: string;

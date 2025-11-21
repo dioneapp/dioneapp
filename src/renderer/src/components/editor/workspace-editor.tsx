@@ -1,5 +1,32 @@
 import AI from "@/components/ai/ai";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import ContextMenu from "@/components/editor/context-menu";
+import EntryNameDialog from "@/components/editor/entry-name-dialog";
+import FileTree from "@/components/editor/file-tree";
+import HeaderBar from "@/components/editor/header-bar";
+import PreviewPane from "@/components/editor/preview-panel";
+import {
+	mediaMimeMap,
+	previewableMediaExtensions,
+	unsupportedExtensions,
+} from "@/components/editor/utils/constants";
+import type {
+	ContextMenuState,
+	EditorViewProps,
+	FileContentResponse,
+	FileEncoding,
+	FileEntryResponse,
+	FileNode,
+} from "@/components/editor/utils/types";
+import {
+	findNodeByPath,
+	getExtensionKey,
+	getLanguageFromPath,
+	getParentPath,
+	isValidEntryNameClient,
+	normalizeRelativePath,
+	updateTreeNode,
+} from "@/components/editor/utils/utils";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
@@ -12,33 +39,6 @@ import {
 	useRef,
 	useState,
 } from "react";
-import ContextMenu from "./context-menu";
-import EntryNameDialog from "./entry-name-dialog";
-import FileTree from "./file-tree";
-import HeaderBar from "./header-bar";
-import PreviewPane from "./preview-panel";
-import {
-	mediaMimeMap,
-	previewableMediaExtensions,
-	unsupportedExtensions,
-} from "./utils/constants";
-import type {
-	ContextMenuState,
-	EditorViewProps,
-	FileContentResponse,
-	FileEncoding,
-	FileEntryResponse,
-	FileNode,
-} from "./utils/types";
-import {
-	findNodeByPath,
-	getExtensionKey,
-	getLanguageFromPath,
-	getParentPath,
-	isValidEntryNameClient,
-	normalizeRelativePath,
-	updateTreeNode,
-} from "./utils/utils";
 
 const initialContextMenuState: ContextMenuState = {
 	visible: false,

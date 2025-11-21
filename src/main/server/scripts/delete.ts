@@ -1,8 +1,8 @@
+import { removeValue } from "@/server/scripts/dependencies/environment";
+import { resolveScriptPaths } from "@/server/scripts/utils/paths";
+import type { Response } from "express";
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import type { Response } from "express";
-import { removeValue } from "./dependencies/environment";
-import { resolveScriptPaths } from "./utils/paths";
 
 export async function deleteScript(name: string, res: Response) {
 	try {

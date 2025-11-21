@@ -1,5 +1,6 @@
 import { readConfig } from "@/config";
 import { getSysPrompt } from "@/server/routes/ai/instructions/instructions";
+import { getTools, read_file } from "@/server/routes/ai/ollama/tools";
 import {
 	checkOneDependency,
 	installDependency,
@@ -12,7 +13,6 @@ import express from "express";
 import fs from "fs";
 import path from "path";
 import type { Server as SocketIOServer } from "socket.io";
-import { getTools, read_file } from "./tools";
 const { Ollama } = require("ollama");
 
 let activeProcess: ChildProcess | null = null;

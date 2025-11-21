@@ -1,3 +1,4 @@
+import type { Script } from "@/components/home/feed/types";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import {
 	BadgeCheck,
@@ -9,7 +10,6 @@ import {
 } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
-import type { Script } from "./types";
 
 interface ScriptCardProps {
 	script: Script;

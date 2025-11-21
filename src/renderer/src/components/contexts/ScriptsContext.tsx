@@ -1,3 +1,9 @@
+import { setupSocket } from "@/components/contexts/scripts/setup-socket";
+import type {
+	DependencyDiagnosticsState,
+	ProgressState,
+	ScriptsContextType,
+} from "@/components/contexts/types/context-types";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, getBackendPort } from "@/utils/api";
 import { TerminalNormalizer } from "@/utils/terminal";
@@ -12,12 +18,6 @@ import {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Socket } from "socket.io-client";
-import { setupSocket } from "./scripts/setup-socket";
-import type {
-	DependencyDiagnosticsState,
-	ProgressState,
-	ScriptsContextType,
-} from "./types/context-types";
 
 const AppContext = createContext<ScriptsContextType | undefined>(undefined);
 

@@ -1,16 +1,16 @@
 import type { Express } from "express";
 import type { Server } from "socket.io";
 
-import { createAIRouter } from "./ai/ai";
-import configRouter from "./config";
+import { createAIRouter } from "@/server/routes/ai/ai";
+import configRouter from "@/server/routes/config";
 // routers
-import databaseRouter from "./database";
-import { createDependenciesRouter } from "./dependencies";
-import filesRouter from "./files";
-import { createLocalScriptsRouter } from "./local";
-import { createScriptRouter } from "./scripts";
-import searchBarRouter from "./searchbar";
-import { createVariablesRouter } from "./variables";
+import databaseRouter from "@/server/routes/database";
+import { createDependenciesRouter } from "@/server/routes/dependencies";
+import filesRouter from "@/server/routes/files";
+import { createLocalScriptsRouter } from "@/server/routes/local";
+import { createScriptRouter } from "@/server/routes/scripts";
+import searchBarRouter from "@/server/routes/searchbar";
+import { createVariablesRouter } from "@/server/routes/variables";
 
 export const setupRoutes = (server: Express, io: Server) => {
 	server.get("/", (_req, res) => {

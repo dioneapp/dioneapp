@@ -1,3 +1,4 @@
+import type { FileNode } from "@/components/editor/utils/types";
 import { useTranslation } from "@/translations/translation-context";
 import {
 	ArrowLeft,
@@ -6,7 +7,6 @@ import {
 	RefreshCcw,
 	Save,
 } from "lucide-react";
-import type { FileNode } from "./utils/types";
 
 interface HeaderBarProps {
 	rootPath: string;

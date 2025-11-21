@@ -15,7 +15,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 import remarkGithubBlockquoteAlert from "remark-github-blockquote-alert";
-import "./markdown-preview.css";
+import "@/components/editor/markdown-preview.css";
 
 loader.config({ monaco });
 

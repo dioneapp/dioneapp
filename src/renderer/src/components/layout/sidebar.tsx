@@ -2,6 +2,7 @@ import { useAuthContext } from "@/components/contexts/auth-context";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import Icon from "@/components/icons/icon";
+import QuickLaunch from "@/components/layout/quick-launch";
 import { useTranslation } from "@/translations/translation-context";
 import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
@@ -9,7 +10,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Camera, Clock, Library, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import QuickLaunch from "./quick-launch";
 
 export default function Sidebar() {
 	const { t } = useTranslation();

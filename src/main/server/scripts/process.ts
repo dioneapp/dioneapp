@@ -1,3 +1,6 @@
+import { getAllValues, initDefaultEnv } from "@/server/scripts/dependencies/environment";
+import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-manager";
+import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
 import { exec, spawn } from "node:child_process";
@@ -6,9 +9,6 @@ import { arch, platform as getPlatform } from "node:os";
 import path from "node:path";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
-import { getAllValues, initDefaultEnv } from "./dependencies/environment";
-import BuildToolsManager from "./dependencies/utils/build-tools-manager";
-import { getSystemInfo } from "./system";
 
 let activeProcess: any = null;
 let activePID: number | null = null;

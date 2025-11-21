@@ -1,8 +1,8 @@
+import type { ContextMenuState } from "@/components/editor/utils/types";
 import { useTranslation } from "@/translations/translation-context";
 import { Copy, ExternalLink, Pencil, RefreshCcw } from "lucide-react";
 import type { MouseEvent } from "react";
 import { createPortal } from "react-dom";
-import type { ContextMenuState } from "./utils/types";
 
 interface ContextMenuProps {
 	state: ContextMenuState;

@@ -1,15 +1,15 @@
 import { readConfig as userConfig } from "@/config";
+import { checkDependencies } from "@/server/scripts/dependencies/dependencies";
+import { addValue, getAllValues } from "@/server/scripts/dependencies/environment";
+import { getArch, getOS } from "@/server/scripts/dependencies/utils/system";
+import { executeCommands } from "@/server/scripts/process";
+import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { emitRunProgress, generateRunId } from "@/server/utils/progress-emitter";
 import { app } from "electron";
 import fs from "node:fs";
 import path from "node:path";
 import type { Server } from "socket.io";
-import { checkDependencies } from "./dependencies/dependencies";
-import { addValue, getAllValues } from "./dependencies/environment";
-import { getArch, getOS } from "./dependencies/utils/system";
-import { executeCommands } from "./process";
-import { getSystemInfo } from "./system";
 
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
