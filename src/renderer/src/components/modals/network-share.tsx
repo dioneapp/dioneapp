@@ -1,9 +1,9 @@
-import { getBackendPort } from "@renderer/utils/api";
+import { useTranslation } from "@/translations/translation-context";
+import { getBackendPort } from "@/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Copy, X } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
-import { useTranslation } from "../../translations/translation-context";
 
 interface NetworkShareModalProps {
 	isOpen: boolean;

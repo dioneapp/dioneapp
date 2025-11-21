@@ -1,5 +1,5 @@
+import { useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
-import { useTranslation } from "../../translations/translation-context";
 
 export default function SureNotLogin({
 	onSkip,

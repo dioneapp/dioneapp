@@ -1,9 +1,9 @@
+import { readConfig } from "@/config";
+import logger from "@/server/utils/logger";
+import { app } from "electron";
 import fs from "node:fs";
 import path from "node:path";
-import { app } from "electron";
 import type { Server } from "socket.io";
-import { readConfig } from "../../../config";
-import logger from "../../utils/logger";
 import { dependencyRegistry } from "./accepted-dependencies";
 import { getOS } from "./utils/system";
 

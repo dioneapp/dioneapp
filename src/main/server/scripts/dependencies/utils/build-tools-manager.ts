@@ -1,10 +1,10 @@
+import { readConfig } from "@/config";
+import logger from "@/server/utils/logger";
+import { app } from "electron";
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
-import { app } from "electron";
-import { readConfig } from "../../../../config";
-import logger from "../../../utils/logger";
 import {
 	type BuildToolsVerification,
 	verifyBuildToolsPaths,

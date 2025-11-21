@@ -1,3 +1,5 @@
+import NetworkShareModal from "@/components/modals/network-share";
+import { useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
 import {
 	ArrowLeft,
@@ -12,8 +14,6 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "../../translations/translation-context";
-import NetworkShareModal from "../modals/network-share";
 
 interface IframeProps {
 	iframeSrc: string;

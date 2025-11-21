@@ -1,10 +1,10 @@
+import { addValue, getAllValues, removeKey } from "@/server/scripts/dependencies/environment";
+import { getArch, getOS } from "@/server/scripts/dependencies/utils/system";
+import logger from "@/server/utils/logger";
 import { execFile, spawn } from "child_process";
 import fs, { createWriteStream } from "fs";
 import path from "path";
 import type { Server } from "socket.io";
-import logger from "../../../utils/logger";
-import { addValue, getAllValues, removeKey } from "../environment";
-import { getArch, getOS } from "../utils/system";
 
 const depName = "ollama";
 

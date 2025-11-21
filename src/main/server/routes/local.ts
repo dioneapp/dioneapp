@@ -1,5 +1,3 @@
-import express from "express";
-import type { Server } from "socket.io";
 import {
 	deleteLocalScript,
 	getAllLocalScripts,
@@ -8,8 +6,10 @@ import {
 	getLocalScriptById,
 	loadLocalScript,
 	uploadLocalScript,
-} from "../scripts/local";
-import logger from "../utils/logger";
+} from "@/server/scripts/local";
+import logger from "@/server/utils/logger";
+import express from "express";
+import type { Server } from "socket.io";
 
 export function createLocalScriptsRouter(io: Server) {
 	const router = express.Router();

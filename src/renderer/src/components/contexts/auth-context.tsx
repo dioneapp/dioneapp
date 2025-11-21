@@ -1,4 +1,4 @@
-import { apiFetch } from "@renderer/utils/api";
+import { apiFetch } from "@/utils/api";
 import {
 	deleteExpiresAt,
 	deleteId,
@@ -9,7 +9,7 @@ import {
 	saveExpiresAt,
 	saveId,
 	saveRefreshToken,
-} from "@renderer/utils/secure-tokens";
+} from "@/utils/secure-tokens";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { AuthContextType } from "./types/context-types";

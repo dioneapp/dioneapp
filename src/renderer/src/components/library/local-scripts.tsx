@@ -1,11 +1,11 @@
-import { apiFetch, apiJson } from "@renderer/utils/api";
+import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import ScriptCard from "@/components/home/feed/card";
+import type { Script } from "@/components/home/feed/types";
+import UploadModal from "@/components/modals/upload-script";
+import { useTranslation } from "@/translations/translation-context";
+import { apiFetch, apiJson } from "@/utils/api";
+import { useToast } from "@/utils/use-toast";
 import { useEffect, useState } from "react";
-import { useTranslation } from "../../translations/translation-context";
-import { useToast } from "../../utils/use-toast";
-import { useScriptsContext } from "../contexts/ScriptsContext";
-import ScriptCard from "../home/feed/card";
-import type { Script } from "../home/feed/types";
-import UploadModal from "../modals/upload-script";
 
 export default function LocalScripts() {
 	const { t } = useTranslation();

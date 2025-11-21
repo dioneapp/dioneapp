@@ -1,8 +1,8 @@
+import logger from "@/server/utils/logger";
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import type { Server } from "socket.io";
-import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies/dependencies";
 import executeInstallation from "./execute";
 import { checkSystem } from "./system";

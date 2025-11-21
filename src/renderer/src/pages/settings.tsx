@@ -1,15 +1,15 @@
-import { useScriptsContext } from "@renderer/components/contexts/ScriptsContext";
-import VariablesModal from "@renderer/components/modals/variables";
-import AnimatedCount from "@renderer/utils/animate-count";
-import { apiFetch, apiJson, getBackendPort } from "@renderer/utils/api";
-import { joinPath } from "@renderer/utils/path";
+import { useAuthContext } from "@/components/contexts/auth-context";
+import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import VariablesModal from "@/components/modals/variables";
+import { languages, useTranslation } from "@/translations/translation-context";
+import AnimatedCount from "@/utils/animate-count";
+import { apiFetch, apiJson, getBackendPort } from "@/utils/api";
+import { openFolder, openLink } from "@/utils/open-link";
+import { joinPath } from "@/utils/path";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Folder, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../components/contexts/auth-context";
-import { languages, useTranslation } from "../translations/translation-context";
-import { openFolder, openLink } from "../utils/open-link";
 
 // custom dropdown component
 const CustomSelect = ({

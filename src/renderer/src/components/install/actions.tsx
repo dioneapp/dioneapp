@@ -1,10 +1,10 @@
-import GeneratedIcon from "@renderer/components/icons/generated-icon";
+import GeneratedIcon from "@/components/icons/generated-icon";
+import { useTranslation } from "@/translations/translation-context";
+import { openLink } from "@/utils/open-link";
 import { motion } from "framer-motion";
 import { BadgeCheck, ChevronDown, CodeXml, Download, User } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
-import { useTranslation } from "../../translations/translation-context";
-import { openLink } from "../../utils/open-link";
 import Loading from "./loading-skeleton";
 
 interface ActionsProps {

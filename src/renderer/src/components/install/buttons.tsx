@@ -1,6 +1,6 @@
+import { useTranslation } from "@/translations/translation-context";
 import { ArrowLeft, Bookmark, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "../../translations/translation-context";
 
 export default function Buttons({
 	user,

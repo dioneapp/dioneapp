@@ -1,4 +1,4 @@
-import { getBackendPort } from "@renderer/utils/api";
+import { getBackendPort } from "@/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import Messages from "./messages";

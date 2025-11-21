@@ -1,7 +1,7 @@
+import { useTranslation } from "@/translations/translation-context";
 import { AnimatePresence, motion } from "framer-motion";
 import { FolderOpen } from "lucide-react";
 import { useState } from "react";
-import { useTranslation } from "../../../translations/translation-context";
 
 export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 	const [selectedPath, setSelectedPath] = useState<string | null>(null);

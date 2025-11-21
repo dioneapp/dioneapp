@@ -1,17 +1,17 @@
-import { type ChildProcess, spawn } from "child_process";
-import fs from "fs";
-import path from "path";
-import { app } from "electron";
-import express from "express";
-import type { Server as SocketIOServer } from "socket.io";
-import { readConfig } from "../../../../config";
+import { readConfig } from "@/config";
+import { getSysPrompt } from "@/server/routes/ai/instructions/instructions";
 import {
 	checkOneDependency,
 	installDependency,
-} from "../../../scripts/dependencies/dependencies";
-import { killProcess } from "../../../scripts/process";
-import logger from "../../../utils/logger";
-import { getSysPrompt } from "../instructions/instructions";
+} from "@/server/scripts/dependencies/dependencies";
+import { killProcess } from "@/server/scripts/process";
+import logger from "@/server/utils/logger";
+import { type ChildProcess, spawn } from "child_process";
+import { app } from "electron";
+import express from "express";
+import fs from "fs";
+import path from "path";
+import type { Server as SocketIOServer } from "socket.io";
 import { getTools, read_file } from "./tools";
 const { Ollama } = require("ollama");
 

@@ -1,7 +1,7 @@
-import fs from "node:fs";
-import os from "node:os";
-import path, { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
+import macosIcon from "@resources/icon.icns?asset";
+import icon from "@resources/icon.ico?asset";
+import linuxIcon from "@resources/icon.png?asset";
 import { config as dotenvConfig } from "dotenv";
 import {
 	BrowserWindow,
@@ -16,10 +16,10 @@ import {
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
+import fs from "node:fs";
+import os from "node:os";
+import path, { join } from "node:path";
 import si from "systeminformation";
-import macosIcon from "../../resources/icon.icns?asset";
-import icon from "../../resources/icon.ico?asset";
-import linuxIcon from "../../resources/icon.png?asset";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "./config";
 import {
 	destroyPresence,

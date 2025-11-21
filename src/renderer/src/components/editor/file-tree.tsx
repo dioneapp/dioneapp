@@ -1,3 +1,4 @@
+import { useTranslation } from "@/translations/translation-context";
 import {
 	ChevronDown,
 	ChevronRight,
@@ -6,7 +7,6 @@ import {
 	Loader2,
 } from "lucide-react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
-import { useTranslation } from "../../translations/translation-context";
 import type { FileNode } from "./utils/types";
 import { getFileIconColor } from "./utils/utils";
 

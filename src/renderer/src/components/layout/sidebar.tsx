@@ -1,14 +1,14 @@
-import GeneratedIcon from "@renderer/components/icons/generated-icon";
-import { apiJson } from "@renderer/utils/api";
+import { useAuthContext } from "@/components/contexts/auth-context";
+import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import GeneratedIcon from "@/components/icons/generated-icon";
+import Icon from "@/components/icons/icon";
+import { useTranslation } from "@/translations/translation-context";
+import { apiJson } from "@/utils/api";
+import { openLink } from "@/utils/open-link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, Clock, Library, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useTranslation } from "../../translations/translation-context";
-import { openLink } from "../../utils/open-link";
-import { useAuthContext } from "../contexts/auth-context";
-import { useScriptsContext } from "../contexts/ScriptsContext";
-import Icon from "../icons/icon";
 import QuickLaunch from "./quick-launch";
 
 export default function Sidebar() {

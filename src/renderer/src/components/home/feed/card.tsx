@@ -1,4 +1,4 @@
-import GeneratedIcon from "@renderer/components/icons/generated-icon";
+import GeneratedIcon from "@/components/icons/generated-icon";
 import {
 	BadgeCheck,
 	Calendar,

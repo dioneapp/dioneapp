@@ -1,8 +1,8 @@
+import { useAuthContext } from "@/components/contexts/auth-context";
+import { useTranslation } from "@/translations/translation-context";
+import { openLink } from "@/utils/open-link";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../components/contexts/auth-context";
-import { useTranslation } from "../translations/translation-context";
-import { openLink } from "../utils/open-link";
 
 export default function NoAccess() {
 	const { t } = useTranslation();

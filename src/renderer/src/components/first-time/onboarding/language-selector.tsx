@@ -1,10 +1,10 @@
-import { AnimatePresence, motion } from "framer-motion";
-import { Check, ChevronLeft, ChevronRight } from "lucide-react";
-import { useMemo, useState } from "react";
 import {
 	languages,
 	useTranslation,
-} from "../../../translations/translation-context";
+} from "@/translations/translation-context";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface LanguageSelectorProps {
 	onSelectLanguage: () => void;

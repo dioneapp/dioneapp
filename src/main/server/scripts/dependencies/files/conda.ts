@@ -2,12 +2,12 @@ import { execFile, execSync, spawn } from "child_process";
 import fs from "fs";
 import * as fsRemove from "fs/promises";
 
+import { addValue, getAllValues, removeValue } from "@/server/scripts/dependencies/environment";
+import { getArch, getOS } from "@/server/scripts/dependencies/utils/system";
+import logger from "@/server/utils/logger";
 import https from "https";
 import path from "path";
 import type { Server } from "socket.io";
-import logger from "../../../utils/logger";
-import { addValue, getAllValues, removeValue } from "../environment";
-import { getArch, getOS } from "../utils/system";
 
 const depName = "conda";
 const ENVIRONMENT = getAllValues();

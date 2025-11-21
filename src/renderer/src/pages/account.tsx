@@ -1,10 +1,10 @@
-import { StatCard } from "@renderer/components/account/stat-card";
+import { StatCard } from "@/components/account/stat-card";
+import { useAuthContext } from "@/components/contexts/auth-context";
+import { useTranslation } from "@/translations/translation-context";
+import { apiFetch } from "@/utils/api";
 import { motion } from "framer-motion";
 import { Calendar, Clock, Flame, LogOut, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useAuthContext } from "../components/contexts/auth-context";
-import { useTranslation } from "../translations/translation-context";
-import { apiFetch } from "../utils/api";
 
 export default function Account() {
 	const { t } = useTranslation();

@@ -1,13 +1,13 @@
+import {
+	ensureBuildToolsInstalled,
+	verifyBuildToolsPaths,
+} from "@/server/scripts/dependencies/utils/build-tools";
+import { getOS } from "@/server/scripts/dependencies/utils/system";
+import logger from "@/server/utils/logger";
 import child_process from "node:child_process";
 import fs from "node:fs";
 import path from "path";
 import type { Server } from "socket.io";
-import logger from "../../../utils/logger";
-import {
-	ensureBuildToolsInstalled,
-	verifyBuildToolsPaths,
-} from "../utils/build-tools";
-import { getOS } from "../utils/system";
 
 const depName = "build_tools";
 

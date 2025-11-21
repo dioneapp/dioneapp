@@ -1,5 +1,5 @@
+import logger from "@/server/utils/logger";
 import { networkInterfaces } from "node:os";
-import logger from "../server/utils/logger";
 
 export function getLocalNetworkIP(): string | null {
 	try {

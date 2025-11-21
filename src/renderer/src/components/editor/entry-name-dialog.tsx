@@ -1,6 +1,6 @@
+import { useTranslation } from "@/translations/translation-context";
 import { Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { useTranslation } from "../../translations/translation-context";
 
 interface EntryNameDialogProps {
 	open: boolean;

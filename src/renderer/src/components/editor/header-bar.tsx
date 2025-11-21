@@ -1,3 +1,4 @@
+import { useTranslation } from "@/translations/translation-context";
 import {
 	ArrowLeft,
 	ExternalLink,
@@ -5,7 +6,6 @@ import {
 	RefreshCcw,
 	Save,
 } from "lucide-react";
-import { useTranslation } from "../../translations/translation-context";
 import type { FileNode } from "./utils/types";
 
 interface HeaderBarProps {

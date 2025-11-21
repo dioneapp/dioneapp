@@ -1,8 +1,8 @@
-import http from "node:http";
+import { start as setupSocket } from "@/socket/socket";
 import cors from "cors";
 import express from "express";
+import http from "node:http";
 import type { Server as SocketIOServer } from "socket.io";
-import { start as setupSocket } from "../socket/socket";
 import { setupRoutes } from "./routes/setup";
 import { getAvailablePort } from "./utils/getPort";
 import logger from "./utils/logger";

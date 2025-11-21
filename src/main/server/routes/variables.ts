@@ -1,10 +1,10 @@
-import express from "express";
 import {
 	addValue,
 	getAllValues,
 	removeKey,
 	removeValue,
-} from "../scripts/dependencies/environment";
+} from "@/server/scripts/dependencies/environment";
+import express from "express";
 
 export const createVariablesRouter = () => {
 	const router = express.Router();

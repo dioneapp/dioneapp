@@ -1,11 +1,11 @@
-import Icon from "@renderer/components/icons/icon";
-import { apiJson } from "@renderer/utils/api";
-import sendEvent from "@renderer/utils/events";
+import { useAuthContext } from "@/components/contexts/auth-context";
+import type { Script } from "@/components/home/feed/types";
+import Icon from "@/components/icons/icon";
+import { apiJson } from "@/utils/api";
+import sendEvent from "@/utils/events";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../../contexts/auth-context";
-import type { Script } from "../feed/types";
 
 export default function FeaturedCarousel() {
 	const [scripts, setScripts] = useState<Script[]>([]);

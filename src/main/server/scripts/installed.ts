@@ -1,6 +1,6 @@
+import logger from "@/server/utils/logger";
 import fs from "node:fs";
 import path from "node:path";
-import logger from "../utils/logger";
 import { ensureAppsRootExists, resolveScriptPaths } from "./utils/paths";
 
 export default async function getAllScripts() {

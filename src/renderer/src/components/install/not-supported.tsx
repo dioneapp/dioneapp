@@ -1,5 +1,5 @@
+import { useTranslation } from "@/translations/translation-context";
 import { Gpu, Monitor } from "lucide-react";
-import { useTranslation } from "../../translations/translation-context";
 
 export default function NotSupported({
 	reasons,

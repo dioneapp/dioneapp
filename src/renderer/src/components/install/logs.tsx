@@ -1,10 +1,10 @@
-import { MAX_TERMINAL_LINES } from "@renderer/utils/terminal";
+import ProgressBar from "@/components/common/progress-bar";
+import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import { useTranslation } from "@/translations/translation-context";
+import { MAX_TERMINAL_LINES } from "@/utils/terminal";
 import { motion } from "framer-motion";
 import { Copy, ExternalLink, Square } from "lucide-react";
 import { useEffect, useMemo } from "react";
-import { useTranslation } from "../../translations/translation-context";
-import ProgressBar from "../common/progress-bar";
-import { useScriptsContext } from "../contexts/ScriptsContext";
 import TerminalOutput from "./terminal-output";
 
 interface LogsProps {

@@ -1,10 +1,10 @@
-import fs from "node:fs";
-import path from "node:path";
+import { readConfig } from "@/config";
+import logger from "@/server/utils/logger";
 import { app } from "electron";
 import express from "express";
 import { fileTypeFromBuffer } from "file-type";
-import { readConfig } from "../../config";
-import logger from "../utils/logger";
+import fs from "node:fs";
+import path from "node:path";
 
 const router = express.Router();
 

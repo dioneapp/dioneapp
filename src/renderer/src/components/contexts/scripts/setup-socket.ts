@@ -1,7 +1,7 @@
-import successSound from "@renderer/components/first-time/sounds/success.mp3";
+import type { SetupSocketProps } from "@/components/contexts/types/context-types";
+import successSound from "@/components/first-time/sounds/success.mp3";
+import { sendDiscordReport } from "@/utils/discord-webhook";
 import { type Socket, io as clientIO } from "socket.io-client";
-import { sendDiscordReport } from "../../../utils/discord-webhook";
-import type { SetupSocketProps } from "../types/context-types";
 
 export function setupSocket({
 	appId,

@@ -1,8 +1,8 @@
+import { useTranslation } from "@/translations/translation-context";
+import { sendDiscordReport } from "@/utils/discord-webhook";
 import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "../translations/translation-context";
-import { sendDiscordReport } from "../utils/discord-webhook";
 
 export default function ReportPage() {
 	const navigate = useNavigate();

@@ -1,11 +1,11 @@
-import express from "express";
 import {
 	deleteConfig,
 	readConfig,
 	resetConfig,
 	updateConfig,
-} from "../../config";
-import { toggleDiscordRPC } from "../../discord/presence";
+} from "@/config";
+import { toggleDiscordRPC } from "@/discord/presence";
+import express from "express";
 
 const router = express.Router();
 router.use(express.json());

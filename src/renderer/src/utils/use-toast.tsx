@@ -1,4 +1,4 @@
-import { Toast, type ToastProps } from "@renderer/components/layout/toast";
+import { Toast, type ToastProps } from "@/components/layout/toast";
 import { AnimatePresence } from "framer-motion";
 import React from "react";
 

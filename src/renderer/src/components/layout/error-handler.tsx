@@ -1,7 +1,7 @@
 // src/components/ErrorBoundary.tsx
-import ErrorPage from "@renderer/pages/error";
+import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import ErrorPage from "@/pages/error";
 import React from "react";
-import { useScriptsContext } from "../contexts/ScriptsContext";
 
 interface ErrorBoundaryProps {
 	children: React.ReactNode;

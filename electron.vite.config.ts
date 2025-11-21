@@ -1,12 +1,12 @@
-import { resolve } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import 'dotenv/config';
 import {
 	defineConfig,
 	defineViteConfig,
 	externalizeDepsPlugin,
 } from "electron-vite";
-import 'dotenv/config';
+import { resolve } from "node:path";
 
 export default defineConfig({
 	main: {
@@ -15,6 +15,12 @@ export default defineConfig({
 		define: {
 			"process.env.API_KEY": JSON.stringify(process.env.MAIN_VITE_API_KEY),
 			"process.env.LOCAL_API_KEY": JSON.stringify(process.env.MAIN_VITE_LOCAL_API_KEY),
+		},
+		resolve: {
+			alias: {
+				"@": resolve("src/main"),
+				"@resources": resolve("resources"),
+			},
 		},
 	},
 	preload: {
@@ -29,7 +35,7 @@ export default defineConfig({
 		},
 		resolve: {
 			alias: {
-				"@renderer": resolve("src/renderer/src"),
+				"@": resolve("src/renderer/src"),
 				"@assets": resolve("src/renderer/src/assets"),
 			},
 		},

@@ -1,5 +1,5 @@
-import Installed from "@renderer/components/library/installed";
-import LocalScripts from "@renderer/components/library/local-scripts";
+import Installed from "@/components/library/installed";
+import LocalScripts from "@/components/library/local-scripts";
 
 export default function Library() {
 	return (

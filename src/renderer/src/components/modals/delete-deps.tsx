@@ -1,5 +1,5 @@
+import { useTranslation } from "@/translations/translation-context";
 import { X } from "lucide-react";
-import { useTranslation } from "../../translations/translation-context";
 
 export default function DeleteDepsModal({
 	inUseDeps,

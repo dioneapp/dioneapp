@@ -1,10 +1,10 @@
+import { readConfig as userConfig } from "@/config";
+import logger from "@/server/utils/logger";
+import { emitRunProgress, generateRunId } from "@/server/utils/progress-emitter";
+import { app } from "electron";
 import fs from "node:fs";
 import path from "node:path";
-import { app } from "electron";
 import type { Server } from "socket.io";
-import { readConfig as userConfig } from "../../config";
-import logger from "../utils/logger";
-import { emitRunProgress, generateRunId } from "../utils/progress-emitter";
 import { checkDependencies } from "./dependencies/dependencies";
 import { addValue, getAllValues } from "./dependencies/environment";
 import { getArch, getOS } from "./dependencies/utils/system";

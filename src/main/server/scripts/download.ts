@@ -1,9 +1,9 @@
+import { supabase } from "@/server/utils/database";
+import logger from "@/server/utils/logger";
 import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
 import type { Server } from "socket.io";
-import { supabase } from "../utils/database";
-import logger from "../utils/logger";
 import { checkDependencies } from "./dependencies/dependencies";
 import executeInstallation from "./execute";
 import { checkSystem } from "./system";

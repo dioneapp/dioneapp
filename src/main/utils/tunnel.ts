@@ -1,9 +1,9 @@
+import { supabase } from "@/server/utils/database";
+import logger from "@/server/utils/logger";
 import type { Tunnel } from "localtunnel";
 import localtunnel from "localtunnel";
 import { nanoid } from "nanoid";
 import { machineIdSync } from "node-machine-id";
-import { supabase } from "../server/utils/database";
-import logger from "../server/utils/logger";
 
 let activeTunnel: Tunnel | null = null;
 let currentTunnelUrl: string | null = null;

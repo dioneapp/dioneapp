@@ -1,12 +1,12 @@
-import express from "express";
-import type { Server } from "socket.io";
 import {
 	inUseDependencies,
 	installDependency,
 	uninstallDependency,
-} from "../scripts/dependencies/dependencies";
-import { resolveScriptPaths } from "../scripts/utils/paths";
-import logger from "../utils/logger";
+} from "@/server/scripts/dependencies/dependencies";
+import { resolveScriptPaths } from "@/server/scripts/utils/paths";
+import logger from "@/server/utils/logger";
+import express from "express";
+import type { Server } from "socket.io";
 
 export const createDependenciesRouter = (io: Server) => {
 	const router = express.Router();

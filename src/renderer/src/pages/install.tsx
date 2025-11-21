@@ -1,20 +1,20 @@
-import ActionsComponent from "@renderer/components/install/actions";
-import Buttons from "@renderer/components/install/buttons";
-import IframeComponent from "@renderer/components/install/iframe";
-import LogsComponent from "@renderer/components/install/logs";
-import NotSupported from "@renderer/components/install/not-supported";
-import CustomCommandsModal from "@renderer/components/modals/custom-commands";
-import DeleteDepsModal from "@renderer/components/modals/delete-deps";
-import sendEvent from "@renderer/utils/events";
+import { useAuthContext } from "@/components/contexts/auth-context";
+import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import WorkspaceEditor from "@/components/editor/editor";
+import ActionsComponent from "@/components/install/actions";
+import Buttons from "@/components/install/buttons";
+import IframeComponent from "@/components/install/iframe";
+import LogsComponent from "@/components/install/logs";
+import NotSupported from "@/components/install/not-supported";
+import CustomCommandsModal from "@/components/modals/custom-commands";
+import DeleteDepsModal from "@/components/modals/delete-deps";
+import DeleteLoadingModal from "@/components/modals/delete-loading";
+import { useTranslation } from "@/translations/translation-context";
+import { apiFetch, apiJson } from "@/utils/api";
+import sendEvent from "@/utils/events";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../components/contexts/auth-context";
-import { useScriptsContext } from "../components/contexts/ScriptsContext";
-import WorkspaceEditor from "../components/editor/editor";
-import DeleteLoadingModal from "../components/modals/delete-loading";
-import { useTranslation } from "../translations/translation-context";
-import { apiFetch, apiJson } from "../utils/api";
 
 export default function Install({
 	id,

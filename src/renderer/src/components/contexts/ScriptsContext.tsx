@@ -1,5 +1,7 @@
-import { apiFetch, getBackendPort } from "@renderer/utils/api";
-import { TerminalNormalizer } from "@renderer/utils/terminal";
+import { useTranslation } from "@/translations/translation-context";
+import { apiFetch, getBackendPort } from "@/utils/api";
+import { TerminalNormalizer } from "@/utils/terminal";
+import { useToast } from "@/utils/use-toast";
 import {
 	createContext,
 	useCallback,
@@ -10,8 +12,6 @@ import {
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Socket } from "socket.io-client";
-import { useTranslation } from "../../translations/translation-context";
-import { useToast } from "../../utils/use-toast";
 import { setupSocket } from "./scripts/setup-socket";
 import type {
 	DependencyDiagnosticsState,

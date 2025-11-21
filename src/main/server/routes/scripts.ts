@@ -1,13 +1,13 @@
+import { deleteScript } from "@/server/scripts/delete";
+import { readDioneConfig } from "@/server/scripts/dependencies/dependencies";
+import { getScripts } from "@/server/scripts/download";
+import { executeStartup } from "@/server/scripts/execute";
+import getAllScripts, { getInstalledScript } from "@/server/scripts/installed";
+import { stopActiveProcess } from "@/server/scripts/process";
+import { resolveScriptPaths } from "@/server/scripts/utils/paths";
+import logger from "@/server/utils/logger";
 import express from "express";
 import type { Server } from "socket.io";
-import { deleteScript } from "../scripts/delete";
-import { readDioneConfig } from "../scripts/dependencies/dependencies";
-import { getScripts } from "../scripts/download";
-import { executeStartup } from "../scripts/execute";
-import getAllScripts, { getInstalledScript } from "../scripts/installed";
-import { stopActiveProcess } from "../scripts/process";
-import { resolveScriptPaths } from "../scripts/utils/paths";
-import logger from "../utils/logger";
 
 const activeStarts = new Map<string, boolean>();
 

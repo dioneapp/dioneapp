@@ -1,4 +1,7 @@
-import { apiFetch } from "@renderer/utils/api";
+import AI from "@/components/ai/ai";
+import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import { useTranslation } from "@/translations/translation-context";
+import { apiFetch } from "@/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
 import {
 	type KeyboardEvent,
@@ -9,9 +12,6 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { useTranslation } from "../../translations/translation-context";
-import AI from "../ai/ai";
-import { useScriptsContext } from "../contexts/ScriptsContext";
 import ContextMenu from "./context-menu";
 import EntryNameDialog from "./entry-name-dialog";
 import FileTree from "./file-tree";

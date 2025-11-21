@@ -1,5 +1,5 @@
+import logger from "@/server/utils/logger";
 import si from "systeminformation";
-import logger from "../utils/logger";
 import { readDioneConfig } from "./dependencies/dependencies";
 
 export async function getSystemInfo() {

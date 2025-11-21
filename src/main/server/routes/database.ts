@@ -1,7 +1,7 @@
+import { supabase } from "@/server/utils/database";
+import logger from "@/server/utils/logger";
 import { app } from "electron";
 import express from "express";
-import { supabase } from "../utils/database";
-import logger from "../utils/logger";
 
 const router = express.Router();
 router.use(express.json());

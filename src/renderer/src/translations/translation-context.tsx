@@ -1,4 +1,4 @@
-import { apiJson } from "@renderer/utils/api";
+import { apiJson } from "@/utils/api";
 import {
 	type ReactNode,
 	createContext,

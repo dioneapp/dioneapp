@@ -1,4 +1,4 @@
-import SearchBar from "../feed/search";
+import SearchBar from "@/components/home/feed/search";
 
 export default function Explore() {
 	return (

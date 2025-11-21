@@ -1,9 +1,9 @@
+import Icon from "@/components/icons/icon";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
-import Icon from "../icons/icon";
 
 export default function Messages({
 	messages,
