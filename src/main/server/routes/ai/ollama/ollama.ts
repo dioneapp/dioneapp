@@ -5,6 +5,7 @@ import {
 	checkOneDependency,
 	installDependency,
 } from "@/server/scripts/dependencies/dependencies";
+import { getAllValues } from "@/server/scripts/dependencies/environment";
 import { killProcess } from "@/server/scripts/process";
 import logger from "@/server/utils/logger";
 import { type ChildProcess, spawn } from "child_process";
@@ -75,7 +76,8 @@ export function createOllamaRouter(io: SocketIOServer) {
 		}
 
 		try {
-			activeProcess = spawn(command, { cwd: ollamaDir, shell: true });
+			const ENVIRONMENT = getAllValues();
+			activeProcess = spawn(command, { cwd: ollamaDir, shell: true, env: ENVIRONMENT });
 
 			if (!activeProcess) {
 				res.status(500).json({ error: "Failed to start Ollama server" });
@@ -122,15 +124,82 @@ export function createOllamaRouter(io: SocketIOServer) {
 
 	OllamaRouter.get("/models", async (_req, res) => {
 		try {
+			// wait until ollama server is ready
+			await new Promise((resolve) => setTimeout(resolve, 500));
 			const response = await ollama.list();
 			const modelNames = response.models
 				.map((m: { name: string }) => m.name)
 				.join(", ");
-			logger.ai(`Available models: ${modelNames}`);
+			logger.ai(`Downloaded models: ${modelNames}`);
 			res.json(response);
+		} catch (error) {
+			logger.error(`Error fetching downloaded models: ${error}`);
+			res.status(500).json({ error: "Failed to fetch downloaded models" });
+		}
+	});
+
+	OllamaRouter.get("/available-models", async (_req, res) => {
+		try {
+			const response = await fetch("https://api.getdione.app/v1/ai/models", {
+				method: "GET",
+				headers: {
+					...(process.env.API_KEY
+						? { Authorization: `Bearer ${process.env.API_KEY}` }
+						: {}),
+				},
+			});
+
+			if (!response.ok) {
+				const errorText = await response.text();
+				logger.error(`Failed to fetch models: ${response.status} - ${errorText}`);
+				return res.status(response.status).json({
+					error: "Failed to fetch models",
+					details: errorText,
+				});
+			}
+
+			const data = await response.json();
+			logger.ai(`Available models: ${JSON.stringify(data)}`);
+			res.json(data);
 		} catch (error) {
 			logger.error(`Error fetching models: ${error}`);
 			res.status(500).json({ error: "Failed to fetch models" });
+		}
+	});
+
+	OllamaRouter.post("/download-model", async (req, res) => {
+		try {
+			const { model } = req.query;
+			logger.ai("Downloading model: ", model);
+			const config = readConfig();
+			const binFolder = path.join(
+				config?.defaultBinFolder || path.join(app.getPath("userData")),
+				"bin",
+			);
+			const ollamaDir = path.join(binFolder, "ollama");
+			const command = `ollama pull ${model}`;
+
+			const ENVIRONMENT = getAllValues();
+			const process = spawn(command, { cwd: ollamaDir, shell: true, env: ENVIRONMENT });
+			process.stdout.on("data", (data) => {
+				logger.ai(`[ollama stdout] ${data}`);
+
+			});
+			process.stderr.on("data", (data) => {
+				logger.ai(`[ollama stderr] ${data}`);
+			});
+			process.on("exit", (code) => {
+				logger.ai(`Ollama server exited with code ${code}`);
+				if (code === 0) {
+					res.json({ success: true, message: "Model downloaded successfully" });
+				} else {
+					res.json({ success: false, message: "Failed to download model" });
+				}
+			});
+
+		} catch (error) {
+			logger.error(`Error downloading model: ${error}`);
+			res.status(500).json({ error: "Failed to download model" });
 		}
 	});
 

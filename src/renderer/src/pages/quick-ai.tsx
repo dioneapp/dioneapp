@@ -1,4 +1,5 @@
 import Messages from "@/components/ai/messages";
+import Models from "@/components/ai/models";
 import ProgressBar from "@/components/common/progress-bar";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import Icon from "@/components/icons/icon";
@@ -17,6 +18,8 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+const defaultModel = "gemma3:12b";
+
 export default function QuickAI() {
 	const [messages, setMessages] = useState<{ role: string; content: string }[]>(
 		[],
@@ -24,9 +27,11 @@ export default function QuickAI() {
 	const [ollamaStatus, setOllamaStatus] = useState("");
 	const [ollamaInstalled, setOllamaInstalled] = useState(false);
 	const [ollamaRunning, setOllamaRunning] = useState(false);
+	const [ollamaModel, setOllamaModel] = useState("");
 	const [showInstallModal, setShowInstallModal] = useState<boolean | string>(
 		false,
 	);
+	const [showModelHub, setShowModelHub] = useState(false);
 	const [installStep, setInstallStep] = useState(1);
 	const { sockets, connectApp, logs } = useScriptsContext();
 	const logsEndRef = useRef<HTMLDivElement>(null);
@@ -39,6 +44,18 @@ export default function QuickAI() {
 		};
 	}, []);
 
+	useEffect(() => {
+		if (showModelHub && ollamaInstalled && !ollamaRunning) {
+			handleStartOllama();
+		}
+	}, [showModelHub]);
+
+	useEffect(() => {
+		if (ollamaModel) {
+			localStorage.setItem("quick-ai-model", ollamaModel);
+		}
+	}, [ollamaModel]);
+
 	const checkOllama = async () => {
 		const response = await apiFetch(`/ai/ollama/isinstalled`, {
 			method: "GET",
@@ -49,6 +66,12 @@ export default function QuickAI() {
 			setOllamaStatus("not installed");
 			setShowInstallModal(true);
 		} else {
+			const model = localStorage.getItem("quick-ai-model");
+			if (!model) {
+				setOllamaModel(defaultModel);
+			}
+			setOllamaModel(model || defaultModel);
+			setOllamaInstalled(true);
 			setOllamaStatus("starting");
 			const response = await handleStartOllama();
 			const result = await response?.json();
@@ -96,6 +119,7 @@ export default function QuickAI() {
 			method: "POST",
 		});
 		setOllamaRunning(false);
+		setShowModelHub(false);
 	}
 
 	async function handleStartOllama() {
@@ -112,6 +136,15 @@ export default function QuickAI() {
 		const userMessage = { role: "user", content: prompt };
 		setMessages((prev) => [...prev, userMessage]);
 
+		if (!ollamaRunning) {
+			await handleStartOllama();
+			await new Promise((resolve) => setTimeout(resolve, 500)); // wait for ollama to start
+			setMessages((prev) => [
+				...prev,
+				{ role: "assistant", content: "Starting ollama..." },
+			]);
+		}
+
 		try {
 			const port = await getBackendPort();
 			const response = await fetch(`http://localhost:${port}/ai/ollama/chat`, {
@@ -121,7 +154,7 @@ export default function QuickAI() {
 				},
 				body: JSON.stringify({
 					prompt,
-					model: "llama3.2",
+					model: ollamaModel,
 					quickAI: true,
 				}),
 			});
@@ -252,9 +285,8 @@ export default function QuickAI() {
 									{[1, 2, 3].map((step) => (
 										<div
 											key={step}
-											className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-												step === installStep ? "bg-white" : "bg-white/20"
-											}`}
+											className={`w-2 h-2 rounded-full transition-colors duration-300 ${step === installStep ? "bg-white" : "bg-white/20"
+												}`}
 										/>
 									))}
 								</div>
@@ -262,9 +294,8 @@ export default function QuickAI() {
 								<div className="flex justify-between items-center w-full">
 									<button
 										onClick={() => setInstallStep((s) => Math.max(1, s - 1))}
-										className={`flex items-center justify-center px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors gap-2 ${
-											installStep === 1 ? "opacity-0 pointer-events-none" : ""
-										}`}
+										className={`flex items-center justify-center px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors gap-2 ${installStep === 1 ? "opacity-0 pointer-events-none" : ""
+											}`}
 									>
 										<ChevronLeft className="w-4 h-4" />
 										Back
@@ -304,77 +335,89 @@ export default function QuickAI() {
 				</div>
 			)}
 			<div className="w-full max-w-3xl h-full flex flex-col items-center justify-center mx-auto relative">
-				<div className="flex justify-center items-center h-full w-full mt-auto">
-					{messages.length === 0 ? (
-						<>
-							<ul className="text-sm gap-2 flex flex-col items-start justify-start w-full text-pretty max-w-2xl text-neutral-300 ">
-								<li
-									onClick={() => chat("Open FaceFusion")}
-									className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
-								>
-									"Open FaceFusion" <ArrowRight className="ml-2" size={16} />
-								</li>
-								<li
-									onClick={() => chat("Install Applio")}
-									className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
-								>
-									"Install Applio" <ArrowRight className="ml-2" size={16} />
-								</li>
-								<li
-									onClick={() =>
-										chat("What is the latest application in Dione?")
-									}
-									className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
-								>
-									"What is the latest application in Dione?"{" "}
-									<ArrowRight className="ml-2" size={16} />
-								</li>
-							</ul>
-							{!ollamaRunning && ollamaInstalled && (
-								<div className="absolute left-12 bottom-40 w-44 p-4 h-12">
-									<div className="w-full h-full flex items-center gap-2 text-neutral-200 rotate-10">
-										<CornerLeftDown size={50} />
-										<span>Click here to start Ollama</span>
+				{showModelHub ? <Models setOllamaModel={setOllamaModel} ollamaModel={ollamaModel} /> : (
+					<div className="flex justify-center items-center h-full w-full mt-auto">
+						{messages.length === 0 && !showModelHub ? (
+							<>
+								<ul className="text-sm gap-2 flex flex-col items-start justify-start w-full text-pretty max-w-2xl text-neutral-300 ">
+									<li
+										onClick={() => chat("Open FaceFusion")}
+										className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
+									>
+										"Open FaceFusion" <ArrowRight className="ml-2" size={16} />
+									</li>
+									<li
+										onClick={() => chat("Install Applio")}
+										className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
+									>
+										"Install Applio" <ArrowRight className="ml-2" size={16} />
+									</li>
+									<li
+										onClick={() =>
+											chat("What is the latest application in Dione?")
+										}
+										className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
+									>
+										"What is the latest application in Dione?"{" "}
+										<ArrowRight className="ml-2" size={16} />
+									</li>
+								</ul>
+								{!ollamaRunning && ollamaInstalled && !showModelHub && (
+									<div className="absolute left-9 bottom-45 w-44 p-4 h-12">
+										<div className="w-full h-full flex items-center gap-2 text-neutral-400">
+											<CornerLeftDown size={50} />
+											<span>Click here to start Ollama</span>
+										</div>
 									</div>
-								</div>
-							)}
-						</>
-					) : (
-						<div className="w-full mx-auto flex justify-center items-center">
-							<div ref={logsEndRef} />
-							<Messages messages={messages} logsEndRef={logsEndRef} quickAI />
-						</div>
-					)}
-				</div>
+								)}
+							</>
+						) : (
+							<div className="w-full mx-auto flex justify-center items-center">
+								<div ref={logsEndRef} />
+								<Messages messages={messages} logsEndRef={logsEndRef} quickAI />
+							</div>
+						)}
+					</div>
+				)}
 				<div className="w-full max-w-2xl h-full flex flex-col justify-end mx-auto items-center">
 					<div className="flex items-center justify-between px-0.5 w-full">
-						<div className="w-6 h-6 flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group">
-							{ollamaRunning && ollamaInstalled ? (
-								<button
-									className="cursor-pointer transition-colors duration-200"
-									title="Stop Ollama"
-									onClick={handleStopOllama}
-								>
-									<Square className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
+						<div className="flex gap-2 items-center justify-start w-full">
+							<div className="w-6 h-6 flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group">
+								{ollamaRunning && ollamaInstalled ? (
+									<button
+										className="cursor-pointer transition-colors duration-200"
+										title="Stop Ollama"
+										onClick={handleStopOllama}
+									>
+										<Square className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
+									</button>
+								) : (
+									<button
+										className="cursor-pointer transition-colors duration-200"
+										title="Start Ollama"
+										onClick={handleStartOllama}
+									>
+										<Play className="w-4 h-4 text-neutral-400 group-hover:text-neutral-200" />
+									</button>
+								)}
+							</div>
+							<div
+								className="w-fit h-6 flex items-center justify-center"
+								onClick={() => setShowModelHub(!showModelHub)}
+							>
+								<button className="w-full h-full flex items-center justify-center cursor-pointer border border-white/10 outline-none rounded-full px-4 text-[11.5px] text-neutral-300 hover:text-neutral-200 hover:bg-white/10 hover:border-transparent transition-all duration-200">
+									<span className="truncate text-center">{ollamaModel}</span>
 								</button>
-							) : (
-								<button
-									className="cursor-pointer transition-colors duration-200"
-									title="Start Ollama"
-									onClick={handleStartOllama}
-								>
-									<Play className="w-4 h-4 text-neutral-400 group-hover:text-neutral-200" />
-								</button>
-							)}
+							</div>
 						</div>
-						<div className="flex flex-col gap-2 items-end justify-end mr-auto w-full h-full text-[10px] text-neutral-400 font-medium">
+						<div className="flex flex-col gap-2 items-end justify-center mr-auto w-full h-full text-[10px] text-neutral-400 font-medium">
 							{ollamaRunning && (
-								<div className="p-1 px-3 rounded-full bg-green-500/10 backdrop-blur-3xl">
+								<div className="p-1 px-3 rounded-full bg-green-500/5 backdrop-blur-3xl">
 									Ollama running
 								</div>
 							)}
 							{!ollamaRunning && (
-								<div className="p-1 px-3 rounded-full bg-red-500/10 backdrop-blur-3xl">
+								<div className="p-1 px-3 rounded-full bg-red-500/5 backdrop-blur-3xl">
 									Ollama not running
 								</div>
 							)}
@@ -398,9 +441,9 @@ export default function QuickAI() {
 								},
 							}}
 						/>
-						<div className="flex max-w-2xl min-h-15 h-15 bg-white/5 backdrop-blur-3xl border border-white/5 w-full rounded-xl overflow-hidden">
+						<div className="flex max-w-2xl min-h-15 h-15 bg-white/5 backdrop-blur-3xl border hover:border-neutral-700 border-white/5 w-full rounded-xl overflow-hidden">
 							<input
-								className="w-full h-full outline-none border-none bg-transparent text-white px-4"
+								className="w-full h-full focus:outline-neutral-800 rounded-xl border-none bg-transparent text-white px-4"
 								type="text"
 								placeholder="Ask Dio..."
 								autoFocus
