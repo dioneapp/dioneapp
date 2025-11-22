@@ -157,7 +157,7 @@ export async function install(
 			content: `Successfully downloaded ${depName} for ${platform} (${arch}) using URL method`,
 		});
 
-		addValue("PATH", path.join(depFolder, "pnpm.exe"));
+		addValue("PATH", path.join(depFolder));
 		addValue("XDG_CACHE_HOME", path.join(binFolder, "cache", depName, "cache"));
 		addValue("XDG_STATE_HOME", path.join(binFolder, "cache", depName, "state"));
 		addValue("XDG_DATA_HOME", path.join(binFolder, "cache", depName, "data"));
