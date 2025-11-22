@@ -24,7 +24,7 @@ export default function Messages({
 	return (
 		<div
 			id={`${quickAI ? "logs" : ""}`}
-			className={`flex flex-col w-full h-full overflow-y-auto ${quickAI ? "max-h-120 min-h-120 h-full mt-20 -mx-24 pt-4" : ""}`}
+			className={`flex flex-col w-full h-full overflow-y-auto ${quickAI ? "max-h-110 min-h-110 h-full mt-20 -mx-24 pt-4" : ""}`}
 		>
 			{messages.map((message: any, index: number) => (
 				<div
@@ -43,10 +43,10 @@ export default function Messages({
 								<div className="mb-2">
 									{message?.message?.tool_calls[0].function.name ===
 										"read_file" && (
-										<span className="text-xs text-gray-500 dark:text-gray-400">
-											Reading files...
-										</span>
-									)}
+											<span className="text-xs text-gray-500 dark:text-gray-400">
+												Reading files...
+											</span>
+										)}
 								</div>
 							)}
 						<div
