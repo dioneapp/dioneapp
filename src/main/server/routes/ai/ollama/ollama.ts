@@ -1,3 +1,6 @@
+import { type ChildProcess, spawn } from "child_process";
+import fs from "fs";
+import path from "path";
 import { readConfig } from "@/config";
 import { getSysPrompt } from "@/server/routes/ai/instructions/instructions";
 import { getTools, read_file } from "@/server/routes/ai/ollama/tools";
@@ -8,11 +11,8 @@ import {
 import { getAllValues } from "@/server/scripts/dependencies/environment";
 import { killProcess } from "@/server/scripts/process";
 import logger from "@/server/utils/logger";
-import { type ChildProcess, spawn } from "child_process";
 import { app } from "electron";
 import express from "express";
-import fs from "fs";
-import path from "path";
 import type { Server as SocketIOServer } from "socket.io";
 const { Ollama } = require("ollama");
 
@@ -77,7 +77,11 @@ export function createOllamaRouter(io: SocketIOServer) {
 
 		try {
 			const ENVIRONMENT = getAllValues();
-			activeProcess = spawn(command, { cwd: ollamaDir, shell: true, env: ENVIRONMENT });
+			activeProcess = spawn(command, {
+				cwd: ollamaDir,
+				shell: true,
+				env: ENVIRONMENT,
+			});
 
 			if (!activeProcess) {
 				res.status(500).json({ error: "Failed to start Ollama server" });
@@ -151,7 +155,9 @@ export function createOllamaRouter(io: SocketIOServer) {
 
 			if (!response.ok) {
 				const errorText = await response.text();
-				logger.error(`Failed to fetch models: ${response.status} - ${errorText}`);
+				logger.error(
+					`Failed to fetch models: ${response.status} - ${errorText}`,
+				);
 				return res.status(response.status).json({
 					error: "Failed to fetch models",
 					details: errorText,
@@ -180,7 +186,10 @@ export function createOllamaRouter(io: SocketIOServer) {
 				let percent = 0;
 
 				if (part.digest) {
-					if (typeof part.completed === "number" && typeof part.total === "number") {
+					if (
+						typeof part.completed === "number" &&
+						typeof part.total === "number"
+					) {
 						percent = Math.round((part.completed / part.total) * 100);
 					}
 				}
@@ -250,21 +259,17 @@ export function createOllamaRouter(io: SocketIOServer) {
 			logger.error(`Error processing chat request: ${error}`);
 
 			if (error.message.includes("not found")) {
-				res
-					.status(500)
-					.json({
-						error: "Model Not Found",
-						message: "Model Not Found, please select a valid model.",
-					});
+				res.status(500).json({
+					error: "Model Not Found",
+					message: "Model Not Found, please select a valid model.",
+				});
 				return;
 			}
 
-			res
-				.status(500)
-				.json({
-					error: `Unexpected error`,
-					message: `Unexpected error: ${error}`,
-				});
+			res.status(500).json({
+				error: `Unexpected error`,
+				message: `Unexpected error: ${error}`,
+			});
 		}
 	});
 

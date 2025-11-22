@@ -28,4 +28,3 @@ try {
 }
 
 export { supabase };
-

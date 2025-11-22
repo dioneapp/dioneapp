@@ -1,4 +1,3 @@
-import logger from "@/server/utils/logger";
 import { execSync, spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -9,6 +8,7 @@ import os from "node:os";
 import path from "node:path";
 import { pipeline as streamPipeline } from "node:stream/promises";
 import { setTimeout as delay } from "node:timers/promises";
+import logger from "@/server/utils/logger";
 
 type LogLevel = "info" | "warn" | "error";
 

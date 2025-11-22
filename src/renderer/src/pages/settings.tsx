@@ -1,5 +1,5 @@
-import { useAuthContext } from "@/components/contexts/auth-context";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import { useAuthContext } from "@/components/contexts/auth-context";
 import VariablesModal from "@/components/modals/variables";
 import { languages, useTranslation } from "@/translations/translation-context";
 import AnimatedCount from "@/utils/animate-count";

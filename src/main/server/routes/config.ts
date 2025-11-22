@@ -1,9 +1,4 @@
-import {
-	deleteConfig,
-	readConfig,
-	resetConfig,
-	updateConfig,
-} from "@/config";
+import { deleteConfig, readConfig, resetConfig, updateConfig } from "@/config";
 import { toggleDiscordRPC } from "@/discord/presence";
 import express from "express";
 
