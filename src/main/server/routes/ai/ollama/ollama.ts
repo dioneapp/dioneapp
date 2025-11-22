@@ -170,35 +170,41 @@ export function createOllamaRouter(io: SocketIOServer) {
 	OllamaRouter.post("/download-model", async (req, res) => {
 		try {
 			const { model } = req.query;
-			logger.ai("Downloading model: ", model);
-			const config = readConfig();
-			const binFolder = path.join(
-				config?.defaultBinFolder || path.join(app.getPath("userData")),
-				"bin",
-			);
-			const ollamaDir = path.join(binFolder, "ollama");
-			const command = `ollama pull ${model}`;
+			if (typeof model !== "string") {
+				return res.status(400).json({ error: "Model name is required" });
+			}
 
-			const ENVIRONMENT = getAllValues();
-			const process = spawn(command, { cwd: ollamaDir, shell: true, env: ENVIRONMENT });
-			process.stdout.on("data", (data) => {
-				logger.ai(`[ollama stdout] ${data}`);
+			const stream = await ollama.pull({ model, stream: true });
 
-			});
-			process.stderr.on("data", (data) => {
-				logger.ai(`[ollama stderr] ${data}`);
-			});
-			process.on("exit", (code) => {
-				logger.ai(`Ollama server exited with code ${code}`);
-				if (code === 0) {
-					res.json({ success: true, message: "Model downloaded successfully" });
-				} else {
-					res.json({ success: false, message: "Failed to download model" });
+			for await (const part of stream) {
+				let percent = 0;
+
+				if (part.digest) {
+					if (typeof part.completed === "number" && typeof part.total === "number") {
+						percent = Math.round((part.completed / part.total) * 100);
+					}
 				}
+
+				io.emit("ollama:download-progress", {
+					model,
+					percentage: percent,
+					status: part.status,
+				});
+			}
+
+			io.emit("ollama:download-progress", {
+				model,
+				percentage: 100,
+				status: "completed",
 			});
 
-		} catch (error) {
-			logger.error(`Error downloading model: ${error}`);
+			res.json({ success: true });
+		} catch (err) {
+			io.emit("ollama:download-progress", {
+				model: req.query.model,
+				percentage: 0,
+				status: "error",
+			});
 			res.status(500).json({ error: "Failed to download model" });
 		}
 	});
@@ -214,6 +220,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 				workspaceName = "",
 				workspaceFiles = [],
 				quickAI = false,
+				support = [],
 			} = req.body;
 			const tools = await getTools();
 			const systemprompt = getSysPrompt(
@@ -235,6 +242,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 				messages,
 				tools,
 				quickAI,
+				support,
 			});
 			logger.ai(`Chat response: ${JSON.stringify(finalResponse)}`);
 			res.json(finalResponse);
@@ -265,11 +273,19 @@ export function createOllamaRouter(io: SocketIOServer) {
 		messages,
 		tools,
 		quickAI,
+		support = [],
+	}: {
+		model: string;
+		messages: any[];
+		tools: any;
+		quickAI: boolean;
+		support?: string[];
 	}) {
+		logger.ai(`Chat request (support): ${JSON.stringify(support)}`);
 		let response = await ollama.chat({
 			model,
 			messages,
-			tools: tools,
+			tools: support.includes("tools") ? tools : undefined,
 		});
 		// repeat until no more tool calls
 		while (
@@ -294,7 +310,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 			response = await ollama.chat({
 				model,
 				messages,
-				tools: quickAI ? [] : tools,
+				tools: support.includes("tools") ? tools : undefined,
 			});
 		}
 		// if no more tool calls, return response

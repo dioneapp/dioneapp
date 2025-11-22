@@ -28,6 +28,7 @@ export default function QuickAI() {
 	const [ollamaInstalled, setOllamaInstalled] = useState(false);
 	const [ollamaRunning, setOllamaRunning] = useState(false);
 	const [ollamaModel, setOllamaModel] = useState("");
+	const [ollamaSupport, setOllamaSupport] = useState<string[]>([]);
 	const [showInstallModal, setShowInstallModal] = useState<boolean | string>(
 		false,
 	);
@@ -146,8 +147,7 @@ export default function QuickAI() {
 		}
 
 		try {
-			const port = await getBackendPort();
-			const response = await fetch(`http://localhost:${port}/ai/ollama/chat`, {
+			const response = await apiFetch(`/ai/ollama/chat`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -155,6 +155,7 @@ export default function QuickAI() {
 				body: JSON.stringify({
 					prompt,
 					model: ollamaModel,
+					support: ollamaSupport,
 					quickAI: true,
 				}),
 			});
@@ -335,7 +336,7 @@ export default function QuickAI() {
 				</div>
 			)}
 			<div className="w-full max-w-3xl h-full flex flex-col items-center justify-center mx-auto relative">
-				{showModelHub ? <Models setOllamaModel={setOllamaModel} ollamaModel={ollamaModel} /> : (
+				{showModelHub ? <Models setOllamaModel={setOllamaModel} setOllamaSupport={setOllamaSupport} ollamaModel={ollamaModel} /> : (
 					<div className="flex justify-center items-center h-full w-full mt-auto">
 						{messages.length === 0 && !showModelHub ? (
 							<>
