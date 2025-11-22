@@ -1,6 +1,6 @@
+import type http from "node:http";
 import logger from "@/server/utils/logger";
 import { ipcMain } from "electron";
-import type http from "node:http";
 import { Server } from "socket.io";
 
 export const start = (httpServer: http.Server) => {
