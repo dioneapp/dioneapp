@@ -36,17 +36,17 @@ export default function Messages({
 							<Icon name="Dio" className="w-5 h-5" />
 						</div>
 					)}
-					<div className={`flex flex-col ${quickAI ? "max-w-[70%]" : ""}`}>
+					<div className={`flex flex-col ${quickAI ? "max-w-full" : ""}`}>
 						{message?.role !== "user" &&
 							message?.message?.tool_calls &&
 							message?.message?.tool_calls?.length > 0 && (
 								<div className="mb-2">
 									{message?.message?.tool_calls[0].function.name ===
 										"read_file" && (
-										<span className="text-xs text-gray-500 dark:text-gray-400">
-											Reading files...
-										</span>
-									)}
+											<span className="text-xs text-gray-500 dark:text-gray-400">
+												Reading files...
+											</span>
+										)}
 								</div>
 							)}
 						<div
