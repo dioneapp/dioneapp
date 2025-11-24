@@ -135,7 +135,8 @@ export default function QuickAI() {
 
 	const chat = async (prompt: string) => {
 		const userMessage = { role: "user", content: prompt };
-		setMessages((prev) => [...prev, userMessage]);
+		const newMessages = [...messages, userMessage];
+		setMessages(newMessages);
 
 		if (!ollamaRunning) {
 			await handleStartOllama();
@@ -153,7 +154,7 @@ export default function QuickAI() {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					prompt,
+					messages: newMessages,
 					model: ollamaModel,
 					support: ollamaSupport,
 					quickAI: true,
@@ -286,9 +287,8 @@ export default function QuickAI() {
 									{[1, 2, 3].map((step) => (
 										<div
 											key={step}
-											className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-												step === installStep ? "bg-white" : "bg-white/20"
-											}`}
+											className={`w-2 h-2 rounded-full transition-colors duration-300 ${step === installStep ? "bg-white" : "bg-white/20"
+												}`}
 										/>
 									))}
 								</div>
@@ -296,9 +296,8 @@ export default function QuickAI() {
 								<div className="flex justify-between items-center w-full">
 									<button
 										onClick={() => setInstallStep((s) => Math.max(1, s - 1))}
-										className={`flex items-center justify-center px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors gap-2 ${
-											installStep === 1 ? "opacity-0 pointer-events-none" : ""
-										}`}
+										className={`flex items-center justify-center px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors gap-2 ${installStep === 1 ? "opacity-0 pointer-events-none" : ""
+											}`}
 									>
 										<ChevronLeft className="w-4 h-4" />
 										Back
@@ -391,25 +390,17 @@ export default function QuickAI() {
 				<div className="w-full max-w-2xl h-full flex flex-col justify-end mx-auto items-center">
 					<div className="flex items-center justify-between px-0.5 w-full">
 						<div className="flex gap-2 items-center justify-start w-full">
-							<div className="w-6 h-6 flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group">
+							<button
+								title={ollamaRunning && ollamaInstalled ? "Stop Ollama" : "Start Ollama"}
+								onClick={ollamaRunning && ollamaInstalled ? handleStopOllama : handleStartOllama}
+								className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group"
+							>
 								{ollamaRunning && ollamaInstalled ? (
-									<button
-										className="cursor-pointer transition-colors duration-200"
-										title="Stop Ollama"
-										onClick={handleStopOllama}
-									>
-										<Square className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
-									</button>
+									<Square className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
 								) : (
-									<button
-										className="cursor-pointer transition-colors duration-200"
-										title="Start Ollama"
-										onClick={handleStartOllama}
-									>
-										<Play className="w-4 h-4 text-neutral-400 group-hover:text-neutral-200" />
-									</button>
+									<Play className="w-4 h-4 text-neutral-400 group-hover:text-neutral-200" />
 								)}
-							</div>
+							</button>
 							<div
 								className="w-fit h-6 flex items-center justify-center"
 								onClick={() => setShowModelHub(!showModelHub)}
