@@ -6,7 +6,7 @@ For developers, Dione offers a zero-friction way to distribute apps using just a
 
 ## Showcase
 
-![Demo](https://pbs.twimg.com/media/G1S8Y01WIAAfcrl?format=jpg&name=large)
+![Demo](https://i.imgur.com/RaHSxoK.png)
 
 
 ## Download
