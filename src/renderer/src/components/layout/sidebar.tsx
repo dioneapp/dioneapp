@@ -1,5 +1,5 @@
-import { useAuthContext } from "@/components/contexts/auth-context";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import { useAuthContext } from "@/components/contexts/auth-context";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import Icon from "@/components/icons/icon";
 import QuickLaunch from "@/components/layout/quick-launch";

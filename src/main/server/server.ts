@@ -1,10 +1,10 @@
+import http from "node:http";
 import { setupRoutes } from "@/server/routes/setup";
 import { getAvailablePort } from "@/server/utils/getPort";
 import logger from "@/server/utils/logger";
 import { start as setupSocket } from "@/socket/socket";
 import cors from "cors";
 import express from "express";
-import http from "node:http";
 import type { Server as SocketIOServer } from "socket.io";
 
 let httpServer: http.Server | null = null;

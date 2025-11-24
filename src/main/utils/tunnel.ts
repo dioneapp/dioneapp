@@ -206,10 +206,14 @@ export async function shortenUrl(url: string): Promise<string | null> {
 			}
 
 			attempts++;
-			logger.warn(`ID collision detected (${shortId}), retrying... (${attempts}/${maxAttempts})`);
+			logger.warn(
+				`ID collision detected (${shortId}), retrying... (${attempts}/${maxAttempts})`,
+			);
 		}
 
-		logger.error("Failed to generate unique shortened URL after maximum attempts");
+		logger.error(
+			"Failed to generate unique shortened URL after maximum attempts",
+		);
 		return null;
 	} catch (error) {
 		logger.error("Error shortening URL:", error);

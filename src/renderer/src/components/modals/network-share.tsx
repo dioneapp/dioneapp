@@ -168,222 +168,221 @@ export default function NetworkShareModal({
 						className="w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-neutral-900 shadow-2xl"
 						onClick={(e) => e.stopPropagation()}
 					>
-							<div className="flex w-full items-center justify-between px-5 py-4">
-								<h3 className="text-base font-semibold text-white">
-									{t("networkShare.title")}
-								</h3>
+						<div className="flex w-full items-center justify-between px-5 py-4">
+							<h3 className="text-base font-semibold text-white">
+								{t("networkShare.title")}
+							</h3>
+							<button
+								type="button"
+								onClick={onClose}
+								className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
+							>
+								<X className="w-4 h-4 text-neutral-400" />
+							</button>
+						</div>
+
+						<div className="p-5 space-y-4">
+							<div className="grid grid-cols-2 gap-2 p-1 bg-black/30 rounded-lg">
 								<button
 									type="button"
-									onClick={onClose}
-									className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
+									onClick={() => {
+										if (tunnelInfo) stopActiveTunnel();
+										setShareMode("local");
+									}}
+									className={`px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
+										shareMode === "local"
+											? "bg-white text-black shadow-sm"
+											: "text-neutral-400 hover:text-neutral-200"
+									}`}
 								>
-									<X className="w-4 h-4 text-neutral-400" />
+									{t("networkShare.modes.local")}
+								</button>
+								<button
+									type="button"
+									onClick={() => {
+										if (tunnelInfo) {
+											stopActiveTunnel();
+										} else {
+											startPublicTunnel();
+										}
+									}}
+									disabled={startingTunnel}
+									className={`px-4 py-2.5 cursor-pointer rounded-md text-sm font-medium transition-all duration-200 ${
+										shareMode === "public"
+											? "bg-white text-black shadow-sm"
+											: "text-neutral-400 hover:text-neutral-200"
+									} ${startingTunnel ? "opacity-50 cursor-not-allowed" : ""}`}
+								>
+									{t("networkShare.modes.public")}
 								</button>
 							</div>
 
-							<div className="p-5 space-y-4">
-								<div className="grid grid-cols-2 gap-2 p-1 bg-black/30 rounded-lg">
-									<button
-										type="button"
-										onClick={() => {
-											if (tunnelInfo) stopActiveTunnel();
-											setShareMode("local");
-										}}
-										className={`px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
-											shareMode === "local"
-												? "bg-white text-black shadow-sm"
-												: "text-neutral-400 hover:text-neutral-200"
-										}`}
-									>
-										{t("networkShare.modes.local")}
-									</button>
-									<button
-										type="button"
-										onClick={() => {
-											if (tunnelInfo) {
-												stopActiveTunnel();
-											} else {
-												startPublicTunnel();
-											}
-										}}
-										disabled={startingTunnel}
-										className={`px-4 py-2.5 cursor-pointer rounded-md text-sm font-medium transition-all duration-200 ${
-											shareMode === "public"
-												? "bg-white text-black shadow-sm"
-												: "text-neutral-400 hover:text-neutral-200"
-										} ${startingTunnel ? "opacity-50 cursor-not-allowed" : ""}`}
-									>
-										{t("networkShare.modes.public")}
-									</button>
-								</div>
+							<div className="min-h-[200px]">
+								{startingTunnel && (
+									<div className="space-y-3">
+										<div className="bg-black/30 rounded-lg px-3 py-2.5 h-[42px] animate-pulse">
+											<div className="h-4 bg-white/10 rounded w-3/4"></div>
+										</div>
+										<div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 space-y-2 animate-pulse">
+											<div className="h-3 bg-purple-500/20 rounded w-24"></div>
+											<div className="h-6 bg-purple-500/20 rounded"></div>
+											<div className="h-2 bg-purple-500/20 rounded w-4/5"></div>
+										</div>
+									</div>
+								)}
 
-								<div className="min-h-[200px]">
-									{startingTunnel && (
-										<div className="space-y-3">
-											<div className="bg-black/30 rounded-lg px-3 py-2.5 h-[42px] animate-pulse">
+								{!startingTunnel &&
+									(initialLoading ? (
+										<div className="space-y-3 animate-pulse">
+											<div className="bg-black/30 rounded-lg px-3 py-2.5 h-[42px]">
 												<div className="h-4 bg-white/10 rounded w-3/4"></div>
 											</div>
-											<div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 space-y-2 animate-pulse">
-												<div className="h-3 bg-purple-500/20 rounded w-24"></div>
-												<div className="h-6 bg-purple-500/20 rounded"></div>
-												<div className="h-2 bg-purple-500/20 rounded w-4/5"></div>
+											<div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 h-[60px]">
+												<div className="h-3 bg-blue-500/20 rounded w-full mb-2"></div>
+												<div className="h-3 bg-blue-500/20 rounded w-2/3"></div>
 											</div>
 										</div>
-									)}
-
-									{!startingTunnel &&
-										(initialLoading ? (
-											<div className="space-y-3 animate-pulse">
-												<div className="bg-black/30 rounded-lg px-3 py-2.5 h-[42px]">
-													<div className="h-4 bg-white/10 rounded w-3/4"></div>
-												</div>
-												<div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 h-[60px]">
-													<div className="h-3 bg-blue-500/20 rounded w-full mb-2"></div>
-													<div className="h-3 bg-blue-500/20 rounded w-2/3"></div>
-												</div>
-											</div>
-										) : error ? (
-											<div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-200 text-xs">
-												{error}
-											</div>
-										) : (
-											<>
-												{shareMode === "local" && localUrl && (
-													<div className="space-y-3">
-														<div className="flex items-center justify-center pb-2">
-															<div className="bg-black/30 p-4 rounded-xl border border-white/5">
-																<QRCodeSVG
-																	value={localUrl}
-																	size={180}
-																	level="H"
-																	fgColor="#ffffff"
-																	bgColor="transparent"
-																/>
-															</div>
-														</div>
-														<div className="space-y-2">
-															<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
-																{t("networkShare.local.shareUrl") ||
-																	"Share URL"}
-															</label>
-															<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
-																<input
-																	type="text"
-																	readOnly
-																	value={localUrl}
-																	className="flex-1 select-all bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
-																/>
-																<button
-																	type="button"
-																	onClick={handleCopy}
-																	className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
-																>
-																	{copied ? (
-																		<Check className="w-4 h-4 text-green-400" />
-																	) : (
-																		<Copy className="w-4 h-4 text-neutral-400" />
-																	)}
-																</button>
-															</div>
-															<p className="text-xs text-neutral-500">
-																{t("networkShare.local.urlDescription") ||
-																	"Share this URL with devices on your local network"}
-															</p>
-														</div>
-														<div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
-															<p className="text-blue-200 text-xs wrap-break-word">
-																<strong>
-																	{t("networkShare.local.localNetwork")}
-																</strong>{" "}
-																{t("networkShare.local.description")}
-															</p>
+									) : error ? (
+										<div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-200 text-xs">
+											{error}
+										</div>
+									) : (
+										<>
+											{shareMode === "local" && localUrl && (
+												<div className="space-y-3">
+													<div className="flex items-center justify-center pb-2">
+														<div className="bg-black/30 p-4 rounded-xl border border-white/5">
+															<QRCodeSVG
+																value={localUrl}
+																size={180}
+																level="H"
+																fgColor="#ffffff"
+																bgColor="transparent"
+															/>
 														</div>
 													</div>
-												)}
-
-												{shareMode === "public" && tunnelInfo && (
-													<div className="space-y-3">
-														<div className="flex items-center justify-center pb-2">
-															<div className="bg-black/30 p-4 rounded-xl border border-white/5">
-																<QRCodeSVG
-																	value={tunnelInfo.shortUrl || tunnelInfo.url}
-																	size={180}
-																	level="H"
-																	fgColor="#ffffff"
-																	bgColor="transparent"
-																/>
-															</div>
-														</div>
-														<div className="space-y-2">
-															<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
-																{t("networkShare.public.shareUrl")}
-															</label>
-															<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
-																<input
-																	type="text"
-																	readOnly
-																	value={tunnelInfo.shortUrl || tunnelInfo.url}
-																	className="flex-1 bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
-																/>
-																<button
-																	type="button"
-																	onClick={handleCopy}
-																	className="p-1.5 cursor-pointer hover:bg-white/10 rounded-md transition-colors"
-																>
-																	{copied ? (
-																		<Check className="w-4 h-4 text-green-400" />
-																	) : (
-																		<Copy className="w-4 h-4 text-neutral-400" />
-																	)}
-																</button>
-															</div>
-															<p className="text-xs text-neutral-500">
-																{t("networkShare.public.urlDescription")}
-															</p>
-														</div>{" "}
-														{tunnelInfo.password && (
-															<div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 space-y-2">
-																<p className="text-purple-200 text-xs font-medium">
-																	{t("networkShare.public.passwordTitle")}
-																</p>
-																<div className="flex items-center gap-2 bg-black/30 rounded px-2 py-1.5 group">
-																	<code className="flex-1 text-purple-300 font-mono text-xs blur-sm group-hover:blur-none transition-all duration-200 select-none group-hover:select-text">
-																		{tunnelInfo.password}
-																	</code>
-																	<button
-																		type="button"
-																		onClick={() => {
-																			navigator.clipboard.writeText(
-																				tunnelInfo.password || "",
-																			);
-																			setCopied(true);
-																			setTimeout(() => setCopied(false), 2000);
-																		}}
-																		className="p-1 cursor-pointer hover:bg-white/10 rounded transition-colors"
-																	>
-																		<Copy className="w-3.5 h-3.5 text-purple-300" />
-																	</button>
-																</div>
-																<p className="text-purple-300/60 text-xs">
-																	{t("networkShare.public.visitorMessage")}
-																</p>
-															</div>
-														)}
-														<div className="flex items-center justify-end pt-1">
+													<div className="space-y-2">
+														<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+															{t("networkShare.local.shareUrl") || "Share URL"}
+														</label>
+														<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
+															<input
+																type="text"
+																readOnly
+																value={localUrl}
+																className="flex-1 select-all bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
+															/>
 															<button
 																type="button"
-																onClick={stopActiveTunnel}
-																className="text-xs cursor-pointer px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-md transition-colors font-medium"
+																onClick={handleCopy}
+																className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
 															>
-																{t("networkShare.public.stopSharing")}
+																{copied ? (
+																	<Check className="w-4 h-4 text-green-400" />
+																) : (
+																	<Copy className="w-4 h-4 text-neutral-400" />
+																)}
 															</button>
 														</div>
+														<p className="text-xs text-neutral-500">
+															{t("networkShare.local.urlDescription") ||
+																"Share this URL with devices on your local network"}
+														</p>
 													</div>
-												)}
-											</>
-										))}
-								</div>
+													<div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+														<p className="text-blue-200 text-xs wrap-break-word">
+															<strong>
+																{t("networkShare.local.localNetwork")}
+															</strong>{" "}
+															{t("networkShare.local.description")}
+														</p>
+													</div>
+												</div>
+											)}
+
+											{shareMode === "public" && tunnelInfo && (
+												<div className="space-y-3">
+													<div className="flex items-center justify-center pb-2">
+														<div className="bg-black/30 p-4 rounded-xl border border-white/5">
+															<QRCodeSVG
+																value={tunnelInfo.shortUrl || tunnelInfo.url}
+																size={180}
+																level="H"
+																fgColor="#ffffff"
+																bgColor="transparent"
+															/>
+														</div>
+													</div>
+													<div className="space-y-2">
+														<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+															{t("networkShare.public.shareUrl")}
+														</label>
+														<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
+															<input
+																type="text"
+																readOnly
+																value={tunnelInfo.shortUrl || tunnelInfo.url}
+																className="flex-1 bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
+															/>
+															<button
+																type="button"
+																onClick={handleCopy}
+																className="p-1.5 cursor-pointer hover:bg-white/10 rounded-md transition-colors"
+															>
+																{copied ? (
+																	<Check className="w-4 h-4 text-green-400" />
+																) : (
+																	<Copy className="w-4 h-4 text-neutral-400" />
+																)}
+															</button>
+														</div>
+														<p className="text-xs text-neutral-500">
+															{t("networkShare.public.urlDescription")}
+														</p>
+													</div>{" "}
+													{tunnelInfo.password && (
+														<div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 space-y-2">
+															<p className="text-purple-200 text-xs font-medium">
+																{t("networkShare.public.passwordTitle")}
+															</p>
+															<div className="flex items-center gap-2 bg-black/30 rounded px-2 py-1.5 group">
+																<code className="flex-1 text-purple-300 font-mono text-xs blur-sm group-hover:blur-none transition-all duration-200 select-none group-hover:select-text">
+																	{tunnelInfo.password}
+																</code>
+																<button
+																	type="button"
+																	onClick={() => {
+																		navigator.clipboard.writeText(
+																			tunnelInfo.password || "",
+																		);
+																		setCopied(true);
+																		setTimeout(() => setCopied(false), 2000);
+																	}}
+																	className="p-1 cursor-pointer hover:bg-white/10 rounded transition-colors"
+																>
+																	<Copy className="w-3.5 h-3.5 text-purple-300" />
+																</button>
+															</div>
+															<p className="text-purple-300/60 text-xs">
+																{t("networkShare.public.visitorMessage")}
+															</p>
+														</div>
+													)}
+													<div className="flex items-center justify-end pt-1">
+														<button
+															type="button"
+															onClick={stopActiveTunnel}
+															className="text-xs cursor-pointer px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-md transition-colors font-medium"
+														>
+															{t("networkShare.public.stopSharing")}
+														</button>
+													</div>
+												</div>
+											)}
+										</>
+									))}
 							</div>
+						</div>
 					</motion.div>
 				</motion.div>
 			)}

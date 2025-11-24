@@ -9,11 +9,7 @@ import Titlebar from "@/components/layout/titlebar";
 import { useTranslation } from "@/translations/translation-context";
 import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
-import {
-	saveExpiresAt,
-	saveId,
-	saveRefreshToken,
-} from "@/utils/secure-tokens";
+import { saveExpiresAt, saveId, saveRefreshToken } from "@/utils/secure-tokens";
 import { useToast } from "@/utils/use-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link as LinkIcon } from "lucide-react";

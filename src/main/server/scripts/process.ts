@@ -1,12 +1,15 @@
-import { getAllValues, initDefaultEnv } from "@/server/scripts/dependencies/environment";
-import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-manager";
-import { getSystemInfo } from "@/server/scripts/system";
-import logger from "@/server/utils/logger";
-import { useGit } from "@/server/utils/useGit";
 import { exec, spawn } from "node:child_process";
 import fs from "node:fs";
 import { arch, platform as getPlatform } from "node:os";
 import path from "node:path";
+import {
+	getAllValues,
+	initDefaultEnv,
+} from "@/server/scripts/dependencies/environment";
+import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-manager";
+import { getSystemInfo } from "@/server/scripts/system";
+import logger from "@/server/utils/logger";
+import { useGit } from "@/server/utils/useGit";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
 

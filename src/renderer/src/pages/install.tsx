@@ -1,5 +1,5 @@
-import { useAuthContext } from "@/components/contexts/auth-context";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import { useAuthContext } from "@/components/contexts/auth-context";
 import WorkspaceEditor from "@/components/editor/editor";
 import ActionsComponent from "@/components/install/actions";
 import Buttons from "@/components/install/buttons";

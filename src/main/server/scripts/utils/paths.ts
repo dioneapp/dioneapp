@@ -1,7 +1,7 @@
-import { readConfig } from "@/config";
-import { app } from "electron";
 import fs from "node:fs";
 import path from "node:path";
+import { readConfig } from "@/config";
+import { app } from "electron";
 
 export interface ScriptPathInfo {
 	sanitizedName: string;
