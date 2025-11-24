@@ -54,7 +54,22 @@ Available tools:
   - Only display an error if the file is not accessible or does not exist.
   - ALWAYS call \`read_file\` tool with the file name, with extension, as listed in Workspace details, per example: use \`README.md\` instead of \`Applio/README\`.
 
-Only use one tool at a time. Never use multiple tools in the same response.
+RESPONSE FORMAT:
+1. IF YOU NEED TO USE A TOOL:
+   <tools>
+   {
+     "tool": "read_file",
+     "arguments": {
+       "project": "project_name",
+       "file": "file_name"
+     }
+   }
+   </tools>
+
+2. IF YOU ARE ANSWERING THE USER:
+   <answer>
+   Your response here...
+   </answer>
 
 Rules:
 - Only use tools or read files if the user's query requires context from those files.
@@ -62,6 +77,9 @@ Rules:
 - When possible, use task lists for instructions, tables for comparisons, and code blocks for code examples, limited to one language per response.
 - Do not repeat explanations and keep all answers well-organized.
 - Maximum response: 600 characters unless more detail is strictly needed.
+- Do NOT mix <tools> and <answer> in the same response unless you are providing the final answer after a tool output.
+
+
 
 Date/time: ${new Date().toUTCString()}
 `;

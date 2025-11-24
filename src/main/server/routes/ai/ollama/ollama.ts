@@ -229,7 +229,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 				workspaceName = "",
 				workspaceFiles = [],
 				quickAI = false,
-				support = [],
+				messages: history = [],
 			} = req.body;
 			const tools = await getTools();
 			const systemprompt = getSysPrompt(
@@ -240,9 +240,10 @@ export function createOllamaRouter(io: SocketIOServer) {
 				workspaceName,
 				quickAI,
 			);
+
 			const messages = [
 				{ role: "system", content: systemprompt },
-				{ role: "user", content: prompt },
+				...(history.length > 0 ? history : [{ role: "user", content: prompt }]),
 			];
 			logger.ai(`Chat request (prompt): ${prompt}`);
 			logger.ai(`Chat request (systemprompt): ${systemprompt}`);
@@ -251,7 +252,6 @@ export function createOllamaRouter(io: SocketIOServer) {
 				messages,
 				tools,
 				quickAI,
-				support,
 			});
 			logger.ai(`Chat response: ${JSON.stringify(finalResponse)}`);
 			res.json(finalResponse);
@@ -278,48 +278,117 @@ export function createOllamaRouter(io: SocketIOServer) {
 		messages,
 		tools,
 		quickAI,
-		support = [],
-	}: {
-		model: string;
-		messages: any[];
-		tools: any;
-		quickAI: boolean;
-		support?: string[];
 	}) {
-		logger.ai(`Chat request (support): ${JSON.stringify(support)}`);
-		let response = await ollama.chat({
-			model,
-			messages,
-			tools: support.includes("tools") ? tools : undefined,
-		});
-		// repeat until no more tool calls
-		while (
-			response.message?.tool_calls &&
-			response.message.tool_calls.length > 0
-		) {
-			for (const call of response.message.tool_calls) {
-				if (call.function.name === "read_file") {
-					logger.ai(`Using tools: ${JSON.stringify(call.function)}`);
-					const project = call.function.arguments.project;
-					const file = call.function.arguments.file;
-					const fileContents = read_file(project, file);
-					messages.push({
-						role: "tool",
-						name: call.function.name,
-						content: fileContents,
-						tool_call_id: call.id,
-					});
-				}
-			}
-			// call ollama again after fulfilling the previous tool calls
-			response = await ollama.chat({
+		while (true) {
+			// 1. call model
+			const response = await ollama.chat({
 				model,
 				messages,
-				tools: support.includes("tools") ? tools : undefined,
 			});
+
+			const content = response.message?.content || "";
+
+			// 2. detect tool call with <tools> tags
+			const toolRegex = /<tools>([\s\S]*?)<\/tools>/;
+			const answerRegex = /<answer>([\s\S]*?)<\/answer>/;
+			const thoughtRegex = /<thought>([\s\S]*?)<\/thought>/;
+
+			const toolMatch = content.match(toolRegex);
+			const answerMatch = content.match(answerRegex);
+			const thoughtMatch = content.match(thoughtRegex);
+
+			if (thoughtMatch) {
+				logger.ai(`[Thought]: ${thoughtMatch[1].trim()}`);
+			}
+
+			if (toolMatch) {
+				let parsed: any;
+				try {
+					parsed = JSON.parse(toolMatch[1]);
+				} catch {
+					// if !json, return normal answer
+					if (answerMatch) {
+						response.message.content = answerMatch[1].trim();
+						return response;
+					}
+				}
+
+				if (parsed && parsed.tool && parsed.arguments) {
+					const toolName = parsed.tool;
+					const args = parsed.arguments;
+
+					// map legacy tools
+					const actualToolName = toolName;
+					const toolFn = tools[actualToolName];
+
+					if (!toolFn) {
+						return {
+							...response,
+							error: `Unknown tool: ${toolName}`,
+						};
+					}
+
+					// execute tool
+					let toolResult: any;
+					try {
+						toolResult = await toolFn(args);
+					} catch (err: any) {
+						toolResult = { error: err.message || "Tool execution failed" };
+					}
+
+					// result to messages
+					messages.push({
+						role: "assistant",
+						content: content,
+					});
+
+					messages.push({
+						role: "user",
+						content: `Tool Output: ${JSON.stringify(toolResult)}`,
+					});
+
+					continue;
+				}
+			}
+
+			// 3. if no tool, check for answer
+			if (answerMatch) {
+				response.message.content = answerMatch[1].trim();
+				return response;
+			}
+
+			// 4. fallback: check for a raw JSON
+			try {
+				const parsed = JSON.parse(content);
+				if (parsed.tool && parsed.arguments) {
+					const toolName = parsed.tool;
+					const args = parsed.arguments;
+
+					// map legacy tools
+					const actualToolName = toolName;
+					const toolFn = tools[actualToolName];
+
+					if (toolFn) {
+						let toolResult: any;
+						try {
+							toolResult = await toolFn(args);
+						} catch (err: any) {
+							toolResult = { error: err.message || "Tool execution failed" };
+						}
+						messages.push({ role: "assistant", content: content });
+						messages.push({ role: "user", content: `Tool Output: ${JSON.stringify(toolResult)}` });
+						continue;
+					}
+				}
+			} catch {
+			}
+
+			// 5. if nothing matched, return normal content
+			if (thoughtMatch) {
+				response.message.content = content.replace(thoughtRegex, "").trim();
+			}
+			return response;
 		}
-		// if no more tool calls, return response
-		return response;
 	}
 
 	return OllamaRouter;

@@ -3,39 +3,18 @@ import path from "node:path";
 import { resolveScriptPaths } from "@/server/scripts/utils/paths";
 import logger from "@/server/utils/logger";
 
-const availableTools = [
-	{
-		type: "function",
-		function: {
-			name: "read_file",
-			description:
-				"Reads content from a specific file in a project. ONLY use this when the user explicitly asks to read a file or asks about a specific project's codebase. Do NOT use for general knowledge questions.",
-			parameters: {
-				type: "object",
-				properties: {
-					project: {
-						type: "string",
-						description: "The project name",
-					},
-					file: {
-						type: "string",
-						description: "The file name with extension",
-					},
-				},
-				required: ["project", "file"],
-			},
-		},
-	},
-];
-
 export function getTools() {
-	return availableTools;
+	return {
+		read_file: async ({ project, file }) => {
+			return read_file(project, file);
+		},
+	};
 }
 
 export function read_file(project: string, file: string) {
 	try {
-		if (!project || !file || project === "None" || file === "None") {
-			return "Error: You called the tool with empty parameters. Please ask the user for the project and file name first.";
+		if (!project || !file) {
+			return "Error: Missing 'project' or 'file' parameter.";
 		}
 
 		logger.ai(`Reading file: ${file}`);
@@ -46,6 +25,7 @@ export function read_file(project: string, file: string) {
 			return fs.readFileSync(pathToRead, "utf8");
 		}
 
+		// search inside subdirectories
 		for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
 			const p = path.join(dir, e.name, file);
 			if (
@@ -59,7 +39,7 @@ export function read_file(project: string, file: string) {
 		}
 
 		logger.ai(`File not found: ${file} in ${dir}`);
-		return `Error: File "${file}" not found in project "${project}"`;
+		return `Error: File "${file}" not found in project "${project}".`;
 	} catch (err: any) {
 		const errorMsg = `Error reading file "${file}": ${err.message || err}`;
 		logger.ai(errorMsg);
