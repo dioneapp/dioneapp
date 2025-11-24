@@ -65,12 +65,15 @@ export default function Models({
 			status: string;
 		}) => {
 			console.log("[Models] Received download progress:", data);
-			if (data.status === "downloading" || data.status === "pulling") {
+			if (
+				data.status.includes("downloading") ||
+				data.status.includes("pulling")
+			) {
 				setDownloadProgress((prev) => ({
 					...prev,
 					[data.model]: data.percentage,
 				}));
-			} else if (data.status === "verifying") {
+			} else if (data.status.includes("verifying")) {
 				setDownloadProgress((prev) => ({ ...prev, [data.model]: 100 }));
 			} else if (data.status === "completed" || data.status === "error") {
 				setDownloadProgress((prev) => {
@@ -152,11 +155,10 @@ export default function Models({
 														: handleSelectModel(model, group)
 												}
 												key={model.id}
-												className={`p-4 rounded-xl flex flex-col items-start justify-start gap-2 shadow-sm cursor-pointer transition-colors relative overflow-hidden ${
-													isDownloaded
+												className={`p-4 rounded-xl flex flex-col items-start justify-start gap-2 shadow-sm cursor-pointer transition-colors relative overflow-hidden ${isDownloaded
 														? `bg-neutral-700 hover:bg-neutral-600 ${ollamaModel === model.id ? "border border-neutral-400" : ""}`
 														: "bg-neutral-900 hover:bg-neutral-800"
-												}`}
+													}`}
 											>
 												{isDownloading && (
 													<div
