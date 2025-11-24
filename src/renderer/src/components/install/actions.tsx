@@ -158,7 +158,15 @@ export default function ActionsComponent({
 												<span className="w-fit h-full flex items-center">
 													<User size={16} />
 												</span>
-												{t("actions.publishedBy")}{" "}
+												{data?.og_author && (
+													<>
+														<span className="text-xs">
+															Created by {data?.og_author}
+														</span>
+														&
+													</>
+												)}
+												{" "}{t("actions.publishedBy")}{" "}
 												<span
 													className="hover:underline cursor-pointer"
 													onClick={() => openLink(`${data?.author_url}`)}
