@@ -85,6 +85,7 @@ const BUILD_TOOLS_COMPONENTS_BASE = [
 	"Microsoft.VisualStudio.Component.VC.Tools.x86.x64",
 	"Microsoft.VisualStudio.Component.VC.CMake.Project",
 	"Microsoft.VisualStudio.Workload.MSBuildTools",
+	"Microsoft.VisualStudio.Component.Windows10SDK.19041",
 ];
 const LAYOUT_FALLBACK_ENV =
 	process.env.DIONE_ENABLE_BUILD_TOOLS_LAYOUT_FALLBACK?.toLowerCase();
@@ -220,12 +221,12 @@ async function downloadBootstrapperExecutable(
 	}
 
 	const tempPath = `${targetPath}.part`;
-	await fsp.rm(tempPath, { force: true }).catch(() => {});
+	await fsp.rm(tempPath, { force: true }).catch(() => { });
 
 	let handle: fsp.FileHandle | undefined;
 	let writable: fs.WriteStream | undefined;
 	const cleanupPartial = async () => {
-		await fsp.rm(tempPath, { force: true }).catch(() => {});
+		await fsp.rm(tempPath, { force: true }).catch(() => { });
 	};
 
 	try {
@@ -266,7 +267,7 @@ async function downloadBootstrapperExecutable(
 		if (handle) {
 			try {
 				await handle.close();
-			} catch {}
+			} catch { }
 			handle = undefined;
 		}
 		writable?.destroy();
@@ -460,7 +461,7 @@ async function ensureChannelManifest(
 ): Promise<string> {
 	const manifestPath = path.join(tempDir, "channelManifest.json");
 	let lastError: unknown;
-	await fsp.rm(manifestPath, { force: true }).catch(() => {});
+	await fsp.rm(manifestPath, { force: true }).catch(() => { });
 
 	for (let attempt = 0; attempt < MAX_CHANNEL_MANIFEST_ATTEMPTS; attempt += 1) {
 		if (attempt === 0) {
@@ -485,7 +486,7 @@ async function ensureChannelManifest(
 			return manifestPath;
 		} catch (error) {
 			lastError = error;
-			await fsp.rm(manifestPath, { force: true }).catch(() => {});
+			await fsp.rm(manifestPath, { force: true }).catch(() => { });
 			const message = error instanceof Error ? error.message : String(error);
 			const isLastAttempt = attempt >= MAX_CHANNEL_MANIFEST_ATTEMPTS - 1;
 			logMessage(
@@ -561,8 +562,7 @@ function cleanupBootstrapperCache(onLog?: LogSink) {
 	if (removed > 0) {
 		logMessage(
 			onLog,
-			`Cleared ${removed} Visual Studio bootstrapper manifest ${
-				removed === 1 ? "file" : "files"
+			`Cleared ${removed} Visual Studio bootstrapper manifest ${removed === 1 ? "file" : "files"
 			} from ${cacheDir}.`,
 		);
 	}
@@ -600,7 +600,7 @@ async function acquireInstallMutex(
 					logger.warn(`Failed to close install mutex handle: ${closeError}`);
 				}
 
-				await fsp.unlink(lockPath).catch(() => {});
+				await fsp.unlink(lockPath).catch(() => { });
 			};
 		} catch (error) {
 			const err = error as NodeJS.ErrnoException;
@@ -837,7 +837,7 @@ try {
 			mutexUnavailable: exitCode === MUTEX_ACQUIRE_EXIT_CODE,
 		};
 	} finally {
-		await fsp.rm(scriptPath, { force: true }).catch(() => {});
+		await fsp.rm(scriptPath, { force: true }).catch(() => { });
 	}
 }
 
