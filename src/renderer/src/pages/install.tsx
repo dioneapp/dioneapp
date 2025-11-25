@@ -314,6 +314,7 @@ export default function Install({
 	}, [show]);
 
 	async function download(force?: boolean) {
+		setExecuting(null);
 		const tooMuchApps = activeApps.length >= maxApps;
 		if (tooMuchApps) {
 			showToast(
@@ -409,6 +410,7 @@ export default function Install({
 			return;
 		}
 
+		setExecuting(null);
 		const tooMuchApps = activeApps.length >= maxApps;
 		if (tooMuchApps) {
 			showToast(
@@ -481,6 +483,7 @@ export default function Install({
 				//     t("toast.install.success.stopped").replace("%s", data.name),
 				// );
 				clearLogs(data?.id);
+				setExecuting(null);
 				await fetchIfDownloaded();
 				setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 				if (type === "exit") {
@@ -933,24 +936,24 @@ export default function Install({
 								/>
 							)}{" "}
 							{show[data?.id] === "actions" && (
-									<ActionsComponent
-										handleReconnect={handleReconnect}
-										isServerRunning={isServerRunning}
-										data={data}
-										installed={installed}
-										setImgLoading={setImgLoading}
-										handleDownload={handleDownload}
-										handleStart={handleStart}
-										handleUninstall={handleUninstall}
-										handleDeleteDeps={handleDeleteDeps}
-										startOptions={startOptions}
-										isLocal={isLocal}
-										setShow={setShow}
-										user={user}
-										handleShare={handleShare}
-										handleSave={handleSave}
-										saved={saved}
-									/>
+								<ActionsComponent
+									handleReconnect={handleReconnect}
+									isServerRunning={isServerRunning}
+									data={data}
+									installed={installed}
+									setImgLoading={setImgLoading}
+									handleDownload={handleDownload}
+									handleStart={handleStart}
+									handleUninstall={handleUninstall}
+									handleDeleteDeps={handleDeleteDeps}
+									startOptions={startOptions}
+									isLocal={isLocal}
+									setShow={setShow}
+									user={user}
+									handleShare={handleShare}
+									handleSave={handleSave}
+									saved={saved}
+								/>
 							)}
 						</AnimatePresence>
 					</div>

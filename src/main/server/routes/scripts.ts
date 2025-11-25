@@ -76,6 +76,7 @@ export function createScriptRouter(io: Server) {
 		logger.info(`Stopping script '${sanitizedName}' on '${workingDir}'`);
 		try {
 			const success = await stopActiveProcess(io, id, port);
+			logger.info(`SUCCESSSS???? ${success}`);
 			if (success) {
 				res.status(200).send({ message: "Process stopped successfully" });
 			} else {
