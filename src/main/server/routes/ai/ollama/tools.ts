@@ -2,11 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { resolveScriptPaths } from "@/server/scripts/utils/paths";
 import logger from "@/server/utils/logger";
+import getAllScripts from "@/server/scripts/installed";
 
 export function getTools() {
 	return {
 		read_file: async ({ project, file }) => {
 			return read_file(project, file);
+		},
+		get_installed_apps: async () => {
+			return get_installed_apps();
 		},
 	};
 }
@@ -45,4 +49,10 @@ export function read_file(project: string, file: string) {
 		logger.ai(errorMsg);
 		return errorMsg;
 	}
+}
+
+
+export async function get_installed_apps() {
+	const result = await getAllScripts();
+	return result;
 }
