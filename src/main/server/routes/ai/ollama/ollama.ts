@@ -313,9 +313,9 @@ export function createOllamaRouter(io: SocketIOServer) {
 					}
 				}
 
-				if (parsed && parsed.tool && parsed.arguments) {
+				if (parsed && parsed.tool) {
 					const toolName = parsed.tool;
-					const args = parsed.arguments;
+					const args = parsed.arguments || {};
 
 					// map legacy tools
 					const actualToolName = toolName;
@@ -360,9 +360,9 @@ export function createOllamaRouter(io: SocketIOServer) {
 			// 4. fallback: check for a raw JSON
 			try {
 				const parsed = JSON.parse(content);
-				if (parsed.tool && parsed.arguments) {
+				if (parsed.tool) {
 					const toolName = parsed.tool;
-					const args = parsed.arguments;
+					const args = parsed.arguments || {};
 
 					// map legacy tools
 					const actualToolName = toolName;
