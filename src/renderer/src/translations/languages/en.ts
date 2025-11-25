@@ -379,6 +379,8 @@ export const en = {
 		uninstall: "Uninstall",
 		install: "Install",
 		publishedBy: "Published by",
+		installed: "Installed",
+		notInstalled: "Not installed",
 	},
 
 	// promo component

@@ -2,10 +2,23 @@ import GeneratedIcon from "@/components/icons/generated-icon";
 import Loading from "@/components/install/loading-skeleton";
 import { useTranslation } from "@/translations/translation-context";
 import { openLink } from "@/utils/open-link";
-import { motion } from "framer-motion";
-import { BadgeCheck, ChevronDown, CodeXml, Download, User } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+	ArrowLeft,
+	BadgeCheck,
+	Bookmark,
+	ChevronDown,
+	CodeXml,
+	Download,
+	MoreHorizontal,
+	Play,
+	Share2,
+	Trash2,
+	User
+} from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ActionsProps {
 	data: any;
@@ -19,8 +32,11 @@ interface ActionsProps {
 	handleDeleteDeps: any;
 	startOptions?: any;
 	isLocal?: boolean;
-	user?: boolean;
+	user?: any;
 	setShow: any;
+	handleShare?: () => void;
+	handleSave?: () => void;
+	saved?: boolean;
 }
 
 export default function ActionsComponent({
@@ -28,7 +44,6 @@ export default function ActionsComponent({
 	setImgLoading,
 	installed,
 	handleStart,
-	// handleUninstall,
 	handleDownload,
 	isServerRunning,
 	handleReconnect,
@@ -36,12 +51,18 @@ export default function ActionsComponent({
 	startOptions,
 	isLocal,
 	setShow,
+	user,
+	handleShare,
+	handleSave,
+	saved,
 }: ActionsProps) {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
 	const [dropdownOpen, setDropdownOpen] = useState(false);
+	const [moreMenuOpen, setMoreMenuOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
+	const moreMenuRef = useRef<HTMLDivElement>(null);
 
-	// Close dropdown on outside click
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
 			if (
@@ -50,14 +71,20 @@ export default function ActionsComponent({
 			) {
 				setDropdownOpen(false);
 			}
+			if (
+				moreMenuRef.current &&
+				!moreMenuRef.current.contains(event.target as Node)
+			) {
+				setMoreMenuOpen(false);
+			}
 		}
-		if (dropdownOpen) {
+		if (dropdownOpen || moreMenuOpen) {
 			document.addEventListener("mousedown", handleClickOutside);
 		}
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [dropdownOpen]);
+	}, [dropdownOpen, moreMenuOpen]);
 
 	const handleOpenEditor = () => {
 		if (!data?.id) return;
@@ -65,39 +92,72 @@ export default function ActionsComponent({
 	};
 
 	return (
-		<>
-			<motion.div
-				key="actions"
-				initial={{ opacity: 0, y: 20 }}
-				animate={{ opacity: 1, y: 0 }}
-				exit={{ opacity: 0, y: -20 }}
-				transition={{
-					type: "spring",
-					stiffness: 100,
-					damping: 20,
-				}}
-				className="flex flex-col gap-6 w-full max-w-xl rounded-xl"
-			>
-				{data ? (
-					<motion.div
-						key="content"
-						initial={{ opacity: 0, scale: 0.95 }}
-						animate={{ opacity: 1, scale: 1 }}
-						exit={{ opacity: 0, scale: 0.95 }}
-						transition={{
-							type: "spring",
-							stiffness: 100,
-							damping: 20,
-						}}
-						className="rounded-xl border border-white/10 shadow-lg relative max-w-xl w-full bg-[#080808]/30 backdrop-filter backdrop-blur-sm"
-					>
-						{/* background effects */}
-						<div className="absolute w-full h-full backdrop-filter backdrop-blur-sm overflow-hidden">
-							<div className="absolute top-0 left-1/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-50" />
+		<AnimatePresence mode="wait">
+			{data ? (
+				<motion.div
+					key="actions-content"
+					initial={{ opacity: 0, y: 20 }}
+					animate={{ opacity: 1, y: 0 }}
+					exit={{ opacity: 0, y: -20 }}
+					transition={{
+						type: "spring",
+						stiffness: 100,
+						damping: 20,
+					}}
+					className="flex flex-col w-full max-w-xl px-4 sm:px-6"
+				>
+					{/* Hero Card */}
+					<div className="rounded-xl border border-white/10 relative w-full overflow-hidden">
+						{/* Background with gradient */}
+						<div className="absolute inset-0 bg-linear-to-br from-[#BCB1E7]/10 via-[#080808]/50 to-[#080808]/80" />
+						<div className="absolute inset-0 overflow-hidden pointer-events-none">
+							<div className="absolute -top-16 -right-16 w-32 sm:w-48 h-32 sm:h-48 bg-[#BCB1E7]/20 rounded-full blur-3xl" />
+							<div className="absolute -bottom-8 -left-8 w-24 sm:w-32 h-24 sm:h-32 bg-[#BCB1E7]/10 rounded-full blur-2xl" />
 						</div>
-						<div className="relative z-10 p-6">
-							<div className="flex gap-4 items-start justify-start">
-								<div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-white/10">
+
+						{/* Top Bar */}
+						<div className="relative z-10 flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-white/5">
+							<button
+								type="button"
+								onClick={() => navigate(-1)}
+								className="flex items-center gap-1 sm:gap-1.5 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+							>
+								<ArrowLeft className="h-3.5 w-3.5" />
+								<span className="text-xs hidden sm:inline">{t("common.back")}</span>
+							</button>
+
+							<div className="flex items-center gap-0.5 sm:gap-1">
+								{user && !isLocal && (
+									<>
+										<button
+											type="button"
+											onClick={handleShare}
+											className="p-1.5 hover:bg-white/10 transition-colors rounded-lg text-neutral-400 hover:text-white cursor-pointer"
+										>
+											<Share2 className="h-3.5 w-3.5" />
+										</button>
+										<button
+											type="button"
+											onClick={handleSave}
+											className={`p-1.5 transition-colors rounded-lg cursor-pointer ${
+												saved
+													? "text-[#BCB1E7]"
+													: "text-neutral-400 hover:text-white hover:bg-white/10"
+											}`}
+										>
+											<Bookmark className={`h-3.5 w-3.5 ${saved ? "fill-[#BCB1E7]" : ""}`} />
+										</button>
+									</>
+								)}
+							</div>
+						</div>
+
+						{/* Main Content */}
+						<div className="relative z-10 p-3 sm:p-5">
+							{/* App Header */}
+							<div className="flex items-start gap-3 sm:gap-4">
+								{/* App Icon */}
+								<div className="relative h-12 w-12 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-lg sm:rounded-xl border border-white/10 shadow-lg">
 									{/* biome-ignore lint/complexity/useOptionalChain: if you change && to || it will break */}
 									{data?.logo_url && data?.logo_url?.startsWith("http") ? (
 										<img
@@ -105,163 +165,160 @@ export default function ActionsComponent({
 											onError={() => setImgLoading(false)}
 											src={data?.logo_url}
 											alt={`${data?.name} icon`}
-											className="h-16 w-16 object-cover object-center transition-all duration-200"
+											className="h-12 w-12 sm:h-16 sm:w-16 object-cover object-center"
 										/>
 									) : (
-										<GeneratedIcon name={data?.name} className="h-16 w-16" />
+										<GeneratedIcon name={data?.name} className="h-12 w-12 sm:h-16 sm:w-16" />
 									)}
 								</div>
-								<div className="flex flex-col items-start w-full">
-									<div className="flex w-full items-start justify-between gap-2">
-										<div className="flex items-start justify-start -mt-1">
-											<h1 className="text-2xl font-medium mb-1 truncate text-white">
+
+								{/* App Info */}
+								<div className="flex flex-col flex-1 min-w-0 gap-0.5 sm:gap-1">
+									<div className="flex items-start justify-between gap-2">
+										<div className="min-w-0 flex-1">
+											<h1 className="text-base sm:text-xl font-semibold text-white tracking-tight truncate">
 												{data?.name}
 											</h1>
+											{!isLocal && (
+												<p className="text-xs text-neutral-400 flex items-center gap-1 mt-0.5 flex-wrap">
+													<User size={11} />
+													{data?.og_author && (
+														<span className="truncate">{data?.og_author}</span>
+													)}
+													{data?.og_author && data?.author && (
+														<span className="mx-0.5">•</span>
+													)}
+													<span
+														className="text-[#BCB1E7] hover:underline cursor-pointer truncate"
+														onClick={() => openLink(`${data?.author_url}`)}
+													>
+														{data?.author}
+													</span>
+												</p>
+											)}
 										</div>
-										{!isLocal && (
-											<div className="flex items-start mb-auto gap-2 justify-center">
+										
+										{/* Status Badge */}
+										<div
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
+												installed
+													? "bg-green-500/20 text-green-400 border border-green-500/30"
+													: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
+											}`}
+										>
+											<div
+												className={`w-1 h-1 rounded-full ${
+													installed ? "bg-green-400" : "bg-neutral-400"
+												}`}
+											/>
+											<span className="hidden sm:inline">
+												{installed ? t("actions.installed") : t("actions.notInstalled")}
+											</span>
+											<span className="sm:hidden">
+												{installed ? "✓" : "—"}
+											</span>
+										</div>
+									</div>
+
+									{/* Stats Row */}
+									{!isLocal && (
+										<div className="flex items-center gap-2 mt-1 flex-wrap">
+											<div className="flex items-center gap-1 text-[10px]">
+												<Download className="h-3 w-3 text-neutral-400" />
+												<span className="font-medium text-[#BCB1E7]">{data.downloads?.toLocaleString() || 0}</span>
+											</div>
+											{data?.script_url && (
 												<button
 													type="button"
-													className={
-														"flex items-center justify-center gap-2 text-xs w-full transition-colors duration-400 rounded-full text-neutral-400 text-center"
-													}
+													onClick={() => openLink(data?.script_url)}
+													className="flex items-center gap-1 text-[10px] text-[#BCB1E7] hover:underline cursor-pointer"
 												>
-													<Download className="h-3 w-3" />
-													<span className="font-semibold">
-														{data.downloads || 0}
+													<BadgeCheck size={12} className="shrink-0 text-neutral-400" />
+													<span>
+														{data?.script_url
+															.replace(
+																/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
+																"",
+															)
+															.split("/")
+															.slice(0, 2)
+															.join("/")}
 													</span>
 												</button>
-											</div>
-										)}
-									</div>
-									{!isLocal && (
-										<>
-											<p
-												className="text-xs text-[#BCB1E7] mb-1 flex gap-1 hover:underline w-fit cursor-pointer text-justify max-w-md"
-												onClick={() => openLink(data?.script_url)}
-											>
-												<span className="w-fit h-full flex items-center justify-center">
-													<BadgeCheck size={16} />
-												</span>
-												{!isLocal &&
-													data?.script_url &&
-													data?.script_url
-														.replace(
-															/^https?:\/\/(raw\.githubusercontent\.com|github\.com)\//,
-															"",
-														)
-														.split("/")
-														.slice(0, 2)
-														.join("/")}
-											</p>
-											<p className="text-xs text-[#BCB1E7] flex gap-1">
-												<span className="w-fit h-full flex items-center">
-													<User size={16} />
-												</span>
-												{data?.og_author && (
-													<>
-														<span className="text-xs">
-															Created by {data?.og_author}
-														</span>
-														&
-													</>
-												)}
-												{" "}{t("actions.publishedBy")}{" "}
-												<span
-													className="hover:underline cursor-pointer"
-													onClick={() => openLink(`${data?.author_url}`)}
-												>
-													{data?.author}
-												</span>
-											</p>
-										</>
+											)}
+										</div>
 									)}
-									<p className="text-xs text-neutral-400 mb-4 mt-2 line-clamp-3">
-										{data?.description}
-									</p>
 								</div>
 							</div>
 
-							<div className="flex justify-center gap-2 w-full">
-								{isServerRunning[data?.id] && (
+							{/* Description */}
+							<p className="text-xs text-neutral-300 mt-3 sm:mt-4 leading-relaxed line-clamp-2">
+								{data?.description}
+							</p>
+
+							{/* Action Buttons */}
+							<div className="flex items-center gap-1.5 sm:gap-2 mt-3 sm:mt-5">
+								{isServerRunning[data?.id] ? (
 									<button
 										type="button"
 										onClick={handleReconnect}
-										className="bg-neutral-500/80 hover:bg-neutral-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-white transition-colors duration-200 cursor-pointer"
+										className="flex-1 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-neutral-500/30 hover:bg-neutral-500/40 transition-colors duration-200 rounded-full text-white font-medium cursor-pointer border border-white/10"
 									>
 										{t("actions.reconnect")}
 									</button>
-								)}
-								{!isServerRunning[data?.id] &&
-									(installed ? (
-										<div className="flex gap-2 justify-end items-center w-full">
-											<div className="flex justify-start items-center w-full">
-												<button
-													title="Open code editor"
-													onClick={handleOpenEditor}
-													type="button"
-													className="bg-neutral-500/20 flex items-center justify-center text-neutral-300 hover:bg-neutral-500/40 font-medium gap-2 py-1 px-3 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer"
-												>
-													<CodeXml size={16} />
-													Code
-												</button>
-											</div>
-											{startOptions && startOptions.starts.length > 1 ? (
-												<div className="relative" ref={dropdownRef}>
+								) : installed ? (
+									<>
+										{/* Start Button */}
+										<div className="flex-1" ref={dropdownRef}>
+											{startOptions && startOptions.starts?.length > 1 ? (
+												<div className="relative">
 													<button
 														type="button"
 														onClick={() => setDropdownOpen((v) => !v)}
-														className="bg-white hover:bg-white/80 text-black font-semibold py-1 pl-4 pr-3 text-sm rounded-full focus:outline-none transition-all duration-200 cursor-pointer flex items-center gap-2"
+														className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
 													>
-														{t("actions.start")}
+														<Play className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-black" />
+														<span className="hidden sm:inline">{t("actions.start")}</span>
+														<span className="sm:hidden">Start</span>
 														<motion.div
 															animate={{ rotate: dropdownOpen ? 180 : 0 }}
 															transition={{ duration: 0.2 }}
 														>
-															<ChevronDown size={16} />
+															<ChevronDown size={14} />
 														</motion.div>
 													</button>
-													{dropdownOpen && startOptions && (
+
+													{dropdownOpen && (
 														<motion.div
-															initial={{
-																opacity: 0,
-																scale: 0.95,
-																y: -5,
-															}}
-															animate={{
-																opacity: 1,
-																scale: 1,
-																y: 0,
-															}}
-															exit={{
-																opacity: 0,
-																scale: 0.95,
-																y: -5,
-															}}
+															initial={{ opacity: 0, scale: 0.95, y: -5 }}
+															animate={{ opacity: 1, scale: 1, y: 0 }}
+															exit={{ opacity: 0, scale: 0.95, y: -5 }}
 															transition={{ duration: 0.15 }}
-															className="absolute left-0 mt-2 w-50 bg-[#1a1a1a] border border-white/10 rounded-lg shadow-xl z-50 overflow-hidden backdrop-blur-md"
+															className="absolute left-0 right-0 mt-2 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden"
 														>
 															<div className="p-1">
-																{startOptions.starts.map((start, index) => (
-																	<button
-																		type="button"
-																		onClick={() => {
-																			handleStart(start);
-																			setDropdownOpen(false);
-																		}}
-																		key={index}
-																		className="w-full px-3 py-1 text-left text-white hover:bg-white/10 rounded-md cursor-pointer transition-colors duration-150 flex flex-col gap-1"
-																	>
-																		<span className="text-sm font-semibold">
-																			{start.name}
-																		</span>
-																		{start.description && (
-																			<span className="text-xs text-neutral-400">
-																				{start.description}
+																{startOptions.starts.map(
+																	(start: any, index: number) => (
+																		<button
+																			type="button"
+																			key={index}
+																			onClick={() => {
+																				handleStart(start);
+																				setDropdownOpen(false);
+																			}}
+																			className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-white hover:bg-white/10 rounded-lg cursor-pointer transition-colors duration-150 flex flex-col gap-0.5"
+																		>
+																			<span className="text-xs sm:text-sm font-semibold">
+																				{start.name}
 																			</span>
-																		)}
-																	</button>
-																))}
+																			{start.description && (
+																				<span className="text-[10px] sm:text-xs text-neutral-400 line-clamp-1">
+																					{start.description}
+																				</span>
+																			)}
+																		</button>
+																	),
+																)}
 															</div>
 														</motion.div>
 													)}
@@ -270,36 +327,79 @@ export default function ActionsComponent({
 												<button
 													type="button"
 													onClick={() => handleStart()}
-													className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none transition-all duration-200 cursor-pointer"
+													className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
 												>
-													{t("actions.start")}
+													<Play className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-black" />
+													<span className="hidden sm:inline">{t("actions.start")}</span>
+													<span className="sm:hidden">Start</span>
 												</button>
 											)}
+										</div>
 
+										{/* More Options */}
+										<div className="relative" ref={moreMenuRef}>
 											<button
 												type="button"
-												onClick={handleDeleteDeps}
-												className="bg-red-500/50 hover:bg-red-500/60 font-medium py-1 px-4 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer"
+												onClick={() => setMoreMenuOpen((v) => !v)}
+												className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-full text-neutral-300 cursor-pointer border border-white/10"
 											>
-												{t("actions.uninstall")}
+												<MoreHorizontal size={14} className="sm:w-4 sm:h-4" />
 											</button>
+
+											{moreMenuOpen && (
+												<motion.div
+													initial={{ opacity: 0, scale: 0.95, y: 5 }}
+													animate={{ opacity: 1, scale: 1, y: 0 }}
+													exit={{ opacity: 0, scale: 0.95, y: 5 }}
+													transition={{ duration: 0.15 }}
+													className="absolute right-0 bottom-full mb-2 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden min-w-32 sm:min-w-36"
+												>
+													<div className="p-1">
+														<button
+															type="button"
+															onClick={() => {
+																handleOpenEditor();
+																setMoreMenuOpen(false);
+															}}
+															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-white hover:bg-white/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
+														>
+															<CodeXml size={13} className="sm:w-3.5 sm:h-3.5" />
+															<span className="text-xs sm:text-sm">Code</span>
+														</button>
+														<button
+															type="button"
+															onClick={() => {
+																handleDeleteDeps();
+																setMoreMenuOpen(false);
+															}}
+															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
+														>
+															<Trash2 size={13} className="sm:w-3.5 sm:h-3.5" />
+															<span className="text-xs sm:text-sm">{t("actions.uninstall")}</span>
+														</button>
+													</div>
+												</motion.div>
+											)}
 										</div>
-									) : (
-										<button
-											type="button"
-											onClick={handleDownload}
-											className="bg-white hover:bg-white/80 text-black font-semibold py-1 px-4 text-sm rounded-full focus:outline-none transition-colors duration-200 cursor-pointer"
-										>
-											{t("actions.install")}
-										</button>
-									))}
+									</>
+								) : (
+									<button
+										type="button"
+										onClick={handleDownload}
+										className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
+									>
+										<Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+										<span className="hidden sm:inline">{t("actions.install")}</span>
+										<span className="sm:hidden">Install</span>
+									</button>
+								)}
 							</div>
 						</div>
-					</motion.div>
-				) : (
-					<Loading />
-				)}
-			</motion.div>
-		</>
+					</div>
+				</motion.div>
+			) : (
+				<Loading />
+			)}
+		</AnimatePresence>
 	);
 }

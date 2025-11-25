@@ -2,7 +2,6 @@ import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import WorkspaceEditor from "@/components/editor/editor";
 import ActionsComponent from "@/components/install/actions";
-import Buttons from "@/components/install/buttons";
 import IframeComponent from "@/components/install/iframe";
 import LogsComponent from "@/components/install/logs";
 import NotSupported from "@/components/install/not-supported";
@@ -906,15 +905,7 @@ export default function Install({
 						}}
 					/>
 				)}
-				{show[data?.id] === "actions" && (
-					<Buttons
-						user={user}
-						isLocal={isLocal}
-						handleShare={handleShare}
-						handleSave={handleSave}
-						saved={saved}
-					/>
-				)}
+
 				<div className="flex h-screen w-full">
 					<div className="w-full h-full flex justify-center items-center">
 						<AnimatePresence>
@@ -942,20 +933,24 @@ export default function Install({
 								/>
 							)}{" "}
 							{show[data?.id] === "actions" && (
-								<ActionsComponent
-									handleReconnect={handleReconnect}
-									isServerRunning={isServerRunning}
-									data={data}
-									installed={installed}
-									setImgLoading={setImgLoading}
-									handleDownload={handleDownload}
-									handleStart={handleStart}
-									handleUninstall={handleUninstall}
-									handleDeleteDeps={handleDeleteDeps}
-									startOptions={startOptions}
-									isLocal={isLocal}
-									setShow={setShow}
-								/>
+									<ActionsComponent
+										handleReconnect={handleReconnect}
+										isServerRunning={isServerRunning}
+										data={data}
+										installed={installed}
+										setImgLoading={setImgLoading}
+										handleDownload={handleDownload}
+										handleStart={handleStart}
+										handleUninstall={handleUninstall}
+										handleDeleteDeps={handleDeleteDeps}
+										startOptions={startOptions}
+										isLocal={isLocal}
+										setShow={setShow}
+										user={user}
+										handleShare={handleShare}
+										handleSave={handleSave}
+										saved={saved}
+									/>
 							)}
 						</AnimatePresence>
 					</div>
