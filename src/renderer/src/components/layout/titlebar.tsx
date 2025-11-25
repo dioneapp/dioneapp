@@ -54,12 +54,9 @@ export default function Titlebar() {
 					</div>
 				</div>
 			)}
-			<div
-				className="absolute top-0 w-full z-50"
-				style={{ zIndex: 9999 }}
-			>
+			<div className="absolute top-0 w-full z-50" style={{ zIndex: 9999 }}>
 				<div className="flex flex-row items-center justify-end h-10 w-full p-6 px-4">
-					<div 
+					<div
 						id={isFullscreen ? "" : "titlebar"}
 						className="absolute top-0 right-0 h-10 w-1/2"
 					/>
