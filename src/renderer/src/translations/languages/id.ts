@@ -319,6 +319,11 @@ export const id = {
 
 	// delete loading modal
 	deleteLoading: {
+		uninstall: {
+			title: "Hapus Instalasi",
+			deps: "Hapus instalasi dependensi",
+			wait: "harap tunggu...",
+		},
 		uninstalling: {
 			title: "Menghapus Instalasi",
 			deps: "Menghapus instalasi dependensi",

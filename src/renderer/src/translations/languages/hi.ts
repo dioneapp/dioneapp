@@ -306,6 +306,11 @@ export const hi = {
 
 	// delete loading modal
 	deleteLoading: {
+		uninstall: {
+			title: "अनइंस्टॉल",
+			deps: "निर्भरताएं अनइंस्टॉल करें",
+			wait: "कृपया प्रतीक्षा करें...",
+		},
 		uninstalling: {
 			title: "अनइंस्टॉल हो रहा है",
 			deps: "निर्भरताएं अनइंस्टॉल हो रही हैं",

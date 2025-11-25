@@ -308,6 +308,11 @@ export const bn = {
 
 	// delete loading modal
 	deleteLoading: {
+		uninstall: {
+			title: "আনইনস্টল",
+			deps: "নির্ভরতাগুলি আনইনস্টল করুন",
+			wait: "অনুগ্রহ করে অপেক্ষা করুন...",
+		},
 		uninstalling: {
 			title: "আনইনস্টল হচ্ছে",
 			deps: "নির্ভরতাগুলি আনইনস্টল হচ্ছে",

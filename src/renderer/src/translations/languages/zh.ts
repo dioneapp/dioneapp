@@ -300,6 +300,11 @@ export const zh = {
 
 	// delete loading modal
 	deleteLoading: {
+		uninstall: {
+			title: "卸载",
+			deps: "卸载依赖项",
+			wait: "请稍候...",
+		},
 		uninstalling: {
 			title: "正在卸载",
 			deps: "正在卸载依赖项",

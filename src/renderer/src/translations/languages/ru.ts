@@ -319,6 +319,11 @@ export const ru = {
 
 	// delete loading modal
 	deleteLoading: {
+		uninstall: {
+			title: "Удалить",
+			deps: "Удалить зависимости",
+			wait: "пожалуйста, подождите...",
+		},
 		uninstalling: {
 			title: "Удаление",
 			deps: "Удаление зависимостей",
