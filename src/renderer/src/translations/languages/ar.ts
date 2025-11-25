@@ -306,6 +306,11 @@ export const ar = {
 
 	// delete loading modal
 	deleteLoading: {
+		uninstall: {
+			title: "إلغاء التثبيت",
+			deps: "إلغاء تثبيت التبعيات",
+			wait: "يرجى الانتظار...",
+		},
 		uninstalling: {
 			title: "جارٍ إلغاء التثبيت",
 			deps: "جارٍ إلغاء تثبيت التبعيات",

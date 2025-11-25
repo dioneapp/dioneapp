@@ -319,6 +319,11 @@ export const pt = {
 
 	// delete loading modal
 	deleteLoading: {
+		uninstall: {
+			title: "Desinstalar",
+			deps: "Desinstalar dependências",
+			wait: "aguarde, por favor...",
+		},
 		uninstalling: {
 			title: "Desinstalando",
 			deps: "Desinstalando dependências",

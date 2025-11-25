@@ -318,6 +318,11 @@ export const ja = {
 
 	// delete loading modal
 	deleteLoading: {
+		uninstall: {
+			title: "アンインストール",
+			deps: "依存関係をアンインストール",
+			wait: "お待ちください...",
+		},
 		uninstalling: {
 			title: "アンインストール中",
 			deps: "依存関係をアンインストール中",

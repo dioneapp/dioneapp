@@ -40,7 +40,7 @@ export default function DeleteLoadingModal({
 			};
 		}
 
-		return () => {};
+		return () => { };
 	}, [status]);
 
 	return (
@@ -63,9 +63,7 @@ export default function DeleteLoadingModal({
 				<div className="flex flex-col gap-14 items-center">
 					<Loader2 className="h-24 w-24 animate-spin" />
 					<h1 className="font-medium text-3xl flex flex-col gap-2">
-						{status === "deleting_deps"
-							? t("deleteLoading.uninstalling.deps")
-							: t("deleteLoading.uninstalling.title")}
+						{t("deleteLoading.uninstalling.title")}
 						<span className="text-neutral-400 text-sm text-center">
 							{t("deleteLoading.uninstalling.wait")}
 						</span>

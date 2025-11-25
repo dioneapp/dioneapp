@@ -31,7 +31,7 @@ export default function DeleteDepsModal({
 			>
 				<div className="flex justify-between w-full items-center">
 					<h2 className="font-semibold text-lg flex items-center justify-center">
-						{t("deleteLoading.uninstalling.deps")}
+						{t("deleteLoading.uninstall.deps")}
 					</h2>
 					<button
 						type="button"
