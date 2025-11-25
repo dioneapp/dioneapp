@@ -15,7 +15,7 @@ router.get("/user/:id", async (req, res) => {
 
 	// check if request come from app
 	const api_key = req.get("api_key");
-	if (!api_key || api_key !== process.env.LOCAL_API_KEY) {
+	if (!api_key || api_key !== (process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)) {
 		logger.warn(
 			app.isPackaged
 				? "Invalid API key"
@@ -55,7 +55,7 @@ router.get("/refresh-token", async (req, res) => {
 
 	// check if request come from app
 	const api_key = req.get("api_key");
-	if (!api_key || api_key !== process.env.LOCAL_API_KEY) {
+	if (!api_key || api_key !== (process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)) {
 		logger.warn(
 			app.isPackaged
 				? "Invalid API key"
@@ -101,7 +101,7 @@ router.get("/set-session", async (req, res) => {
 
 	// check if request come from app
 	const api_key = req.get("api_key");
-	if (!api_key || api_key !== process.env.LOCAL_API_KEY) {
+	if (!api_key || api_key !== (process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)) {
 		logger.warn(
 			app.isPackaged
 				? "Invalid API key"
@@ -170,7 +170,7 @@ router.get("/featured", (_req, res) => {
 			{
 				headers: {
 					...(process.env.API_KEY
-						? { Authorization: `Bearer ${process.env.API_KEY}` }
+						? { Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}` }
 						: {}),
 				},
 			},
@@ -226,7 +226,7 @@ router.get("/explore", (req, res) => {
 				{
 					headers: {
 						...(process.env.API_KEY
-							? { Authorization: `Bearer ${process.env.API_KEY}` }
+							? { Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}` }
 							: {}),
 					},
 				},
@@ -292,7 +292,7 @@ router.get("/search/:id", (req, res) => {
 			{
 				headers: {
 					...(process.env.API_KEY
-						? { Authorization: `Bearer ${process.env.API_KEY}` }
+						? { Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}` }
 						: {}),
 				},
 			},
@@ -446,7 +446,7 @@ router.get("/search/type/:type", async (req, res) => {
 		const response = await fetch(url.toString(), {
 			headers: {
 				...(process.env.API_KEY
-					? { Authorization: `Bearer ${process.env.API_KEY}` }
+					? { Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}` }
 					: {}),
 			},
 		});
