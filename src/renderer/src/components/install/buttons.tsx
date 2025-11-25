@@ -51,9 +51,7 @@ export default function Buttons({
 								: "border-white/10 hover:bg-white/10 text-neutral-300"
 						}`}
 					>
-						<Bookmark
-							className={`h-4 w-4 ${saved ? "fill-[#BCB1E7]" : ""}`}
-						/>
+						<Bookmark className={`h-4 w-4 ${saved ? "fill-[#BCB1E7]" : ""}`} />
 					</button>
 				</div>
 			)}

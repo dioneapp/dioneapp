@@ -287,8 +287,9 @@ export default function QuickAI() {
 									{[1, 2, 3].map((step) => (
 										<div
 											key={step}
-											className={`w-2 h-2 rounded-full transition-colors duration-300 ${step === installStep ? "bg-white" : "bg-white/20"
-												}`}
+											className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+												step === installStep ? "bg-white" : "bg-white/20"
+											}`}
 										/>
 									))}
 								</div>
@@ -296,8 +297,9 @@ export default function QuickAI() {
 								<div className="flex justify-between items-center w-full">
 									<button
 										onClick={() => setInstallStep((s) => Math.max(1, s - 1))}
-										className={`flex items-center justify-center px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors gap-2 ${installStep === 1 ? "opacity-0 pointer-events-none" : ""
-											}`}
+										className={`flex items-center justify-center px-4 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors gap-2 ${
+											installStep === 1 ? "opacity-0 pointer-events-none" : ""
+										}`}
 									>
 										<ChevronLeft className="w-4 h-4" />
 										Back
@@ -391,8 +393,16 @@ export default function QuickAI() {
 					<div className="flex items-center justify-between px-0.5 w-full">
 						<div className="flex gap-2 items-center justify-start w-full">
 							<button
-								title={ollamaRunning && ollamaInstalled ? "Stop Ollama" : "Start Ollama"}
-								onClick={ollamaRunning && ollamaInstalled ? handleStopOllama : handleStartOllama}
+								title={
+									ollamaRunning && ollamaInstalled
+										? "Stop Ollama"
+										: "Start Ollama"
+								}
+								onClick={
+									ollamaRunning && ollamaInstalled
+										? handleStopOllama
+										: handleStartOllama
+								}
 								className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group"
 							>
 								{ollamaRunning && ollamaInstalled ? (

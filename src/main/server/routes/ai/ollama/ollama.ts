@@ -273,12 +273,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 		}
 	});
 
-	async function handleOllamaChat({
-		model,
-		messages,
-		tools,
-		quickAI,
-	}) {
+	async function handleOllamaChat({ model, messages, tools, quickAI }) {
 		while (true) {
 			// 1. call model
 			const response = await ollama.chat({
@@ -376,12 +371,14 @@ export function createOllamaRouter(io: SocketIOServer) {
 							toolResult = { error: err.message || "Tool execution failed" };
 						}
 						messages.push({ role: "assistant", content: content });
-						messages.push({ role: "user", content: `Tool Output: ${JSON.stringify(toolResult)}` });
+						messages.push({
+							role: "user",
+							content: `Tool Output: ${JSON.stringify(toolResult)}`,
+						});
 						continue;
 					}
 				}
-			} catch {
-			}
+			} catch {}
 
 			// 5. if nothing matched, return normal content
 			if (thoughtMatch) {

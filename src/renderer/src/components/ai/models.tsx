@@ -155,10 +155,11 @@ export default function Models({
 														: handleSelectModel(model, group)
 												}
 												key={model.id}
-												className={`p-4 rounded-xl flex flex-col items-start justify-start gap-2 shadow-sm cursor-pointer transition-colors relative overflow-hidden ${isDownloaded
+												className={`p-4 rounded-xl flex flex-col items-start justify-start gap-2 shadow-sm cursor-pointer transition-colors relative overflow-hidden ${
+													isDownloaded
 														? `bg-neutral-700 hover:bg-neutral-600 ${ollamaModel === model.id ? "border border-neutral-400" : ""}`
 														: "bg-neutral-900 hover:bg-neutral-800"
-													}`}
+												}`}
 											>
 												{isDownloading && (
 													<div

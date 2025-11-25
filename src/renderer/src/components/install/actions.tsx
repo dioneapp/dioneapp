@@ -14,7 +14,7 @@ import {
 	Play,
 	Share2,
 	Trash2,
-	User
+	User,
 } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
@@ -123,7 +123,9 @@ export default function ActionsComponent({
 								className="flex items-center gap-1 sm:gap-1.5 text-neutral-400 hover:text-white transition-colors cursor-pointer"
 							>
 								<ArrowLeft className="h-3.5 w-3.5" />
-								<span className="text-xs hidden sm:inline">{t("common.back")}</span>
+								<span className="text-xs hidden sm:inline">
+									{t("common.back")}
+								</span>
 							</button>
 
 							<div className="flex items-center gap-0.5 sm:gap-1">
@@ -145,7 +147,9 @@ export default function ActionsComponent({
 													: "text-neutral-400 hover:text-white hover:bg-white/10"
 											}`}
 										>
-											<Bookmark className={`h-3.5 w-3.5 ${saved ? "fill-[#BCB1E7]" : ""}`} />
+											<Bookmark
+												className={`h-3.5 w-3.5 ${saved ? "fill-[#BCB1E7]" : ""}`}
+											/>
 										</button>
 									</>
 								)}
@@ -168,7 +172,10 @@ export default function ActionsComponent({
 											className="h-12 w-12 sm:h-16 sm:w-16 object-cover object-center"
 										/>
 									) : (
-										<GeneratedIcon name={data?.name} className="h-12 w-12 sm:h-16 sm:w-16" />
+										<GeneratedIcon
+											name={data?.name}
+											className="h-12 w-12 sm:h-16 sm:w-16"
+										/>
 									)}
 								</div>
 
@@ -197,7 +204,7 @@ export default function ActionsComponent({
 												</p>
 											)}
 										</div>
-										
+
 										{/* Status Badge */}
 										<div
 											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
@@ -212,11 +219,11 @@ export default function ActionsComponent({
 												}`}
 											/>
 											<span className="hidden sm:inline">
-												{installed ? t("actions.installed") : t("actions.notInstalled")}
+												{installed
+													? t("actions.installed")
+													: t("actions.notInstalled")}
 											</span>
-											<span className="sm:hidden">
-												{installed ? "✓" : "—"}
-											</span>
+											<span className="sm:hidden">{installed ? "✓" : "—"}</span>
 										</div>
 									</div>
 
@@ -225,7 +232,9 @@ export default function ActionsComponent({
 										<div className="flex items-center gap-2 mt-1 flex-wrap">
 											<div className="flex items-center gap-1 text-[10px]">
 												<Download className="h-3 w-3 text-neutral-400" />
-												<span className="font-medium text-[#BCB1E7]">{data.downloads?.toLocaleString() || 0}</span>
+												<span className="font-medium text-[#BCB1E7]">
+													{data.downloads?.toLocaleString() || 0}
+												</span>
 											</div>
 											{data?.script_url && (
 												<button
@@ -233,7 +242,10 @@ export default function ActionsComponent({
 													onClick={() => openLink(data?.script_url)}
 													className="flex items-center gap-1 text-[10px] text-[#BCB1E7] hover:underline cursor-pointer"
 												>
-													<BadgeCheck size={12} className="shrink-0 text-neutral-400" />
+													<BadgeCheck
+														size={12}
+														className="shrink-0 text-neutral-400"
+													/>
 													<span>
 														{data?.script_url
 															.replace(
@@ -278,7 +290,9 @@ export default function ActionsComponent({
 														className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
 													>
 														<Play className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-black" />
-														<span className="hidden sm:inline">{t("actions.start")}</span>
+														<span className="hidden sm:inline">
+															{t("actions.start")}
+														</span>
 														<span className="sm:hidden">Start</span>
 														<motion.div
 															animate={{ rotate: dropdownOpen ? 180 : 0 }}
@@ -330,7 +344,9 @@ export default function ActionsComponent({
 													className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
 												>
 													<Play className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-black" />
-													<span className="hidden sm:inline">{t("actions.start")}</span>
+													<span className="hidden sm:inline">
+														{t("actions.start")}
+													</span>
 													<span className="sm:hidden">Start</span>
 												</button>
 											)}
@@ -363,7 +379,10 @@ export default function ActionsComponent({
 															}}
 															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-white hover:bg-white/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
 														>
-															<CodeXml size={13} className="sm:w-3.5 sm:h-3.5" />
+															<CodeXml
+																size={13}
+																className="sm:w-3.5 sm:h-3.5"
+															/>
 															<span className="text-xs sm:text-sm">Code</span>
 														</button>
 														<button
@@ -375,7 +394,9 @@ export default function ActionsComponent({
 															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
 														>
 															<Trash2 size={13} className="sm:w-3.5 sm:h-3.5" />
-															<span className="text-xs sm:text-sm">{t("actions.uninstall")}</span>
+															<span className="text-xs sm:text-sm">
+																{t("actions.uninstall")}
+															</span>
 														</button>
 													</div>
 												</motion.div>
@@ -389,7 +410,9 @@ export default function ActionsComponent({
 										className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
 									>
 										<Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
-										<span className="hidden sm:inline">{t("actions.install")}</span>
+										<span className="hidden sm:inline">
+											{t("actions.install")}
+										</span>
 										<span className="sm:hidden">Install</span>
 									</button>
 								)}
