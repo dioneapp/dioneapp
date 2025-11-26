@@ -1,5 +1,3 @@
-import fs from "node:fs";
-import path from "node:path";
 import { readConfig as userConfig } from "@/config";
 import { checkDependencies } from "@/server/scripts/dependencies/dependencies";
 import {
@@ -15,6 +13,8 @@ import {
 	generateRunId,
 } from "@/server/utils/progress-emitter";
 import { app } from "electron";
+import fs from "node:fs";
+import path from "node:path";
 import type { Server } from "socket.io";
 
 async function readConfig(pathname: string) {
@@ -110,78 +110,96 @@ export default async function executeInstallation(
 					: [step.commands.toString()];
 
 				// if exists env property, create virtual environment and execute commands inside it
-				if (step.env) {
-					const envName =
-						typeof step.env === "string" ? step.env : step.env.name;
-					const envType =
-						typeof step.env === "object" && "type" in step.env
-							? step.env.type
-							: "uv";
-					const pythonVersion =
-						typeof step.env === "object" && "version" in step.env
-							? step.env.version
-							: "";
+			if (step.env) {
+				const envName =
+					typeof step.env === "string" ? step.env : step.env.name;
+				const envType =
+					typeof step.env === "object" && "type" in step.env
+						? step.env.type
+						: "uv";
+				const pythonVersion =
+					typeof step.env === "object" && "version" in step.env
+						? step.env.version
+						: "";
+				io.to(id).emit("installUpdate", {
+					type: "log",
+					content: `INFO: Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}\n`,
+				});
+				logger.info(
+					`Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
+				);
+
+				// create virtual environment and execute commands inside it
+				const envCommands = await createVirtualEnvCommands(
+					envName,
+					commandsArray,
+					configDir,
+					pythonVersion,
+					envType,
+				);
+				const resp = await executeCommands(
+					envCommands,
+					configDir,
+					io,
+					id,
+					needsBuildTools,
+					{
+						onProgress: (progress: number) => {
+							emitRunProgress(io, id, {
+								type: "step_progress",
+								runId,
+								id: stepId,
+								progress,
+							});
+						},
+					},
+				);
+				if (resp?.cancelled) {
 					io.to(id).emit("installUpdate", {
 						type: "log",
-						content: `INFO: Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}\n`,
+						content:
+							"INFO: Installation cancelled - stopping remaining steps",
 					});
-					logger.info(
-						`Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
-					);
-
-					// create virtual environment and execute commands inside it
-					const envCommands = await createVirtualEnvCommands(
-						envName,
-						commandsArray,
-						configDir,
-						pythonVersion,
-						envType,
-					);
-					const resp = await executeCommands(
-						envCommands,
-						configDir,
-						io,
-						id,
-						needsBuildTools,
-					);
-					if (resp?.cancelled) {
-						io.to(id).emit("installUpdate", {
-							type: "log",
-							content:
-								"INFO: Installation cancelled - stopping remaining steps",
-						});
-						emitRunProgress(io, id, {
-							type: "run_finished",
-							runId,
-							success: false,
-						});
-						return;
-					}
-				} else {
-					// execute commands normally
-					const resp = await executeCommands(
-						commandsArray,
-						configDir,
-						io,
-						id,
-						needsBuildTools,
-					);
-					if (resp?.cancelled) {
-						io.to(id).emit("installUpdate", {
-							type: "log",
-							content:
-								"INFO: Installation cancelled - stopping remaining steps",
-						});
-						emitRunProgress(io, id, {
-							type: "run_finished",
-							runId,
-							success: false,
-						});
-						return;
-					}
+					emitRunProgress(io, id, {
+						type: "run_finished",
+						runId,
+						success: false,
+					});
+					return;
 				}
-
-				io.to(id).emit("installUpdate", {
+			} else {
+				// execute commands normally
+				const resp = await executeCommands(
+					commandsArray,
+					configDir,
+					io,
+					id,
+					needsBuildTools,
+					{
+						onProgress: (progress: number) => {
+							emitRunProgress(io, id, {
+								type: "step_progress",
+								runId,
+								id: stepId,
+								progress,
+							});
+						},
+					},
+				);
+				if (resp?.cancelled) {
+					io.to(id).emit("installUpdate", {
+						type: "log",
+						content:
+							"INFO: Installation cancelled - stopping remaining steps",
+					});
+					emitRunProgress(io, id, {
+						type: "run_finished",
+						runId,
+						success: false,
+					});
+					return;
+				}
+			}				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: `INFO: Completed step "${step.name}"\n`,
 				});
@@ -428,33 +446,51 @@ export async function executeStartup(
 					}\n`,
 				});
 
-				const envCommands = await createVirtualEnvCommands(
-					envName,
-					commandsArray,
-					configDir,
-					pythonVersion,
-					envType,
-				);
-				response = await executeCommands(
-					envCommands,
-					configDir,
-					io,
-					id,
-					needsBuildTools,
-					{ onOutput: outputHandler },
-				);
-			} else {
-				response = await executeCommands(
-					commandsArray,
-					configDir,
-					io,
-					id,
-					needsBuildTools,
-					{ onOutput: outputHandler },
-				);
-			}
-
-			if (response?.cancelled) {
+			const envCommands = await createVirtualEnvCommands(
+				envName,
+				commandsArray,
+				configDir,
+				pythonVersion,
+				envType,
+			);
+			response = await executeCommands(
+				envCommands,
+				configDir,
+				io,
+				id,
+				needsBuildTools,
+				{
+					onOutput: outputHandler,
+					onProgress: (progress: number) => {
+						emitRunProgress(io, id, {
+							type: "step_progress",
+							runId,
+							id: stepId,
+							progress,
+						});
+					},
+				},
+			);
+		} else {
+			response = await executeCommands(
+				commandsArray,
+				configDir,
+				io,
+				id,
+				needsBuildTools,
+				{
+					onOutput: outputHandler,
+					onProgress: (progress: number) => {
+						emitRunProgress(io, id, {
+							type: "step_progress",
+							runId,
+							id: stepId,
+							progress,
+						});
+					},
+				},
+			);
+		}			if (response?.cancelled) {
 				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: "INFO: Startup cancelled - stopping remaining steps\n",

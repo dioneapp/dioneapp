@@ -46,7 +46,16 @@ export function setupSocket({
 		label?: string,
 		status: "running" | "success" | "error" = "running",
 	) => {
-		const smooth = 0.6 * lastPercent + 0.4 * nextPercent;
+		const diff = nextPercent - lastPercent;
+		let smooth: number;
+		
+		if (diff > 0) {
+			const smoothingFactor = diff < 5 ? 0.3 : 0.4;
+			smooth = smoothingFactor * lastPercent + (1 - smoothingFactor) * nextPercent;
+		} else {
+			smooth = 0.8 * lastPercent + 0.2 * nextPercent;
+		}
+		
 		lastPercent = smooth;
 		setProgress((prev) => ({
 			...prev,
@@ -72,7 +81,7 @@ export function setupSocket({
 		if (debounceTimer) clearTimeout(debounceTimer);
 		debounceTimer = setTimeout(
 			() => applyProgress(nextPercent, label, status as any),
-			80,
+			50,
 		);
 	};
 

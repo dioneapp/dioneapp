@@ -1,7 +1,3 @@
-import { exec, spawn } from "node:child_process";
-import fs from "node:fs";
-import { arch, platform as getPlatform } from "node:os";
-import path from "node:path";
 import {
 	getAllValues,
 	initDefaultEnv,
@@ -10,6 +6,10 @@ import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-m
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
+import { exec, spawn } from "node:child_process";
+import fs from "node:fs";
+import { arch, platform as getPlatform } from "node:os";
+import path from "node:path";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
 
@@ -533,13 +533,17 @@ export const executeCommands = async (
 	io: Server,
 	id: string,
 	needsBuildTools?: boolean,
-	options?: { onOutput?: (text: string) => void },
+	options?: { onOutput?: (text: string) => void; onProgress?: (progress: number) => void },
 ): Promise<{ cancelled: boolean }> => {
 	// reset cancellation state for a new command batch
 	processWasCancelled = false;
 	let currentWorkingDir = workingDir;
 	const currentPlatform = getPlatform(); // "win32", "linux", "darwin"
 	const { gpu: currentGpu } = await getSystemInfo();
+
+	// track progress across commands
+	const totalCommands = commands.length;
+	let completedCommands = 0;
 
 	for (const cmd of commands) {
 		// if user requested cancellation, stop processing further commands
@@ -654,6 +658,18 @@ export const executeCommands = async (
 		}
 
 		if (command.length > 0) {
+			// track progress within this command
+			let commandProgress = 0;
+			let outputLines = 0;
+			const startTime = Date.now();
+			let lastProgressEmit = 0;
+			
+			// emit initial progress for this command starting
+			if (options?.onProgress) {
+				const baseProgress = completedCommands / totalCommands;
+				options.onProgress(baseProgress);
+			}
+
 			const response = await executeCommand(
 				command,
 				io,
@@ -661,7 +677,32 @@ export const executeCommands = async (
 				id,
 				needsBuildTools,
 				undefined,
-				options,
+				{
+					...options,
+					onOutput: (text: string) => {
+						options?.onOutput?.(text);
+						
+						outputLines++;
+						const elapsed = Date.now() - startTime;
+						
+						const timeProgress = Math.min(0.92, Math.log(elapsed + 1000) / Math.log(120000));
+						const outputProgress = Math.min(0.92, Math.sqrt(outputLines / 50));
+						
+						commandProgress = Math.max(
+							commandProgress,
+							0.4 * timeProgress + 0.6 * outputProgress,
+							outputLines > 0 ? 0.05 : 0
+						);
+						
+						const overallProgress = (completedCommands + commandProgress) / totalCommands;
+						
+						const now = Date.now();
+						if (now - lastProgressEmit > 300 && options?.onProgress) {
+							options.onProgress(overallProgress);
+							lastProgressEmit = now;
+						}
+					},
+				},
 			);
 
 			if (response.code !== 0) {
@@ -676,6 +717,11 @@ export const executeCommands = async (
 				throw new Error(
 					response.stderr || `Command failed with exit code ${response.code}`,
 				);
+			}
+
+			completedCommands++;
+			if (options?.onProgress) {
+				options.onProgress(completedCommands / totalCommands);
 			}
 		}
 	}
