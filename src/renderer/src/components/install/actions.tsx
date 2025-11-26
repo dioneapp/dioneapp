@@ -96,13 +96,13 @@ export default function ActionsComponent({
 			{data ? (
 				<motion.div
 					key="actions-content"
-					initial={{ opacity: 0, scale: 0.9, filter: "blur(3px)" }}
+					initial={{ opacity: 0.2, scale: 0.9, filter: "blur(3px)" }}
 					animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
 					exit={{ opacity: 0, scale: 0.9, filter: "blur(3px)" }}
 					transition={{
 						type: "spring",
-						stiffness: 100,
-						damping: 20,
+						stiffness: 110,
+						damping: 15,
 						duration: 0.1,
 					}}
 					className="flex flex-col w-full max-w-xl px-4 sm:px-6"
