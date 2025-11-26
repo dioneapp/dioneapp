@@ -40,7 +40,7 @@ export default function DeleteLoadingModal({
 			};
 		}
 
-		return () => {};
+		return () => { };
 	}, [status]);
 
 	return (
@@ -52,13 +52,13 @@ export default function DeleteLoadingModal({
 			className="absolute inset-0 flex items-center justify-center bg-black/80 p-4 backdrop-blur-3xl"
 			style={{ zIndex: 100 }}
 		>
-			<button
+			{/* <button
 				type="button"
 				onClick={onClose}
 				className="absolute top-16 right-16 cursor-pointer"
 			>
 				<X className="h-8 w-8" />
-			</button>
+			</button> */}
 			{status === "deleting" || status === "deleting_deps" ? (
 				<div className="flex flex-col gap-14 items-center">
 					<Loader2 className="h-24 w-24 animate-spin" />
