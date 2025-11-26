@@ -96,13 +96,14 @@ export default function ActionsComponent({
 			{data ? (
 				<motion.div
 					key="actions-content"
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					exit={{ opacity: 0, y: -20 }}
+					initial={{ opacity: 0, scale: 0.9, filter: "blur(3px)" }}
+					animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+					exit={{ opacity: 0, scale: 0.9, filter: "blur(3px)" }}
 					transition={{
 						type: "spring",
 						stiffness: 100,
 						damping: 20,
+						duration: 0.1,
 					}}
 					className="flex flex-col w-full max-w-xl px-4 sm:px-6"
 				>
@@ -141,11 +142,10 @@ export default function ActionsComponent({
 										<button
 											type="button"
 											onClick={handleSave}
-											className={`p-1.5 transition-colors rounded-lg cursor-pointer ${
-												saved
-													? "text-[#BCB1E7]"
-													: "text-neutral-400 hover:text-white hover:bg-white/10"
-											}`}
+											className={`p-1.5 transition-colors rounded-lg cursor-pointer ${saved
+												? "text-[#BCB1E7]"
+												: "text-neutral-400 hover:text-white hover:bg-white/10"
+												}`}
 										>
 											<Bookmark
 												className={`h-3.5 w-3.5 ${saved ? "fill-[#BCB1E7]" : ""}`}
@@ -207,16 +207,14 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
-												installed
-													? "bg-green-500/20 text-green-400 border border-green-500/30"
-													: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
-											}`}
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${installed
+												? "bg-green-500/20 text-green-400 border border-green-500/30"
+												: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
+												}`}
 										>
 											<div
-												className={`w-1 h-1 rounded-full ${
-													installed ? "bg-green-400" : "bg-neutral-400"
-												}`}
+												className={`w-1 h-1 rounded-full ${installed ? "bg-green-400" : "bg-neutral-400"
+													}`}
 											/>
 											<span className="hidden sm:inline">
 												{installed
