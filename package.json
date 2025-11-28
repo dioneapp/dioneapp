@@ -130,6 +130,7 @@
     "@supabase/supabase-js": "2.49.4",
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.6",
+    "archiver": "^7.0.1",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "electron-store": "^10.0.1",
@@ -165,6 +166,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@electron-toolkit/tsconfig": "^1.0.1",
+    "@types/archiver": "^7.0.0",
     "@types/localtunnel": "^2.0.4",
     "@types/node": "^22.15.3",
     "@types/react": "^19.1.2",

@@ -6,6 +6,7 @@ import AnimatedCount from "@/utils/animate-count";
 import { apiFetch, apiJson, getBackendPort } from "@/utils/api";
 import { openFolder, openLink } from "@/utils/open-link";
 import { joinPath } from "@/utils/path";
+import { useToast } from "@/utils/use-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, Folder, Trash2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
@@ -153,6 +154,7 @@ export default function Settings() {
 	const { logout } = useAuthContext();
 	const { handleReloadQuickLaunch } = useScriptsContext();
 	const navigate = useNavigate();
+	const { addToast } = useToast();
 
 	const [cacheSize, setCacheSize] = useState<number | null>(null);
 	const [deleteCacheStatus, setDeleteCacheStatus] = useState<string | null>(
@@ -335,6 +337,39 @@ export default function Settings() {
 
 	const handleCheckUpdates = () => {
 		window.electron.ipcRenderer.invoke("check-update-and-notify");
+	};
+
+	const handleExportLogs = async () => {
+		try {
+			const result = await window.electron.ipcRenderer.invoke(
+				"export-debug-logs",
+			);
+			
+			// if user canceled the save dialog, do nothing
+			if (result.canceled) {
+				return;
+			}
+			
+			if (result.success) {
+				addToast({
+					variant: "success",
+					children: "Debug logs exported successfully",
+				});
+				console.log("Debug logs exported to:", result.path);
+			} else {
+				console.error("Failed to export debug logs:", result.error);
+				addToast({
+					variant: "error",
+					children: "Failed to export debug logs. Please try again.",
+				});
+			}
+		} catch (error) {
+			console.error("Error exporting debug logs:", error);
+			addToast({
+				variant: "error",
+				children: "Failed to export debug logs. Please try again.",
+			});
+		}
 	};
 
 	return (
@@ -868,6 +903,23 @@ export default function Settings() {
 														type="button"
 													>
 														{t("settings.other.variables.button")}
+													</button>
+												</div>
+												<div className="flex justify-between w-full items-center h-full space-y-2">
+													<div className="h-full flex items-start justify-center flex-col mt-auto">
+														<label className="text-neutral-200 font-medium">
+															{t("settings.other.exportLogs.label")}
+														</label>
+														<p className="text-xs text-neutral-400">
+															{t("settings.other.exportLogs.description")}
+														</p>
+													</div>
+													<button
+														onClick={() => handleExportLogs()}
+														className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+														type="button"
+													>
+														{t("settings.other.exportLogs.button")}
 													</button>
 												</div>
 												<div className="flex justify-between w-full items-center h-full space-y-2">

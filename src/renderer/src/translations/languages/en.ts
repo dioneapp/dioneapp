@@ -244,6 +244,12 @@ export const en = {
 				label: "Logs Directory",
 				description: "Location where application logs are stored",
 			},
+			exportLogs: {
+				label: "Export Debug Logs",
+				description:
+					"Export all logs and system information in a zip file for debugging",
+				button: "Export Logs",
+			},
 			submitFeedback: {
 				label: "Submit Feedback",
 				description: "Report any issues or problems you encounter",

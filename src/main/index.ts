@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import os from "node:os";
-import path, { join } from "node:path";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "@/config";
 import {
 	destroyPresence,
@@ -21,6 +18,7 @@ import {
 import { initDefaultEnv } from "@/server/scripts/dependencies/environment";
 import { start as startServer, stop as stopServer } from "@/server/server";
 import logger, { getLogs } from "@/server/utils/logger";
+import { exportDebugLogs } from "@/utils/export-logs";
 import { getLocalNetworkIP } from "@/utils/network";
 import {
 	getCurrentTunnel,
@@ -47,6 +45,9 @@ import {
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
+import fs from "node:fs";
+import os from "node:os";
+import path, { join } from "node:path";
 import si from "systeminformation";
 
 dotenvConfig();
@@ -776,6 +777,38 @@ app.whenReady().then(async () => {
 
 	ipcMain.handle("check-update-and-notify", () => {
 		autoUpdater.checkForUpdatesAndNotify();
+	});
+
+	// export debug logs
+	ipcMain.handle("export-debug-logs", async () => {
+		try {
+			// show save dialog
+			const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+			const result = await dialog.showSaveDialog({
+				title: "Save Debug Logs",
+				defaultPath: `dione-debug-${timestamp}.zip`,
+				filters: [
+					{ name: "Zip Files", extensions: ["zip"] },
+					{ name: "All Files", extensions: ["*"] },
+				],
+			});
+
+			// if user cancelled, return
+			if (result.canceled || !result.filePath) {
+				return { success: false, canceled: true };
+			}
+
+			// export logs to the selected path
+			const zipPath = await exportDebugLogs(result.filePath);
+			
+			// show the file in explorer/finder
+			shell.showItemInFolder(zipPath);
+			
+			return { success: true, path: zipPath };
+		} catch (error) {
+			logger.error("Error exporting debug logs:", error);
+			return { success: false, error: String(error) };
+		}
 	});
 
 	ipcMain.on("restart_app", () => {
