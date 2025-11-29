@@ -46,12 +46,15 @@ export default function Buttons({
 						type="button"
 						onClick={() => handleSave()}
 						className={`p-2 border transition-colors duration-300 rounded-full cursor-pointer ${
-							saved
-								? "border-[#BCB1E7]/50 bg-[#BCB1E7]/20 text-[#BCB1E7]"
-								: "border-white/10 hover:bg-white/10 text-neutral-300"
+							!saved && "border-white/10 hover:bg-white/10 text-neutral-300"
 						}`}
+						style={saved ? {
+							borderColor: 'color-mix(in srgb, var(--theme-accent) 50%, transparent)',
+							backgroundColor: 'color-mix(in srgb, var(--theme-accent) 20%, transparent)',
+							color: 'var(--theme-accent)',
+						} : {}}
 					>
-						<Bookmark className={`h-4 w-4 ${saved ? "fill-[#BCB1E7]" : ""}`} />
+						<Bookmark className="h-4 w-4" style={saved ? { fill: 'var(--theme-accent)' } : {}} />
 					</button>
 				</div>
 			)}

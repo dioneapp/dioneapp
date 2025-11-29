@@ -110,10 +110,12 @@ export default function ActionsComponent({
 					{/* Hero Card */}
 					<div className="rounded-xl border border-white/10 relative w-full overflow-hidden">
 						{/* Background with gradient */}
-						<div className="absolute inset-0 bg-linear-to-br from-[#BCB1E7]/10 via-[#080808]/50 to-[#080808]/80" />
+						<div className="absolute inset-0" style={{
+							background: 'linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 10%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))'
+						}} />
 						<div className="absolute inset-0 overflow-hidden pointer-events-none">
-							<div className="absolute -top-16 -right-16 w-32 sm:w-48 h-32 sm:h-48 bg-[#BCB1E7]/20 rounded-full blur-3xl" />
-							<div className="absolute -bottom-8 -left-8 w-24 sm:w-32 h-24 sm:h-32 bg-[#BCB1E7]/10 rounded-full blur-2xl" />
+							<div className="absolute -top-16 -right-16 w-32 sm:w-48 h-32 sm:h-48 rounded-full blur-3xl" style={{ backgroundColor: 'color-mix(in srgb, var(--theme-accent) 20%, transparent)' }} />
+							<div className="absolute -bottom-8 -left-8 w-24 sm:w-32 h-24 sm:h-32 rounded-full blur-2xl" style={{ backgroundColor: 'color-mix(in srgb, var(--theme-accent) 10%, transparent)' }} />
 						</div>
 
 						{/* Top Bar */}
@@ -139,18 +141,17 @@ export default function ActionsComponent({
 										>
 											<Share2 className="h-3.5 w-3.5" />
 										</button>
-										<button
-											type="button"
-											onClick={handleSave}
-											className={`p-1.5 transition-colors rounded-lg cursor-pointer ${saved
-												? "text-[#BCB1E7]"
-												: "text-neutral-400 hover:text-white hover:bg-white/10"
-												}`}
-										>
-											<Bookmark
-												className={`h-3.5 w-3.5 ${saved ? "fill-[#BCB1E7]" : ""}`}
-											/>
-										</button>
+									<button
+										type="button"
+										onClick={handleSave}
+										className="p-1.5 transition-colors rounded-lg cursor-pointer text-neutral-400 hover:text-white hover:bg-white/10"
+										style={saved ? { color: 'var(--theme-accent)', backgroundColor: 'color-mix(in srgb, var(--theme-accent) 10%, transparent)' } : {}}
+									>
+										<Bookmark
+											className="h-3.5 w-3.5 transition-colors"
+											style={saved ? { fill: 'var(--theme-accent)', color: 'var(--theme-accent)' } : {}}
+										/>
+									</button>
 									</>
 								)}
 							</div>
@@ -196,7 +197,8 @@ export default function ActionsComponent({
 														<span className="mx-0.5">•</span>
 													)}
 													<span
-														className="text-[#BCB1E7] hover:underline cursor-pointer truncate"
+														className="hover:underline cursor-pointer truncate"
+														style={{ color: 'var(--theme-accent)' }}
 														onClick={() => openLink(`${data?.author_url}`)}
 													>
 														{data?.author}
@@ -230,7 +232,7 @@ export default function ActionsComponent({
 										<div className="flex items-center gap-2 mt-1 flex-wrap">
 											<div className="flex items-center gap-1 text-[10px]">
 												<Download className="h-3 w-3 text-neutral-400" />
-												<span className="font-medium text-[#BCB1E7]">
+												<span className="font-medium" style={{ color: 'var(--theme-accent)' }}>
 													{data.downloads?.toLocaleString() || 0}
 												</span>
 											</div>
@@ -238,7 +240,8 @@ export default function ActionsComponent({
 												<button
 													type="button"
 													onClick={() => openLink(data?.script_url)}
-													className="flex items-center gap-1 text-[10px] text-[#BCB1E7] hover:underline cursor-pointer"
+													className="flex items-center gap-1 text-[10px] hover:underline cursor-pointer"
+													style={{ color: 'var(--theme-accent)' }}
 												>
 													<BadgeCheck
 														size={12}

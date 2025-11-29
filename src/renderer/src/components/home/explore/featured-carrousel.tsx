@@ -68,16 +68,14 @@ export default function FeaturedCarousel() {
 	const generateGradients = async (scripts: Script[]) => {
 		const newGradients: Record<string, string> = {};
 
-		const gradients = [
-			"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, #BCB1E7 100%)",
-			"linear-gradient(135deg, #2c2c3a 0%, #3b3b4f 50%, #BCB1E7 100%)",
-			"linear-gradient(135deg, #1f2937 0%, #374151 50%, #BCB1E7 100%)",
-			"linear-gradient(135deg, #111827 0%, #2d3748 50%, #BCB1E7 100%)",
-			"linear-gradient(135deg, #080808 0%, #1e1e2f 50%, #BCB1E7 100%)",
-			"linear-gradient(135deg, #2e2d32 0%, #3b3b4f 50%, #BCB1E7 100%)",
-		];
-
-		await Promise.all(
+	const gradients = [
+		"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, var(--theme-accent) 100%)",
+		"linear-gradient(135deg, #2c2c3a 0%, #3b3b4f 50%, var(--theme-accent) 100%)",
+		"linear-gradient(135deg, #1f2937 0%, #374151 50%, var(--theme-accent) 100%)",
+		"linear-gradient(135deg, #111827 0%, #2d3748 50%, var(--theme-accent) 100%)",
+		"linear-gradient(135deg, #080808 0%, #1e1e2f 50%, var(--theme-accent) 100%)",
+		"linear-gradient(135deg, #2e2d32 0%, #3b3b4f 50%, var(--theme-accent) 100%)",
+	];		await Promise.all(
 			scripts.map(async (script) => {
 				if (script.banner_url) return;
 
@@ -154,13 +152,13 @@ export default function FeaturedCarousel() {
 									) : (
 										<motion.div
 											aria-hidden
-											className="absolute inset-0 w-full h-full opacity-20 scale-150"
-											style={{
-												background:
-													gradients[activeItem.id] ||
-													"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, #BCB1E7 100%)",
-												backgroundSize: "200% 200%",
-											}}
+										className="absolute inset-0 w-full h-full opacity-20 scale-150"
+										style={{
+											background:
+												gradients[activeItem.id] ||
+												"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, var(--theme-accent) 100%)",
+											backgroundSize: "200% 200%",
+										}}
 											initial={{ backgroundPosition: "0% 50%" }}
 											animate={{
 												backgroundPosition: [
@@ -300,15 +298,15 @@ export const Announcements = () => {
 						. It can help you resolve an error within the terminal, edit an
 						app's code, or interact with any app.
 					</p>
-					<p className="text-sm text-neutral-300 text-pretty">
-						You can{" "}
-						<span className="font-medium text-[#BCB1E7]">use CTRL+K</span> to
-						quickly use Dio,{" "}
-						<span className="font-medium text-[#BCB1E7]">
-							or click on the purple icon
-						</span>{" "}
-						inside the terminal or code editor.
-					</p>
+				<p className="text-sm text-neutral-300 text-pretty">
+					You can{" "}
+					<span className="font-medium" style={{ color: 'var(--theme-accent)' }}>use CTRL+K</span> to
+					quickly use Dio,{" "}
+					<span className="font-medium" style={{ color: 'var(--theme-accent)' }}>
+						or click on the purple icon
+					</span>{" "}
+					inside the terminal or code editor.
+				</p>
 				</div>
 			</div>
 		</motion.div>

@@ -128,8 +128,12 @@ export default function QuickLaunch({
 					flex items-center justify-center overflow-hidden cursor-pointer
 					${compactMode ? "h-12 w-12" : "h-18 w-18"}
 					${isBeingDragged ? "opacity-30 scale-95" : ""}
-					${isHovered ? "ring-2 ring-[#BCB1E7] ring-opacity-70 shadow-lg shadow-[#BCB1E7]/25" : ""}
 					`}
+					style={{
+						...(isHovered && {
+							boxShadow: `0 0 20px color-mix(in srgb, var(--theme-accent) 25%, transparent), 0 0 0 2px var(--theme-accent)`,
+						}),
+					}}
 					onMouseDown={(e) => handlePointerDown(e, app, index)}
 					onTouchStart={(e) => handlePointerDown(e, app, index)}
 					onContextMenu={(e) => {
@@ -209,20 +213,26 @@ export default function QuickLaunch({
 					className={`
             h-18 w-18 border border-white/10 rounded-xl flex items-center justify-center transition-all duration-300
             ${clickIsDisabled && !isHovered && "opacity-50 cursor-not-allowed"}
-            ${isHovered ? "border-[#BCB1E7] bg-[#BCB1E7]/20 shadow-lg shadow-[#BCB1E7]/25" : ""}
 			${clickIsDisabled && isHovered && "cursor-grabbing"}
 			${!clickIsDisabled && !isHovered && "cursor-pointer"}
           `}
+					style={{
+						...(isHovered && {
+							borderColor: 'var(--theme-accent)',
+							backgroundColor: 'color-mix(in srgb, var(--theme-accent) 20%, transparent)',
+							boxShadow: `0 10px 30px color-mix(in srgb, var(--theme-accent) 25%, transparent)`,
+						}),
+					}}
 					tabIndex={clickIsDisabled ? -1 : 0}
 					aria-disabled={clickIsDisabled}
 					animate={{
 						scale: isHovered ? 1.1 : 1,
-						borderColor: isHovered ? "#BCB1E7" : "rgba(255,255,255,0.1)",
 					}}
 					transition={{ duration: 0.2 }}
 				>
 					<Plus
-						className={`h-10 w-10 transition-colors ${isHovered ? "text-[#BCB1E7]" : ""}`}
+						className="h-10 w-10 transition-colors"
+						style={isHovered ? { color: 'var(--theme-accent)' } : {}}
 					/>
 				</motion.button>
 				<AnimatePresence>
@@ -298,13 +308,14 @@ export default function QuickLaunch({
 						animate={{ scale: 1, opacity: 0.9 }}
 						exit={{ scale: 0.8, opacity: 0 }}
 					>
-						<div
-							className={`
-                border-2 border-[#BCB1E7] rounded-xl flex items-center justify-center 
-                overflow-hidden shadow-2xl shadow-[#BCB1E7]/50 backdrop-blur-sm
-                ${compactMode ? "h-12 w-12" : "h-18 w-18"}
-              `}
-						>
+					<div
+						className="rounded-xl flex items-center justify-center overflow-hidden backdrop-blur-sm"
+						style={{
+							border: '2px solid var(--theme-accent)',
+							boxShadow: '0 25px 50px color-mix(in srgb, var(--theme-accent) 50%, transparent)',
+							...(compactMode ? {width: '3rem', height: '3rem'} : {width: '4.5rem', height: '4.5rem'}),
+						}}
+					>
 							{dragState.draggedApp.logo_url?.startsWith("http") ? (
 								<img
 									src={dragState.draggedApp.logo_url}
@@ -355,7 +366,7 @@ export default function QuickLaunch({
 							animate="visible"
 							exit="exit"
 						>
-							<div className="absolute top-0 left-0.5/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-10" />
+							<div className="absolute top-0 left-0.5/4 w-32 h-32 rounded-full -translate-y-1/2 blur-3xl z-10" style={{ backgroundColor: 'var(--theme-blur)' }} />
 							<div className="relative z-10">
 								<div className="flex justify-between items-center mb-2">
 									<div className="flex-col gap-2 items-center">

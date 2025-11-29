@@ -55,17 +55,20 @@ export default function LanguageSelector({
 							className="cursor-pointer enabled:hover:bg-white/10 rounded-full p-1 flex items-center justify-center disabled:opacity-50 transition-colors duration-300"
 						>
 							<ChevronLeft className="w-6 h-6" />
-						</button>
-						<AnimatePresence mode="sync" initial={false}>
-							<div
-								key={currentPage}
-								className="grid grid-cols-4 grid-rows-2 w-full h-full place-items-center gap-4 max-w-2xl p-8 rounded-xl bg-gradient-to-r from-[#BCB1E7]/5 to-[#080808]/10 border border-white/10 backdrop-blur-sm"
-							>
-								{currentLanguages.map(([key, value]) => (
-									<motion.button
-										type="button"
-										key={key}
-										className={`group cursor-pointer flex flex-col gap-3 items-center justify-center overflow-visible relative transition-all duration-300 focus:outline-none ${
+					</button>
+					<AnimatePresence mode="sync" initial={false}>
+						<div
+							key={currentPage}
+							className="grid grid-cols-4 grid-rows-2 w-full h-full place-items-center gap-4 max-w-2xl p-8 rounded-xl border border-white/10 backdrop-blur-sm"
+							style={{
+								background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), color-mix(in srgb, var(--theme-background) 10%, transparent))'
+							}}
+						>
+							{currentLanguages.map(([key, value]) => (
+								<motion.button
+									type="button"
+									key={key}
+									className={`group cursor-pointer flex flex-col gap-3 items-center justify-center overflow-visible relative transition-all duration-300 focus:outline-none ${
 											language === key
 												? "hover:bg-gradient-to-l from-white/20 via-white/10 to-white/[0.01] rounded-b-none"
 												: "hover:bg-gradient-to-b from-white/20 via-white/10 to-white/[0.01] rounded-b-none"
@@ -74,17 +77,18 @@ export default function LanguageSelector({
 											setLanguage(key as any);
 										}}
 									>
-										{language === key && (
-											<motion.div
-												initial={{ opacity: 0, scale: 0 }}
-												animate={{ opacity: 1, scale: 1 }}
-												className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-r from-[#BCB1E7] to-[#9A8FD1] rounded-full flex items-center justify-center shadow-lg border border-white/20 z-[9999]"
-											>
-												<Check className="w-4 h-4 text-black" />
-											</motion.div>
-										)}
-
-										<div className="relative w-full h-full">
+									{language === key && (
+										<motion.div
+											initial={{ opacity: 0, scale: 0 }}
+											animate={{ opacity: 1, scale: 1 }}
+											className="absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center shadow-lg border border-white/20 z-[9999]"
+											style={{
+												background: 'linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))'
+											}}
+										>
+											<Check className="w-4 h-4 text-black" />
+										</motion.div>
+									)}										<div className="relative w-full h-full">
 											{!isImageLoaded(key) && (
 												<div className="absolute inset-0 bg-white/10 border border-white/5 rounded-lg aspect-[5/3] animate-pulse" />
 											)}

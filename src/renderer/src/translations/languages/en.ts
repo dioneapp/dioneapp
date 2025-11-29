@@ -200,6 +200,22 @@ export const en = {
 				description: "Choose your preferred interface language.",
 			},
 			helpTranslate: "🤔 Not seeing your language? Help us add more!",
+			theme: {
+				label: "Theme",
+				description: "Choose a color theme for the application.",
+				themes: {
+					default: "Purple Dream",
+					midnight: "Midnight Blue",
+					ocean: "Ocean Depths",
+					forest: "Forest Night",
+					sunset: "Sunset Glow",
+					royal: "Royal Purple",
+				},
+			},
+			intenseBackgrounds: {
+				label: "Intense Background Colors",
+				description: "Use more vibrant background colors instead of subtle tones.",
+			},
 			compactView: {
 				label: "Compact View",
 				description:

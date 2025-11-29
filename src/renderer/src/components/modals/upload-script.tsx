@@ -58,10 +58,8 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 			style={{ zIndex: 100 }}
 		>
 			<div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl w-full backdrop-blur-md">
-				<div className="absolute top-0 left-0.5/4 w-32 h-32 bg-[#BCB1E7] rounded-full -translate-y-1/2 blur-3xl z-10" />
-				<div className="absolute -top-10 -left-14 bg-[#BCB1E7] blur-3xl max-w-64 w-full h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" />
-
-				<div className="flex justify-between w-full items-center relative z-20">
+			<div className="absolute top-0 left-0.5/4 w-32 h-32 rounded-full -translate-y-1/2 blur-3xl z-10" style={{ backgroundColor: 'var(--theme-blur)' }} />
+			<div className="absolute -top-10 -left-14 blur-3xl max-w-64 w-full h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" style={{ backgroundColor: 'var(--theme-blur)' }} />				<div className="flex justify-between w-full items-center relative z-20">
 					<h2 className="font-semibold text-xl flex items-center justify-center">
 						{t("local.uploadModal.title")}
 					</h2>

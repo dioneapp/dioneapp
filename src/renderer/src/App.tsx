@@ -14,6 +14,7 @@ import QuickAI from "@/pages/quick-ai";
 import Report from "@/pages/report";
 import Settings from "@/pages/settings";
 import { TranslationProvider } from "@/translations/translation-context";
+import { initializeTheme } from "@/utils/theme";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -24,6 +25,11 @@ function App() {
 	const [_isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 	const [_isLoading, setIsLoading] = useState(true);
 	const navigate = useNavigate();
+
+	// Initialize theme on app load
+	useEffect(() => {
+		initializeTheme();
+	}, []);
 
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {

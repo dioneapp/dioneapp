@@ -1,10 +1,20 @@
 @import "tailwindcss";
 
+:root {
+	--theme-background: #080808;
+	--theme-accent: #BCB1E7;
+	--theme-accent-secondary: #9A8FD1;
+	--theme-gradient-from: #BCB1E7;
+	--theme-gradient-to: #9A8FD1;
+	--theme-blur: #BCB1E7;
+}
+
 body {
 	color: #fff;
 	font-family: "Poppins", serif;
 	user-select: none;
 	scroll-behavior: smooth;
+	background-color: var(--theme-background);
 }
 
 #titlebar {
@@ -230,7 +240,7 @@ a:disabled {
 }
 
 .prose a {
-	color: #bcb1e7;
+	color: var(--theme-accent);
 	text-decoration: underline;
 }
 
@@ -246,16 +256,16 @@ a:disabled {
 }
 
 .prose blockquote {
-	border-left: 3px solid #bcb1e7;
+	border-left: 3px solid var(--theme-accent);
 	padding-left: 1em;
-	color: #bcb1e7;
+	color: var(--theme-accent);
 	margin-bottom: 1em;
 	font-style: italic;
 }
 
 .prose code {
 	background-color: #171515;
-	color: #bcb1e7;
+	color: var(--theme-accent);
 	padding: 0.2em 0.4em;
 	border-radius: 3px;
 	font-size: 0.9em;
@@ -264,7 +274,7 @@ a:disabled {
 
 .prose pre {
 	background-color: #171515;
-	color: #bcb1e7;
+	color: var(--theme-accent);
 	padding: 1em;
 	border-radius: 5px;
 	overflow-x: auto;
@@ -288,7 +298,7 @@ a:disabled {
 
 .prose th {
 	background: #201c35;
-	color: #bcb1e7;
+	color: var(--theme-accent);
 }
 
 .prose ul,
@@ -309,6 +319,6 @@ a:disabled {
 }
 
 .prose ul li::marker {
-	color: #bcb1e7;
+	color: var(--theme-accent);
 	font-size: 1.1em;
 }

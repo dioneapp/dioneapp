@@ -1,9 +1,8 @@
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import VariablesModal from "@/components/modals/variables";
-import { TabType } from "@/components/settings/settings-tabs";
 import SettingsFooter from "@/components/settings/settings-footer";
-import SettingsTabs from "@/components/settings/settings-tabs";
+import SettingsTabs, { TabType } from "@/components/settings/settings-tabs";
 import ApplicationsTab from "@/components/settings/tabs/applications-tab";
 import InterfaceTab from "@/components/settings/tabs/interface-tab";
 import NotificationsTab from "@/components/settings/tabs/notifications-tab";
@@ -21,7 +20,15 @@ import { useNavigate } from "react-router-dom";
 export default function Settings() {
 	const [port, setPort] = useState<number | null>(null);
 	const [packVersion, setPackVersion] = useState<string | null>(null);
-	const [versions] = useState(window.electron.process.versions);
+	const [versions] = useState<{
+		node: string;
+		electron: string;
+		chrome: string;
+	}>({
+		node: window.electron.process.versions.node || "",
+		electron: window.electron.process.versions.electron || "",
+		chrome: window.electron.process.versions.chrome || "",
+	});
 	const [config, setConfig] = useState<any | null>(null);
 	const { setLanguage, language, t } = useTranslation();
 	const { logout } = useAuthContext();

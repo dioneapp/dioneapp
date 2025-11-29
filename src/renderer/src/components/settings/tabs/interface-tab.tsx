@@ -2,6 +2,7 @@ import { languages, useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
 import CustomSelect from "../custom-select";
 import SettingItem from "../setting-item";
+import ThemeSelector from "../theme-selector";
 import ToggleSwitch from "../toggle-switch";
 
 interface InterfaceTabProps {
@@ -52,7 +53,13 @@ export default function InterfaceTab({
 				</a>
 			</div>
 
-			<SettingItem
+		<SettingItem
+			label={t("settings.interface.theme.label")}
+			description={t("settings.interface.theme.description")}
+			layout="column"
+		>
+			<ThemeSelector />
+		</SettingItem>			<SettingItem
 				label={t("settings.interface.compactView.label")}
 				description={t("settings.interface.compactView.description")}
 			>

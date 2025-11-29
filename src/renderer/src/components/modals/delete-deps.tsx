@@ -66,8 +66,8 @@ export default function DeleteDepsModal({
 													setSelectedDeps([...selectedDeps, dep]);
 												}
 											}}
-											className="form-checkbox h-4 w-4 rounded border-white/30 bg-transparent checked:bg-[#BCB1E7] checked:border-[#BCB1E7] focus:ring-0 focus:outline-none mt-0.5"
-											style={{ accentColor: "#BCB1E7" }}
+										className="form-checkbox h-4 w-4 rounded border-white/30 bg-transparent focus:ring-0 focus:outline-none mt-0.5"
+										style={{ accentColor: "var(--theme-accent)" }}
 										/>
 										<span className="text-xs text-neutral-300 font-medium">
 											{dep}

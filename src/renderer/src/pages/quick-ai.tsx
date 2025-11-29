@@ -3,18 +3,18 @@ import Models from "@/components/ai/models";
 import ProgressBar from "@/components/common/progress-bar";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import Icon from "@/components/icons/icon";
-import { apiFetch, getBackendPort } from "@/utils/api";
+import { apiFetch } from "@/utils/api";
 import { motion } from "framer-motion";
 import {
-	ArrowRight,
-	ChevronLeft,
-	CornerLeftDown,
-	Cpu,
-	Loader2,
-	Play,
-	ShieldCheck,
-	Sparkles,
-	Square,
+    ArrowRight,
+    ChevronLeft,
+    CornerLeftDown,
+    Cpu,
+    Loader2,
+    Play,
+    ShieldCheck,
+    Sparkles,
+    Square,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -225,7 +225,7 @@ export default function QuickAI() {
 										</div>
 										<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
 											<div className="flex flex-col items-center text-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-												<Sparkles className="w-6 h-6 text-[#BCB1E7] mb-1" />
+												<Sparkles className="w-6 h-6 mb-1" style={{ color: 'var(--theme-accent)' }} />
 												<h3 className="text-white font-medium text-sm">
 													Free to use
 												</h3>
@@ -234,7 +234,7 @@ export default function QuickAI() {
 												</p>
 											</div>
 											<div className="flex flex-col items-center text-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-												<Cpu className="w-6 h-6 text-[#BCB1E7] mb-1" />
+												<Cpu className="w-6 h-6 mb-1" style={{ color: 'var(--theme-accent)' }} />
 												<h3 className="text-white font-medium text-sm">
 													Local Processing
 												</h3>
@@ -243,7 +243,7 @@ export default function QuickAI() {
 												</p>
 											</div>
 											<div className="flex flex-col items-center text-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-												<ShieldCheck className="w-6 h-6 text-[#BCB1E7] mb-1" />
+												<ShieldCheck className="w-6 h-6 mb-1" style={{ color: 'var(--theme-accent)' }} />
 												<h3 className="text-white font-medium text-sm">
 													Private & Secure
 												</h3>

@@ -3,7 +3,7 @@ import fs from "fs";
 import path from "path";
 import { readConfig } from "@/config";
 import { getSysPrompt } from "@/server/routes/ai/instructions/instructions";
-import { getTools, read_file } from "@/server/routes/ai/ollama/tools";
+import { getTools } from "@/server/routes/ai/ollama/tools";
 import {
 	checkOneDependency,
 	installDependency,
@@ -251,7 +251,6 @@ export function createOllamaRouter(io: SocketIOServer) {
 				model,
 				messages,
 				tools,
-				quickAI,
 			});
 			logger.ai(`Chat response: ${JSON.stringify(finalResponse)}`);
 			res.json(finalResponse);
@@ -273,7 +272,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 		}
 	});
 
-	async function handleOllamaChat({ model, messages, tools, quickAI }) {
+	async function handleOllamaChat({ model, messages, tools }) {
 		while (true) {
 			// 1. call model
 			const response = await ollama.chat({

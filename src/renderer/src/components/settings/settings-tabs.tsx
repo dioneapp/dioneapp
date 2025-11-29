@@ -44,7 +44,11 @@ export default function SettingsTabs({ activeTab, onTabChange }: SettingsTabsPro
 						{activeTab === tab.id && (
 							<motion.div
 								layoutId="activeTab"
-								className="absolute inset-0 bg-gradient-to-r from-[#BCB1E7]/20 to-[#9A8FD1]/20 border border-[#BCB1E7]/30 rounded-lg"
+								className="absolute inset-0 border rounded-lg"
+								style={{
+									background: `linear-gradient(to right, color-mix(in srgb, var(--theme-gradient-from) 20%, transparent), color-mix(in srgb, var(--theme-gradient-to) 20%, transparent))`,
+									borderColor: `color-mix(in srgb, var(--theme-accent) 30%, transparent)`,
+								}}
 								transition={{
 									type: "spring",
 									stiffness: 500,

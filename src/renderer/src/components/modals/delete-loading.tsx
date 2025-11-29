@@ -1,7 +1,7 @@
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
-import { CheckCircle, Loader2, X, XCircle } from "lucide-react";
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export default function DeleteLoadingModal({

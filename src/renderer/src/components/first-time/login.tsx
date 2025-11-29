@@ -65,11 +65,11 @@ export default function SureNotLogin({
 								<p className="text-neutral-400 text-wrap text-sm mt-auto">
 									{t("loginFeatures.features.createProfile.description")}
 								</p>
-							</div>
 						</div>
-						<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
-							<div className="absolute left-12 w-34 h-44 bg-[#BCB1E7]/20 rounded-full blur-3xl" />
-							<div className="p-4 flex flex-col gap-2 h-full">
+					</div>
+					<div className="flex flex-col gap-2 bg-black/70 hover:border-white/20 transition-colors duration-300 border border-white/10 rounded-lg w-full h-62 xl:h-72 relative overflow-hidden">
+						<div className="absolute left-12 w-34 h-44 rounded-full blur-3xl" style={{ backgroundColor: 'color-mix(in srgb, var(--theme-accent) 20%, transparent)' }} />
+						<div className="p-4 flex flex-col gap-2 h-full">
 								<h2 className="font-semibold text-3xl">
 									{t("loginFeatures.features.syncData.title")}
 								</h2>

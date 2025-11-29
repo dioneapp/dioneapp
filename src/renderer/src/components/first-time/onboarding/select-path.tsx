@@ -83,23 +83,34 @@ export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
 						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.6, delay: 0.4 }}
-						className="w-full max-w-2xl"
-					>
-						<div className="bg-gradient-to-r from-[#BCB1E7]/5 to-[#080808]/10 border border-white/10 rounded-xl p-8 backdrop-blur-sm">
-							<h3 className="text-white font-semibold text-lg text-center mb-6">
-								{t("selectPath.chooseLocation")}
-							</h3>
+					transition={{ duration: 0.6, delay: 0.4 }}
+					className="w-full max-w-2xl"
+				>
+					<div className="border border-white/10 rounded-xl p-8 backdrop-blur-sm" style={{
+						background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), color-mix(in srgb, var(--theme-background) 10%, transparent))'
+					}}>
+						<h3 className="text-white font-semibold text-lg text-center mb-6">
+							{t("selectPath.chooseLocation")}
+						</h3>
 							<div className="w-full h-32 mb-6">
-								<button
-									onClick={handlePathSelection}
-									className="focus:outline-none focus:ring-2 focus:ring-[#BCB1E7] focus:ring-offset-2 focus:ring-offset-[#080808] px-6 cursor-pointer active:scale-[0.98] w-full h-full bg-gradient-to-r from-[#BCB1E7]/10 to-[#080808]/20 hover:from-[#BCB1E7]/15 hover:to-[#080808]/30 rounded-xl border border-white/20 border-dashed transition-all duration-300 backdrop-blur-sm group"
-								>
+									<button
+										onClick={handlePathSelection}
+										className="focus:outline-none focus:ring-2 focus:ring-offset-2 px-6 cursor-pointer active:scale-[0.98] w-full h-full rounded-xl border border-white/20 border-dashed transition-all duration-300 backdrop-blur-sm group"
+										style={{
+											background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-background) 20%, transparent))'
+										}}
+										onMouseEnter={(e) => {
+											e.currentTarget.style.background = 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 15%, transparent), color-mix(in srgb, var(--theme-background) 30%, transparent))';
+										}}
+										onMouseLeave={(e) => {
+											e.currentTarget.style.background = 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-background) 20%, transparent))';
+										}}
+									>
 									<div className="flex flex-col items-center justify-center h-full">
 										{selectedPath ? (
 											<>
 												<div className="mb-2 group-hover:scale-110 transition-transform duration-300">
-													<FolderOpen className="w-8 h-8 text-[#BCB1E7]" />
+													<FolderOpen className="w-8 h-8" style={{ color: 'var(--theme-accent)' }} />
 												</div>
 												<span className="text-white font-medium text-sm mb-2">
 													{t("selectPath.changePath")}
@@ -113,7 +124,7 @@ export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 										) : (
 											<>
 												<div className="mb-3 group-hover:scale-110 transition-transform duration-300">
-													<FolderOpen className="w-12 h-12 text-[#BCB1E7]" />
+													<FolderOpen className="w-12 h-12" style={{ color: 'var(--theme-accent)' }} />
 												</div>
 												<span className="text-white font-medium text-lg">
 													{t("firstTime.selectPath.button")}
@@ -141,13 +152,22 @@ export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 
 							{success && (
 								<motion.button
-									onClick={onFinish}
-									initial={{ opacity: 0, y: 20, filter: "blur(20px)" }}
-									animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-									exit={{ opacity: 0, y: -20, filter: "blur(20px)" }}
-									transition={{ duration: 0.4 }}
-									className="w-full px-6 bg-gradient-to-r from-[#BCB1E7] to-[#9A8FD1] hover:from-[#BCB1E7]/90 hover:to-[#9A8FD1]/90 text-black font-semibold py-3 rounded-xl text-lg active:scale-[0.98] cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl"
-								>
+								onClick={onFinish}
+								initial={{ opacity: 0, y: 20, filter: "blur(20px)" }}
+								animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+								exit={{ opacity: 0, y: -20, filter: "blur(20px)" }}
+								transition={{ duration: 0.4 }}
+								className="w-full px-6 text-black font-semibold py-3 rounded-xl text-lg active:scale-[0.98] cursor-pointer transition-all duration-300 shadow-lg hover:shadow-xl"
+								style={{
+									background: 'linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))'
+								}}
+								onMouseEnter={(e) => {
+									e.currentTarget.style.background = 'linear-gradient(to right, color-mix(in srgb, var(--theme-gradient-from) 90%, transparent), color-mix(in srgb, var(--theme-gradient-to) 90%, transparent))';
+								}}
+								onMouseLeave={(e) => {
+									e.currentTarget.style.background = 'linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))';
+								}}
+							>
 									{t("firstTime.selectPath.success")}
 								</motion.button>
 							)}
