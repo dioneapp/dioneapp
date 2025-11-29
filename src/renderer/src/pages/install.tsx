@@ -892,6 +892,11 @@ export default function Install({
 				/>
 			)}
 			<div className="relative w-full h-full overflow-auto">
+				{/* Subtle background light effect */}
+				<div className="absolute inset-0 overflow-hidden pointer-events-none">
+					<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-[var(--theme-accent)] to-[var(--theme-accent-secondary)] opacity-[0.08] blur-[120px]"></div>
+				</div>
+				
 				{notSupportedModal && (
 					<NotSupported
 						reasons={notSupported[data?.id].reasons}
@@ -909,7 +914,7 @@ export default function Install({
 					/>
 				)}
 
-				<div className="flex h-screen w-full">
+				<div className="flex h-screen w-full relative z-10">
 					<div className="w-full h-full flex justify-center items-center">
 						<AnimatePresence>
 							{show[data?.id] === "iframe" && (
