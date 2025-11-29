@@ -103,7 +103,7 @@ export default function ActionsComponent({
 					className="flex flex-col w-full max-w-xl px-4 sm:px-6"
 				>
 					{/* Hero Card */}
-					<div className="rounded-xl border border-white/10 relative w-full overflow-hidden">
+					<div className="rounded-xl border border-white/10 relative w-full overflow-visible">
 						{/* Background with gradient */}
 						<div
 							className="absolute inset-0"

@@ -46,35 +46,6 @@ export default function LogsComponent({
 			exit={{ opacity: 0, height: 0, y: -20 }}
 			transition={{ duration: 0.3 }}
 		>
-			{/* <div className="w-full justify-end flex items-end mx-auto overflow-hidden">
-                <div className="max-w-80 min-w-32 h-12 rounded-t-xl border border-b-0 border-white/10 p-4 flex items-center justify-center">
-                    <p
-                        className={`text-xs ${
-                            statusLog[appId]?.status === "success"
-                                ? "text-green-400"
-                                : statusLog[appId]?.status === "error"
-                                    ? "text-red-400"
-                                    : statusLog[appId]?.status === "pending" ||
-                                            !statusLog[appId]?.status
-                                        ? "text-orange-400"
-                                        : "text-neutral-200"
-                        } flex items-center gap-2 whitespace-nowrap overflow-hidden`}
-                    >
-                        {Spinner}
-                        {statusLog[appId]?.status === "success" && (
-                            <CheckCircle className="h-4 w-4 flex-shrink-0" />
-                        )}
-                        {statusLog[appId]?.status === "error" && (
-                            <XCircle className="h-4 w-4 flex-shrink-0" />
-                        )}
-                        <span className="truncate">
-                            {statusLog[appId]?.content
-                                ? `${statusLog[appId]?.content}`
-                                : t("logs.loading")}
-                        </span>
-                    </p>
-                </div>
-            </div> */}
 			<motion.div className="p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/40 hide-scrollbar">
 				<TerminalOutput
 					id="logs"
@@ -101,30 +72,33 @@ export default function LogsComponent({
 						Showing last {MAX_TERMINAL_LINES.toLocaleString()} lines
 					</div>
 				)}
-				<div className="flex w-full justify-end items-center mx-auto">
-					<div className="flex gap-1.5">
-						{iframeAvailable && (
-							<button
-								type="button"
-								className="group bg-white hover:bg-white/80 transition-colors duration-300 rounded-full p-2 text-black font-medium text-center cursor-pointer flex items-center gap-2"
-								onClick={() => setShow({ [appId]: "iframe" })}
-							>
-								<ExternalLink className="h-4 w-4" />
-							</button>
-						)}
+				<div className="flex w-full justify-between items-center mx-auto">
+					{iframeAvailable && (
 						<button
 							type="button"
-							className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
-							onClick={copyLogsToClipboard}
+							className="group bg-white hover:bg-white/90 transition-all duration-200 rounded-full px-3 py-2 text-black font-medium text-center cursor-pointer shadow-sm hover:shadow-md flex items-center gap-2"
+							onClick={() => setShow({ [appId]: "iframe" })}
 						>
-							<Copy className="h-4 w-4" />
+							<ExternalLink className="h-4 w-4" />
+							<span className="text-sm">{t("logs.openPreview")}</span>
+						</button>
+					)}
+					<div className={`flex gap-1.5 ${!iframeAvailable ? "ml-auto" : ""}`}>
+						<button
+							type="button"
+							className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-full text-neutral-300 cursor-pointer border border-white/10"
+							onClick={copyLogsToClipboard}
+							title={t("logs.copyLogs")}
+						>
+							<Copy size={14} className="sm:w-4 sm:h-4" />
 						</button>
 						<button
 							type="button"
-							className="bg-white hover:bg-white/80 transition-colors duration-400 rounded-full p-2 text-black font-medium text-center cursor-pointer"
+							className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-full text-neutral-300 cursor-pointer border border-white/10"
 							onClick={handleStop}
+							title={t("logs.stop")}
 						>
-							<Square className="h-4 w-4" />
+							<Square size={14} className="sm:w-4 sm:h-4" />
 						</button>
 					</div>
 				</div>

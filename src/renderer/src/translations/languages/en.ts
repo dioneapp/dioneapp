@@ -374,6 +374,9 @@ export const en = {
 	// logs component
 	logs: {
 		loading: "Loading...",
+		openPreview: "Open Preview",
+		copyLogs: "Copy logs",
+		stop: "Stop",
 		disclaimer:
 			"Logs shown are from the app itself. If you see an error, please report it to the original app's developers first.",
 		status: {

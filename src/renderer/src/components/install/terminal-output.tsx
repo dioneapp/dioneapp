@@ -15,14 +15,14 @@ const removePrefix = (line: string): string => {
 const getLineStyle = (line: string): string => {
 	const lower = line.toLowerCase();
 	if (lower.includes("warn"))
-		return "text-yellow-400 border-l-2 border-yellow-500/40 pl-3";
+		return "text-yellow-400/90 bg-gradient-to-r from-yellow-500/8 to-transparent border-l-2 border-yellow-500/60 pl-3 py-1 my-0.5 rounded-r";
 	if (lower.includes("error") || lower.includes("fail"))
-		return "text-red-400 border-l-2 border-red-500/40 pl-3";
+		return "text-red-400/90 bg-gradient-to-r from-red-500/8 to-transparent border-l-2 border-red-500/60 pl-3 py-1 my-0.5 rounded-r";
 	if (lower.includes("success") || lower.includes("complete"))
-		return "text-green-400 border-l-2 border-green-500/40 pl-3";
+		return "text-green-400/90 bg-gradient-to-r from-green-500/8 to-transparent border-l-2 border-green-500/60 pl-3 py-1 my-0.5 rounded-r";
 	if (lower.includes("info"))
-		return "text-blue-400 border-l-2 border-blue-500/40 pl-3";
-	return "text-neutral-400";
+		return "text-blue-400/90 bg-gradient-to-r from-blue-500/8 to-transparent border-l-2 border-blue-500/60 pl-3 py-1 my-0.5 rounded-r";
+	return "text-neutral-400/90 hover:bg-white/[0.03] transition-all duration-150 py-0.5 px-2 rounded";
 };
 
 export default function TerminalOutput({
@@ -79,12 +79,30 @@ export default function TerminalOutput({
 					"whitespace-pre-wrap break-words text-justify font-mono text-[13px] leading-relaxed space-y-1"
 				}
 			>
-				{processedLines.map((line) => (
-					<div key={line.key} className={line.style}>
+				{processedLines.map((line, idx) => (
+					<div 
+						key={line.key} 
+						className={`${line.style} group relative`}
+						style={{
+							animation: `fadeInLine 0.2s ease-out ${idx * 0.01}s backwards`
+						}}
+					>
 						{line.content}
 					</div>
 				))}
 			</pre>
+			<style>{`
+				@keyframes fadeInLine {
+					from {
+						opacity: 0;
+						transform: translateX(-4px);
+					}
+					to {
+						opacity: 1;
+						transform: translateX(0);
+					}
+				}
+			`}</style>
 		</div>
 	);
 }
