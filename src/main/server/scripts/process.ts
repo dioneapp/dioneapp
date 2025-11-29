@@ -1,3 +1,7 @@
+import { exec, spawn } from "node:child_process";
+import fs from "node:fs";
+import { arch, platform as getPlatform } from "node:os";
+import path from "node:path";
 import {
 	getAllValues,
 	initDefaultEnv,
@@ -6,10 +10,6 @@ import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-m
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
-import { exec, spawn } from "node:child_process";
-import fs from "node:fs";
-import { arch, platform as getPlatform } from "node:os";
-import path from "node:path";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
 
@@ -533,7 +533,10 @@ export const executeCommands = async (
 	io: Server,
 	id: string,
 	needsBuildTools?: boolean,
-	options?: { onOutput?: (text: string) => void; onProgress?: (progress: number) => void },
+	options?: {
+		onOutput?: (text: string) => void;
+		onProgress?: (progress: number) => void;
+	},
 ): Promise<{ cancelled: boolean }> => {
 	// reset cancellation state for a new command batch
 	processWasCancelled = false;
@@ -663,7 +666,7 @@ export const executeCommands = async (
 			let outputLines = 0;
 			const startTime = Date.now();
 			let lastProgressEmit = 0;
-			
+
 			// emit initial progress for this command starting
 			if (options?.onProgress) {
 				const baseProgress = completedCommands / totalCommands;
@@ -681,21 +684,25 @@ export const executeCommands = async (
 					...options,
 					onOutput: (text: string) => {
 						options?.onOutput?.(text);
-						
+
 						outputLines++;
 						const elapsed = Date.now() - startTime;
-						
-						const timeProgress = Math.min(0.92, Math.log(elapsed + 1000) / Math.log(120000));
+
+						const timeProgress = Math.min(
+							0.92,
+							Math.log(elapsed + 1000) / Math.log(120000),
+						);
 						const outputProgress = Math.min(0.92, Math.sqrt(outputLines / 50));
-						
+
 						commandProgress = Math.max(
 							commandProgress,
 							0.4 * timeProgress + 0.6 * outputProgress,
-							outputLines > 0 ? 0.05 : 0
+							outputLines > 0 ? 0.05 : 0,
 						);
-						
-						const overallProgress = (completedCommands + commandProgress) / totalCommands;
-						
+
+						const overallProgress =
+							(completedCommands + commandProgress) / totalCommands;
+
 						const now = Date.now();
 						if (now - lastProgressEmit > 300 && options?.onProgress) {
 							options.onProgress(overallProgress);

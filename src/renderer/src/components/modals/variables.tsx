@@ -358,13 +358,17 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
 							className="w-full bg-white/10 border border-white/5 text-white placeholder-neutral-400 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:border-opacity-50"
-						style={{
-							'--tw-ring-color': 'var(--theme-accent)',
-							'borderColor': 'color-mix(in srgb, var(--theme-accent) 50%, transparent)',
-						} as React.CSSProperties}
-						onFocus={(e) => {
-							e.target.style.borderColor = 'color-mix(in srgb, var(--theme-accent) 50%, transparent)';
-						}}
+							style={
+								{
+									"--tw-ring-color": "var(--theme-accent)",
+									borderColor:
+										"color-mix(in srgb, var(--theme-accent) 50%, transparent)",
+								} as React.CSSProperties
+							}
+							onFocus={(e) => {
+								e.target.style.borderColor =
+									"color-mix(in srgb, var(--theme-accent) 50%, transparent)";
+							}}
 						/>
 					</div>
 				</div>
@@ -416,7 +420,10 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 								>
 									<div className="flex items-start justify-between gap-4 mb-3">
 										<div className="flex items-center gap-2">
-											<h3 className="text-sm font-medium" style={{ color: 'var(--theme-accent)' }}>
+											<h3
+												className="text-sm font-medium"
+												style={{ color: "var(--theme-accent)" }}
+											>
 												{key}
 											</h3>
 										</div>

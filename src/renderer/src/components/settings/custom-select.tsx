@@ -8,7 +8,11 @@ interface CustomSelectProps {
 	options: { value: string; label: string }[];
 }
 
-export default function CustomSelect({ value, onChange, options }: CustomSelectProps) {
+export default function CustomSelect({
+	value,
+	onChange,
+	options,
+}: CustomSelectProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const containerRef = useRef<HTMLDivElement | null>(null);
 

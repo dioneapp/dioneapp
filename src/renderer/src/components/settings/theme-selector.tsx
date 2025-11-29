@@ -1,5 +1,12 @@
 import { useTranslation } from "@/translations/translation-context";
-import { Theme, applyTheme, getStoredBackgroundIntensity, getStoredTheme, setBackgroundIntensity, themes } from "@/utils/theme";
+import {
+	type Theme,
+	applyTheme,
+	getStoredBackgroundIntensity,
+	getStoredTheme,
+	setBackgroundIntensity,
+	themes,
+} from "@/utils/theme";
 import { useState } from "react";
 import SettingItem from "./setting-item";
 import ThemePreview from "./theme-preview";
@@ -8,16 +15,18 @@ import ToggleSwitch from "./toggle-switch";
 export default function ThemeSelector() {
 	const { t } = useTranslation();
 	const [selectedTheme, setSelectedTheme] = useState<Theme>(getStoredTheme());
-	const [isIntense, setIsIntense] = useState<boolean>(getStoredBackgroundIntensity() === 'intense');
+	const [isIntense, setIsIntense] = useState<boolean>(
+		getStoredBackgroundIntensity() === "intense",
+	);
 
 	const handleThemeChange = (theme: Theme) => {
 		setSelectedTheme(theme);
-		applyTheme(theme, isIntense ? 'intense' : 'subtle');
+		applyTheme(theme, isIntense ? "intense" : "subtle");
 	};
 
 	const handleIntensityToggle = (enabled: boolean) => {
 		setIsIntense(enabled);
-		setBackgroundIntensity(enabled ? 'intense' : 'subtle');
+		setBackgroundIntensity(enabled ? "intense" : "subtle");
 	};
 
 	return (
@@ -39,10 +48,7 @@ export default function ThemeSelector() {
 				description={t("settings.interface.intenseBackgrounds.description")}
 				layout="row"
 			>
-				<ToggleSwitch
-					enabled={isIntense}
-					onChange={handleIntensityToggle}
-				/>
+				<ToggleSwitch enabled={isIntense} onChange={handleIntensityToggle} />
 			</SettingItem>
 		</div>
 	);

@@ -30,7 +30,8 @@ export default function SearchBar() {
                         focus:outline-none focus:border-white/20
                         active:border-white/20 active:outline-none"
 						style={{
-							background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), color-mix(in srgb, var(--theme-background) 10%, transparent))'
+							background:
+								"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), color-mix(in srgb, var(--theme-background) 10%, transparent))",
 						}}
 					/>
 					<Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none text-neutral-400" />
@@ -44,23 +45,31 @@ export default function SearchBar() {
 								? "border shadow-lg"
 								: "border border-white/10 text-neutral-400"
 						}`}
-						style={type === "audio" ? {
-							background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 20%, transparent), color-mix(in srgb, var(--theme-accent) 10%, transparent))',
-							borderColor: 'color-mix(in srgb, var(--theme-accent) 30%, transparent)',
-							color: 'var(--theme-accent)'
-						} : {}}
+						style={
+							type === "audio"
+								? {
+										background:
+											"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 20%, transparent), color-mix(in srgb, var(--theme-accent) 10%, transparent))",
+										borderColor:
+											"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
+										color: "var(--theme-accent)",
+									}
+								: {}
+						}
 						onMouseEnter={(e) => {
 							if (type !== "audio") {
-								e.currentTarget.style.background = 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-accent) 5%, transparent))';
-								e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--theme-accent) 20%, transparent)';
-								e.currentTarget.style.color = 'var(--theme-accent)';
+								e.currentTarget.style.background =
+									"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-accent) 5%, transparent))";
+								e.currentTarget.style.borderColor =
+									"color-mix(in srgb, var(--theme-accent) 20%, transparent)";
+								e.currentTarget.style.color = "var(--theme-accent)";
 							}
 						}}
 						onMouseLeave={(e) => {
 							if (type !== "audio") {
-								e.currentTarget.style.background = '';
-								e.currentTarget.style.borderColor = '';
-								e.currentTarget.style.color = '';
+								e.currentTarget.style.background = "";
+								e.currentTarget.style.borderColor = "";
+								e.currentTarget.style.color = "";
 							}
 						}}
 					>
@@ -77,23 +86,31 @@ export default function SearchBar() {
 								? "border shadow-lg"
 								: "border border-white/10 text-neutral-400"
 						}`}
-						style={type === "image" ? {
-							background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 20%, transparent), color-mix(in srgb, var(--theme-accent) 10%, transparent))',
-							borderColor: 'color-mix(in srgb, var(--theme-accent) 30%, transparent)',
-							color: 'var(--theme-accent)'
-						} : {}}
+						style={
+							type === "image"
+								? {
+										background:
+											"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 20%, transparent), color-mix(in srgb, var(--theme-accent) 10%, transparent))",
+										borderColor:
+											"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
+										color: "var(--theme-accent)",
+									}
+								: {}
+						}
 						onMouseEnter={(e) => {
 							if (type !== "image") {
-								e.currentTarget.style.background = 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-accent) 5%, transparent))';
-								e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--theme-accent) 20%, transparent)';
-								e.currentTarget.style.color = 'var(--theme-accent)';
+								e.currentTarget.style.background =
+									"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-accent) 5%, transparent))";
+								e.currentTarget.style.borderColor =
+									"color-mix(in srgb, var(--theme-accent) 20%, transparent)";
+								e.currentTarget.style.color = "var(--theme-accent)";
 							}
 						}}
 						onMouseLeave={(e) => {
 							if (type !== "image") {
-								e.currentTarget.style.background = '';
-								e.currentTarget.style.borderColor = '';
-								e.currentTarget.style.color = '';
+								e.currentTarget.style.background = "";
+								e.currentTarget.style.borderColor = "";
+								e.currentTarget.style.color = "";
 							}
 						}}
 					>
@@ -110,23 +127,31 @@ export default function SearchBar() {
 								? "border shadow-lg"
 								: "border border-white/10 text-neutral-400"
 						}`}
-						style={type === "video" ? {
-							background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 20%, transparent), color-mix(in srgb, var(--theme-accent) 10%, transparent))',
-							borderColor: 'color-mix(in srgb, var(--theme-accent) 30%, transparent)',
-							color: 'var(--theme-accent)'
-						} : {}}
+						style={
+							type === "video"
+								? {
+										background:
+											"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 20%, transparent), color-mix(in srgb, var(--theme-accent) 10%, transparent))",
+										borderColor:
+											"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
+										color: "var(--theme-accent)",
+									}
+								: {}
+						}
 						onMouseEnter={(e) => {
 							if (type !== "video") {
-								e.currentTarget.style.background = 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-accent) 5%, transparent))';
-								e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--theme-accent) 20%, transparent)';
-								e.currentTarget.style.color = 'var(--theme-accent)';
+								e.currentTarget.style.background =
+									"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-accent) 5%, transparent))";
+								e.currentTarget.style.borderColor =
+									"color-mix(in srgb, var(--theme-accent) 20%, transparent)";
+								e.currentTarget.style.color = "var(--theme-accent)";
 							}
 						}}
 						onMouseLeave={(e) => {
 							if (type !== "video") {
-								e.currentTarget.style.background = '';
-								e.currentTarget.style.borderColor = '';
-								e.currentTarget.style.color = '';
+								e.currentTarget.style.background = "";
+								e.currentTarget.style.borderColor = "";
+								e.currentTarget.style.color = "";
 							}
 						}}
 					>
@@ -143,23 +168,31 @@ export default function SearchBar() {
 								? "border shadow-lg"
 								: "border border-white/10 text-neutral-400"
 						}`}
-						style={type === "chat" ? {
-							background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 20%, transparent), color-mix(in srgb, var(--theme-accent) 10%, transparent))',
-							borderColor: 'color-mix(in srgb, var(--theme-accent) 30%, transparent)',
-							color: 'var(--theme-accent)'
-						} : {}}
+						style={
+							type === "chat"
+								? {
+										background:
+											"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 20%, transparent), color-mix(in srgb, var(--theme-accent) 10%, transparent))",
+										borderColor:
+											"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
+										color: "var(--theme-accent)",
+									}
+								: {}
+						}
 						onMouseEnter={(e) => {
 							if (type !== "chat") {
-								e.currentTarget.style.background = 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-accent) 5%, transparent))';
-								e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--theme-accent) 20%, transparent)';
-								e.currentTarget.style.color = 'var(--theme-accent)';
+								e.currentTarget.style.background =
+									"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-accent) 5%, transparent))";
+								e.currentTarget.style.borderColor =
+									"color-mix(in srgb, var(--theme-accent) 20%, transparent)";
+								e.currentTarget.style.color = "var(--theme-accent)";
 							}
 						}}
 						onMouseLeave={(e) => {
 							if (type !== "chat") {
-								e.currentTarget.style.background = '';
-								e.currentTarget.style.borderColor = '';
-								e.currentTarget.style.color = '';
+								e.currentTarget.style.background = "";
+								e.currentTarget.style.borderColor = "";
+								e.currentTarget.style.color = "";
 							}
 						}}
 					>

@@ -1,8 +1,20 @@
 import { useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
-import { Bell, LucideIcon, Package, Palette, Settings2, Shield } from "lucide-react";
+import {
+	Bell,
+	type LucideIcon,
+	Package,
+	Palette,
+	Settings2,
+	Shield,
+} from "lucide-react";
 
-export type TabType = "applications" | "interface" | "notifications" | "privacy" | "other";
+export type TabType =
+	| "applications"
+	| "interface"
+	| "notifications"
+	| "privacy"
+	| "other";
 
 interface Tab {
 	id: TabType;
@@ -15,13 +27,24 @@ interface SettingsTabsProps {
 	onTabChange: (tab: TabType) => void;
 }
 
-export default function SettingsTabs({ activeTab, onTabChange }: SettingsTabsProps) {
+export default function SettingsTabs({
+	activeTab,
+	onTabChange,
+}: SettingsTabsProps) {
 	const { t } = useTranslation();
 
 	const tabs: Tab[] = [
-		{ id: "applications", label: t("settings.applications.title"), icon: Package },
+		{
+			id: "applications",
+			label: t("settings.applications.title"),
+			icon: Package,
+		},
 		{ id: "interface", label: t("settings.interface.title"), icon: Palette },
-		{ id: "notifications", label: t("settings.notifications.title"), icon: Bell },
+		{
+			id: "notifications",
+			label: t("settings.notifications.title"),
+			icon: Bell,
+		},
 		{ id: "privacy", label: t("settings.privacy.title"), icon: Shield },
 		{ id: "other", label: t("settings.other.title"), icon: Settings2 },
 	];

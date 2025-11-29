@@ -1,12 +1,12 @@
 import type { Script } from "@/components/home/feed/types";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import {
-    BadgeCheck,
-    Calendar,
-    Download,
-    GitCompare,
-    Tag,
-    Trash,
+	BadgeCheck,
+	Calendar,
+	Download,
+	GitCompare,
+	Tag,
+	Trash,
 } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
@@ -93,21 +93,30 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 									className="text-[10px] font-medium text-white rounded px-2 p-0.5 border flex items-center justify-center my-auto gap-1.5 shadow-sm group-hover:shadow-md backdrop-blur-sm"
 									style={{
 										background: `linear-gradient(to right, color-mix(in srgb, var(--theme-gradient-from) 20%, transparent), color-mix(in srgb, var(--theme-gradient-to) 20%, transparent))`,
-										borderColor: 'color-mix(in srgb, var(--theme-accent) 30%, transparent)',
+										borderColor:
+											"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
 									}}
 									onMouseEnter={(e) => {
 										e.currentTarget.style.background = `linear-gradient(to right, color-mix(in srgb, var(--theme-gradient-from) 30%, transparent), color-mix(in srgb, var(--theme-gradient-to) 30%, transparent))`;
-										e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--theme-accent) 50%, transparent)';
+										e.currentTarget.style.borderColor =
+											"color-mix(in srgb, var(--theme-accent) 50%, transparent)";
 									}}
 									onMouseLeave={(e) => {
 										e.currentTarget.style.background = `linear-gradient(to right, color-mix(in srgb, var(--theme-gradient-from) 20%, transparent), color-mix(in srgb, var(--theme-gradient-to) 20%, transparent))`;
-										e.currentTarget.style.borderColor = 'color-mix(in srgb, var(--theme-accent) 30%, transparent)';
+										e.currentTarget.style.borderColor =
+											"color-mix(in srgb, var(--theme-accent) 30%, transparent)";
 									}}
 								>
-									<BadgeCheck className="inline h-3 w-3 drop-shadow-sm" style={{ color: 'var(--theme-accent)' }} />
-									<span className="bg-linear-to-r bg-clip-text text-transparent font-semibold" style={{
-										backgroundImage: `linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))`,
-									}}>
+									<BadgeCheck
+										className="inline h-3 w-3 drop-shadow-sm"
+										style={{ color: "var(--theme-accent)" }}
+									/>
+									<span
+										className="bg-linear-to-r bg-clip-text text-transparent font-semibold"
+										style={{
+											backgroundImage: `linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))`,
+										}}
+									>
 										Official
 									</span>
 								</span>

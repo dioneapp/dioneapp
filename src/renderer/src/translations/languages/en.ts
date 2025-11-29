@@ -214,7 +214,8 @@ export const en = {
 			},
 			intenseBackgrounds: {
 				label: "Intense Background Colors",
-				description: "Use more vibrant background colors instead of subtle tones.",
+				description:
+					"Use more vibrant background colors instead of subtle tones.",
 			},
 			compactView: {
 				label: "Compact View",

@@ -58,8 +58,15 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 			style={{ zIndex: 100 }}
 		>
 			<div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl w-full backdrop-blur-md">
-			<div className="absolute top-0 left-0.5/4 w-32 h-32 rounded-full -translate-y-1/2 blur-3xl z-10" style={{ backgroundColor: 'var(--theme-blur)' }} />
-			<div className="absolute -top-10 -left-14 blur-3xl max-w-64 w-full h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40" style={{ backgroundColor: 'var(--theme-blur)' }} />				<div className="flex justify-between w-full items-center relative z-20">
+				<div
+					className="absolute top-0 left-0.5/4 w-32 h-32 rounded-full -translate-y-1/2 blur-3xl z-10"
+					style={{ backgroundColor: "var(--theme-blur)" }}
+				/>
+				<div
+					className="absolute -top-10 -left-14 blur-3xl max-w-64 w-full h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40"
+					style={{ backgroundColor: "var(--theme-blur)" }}
+				/>{" "}
+				<div className="flex justify-between w-full items-center relative z-20">
 					<h2 className="font-semibold text-xl flex items-center justify-center">
 						{t("local.uploadModal.title")}
 					</h2>
@@ -71,7 +78,6 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 						<X className="h-4 w-4" />
 					</button>
 				</div>
-
 				<div className="pt-6 w-full h-full flex flex-col relative z-20">
 					<div className="flex flex-col gap-4">
 						<button
@@ -122,7 +128,6 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 						/>
 					</div>
 				</div>
-
 				<div className="flex justify-between mt-6 relative z-20">
 					<div className="">
 						<button

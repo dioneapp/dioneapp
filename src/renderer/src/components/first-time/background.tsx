@@ -10,7 +10,7 @@ export default function Background() {
 		>
 			<motion.div
 				className="absolute left-1/4 -top-18 w-32 h-32 rounded-full blur-3xl z-10"
-				style={{ backgroundColor: 'var(--theme-accent)' }}
+				style={{ backgroundColor: "var(--theme-accent)" }}
 				animate={{
 					x: [0, 200, 100, -100, 0],
 					y: [0, -100, 100, 0, 0],
@@ -23,7 +23,7 @@ export default function Background() {
 			/>
 			<motion.div
 				className="absolute right-1/6 -bottom-24 w-32 h-32 rounded-full blur-3xl z-10"
-				style={{ backgroundColor: 'var(--theme-accent)' }}
+				style={{ backgroundColor: "var(--theme-accent)" }}
 				animate={{
 					x: [0, -150, 0, 150, 0],
 					y: [0, 100, -100, 50, 0],
@@ -36,7 +36,7 @@ export default function Background() {
 			/>
 			<motion.div
 				className="absolute -left-16 bottom-24 w-32 h-32 rounded-full blur-3xl z-10"
-				style={{ backgroundColor: 'var(--theme-accent)' }}
+				style={{ backgroundColor: "var(--theme-accent)" }}
 				animate={{
 					x: [0, 200, -100, 100, 0],
 					y: [0, 50, -150, 100, 0],
@@ -49,7 +49,7 @@ export default function Background() {
 			/>
 			<motion.div
 				className="absolute -right-12 top-24 w-32 h-32 rounded-full blur-3xl z-10"
-				style={{ backgroundColor: 'var(--theme-accent)' }}
+				style={{ backgroundColor: "var(--theme-accent)" }}
 				animate={{
 					x: [0, -200, 100, -100, 0],
 					y: [0, -50, 150, -100, 0],

@@ -8,7 +8,10 @@ interface NotificationsTabProps {
 	handleUpdate: (newConfig: Partial<any>) => void;
 }
 
-export default function NotificationsTab({ config, handleUpdate }: NotificationsTabProps) {
+export default function NotificationsTab({
+	config,
+	handleUpdate,
+}: NotificationsTabProps) {
 	const { t } = useTranslation();
 
 	return (
@@ -21,7 +24,9 @@ export default function NotificationsTab({ config, handleUpdate }: Notifications
 		>
 			<SettingItem
 				label={t("settings.notifications.systemNotifications.label")}
-				description={t("settings.notifications.systemNotifications.description")}
+				description={t(
+					"settings.notifications.systemNotifications.description",
+				)}
 			>
 				<ToggleSwitch
 					enabled={config.enableDesktopNotifications}

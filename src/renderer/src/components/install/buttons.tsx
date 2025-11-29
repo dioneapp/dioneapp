@@ -48,13 +48,22 @@ export default function Buttons({
 						className={`p-2 border transition-colors duration-300 rounded-full cursor-pointer ${
 							!saved && "border-white/10 hover:bg-white/10 text-neutral-300"
 						}`}
-						style={saved ? {
-							borderColor: 'color-mix(in srgb, var(--theme-accent) 50%, transparent)',
-							backgroundColor: 'color-mix(in srgb, var(--theme-accent) 20%, transparent)',
-							color: 'var(--theme-accent)',
-						} : {}}
+						style={
+							saved
+								? {
+										borderColor:
+											"color-mix(in srgb, var(--theme-accent) 50%, transparent)",
+										backgroundColor:
+											"color-mix(in srgb, var(--theme-accent) 20%, transparent)",
+										color: "var(--theme-accent)",
+									}
+								: {}
+						}
 					>
-						<Bookmark className="h-4 w-4" style={saved ? { fill: 'var(--theme-accent)' } : {}} />
+						<Bookmark
+							className="h-4 w-4"
+							style={saved ? { fill: "var(--theme-accent)" } : {}}
+						/>
 					</button>
 				</div>
 			)}

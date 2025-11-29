@@ -2,7 +2,9 @@ import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import VariablesModal from "@/components/modals/variables";
 import SettingsFooter from "@/components/settings/settings-footer";
-import SettingsTabs, { TabType } from "@/components/settings/settings-tabs";
+import SettingsTabs, {
+	type TabType,
+} from "@/components/settings/settings-tabs";
 import ApplicationsTab from "@/components/settings/tabs/applications-tab";
 import InterfaceTab from "@/components/settings/tabs/interface-tab";
 import NotificationsTab from "@/components/settings/tabs/notifications-tab";
@@ -15,7 +17,6 @@ import { useToast } from "@/utils/use-toast";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 
 export default function Settings() {
 	const [port, setPort] = useState<number | null>(null);
@@ -222,14 +223,13 @@ export default function Settings() {
 
 	const handleExportLogs = async () => {
 		try {
-			const result = await window.electron.ipcRenderer.invoke(
-				"export-debug-logs",
-			);
-			
+			const result =
+				await window.electron.ipcRenderer.invoke("export-debug-logs");
+
 			if (result.canceled) {
 				return;
 			}
-			
+
 			if (result.success) {
 				addToast({
 					variant: "success",
@@ -322,12 +322,18 @@ export default function Settings() {
 						{/* Tab Content */}
 						{config && (
 							<div className="border border-white/10 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm rounded-xl p-6 min-h-[400px]">
-								<AnimatePresence mode="wait">{renderTabContent()}</AnimatePresence>
+								<AnimatePresence mode="wait">
+									{renderTabContent()}
+								</AnimatePresence>
 							</div>
 						)}
 
 						{/* Footer */}
-						<SettingsFooter packVersion={packVersion} port={port} versions={versions} />
+						<SettingsFooter
+							packVersion={packVersion}
+							port={port}
+							versions={versions}
+						/>
 					</main>
 				</div>
 			</div>

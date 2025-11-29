@@ -105,12 +105,28 @@ export default function ActionsComponent({
 					{/* Hero Card */}
 					<div className="rounded-xl border border-white/10 relative w-full overflow-hidden">
 						{/* Background with gradient */}
-						<div className="absolute inset-0" style={{
-							background: 'linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 10%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))'
-						}} />
+						<div
+							className="absolute inset-0"
+							style={{
+								background:
+									"linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 10%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))",
+							}}
+						/>
 						<div className="absolute inset-0 overflow-hidden pointer-events-none">
-							<div className="absolute -top-16 -right-16 w-32 sm:w-48 h-32 sm:h-48 rounded-full blur-3xl" style={{ backgroundColor: 'color-mix(in srgb, var(--theme-accent) 20%, transparent)' }} />
-							<div className="absolute -bottom-8 -left-8 w-24 sm:w-32 h-24 sm:h-32 rounded-full blur-2xl" style={{ backgroundColor: 'color-mix(in srgb, var(--theme-accent) 10%, transparent)' }} />
+							<div
+								className="absolute -top-16 -right-16 w-32 sm:w-48 h-32 sm:h-48 rounded-full blur-3xl"
+								style={{
+									backgroundColor:
+										"color-mix(in srgb, var(--theme-accent) 20%, transparent)",
+								}}
+							/>
+							<div
+								className="absolute -bottom-8 -left-8 w-24 sm:w-32 h-24 sm:h-32 rounded-full blur-2xl"
+								style={{
+									backgroundColor:
+										"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+								}}
+							/>
 						</div>
 
 						{/* Top Bar */}
@@ -136,17 +152,32 @@ export default function ActionsComponent({
 										>
 											<Share2 className="h-3.5 w-3.5" />
 										</button>
-									<button
-										type="button"
-										onClick={handleSave}
-										className="p-1.5 transition-colors rounded-lg cursor-pointer text-neutral-400 hover:text-white hover:bg-white/10"
-										style={saved ? { color: 'var(--theme-accent)', backgroundColor: 'color-mix(in srgb, var(--theme-accent) 10%, transparent)' } : {}}
-									>
-										<Bookmark
-											className="h-3.5 w-3.5 transition-colors"
-											style={saved ? { fill: 'var(--theme-accent)', color: 'var(--theme-accent)' } : {}}
-										/>
-									</button>
+										<button
+											type="button"
+											onClick={handleSave}
+											className="p-1.5 transition-colors rounded-lg cursor-pointer text-neutral-400 hover:text-white hover:bg-white/10"
+											style={
+												saved
+													? {
+															color: "var(--theme-accent)",
+															backgroundColor:
+																"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+														}
+													: {}
+											}
+										>
+											<Bookmark
+												className="h-3.5 w-3.5 transition-colors"
+												style={
+													saved
+														? {
+																fill: "var(--theme-accent)",
+																color: "var(--theme-accent)",
+															}
+														: {}
+												}
+											/>
+										</button>
 									</>
 								)}
 							</div>
@@ -193,7 +224,7 @@ export default function ActionsComponent({
 													)}
 													<span
 														className="hover:underline cursor-pointer truncate"
-														style={{ color: 'var(--theme-accent)' }}
+														style={{ color: "var(--theme-accent)" }}
 														onClick={() => openLink(`${data?.author_url}`)}
 													>
 														{data?.author}
@@ -204,14 +235,16 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${installed
-												? "bg-green-500/20 text-green-400 border border-green-500/30"
-												: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
-												}`}
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
+												installed
+													? "bg-green-500/20 text-green-400 border border-green-500/30"
+													: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
+											}`}
 										>
 											<div
-												className={`w-1 h-1 rounded-full ${installed ? "bg-green-400" : "bg-neutral-400"
-													}`}
+												className={`w-1 h-1 rounded-full ${
+													installed ? "bg-green-400" : "bg-neutral-400"
+												}`}
 											/>
 											<span className="hidden sm:inline">
 												{installed
@@ -224,10 +257,13 @@ export default function ActionsComponent({
 
 									{/* Stats Row */}
 									{!isLocal && (
-											<div className="flex items-center gap-2 mt-1 flex-wrap">
+										<div className="flex items-center gap-2 mt-1 flex-wrap">
 											<div className="flex items-center gap-1 text-xs">
 												<Download size={14} className="text-neutral-400" />
-												<span className="font-medium" style={{ color: 'var(--theme-accent)' }}>
+												<span
+													className="font-medium"
+													style={{ color: "var(--theme-accent)" }}
+												>
 													{data.downloads?.toLocaleString() || 0}
 												</span>
 											</div>
@@ -236,9 +272,12 @@ export default function ActionsComponent({
 													type="button"
 													onClick={() => openLink(data?.script_url)}
 													className="flex items-center gap-1.5 text-xs hover:underline cursor-pointer"
-													style={{ color: 'var(--theme-accent)' }}
+													style={{ color: "var(--theme-accent)" }}
 												>
-													<BadgeCheck size={14} className="shrink-0 text-neutral-400" />
+													<BadgeCheck
+														size={14}
+														className="shrink-0 text-neutral-400"
+													/>
 													<span>
 														{data?.script_url
 															.replace(

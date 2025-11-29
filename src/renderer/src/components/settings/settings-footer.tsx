@@ -11,7 +11,11 @@ interface SettingsFooterProps {
 	};
 }
 
-export default function SettingsFooter({ packVersion, port, versions }: SettingsFooterProps) {
+export default function SettingsFooter({
+	packVersion,
+	port,
+	versions,
+}: SettingsFooterProps) {
 	const { t } = useTranslation();
 
 	return (
@@ -31,7 +35,9 @@ export default function SettingsFooter({ packVersion, port, versions }: Settings
 				<button
 					type="button"
 					className="hover:underline cursor-pointer hover:text-neutral-400 transition-colors"
-					onClick={() => openLink("https://github.com/dioneapp/dioneapp/releases")}
+					onClick={() =>
+						openLink("https://github.com/dioneapp/dioneapp/releases")
+					}
 				>
 					v{packVersion || "0.0.0"}
 				</button>

@@ -5,7 +5,8 @@ export default function Loading() {
 				<div
 					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-lg p-4 items-center"
 					style={{
-						background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)'
+						background:
+							"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)",
 					}}
 				>
 					<div className="flex w-full gap-2 animate-pulse">
@@ -19,7 +20,8 @@ export default function Loading() {
 				<div
 					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-lg p-4 items-center"
 					style={{
-						background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)'
+						background:
+							"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)",
 					}}
 				>
 					<div className="flex w-full gap-2 animate-pulse">
@@ -33,7 +35,8 @@ export default function Loading() {
 				<div
 					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-lg p-4 items-center"
 					style={{
-						background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)'
+						background:
+							"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)",
 					}}
 				>
 					<div className="flex w-full gap-2 animate-pulse">
@@ -47,7 +50,8 @@ export default function Loading() {
 				<div
 					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-lg p-4 items-center"
 					style={{
-						background: 'linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)'
+						background:
+							"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)",
 					}}
 				>
 					<div className="flex w-full gap-2 animate-pulse">
