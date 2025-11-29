@@ -96,15 +96,10 @@ export default function ActionsComponent({
 			{data ? (
 				<motion.div
 					key="actions-content"
-					initial={{ opacity: 0.2, scale: 0.9, filter: "blur(3px)" }}
-					animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-					exit={{ opacity: 0, scale: 0.9, filter: "blur(3px)" }}
-					transition={{
-						type: "spring",
-						stiffness: 110,
-						damping: 15,
-						duration: 0.1,
-					}}
+					initial={{ opacity: 0 }}
+					animate={{ opacity: 1 }}
+					exit={{ opacity: 0 }}
+					transition={{ duration: 0.15 }}
 					className="flex flex-col w-full max-w-xl px-4 sm:px-6"
 				>
 					{/* Hero Card */}
@@ -189,7 +184,7 @@ export default function ActionsComponent({
 											</h1>
 											{!isLocal && (
 												<p className="text-xs text-neutral-400 flex items-center gap-1 mt-0.5 flex-wrap">
-													<User size={11} />
+													<User size={14} />
 													{data?.og_author && (
 														<span className="truncate">{data?.og_author}</span>
 													)}
@@ -229,9 +224,9 @@ export default function ActionsComponent({
 
 									{/* Stats Row */}
 									{!isLocal && (
-										<div className="flex items-center gap-2 mt-1 flex-wrap">
-											<div className="flex items-center gap-1 text-[10px]">
-												<Download className="h-3 w-3 text-neutral-400" />
+											<div className="flex items-center gap-2 mt-1 flex-wrap">
+											<div className="flex items-center gap-1 text-xs">
+												<Download size={14} className="text-neutral-400" />
 												<span className="font-medium" style={{ color: 'var(--theme-accent)' }}>
 													{data.downloads?.toLocaleString() || 0}
 												</span>
@@ -240,13 +235,10 @@ export default function ActionsComponent({
 												<button
 													type="button"
 													onClick={() => openLink(data?.script_url)}
-													className="flex items-center gap-1 text-[10px] hover:underline cursor-pointer"
+													className="flex items-center gap-1.5 text-xs hover:underline cursor-pointer"
 													style={{ color: 'var(--theme-accent)' }}
 												>
-													<BadgeCheck
-														size={12}
-														className="shrink-0 text-neutral-400"
-													/>
+													<BadgeCheck size={14} className="shrink-0 text-neutral-400" />
 													<span>
 														{data?.script_url
 															.replace(
