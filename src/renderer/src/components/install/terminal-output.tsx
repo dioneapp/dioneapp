@@ -79,30 +79,12 @@ export default function TerminalOutput({
 					"whitespace-pre-wrap break-words text-justify font-mono text-[13px] leading-relaxed space-y-1"
 				}
 			>
-				{processedLines.map((line, idx) => (
-					<div 
-						key={line.key} 
-						className={`${line.style} group relative`}
-						style={{
-							animation: `fadeInLine 0.2s ease-out ${idx * 0.01}s backwards`
-						}}
-					>
+				{processedLines.map((line) => (
+					<div key={line.key} className={`${line.style} group relative`}>
 						{line.content}
 					</div>
 				))}
 			</pre>
-			<style>{`
-				@keyframes fadeInLine {
-					from {
-						opacity: 0;
-						transform: translateX(-4px);
-					}
-					to {
-						opacity: 1;
-						transform: translateX(0);
-					}
-				}
-			`}</style>
 		</div>
 	);
 }

@@ -2,8 +2,8 @@ import ProgressBar from "@/components/common/progress-bar";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import TerminalOutput from "@/components/install/terminal-output";
 import { useTranslation } from "@/translations/translation-context";
+
 import { MAX_TERMINAL_LINES } from "@/utils/terminal";
-import { motion } from "framer-motion";
 import { Copy, ExternalLink, Square } from "lucide-react";
 import { useEffect, useMemo } from "react";
 
@@ -38,15 +38,8 @@ export default function LogsComponent({
 	}, [progress?.[appId]?.steps?.length]);
 
 	return (
-		<motion.div
-			className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden"
-			key="logs"
-			initial={{ opacity: 0, height: 0, y: 20 }}
-			animate={{ opacity: 1, height: "auto", y: 0 }}
-			exit={{ opacity: 0, height: 0, y: -20 }}
-			transition={{ duration: 0.3 }}
-		>
-			<motion.div className="p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/40 hide-scrollbar">
+		<div className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden">
+			   <div className="p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/40 hide-scrollbar">
 				<TerminalOutput
 					id="logs"
 					lines={processedLogs}
@@ -102,10 +95,10 @@ export default function LogsComponent({
 						</button>
 					</div>
 				</div>
-			</motion.div>
+			   </div>
 			<div className="text-[11px] text-neutral-500 mt-2 mb-2 text-center mx-auto justify-center items-center flex">
 				{t("logs.disclaimer")}
 			</div>
-		</motion.div>
+		</div>
 	);
 }
