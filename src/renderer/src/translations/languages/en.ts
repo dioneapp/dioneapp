@@ -167,26 +167,26 @@ export const en = {
 			installationDirectory: {
 				label: "Installation Directory",
 				description:
-					"Choose where new applications will be installed by default",
+					"Choose where new applications will be installed by default.",
 			},
 			binDirectory: {
 				label: "Bin Directory",
 				description:
-					"Choose where the application binaries will be stored for easy access",
+					"Choose where the application binaries will be stored for easy access.",
 			},
 			cleanUninstall: {
 				label: "Clean Uninstall",
 				description:
-					"Remove all related dependencies when uninstalling applications",
+					"Remove all related dependencies when uninstalling applications.",
 			},
 			autoOpenAfterInstall: {
 				label: "Auto-Open After Install",
 				description:
-					"Automatically open applications for the first time after installation",
+					"Automatically open applications for the first time after installation.",
 			},
 			deleteCache: {
 				label: "Delete Cache",
-				description: "Remove all cached data from applications",
+				description: "Remove all cached data from applications.",
 				button: "Delete Cache",
 				deleting: "Deleting...",
 				deleted: "Deleted",
@@ -197,40 +197,40 @@ export const en = {
 			title: "Interface",
 			displayLanguage: {
 				label: "Display Language",
-				description: "Choose your preferred interface language",
+				description: "Choose your preferred interface language.",
 			},
 			helpTranslate: "🤔 Not seeing your language? Help us add more!",
 			compactView: {
 				label: "Compact View",
 				description:
-					"Use a more condensed layout to fit more content on screen",
+					"Use a more condensed layout to fit more content on screen.",
 			},
 		},
 		notifications: {
 			title: "Notifications",
 			systemNotifications: {
 				label: "System Notifications",
-				description: "Show desktop notifications for important events",
+				description: "Show desktop notifications for important events.",
 			},
 			installationAlerts: {
 				label: "Installation Alerts",
-				description: "Get notified when application installations complete",
+				description: "Get notified when application installations complete.",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
-				description: "Show your current activity in Discord status",
+				description: "Show your current activity in Discord status.",
 			},
 			successSound: {
 				label: "Enable Success Sound",
 				description:
-					"Enable the sound that plays when applications finish installing",
+					"Enable the sound that plays when applications finish installing.",
 			},
 		},
 		privacy: {
 			title: "Privacy",
 			errorReporting: {
 				label: "Error Reporting",
-				description: "Help improve Dione by sending anonymous error reports",
+				description: "Help improve Dione by sending anonymous error reports.",
 			},
 		},
 		other: {
@@ -242,34 +242,34 @@ export const en = {
 			},
 			logsDirectory: {
 				label: "Logs Directory",
-				description: "Location where application logs are stored",
+				description: "Location where application logs are stored.",
 			},
 			exportLogs: {
 				label: "Export Debug Logs",
 				description:
-					"Export all logs and system information in a zip file for debugging",
+					"Export all logs and system information in a zip file for debugging.",
 				button: "Export Logs",
 			},
 			submitFeedback: {
 				label: "Submit Feedback",
-				description: "Report any issues or problems you encounter",
+				description: "Report any issues or problems you encounter.",
 				button: "Send Report",
 			},
 			showOnboarding: {
 				label: "Show onboarding",
 				description:
-					"Reset Dione to its initial state and show again the onboarding for reconfiguration",
+					"Reset Dione to its initial state and show again the onboarding for reconfiguration.",
 				button: "Reset",
 			},
 			variables: {
 				label: "Variables",
-				description: "Manage application variables and their values",
+				description: "Manage application variables and their values.",
 				button: "Open Variables",
 			},
 			checkUpdates: {
 				label: "Check for updates",
 				description:
-					"Check for updates and notify you when a new version is available",
+					"Check for updates and notify you when a new version is available.",
 				button: "Check for updates",
 			},
 		},

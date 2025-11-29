@@ -1,0 +1,66 @@
+import { languages, useTranslation } from "@/translations/translation-context";
+import { motion } from "framer-motion";
+import CustomSelect from "../custom-select";
+import SettingItem from "../setting-item";
+import ToggleSwitch from "../toggle-switch";
+
+interface InterfaceTabProps {
+	config: any;
+	language: string;
+	handleUpdate: (newConfig: Partial<any>) => void;
+	setLanguage: (lang: any) => void;
+}
+
+export default function InterfaceTab({
+	config,
+	language,
+	handleUpdate,
+	setLanguage,
+}: InterfaceTabProps) {
+	const { t } = useTranslation();
+
+	return (
+		<motion.div
+			initial={{ opacity: 0, y: 20 }}
+			animate={{ opacity: 1, y: 0 }}
+			exit={{ opacity: 0, y: -20 }}
+			transition={{ duration: 0.2 }}
+			className="flex flex-col gap-6"
+		>
+			<SettingItem
+				label={t("settings.interface.displayLanguage.label")}
+				description={t("settings.interface.displayLanguage.description")}
+			>
+				<CustomSelect
+					value={language}
+					onChange={(value) => setLanguage(value as any)}
+					options={Object.entries(languages).map(([value, label]) => ({
+						value,
+						label,
+					}))}
+				/>
+			</SettingItem>
+
+			<div>
+				<a
+					href="https://github.com/dioneapp/dioneapp"
+					target="_blank"
+					rel="noopener noreferrer"
+					className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-3 py-1 rounded-full bg-white/10 hover:bg-white/15 inline-block"
+				>
+					{t("settings.interface.helpTranslate")}
+				</a>
+			</div>
+
+			<SettingItem
+				label={t("settings.interface.compactView.label")}
+				description={t("settings.interface.compactView.description")}
+			>
+				<ToggleSwitch
+					enabled={config.compactMode}
+					onChange={() => handleUpdate({ compactMode: !config.compactMode })}
+				/>
+			</SettingItem>
+		</motion.div>
+	);
+}
