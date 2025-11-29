@@ -5,7 +5,12 @@ interface SettingItemProps {
 	layout?: "row" | "column";
 }
 
-export default function SettingItem({ label, description, children, layout = "row" }: SettingItemProps) {
+export default function SettingItem({
+	label,
+	description,
+	children,
+	layout = "row",
+}: SettingItemProps) {
 	if (layout === "column") {
 		return (
 			<div className="flex flex-col gap-3 w-full">

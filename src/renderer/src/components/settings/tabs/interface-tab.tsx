@@ -41,7 +41,6 @@ export default function InterfaceTab({
 					}))}
 				/>
 			</SettingItem>
-
 			<div>
 				<a
 					href="https://github.com/dioneapp/dioneapp"
@@ -52,14 +51,14 @@ export default function InterfaceTab({
 					{t("settings.interface.helpTranslate")}
 				</a>
 			</div>
-
-		<SettingItem
-			label={t("settings.interface.theme.label")}
-			description={t("settings.interface.theme.description")}
-			layout="column"
-		>
-			<ThemeSelector />
-		</SettingItem>			<SettingItem
+			<SettingItem
+				label={t("settings.interface.theme.label")}
+				description={t("settings.interface.theme.description")}
+				layout="column"
+			>
+				<ThemeSelector />
+			</SettingItem>{" "}
+			<SettingItem
 				label={t("settings.interface.compactView.label")}
 				description={t("settings.interface.compactView.description")}
 			>

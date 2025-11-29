@@ -2,11 +2,11 @@
 
 :root {
 	--theme-background: #080808;
-	--theme-accent: #BCB1E7;
-	--theme-accent-secondary: #9A8FD1;
-	--theme-gradient-from: #BCB1E7;
-	--theme-gradient-to: #9A8FD1;
-	--theme-blur: #BCB1E7;
+	--theme-accent: #bcb1e7;
+	--theme-accent-secondary: #9a8fd1;
+	--theme-gradient-from: #bcb1e7;
+	--theme-gradient-to: #9a8fd1;
+	--theme-blur: #bcb1e7;
 }
 
 body {

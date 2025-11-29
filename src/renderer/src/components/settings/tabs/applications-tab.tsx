@@ -37,7 +37,9 @@ export default function ApplicationsTab({
 		>
 			<SettingItem
 				label={t("settings.applications.installationDirectory.label")}
-				description={t("settings.applications.installationDirectory.description")}
+				description={t(
+					"settings.applications.installationDirectory.description",
+				)}
 			>
 				<CustomInput
 					value={joinPath(config.defaultInstallFolder)}
@@ -70,7 +72,9 @@ export default function ApplicationsTab({
 
 			<SettingItem
 				label={t("settings.applications.autoOpenAfterInstall.label")}
-				description={t("settings.applications.autoOpenAfterInstall.description")}
+				description={t(
+					"settings.applications.autoOpenAfterInstall.description",
+				)}
 			>
 				<ToggleSwitch
 					enabled={config.autoOpenAfterInstall}

@@ -48,14 +48,15 @@ export function setupSocket({
 	) => {
 		const diff = nextPercent - lastPercent;
 		let smooth: number;
-		
+
 		if (diff > 0) {
 			const smoothingFactor = diff < 5 ? 0.3 : 0.4;
-			smooth = smoothingFactor * lastPercent + (1 - smoothingFactor) * nextPercent;
+			smooth =
+				smoothingFactor * lastPercent + (1 - smoothingFactor) * nextPercent;
 		} else {
 			smooth = 0.8 * lastPercent + 0.2 * nextPercent;
 		}
-		
+
 		lastPercent = smooth;
 		setProgress((prev) => ({
 			...prev,

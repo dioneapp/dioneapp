@@ -1,10 +1,10 @@
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { readConfig } from "@/config";
 import logger from "@/server/utils/logger";
 import archiver from "archiver";
 import { app } from "electron";
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
 import si from "systeminformation";
 
 /**
@@ -59,22 +59,30 @@ Used: ${(mem.used / 1024 / 1024 / 1024).toFixed(2)} GB
 Active: ${(mem.active / 1024 / 1024 / 1024).toFixed(2)} GB
 
 === GRAPHICS ===
-${graphics.controllers.map((gpu, i) => `
+${graphics.controllers
+	.map(
+		(gpu, i) => `
 GPU ${i + 1}:
   Model: ${gpu.model}
   Vendor: ${gpu.vendor}
   VRAM: ${gpu.vram} MB
   Driver Version: ${gpu.driverVersion}
-`).join("\n")}
+`,
+	)
+	.join("\n")}
 
 === DISK ===
-${disk.map((d, i) => `
+${disk
+	.map(
+		(d, i) => `
 Disk ${i + 1}:
   Type: ${d.type}
   Name: ${d.name}
   Size: ${(d.size / 1024 / 1024 / 1024).toFixed(2)} GB
   Interface: ${d.interfaceType}
-`).join("\n")}
+`,
+	)
+	.join("\n")}
 
 === NODE.JS ===
 Node Version: ${process.versions.node}
@@ -110,7 +118,9 @@ ${JSON.stringify(os.networkInterfaces(), null, 2)}
  * @param destinationPath - The path where the zip file should be saved
  * @returns Path to the generated zip file
  */
-export async function exportDebugLogs(destinationPath: string): Promise<string> {
+export async function exportDebugLogs(
+	destinationPath: string,
+): Promise<string> {
 	return new Promise(async (resolve, reject) => {
 		try {
 			const logsDir = app.getPath("logs");
@@ -124,7 +134,9 @@ export async function exportDebugLogs(destinationPath: string): Promise<string> 
 
 			// handle stream events
 			output.on("close", () => {
-				logger.info(`Debug logs exported successfully: ${zipPath} (${archive.pointer()} bytes)`);
+				logger.info(
+					`Debug logs exported successfully: ${zipPath} (${archive.pointer()} bytes)`,
+				);
 				resolve(zipPath);
 			});
 

@@ -52,7 +52,10 @@ export default function CustomCommandsModal({
 					</div>
 					{/* background effects */}
 					<div className="absolute w-full h-full overflow-hidden pointer-events-none">
-						<div className="absolute top-0 left-2/4 w-32 h-32 rounded-full -translate-y-1/2 blur-3xl" style={{ backgroundColor: 'var(--theme-blur)' }} />
+						<div
+							className="absolute top-0 left-2/4 w-32 h-32 rounded-full -translate-y-1/2 blur-3xl"
+							style={{ backgroundColor: "var(--theme-blur)" }}
+						/>
 					</div>
 				</div>
 			</div>

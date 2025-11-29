@@ -1,4 +1,4 @@
-import { Theme, themes } from "@/utils/theme";
+import { type Theme, themes } from "@/utils/theme";
 import { Check } from "lucide-react";
 
 interface ThemePreviewProps {
@@ -8,7 +8,12 @@ interface ThemePreviewProps {
 	onClick: () => void;
 }
 
-export default function ThemePreview({ theme, isActive, isIntense = false, onClick }: ThemePreviewProps) {
+export default function ThemePreview({
+	theme,
+	isActive,
+	isIntense = false,
+	onClick,
+}: ThemePreviewProps) {
 	const themeColors = themes[theme];
 
 	return (
@@ -48,7 +53,11 @@ export default function ThemePreview({ theme, isActive, isIntense = false, onCli
 						/>
 						<div
 							className="w-3 h-3 rounded-full border border-white/20"
-							style={{ backgroundColor: isIntense ? themeColors.background.intense : themeColors.background.subtle }}
+							style={{
+								backgroundColor: isIntense
+									? themeColors.background.intense
+									: themeColors.background.subtle,
+							}}
 						/>
 					</div>
 				</div>

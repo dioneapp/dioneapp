@@ -40,7 +40,7 @@ export default function DeleteLoadingModal({
 			};
 		}
 
-		return () => { };
+		return () => {};
 	}, [status]);
 
 	return (

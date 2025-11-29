@@ -157,7 +157,11 @@ export default function FirstTime() {
 				animate={{ opacity: 1 }}
 				transition={{ duration: 1 }}
 				className="absolute blur-sm h-full w-full"
-				style={{ backgroundColor: 'color-mix(in srgb, var(--theme-accent) 5%, transparent)', zIndex: -1 }}
+				style={{
+					backgroundColor:
+						"color-mix(in srgb, var(--theme-accent) 5%, transparent)",
+					zIndex: -1,
+				}}
 			/>
 			<AnimatePresence mode="wait">
 				{/* 1 - welcome */}
@@ -202,7 +206,8 @@ export default function FirstTime() {
 										}}
 										className="bg-clip-text text-transparent inline-block"
 										style={{
-											backgroundImage: 'linear-gradient(to top, rgba(255, 255, 255, 0.8), var(--theme-accent), var(--theme-accent))'
+											backgroundImage:
+												"linear-gradient(to top, rgba(255, 255, 255, 0.8), var(--theme-accent), var(--theme-accent))",
 										}}
 									>
 										{char}
@@ -387,12 +392,16 @@ export default function FirstTime() {
 			{level !== 2 && (
 				<motion.div className="absolute bottom-4 left-1/2 translate-x-[-50%]">
 					<div className="flex gap-2">
-					{[1, 2, 3, 4, 5].map((lvl) => (
-						<div key={lvl} className="py-1">
-							<div
-								className={`w-6 h-1 rounded-full ${lvl === level ? "w-10" : "bg-white/20"}`}
-								style={lvl === level ? { backgroundColor: 'var(--theme-accent)' } : {}}
-							/>
+						{[1, 2, 3, 4, 5].map((lvl) => (
+							<div key={lvl} className="py-1">
+								<div
+									className={`w-6 h-1 rounded-full ${lvl === level ? "w-10" : "bg-white/20"}`}
+									style={
+										lvl === level
+											? { backgroundColor: "var(--theme-accent)" }
+											: {}
+									}
+								/>
 							</div>
 						))}
 					</div>

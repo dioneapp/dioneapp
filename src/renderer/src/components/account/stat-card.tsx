@@ -30,13 +30,18 @@ export const StatCard = ({
 			}}
 			className={`group relative rounded-xl p-8 h-auto flex flex-col border border-white/10 backdrop-blur-sm hover:border-white/20 transition-all duration-300 ${className}`}
 			style={{
-				background: 'linear-gradient(135deg, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-background) 20%, transparent))'
+				background:
+					"linear-gradient(135deg, color-mix(in srgb, var(--theme-accent) 10%, transparent), color-mix(in srgb, var(--theme-background) 20%, transparent))",
 			}}
 		>
 			{isStreak && (
-				<div className="absolute inset-0 opacity-100 rounded-xl" style={{
-					background: 'linear-gradient(135deg, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)'
-				}} />
+				<div
+					className="absolute inset-0 opacity-100 rounded-xl"
+					style={{
+						background:
+							"linear-gradient(135deg, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)",
+					}}
+				/>
 			)}
 			<div className="relative flex flex-col items-start overflow-hidden h-full">
 				<span className="flex flex-col items-start gap-0.5 w-full mb-6">
@@ -65,18 +70,21 @@ export const StatCard = ({
 							{[1, 2, 3, 4, 5, 6, 7].map((day) => (
 								<motion.div
 									key={day}
-								initial={{ scale: 0 }}
-								animate={{ scale: 1 }}
-								transition={{ delay: day * 0.1 }}
-								className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-									day <= (streakDays || 0)
-										? ""
-										: "bg-neutral-700"
-								}`}
-								style={day <= (streakDays || 0) ? {
-									background: 'linear-gradient(to right, var(--theme-accent), white)'
-								} : {}}
-							/>
+									initial={{ scale: 0 }}
+									animate={{ scale: 1 }}
+									transition={{ delay: day * 0.1 }}
+									className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+										day <= (streakDays || 0) ? "" : "bg-neutral-700"
+									}`}
+									style={
+										day <= (streakDays || 0)
+											? {
+													background:
+														"linear-gradient(to right, var(--theme-accent), white)",
+												}
+											: {}
+									}
+								/>
 							))}
 						</div>
 					</>
