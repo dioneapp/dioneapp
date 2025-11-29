@@ -39,7 +39,7 @@ export default function LogsComponent({
 
 	return (
 		<div className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden">
-			   <div className="p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/40 hide-scrollbar">
+			<div className="p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/40 hide-scrollbar">
 				<TerminalOutput
 					id="logs"
 					lines={processedLogs}
@@ -95,7 +95,7 @@ export default function LogsComponent({
 						</button>
 					</div>
 				</div>
-			   </div>
+			</div>
 			<div className="text-[11px] text-neutral-500 mt-2 mb-2 text-center mx-auto justify-center items-center flex">
 				{t("logs.disclaimer")}
 			</div>
