@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 import type { Socket } from "socket.io-client";
 
 // Auth context
@@ -172,4 +173,30 @@ export interface SetupSocketProps {
 		React.SetStateAction<Record<string, ProgressState>>
 	>;
 	isLocal?: boolean;
+}
+
+export interface AIContextType {
+	messages: { role: string; content: string }[];
+	setMessages: (messages: { role: string; content: string }[]) => void;
+	ollamaStatus: string;
+	setOllamaStatus: (status: string) => void;
+	ollamaInstalled: boolean;
+	setOllamaInstalled: (installed: boolean) => void;
+	ollamaRunning: boolean;
+	setOllamaRunning: (running: boolean) => void;
+	ollamaModel: string;
+	setOllamaModel: (model: string) => void;
+	ollamaSupport: string[];
+	setOllamaSupport: (support: string[]) => void;
+	showInstallModal: boolean | string;
+	setShowInstallModal: (modal: boolean | string) => void;
+	showModelHub: boolean;
+	setShowModelHub: (hub: boolean) => void;
+	installStep: number;
+	setInstallStep: Dispatch<SetStateAction<number>>;
+	chat: (prompt: string) => Promise<void>;
+	downloadOllama: () => void;
+	handleStopOllama: () => void;
+	handleStartOllama: () => void;
+	checkOllama: () => void;
 }

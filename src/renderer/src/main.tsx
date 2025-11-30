@@ -7,6 +7,7 @@ import { TranslationProvider } from "@/translations/translation-context";
 import { ToastProvider } from "@/utils/use-toast";
 import ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
+import { AIContextProvider } from "./components/contexts/ai-context";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 	<HashRouter>
@@ -14,7 +15,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
 			<ToastProvider>
 				<AuthContextProvider>
 					<ScriptsContext>
-						<App />
+						<AIContextProvider>
+							<App />
+						</AIContextProvider>
 					</ScriptsContext>
 				</AuthContextProvider>
 			</ToastProvider>
