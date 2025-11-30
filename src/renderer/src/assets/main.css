@@ -6,10 +6,12 @@
 	--theme-gradient-from: #bcb1e7;
 	--theme-gradient-to: #9a8fd1;
 	--theme-blur: #bcb1e7;
+	--theme-background: #080808;
 }
 
 body {
 	color: #fff;
+	background-color: var(--theme-background);
 	font-family: "Poppins", serif;
 	user-select: none;
 	scroll-behavior: smooth;

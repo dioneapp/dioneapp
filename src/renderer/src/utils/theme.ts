@@ -27,7 +27,7 @@ export const themes: Record<Theme, ThemeColors> = {
 		name: "Purple Dream",
 		background: {
 			subtle: "#080808",
-			intense: "#1a0f2e",
+			intense: "#0d0716",
 		},
 		accent: "#BCB1E7",
 		accentSecondary: "#9A8FD1",
@@ -41,7 +41,7 @@ export const themes: Record<Theme, ThemeColors> = {
 		name: "Midnight Blue",
 		background: {
 			subtle: "#080a10",
-			intense: "#0a0e27",
+			intense: "#060814",
 		},
 		accent: "#6B8DD6",
 		accentSecondary: "#4A5F9D",
@@ -55,7 +55,7 @@ export const themes: Record<Theme, ThemeColors> = {
 		name: "Ocean Depths",
 		background: {
 			subtle: "#08090c",
-			intense: "#061621",
+			intense: "#031019",
 		},
 		accent: "#4DD0E1",
 		accentSecondary: "#26A69A",
@@ -69,7 +69,7 @@ export const themes: Record<Theme, ThemeColors> = {
 		name: "Forest Night",
 		background: {
 			subtle: "#080a08",
-			intense: "#0d1b0d",
+			intense: "#08120a",
 		},
 		accent: "#66BB6A",
 		accentSecondary: "#43A047",
@@ -83,7 +83,7 @@ export const themes: Record<Theme, ThemeColors> = {
 		name: "Sunset Glow",
 		background: {
 			subtle: "#0a0808",
-			intense: "#1a0a0a",
+			intense: "#080505",
 		},
 		accent: "#FF7043",
 		accentSecondary: "#F4511E",
@@ -97,7 +97,7 @@ export const themes: Record<Theme, ThemeColors> = {
 		name: "Royal Purple",
 		background: {
 			subtle: "#09080b",
-			intense: "#120a1f",
+			intense: "#07040d",
 		},
 		accent: "#9C27B0",
 		accentSecondary: "#7B1FA2",

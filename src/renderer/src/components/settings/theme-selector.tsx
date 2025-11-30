@@ -1,11 +1,11 @@
 import { useTranslation } from "@/translations/translation-context";
 import {
-	type Theme,
-	applyTheme,
-	getStoredBackgroundIntensity,
-	getStoredTheme,
-	setBackgroundIntensity,
-	themes,
+    type Theme,
+    applyTheme,
+    getStoredBackgroundIntensity,
+    getStoredTheme,
+    setBackgroundIntensity,
+    themes,
 } from "@/utils/theme";
 import { useState } from "react";
 import SettingItem from "./setting-item";
@@ -26,6 +26,7 @@ export default function ThemeSelector() {
 
 	const handleIntensityToggle = (enabled: boolean) => {
 		setIsIntense(enabled);
+		applyTheme(selectedTheme, enabled ? "intense" : "subtle");
 		setBackgroundIntensity(enabled ? "intense" : "subtle");
 	};
 
