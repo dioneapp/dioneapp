@@ -11,6 +11,8 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
     const [messages, setMessages] = useState<{ role: string; content: string }[]>(
         [],
     );
+    const [messageLoading, setMessageLoading] = useState(false);
+    const [redirecting, setRedirecting] = useState(false);
     const [ollamaStatus, setOllamaStatus] = useState("");
     const [ollamaInstalled, setOllamaInstalled] = useState(false);
     const [ollamaRunning, setOllamaRunning] = useState(false);
@@ -149,6 +151,7 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
         }
 
         try {
+            setMessageLoading(true);
             const response = await apiFetch(`/ai/ollama/chat`, {
                 method: "POST",
                 headers: {
@@ -164,13 +167,14 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
 
             const data = await response.json();
 
-            if (data?.error) {
+            if (data?.error && !redirecting) {
                 console.error(data?.message);
                 setOllamaStatus(data?.error);
-                setMessages((prev) => [
-                    ...prev,
-                    { role: "assistant", content: data?.message },
-                ]);
+                // setMessages((prev) => [
+                //     ...prev,
+                //     { role: "assistant", content: data?.message },
+                // ]);
+                setMessageLoading(false);
                 return;
             }
 
@@ -178,6 +182,7 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
                 ...prev,
                 { role: "assistant", content: data?.message?.content },
             ]);
+            setMessageLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
             setMessages((prev) => [
@@ -187,6 +192,7 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
                     content: "An error occurred while fetching data. Please try again.",
                 },
             ]);
+            setMessageLoading(false);
         }
     };
 
@@ -195,8 +201,12 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
         if (socket) {
             console.log("Socket connected");
             socket.on("ollama:navigate-to-app", (data: { id: string, action: "navigate" | "start" | "install" }) => {
+                setRedirecting(true);
                 console.log("Navigating to app", data);
                 navigate(`/install/${data.id}?action=${data.action}`);
+                setTimeout(() => {
+                    setRedirecting(false);
+                }, 500);
             });
         }
 
@@ -211,6 +221,8 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
         <AIContext.Provider value={{
             messages,
             setMessages,
+            messageLoading,
+            setMessageLoading,
             ollamaStatus,
             setOllamaStatus,
             ollamaInstalled,

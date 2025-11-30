@@ -178,6 +178,8 @@ export interface SetupSocketProps {
 export interface AIContextType {
 	messages: { role: string; content: string }[];
 	setMessages: (messages: { role: string; content: string }[]) => void;
+	messageLoading: boolean;
+	setMessageLoading: (loading: boolean) => void;
 	ollamaStatus: string;
 	setOllamaStatus: (status: string) => void;
 	ollamaInstalled: boolean;

@@ -1,4 +1,5 @@
 import Icon from "@/components/icons/icon";
+import { LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -9,10 +10,12 @@ export default function Messages({
 	messages,
 	logsEndRef,
 	quickAI,
+	messageLoading,
 }: {
 	messages: any[];
 	logsEndRef: React.RefObject<HTMLDivElement | null>;
 	quickAI?: boolean;
+	messageLoading?: boolean;
 }) {
 	// scroll to bottom
 	useEffect(() => {
@@ -40,13 +43,13 @@ export default function Messages({
 						{message?.role !== "user" &&
 							message?.message?.tool_calls &&
 							message?.message?.tool_calls?.length > 0 && (
-								<div className="mb-2">
+								<div className="my-2 first:mt-0">
 									{message?.message?.tool_calls[0].function.name ===
 										"read_file" && (
-										<span className="text-xs text-gray-500 dark:text-gray-400">
-											Reading files...
-										</span>
-									)}
+											<span className="text-xs text-gray-500 dark:text-gray-400">
+												Reading files...
+											</span>
+										)}
 								</div>
 							)}
 						<div
@@ -113,6 +116,11 @@ export default function Messages({
 					</div>
 				</div>
 			))}
+			{messageLoading && (
+				<div className="flex items-center mx-12 pb-4 justify-start">
+					<LoaderCircle className="w-5 h-5 animate-spin duration-100" />
+				</div>
+			)}
 			<div ref={logsEndRef} />
 		</div>
 	);

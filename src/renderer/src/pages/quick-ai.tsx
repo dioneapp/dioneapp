@@ -4,6 +4,7 @@ import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { motion } from "framer-motion";
 import {
 	ArrowRight,
+	BrushCleaning,
 	CornerLeftDown,
 	Play,
 	Square,
@@ -14,7 +15,7 @@ import { InstallAIModal } from "@/components/modals/install-ai";
 
 export default function QuickAI() {
 	const { logs } = useScriptsContext();
-	const { chat, messages, checkOllama, handleStartOllama, handleStopOllama, showInstallModal, showModelHub, setShowModelHub, setOllamaModel, setOllamaSupport, ollamaModel, ollamaInstalled, ollamaRunning, installStep, setInstallStep, ollamaStatus, downloadOllama } = useAIContext();
+	const { chat, messages, setMessages, messageLoading, checkOllama, handleStartOllama, handleStopOllama, showInstallModal, showModelHub, setShowModelHub, setOllamaModel, setOllamaSupport, ollamaModel, ollamaInstalled, ollamaRunning, installStep, setInstallStep, ollamaStatus, downloadOllama } = useAIContext();
 	const logsEndRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -82,7 +83,7 @@ export default function QuickAI() {
 						) : (
 							<div className="w-full mx-auto flex justify-center items-center">
 								<div ref={logsEndRef} />
-								<Messages messages={messages} logsEndRef={logsEndRef} quickAI />
+								<Messages messages={messages} messageLoading={messageLoading} logsEndRef={logsEndRef} quickAI />
 							</div>
 						)}
 					</div>
@@ -108,6 +109,12 @@ export default function QuickAI() {
 								) : (
 									<Play className="w-4 h-4 text-neutral-400 group-hover:text-neutral-200" />
 								)}
+							</button>
+							<button className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group"
+								onClick={() => setMessages([])}
+								title="Clear chat"
+							>
+								<BrushCleaning className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
 							</button>
 							<div
 								className="w-fit h-6 flex items-center justify-center"
