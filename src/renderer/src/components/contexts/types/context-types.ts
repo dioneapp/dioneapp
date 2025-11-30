@@ -180,6 +180,10 @@ export interface AIContextType {
 	setMessages: (messages: { role: string; content: string }[]) => void;
 	messageLoading: boolean;
 	setMessageLoading: (loading: boolean) => void;
+	redirecting: boolean;
+	setRedirecting: (redirecting: boolean) => void;
+	usingTool: { name: string; message: string };
+	setUsingTool: (tool: { name: string; message: string }) => void;
 	ollamaStatus: string;
 	setOllamaStatus: (status: string) => void;
 	ollamaInstalled: boolean;

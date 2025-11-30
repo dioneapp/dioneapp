@@ -15,7 +15,7 @@ import { InstallAIModal } from "@/components/modals/install-ai";
 
 export default function QuickAI() {
 	const { logs } = useScriptsContext();
-	const { chat, messages, setMessages, messageLoading, checkOllama, handleStartOllama, handleStopOllama, showInstallModal, showModelHub, setShowModelHub, setOllamaModel, setOllamaSupport, ollamaModel, ollamaInstalled, ollamaRunning, installStep, setInstallStep, ollamaStatus, downloadOllama } = useAIContext();
+	const { chat, messages, setMessages, usingTool, messageLoading, checkOllama, handleStartOllama, handleStopOllama, showInstallModal, showModelHub, setShowModelHub, setOllamaModel, setOllamaSupport, ollamaModel, ollamaInstalled, ollamaRunning, installStep, setInstallStep, ollamaStatus, downloadOllama } = useAIContext();
 	const logsEndRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -83,7 +83,7 @@ export default function QuickAI() {
 						) : (
 							<div className="w-full mx-auto flex justify-center items-center">
 								<div ref={logsEndRef} />
-								<Messages messages={messages} messageLoading={messageLoading} logsEndRef={logsEndRef} quickAI />
+								<Messages messages={messages} messageLoading={messageLoading} logsEndRef={logsEndRef} usingTool={usingTool} quickAI />
 							</div>
 						)}
 					</div>

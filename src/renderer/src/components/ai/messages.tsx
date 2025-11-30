@@ -1,5 +1,5 @@
 import Icon from "@/components/icons/icon";
-import { LoaderCircle } from "lucide-react";
+import { Hammer, LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -11,11 +11,13 @@ export default function Messages({
 	logsEndRef,
 	quickAI,
 	messageLoading,
+	usingTool,
 }: {
 	messages: any[];
 	logsEndRef: React.RefObject<HTMLDivElement | null>;
 	quickAI?: boolean;
 	messageLoading?: boolean;
+	usingTool?: { name: string; message: string };
 }) {
 	// scroll to bottom
 	useEffect(() => {
@@ -23,6 +25,8 @@ export default function Messages({
 			logsEndRef.current.scrollIntoView({ behavior: "smooth" });
 		}
 	}, [messages]);
+
+	console.log("using tool", usingTool);
 
 	return (
 		<div
@@ -116,9 +120,16 @@ export default function Messages({
 					</div>
 				</div>
 			))}
-			{messageLoading && (
-				<div className="flex items-center mx-12 pb-4 justify-start">
-					<LoaderCircle className="w-5 h-5 animate-spin duration-100" />
+			{messageLoading && !usingTool?.name && (
+				<div className="flex gap-2 text-xs items-center justify-center animate-pulse rounded-full w-fit text-neutral-500 mx-12 p-1 px-2">
+					<LoaderCircle className="w-3.5 h-3.5 animate-spin duration-100" />
+					<span>Loading...</span>
+				</div>
+			)}
+			{usingTool?.name && messageLoading && (
+				<div className="flex gap-2 text-xs items-center justify-center animate-pulse rounded-full w-fit text-neutral-400 mx-12 p-1 px-2">
+					<Hammer className="w-3.5 h-3.5 duration-100" />
+					<span>{usingTool.message}...</span>
 				</div>
 			)}
 			<div ref={logsEndRef} />

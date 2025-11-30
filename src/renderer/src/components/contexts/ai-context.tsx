@@ -13,6 +13,7 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
     );
     const [messageLoading, setMessageLoading] = useState(false);
     const [redirecting, setRedirecting] = useState(false);
+    const [usingTool, setUsingTool] = useState({ name: "", message: "" });
     const [ollamaStatus, setOllamaStatus] = useState("");
     const [ollamaInstalled, setOllamaInstalled] = useState(false);
     const [ollamaRunning, setOllamaRunning] = useState(false);
@@ -178,6 +179,7 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
                 return;
             }
 
+            setUsingTool({ name: "", message: "" });
             setMessages((prev) => [
                 ...prev,
                 { role: "assistant", content: data?.message?.content },
@@ -208,11 +210,16 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
                     setRedirecting(false);
                 }, 500);
             });
+
+            socket.on("ollama:using-tool", (data: { name: string, message: string, icon: string }) => {
+                setUsingTool(data);
+            });
         }
 
         return () => {
             if (socket) {
                 socket.off("ollama:navigate-to-app");
+                socket.off("ollama:using-tool");
             }
         };
     }, [sockets, navigate]);
@@ -223,6 +230,10 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
             setMessages,
             messageLoading,
             setMessageLoading,
+            redirecting,
+            setRedirecting,
+            usingTool,
+            setUsingTool,
             ollamaStatus,
             setOllamaStatus,
             ollamaInstalled,
