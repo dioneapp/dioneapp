@@ -18,9 +18,11 @@ import { useNavigate } from "react-router-dom";
 export default function Install({
 	id,
 	isLocal,
+	action,
 }: {
 	id?: string;
 	isLocal?: boolean;
+	action?: "install" | "start" | "navigate";
 }) {
 	const {
 		setInstalledApps,
@@ -303,9 +305,22 @@ export default function Install({
 		return false;
 	}
 
+	async function handleActions(action: "install" | "start" | "navigate") {
+		if (action === "install") {
+			await download();
+		} else if (action === "start") {
+			await start();
+		} else if (action === "navigate") {
+			// do nothing
+		}
+	}
+
 	useEffect(() => {
 		fetchIfDownloaded();
-	}, [data, isLocal]);
+		if (action) {
+			handleActions(action);
+		}
+	}, [data, isLocal, action]);
 
 	useEffect(() => {
 		if (show[data?.id] === "actions") {

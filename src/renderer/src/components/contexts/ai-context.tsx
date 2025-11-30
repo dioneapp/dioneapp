@@ -2,6 +2,7 @@ import { apiFetch } from "@/utils/api";
 import { createContext, useContext, useEffect, useState } from "react";
 import { AIContextType } from "./types/context-types";
 import { useScriptsContext } from "./ScriptsContext";
+import { useNavigate } from "react-router-dom";
 
 const defaultModel = "gemma3:12b"
 const AIContext = createContext<AIContextType | undefined>(undefined)
@@ -21,7 +22,8 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
     const [showModelHub, setShowModelHub] = useState(false);
     const [installStep, setInstallStep] = useState<number>(1);
     // contexts
-    const { sockets, connectApp } = useScriptsContext()
+    const { sockets, connectApp, disconnectApp } = useScriptsContext()
+    const navigate = useNavigate();
 
     // if you want to start ollama when the app starts, uncomment the following code
     // useEffect(() => {
@@ -103,9 +105,16 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
     }
 
     async function handleStopOllama() {
+        if (!ollamaRunning) return;
         await apiFetch("/ai/ollama/stop", {
             method: "POST",
         });
+
+        if (sockets["ollama"]) {
+            await disconnectApp("ollama");
+            await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to disconnect
+        }
+
         setOllamaRunning(false);
         setShowModelHub(false);
     }
@@ -116,6 +125,11 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
         });
         if (response.status === 200) {
             setOllamaRunning(true);
+            // Connect ollama socket if not already connected
+            if (!sockets["ollama"]) {
+                await connectApp("ollama", true);
+                console.log("Ollama socket connected");
+            }
         }
         return response;
     }
@@ -175,6 +189,23 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
             ]);
         }
     };
+
+    useEffect(() => {
+        const socket = sockets["ollama"]?.socket;
+        if (socket) {
+            console.log("Socket connected");
+            socket.on("ollama:navigate-to-app", (data: { id: string, action: "navigate" | "start" | "install" }) => {
+                console.log("Navigating to app", data);
+                navigate(`/install/${data.id}?action=${data.action}`);
+            });
+        }
+
+        return () => {
+            if (socket) {
+                socket.off("ollama:navigate-to-app");
+            }
+        };
+    }, [sockets, navigate]);
 
     return (
         <AIContext.Provider value={{

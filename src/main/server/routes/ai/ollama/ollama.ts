@@ -231,7 +231,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 				quickAI = false,
 				messages: history = [],
 			} = req.body;
-			const tools = await getTools();
+			const tools = await getTools(io);
 			const systemprompt = getSysPrompt(
 				context,
 				name,
@@ -377,7 +377,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 						continue;
 					}
 				}
-			} catch {}
+			} catch { }
 
 			// 5. if nothing matched, return normal content
 			if (thoughtMatch) {

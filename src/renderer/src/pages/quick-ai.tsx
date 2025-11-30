@@ -114,7 +114,7 @@ export default function QuickAI() {
 								onClick={() => setShowModelHub(!showModelHub)}
 							>
 								<button className="w-full h-full flex items-center justify-center cursor-pointer border border-white/10 outline-none rounded-full px-4 text-[11.5px] text-neutral-300 hover:text-neutral-200 hover:bg-white/10 hover:border-transparent transition-all duration-200">
-									<span className="truncate text-center">{ollamaModel}</span>
+									<span className="truncate text-center">{ollamaModel || "Loading..."}</span>
 								</button>
 							</div>
 						</div>

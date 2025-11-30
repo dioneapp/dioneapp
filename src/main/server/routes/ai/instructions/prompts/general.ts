@@ -35,6 +35,11 @@ Your response here...
    - Any questions about new, latest, or available apps require this tool.
    - Arguments: None
 
+4. **navigate_to_app**: Navigates to a specific app
+   - Use ONLY when user explicitly asks to navigate, start, or install an app.
+   - Specify the action you want to perform, navigate for just redirect to the app, start for start the app, install for install the app.
+   - Arguments: { name: "app_name", action: "navigate" | "start" | "install" }
+
 ## Rules
 
 1. **Default to <answer>** - Most questions don't need tools

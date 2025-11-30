@@ -4,7 +4,7 @@ import getAllScripts from "@/server/scripts/installed";
 import { resolveScriptPaths } from "@/server/scripts/utils/paths";
 import logger from "@/server/utils/logger";
 
-export function getTools() {
+export function getTools(io: any) {
 	return {
 		read_file: async ({ project, file }) => {
 			return read_file(project, file);
@@ -15,6 +15,9 @@ export function getTools() {
 		get_latest_apps: async () => {
 			return get_latest_apps();
 		},
+		navigate_to_app: async ({ name, action }) => {
+			return navigate_to_app(name, action, io);
+		}
 	};
 }
 
@@ -127,4 +130,33 @@ export async function get_latest_apps() {
 	const result = await getData(1, 5);
 	logger.ai(`Latest apps: ${result.length}`);
 	return result;
+}
+
+export async function get_app_by_name(name: string) {
+	const response = await fetch(
+		`https://api.getdione.app/v1/scripts?q=${name}&limit=1`,
+		{
+			headers: {
+				...(process.env.API_KEY
+					? {
+						Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+					}
+					: {}),
+			},
+		},
+	);
+	const data = await response.json();
+	logger.ai(`Found app: ${data.length}`);
+	return data;
+}
+
+export async function navigate_to_app(name: string, action: "navigate" | "start" | "install", io: any) {
+	logger.ai(`Navigating to app: ${name} with action ${action}`);
+	const app = await get_app_by_name(name);
+	if (!app) {
+		return "App not found";
+	}
+	const id = app[0].id;
+	io.emit("ollama:navigate-to-app", { id, action });
+	return `Navigated to app: ${name} with id ${id} and action ${action}`;
 }
