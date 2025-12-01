@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import type { Socket } from "socket.io-client";
 
 // Auth context
@@ -200,14 +200,18 @@ export interface AIContextType {
 	setShowModelHub: (hub: boolean) => void;
 	installStep: number;
 	setInstallStep: Dispatch<SetStateAction<number>>;
-	chat: (prompt: string, quickAI?: boolean, code?: {
-		context: string;
-		name: string;
-		path: string;
-		workspaceName: string;
-		workspaceFiles: any;
-		workspacePath: string;
-	}) => Promise<void>;
+	chat: (
+		prompt: string,
+		quickAI?: boolean,
+		code?: {
+			context: string;
+			name: string;
+			path: string;
+			workspaceName: string;
+			workspaceFiles: any;
+			workspacePath: string;
+		},
+	) => Promise<void>;
 	downloadOllama: () => void;
 	handleStopOllama: () => void;
 	handleStartOllama: () => void;
