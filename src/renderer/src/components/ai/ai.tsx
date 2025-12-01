@@ -31,6 +31,8 @@ export default function AI({
 		setInstallStep,
 		downloadOllama,
 		ollamaRunning,
+		messageLoading,
+		usingTool,
 	} = useAIContext();
 	const { logs } = useScriptsContext();
 
@@ -200,7 +202,7 @@ export default function AI({
 							className="backdrop-blur-3xl rounded-2xl p-4 pb-8 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto"
 							style={{ scrollbarWidth: "none" }}
 						>
-							<Messages messages={messages} logsEndRef={logsEndRef} />
+							<Messages messages={messages} logsEndRef={logsEndRef} messageLoading={messageLoading} usingTool={usingTool} />
 						</div>
 					)}
 				</motion.div>

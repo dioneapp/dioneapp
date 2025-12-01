@@ -55,7 +55,7 @@ export default function Messages({
 								</div>
 							)}
 						<div
-							className={`prose prose-invert text-sm leading-relaxed text-pretty ${message?.role === "user" ? "text-neutral-300" : ""}`}
+							className={`prose prose-invert text-sm leading-relaxed ${quickAI ? "" : `${message?.role === "user" ? "text-right" : "text-pretty"}`} ${message?.role === "user" ? "text-neutral-300" : ""}`}
 						>
 							<ReactMarkdown
 								remarkPlugins={[remarkGfm]}
@@ -119,13 +119,13 @@ export default function Messages({
 				</div>
 			))}
 			{messageLoading && !usingTool?.name && (
-				<div className="flex gap-2 text-xs items-center justify-center animate-pulse rounded-full w-fit text-neutral-500 mx-12 p-1 px-2">
+				<div className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-full w-fit text-neutral-500 p-1 px-2`}>
 					<LoaderCircle className="w-3.5 h-3.5 animate-spin duration-100" />
 					<span>Loading...</span>
 				</div>
 			)}
 			{usingTool?.name && messageLoading && (
-				<div className="flex gap-2 text-xs items-center justify-center animate-pulse rounded-full w-fit text-neutral-400 mx-12 p-1 px-2">
+				<div className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-full w-fit text-neutral-500 p-1 px-2`}>
 					<Hammer className="w-3.5 h-3.5 duration-100" />
 					<span>{usingTool.message}...</span>
 				</div>
