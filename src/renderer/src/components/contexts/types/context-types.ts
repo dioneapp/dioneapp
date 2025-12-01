@@ -200,7 +200,14 @@ export interface AIContextType {
 	setShowModelHub: (hub: boolean) => void;
 	installStep: number;
 	setInstallStep: Dispatch<SetStateAction<number>>;
-	chat: (prompt: string) => Promise<void>;
+	chat: (prompt: string, quickAI?: boolean, code?: {
+		context: string;
+		name: string;
+		path: string;
+		workspaceName: string;
+		workspaceFiles: any;
+		workspacePath: string;
+	}) => Promise<void>;
 	downloadOllama: () => void;
 	handleStopOllama: () => void;
 	handleStartOllama: () => void;

@@ -1,5 +1,6 @@
 import codePrompt from "@/server/routes/ai/instructions/prompts/code";
 import generalPrompt from "@/server/routes/ai/instructions/prompts/general";
+import logger from "@/server/utils/logger";
 
 export const getSysPrompt = (
 	context?: string,
@@ -9,6 +10,7 @@ export const getSysPrompt = (
 	contextProject?: string,
 	quickAI?: boolean,
 ) => {
+	logger.ai(`QuickAI: ${quickAI}`);
 	if (!quickAI) {
 		return codePrompt(
 			context,

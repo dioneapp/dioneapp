@@ -222,15 +222,13 @@ export function createOllamaRouter(io: SocketIOServer) {
 		try {
 			const {
 				model,
-				prompt,
-				context = "",
-				name = "",
-				path = "",
-				workspaceName = "",
-				workspaceFiles = [],
+				support: prompt,
 				quickAI = false,
 				messages: history = [],
+				code,
 			} = req.body;
+			const { context, name, path, workspaceFiles, workspaceName } = code || {};
+
 			const tools = await getTools(io);
 			const systemprompt = getSysPrompt(
 				context,

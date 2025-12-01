@@ -1,7 +1,9 @@
 import Messages from "@/components/ai/messages";
-import { getBackendPort } from "@/utils/api";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useAIContext } from "../contexts/ai-context";
+import { InstallAIModal } from "../modals/install-ai";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function AI({
 	getContext,
@@ -15,17 +17,46 @@ export default function AI({
 	workspacePath: string;
 }) {
 	const [open, setOpen] = useState(false);
-	// const [loading, setLoading] = useState(false);
-	const [messages, setMessages] = useState<any[]>([]);
-	const [ollamaStatus, setOllamaStatus] = useState("");
 	const logsEndRef = useRef<HTMLDivElement>(null);
+
+	// ai
+	const {
+		checkOllama,
+		handleStopOllama,
+		chat,
+		messages,
+		ollamaStatus,
+		showInstallModal,
+		installStep,
+		setInstallStep,
+		downloadOllama,
+		ollamaRunning,
+	} = useAIContext();
+	const { logs } = useScriptsContext();
+
+	useEffect(() => {
+		if (open) {
+			checkOllama();
+		}
+
+		return () => {
+			if (ollamaRunning) {
+				handleStopOllama();
+			}
+		};
+	}, [open]);
 
 	useEffect(() => {
 		logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	}, [messages]);
 
-	const chat = async (prompt: string) => {
-		const port = await getBackendPort();
+	useEffect(() => {
+		if (!open && ollamaRunning) {
+			handleStopOllama();
+		}
+	}, [open]);
+
+	const handleChat = async (prompt: string) => {
 		const context = getContext();
 		const files = nodes.map((node) => ({
 			name: node.name,
@@ -38,35 +69,29 @@ export default function AI({
 					path: child.path,
 				})) || undefined,
 		}));
-		const response = await fetch(`http://localhost:${port}/ai/ollama/chat`, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({
-				prompt,
-				model: "llama3.2",
-				context: context.context,
-				name: context.name,
-				path: context.path,
-				workspaceName: workspaceName,
-				workspaceFiles: files,
-				workspacePath: workspacePath,
-			}),
+
+		chat(prompt, false, {
+			context: context.context,
+			name: context.name,
+			path: context.path,
+			workspaceName: workspaceName,
+			workspaceFiles: files,
+			workspacePath: workspacePath,
 		});
-
-		if (response.status === 500) {
-			console.log("ollama is closed");
-			setOllamaStatus("closed");
-		}
-
-		const data = await response.json();
-		setMessages((prev) => [...prev, data]);
 	};
 
 	return (
 		<>
 			<div className="fixed bottom-6 right-6" style={{ zIndex: 1000 }}>
+				{showInstallModal && (
+					<InstallAIModal
+						installStep={installStep}
+						setInstallStep={setInstallStep}
+						ollamaStatus={ollamaStatus}
+						logs={logs}
+						downloadOllama={downloadOllama}
+					/>
+				)}
 				<div className="group relative flex gap-2">
 					<AnimatePresence mode="wait">
 						{open && (
@@ -110,7 +135,7 @@ export default function AI({
 											setOpen(false);
 										}
 										if (e.key === "Enter") {
-											chat(e.currentTarget.value);
+											handleChat(e.currentTarget.value);
 											e.currentTarget.value = "";
 										}
 									}}
@@ -157,16 +182,22 @@ export default function AI({
 					className="fixed bottom-20 right-6"
 					style={{ zIndex: 1001 }}
 				>
-					{ollamaStatus === "closed" && (
-						<div className="w-fit text-[11px] mb-2 flex items-center justify-end ml-auto gap-2 backdrop-blur-3xl rounded-full overflow-hidden">
-							<span className="bg-red-500/10 px-2 text-red-500 font-semibold">
-								Ollama not found
-							</span>
-						</div>
-					)}
-					{messages && messages.length > 0 && !messages[0]?.error && (
+					<div className="flex flex-col gap-2 items-end justify-center mr-auto w-full h-full text-[10px] mb-2 text-neutral-400 font-medium">
+						{ollamaRunning && (
+							<div className="p-1 px-3 rounded-full bg-green-500/05 backdrop-blur-3xl">
+								Ollama running
+							</div>
+						)}
+						{!ollamaRunning && (
+							<div className="p-1 px-3 rounded-full bg-red-500/05 backdrop-blur-3xl">
+								Ollama not running
+							</div>
+						)}
+					</div>
+					{messages && messages.length > 0 && (
 						<div
-							className="backdrop-blur-3xl bg-neutral-900/40 rounded-2xl p-4 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto"
+							id="logs"
+							className="backdrop-blur-3xl rounded-2xl p-4 pb-8 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto"
 							style={{ scrollbarWidth: "none" }}
 						>
 							<Messages messages={messages} logsEndRef={logsEndRef} />

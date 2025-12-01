@@ -26,8 +26,6 @@ export default function Messages({
 		}
 	}, [messages]);
 
-	console.log("using tool", usingTool);
-
 	return (
 		<div
 			id={`${quickAI ? "logs" : ""}`}
@@ -36,11 +34,11 @@ export default function Messages({
 			{messages.map((message: any, index: number) => (
 				<div
 					key={index}
-					className={`flex w-full ${quickAI ? `px-12 items-start gap-4 mb-2 ${message?.role === "user" ? "justify-end" : "justify-start"}` : "items-center justify-center"}`}
+					className={`flex w-full ${quickAI ? `px-12 items-start gap-4 mb-2 ${message?.role === "user" ? "justify-end" : "justify-start"}` : `flex gap-2 ${message?.role === "user" ? "justify-end items-center pt-4 first:pt-0" : "justify-start items-start"}`}`}
 				>
-					{message?.role !== "user" && quickAI && (
-						<div className="rounded-full flex items-center justify-center">
-							<Icon name="Dio" className="w-5 h-5" />
+					{message?.role !== "user" && (
+						<div className={`rounded-full flex items-center justify-center ${quickAI ? "" : "pt-1"}`}>
+							<Icon name="Dio" className="w-4 h-4" />
 						</div>
 					)}
 					<div className={`flex flex-col ${quickAI ? "max-w-full" : ""}`}>

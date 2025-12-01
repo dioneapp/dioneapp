@@ -137,7 +137,18 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
         return response;
     }
 
-    const chat = async (prompt: string) => {
+    const chat = async (
+        prompt: string,
+        quickAI?: boolean,
+        code?: {
+            context: string;
+            name: string;
+            path: string;
+            workspaceName: string;
+            workspaceFiles: any;
+            workspacePath: string;
+        },
+    ) => {
         const userMessage = { role: "user", content: prompt };
         const newMessages = [...messages, userMessage];
         setMessages(newMessages);
@@ -153,6 +164,11 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
 
         try {
             setMessageLoading(true);
+            console.log("QuickAI", quickAI);
+            if (quickAI === undefined || quickAI === null) {
+                console.log("QuickAI set to true");
+                quickAI = true;
+            }
             const response = await apiFetch(`/ai/ollama/chat`, {
                 method: "POST",
                 headers: {
@@ -162,7 +178,14 @@ export function AIContextProvider({ children }: { children: React.ReactNode }) {
                     messages: newMessages,
                     model: ollamaModel,
                     support: ollamaSupport,
-                    quickAI: true,
+                    quickAI: quickAI,
+                    code: {
+                        context: code?.context,
+                        name: code?.name,
+                        path: code?.path,
+                        workspaceName: code?.workspaceName,
+                        workspaceFiles: code?.workspaceFiles
+                    }
                 }),
             });
 
