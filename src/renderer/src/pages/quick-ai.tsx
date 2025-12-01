@@ -1,6 +1,8 @@
 import Messages from "@/components/ai/messages";
 import Models from "@/components/ai/models";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
+import { useAIContext } from "@/components/contexts/ai-context";
+import { InstallAIModal } from "@/components/modals/install-ai";
 import { motion } from "framer-motion";
 import {
 	ArrowRight,
@@ -10,12 +12,31 @@ import {
 	Square,
 } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { useAIContext } from "@/components/contexts/ai-context";
-import { InstallAIModal } from "@/components/modals/install-ai";
 
 export default function QuickAI() {
 	const { logs } = useScriptsContext();
-	const { chat, messages, setMessages, usingTool, messageLoading, checkOllama, handleStartOllama, handleStopOllama, showInstallModal, showModelHub, setShowModelHub, setOllamaModel, setOllamaSupport, ollamaModel, ollamaInstalled, ollamaRunning, installStep, setInstallStep, ollamaStatus, downloadOllama } = useAIContext();
+	const {
+		chat,
+		messages,
+		setMessages,
+		usingTool,
+		messageLoading,
+		checkOllama,
+		handleStartOllama,
+		handleStopOllama,
+		showInstallModal,
+		showModelHub,
+		setShowModelHub,
+		setOllamaModel,
+		setOllamaSupport,
+		ollamaModel,
+		ollamaInstalled,
+		ollamaRunning,
+		installStep,
+		setInstallStep,
+		ollamaStatus,
+		downloadOllama,
+	} = useAIContext();
 	const logsEndRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -83,7 +104,13 @@ export default function QuickAI() {
 						) : (
 							<div className="w-full mx-auto flex justify-center items-center">
 								<div ref={logsEndRef} />
-								<Messages messages={messages} messageLoading={messageLoading} logsEndRef={logsEndRef} usingTool={usingTool} quickAI />
+								<Messages
+									messages={messages}
+									messageLoading={messageLoading}
+									logsEndRef={logsEndRef}
+									usingTool={usingTool}
+									quickAI
+								/>
 							</div>
 						)}
 					</div>
@@ -110,7 +137,8 @@ export default function QuickAI() {
 									<Play className="w-4 h-4 text-neutral-400 group-hover:text-neutral-200" />
 								)}
 							</button>
-							<button className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group"
+							<button
+								className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group"
 								onClick={() => setMessages([])}
 								title="Clear chat"
 							>
@@ -121,7 +149,9 @@ export default function QuickAI() {
 								onClick={() => setShowModelHub(!showModelHub)}
 							>
 								<button className="w-full h-full flex items-center justify-center cursor-pointer border border-white/10 outline-none rounded-full px-4 text-[11.5px] text-neutral-300 hover:text-neutral-200 hover:bg-white/10 hover:border-transparent transition-all duration-200">
-									<span className="truncate text-center">{ollamaModel || "Loading..."}</span>
+									<span className="truncate text-center">
+										{ollamaModel || "Loading..."}
+									</span>
 								</button>
 							</div>
 						</div>

@@ -37,7 +37,9 @@ export default function Messages({
 					className={`flex w-full ${quickAI ? `px-12 items-start gap-4 mb-2 ${message?.role === "user" ? "justify-end" : "justify-start"}` : `flex gap-2 ${message?.role === "user" ? "justify-end items-center pt-4 first:pt-0" : "justify-start items-start"}`}`}
 				>
 					{message?.role !== "user" && (
-						<div className={`rounded-full flex items-center justify-center ${quickAI ? "" : "pt-1"}`}>
+						<div
+							className={`rounded-full flex items-center justify-center ${quickAI ? "" : "pt-1"}`}
+						>
 							<Icon name="Dio" className="w-4 h-4" />
 						</div>
 					)}
@@ -48,10 +50,10 @@ export default function Messages({
 								<div className="my-2 first:mt-0">
 									{message?.message?.tool_calls[0].function.name ===
 										"read_file" && (
-											<span className="text-xs text-gray-500 dark:text-gray-400">
-												Reading files...
-											</span>
-										)}
+										<span className="text-xs text-gray-500 dark:text-gray-400">
+											Reading files...
+										</span>
+									)}
 								</div>
 							)}
 						<div
@@ -119,13 +121,17 @@ export default function Messages({
 				</div>
 			))}
 			{messageLoading && !usingTool?.name && (
-				<div className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-full w-fit text-neutral-500 p-1 px-2`}>
+				<div
+					className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-full w-fit text-neutral-500 p-1 px-2`}
+				>
 					<LoaderCircle className="w-3.5 h-3.5 animate-spin duration-100" />
 					<span>Loading...</span>
 				</div>
 			)}
 			{usingTool?.name && messageLoading && (
-				<div className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-full w-fit text-neutral-500 p-1 px-2`}>
+				<div
+					className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-full w-fit text-neutral-500 p-1 px-2`}
+				>
 					<Hammer className="w-3.5 h-3.5 duration-100" />
 					<span>{usingTool.message}...</span>
 				</div>
