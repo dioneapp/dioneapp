@@ -102,13 +102,12 @@ export default function ApplicationsTab({
 							<span>{t("settings.applications.deleteCache.button")}</span>
 						) : (
 							<span
-								className={`${
-									deleteCacheStatus === "deleted"
+								className={`${deleteCacheStatus === "deleted"
 										? "text-green-700"
 										: deleteCacheStatus === "error"
 											? "text-red-500"
 											: "text-orange-500"
-								}`}
+									}`}
 							>
 								{deleteCacheStatus === "deleting"
 									? t("settings.applications.deleteCache.deleting")
