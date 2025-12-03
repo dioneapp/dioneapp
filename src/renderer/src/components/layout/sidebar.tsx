@@ -182,12 +182,10 @@ export default function Sidebar() {
 			</AnimatePresence>
 			<div
 				className={`relative flex flex-col items-center justify-center border-r border-white/10 overflow-hidden ${config?.compactMode ? "max-w-24 w-24" : "max-w-70 w-70"}`}
+	
 			>
-				<div className="absolute bottom-0 bg-linear-to-t rounded-full -mb-28 blur-3xl from-white/50 to-transparent w-full h-24" />
-				<div
-					className="absolute -top-10 -left-14 blur-3xl max-w-64 w-full h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40"
-					style={{ backgroundColor: "var(--theme-blur)" }}
-				/>
+				<div className="absolute -top-16 -right-8 w-48 h-48 rounded-full blur-3xl pointer-events-none" style={{ backgroundColor: "color-mix(in srgb, var(--theme-accent) 8%, transparent)" }} />
+				<div className="absolute -bottom-16 -left-8 w-40 h-40 rounded-full blur-3xl pointer-events-none" style={{ backgroundColor: "color-mix(in srgb, var(--theme-accent) 5%, transparent)" }} />
 				<div className="flex flex-col items-center justify-start h-full w-full p-4 z-50 px-6">
 					<div
 						className={`w-full flex flex-col justify-center items-start gap-2 ${config?.compactMode ? "h-24" : "h-44"}`}
@@ -214,7 +212,7 @@ export default function Sidebar() {
 								<button
 									type="button"
 									onClick={() => openLink("https://getdione.app/discord")}
-									className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
+									className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/90 transition-all duration-300 rounded-full text-black font-semibold py-1.5 text-center cursor-pointer shadow-lg hover:shadow-xl"
 								>
 									<Icon name="Discord" className="h-4 w-4" />
 
@@ -224,7 +222,7 @@ export default function Sidebar() {
 								<button
 									type="button"
 									onClick={() => openLink("https://getdione.app/github")}
-									className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold py-1 text-center cursor-pointer"
+									className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/90 transition-all duration-300 rounded-full text-black font-semibold py-1.5 text-center cursor-pointer shadow-lg hover:shadow-xl"
 								>
 									<Icon name="GitHub" className="h-4 w-4" />
 
@@ -334,39 +332,39 @@ export default function Sidebar() {
 									<button
 										type="button"
 										onClick={() => window.captureScreenshot()}
-										className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center justify-center relative cursor-pointer"
+										className="w-10 h-10 border border-white/10 hover:bg-white/10 hover:border-white/20 rounded-xl transition-all duration-200 flex gap-1 items-center justify-center relative cursor-pointer"
 										onMouseEnter={() => setHoveredTooltip("capture")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
 										<Camera className="h-5 w-5" />
 										{hoveredTooltip === "capture" && (
-											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
+											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg">
 												{t("sidebar.tooltips.capture")}
 											</div>
 										)}
 									</button>
 									<Link
 										to={"/library"}
-										className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full flex gap-1 items-center justify-center transition-colors relative"
+										className="w-10 h-10 border border-white/10 hover:bg-white/10 hover:border-white/20 rounded-xl flex gap-1 items-center justify-center transition-all duration-200 relative"
 										onMouseEnter={() => setHoveredTooltip("library")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
 										<Library className="h-5 w-5" />
 										{hoveredTooltip === "library" && (
-											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
+											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg">
 												{t("sidebar.tooltips.library")}
 											</div>
 										)}
 									</Link>
 									<Link
 										to={"/settings"}
-										className="w-9 h-9 border border-white/10 hover:bg-white/10 rounded-full transition-colors flex gap-1 items-center justify-center relative"
+										className="w-10 h-10 border border-white/10 hover:bg-white/10 hover:border-white/20 rounded-xl transition-all duration-200 flex gap-1 items-center justify-center relative"
 										onMouseEnter={() => setHoveredTooltip("settings")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
 										<Settings className="h-5 w-5" />
 										{hoveredTooltip === "settings" && (
-											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap">
+											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg">
 												{t("sidebar.tooltips.settings")}
 											</div>
 										)}
@@ -437,14 +435,14 @@ export default function Sidebar() {
 								{!user && (
 									<Link
 										to={"/first-time?login=true"}
-										className="w-9 h-9 border border-white/10 hover:bg-white/80 bg-white rounded-full transition-colors flex gap-1 items-center justify-center relative cursor-pointer"
+										className="w-9 h-9 border border-white/10 hover:bg-white hover:border-white/20 bg-white/90 rounded-xl transition-all duration-200 flex gap-1 items-center justify-center relative cursor-pointer shadow-lg hover:shadow-xl"
 										onMouseEnter={() => setHoveredTooltip("login")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
 										<User className="h-5 w-5 text-black" />
 										{hoveredTooltip === "login" && (
 											<div
-												className={`${config?.compactMode ? "absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap" : "absolute left-1/2 -translate-x-1/2 top-full z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap"}`}
+												className={`${config?.compactMode ? "absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg" : "absolute left-1/2 -translate-x-1/2 top-full z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-lg"}`}
 											>
 												{t("sidebar.tooltips.login")}
 											</div>
@@ -458,7 +456,7 @@ export default function Sidebar() {
 								{!user && (
 									<button
 										type="button"
-										className="w-9.5 h-9.5 border bg-white text-black font-medium rounded-full transition-colors flex items-center justify-center cursor-pointer relative"
+										className="w-9.5 h-9.5 border bg-white hover:bg-white/90 text-black font-medium rounded-xl transition-all duration-200 flex items-center justify-center cursor-pointer relative shadow-lg hover:shadow-xl"
 										onClick={() =>
 											openLink("https://getdione.app/auth/login?app=true")
 										}
@@ -507,7 +505,7 @@ export default function Sidebar() {
 								>
 									<Settings className="h-5 w-5" />
 									{hoveredTooltip === "settings" && (
-										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-lg">
 											{t("sidebar.tooltips.settings")}
 										</div>
 									)}
