@@ -173,7 +173,7 @@ export async function uninstallDependency(selectedDeps: string[], io: Server) {
 
 			logger.info(`Dependency ${depName} uninstalled successfully`);
 			return { success: true };
-		})
+		}),
 	);
 
 	const failed = results.filter((r) => !r.success);

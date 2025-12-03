@@ -551,7 +551,9 @@ export const executeCommands = async (
 	for (const cmd of commands) {
 		// if user requested cancellation, stop processing further commands
 		if (processWasCancelled) {
-			logger.info(`Process with id ${id} cancelled - stopping remaining commands`);
+			logger.info(
+				`Process with id ${id} cancelled - stopping remaining commands`,
+			);
 			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: "INFO: Process cancelled - stopping remaining commands\n",
