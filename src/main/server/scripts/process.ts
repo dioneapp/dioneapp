@@ -537,7 +537,7 @@ export const executeCommands = async (
 		onOutput?: (text: string) => void;
 		onProgress?: (progress: number) => void;
 	},
-): Promise<{ cancelled: boolean }> => {
+): Promise<{ cancelled: boolean; id?: string }> => {
 	// reset cancellation state for a new command batch
 	processWasCancelled = false;
 	let currentWorkingDir = workingDir;
@@ -551,12 +551,12 @@ export const executeCommands = async (
 	for (const cmd of commands) {
 		// if user requested cancellation, stop processing further commands
 		if (processWasCancelled) {
-			logger.info("Process cancelled - stopping remaining commands");
+			logger.info(`Process with id ${id} cancelled - stopping remaining commands`);
 			io.to(id).emit("installUpdate", {
 				type: "log",
 				content: "INFO: Process cancelled - stopping remaining commands\n",
 			});
-			return { cancelled: true };
+			return { cancelled: true, id };
 		}
 
 		let command: string;
