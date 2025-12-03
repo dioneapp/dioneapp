@@ -5,30 +5,30 @@ export default function PromoBanner() {
 	const { t } = useTranslation();
 
 	return (
-		<div className="mt-6 w-full rounded-xl border border-white/5 bg-[#080808]/50 overflow-hidden">
-			<div className="relative w-full p-4">
+		<div className="mt-6 w-full rounded-xl border border-white/10 overflow-hidden" style={{ background: "linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 8%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))" }}>
+			<div className="relative w-full p-5">
 				{/* background effects */}
 				<div
-					className="absolute top-0 left-1/4 md:left-1/3 w-32 h-32 md:w-64 md:h-64 rounded-full -translate-y-1/2 blur-3xl md:blur-[100px] animate-pulse [animation-duration:7000ms]"
-					style={{ backgroundColor: "var(--theme-blur)" }}
+					className="absolute -top-12 -left-8 w-32 h-32 md:w-48 md:h-48 rounded-full blur-3xl pointer-events-none"
+					style={{ backgroundColor: "color-mix(in srgb, var(--theme-accent) 15%, transparent)" }}
 				/>
 				<div
-					className="absolute bottom-0 right-1/4 md:right-1/3 w-32 h-32 md:w-64 md:h-64 rounded-full translate-y-1/2 blur-3xl md:blur-[100px] animate-pulse [animation-duration:7000ms]"
-					style={{ backgroundColor: "var(--theme-blur)" }}
+					className="absolute -bottom-8 -right-8 w-24 h-24 md:w-32 md:h-32 rounded-full blur-2xl pointer-events-none"
+					style={{ backgroundColor: "color-mix(in srgb, var(--theme-accent) 10%, transparent)" }}
 				/>
-				<div className="relative flex flex-row items-center justify-between px-6 z-10">
-					<div className="flex flex-col space-y-1">
-						<h3 className="text-md font-semibold text-white">
+				<div className="relative flex flex-row items-center justify-between gap-4 z-10">
+					<div className="flex flex-col space-y-1.5">
+						<h3 className="text-base font-semibold text-white tracking-tight">
 							{t("promo.title")}
 						</h3>
-						<p className="text-[13px] text-neutral-300/80">
+						<p className="text-xs text-neutral-300 leading-relaxed">
 							{t("promo.description")}
 						</p>
 					</div>
 					<button
 						type="button"
 						onClick={() => openLink("https://getdione.app/featured/join")}
-						className="px-6 py-2 bg-white/5 border border-white/5 hover:bg-white/10 rounded-full transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
+						className="px-5 py-2 bg-white hover:bg-white/90 rounded-full transition-all duration-300 text-sm font-semibold whitespace-nowrap cursor-pointer text-black shadow-lg hover:shadow-xl"
 					>
 						{t("promo.button")}
 					</button>

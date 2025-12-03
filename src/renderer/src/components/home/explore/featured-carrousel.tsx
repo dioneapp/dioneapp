@@ -114,7 +114,7 @@ export default function FeaturedCarousel() {
 			<div className="relative h-70">
 				<AnimatePresence initial={false} mode="wait">
 					<div key={activeItem.id} className="absolute w-full h-full">
-						<div className="w-full h-72 flex transition-all duration-200 rounded-xl relative overflow-hidden group border border-white/5 cursor-pointer">
+						<div className="w-full h-72 flex transition-all duration-200 rounded-xl relative overflow-hidden group border border-white/10 hover:border-white/20 cursor-pointer shadow-lg hover:shadow-xl">
 							{activeItem.type === "announcement" ? (
 								<div
 									onClick={() => navigate("/quick-ai")}
@@ -237,7 +237,7 @@ export function CarrouselSkeleton() {
 		<section className="flex flex-col gap-0">
 			<div className="relative h-70">
 				<div className="absolute w-full h-full">
-					<div className="w-full h-72 flex rounded-xl relative overflow-hidden border border-white/5">
+					<div className="w-full h-72 flex rounded-xl relative overflow-hidden border border-white/10 shadow-lg">
 						<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
 						<div className="absolute inset-0 w-full h-full bg-linear-to-br from-neutral-600/20 to-neutral-900/10" />
 						<div className="z-50 absolute inset-0 p-10">
