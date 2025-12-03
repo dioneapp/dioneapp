@@ -6,6 +6,7 @@ import { getOS } from "@/server/scripts/dependencies/utils/system";
 import logger from "@/server/utils/logger";
 import { app } from "electron";
 import type { Server } from "socket.io";
+import { safeUninstall } from "./utils/patch-sync-methods";
 
 export function readDioneConfig(filePath: string): any {
 	try {
@@ -152,6 +153,7 @@ export async function uninstallDependency(selectedDeps: string[], io: Server) {
 		config?.defaultBinFolder || path.join(app.getPath("userData")),
 		"bin",
 	);
+
 	const results = await Promise.all(
 		selectedDeps.map(async (depName) => {
 			io.emit("deleteUpdate", "deleting_deps");
@@ -161,19 +163,20 @@ export async function uninstallDependency(selectedDeps: string[], io: Server) {
 				return { success: false, reason: "not-installed" };
 			}
 
-			try {
-				await entry.uninstall(binFolder);
-				logger.info(`Dependency ${depName} uninstalled successfully`);
-				return { success: true };
-			} catch (error) {
+			const result = await safeUninstall(entry, binFolder);
+
+			if (!result.success) {
 				io.emit("deleteUpdate", "error");
-				logger.error(`Error uninstalling dependency ${depName}:`, error);
-				return { success: false, reason: `error` };
+				logger.error(`Error uninstalling ${depName}:`, result.error);
+				return { success: false, reason: "error" };
 			}
-		}),
+
+			logger.info(`Dependency ${depName} uninstalled successfully`);
+			return { success: true };
+		})
 	);
 
-	const failed = results.filter((result) => !result.success);
+	const failed = results.filter((r) => !r.success);
 	if (failed.length > 0) {
 		return { success: false, reasons: failed.map((f) => f.reason) };
 	}
