@@ -2,6 +2,7 @@ import NetworkShareModal from "@/components/modals/network-share";
 import { useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
 import {
+	Activity,
 	ArrowLeft,
 	Folder,
 	Maximize2,
@@ -135,27 +136,21 @@ export default function IframeComponent({
 
 		return (
 			<div
-				className="flex items-center gap-1.5 border border-white/10 bg-white/5 px-2 py-1.5 rounded-md shrink-0 relative"
+				className="flex items-center gap-2 border border-white/10 px-3 py-1.5 rounded-full shrink-0 relative transition-all duration-200 hover:bg-white/10 hover:border-white/20"
 				onMouseEnter={() => setIsHovered(true)}
 				onMouseLeave={() => setIsHovered(false)}
 			>
-				<span className="text-xs text-neutral-300 font-medium">{label}</span>
-				<div className="w-20 h-2 bg-white/10 rounded-full overflow-hidden">
+				<span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wide">{label}</span>
+				<div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
 					<motion.div
-						className="h-full bg-linear-to-r from-[#A395D9] to-[#C1B8E3]"
-						style={{ width: `${percentage}%` }}
-						animate={{
-							scale: isHovered ? 1.05 : 1,
-							filter: isHovered ? "brightness(1.3)" : "brightness(1)",
-						}}
-						transition={{
-							duration: 0.8,
-							ease: "easeInOut",
-							width: { duration: 1.2, ease: "easeOut" },
+						className="h-full rounded-full"
+						style={{ 
+							width: `${percentage}%`,
+							background: "linear-gradient(90deg, var(--theme-gradient-from), var(--theme-gradient-to))"
 						}}
 					/>
 				</div>
-				<span className="text-xs text-neutral-300 text-right w-6">
+				<span className="text-[10px] font-semibold text-right min-w-[2rem]" style={{ color: "var(--theme-accent)" }}>
 					{isHovered && absoluteValue
 						? absoluteValue
 						: `${Math.round(percentage)}%`}
@@ -228,121 +223,122 @@ export default function IframeComponent({
 		}
 	};
 
-	return (
-		<div className="w-full h-full flex flex-col gap-2 p-6">
+		return (
+		<div className="w-full h-full flex flex-col gap-3 p-6">
 			<motion.div
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.4 }}
-				className="w-full flex items-center justify-between gap-2 rounded-md mt-6"
+				className="w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 p-2 mt-6"
 			>
-				<div className="flex items-center gap-1">
+				<div className="flex items-center gap-1.5">
 					<button
 						type="button"
-						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
 						onClick={() => navigate("/")}
 						title={t("iframeLabels.back")}
 					>
-						<ArrowLeft className="w-4 h-4 " />
-						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+						<ArrowLeft className="w-4 h-4" />
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.back")}
 						</div>
 					</button>
 					<button
 						type="button"
-						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
 						onClick={() => setShow({ [data.id]: "logs" })}
 						title={t("iframeLabels.logs")}
 					>
-						<SquareTerminal className="w-4 h-4 " />
-						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+						<SquareTerminal className="w-4 h-4" />
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.logs")}
 						</div>
 					</button>
 					<button
 						type="button"
 						onClick={handleOpenEditor}
-						className="p-1.5 hover:bg-white/10 border border-white/10 transition-colors rounded-md cursor-pointer relative group"
+						className="p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl cursor-pointer relative group"
 						title={t("iframe.openFolder")}
 					>
 						<Folder className="w-4 h-4" />
-						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.openFolder")}
 						</div>
 					</button>
 					<button
 						type="button"
 						onClick={() => setShowNetworkShareModal(true)}
-						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
 						title={t("iframeActions.shareOnNetwork")}
 					>
 						<Share2 className="w-4 h-4" />
 						{tunnelInfo && (
-							<div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 rounded-full border border-neutral-900 animate-pulse" />
+							<div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-neutral-900 animate-pulse" style={{ backgroundColor: "var(--theme-accent)" }} />
 						)}
-						<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframeActions.shareOnNetwork")}
 						</div>
-					</button>{" "}
-				</div>
+				</button>{" "}
+			</div>
 
-				<div className="flex gap-1 justify-start items-center flex-1">
-					{systemUsage.cpu !== undefined && (
-						<UsageIndicator label="CPU" percentage={systemUsage.cpu} />
-					)}
-					{systemUsage.ram.percent !== undefined && (
-						<UsageIndicator
-							label="RAM"
-							percentage={systemUsage.ram.percent}
-							absoluteValue={`${systemUsage.ram.usedGB?.toFixed(1) || 0}G`}
-						/>
-					)}
-					{systemUsage.disk !== undefined && (
-						<UsageIndicator
-							label={t("iframeLabels.disk")}
-							percentage={systemUsage.disk}
-							absoluteValue={`${systemUsage.disk?.toFixed(1) || 0}G`}
-						/>
+			{/* Title and Description */}
+			<div className="flex items-center justify-center gap-3 flex-1 px-4 min-w-0">
+				{data?.logo_url && data?.logo_url?.startsWith("http") && (
+					<img 
+						src={data.logo_url} 
+						alt={data.title || data.name} 
+						className="w-7 h-7 rounded-lg object-cover shrink-0"
+					/>
+				)}
+				<div className="flex flex-col justify-center min-w-0 max-w-md">
+					<h2 className="text-sm font-semibold tracking-tight truncate">
+						{data.title || data.name || "Untitled"}
+					</h2>
+					{data.description && (
+						<p className="text-[10px] text-neutral-400 truncate">
+							{data.description}
+						</p>
 					)}
 				</div>
+			</div>
 
-				<div className="flex gap-1">
+			<div className="flex gap-1.5">
 					<motion.button
-						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
 						onClick={handleOpenNewWindow}
 					>
 						<PictureInPicture className="w-4 h-4" />
-						<div className="absolute bottom-full left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.openNewWindow")}
 						</div>
 					</motion.button>
 					<motion.button
-						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
 						onClick={
 							isFullscreen ? handleExitFullscreen : handleEnterFullscreen
 						}
 					>
 						<Maximize2 className="w-4 h-4" />
-						<div className="absolute bottom-full left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.fullscreen")}
 						</div>
 					</motion.button>
 					<motion.button
-						className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
 						onClick={handleReloadIframe2}
 						title={t("iframe.reload")}
 					>
 						<RotateCcw className="w-4 h-4" />
-						<div className="absolute z-50 -top-5 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+						<div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.reload")}
 						</div>
 					</motion.button>
 					<motion.button
-						className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer"
+						className="flex items-center justify-center p-2 hover:bg-white hover:border-white/20 bg-white/90 border border-white/10 transition-all duration-200 rounded-xl relative group cursor-pointer shadow-lg hover:shadow-xl"
 						onClick={handleStop}
 						title={t("iframe.stop")}
 					>
-						<div className="absolute z-50 -top-5 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+						<div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.stop")}
 						</div>
 						<Square className="w-4 h-4 text-black" />
@@ -378,6 +374,50 @@ export default function IframeComponent({
 					ref={containerRef}
 					style={{ width: "100%", height: "100%", border: 0 }}
 				/>
+
+				<div className="absolute bottom-4 right-4 z-40 group">
+					<button
+						type="button"
+						className="flex items-center justify-center w-10 h-10 bg-black/80 hover:bg-black/90 border border-white/20 hover:border-white/30 transition-all duration-200 rounded-full shadow-lg backdrop-blur-sm"
+					>
+						<Activity className="w-4 h-4" />
+					</button>
+					<div className="absolute bottom-full right-0 mb-3 px-3 py-2.5 bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none w-52 backdrop-blur-md border border-white/10">
+						<div className="text-xs font-semibold mb-2.5">System Performance</div>
+						<div className="space-y-2 text-[10px]">
+							{systemUsage.cpu !== undefined && (
+								<div className="flex justify-between items-center">
+									<span className="text-neutral-400">CPU Usage:</span>
+									<span className="font-semibold">{Math.round(systemUsage.cpu)}%</span>
+								</div>
+							)}
+							{systemUsage.ram.percent !== undefined && (
+								<div className="flex justify-between items-center">
+									<span className="text-neutral-400">RAM Usage:</span>
+									<span className="font-semibold">{systemUsage.ram.usedGB?.toFixed(1) || 0}GB ({Math.round(systemUsage.ram.percent)}%)</span>
+								</div>
+							)}
+							{systemUsage.disk !== undefined && (
+								<div className="flex justify-between items-center">
+									<span className="text-neutral-400">Disk Usage:</span>
+									<span className="font-semibold">{systemUsage.disk?.toFixed(1) || 0}%</span>
+								</div>
+							)}
+							{currentPort && (
+								<div className="flex justify-between items-center pt-1.5 mt-1.5 border-t border-white/10">
+									<span className="text-neutral-400">Port:</span>
+									<span className="font-semibold">{currentPort}</span>
+								</div>
+							)}
+							{tunnelInfo && (
+								<div className="flex justify-between items-center">
+									<span className="text-neutral-400">Tunnel:</span>
+									<span className="font-semibold text-green-400">Active</span>
+								</div>
+							)}
+						</div>
+					</div>
+				</div>
 			</motion.div>
 
 			<NetworkShareModal
