@@ -17,13 +17,16 @@ export function getTools(io: any) {
 		},
 		navigate_to_app: async ({ name, action }) => {
 			return navigate_to_app(io, name, action);
-		}
+		},
 	};
 }
 
 export function read_file(project: string, file: string, io: any) {
 	try {
-		io.emit("ollama:using-tool", { name: "read_file", message: "Reading file" });
+		io.emit("ollama:using-tool", {
+			name: "read_file",
+			message: "Reading file",
+		});
 		if (!project || !file) {
 			return "Error: Missing 'project' or 'file' parameter.";
 		}
@@ -59,7 +62,10 @@ export function read_file(project: string, file: string, io: any) {
 }
 
 export async function get_installed_apps(io: any) {
-	io.emit("ollama:using-tool", { name: "get_installed_apps", message: "Getting installed apps" });
+	io.emit("ollama:using-tool", {
+		name: "get_installed_apps",
+		message: "Getting installed apps",
+	});
 	logger.ai("Getting installed apps...");
 	const result = await getAllScripts();
 	logger.ai(`Installed apps: ${result.length}`);
@@ -67,7 +73,10 @@ export async function get_installed_apps(io: any) {
 }
 
 export async function get_latest_apps(io: any) {
-	io.emit("ollama:using-tool", { name: "get_latest_apps", message: "Getting latest apps" });
+	io.emit("ollama:using-tool", {
+		name: "get_latest_apps",
+		message: "Getting latest apps",
+	});
 	async function getData(page: number, limit: number) {
 		try {
 			const response = await fetch(
@@ -76,8 +85,8 @@ export async function get_latest_apps(io: any) {
 					headers: {
 						...(process.env.API_KEY
 							? {
-								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-							}
+									Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+								}
 							: {}),
 					},
 				},
@@ -136,15 +145,18 @@ export async function get_latest_apps(io: any) {
 }
 
 export async function get_app_by_name(io: any, name: string) {
-	io.emit("ollama:using-tool", { name: "get_app_by_name", message: "Reading about an app" });
+	io.emit("ollama:using-tool", {
+		name: "get_app_by_name",
+		message: "Reading about an app",
+	});
 	const response = await fetch(
 		`https://api.getdione.app/v1/scripts?q=${name}&limit=1`,
 		{
 			headers: {
 				...(process.env.API_KEY
 					? {
-						Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-					}
+							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+						}
 					: {}),
 			},
 		},
@@ -154,8 +166,15 @@ export async function get_app_by_name(io: any, name: string) {
 	return data;
 }
 
-export async function navigate_to_app(io: any, name: string, action: "navigate" | "start" | "install") {
-	io.emit("ollama:using-tool", { name: "navigate_to_app", message: "Navigating to an app" });
+export async function navigate_to_app(
+	io: any,
+	name: string,
+	action: "navigate" | "start" | "install",
+) {
+	io.emit("ollama:using-tool", {
+		name: "navigate_to_app",
+		message: "Navigating to an app",
+	});
 	logger.ai(`Navigating to app: ${name} with action ${action}`);
 	const app = await get_app_by_name(io, name);
 	if (!app) {

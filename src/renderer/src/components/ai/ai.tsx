@@ -1,9 +1,9 @@
 import Messages from "@/components/ai/messages";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { useScriptsContext } from "../contexts/ScriptsContext";
 import { useAIContext } from "../contexts/ai-context";
 import { InstallAIModal } from "../modals/install-ai";
-import { useScriptsContext } from "../contexts/ScriptsContext";
 
 export default function AI({
 	getContext,
@@ -202,7 +202,12 @@ export default function AI({
 							className="backdrop-blur-3xl rounded-2xl p-4 pb-8 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto"
 							style={{ scrollbarWidth: "none" }}
 						>
-							<Messages messages={messages} logsEndRef={logsEndRef} messageLoading={messageLoading} usingTool={usingTool} />
+							<Messages
+								messages={messages}
+								logsEndRef={logsEndRef}
+								messageLoading={messageLoading}
+								usingTool={usingTool}
+							/>
 						</div>
 					)}
 				</motion.div>

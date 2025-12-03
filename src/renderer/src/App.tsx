@@ -94,7 +94,13 @@ function App() {
 			const isLocal = searchParams.get("isLocal");
 			const action = searchParams.get("action");
 			const id = pathname.split("/")[2];
-			return () => <Install id={id} isLocal={isLocal === "true"} action={action as "install" | "start" | "navigate"} />;
+			return () => (
+				<Install
+					id={id}
+					isLocal={isLocal === "true"}
+					action={action as "install" | "start" | "navigate"}
+				/>
+			);
 		}
 
 		return routes[pathname as keyof typeof routes] || Home;
@@ -113,9 +119,9 @@ function App() {
 						className="flex-1 overflow-x-hidden"
 						id={
 							pathname.includes("/install") ||
-								pathname === "/account" ||
-								pathname === "/first-time" ||
-								pathname === "/library"
+							pathname === "/account" ||
+							pathname === "/first-time" ||
+							pathname === "/library"
 								? ""
 								: pathname === "/settings"
 									? "settings"
