@@ -103,16 +103,16 @@ export default function ActionsComponent({
 					className="flex flex-col w-full max-w-xl px-4 sm:px-6"
 				>
 					{/* Hero Card */}
-					<div className="rounded-xl border border-white/10 relative w-full overflow-hidden">
+					<div className="rounded-xl border border-white/10 relative w-full">
 						{/* Background with gradient */}
 						<div
-							className="absolute inset-0"
+							className="absolute inset-0 overflow-hidden rounded-xl"
 							style={{
 								background:
 									"linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 10%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))",
 							}}
 						/>
-						<div className="absolute inset-0 overflow-hidden pointer-events-none">
+						<div className="absolute inset-0 overflow-hidden pointer-events-none overflow-hidden rounded-xl">
 							<div
 								className="absolute -top-16 -right-16 w-32 sm:w-48 h-32 sm:h-48 rounded-full blur-3xl"
 								style={{
@@ -159,10 +159,10 @@ export default function ActionsComponent({
 											style={
 												saved
 													? {
-															color: "var(--theme-accent)",
-															backgroundColor:
-																"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
-														}
+														color: "var(--theme-accent)",
+														backgroundColor:
+															"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+													}
 													: {}
 											}
 										>
@@ -171,9 +171,9 @@ export default function ActionsComponent({
 												style={
 													saved
 														? {
-																fill: "var(--theme-accent)",
-																color: "var(--theme-accent)",
-															}
+															fill: "var(--theme-accent)",
+															color: "var(--theme-accent)",
+														}
 														: {}
 												}
 											/>
@@ -235,16 +235,14 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
-												installed
-													? "bg-green-500/20 text-green-400 border border-green-500/30"
-													: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
-											}`}
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${installed
+												? "bg-green-500/20 text-green-400 border border-green-500/30"
+												: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
+												}`}
 										>
 											<div
-												className={`w-1 h-1 rounded-full ${
-													installed ? "bg-green-400" : "bg-neutral-400"
-												}`}
+												className={`w-1 h-1 rounded-full ${installed ? "bg-green-400" : "bg-neutral-400"
+													}`}
 											/>
 											<span className="hidden sm:inline">
 												{installed
@@ -340,6 +338,7 @@ export default function ActionsComponent({
 															animate={{ opacity: 1, scale: 1, y: 0 }}
 															exit={{ opacity: 0, scale: 0.95, y: -5 }}
 															transition={{ duration: 0.15 }}
+															style={{ zIndex: 10000 }}
 															className="absolute left-0 right-0 mt-2 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden"
 														>
 															<div className="p-1">
