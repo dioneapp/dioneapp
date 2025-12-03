@@ -437,15 +437,14 @@ export async function executeStartup(
 						: "uv";
 				const pythonVersion =
 					typeof selectedStart.env === "object" &&
-					"version" in selectedStart.env
+						"version" in selectedStart.env
 						? selectedStart.env.version
 						: "";
 
 				io.to(id).emit("installUpdate", {
 					type: "log",
-					content: `INFO: Using virtual environment: ${envName} with ${envType}${
-						pythonVersion ? ` (Python ${pythonVersion})` : ""
-					}\n`,
+					content: `INFO: Using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""
+						}\n`,
 				});
 
 				const envCommands = await createVirtualEnvCommands(
@@ -576,54 +575,54 @@ async function createVirtualEnvCommands(
 	// filter and ensure commands is an array of strings without empty strings
 	const commandStrings = Array.isArray(commands)
 		? commands.flatMap((cmd) => {
-				if (typeof cmd === "string" && cmd.trim()) {
-					return [cmd.trim()];
-				}
-				if (
-					cmd &&
-					typeof cmd === "object" &&
-					typeof cmd.command === "string" &&
-					cmd.command.trim()
-				) {
-					// Apply platform filtering
-					if ("platform" in cmd) {
-						const cmdPlatform = cmd.platform.toLowerCase();
-						const normalizedPlatform =
-							currentPlatform === "win32"
-								? "windows"
-								: currentPlatform === "darwin"
-									? "mac"
-									: currentPlatform === "linux"
-										? "linux"
-										: currentPlatform;
+			if (typeof cmd === "string" && cmd.trim()) {
+				return [cmd.trim()];
+			}
+			if (
+				cmd &&
+				typeof cmd === "object" &&
+				typeof cmd.command === "string" &&
+				cmd.command.trim()
+			) {
+				// Apply platform filtering
+				if ("platform" in cmd) {
+					const cmdPlatform = cmd.platform.toLowerCase();
+					const normalizedPlatform =
+						currentPlatform === "win32"
+							? "windows"
+							: currentPlatform === "darwin"
+								? "mac"
+								: currentPlatform === "linux"
+									? "linux"
+									: currentPlatform;
 
-						// if platform does not match current platform, skip
-						if (cmdPlatform !== normalizedPlatform) {
-							logger.info(
-								`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
-							);
-							return [];
-						}
+					// if platform does not match current platform, skip
+					if (cmdPlatform !== normalizedPlatform) {
+						logger.info(
+							`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+						);
+						return [];
 					}
-
-					// Apply GPU filtering
-					if ("gpus" in cmd) {
-						const allowedGpus = Array.isArray(cmd.gpus)
-							? cmd.gpus.map((g: string) => g.toLowerCase())
-							: [cmd.gpus.toLowerCase()];
-
-						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
-							logger.info(
-								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
-							);
-							return [];
-						}
-					}
-
-					return [cmd.command.trim()];
 				}
-				return [];
-			})
+
+				// Apply GPU filtering
+				if ("gpus" in cmd) {
+					const allowedGpus = Array.isArray(cmd.gpus)
+						? cmd.gpus.map((g: string) => g.toLowerCase())
+						: [cmd.gpus.toLowerCase()];
+
+					if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+						logger.info(
+							`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+						);
+						return [];
+					}
+				}
+
+				return [cmd.command.trim()];
+			}
+			return [];
+		})
 		: [];
 
 	// add python version flag if specified
@@ -662,9 +661,10 @@ async function createVirtualEnvCommands(
 			"conda",
 		);
 		if (isWindows) {
+			const between = middle ? ` && ${middle} && ` : " && ";
 			return [
-				`if not exist "${envPath}" ("${condaW}" tos accept --channel main && "${condaW}" create -p "${envPath}" ${pythonArg} -y)`,
-				`call "${condaW}" activate "${envPath}" ${middle} && call "${condaW}" deactivate`,
+				`if not exist "${envPath}" (call "${condaW}" tos accept --channel main & call "${condaW}" create -p "${envPath}" ${pythonArg} -y)`,
+				`call "${condaW}" activate "${envPath}"${between}call "${condaW}" deactivate`,
 			];
 		}
 		// for linux and mac
