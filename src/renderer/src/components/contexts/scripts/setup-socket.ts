@@ -24,7 +24,7 @@ export function setupSocket({
 	setWasJustInstalled,
 	setProgress,
 	shouldCatch,
-	setShouldCatch
+	setShouldCatch,
 }: SetupSocketProps): Socket {
 	if (socketsRef.current[appId]?.socket) {
 		console.log(`Socket [${appId}] already exists`);
@@ -251,10 +251,18 @@ export function setupSocket({
 
 	socket.on(
 		"installUpdate",
-		(message: { type: string; content: string; status: string; portToCatch?: string }) => {
+		(message: {
+			type: string;
+			content: string;
+			status: string;
+			portToCatch?: string;
+		}) => {
 			const { type, status, content, portToCatch } = message;
 			console.log(`[${appId}] LOG:`, message);
-			if ((content && content.toLowerCase().includes("error")) || status === "error") {
+			if (
+				(content && content.toLowerCase().includes("error")) ||
+				status === "error"
+			) {
 				errorRef.current = true;
 				if (settings.sendAnonymousReports && content) {
 					sendDiscordReport(content, {
@@ -265,11 +273,11 @@ export function setupSocket({
 
 			// get if app should search for a port or use catch label
 			if (type === "shouldCatch?") {
-				console.log("should catch port?", content)
+				console.log("should catch port?", content);
 				setShouldCatch((prev) => ({ ...prev, [appId]: Boolean(content) }));
 
 				if (content === "true" && portToCatch) {
-					console.log("catching port", content)
+					console.log("catching port", content);
 					stopCheckingRef.current = false;
 					setIframeAvailable((prev) => ({ ...prev, [appId]: false }));
 					setCatchPort((prev) => ({
@@ -281,7 +289,8 @@ export function setupSocket({
 			}
 			// launch iframe if server is running
 			if (
-				((type === "log" || type === "info") && !shouldCatch[appId] &&
+				((type === "log" || type === "info") &&
+					!shouldCatch[appId] &&
 					(content.toLowerCase().includes("started server") ||
 						content.toLowerCase().includes("http") ||
 						content.toLowerCase().includes("127.0.0.1") ||

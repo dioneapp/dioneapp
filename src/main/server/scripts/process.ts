@@ -196,7 +196,9 @@ async function killByPort(
 				if (activePIDs.size === 0) {
 					return resolve(true); // no active process to stop
 				}
-				logger.info(`Killing active processes with PIDs ${Array.from(activePIDs).join(", ")}`);
+				logger.info(
+					`Killing active processes with PIDs ${Array.from(activePIDs).join(", ")}`,
+				);
 				const results = await Promise.all(
 					Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
 				);

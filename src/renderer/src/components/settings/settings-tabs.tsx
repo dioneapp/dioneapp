@@ -57,10 +57,11 @@ export default function SettingsTabs({
 					<button
 						key={tab.id}
 						onClick={() => onTabChange(tab.id)}
-						className={`relative cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeTab === tab.id
-							? "text-white"
-							: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-							}`}
+						className={`relative cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+							activeTab === tab.id
+								? "text-white"
+								: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
+						}`}
 						type="button"
 					>
 						{activeTab === tab.id && (
