@@ -182,10 +182,21 @@ export default function Sidebar() {
 			</AnimatePresence>
 			<div
 				className={`relative flex flex-col items-center justify-center border-r border-white/10 overflow-hidden ${config?.compactMode ? "max-w-24 w-24" : "max-w-70 w-70"}`}
-	
 			>
-				<div className="absolute -top-16 -right-8 w-48 h-48 rounded-full blur-3xl pointer-events-none" style={{ backgroundColor: "color-mix(in srgb, var(--theme-accent) 8%, transparent)" }} />
-				<div className="absolute -bottom-16 -left-8 w-40 h-40 rounded-full blur-3xl pointer-events-none" style={{ backgroundColor: "color-mix(in srgb, var(--theme-accent) 5%, transparent)" }} />
+				<div
+					className="absolute -top-16 -right-8 w-48 h-48 rounded-full blur-3xl pointer-events-none"
+					style={{
+						backgroundColor:
+							"color-mix(in srgb, var(--theme-accent) 8%, transparent)",
+					}}
+				/>
+				<div
+					className="absolute -bottom-16 -left-8 w-40 h-40 rounded-full blur-3xl pointer-events-none"
+					style={{
+						backgroundColor:
+							"color-mix(in srgb, var(--theme-accent) 5%, transparent)",
+					}}
+				/>
 				<div className="flex flex-col items-center justify-start h-full w-full p-4 z-50 px-6">
 					<div
 						className={`w-full flex flex-col justify-center items-start gap-2 ${config?.compactMode ? "h-24" : "h-44"}`}
