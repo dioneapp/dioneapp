@@ -44,6 +44,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const [isServerRunning, setIsServerRunning] = useState<
 		Record<string, boolean>
 	>({});
+	const [shouldCatch, setShouldCatch] = useState<Record<string, boolean>>({});
 	// toast stuff
 	const { addToast } = useToast();
 	const showToast = (
@@ -226,15 +227,14 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	const isLocalAvailable = async (port: number): Promise<boolean> => {
 		try {
-			const response = await fetch(`http://localhost:${port}`, {
-				method: "GET",
-			});
-			if (response.ok) {
-				return true;
-			}
-			return false;
-		} catch (error: any) {
-			console.log("Port is not available", error);
+			const response = await fetch(`http://localhost:${port}`);
+			if (!response.ok) return false;
+
+			const text = await response.text();
+
+			// check if really its loaded
+			return text.includes("<html");
+		} catch {
 			return false;
 		}
 	};
@@ -245,7 +245,6 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		if (stopCheckingRef.current || isLoadingIframeRef.current) return;
 
 		stopCheckingRef.current = false;
-		isLoadingIframeRef.current = true;
 
 		let isAvailable = false;
 		while (!isAvailable) {
@@ -256,6 +255,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		}
 		if (isAvailable) {
 			stopCheckingRef.current = true;
+			isLoadingIframeRef.current = true;
 			setIframeSrc((prev) => ({
 				...prev,
 				[data?.id]: `http://localhost:${localPort}`,
@@ -347,6 +347,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				setNotSupported,
 				setWasJustInstalled,
 				setProgress,
+				setShouldCatch,
+				shouldCatch,
 			});
 			socketsRef.current[appId] = {
 				socket: newSocket,
@@ -485,10 +487,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${
-							sockets[data.id]?.isLocal
-								? encodeURIComponent(data.name)
-								: data.id
+						`/install/${sockets[data.id]?.isLocal
+							? encodeURIComponent(data.name)
+							: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},

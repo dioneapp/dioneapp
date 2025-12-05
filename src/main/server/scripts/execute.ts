@@ -320,6 +320,12 @@ export async function executeStartup(
 	//     content: `INFO: Executing start: "${selectedStart.name}"\n`,
 	// });
 
+	io.to(id).emit("installUpdate", {
+		type: "shouldCatch?",
+		content: selectedStart.catch ? "true" : "false",
+		portToCatch: selectedStart.catch,
+	});
+
 	// structured progress setup for start run
 	const startStepsRaw = selectedStart.steps
 		? selectedStart.steps

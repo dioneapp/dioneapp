@@ -1,6 +1,7 @@
 import type { SetupSocketProps } from "@/components/contexts/types/context-types";
 import successSound from "@/components/first-time/sounds/success.mp3";
 import { sendDiscordReport } from "@/utils/discord-webhook";
+import { useState } from "react";
 import { type Socket, io as clientIO } from "socket.io-client";
 
 export function setupSocket({
@@ -23,6 +24,8 @@ export function setupSocket({
 	setNotSupported,
 	setWasJustInstalled,
 	setProgress,
+	shouldCatch,
+	setShouldCatch
 }: SetupSocketProps): Socket {
 	if (socketsRef.current[appId]?.socket) {
 		console.log(`Socket [${appId}] already exists`);
@@ -249,10 +252,10 @@ export function setupSocket({
 
 	socket.on(
 		"installUpdate",
-		(message: { type: string; content: string; status: string }) => {
-			const { type, status, content } = message;
+		(message: { type: string; content: string; status: string; portToCatch?: string }) => {
+			const { type, status, content, portToCatch } = message;
 			console.log(`[${appId}] LOG:`, message);
-			if (content.toLowerCase().includes("error") || status === "error") {
+			if ((content && content.toLowerCase().includes("error")) || status === "error") {
 				errorRef.current = true;
 				if (settings.sendAnonymousReports && content) {
 					sendDiscordReport(content, {
@@ -260,9 +263,26 @@ export function setupSocket({
 					});
 				}
 			}
+
+			// get if app should search for a port or use catch label
+			if (type === "shouldCatch?") {
+				console.log("should catch port?", content)
+				setShouldCatch((prev) => ({ ...prev, [appId]: Boolean(content) }));
+
+				if (content === "true" && portToCatch) {
+					console.log("catching port", content)
+					stopCheckingRef.current = false;
+					setIframeAvailable((prev) => ({ ...prev, [appId]: false }));
+					setCatchPort((prev) => ({
+						...prev,
+						[appId]: Number.parseInt(portToCatch),
+					}));
+					loadIframe(Number.parseInt(portToCatch));
+				}
+			}
 			// launch iframe if server is running
 			if (
-				((type === "log" || type === "info") &&
+				((type === "log" || type === "info") && (!shouldCatch) &&
 					(content.toLowerCase().includes("started server") ||
 						content.toLowerCase().includes("http") ||
 						content.toLowerCase().includes("127.0.0.1") ||
@@ -329,15 +349,6 @@ export function setupSocket({
 
 					setAppFinished((prev) => ({ ...prev, [appId]: true }));
 				}
-			}
-			if (type === "catch") {
-				stopCheckingRef.current = false;
-				setIframeAvailable((prev) => ({ ...prev, [appId]: false }));
-				// loadIframe(Number.parseInt(content));
-				setCatchPort((prev) => ({
-					...prev,
-					[appId]: Number.parseInt(content),
-				}));
 			}
 
 			if (content === "Script killed successfully" && !errorRef.current) {

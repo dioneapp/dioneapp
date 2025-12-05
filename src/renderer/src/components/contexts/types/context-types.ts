@@ -172,6 +172,8 @@ export interface SetupSocketProps {
 	setProgress: React.Dispatch<
 		React.SetStateAction<Record<string, ProgressState>>
 	>;
+	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	shouldCatch: Record<string, boolean>;
 	isLocal?: boolean;
 }
 
