@@ -1,7 +1,6 @@
 import type { SetupSocketProps } from "@/components/contexts/types/context-types";
 import successSound from "@/components/first-time/sounds/success.mp3";
 import { sendDiscordReport } from "@/utils/discord-webhook";
-import { useState } from "react";
 import { type Socket, io as clientIO } from "socket.io-client";
 
 export function setupSocket({

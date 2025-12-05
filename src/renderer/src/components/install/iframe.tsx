@@ -123,44 +123,7 @@ export default function IframeComponent({
 		};
 	}, []);
 
-	const UsageIndicator = ({
-		label,
-		percentage,
-		absoluteValue,
-	}: {
-		label: string;
-		percentage: number;
-		absoluteValue?: string;
-	}) => {
-		const [isHovered, setIsHovered] = useState(false);
-
-		return (
-			<div
-				className="flex items-center gap-2 border border-white/10 px-3 py-1.5 rounded-full shrink-0 relative transition-all duration-200 hover:bg-white/10 hover:border-white/20"
-				onMouseEnter={() => setIsHovered(true)}
-				onMouseLeave={() => setIsHovered(false)}
-			>
-				<span className="text-[10px] text-neutral-400 font-medium uppercase tracking-wide">{label}</span>
-				<div className="w-16 h-1.5 bg-white/10 rounded-full overflow-hidden">
-					<motion.div
-						className="h-full rounded-full"
-						style={{ 
-							width: `${percentage}%`,
-							background: "linear-gradient(90deg, var(--theme-gradient-from), var(--theme-gradient-to))"
-						}}
-					/>
-				</div>
-				<span className="text-[10px] font-semibold text-right min-w-[2rem]" style={{ color: "var(--theme-accent)" }}>
-					{isHovered && absoluteValue
-						? absoluteValue
-						: `${Math.round(percentage)}%`}
-				</span>
-			</div>
-		);
-	};
-
 	const containerRef = useRef<HTMLDivElement>(null);
-
 	useEffect(() => {
 		const container = containerRef.current;
 		if (container && iframeSrc) {
@@ -223,7 +186,7 @@ export default function IframeComponent({
 		}
 	};
 
-		return (
+	return (
 		<div className="w-full h-full flex flex-col gap-3 p-6">
 			<motion.div
 				initial={{ opacity: 0, y: -10 }}
@@ -278,31 +241,31 @@ export default function IframeComponent({
 						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframeActions.shareOnNetwork")}
 						</div>
-				</button>{" "}
-			</div>
-
-			{/* Title and Description */}
-			<div className="flex items-center justify-center gap-3 flex-1 px-4 min-w-0">
-				{data?.logo_url && data?.logo_url?.startsWith("http") && (
-					<img 
-						src={data.logo_url} 
-						alt={data.title || data.name} 
-						className="w-7 h-7 rounded-lg object-cover shrink-0"
-					/>
-				)}
-				<div className="flex flex-col justify-center min-w-0 max-w-md">
-					<h2 className="text-sm font-semibold tracking-tight truncate">
-						{data.title || data.name || "Untitled"}
-					</h2>
-					{data.description && (
-						<p className="text-[10px] text-neutral-400 truncate">
-							{data.description}
-						</p>
-					)}
+					</button>{" "}
 				</div>
-			</div>
 
-			<div className="flex gap-1.5">
+				{/* Title and Description */}
+				<div className="flex items-center justify-center gap-3 flex-1 px-4 min-w-0">
+					{data?.logo_url && data?.logo_url?.startsWith("http") && (
+						<img
+							src={data.logo_url}
+							alt={data.title || data.name}
+							className="w-7 h-7 rounded-lg object-cover shrink-0"
+						/>
+					)}
+					<div className="flex flex-col justify-center min-w-0 max-w-md">
+						<h2 className="text-sm font-semibold tracking-tight truncate">
+							{data.title || data.name || "Untitled"}
+						</h2>
+						{data.description && (
+							<p className="text-[10px] text-neutral-400 truncate">
+								{data.description}
+							</p>
+						)}
+					</div>
+				</div>
+
+				<div className="flex gap-1.5">
 					<motion.button
 						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
 						onClick={handleOpenNewWindow}
