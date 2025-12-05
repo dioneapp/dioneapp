@@ -57,6 +57,7 @@ export default function Install({
 		sockets,
 		wasJustInstalled,
 		setWasJustInstalled,
+		shouldCatch
 	} = useScriptsContext();
 
 	const { t } = useTranslation();
@@ -833,7 +834,7 @@ export default function Install({
 
 	useEffect(() => {
 		if (!data?.id) return;
-		if (iframeAvailable[data.id] && isServerRunning[data.id] && installed) {
+		if (iframeAvailable[data.id] && isServerRunning[data.id] && installed && !shouldCatch[data.id]) {
 			loadIframe(catchPort[data.id]);
 			const logText = `INFO: Preview started for ${data.name} on port ${catchPort[data.id]}`;
 

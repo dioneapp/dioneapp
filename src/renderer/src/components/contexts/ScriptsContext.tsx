@@ -533,6 +533,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		} finally {
 			disconnectApp(appId);
 			setAppFinished({ [appId]: false });
+			setShouldCatch({ [appId]: false });
+			setCatchPort({ [appId]: 0 });
 			handleReloadQuickLaunch();
 		}
 	};
@@ -602,6 +604,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				setWasJustInstalled,
 				progress,
 				setProgress,
+				shouldCatch,
+				setShouldCatch,
 			}}
 		>
 			{children}

@@ -85,10 +85,9 @@ export default async function executeInstallation(
 		});
 	}
 
-	// process installation steps sequentially
+	// process installation steps
 	try {
-		for (let i = 0; i < installation.length; i++) {
-			const step = installation[i];
+		const runStep = async (step: any, i: number) => {
 			const stepId = `step-${i + 1}`;
 
 			io.to(id).emit("installUpdate", {
@@ -109,6 +108,7 @@ export default async function executeInstallation(
 					? step.commands
 					: [step.commands.toString()];
 
+				let resp;
 				// if exists env property, create virtual environment and execute commands inside it
 				if (step.env) {
 					const envName =
@@ -137,7 +137,7 @@ export default async function executeInstallation(
 						pythonVersion,
 						envType,
 					);
-					const resp = await executeCommands(
+					resp = await executeCommands(
 						envCommands,
 						configDir,
 						io,
@@ -154,21 +154,9 @@ export default async function executeInstallation(
 							},
 						},
 					);
-					if (resp?.cancelled) {
-						io.to(id).emit("installUpdate", {
-							type: "log",
-							content: `INFO: Installation cancelled with run id ${runId} - stopping remaining steps`,
-						});
-						emitRunProgress(io, id, {
-							type: "run_finished",
-							runId,
-							success: false,
-						});
-						return;
-					}
 				} else {
 					// execute commands normally
-					const resp = await executeCommands(
+					resp = await executeCommands(
 						commandsArray,
 						configDir,
 						io,
@@ -185,20 +173,21 @@ export default async function executeInstallation(
 							},
 						},
 					);
-					if (resp?.cancelled) {
-						io.to(id).emit("installUpdate", {
-							type: "log",
-							content:
-								"INFO: Installation cancelled - stopping remaining steps",
-						});
-						emitRunProgress(io, id, {
-							type: "run_finished",
-							runId,
-							success: false,
-						});
-						return;
-					}
 				}
+
+				if (resp?.cancelled) {
+					io.to(id).emit("installUpdate", {
+						type: "log",
+						content: `INFO: Installation cancelled with run id ${runId} - stopping remaining steps`,
+					});
+					emitRunProgress(io, id, {
+						type: "run_finished",
+						runId,
+						success: false,
+					});
+					return { cancelled: true };
+				}
+
 				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: `INFO: Completed step "${step.name}"\n`,
@@ -212,7 +201,26 @@ export default async function executeInstallation(
 					emitRunProgress(io, id, { type: "step_finished", runId, id: stepId });
 				}
 			}
+			return { success: true };
+		};
+
+		const pendingPromises: Promise<any>[] = [];
+		for (let i = 0; i < installation.length; i++) {
+			const step = installation[i];
+			const p = runStep(step, i);
+			pendingPromises.push(p);
+
+			// if current step is NOT parallel, we await all pending steps (inclusive of current)
+			if (!step.parallel) {
+				await Promise.all(pendingPromises);
+				pendingPromises.length = 0;
+			}
 		}
+		// await any remaining parallel steps at the end
+		if (pendingPromises.length > 0) {
+			await Promise.all(pendingPromises);
+		}
+
 		// emit log to reload frontend after all actions are executed
 		io.to(id).emit("installUpdate", {
 			type: "status",
@@ -320,10 +328,12 @@ export async function executeStartup(
 	//     content: `INFO: Executing start: "${selectedStart.name}"\n`,
 	// });
 
+	const shouldCatch = selectedStart.catch || selectedStart.steps?.find((step: any) => step.catch)?.catch;
+	logger.info(`Should catch port: ${shouldCatch}`);
 	io.to(id).emit("installUpdate", {
 		type: "shouldCatch?",
-		content: selectedStart.catch ? "true" : "false",
-		portToCatch: selectedStart.catch,
+		content: shouldCatch ? "true" : "false",
+		portToCatch: shouldCatch,
 	});
 
 	// structured progress setup for start run
@@ -357,13 +367,9 @@ export async function executeStartup(
 		// convert selected start commands to steps
 		const steps = startStepsRaw;
 
-		let response:
-			| { cancelled?: boolean; id?: string; error?: string }
-			| undefined;
 		let haveMarkedServiceReady = false;
 
-		for (let i = 0; i < steps.length; i++) {
-			const step = steps[i];
+		const runStep = async (step: any, i: number) => {
 			const stepId = `step-${i + 1}`;
 
 			io.to(id).emit("installUpdate", {
@@ -431,6 +437,8 @@ export async function executeStartup(
 					}
 				}
 			};
+
+			let response;
 
 			if (selectedStart.env) {
 				const envName =
@@ -508,7 +516,7 @@ export async function executeStartup(
 					runId,
 					success: false,
 				});
-				return;
+				return { cancelled: true };
 			}
 
 			if (response?.error) {
@@ -540,6 +548,22 @@ export async function executeStartup(
 			});
 
 			emitRunProgress(io, id, { type: "step_finished", runId, id: stepId });
+			return { success: true };
+		};
+
+		const pendingPromises: Promise<any>[] = [];
+		for (let i = 0; i < steps.length; i++) {
+			const step = steps[i];
+			const p = runStep(step, i);
+			pendingPromises.push(p);
+
+			if (!step.parallel) {
+				await Promise.all(pendingPromises);
+				pendingPromises.length = 0;
+			}
+		}
+		if (pendingPromises.length > 0) {
+			await Promise.all(pendingPromises);
 		}
 
 		// if we have a wait-port step and it wasn't already marked, start it now

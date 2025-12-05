@@ -127,6 +127,8 @@ export interface ScriptsContextType {
 	setProgress: React.Dispatch<
 		React.SetStateAction<Record<string, ProgressState>>
 	>;
+	shouldCatch: Record<string, boolean>;
+	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	isLocal?: boolean;
 }
 

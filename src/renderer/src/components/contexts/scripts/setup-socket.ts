@@ -282,7 +282,7 @@ export function setupSocket({
 			}
 			// launch iframe if server is running
 			if (
-				((type === "log" || type === "info") && (!shouldCatch) &&
+				((type === "log" || type === "info") && !shouldCatch[appId] &&
 					(content.toLowerCase().includes("started server") ||
 						content.toLowerCase().includes("http") ||
 						content.toLowerCase().includes("127.0.0.1") ||

@@ -13,8 +13,8 @@ import { useGit } from "@/server/utils/useGit";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
 
-let activeProcess: any = null;
-let activePID: number | null = null;
+const activeProcesses = new Set<any>();
+const activePIDs = new Set<number>();
 let processWasCancelled = false;
 
 // kill process and its children
@@ -83,11 +83,13 @@ async function killByPort(
 
 	if (!port || isNaN(port)) {
 		logger.warn(
-			"No valid port provided for killByPort. Attempting to kill active process...",
+			"No valid port provided for killByPort. Attempting to kill active processes...",
 		);
-		if (activePID) {
-			const success = await killProcess(activePID, io, id);
-			return success;
+		if (activePIDs.size > 0) {
+			const results = await Promise.all(
+				Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
+			);
+			return results.every(Boolean);
 		}
 		io.to(id).emit("installUpdate", {
 			type: "log",
@@ -109,15 +111,17 @@ async function killByPort(
 						content: `ERROR listing port ${port}: ${stderr}\n`,
 					});
 
-					if (!activePID) {
+					if (activePIDs.size === 0) {
 						return resolve(true); // no active process to stop
 					}
 					io.to(id).emit("installUpdate", {
 						type: "log",
-						content: `No port active found, stopping active process...\n`,
+						content: `No port active found, stopping active processes...\n`,
 					});
-					const success = await killProcess(activePID, io, id);
-					return resolve(success);
+					const results = await Promise.all(
+						Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
+					);
+					return resolve(results.every(Boolean));
 				}
 				const pids = stdout.split(/\r?\n/).filter(Boolean).map(Number);
 				if (pids.length === 0) {
@@ -125,11 +129,13 @@ async function killByPort(
 						type: "log",
 						content: `No processes found on port ${port}\n`,
 					});
-					if (!activePID) {
+					if (activePIDs.size === 0) {
 						return resolve(true); // no active process to stop
 					}
-					const success = await killProcess(activePID, io, id);
-					return resolve(success);
+					const results = await Promise.all(
+						Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
+					);
+					return resolve(results.every(Boolean));
 				}
 				Promise.all(
 					pids.map((pid) => {
@@ -148,8 +154,10 @@ async function killByPort(
 						type: "log",
 						content: `Killed processes: ${pids.join(", ")}\n`,
 					});
-					if (activePID) {
-						await killProcess(activePID, io, id);
+					if (activePIDs.size > 0) {
+						await Promise.all(
+							Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
+						);
 					}
 					resolve(true);
 				});
@@ -185,12 +193,14 @@ async function killByPort(
 					type: "log",
 					content: `No processes found on port ${port}\n`,
 				});
-				if (!activePID) {
+				if (activePIDs.size === 0) {
 					return resolve(true); // no active process to stop
 				}
-				logger.info(`Killing active process with PID ${activePID}`);
-				const success = await killProcess(activePID, io, id);
-				return resolve(success);
+				logger.info(`Killing active processes with PIDs ${Array.from(activePIDs).join(", ")}`);
+				const results = await Promise.all(
+					Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
+				);
+				return resolve(results.every(Boolean));
 			}
 
 			// kill each PID
@@ -218,8 +228,10 @@ async function killByPort(
 					});
 				}),
 			).then(async () => {
-				if (activePID) {
-					await killProcess(activePID, io, id);
+				if (activePIDs.size > 0) {
+					await Promise.all(
+						Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
+					);
 				}
 
 				resolve(true);
@@ -237,8 +249,8 @@ export const stopActiveProcess = async (
 	logger.warn(`Stopping any process on port ${port}...`);
 	processWasCancelled = true;
 	const success = await killByPort(port, io, id);
-	activeProcess = null;
-	activePID = null;
+	activeProcesses.clear();
+	activePIDs.clear();
 	return success;
 };
 
@@ -341,30 +353,6 @@ export const executeCommand = async (
 		DS_SKIP_CUDA_CHECK: "1",
 	};
 
-	// if (needsBuildTools) {
-	// 	logger.info(`This script requires build tools. Initializing...`);
-	// 	const buildTools = BuildToolsManager.getInstance();
-	// 	const buildToolsReady = await buildTools.initialize();
-	// 	if (!buildToolsReady) {
-	// 		logger.warn("Build tools initialization failed. Compilation may fail.");
-	// 		io.to(id).emit(logs, {
-	// 			type: "log",
-	// 			content:
-	// 				"WARNING: Build tools initialization failed. Compilation may fail.\n",
-	// 		});
-	// 		enhancedEnv = baseEnv;
-	// 	} else {
-	// 		enhancedEnv = buildTools.getEnhancedEnvironment(ENVIRONMENT);
-	// 		logger.info("Build tools ready for native compilation");
-	// 		io.to(id).emit(logs, {
-	// 			type: "log",
-	// 			content: "Build tools initialized for native module compilation\n",
-	// 		});
-	// 	}
-	// } else {
-	// 	enhancedEnv = baseEnv;
-	// }
-
 	// avoid re-initializing using cache
 	const _cacheKey = "__buildToolsEnv";
 	const _fnAny = executeCommand as unknown as Record<string, any>;
@@ -432,16 +420,18 @@ export const executeCommand = async (
 			}
 		}
 
-		activeProcess = spawn(command, spawnOptions);
-		activePID = activeProcess.pid;
-		logger.info(`Started process (PID: ${activePID}): ${command}`);
-		// io.to(id).emit(logs, {
-		//     type: "log",
-		//     content: `Executing: ${command}\n`,
-		// });
+		const processInstance = spawn(command, spawnOptions);
+		const pid = processInstance.pid;
+
+		if (pid) {
+			activeProcesses.add(processInstance);
+			activePIDs.add(pid);
+			logger.info(`Started process (PID: ${pid}): ${command}`);
+		}
+
 		logger.info(`Executing: ${command}`);
 
-		activeProcess.stdout.on("data", (data: Buffer) => {
+		processInstance.stdout.on("data", (data: Buffer) => {
 			const text = data.toString("utf8");
 			if (text) {
 				stdoutData += text;
@@ -450,14 +440,14 @@ export const executeCommand = async (
 				logger.info(`[stdout] ${text}`);
 			}
 		});
-		activeProcess.stderr.on("data", (data: Buffer) => {
+		processInstance.stderr.on("data", (data: Buffer) => {
 			const text = data.toString("utf8");
 			if (text) {
 				stderrData += text;
 				if (text.match(/error|fatal|unexpected/i)) {
 					io.to(id).emit(logs, { type: "log", content: text });
 					// logger.error(`[stderr-error] ${text}`);
-					// killProcess(activeProcess, io, id);
+					// killProcess(processInstance, io, id);
 					io.to(id).emit(logs, {
 						type: "log",
 						content: `"${command}": ${text}`,
@@ -482,18 +472,18 @@ export const executeCommand = async (
 
 		return new Promise<{ code: number; stdout: string; stderr: string }>(
 			(resolve) => {
-				activeProcess.on("exit", (code: number) => {
-					const oldPid = activePID;
-					activeProcess = null;
-					activePID = null;
-
-					logger.info(
-						`Process (PID: ${oldPid}) finished with exit code ${code}`,
-					);
+				processInstance.on("exit", (code: number) => {
+					if (pid) {
+						activeProcesses.delete(processInstance);
+						activePIDs.delete(pid);
+						logger.info(
+							`Process (PID: ${pid}) finished with exit code ${code}`,
+						);
+					}
 					resolve({ code, stdout: stdoutData, stderr: stderrData });
 				});
 
-				activeProcess.on("error", (error) => {
+				processInstance.on("error", (error) => {
 					const errorMsg = `Failed to start command: ${error.message}`;
 					logger.error(errorMsg);
 					io.to(id).emit(logs, {
@@ -505,8 +495,10 @@ export const executeCommand = async (
 						status: "error",
 						content: "Failed to start process",
 					});
-					activeProcess = null;
-					activePID = null;
+					if (pid) {
+						activeProcesses.delete(processInstance);
+						activePIDs.delete(pid);
+					}
 					resolve({ code: -1, stdout: "", stderr: errorMsg });
 				});
 			},
