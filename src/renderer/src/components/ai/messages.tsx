@@ -50,10 +50,10 @@ export default function Messages({
 								<div className="my-2 first:mt-0">
 									{message?.message?.tool_calls[0].function.name ===
 										"read_file" && (
-										<span className="text-xs text-gray-500 dark:text-gray-400">
-											Reading files...
-										</span>
-									)}
+											<span className="text-xs text-gray-500 dark:text-gray-400">
+												Reading files...
+											</span>
+										)}
 								</div>
 							)}
 						<div
@@ -126,6 +126,7 @@ export default function Messages({
 				>
 					<LoaderCircle className="w-3.5 h-3.5 animate-spin duration-100" />
 					<span>Loading...</span>
+					{messages.length <= 2 && " (first time loading, maybe take a while)"}
 				</div>
 			)}
 			{usingTool?.name && messageLoading && (
