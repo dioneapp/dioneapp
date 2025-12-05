@@ -142,7 +142,8 @@ export const ja = {
 			title: "アップデートあり",
 			description:
 				"Dioneの新しいバージョンが利用可能です。アップデートするにはアプリを再起動してください。",
-			tooltip: "新しいアップデートがあります。アップデートするにはDioneを再起動してください。",
+			tooltip:
+				"新しいアップデートがあります。アップデートするにはDioneを再起動してください。",
 		},
 		tooltips: {
 			library: "ライブラリ",
@@ -166,19 +167,23 @@ export const ja = {
 			title: "アプリケーション",
 			installationDirectory: {
 				label: "インストールディレクトリ",
-				description: "新しいアプリケーションがデフォルトでインストールされる場所を選択してください。",
+				description:
+					"新しいアプリケーションがデフォルトでインストールされる場所を選択してください。",
 			},
 			binDirectory: {
 				label: "Binディレクトリ",
-				description: "アプリケーションバイナリが保存され、簡単にアクセスできるようにする場所を選択してください。",
+				description:
+					"アプリケーションバイナリが保存され、簡単にアクセスできるようにする場所を選択してください。",
 			},
 			cleanUninstall: {
 				label: "クリーンアンインストール",
-				description: "アプリケーションをアンインストールする際に、関連するすべての依存関係を削除します。",
+				description:
+					"アプリケーションをアンインストールする際に、関連するすべての依存関係を削除します。",
 			},
 			autoOpenAfterInstall: {
 				label: "インストール後に自動オープン",
-				description: "インストール後に初めてアプリケーションを自動的に開きます。",
+				description:
+					"インストール後に初めてアプリケーションを自動的に開きます。",
 			},
 			deleteCache: {
 				label: "キャッシュを削除",
@@ -195,7 +200,8 @@ export const ja = {
 				label: "表示言語",
 				description: "好みのインターフェース言語を選択してください。",
 			},
-			helpTranslate: "🤔 あなたの言語が見つかりませんか？追加にご協力ください！",
+			helpTranslate:
+				"🤔 あなたの言語が見つかりませんか？追加にご協力ください！",
 			theme: {
 				label: "テーマ",
 				description: "アプリケーションのカラーテーマを選択してください。",
@@ -210,11 +216,13 @@ export const ja = {
 			},
 			intenseBackgrounds: {
 				label: "鮮やかな背景色",
-				description: "控えめなトーンの代わりに、より鮮やかな背景色を使用します。",
+				description:
+					"控えめなトーンの代わりに、より鮮やかな背景色を使用します。",
 			},
 			compactView: {
 				label: "コンパクト表示",
-				description: "よりコンパクトなレイアウトを使用して、画面により多くのコンテンツを表示します。",
+				description:
+					"よりコンパクトなレイアウトを使用して、画面により多くのコンテンツを表示します。",
 			},
 		},
 		notifications: {
@@ -225,7 +233,8 @@ export const ja = {
 			},
 			installationAlerts: {
 				label: "インストールアラート",
-				description: "アプリケーションのインストールが完了したときに通知を受け取ります。",
+				description:
+					"アプリケーションのインストールが完了したときに通知を受け取ります。",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
@@ -233,14 +242,16 @@ export const ja = {
 			},
 			successSound: {
 				label: "成功サウンドを有効にする",
-				description: "アプリケーションのインストールが完了したときに再生されるサウンドを有効にします。",
+				description:
+					"アプリケーションのインストールが完了したときに再生されるサウンドを有効にします。",
 			},
 		},
 		privacy: {
 			title: "プライバシー",
 			errorReporting: {
 				label: "エラーレポート",
-				description: "匿名のエラーレポートを送信して、Dioneの改善に役立ててください。",
+				description:
+					"匿名のエラーレポートを送信して、Dioneの改善に役立ててください。",
 			},
 		},
 		other: {
@@ -256,7 +267,8 @@ export const ja = {
 			},
 			exportLogs: {
 				label: "デバッグログをエクスポート",
-				description: "デバッグのために、すべてのログとシステム情報をzipファイルにエクスポートします。",
+				description:
+					"デバッグのために、すべてのログとシステム情報をzipファイルにエクスポートします。",
 				button: "ログをエクスポート",
 			},
 			submitFeedback: {
@@ -266,7 +278,8 @@ export const ja = {
 			},
 			showOnboarding: {
 				label: "オンボーディングを表示",
-				description: "Dioneを初期状態にリセットし、再設定のためにオンボーディングを再度表示します。",
+				description:
+					"Dioneを初期状態にリセットし、再設定のためにオンボーディングを再度表示します。",
 				button: "リセット",
 			},
 			variables: {
@@ -276,7 +289,8 @@ export const ja = {
 			},
 			checkUpdates: {
 				label: "アップデートを確認",
-				description: "アップデートを確認し、新しいバージョンが利用可能になったときに通知します。",
+				description:
+					"アップデートを確認し、新しいバージョンが利用可能になったときに通知します。",
 				button: "アップデートを確認",
 			},
 		},
@@ -290,13 +304,13 @@ export const ja = {
 		placeholder:
 			"例: アプリケーションをインストールしようとしたときに、このエラーが発生しました...",
 		systemInformationTitle: "システム情報",
-		disclaimer:
-			"以下のシステム情報と匿名IDがレポートに含まれます。",
+		disclaimer: "以下のシステム情報と匿名IDがレポートに含まれます。",
 		success: "レポートは正常に送信されました！",
 		error: "レポートの送信に失敗しました。もう一度お試しください。",
 		send: "レポートを送信",
 		sending: "送信中...",
-		contribute: "すべてのデバイスと互換性のあるスクリプトにするために貢献してください",
+		contribute:
+			"すべてのデバイスと互換性のあるスクリプトにするために貢献してください",
 	},
 
 	// quick launch component
@@ -308,7 +322,8 @@ export const ja = {
 		},
 		selectApp: {
 			title: "アプリを選択",
-			description: "{count}個のアプリが利用可能です。最大{max}個まで選択できます。",
+			description:
+				"{count}個のアプリが利用可能です。最大{max}個まで選択できます。",
 		},
 	},
 
@@ -435,7 +450,8 @@ export const ja = {
 			uploadFile: "ファイルをアップロード",
 			uploading: "アップロード中...",
 			errors: {
-				uploadFailed: "スクリプトのアップロードに失敗しました。もう一度お試しください。",
+				uploadFailed:
+					"スクリプトのアップロードに失敗しました。もう一度お試しください。",
 				uploadError: "スクリプトのアップロード中にエラーが発生しました。",
 			},
 		},
@@ -482,9 +498,11 @@ export const ja = {
 		},
 		local: {
 			shareUrl: "共有URL",
-			urlDescription: "ローカルネットワークに接続されたデバイスとこのURLを共有します",
+			urlDescription:
+				"ローカルネットワークに接続されたデバイスとこのURLを共有します",
 			localNetwork: "ローカルネットワーク:",
-			description: "このURLは同じネットワークに接続されているデバイスで機能します。",
+			description:
+				"このURLは同じネットワークに接続されているデバイスで機能します。",
 		},
 		public: {
 			shareUrl: "パブリックURL",
@@ -495,7 +513,8 @@ export const ja = {
 			stopSharing: "共有を停止",
 		},
 		errors: {
-			noAddress: "ネットワークアドレスを取得できません。接続を確認してください。",
+			noAddress:
+				"ネットワークアドレスを取得できません。接続を確認してください。",
 			loadFailed: "ネットワーク情報の読み込みに失敗しました。",
 			noUrl: "コピーできるURLがありません。",
 			copyFailed: "クリップボードへのコピーに失敗しました。",
@@ -517,7 +536,8 @@ export const ja = {
 			},
 			createProfile: {
 				title: "プロフィールを作成",
-				description: "Dioneコミュニティのためにプロフィールを作成して、あなたを知ってもらいましょう。",
+				description:
+					"Dioneコミュニティのためにプロフィールを作成して、あなたを知ってもらいましょう。",
 			},
 			syncData: {
 				title: "データを同期",
@@ -529,7 +549,8 @@ export const ja = {
 			},
 			giveOutLikes: {
 				title: "いいねを付ける",
-				description: "最も気に入ったアプリにいいねを付けて、より多くの人に使ってもらいましょう！",
+				description:
+					"最も気に入ったアプリにいいねを付けて、より多くの人に使ってもらいましょう！",
 			},
 			publishScripts: {
 				title: "スクリプトを公開",
@@ -537,11 +558,13 @@ export const ja = {
 			},
 			achieveGoals: {
 				title: "目標を達成する",
-				description: "7日間Dioneを使用するなど、目標を達成して無料ギフトを獲得しましょう。",
+				description:
+					"7日間Dioneを使用するなど、目標を達成して無料ギフトを獲得しましょう。",
 			},
 			getNewswire: {
 				title: "ニューズワイヤーを入手",
-				description: "メールでアップデートを受け取り、新機能を見逃さないようにしましょう。",
+				description:
+					"メールでアップデートを受け取り、新機能を見逃さないようにしましょう。",
 			},
 		},
 	},
@@ -550,7 +573,8 @@ export const ja = {
 	editor: {
 		selectFile: "編集を開始するためにファイルを選択",
 		previewNotAvailable: "このファイルではプレビューは利用できません。",
-		mediaNotSupported: "このメディアタイプはまだプレビューをサポートしていません。",
+		mediaNotSupported:
+			"このメディアタイプはまだプレビューをサポートしていません。",
 		previewOnly: "プレビューのみ",
 		unsaved: "未保存",
 		retry: "再試行",
@@ -691,7 +715,8 @@ export const ja = {
 
 	// browser compatibility
 	browserCompatibility: {
-		audioNotSupported: "お使いのブラウザはオーディオ要素をサポートしていません。",
+		audioNotSupported:
+			"お使いのブラウザはオーディオ要素をサポートしていません。",
 		videoNotSupported: "お使いのブラウザはビデオ要素をサポートしていません。",
 	},
 
@@ -736,7 +761,8 @@ export const ja = {
 		deleted: "削除済み",
 		failedToDeleteEntry: "エントリの削除に失敗しました",
 		workspaceNotAvailable: "ワークスペースが利用できません",
-		selectFileOrFolderToRename: "名前を変更するファイルまたはフォルダを選択してください",
+		selectFileOrFolderToRename:
+			"名前を変更するファイルまたはフォルダを選択してください",
 		cannotRenameWorkspaceRoot: "ワークスペースのルートの名前は変更できません",
 		entryRenamed: "エントリの名前が変更されました",
 		fileSavedSuccessfully: "ファイルが正常に保存されました",

@@ -142,7 +142,8 @@ export const fr = {
 			title: "Mise à jour disponible",
 			description:
 				"Une nouvelle version de Dione est disponible, veuillez redémarrer l'application pour mettre à jour.",
-			tooltip: "Nouvelle mise à jour disponible, veuillez redémarrer Dione pour mettre à jour.",
+			tooltip:
+				"Nouvelle mise à jour disponible, veuillez redémarrer Dione pour mettre à jour.",
 		},
 		tooltips: {
 			library: "Bibliothèque",
@@ -186,7 +187,8 @@ export const fr = {
 			},
 			deleteCache: {
 				label: "Supprimer le cache",
-				description: "Supprime toutes les données mises en cache des applications.",
+				description:
+					"Supprime toutes les données mises en cache des applications.",
 				button: "Supprimer le cache",
 				deleting: "Suppression...",
 				deleted: "Supprimé",
@@ -199,7 +201,8 @@ export const fr = {
 				label: "Langue d'affichage",
 				description: "Choisissez votre langue d'interface préférée.",
 			},
-			helpTranslate: "🤔 Vous ne voyez pas votre langue ? Aidez-nous à en ajouter d'autres !",
+			helpTranslate:
+				"🤔 Vous ne voyez pas votre langue ? Aidez-nous à en ajouter d'autres !",
 			theme: {
 				label: "Thème",
 				description: "Choisissez un thème de couleur pour l'application.",
@@ -227,15 +230,18 @@ export const fr = {
 			title: "Notifications",
 			systemNotifications: {
 				label: "Notifications système",
-				description: "Affiche des notifications de bureau pour les événements importants.",
+				description:
+					"Affiche des notifications de bureau pour les événements importants.",
 			},
 			installationAlerts: {
 				label: "Alertes d'installation",
-				description: "Soyez averti lorsque les installations d'applications sont terminées.",
+				description:
+					"Soyez averti lorsque les installations d'applications sont terminées.",
 			},
 			discordRPC: {
 				label: "Présence riche Discord",
-				description: "Affiche votre activité actuelle dans votre statut Discord.",
+				description:
+					"Affiche votre activité actuelle dans votre statut Discord.",
 			},
 			successSound: {
 				label: "Activer le son de succès",
@@ -247,7 +253,8 @@ export const fr = {
 			title: "Confidentialité",
 			errorReporting: {
 				label: "Rapport d'erreurs",
-				description: "Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes.",
+				description:
+					"Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes.",
 			},
 		},
 		other: {
@@ -259,7 +266,8 @@ export const fr = {
 			},
 			logsDirectory: {
 				label: "Répertoire des journaux",
-				description: "Emplacement où sont stockés les journaux de l'application.",
+				description:
+					"Emplacement où sont stockés les journaux de l'application.",
 			},
 			exportLogs: {
 				label: "Exporter les journaux de débogage",
@@ -269,7 +277,8 @@ export const fr = {
 			},
 			submitFeedback: {
 				label: "Soumettre un commentaire",
-				description: "Signalez tout problème ou difficulté que vous rencontrez.",
+				description:
+					"Signalez tout problème ou difficulté que vous rencontrez.",
 				button: "Envoyer le rapport",
 			},
 			showOnboarding: {
@@ -306,7 +315,8 @@ export const fr = {
 		error: "Échec de l'envoi du rapport. Veuillez réessayer.",
 		send: "Envoyer le rapport",
 		sending: "Envoi...",
-		contribute: "Aidez-nous à rendre ce script compatible avec tous les appareils",
+		contribute:
+			"Aidez-nous à rendre ce script compatible avec tous les appareils",
 	},
 
 	// quick launch component
@@ -318,7 +328,8 @@ export const fr = {
 		},
 		selectApp: {
 			title: "Sélectionner une application",
-			description: "{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
+			description:
+				"{count} applications sont disponibles. Vous pouvez en choisir jusqu'à {max}.",
 		},
 	},
 
@@ -363,7 +374,8 @@ export const fr = {
 			subtitle: "erreur",
 			hasOccurred: "s'est produite",
 			deps: "Dione n'a pas pu supprimer de dépendance, veuillez le faire manuellement.",
-			general: "Veuillez réessayer plus tard ou consulter les journaux pour plus d'informations.",
+			general:
+				"Veuillez réessayer plus tard ou consulter les journaux pour plus d'informations.",
 		},
 		loading: {
 			title: "Chargement...",
@@ -446,7 +458,8 @@ export const fr = {
 			uploading: "Téléchargement...",
 			errors: {
 				uploadFailed: "Échec du téléchargement du script. Veuillez réessayer.",
-				uploadError: "Une erreur s'est produite lors du téléchargement du script.",
+				uploadError:
+					"Une erreur s'est produite lors du téléchargement du script.",
 			},
 		},
 	},
@@ -461,7 +474,8 @@ export const fr = {
 		errors: {
 			notArray: "Les données récupérées ne sont pas un tableau",
 			fetchFailed: "Échec de la récupération des scripts",
-			notSupported: "Malheureusement, %s n'est pas pris en charge sur votre %s.",
+			notSupported:
+				"Malheureusement, %s n'est pas pris en charge sur votre %s.",
 			notSupportedTitle: "Votre appareil peut être incompatible.",
 		},
 	},
@@ -492,20 +506,24 @@ export const fr = {
 		},
 		local: {
 			shareUrl: "URL de partage",
-			urlDescription: "Partagez cette URL avec les appareils de votre réseau local",
+			urlDescription:
+				"Partagez cette URL avec les appareils de votre réseau local",
 			localNetwork: "Réseau Local :",
-			description: "Cette URL fonctionne sur les appareils connectés au même réseau.",
+			description:
+				"Cette URL fonctionne sur les appareils connectés au même réseau.",
 		},
 		public: {
 			shareUrl: "URL Publique",
-			urlDescription: "Partagez cette URL avec n'importe qui, n'importe où dans le monde",
+			urlDescription:
+				"Partagez cette URL avec n'importe qui, n'importe où dans le monde",
 			passwordTitle: "Mot de passe unique",
 			visitorMessage:
 				"Les visiteurs devront peut-être saisir ceci une fois par appareil pour accéder au tunnel.",
 			stopSharing: "Arrêter le partage",
 		},
 		errors: {
-			noAddress: "Impossible d'obtenir l'adresse réseau. Veuillez vérifier votre connexion.",
+			noAddress:
+				"Impossible d'obtenir l'adresse réseau. Veuillez vérifier votre connexion.",
 			loadFailed: "Échec du chargement des informations réseau.",
 			noUrl: "Aucune URL disponible à copier.",
 			copyFailed: "Échec de la copie dans le presse-papiers.",
@@ -516,7 +534,8 @@ export const fr = {
 	// login features modal
 	loginFeatures: {
 		title: "Il vous manque des fonctionnalités",
-		description: "Connectez-vous à Dione pour ne pas manquer ces fonctionnalités.",
+		description:
+			"Connectez-vous à Dione pour ne pas manquer ces fonctionnalités.",
 		login: "Se connecter",
 		skip: "Ignorer",
 		features: {
@@ -565,7 +584,8 @@ export const fr = {
 	editor: {
 		selectFile: "Sélectionnez un fichier pour commencer à éditer",
 		previewNotAvailable: "Aperçu non disponible pour ce fichier.",
-		mediaNotSupported: "L'aperçu pour ce type de média n'est pas encore pris en charge.",
+		mediaNotSupported:
+			"L'aperçu pour ce type de média n'est pas encore pris en charge.",
 		previewOnly: "Aperçu uniquement",
 		unsaved: "Non sauvegardé",
 		retry: "Réessayer",
@@ -600,7 +620,8 @@ export const fr = {
 
 	// connection messages
 	connection: {
-		retryLater: "Nous avons des problèmes de connexion, veuillez réessayer plus tard.",
+		retryLater:
+			"Nous avons des problèmes de connexion, veuillez réessayer plus tard.",
 	},
 
 	// variables modal
@@ -688,7 +709,8 @@ export const fr = {
 	notifications: {
 		enabled: {
 			title: "Notifications activées",
-			description: "Vous recevrez des notifications pour les événements importants.",
+			description:
+				"Vous recevrez des notifications pour les événements importants.",
 		},
 		learnMore: "En savoir plus",
 	},
@@ -706,8 +728,10 @@ export const fr = {
 
 	// browser compatibility
 	browserCompatibility: {
-		audioNotSupported: "Votre navigateur ne prend pas en charge l'élément audio.",
-		videoNotSupported: "Votre navigateur ne prend pas en charge l'élément vidéo.",
+		audioNotSupported:
+			"Votre navigateur ne prend pas en charge l'élément audio.",
+		videoNotSupported:
+			"Votre navigateur ne prend pas en charge l'élément vidéo.",
 	},
 
 	// library card
@@ -747,19 +771,24 @@ export const fr = {
 		pathCopiedToClipboard: "Chemin copié dans le presse-papiers",
 		failedToCopyPath: "Échec de la copie du chemin",
 		unableToOpenLocation: "Impossible d'ouvrir l'emplacement",
-		cannotDeleteWorkspaceRoot: "Impossible de supprimer la racine de l'espace de travail",
+		cannotDeleteWorkspaceRoot:
+			"Impossible de supprimer la racine de l'espace de travail",
 		deleted: "Supprimé",
 		failedToDeleteEntry: "Échec de la suppression de l'entrée",
 		workspaceNotAvailable: "L'espace de travail n'est pas disponible",
-		selectFileOrFolderToRename: "Sélectionnez un fichier ou un dossier à renommer",
-		cannotRenameWorkspaceRoot: "Impossible de renommer la racine de l'espace de travail",
+		selectFileOrFolderToRename:
+			"Sélectionnez un fichier ou un dossier à renommer",
+		cannotRenameWorkspaceRoot:
+			"Impossible de renommer la racine de l'espace de travail",
 		entryRenamed: "Entrée renommée",
 		fileSavedSuccessfully: "Fichier enregistré avec succès",
 		failedToSaveFile: "Échec de l'enregistrement du fichier",
-		mediaFilesCannotBeOpened: "Les fichiers multimédias ne peuvent pas être ouverts dans l'éditeur.",
+		mediaFilesCannotBeOpened:
+			"Les fichiers multimédias ne peuvent pas être ouverts dans l'éditeur.",
 		binaryFilesCannotBeOpened:
 			"Les fichiers binaires et exécutables ne peuvent pas être ouverts dans l'éditeur.",
-		thisFileTypeCannotBeEdited: "Ce type de fichier ne peut pas encore être édité.",
+		thisFileTypeCannotBeEdited:
+			"Ce type de fichier ne peut pas encore être édité.",
 	},
 
 	// error messages
@@ -814,7 +843,9 @@ export const fr = {
 		running: "En cours",
 		thereIsAnAppRunningInBackground:
 			"Une application s'exécute en arrière-plan.",
-		failedToReloadQuickLaunch: "Échec du rechargement des applications de lancement rapide",
-		failedToFetchInstalledApps: "Échec de la récupération des applications installées",
+		failedToReloadQuickLaunch:
+			"Échec du rechargement des applications de lancement rapide",
+		failedToFetchInstalledApps:
+			"Échec de la récupération des applications installées",
 	},
 } as const;

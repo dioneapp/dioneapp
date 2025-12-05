@@ -119,8 +119,7 @@ export const de = {
 				stop: "Fehler beim Stoppen von %s: %s",
 				uninstall: "Fehler bei der Deinstallation von %s: %s",
 				serverRunning: "Server läuft bereits.",
-				tooManyApps:
-					"Langsam! Sie haben bereits 6 Apps gleichzeitig laufen.",
+				tooManyApps: "Langsam! Sie haben bereits 6 Apps gleichzeitig laufen.",
 			},
 		},
 	},
@@ -142,7 +141,8 @@ export const de = {
 			title: "Update verfügbar",
 			description:
 				"Eine neue Version von Dione ist verfügbar. Bitte starten Sie die App neu, um das Update zu installieren.",
-			tooltip: "Neues Update verfügbar, bitte starten Sie Dione neu, um das Update zu installieren.",
+			tooltip:
+				"Neues Update verfügbar, bitte starten Sie Dione neu, um das Update zu installieren.",
 		},
 		tooltips: {
 			library: "Bibliothek",
@@ -199,7 +199,8 @@ export const de = {
 				label: "Anzeigesprache",
 				description: "Wählen Sie Ihre bevorzugte Anzeigesprache.",
 			},
-			helpTranslate: "🤔 Ihre Sprache nicht dabei? Helfen Sie uns, weitere hinzuzufügen!",
+			helpTranslate:
+				"🤔 Ihre Sprache nicht dabei? Helfen Sie uns, weitere hinzuzufügen!",
 			theme: {
 				label: "Design",
 				description: "Wählen Sie ein Farbschema für die Anwendung.",
@@ -227,11 +228,13 @@ export const de = {
 			title: "Benachrichtigungen",
 			systemNotifications: {
 				label: "Systembenachrichtigungen",
-				description: "Zeigen Sie Desktop-Benachrichtigungen für wichtige Ereignisse an.",
+				description:
+					"Zeigen Sie Desktop-Benachrichtigungen für wichtige Ereignisse an.",
 			},
 			installationAlerts: {
 				label: "Installationswarnungen",
-				description: "Erhalten Sie Benachrichtigungen, wenn Anwendungsinstallationen abgeschlossen sind.",
+				description:
+					"Erhalten Sie Benachrichtigungen, wenn Anwendungsinstallationen abgeschlossen sind.",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
@@ -247,7 +250,8 @@ export const de = {
 			title: "Datenschutz",
 			errorReporting: {
 				label: "Fehlerberichterstattung",
-				description: "Helfen Sie, Dione zu verbessern, indem Sie anonyme Fehlerberichte senden.",
+				description:
+					"Helfen Sie, Dione zu verbessern, indem Sie anonyme Fehlerberichte senden.",
 			},
 		},
 		other: {
@@ -269,7 +273,8 @@ export const de = {
 			},
 			submitFeedback: {
 				label: "Feedback einreichen",
-				description: "Melden Sie Probleme oder Schwierigkeiten, auf die Sie stoßen.",
+				description:
+					"Melden Sie Probleme oder Schwierigkeiten, auf die Sie stoßen.",
 				button: "Bericht senden",
 			},
 			showOnboarding: {
@@ -303,10 +308,12 @@ export const de = {
 		disclaimer:
 			"Die folgenden Systeminformationen und eine anonyme ID werden Ihrem Bericht beigefügt.",
 		success: "Bericht erfolgreich gesendet!",
-		error: "Bericht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+		error:
+			"Bericht konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
 		send: "Bericht senden",
 		sending: "Wird gesendet...",
-		contribute: "Helfen Sie uns, dieses Skript mit allen Geräten kompatibel zu machen",
+		contribute:
+			"Helfen Sie uns, dieses Skript mit allen Geräten kompatibel zu machen",
 	},
 
 	// quick launch component
@@ -318,7 +325,8 @@ export const de = {
 		},
 		selectApp: {
 			title: "Eine App auswählen",
-			description: "{count} Apps sind verfügbar. Sie können bis zu {max} auswählen.",
+			description:
+				"{count} Apps sind verfügbar. Sie können bis zu {max} auswählen.",
 		},
 	},
 
@@ -363,7 +371,8 @@ export const de = {
 			subtitle: "Fehler",
 			hasOccurred: "ist aufgetreten",
 			deps: "Dione konnte keine Abhängigkeit entfernen, bitte tun Sie dies manuell.",
-			general: "Bitte versuchen Sie es später erneut oder überprüfen Sie die Protokolle für weitere Informationen.",
+			general:
+				"Bitte versuchen Sie es später erneut oder überprüfen Sie die Protokolle für weitere Informationen.",
 		},
 		loading: {
 			title: "Laden...",
@@ -445,7 +454,8 @@ export const de = {
 			uploadFile: "Datei hochladen",
 			uploading: "Wird hochgeladen...",
 			errors: {
-				uploadFailed: "Skript-Upload fehlgeschlagen. Bitte versuchen Sie es erneut.",
+				uploadFailed:
+					"Skript-Upload fehlgeschlagen. Bitte versuchen Sie es erneut.",
 				uploadError: "Ein Fehler ist beim Hochladen des Skripts aufgetreten.",
 			},
 		},
@@ -492,9 +502,11 @@ export const de = {
 		},
 		local: {
 			shareUrl: "URL teilen",
-			urlDescription: "Teilen Sie diese URL mit Geräten in Ihrem lokalen Netzwerk",
+			urlDescription:
+				"Teilen Sie diese URL mit Geräten in Ihrem lokalen Netzwerk",
 			localNetwork: "Lokales Netzwerk:",
-			description: "Diese URL funktioniert auf Geräten, die mit demselben Netzwerk verbunden sind.",
+			description:
+				"Diese URL funktioniert auf Geräten, die mit demselben Netzwerk verbunden sind.",
 		},
 		public: {
 			shareUrl: "Öffentliche URL",
@@ -505,7 +517,8 @@ export const de = {
 			stopSharing: "Teilen stoppen",
 		},
 		errors: {
-			noAddress: "Netzwerkadresse konnte nicht abgerufen werden. Bitte überprüfen Sie Ihre Verbindung.",
+			noAddress:
+				"Netzwerkadresse konnte nicht abgerufen werden. Bitte überprüfen Sie Ihre Verbindung.",
 			loadFailed: "Netzwerkinformationen konnten nicht geladen werden.",
 			noUrl: "Keine URL zum Kopieren verfügbar.",
 			copyFailed: "Kopieren in die Zwischenablage fehlgeschlagen.",
@@ -516,7 +529,8 @@ export const de = {
 	// login features modal
 	loginFeatures: {
 		title: "Sie verpassen Funktionen",
-		description: "Melden Sie sich bei Dione an, damit Sie diese Funktionen nicht verpassen.",
+		description:
+			"Melden Sie sich bei Dione an, damit Sie diese Funktionen nicht verpassen.",
 		login: "Anmelden",
 		skip: "Überspringen",
 		features: {
@@ -546,7 +560,8 @@ export const de = {
 			},
 			publishScripts: {
 				title: "Skripte veröffentlichen",
-				description: "Veröffentlichen Sie Ihre Skripte und teilen Sie sie mit der Welt.",
+				description:
+					"Veröffentlichen Sie Ihre Skripte und teilen Sie sie mit der Welt.",
 			},
 			achieveGoals: {
 				title: "Ziele erreichen",
@@ -565,7 +580,8 @@ export const de = {
 	editor: {
 		selectFile: "Wählen Sie eine Datei zum Bearbeiten aus",
 		previewNotAvailable: "Vorschau für diese Datei nicht verfügbar.",
-		mediaNotSupported: "Vorschau für diesen Medientyp wird noch nicht unterstützt.",
+		mediaNotSupported:
+			"Vorschau für diesen Medientyp wird noch nicht unterstützt.",
 		previewOnly: "Nur Vorschau",
 		unsaved: "Ungespeichert",
 		retry: "Erneut versuchen",
@@ -600,7 +616,8 @@ export const de = {
 
 	// connection messages
 	connection: {
-		retryLater: "Wir haben Verbindungsprobleme, versuchen Sie es später erneut.",
+		retryLater:
+			"Wir haben Verbindungsprobleme, versuchen Sie es später erneut.",
 	},
 
 	// variables modal
@@ -747,19 +764,24 @@ export const de = {
 		pathCopiedToClipboard: "Pfad in die Zwischenablage kopiert",
 		failedToCopyPath: "Pfad konnte nicht kopiert werden",
 		unableToOpenLocation: "Ort konnte nicht geöffnet werden",
-		cannotDeleteWorkspaceRoot: "Workspace-Stammverzeichnis kann nicht gelöscht werden",
+		cannotDeleteWorkspaceRoot:
+			"Workspace-Stammverzeichnis kann nicht gelöscht werden",
 		deleted: "Gelöscht",
 		failedToDeleteEntry: "Eintrag konnte nicht gelöscht werden",
 		workspaceNotAvailable: "Workspace nicht verfügbar",
-		selectFileOrFolderToRename: "Wählen Sie eine Datei oder einen Ordner zum Umbenennen aus",
-		cannotRenameWorkspaceRoot: "Workspace-Stammverzeichnis kann nicht umbenannt werden",
+		selectFileOrFolderToRename:
+			"Wählen Sie eine Datei oder einen Ordner zum Umbenennen aus",
+		cannotRenameWorkspaceRoot:
+			"Workspace-Stammverzeichnis kann nicht umbenannt werden",
 		entryRenamed: "Eintrag umbenannt",
 		fileSavedSuccessfully: "Datei erfolgreich gespeichert",
 		failedToSaveFile: "Datei konnte nicht gespeichert werden",
-		mediaFilesCannotBeOpened: "Mediendateien können nicht im Editor geöffnet werden.",
+		mediaFilesCannotBeOpened:
+			"Mediendateien können nicht im Editor geöffnet werden.",
 		binaryFilesCannotBeOpened:
 			"Binär- und ausführbare Dateien können nicht im Editor geöffnet werden.",
-		thisFileTypeCannotBeEdited: "Dieser Dateityp kann noch nicht bearbeitet werden.",
+		thisFileTypeCannotBeEdited:
+			"Dieser Dateityp kann noch nicht bearbeitet werden.",
 	},
 
 	// error messages
@@ -793,7 +815,8 @@ export const de = {
 
 	// network share modal
 	networkShareErrors: {
-		failedToLoadNetworkInfo: "Netzwerkinformationen konnten nicht geladen werden.",
+		failedToLoadNetworkInfo:
+			"Netzwerkinformationen konnten nicht geladen werden.",
 		failedToStartTunnel: "Tunnel konnte nicht gestartet werden",
 		failedToCopyToClipboard: "Kopieren in die Zwischenablage fehlgeschlagen.",
 	},
@@ -812,9 +835,10 @@ export const de = {
 	// running apps
 	runningApps: {
 		running: "Läuft",
-		thereIsAnAppRunningInBackground:
-			"Eine Anwendung läuft im Hintergrund.",
-		failedToReloadQuickLaunch: "Schnellstart-Apps konnten nicht neu geladen werden",
-		failedToFetchInstalledApps: "Installierte Apps konnten nicht abgerufen werden",
+		thereIsAnAppRunningInBackground: "Eine Anwendung läuft im Hintergrund.",
+		failedToReloadQuickLaunch:
+			"Schnellstart-Apps konnten nicht neu geladen werden",
+		failedToFetchInstalledApps:
+			"Installierte Apps konnten nicht abgerufen werden",
 	},
 } as const;
