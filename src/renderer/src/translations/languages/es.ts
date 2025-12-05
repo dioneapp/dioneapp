@@ -142,7 +142,8 @@ export const es = {
 			title: "Actualización Disponible",
 			description:
 				"Hay una nueva versión de Dione disponible, reinicia la aplicación para actualizar.",
-			tooltip: "Nueva actualización disponible, reinicia Dione para actualizar.",
+			tooltip:
+				"Nueva actualización disponible, reinicia Dione para actualizar.",
 		},
 		tooltips: {
 			library: "Biblioteca",
@@ -227,11 +228,13 @@ export const es = {
 			title: "Notificaciones",
 			systemNotifications: {
 				label: "Notificaciones del Sistema",
-				description: "Muestra notificaciones de escritorio para eventos importantes.",
+				description:
+					"Muestra notificaciones de escritorio para eventos importantes.",
 			},
 			installationAlerts: {
 				label: "Alertas de Instalación",
-				description: "Recibe notificaciones cuando las instalaciones de aplicaciones se completen.",
+				description:
+					"Recibe notificaciones cuando las instalaciones de aplicaciones se completen.",
 			},
 			discordRPC: {
 				label: "Presencia Rica de Discord",
@@ -247,7 +250,8 @@ export const es = {
 			title: "Privacidad",
 			errorReporting: {
 				label: "Reporte de Errores",
-				description: "Ayuda a mejorar Dione enviando informes de errores anónimos.",
+				description:
+					"Ayuda a mejorar Dione enviando informes de errores anónimos.",
 			},
 		},
 		other: {
@@ -259,7 +263,8 @@ export const es = {
 			},
 			logsDirectory: {
 				label: "Directorio de Registros",
-				description: "Ubicación donde se almacenan los registros de la aplicación.",
+				description:
+					"Ubicación donde se almacenan los registros de la aplicación.",
 			},
 			exportLogs: {
 				label: "Exportar Registros de Depuración",
@@ -269,7 +274,8 @@ export const es = {
 			},
 			submitFeedback: {
 				label: "Enviar Comentarios",
-				description: "Reporta cualquier problema o inconveniente que encuentres.",
+				description:
+					"Reporta cualquier problema o inconveniente que encuentres.",
 				button: "Enviar Informe",
 			},
 			showOnboarding: {
@@ -306,7 +312,8 @@ export const es = {
 		error: "Error al enviar el informe. Por favor, inténtalo de nuevo.",
 		send: "Enviar Informe",
 		sending: "Enviando...",
-		contribute: "Ayúdanos a hacer que este script sea compatible con todos los dispositivos",
+		contribute:
+			"Ayúdanos a hacer que este script sea compatible con todos los dispositivos",
 	},
 
 	// quick launch component
@@ -318,7 +325,8 @@ export const es = {
 		},
 		selectApp: {
 			title: "Selecciona una App",
-			description: "{count} aplicaciones están disponibles. Puedes elegir hasta {max}.",
+			description:
+				"{count} aplicaciones están disponibles. Puedes elegir hasta {max}.",
 		},
 	},
 
@@ -363,7 +371,8 @@ export const es = {
 			subtitle: "error",
 			hasOccurred: "ha ocurrido",
 			deps: "Dione no ha podido eliminar ninguna dependencia, por favor hazlo manualmente.",
-			general: "Por favor, inténtalo de nuevo más tarde o consulta los registros para obtener más información.",
+			general:
+				"Por favor, inténtalo de nuevo más tarde o consulta los registros para obtener más información.",
 		},
 		loading: {
 			title: "Cargando...",
@@ -445,7 +454,8 @@ export const es = {
 			uploadFile: "Subir Archivo",
 			uploading: "Subiendo...",
 			errors: {
-				uploadFailed: "Fallo al subir el script. Por favor, inténtalo de nuevo.",
+				uploadFailed:
+					"Fallo al subir el script. Por favor, inténtalo de nuevo.",
 				uploadError: "Ocurrió un error al subir el script.",
 			},
 		},
@@ -494,18 +504,21 @@ export const es = {
 			shareUrl: "URL para Compartir",
 			urlDescription: "Comparte esta URL con dispositivos en tu red local",
 			localNetwork: "Red Local:",
-			description: "Esta URL funciona en dispositivos conectados a la misma red.",
+			description:
+				"Esta URL funciona en dispositivos conectados a la misma red.",
 		},
 		public: {
 			shareUrl: "URL Pública",
-			urlDescription: "Comparte esta URL con cualquier persona, en cualquier parte del mundo",
+			urlDescription:
+				"Comparte esta URL con cualquier persona, en cualquier parte del mundo",
 			passwordTitle: "Contraseña de Primera Vez",
 			visitorMessage:
 				"Es posible que los visitantes necesiten introducir esto una vez por dispositivo para acceder al túnel.",
 			stopSharing: "Dejar de Compartir",
 		},
 		errors: {
-			noAddress: "No se pudo obtener la dirección de red. Por favor, comprueba tu conexión.",
+			noAddress:
+				"No se pudo obtener la dirección de red. Por favor, comprueba tu conexión.",
 			loadFailed: "Fallo al cargar la información de red.",
 			noUrl: "No hay URL disponible para copiar.",
 			copyFailed: "Fallo al copiar al portapapeles.",
@@ -565,7 +578,8 @@ export const es = {
 	editor: {
 		selectFile: "Selecciona un archivo para empezar a editar",
 		previewNotAvailable: "Vista previa no disponible para este archivo.",
-		mediaNotSupported: "Vista previa para este tipo de medio aún no es compatible.",
+		mediaNotSupported:
+			"Vista previa para este tipo de medio aún no es compatible.",
 		previewOnly: "Solo vista previa",
 		unsaved: "Sin guardar",
 		retry: "Reintentar",
@@ -600,7 +614,8 @@ export const es = {
 
 	// connection messages
 	connection: {
-		retryLater: "Tenemos problemas de conexión, por favor inténtalo de nuevo más tarde.",
+		retryLater:
+			"Tenemos problemas de conexión, por favor inténtalo de nuevo más tarde.",
 	},
 
 	// variables modal
@@ -747,16 +762,20 @@ export const es = {
 		pathCopiedToClipboard: "Ruta copiada al portapapeles",
 		failedToCopyPath: "Fallo al copiar ruta",
 		unableToOpenLocation: "No se puede abrir la ubicación",
-		cannotDeleteWorkspaceRoot: "No se puede eliminar la raíz del espacio de trabajo",
+		cannotDeleteWorkspaceRoot:
+			"No se puede eliminar la raíz del espacio de trabajo",
 		deleted: "Eliminado",
 		failedToDeleteEntry: "Fallo al eliminar entrada",
 		workspaceNotAvailable: "Espacio de trabajo no disponible",
-		selectFileOrFolderToRename: "Selecciona un archivo o carpeta para renombrar",
-		cannotRenameWorkspaceRoot: "No se puede renombrar la raíz del espacio de trabajo",
+		selectFileOrFolderToRename:
+			"Selecciona un archivo o carpeta para renombrar",
+		cannotRenameWorkspaceRoot:
+			"No se puede renombrar la raíz del espacio de trabajo",
 		entryRenamed: "Entrada renombrada",
 		fileSavedSuccessfully: "Archivo guardado con éxito",
 		failedToSaveFile: "Fallo al guardar archivo",
-		mediaFilesCannotBeOpened: "Los archivos multimedia no se pueden abrir en el editor.",
+		mediaFilesCannotBeOpened:
+			"Los archivos multimedia no se pueden abrir en el editor.",
 		binaryFilesCannotBeOpened:
 			"Los archivos binarios y ejecutables no se pueden abrir en el editor.",
 		thisFileTypeCannotBeEdited: "Este tipo de archivo aún no se puede editar.",
@@ -814,7 +833,8 @@ export const es = {
 		running: "En ejecución",
 		thereIsAnAppRunningInBackground:
 			"Hay una aplicación ejecutándose en segundo plano.",
-		failedToReloadQuickLaunch: "Fallo al recargar las aplicaciones de lanzamiento rápido",
+		failedToReloadQuickLaunch:
+			"Fallo al recargar las aplicaciones de lanzamiento rápido",
 		failedToFetchInstalledApps: "Fallo al obtener las aplicaciones instaladas",
 	},
 } as const;

@@ -24,8 +24,7 @@ export const zh = {
 	firstTime: {
 		welcome: {
 			title: "欢迎来到",
-			subtitle:
-				"感谢您早期加入我们的旅程。请登录您的账户开始。",
+			subtitle: "感谢您早期加入我们的旅程。请登录您的账户开始。",
 			login: "登录",
 			copyLink: "复制链接",
 			skipLogin: "无登录继续",
@@ -44,8 +43,7 @@ export const zh = {
 			finish: "完成",
 		},
 		clipboard: {
-			success:
-				"已成功复制到剪贴板，现在粘贴到您的浏览器中！",
+			success: "已成功复制到剪贴板，现在粘贴到您的浏览器中！",
 		},
 		selectPath: {
 			title: "选择安装路径",
@@ -119,8 +117,7 @@ export const zh = {
 				stop: "停止 %s 错误： %s",
 				uninstall: "卸载 %s 错误： %s",
 				serverRunning: "服务器已在运行。",
-				tooManyApps:
-					"慢点！您同时运行的应用已达 6 个。",
+				tooManyApps: "慢点！您同时运行的应用已达 6 个。",
 			},
 		},
 	},
@@ -129,8 +126,7 @@ export const zh = {
 	titlebar: {
 		closing: {
 			title: "正在停止应用程序...",
-			description:
-				"Dione 将在关闭所有打开的应用程序后自动关闭。",
+			description: "Dione 将在关闭所有打开的应用程序后自动关闭。",
 		},
 	},
 
@@ -140,8 +136,7 @@ export const zh = {
 		activeApps: "活动应用",
 		update: {
 			title: "有可用更新",
-			description:
-				"Dione 新版本已发布，请重启应用以进行更新。",
+			description: "Dione 新版本已发布，请重启应用以进行更新。",
 			tooltip: "新更新可用，请重启 Dione 进行更新。",
 		},
 		tooltips: {
@@ -166,23 +161,19 @@ export const zh = {
 			title: "应用程序",
 			installationDirectory: {
 				label: "安装目录",
-				description:
-					"选择新应用程序的默认安装位置。",
+				description: "选择新应用程序的默认安装位置。",
 			},
 			binDirectory: {
 				label: "二进制目录",
-				description:
-					"选择应用程序二进制文件的存储位置，方便访问。",
+				description: "选择应用程序二进制文件的存储位置，方便访问。",
 			},
 			cleanUninstall: {
 				label: "干净卸载",
-				description:
-					"卸载应用程序时删除所有相关依赖项。",
+				description: "卸载应用程序时删除所有相关依赖项。",
 			},
 			autoOpenAfterInstall: {
 				label: "安装后自动打开",
-				description:
-					"安装后首次自动打开应用程序。",
+				description: "安装后首次自动打开应用程序。",
 			},
 			deleteCache: {
 				label: "删除缓存",
@@ -214,13 +205,11 @@ export const zh = {
 			},
 			intenseBackgrounds: {
 				label: "鲜艳的背景颜色",
-				description:
-					"使用更鲜艳的背景颜色，而不是柔和的色调。",
+				description: "使用更鲜艳的背景颜色，而不是柔和的色调。",
 			},
 			compactView: {
 				label: "紧凑视图",
-				description:
-					"使用更紧凑的布局，以便在屏幕上显示更多内容。",
+				description: "使用更紧凑的布局，以便在屏幕上显示更多内容。",
 			},
 		},
 		notifications: {
@@ -239,8 +228,7 @@ export const zh = {
 			},
 			successSound: {
 				label: "启用成功音效",
-				description:
-					"启用应用程序安装完成时播放的声音。",
+				description: "启用应用程序安装完成时播放的声音。",
 			},
 		},
 		privacy: {
@@ -263,8 +251,7 @@ export const zh = {
 			},
 			exportLogs: {
 				label: "导出调试日志",
-				description:
-					"以 zip 文件形式导出所有日志和系统信息以进行调试。",
+				description: "以 zip 文件形式导出所有日志和系统信息以进行调试。",
 				button: "导出日志",
 			},
 			submitFeedback: {
@@ -285,8 +272,7 @@ export const zh = {
 			},
 			checkUpdates: {
 				label: "检查更新",
-				description:
-					"检查更新并在新版本可用时通知您。",
+				description: "检查更新并在新版本可用时通知您。",
 				button: "检查更新",
 			},
 		},
@@ -295,13 +281,10 @@ export const zh = {
 	// report form
 	report: {
 		title: "描述问题",
-		description:
-			"请提供有关发生情况以及您尝试执行的操作的详细信息。",
-		placeholder:
-			"例如：我尝试安装一个应用程序时发生此错误...",
+		description: "请提供有关发生情况以及您尝试执行的操作的详细信息。",
+		placeholder: "例如：我尝试安装一个应用程序时发生此错误...",
 		systemInformationTitle: "系统信息",
-		disclaimer:
-			"以下系统信息和匿名 ID 将包含在您的报告中。",
+		disclaimer: "以下系统信息和匿名 ID 将包含在您的报告中。",
 		success: "报告已成功发送！",
 		error: "发送报告失败。请重试。",
 		send: "发送报告",
@@ -487,8 +470,7 @@ export const zh = {
 		},
 		warning: {
 			title: "公共访问",
-			description:
-				"创建一个可从任何地方访问的公共 URL。仅与信任的人共享。",
+			description: "创建一个可从任何地方访问的公共 URL。仅与信任的人共享。",
 		},
 		local: {
 			shareUrl: "分享 URL",
@@ -500,8 +482,7 @@ export const zh = {
 			shareUrl: "公共 URL",
 			urlDescription: "与世界各地的任何人共享此 URL",
 			passwordTitle: "首次密码",
-			visitorMessage:
-				"访客可能需要每个设备输入一次此密码才能访问隧道。",
+			visitorMessage: "访客可能需要每个设备输入一次此密码才能访问隧道。",
 			stopSharing: "停止分享",
 		},
 		errors: {
@@ -522,13 +503,11 @@ export const zh = {
 		features: {
 			customReports: {
 				title: "发送自定义报告",
-				description:
-					"从应用程序内部发送自定义报告，在出现错误时加快支持速度。",
+				description: "从应用程序内部发送自定义报告，在出现错误时加快支持速度。",
 			},
 			createProfile: {
 				title: "创建个人资料",
-				description:
-					"为 Dione 社区创建个人资料，以便大家了解您。",
+				description: "为 Dione 社区创建个人资料，以便大家了解您。",
 			},
 			syncData: {
 				title: "同步您的数据",
@@ -536,13 +515,11 @@ export const zh = {
 			},
 			earlyBirds: {
 				title: "获取早期体验更新",
-				description:
-					"比其他人更早获得早期体验更新和新功能。",
+				description: "比其他人更早获得早期体验更新和新功能。",
 			},
 			giveOutLikes: {
 				title: "点赞",
-				description:
-					"给您最喜欢的应用点赞，这样更多人会使用它们！",
+				description: "给您最喜欢的应用点赞，这样更多人会使用它们！",
 			},
 			publishScripts: {
 				title: "发布脚本",
@@ -550,13 +527,11 @@ export const zh = {
 			},
 			achieveGoals: {
 				title: "达成目标",
-				description:
-					"例如，使用 Dione 7 天即可获得免费礼物",
+				description: "例如，使用 Dione 7 天即可获得免费礼物",
 			},
 			getNewswire: {
 				title: "获取新闻",
-				description:
-					"通过电子邮件接收更新，以免错过新功能。",
+				description: "通过电子邮件接收更新，以免错过新功能。",
 			},
 		},
 	},
@@ -757,8 +732,7 @@ export const zh = {
 		fileSavedSuccessfully: "文件已成功保存",
 		failedToSaveFile: "保存文件失败",
 		mediaFilesCannotBeOpened: "媒体文件无法在编辑器中打开。",
-		binaryFilesCannotBeOpened:
-			"二进制和可执行文件无法在编辑器中打开。",
+		binaryFilesCannotBeOpened: "二进制和可执行文件无法在编辑器中打开。",
 		thisFileTypeCannotBeEdited: "此文件类型尚无法编辑。",
 	},
 
@@ -812,8 +786,7 @@ export const zh = {
 	// running apps
 	runningApps: {
 		running: "运行中",
-		thereIsAnAppRunningInBackground:
-			"有一个应用程序正在后台运行。",
+		thereIsAnAppRunningInBackground: "有一个应用程序正在后台运行。",
 		failedToReloadQuickLaunch: "重新加载快速启动应用失败",
 		failedToFetchInstalledApps: "获取已安装应用失败",
 	},

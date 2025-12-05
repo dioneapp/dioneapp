@@ -214,8 +214,7 @@ export const pt = {
 			},
 			intenseBackgrounds: {
 				label: "Cores de Fundo Intensas",
-				description:
-					"Use cores de fundo mais vibrantes em vez de tons sutis.",
+				description: "Use cores de fundo mais vibrantes em vez de tons sutis.",
 			},
 			compactView: {
 				label: "Visualização Compacta",
@@ -227,11 +226,13 @@ export const pt = {
 			title: "Notificações",
 			systemNotifications: {
 				label: "Notificações do Sistema",
-				description: "Exiba notificações na área de trabalho para eventos importantes.",
+				description:
+					"Exiba notificações na área de trabalho para eventos importantes.",
 			},
 			installationAlerts: {
 				label: "Alertas de Instalação",
-				description: "Seja notificado quando as instalações de aplicativos forem concluídas.",
+				description:
+					"Seja notificado quando as instalações de aplicativos forem concluídas.",
 			},
 			discordRPC: {
 				label: "Presença Rica do Discord",
@@ -247,7 +248,8 @@ export const pt = {
 			title: "Privacidade",
 			errorReporting: {
 				label: "Relatório de Erros",
-				description: "Ajude a melhorar a Dione enviando relatórios de erros anônimos.",
+				description:
+					"Ajude a melhorar a Dione enviando relatórios de erros anônimos.",
 			},
 		},
 		other: {
@@ -269,7 +271,8 @@ export const pt = {
 			},
 			submitFeedback: {
 				label: "Enviar Feedback",
-				description: "Relate quaisquer problemas ou dificuldades que você encontrar.",
+				description:
+					"Relate quaisquer problemas ou dificuldades que você encontrar.",
 				button: "Enviar Relatório",
 			},
 			showOnboarding: {
@@ -306,7 +309,8 @@ export const pt = {
 		error: "Falha ao enviar relatório. Por favor, tente novamente.",
 		send: "Enviar Relatório",
 		sending: "Enviando...",
-		contribute: "Ajude-nos a tornar este script compatível com todos os dispositivos",
+		contribute:
+			"Ajude-nos a tornar este script compatível com todos os dispositivos",
 	},
 
 	// quick launch component
@@ -318,7 +322,8 @@ export const pt = {
 		},
 		selectApp: {
 			title: "Selecionar um Aplicativo",
-			description: "{count} aplicativos estão disponíveis. Você pode escolher até {max}.",
+			description:
+				"{count} aplicativos estão disponíveis. Você pode escolher até {max}.",
 		},
 	},
 
@@ -363,7 +368,8 @@ export const pt = {
 			subtitle: "erro",
 			hasOccurred: "ocorreu",
 			deps: "A Dione não conseguiu remover nenhuma dependência, por favor, faça isso manualmente.",
-			general: "Por favor, tente novamente mais tarde ou verifique os logs para mais informações.",
+			general:
+				"Por favor, tente novamente mais tarde ou verifique os logs para mais informações.",
 		},
 		loading: {
 			title: "Carregando...",
@@ -498,14 +504,16 @@ export const pt = {
 		},
 		public: {
 			shareUrl: "URL Pública",
-			urlDescription: "Compartilhe esta URL com qualquer pessoa, em qualquer lugar do mundo",
+			urlDescription:
+				"Compartilhe esta URL com qualquer pessoa, em qualquer lugar do mundo",
 			passwordTitle: "Senha de Primeira Utilização",
 			visitorMessage:
 				"Visitantes podem precisar digitar isso uma vez por dispositivo para acessar o túnel.",
 			stopSharing: "Parar de Compartilhar",
 		},
 		errors: {
-			noAddress: "Não foi possível obter o endereço de rede. Verifique sua conexão.",
+			noAddress:
+				"Não foi possível obter o endereço de rede. Verifique sua conexão.",
 			loadFailed: "Falha ao carregar informações de rede.",
 			noUrl: "Nenhuma URL disponível para copiar.",
 			copyFailed: "Falha ao copiar para a área de transferência.",
@@ -565,7 +573,8 @@ export const pt = {
 	editor: {
 		selectFile: "Selecione um arquivo para começar a editar",
 		previewNotAvailable: "Pré-visualização não disponível para este arquivo.",
-		mediaNotSupported: "Pré-visualização para este tipo de mídia ainda não é suportada.",
+		mediaNotSupported:
+			"Pré-visualização para este tipo de mídia ainda não é suportada.",
 		previewOnly: "Apenas Pré-visualização",
 		unsaved: "Não Salvo",
 		retry: "Tentar Novamente",
@@ -600,7 +609,8 @@ export const pt = {
 
 	// connection messages
 	connection: {
-		retryLater: "Estamos tendo problemas de conexão, por favor, tente novamente mais tarde.",
+		retryLater:
+			"Estamos tendo problemas de conexão, por favor, tente novamente mais tarde.",
 	},
 
 	// variables modal
@@ -756,10 +766,12 @@ export const pt = {
 		entryRenamed: "Entrada renomeada",
 		fileSavedSuccessfully: "Arquivo salvo com sucesso",
 		failedToSaveFile: "Falha ao salvar arquivo",
-		mediaFilesCannotBeOpened: "Arquivos de mídia não podem ser abertos no editor.",
+		mediaFilesCannotBeOpened:
+			"Arquivos de mídia não podem ser abertos no editor.",
 		binaryFilesCannotBeOpened:
 			"Arquivos binários e executáveis não podem ser abertos no editor.",
-		thisFileTypeCannotBeEdited: "Este tipo de arquivo ainda não pode ser editado.",
+		thisFileTypeCannotBeEdited:
+			"Este tipo de arquivo ainda não pode ser editado.",
 	},
 
 	// error messages
@@ -814,7 +826,8 @@ export const pt = {
 		running: "Executando",
 		thereIsAnAppRunningInBackground:
 			"Há um aplicativo em execução em segundo plano.",
-		failedToReloadQuickLaunch: "Falha ao recarregar aplicativos de lançamento rápido",
+		failedToReloadQuickLaunch:
+			"Falha ao recarregar aplicativos de lançamento rápido",
 		failedToFetchInstalledApps: "Falha ao buscar aplicativos instalados",
 	},
 } as const;
