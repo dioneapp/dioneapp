@@ -658,14 +658,19 @@ async function createVirtualEnvCommands(
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
 	// join commands without leading/trailing separators; add separators conditionally where used
-	const middle =
-		commandStrings.length > 1
-			? commandStrings.join(" && ")
-			: commandStrings[0] || "";
+
 
 	// variables
 	const variables = getAllValues();
 	const config = userConfig();
+	const arch = getArch();
+	const platform = getOS();
+
+	// NEW: File-based script execution logic to persist venv and avoid cli issues
+	const scriptExt = isWindows ? "bat" : "sh";
+	const scriptName = `.runner-${Date.now()}-${Math.floor(Math.random() * 10000)}.${scriptExt}`;
+	const scriptPath = path.join(baseDir, scriptName);
+	let scriptContent = "";
 
 	if (envType === "conda") {
 		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
@@ -690,81 +695,126 @@ async function createVirtualEnvCommands(
 			"bin",
 			"conda",
 		);
+
 		if (isWindows) {
-			const between = middle ? ` && ${middle} && ` : " && ";
-			return [
-				`if not exist "${envPath}" (call "${condaW}" tos accept --channel main & call "${condaW}" create -p "${envPath}" ${pythonArg} -y)`,
-				`call "${condaW}" activate "${envPath}"${between}call "${condaW}" deactivate`,
-			];
-		}
-		// for linux and mac
-		{
-			const between = middle ? ` && ${middle} && ` : " && ";
-			return [
-				`if [ ! -d "${envPath}" ]; then "${condaUC}" create -p "${envPath}" ${pythonArg} -y; fi`,
-				`. "${condaU}" "${envPath}"${between}conda deactivate`,
-			];
-		}
-	}
+			scriptContent = `@echo off
+setlocal
+if not exist "${envPath}" (
+    echo Creating Conda environment...
+    call "${condaW}" create -p "${envPath}" ${pythonArg} -y
+    if %errorlevel% neq 0 exit /b %errorlevel%
+)
+call "${condaW}" activate "${envPath}"
+if %errorlevel% neq 0 exit /b %errorlevel%
 
-	// default uv env
-	if (isWindows && envType !== "conda") {
-		const activateScript = path.join(envPath, "Scripts", "activate");
-		const deactivateScript = path.join(envPath, "Scripts", "deactivate.bat");
-		if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
-			addValue("PATH", path.join(envPath, "Scripts"));
-		}
-		{
-			const between = middle ? ` ${middle} && ` : " && ";
-			return [
-				`if not exist "${envPath}" (uv venv ${pythonFlag} "${envName}")`,
-				`call "${activateScript}"${between}call "${deactivateScript}"`,
-			];
-		}
-	}
+${commandStrings
+					.map(
+						(cmd) =>
+							`${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`,
+					)
+					.join("\n")}
 
-	// for linux and mac
-	const activateScript = path.join(envPath, "bin", "activate");
-	if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
-		addValue("PATH", path.join(envPath, "Scripts"));
-	}
+call "${condaW}" deactivate
+(goto) 2>nul & del "%~f0"
+`;
+		} else {
+			// Linux/Mac
+			scriptContent = `#!/bin/bash
+set -e
+if [ ! -d "${envPath}" ]; then
+    echo "Creating Conda environment..."
+    "${condaUC}" create -p "${envPath}" ${pythonArg} -y
+fi
+source "${condaU}" "${envPath}"
 
-	const existsEnv = fs.existsSync(envPath);
-	const arch = getArch();
-	const platform = getOS();
-	const uvFolder =
-		platform === "linux"
-			? arch === "amd64"
-				? "uv-x86_64-unknown-linux-gnu"
-				: "uv-aarch64-unknown-linux-gnu"
-			: platform === "macos"
+${commandStrings.join("\n")}
+
+conda deactivate
+rm "$0"
+`;
+		}
+	} else {
+		// default uv/venv env
+		let activateCmd = "";
+		let createCmd = "";
+
+		const uvFolder =
+			platform === "linux"
 				? arch === "amd64"
-					? "uv-x86_64-apple-darwin"
-					: "uv-aarch64-apple-darwin"
-				: "";
+					? "uv-x86_64-unknown-linux-gnu"
+					: "uv-aarch64-unknown-linux-gnu"
+				: platform === "macos"
+					? arch === "amd64"
+						? "uv-x86_64-apple-darwin"
+						: "uv-aarch64-apple-darwin"
+					: "";
 
-	const uvPath = path.join(
-		config?.defaultBinFolder || path.join(app.getPath("userData")),
-		"bin",
-		"uv",
-		uvFolder,
-		process.platform === "win32" ? "uv.exe" : "uv",
-	);
+		const uvPath = path.join(
+			config?.defaultBinFolder || path.join(app.getPath("userData")),
+			"bin",
+			"uv",
+			uvFolder,
+			process.platform === "win32" ? "uv.exe" : "uv",
+		);
 
-	if (!existsEnv) {
-		{
-			const between = middle ? ` ${middle} && ` : " && ";
-			return [
-				// create new env
-				`"${uvPath}" venv ${pythonFlag} "${envPath}"`,
-				// use it
-				`. "${activateScript}"${between}deactivate`,
-			];
+		if (isWindows) {
+			const activateScript = path.join(envPath, "Scripts", "activate.bat");
+			if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
+				addValue("PATH", path.join(envPath, "Scripts"));
+			}
+
+			createCmd = `if not exist "${envPath}" (
+    echo Creating virtual environment...
+    "${uvPath}" venv ${pythonFlag} "${envName}"
+    if %errorlevel% neq 0 exit /b %errorlevel%
+)`;
+			activateCmd = `call "${activateScript}"`;
+
+			scriptContent = `@echo off
+setlocal
+${createCmd}
+${activateCmd}
+if %errorlevel% neq 0 exit /b %errorlevel%
+
+${commandStrings
+					.map(
+						(cmd) =>
+							`${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`,
+					)
+					.join("\n")}
+
+if exist "${envPath}\\Scripts\\deactivate.bat" call "${envPath}\\Scripts\\deactivate.bat"
+(goto) 2>nul & del "%~f0"
+`;
+		} else {
+			const activateScript = path.join(envPath, "bin", "activate");
+			if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
+				addValue("PATH", path.join(envPath, "Scripts"));
+			}
+
+			createCmd = `if [ ! -d "${envPath}" ]; then
+    echo "Creating virtual environment..."
+    "${uvPath}" venv ${pythonFlag} "${envPath}"
+fi`;
+			activateCmd = `. "${activateScript}"`;
+
+			scriptContent = `#!/bin/bash
+set -e
+${createCmd}
+${activateCmd}
+
+${commandStrings.join("\n")}
+
+deactivate
+rm "$0"
+`;
 		}
 	}
-	const between = middle ? ` ${middle} && ` : " && ";
-	return [
-		// use existing env
-		`. "${activateScript}"${between}deactivate`,
-	];
+
+	await fs.promises.writeFile(scriptPath, scriptContent, {
+		encoding: "utf8",
+		mode: 0o755,
+	});
+
+	return [scriptPath];
 }
