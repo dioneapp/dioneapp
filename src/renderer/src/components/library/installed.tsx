@@ -70,9 +70,7 @@ export default function Installed() {
 
 					await Promise.all(
 						appsNeedingFetch.map((app) =>
-							apiJson<any[]>(
-								`/db/search/name/${encodeURIComponent(app.name)}`,
-							)
+							apiJson<any[]>(`/db/search/name/${encodeURIComponent(app.name)}`)
 								.then((data) => {
 									newCachedData[app.name] = data;
 									freshAppsData.push(...data);

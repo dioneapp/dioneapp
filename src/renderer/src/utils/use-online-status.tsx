@@ -2,14 +2,20 @@ import { useEffect, useState } from "react";
 
 export function useOnlineStatus(): boolean {
 	const [isOnline, setIsOnline] = useState(() => {
-		if (typeof navigator !== "undefined" && typeof navigator.onLine === "boolean") {
+		if (
+			typeof navigator !== "undefined" &&
+			typeof navigator.onLine === "boolean"
+		) {
 			return navigator.onLine;
 		}
 		return true;
 	});
 
 	useEffect(() => {
-		if (typeof navigator !== "undefined" && typeof navigator.onLine === "boolean") {
+		if (
+			typeof navigator !== "undefined" &&
+			typeof navigator.onLine === "boolean"
+		) {
 			setIsOnline(navigator.onLine);
 		}
 

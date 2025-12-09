@@ -49,7 +49,7 @@ export default function FeaturedCarousel() {
 					];
 					setScripts(sorted);
 					generateGradients(sorted);
-					
+
 					if (isOnline) {
 						FeedCache.set("/db/featured", sorted);
 					}
@@ -59,7 +59,7 @@ export default function FeaturedCarousel() {
 				}
 			} catch (err) {
 				console.error(err);
-				
+
 				const cached = FeedCache.get("/db/featured");
 				if (cached) {
 					const sorted = [
@@ -138,7 +138,7 @@ export default function FeaturedCarousel() {
 		if (!isOnline) {
 			return;
 		}
-		
+
 		const result = await sendEvent({
 			user: user?.id || "",
 			event: "promo_click",
@@ -153,13 +153,16 @@ export default function FeaturedCarousel() {
 		<section className="flex flex-col gap-0">
 			{isUsingCache && (
 				<div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-200 text-sm">
-					Viewing cached featured content. Install features are disabled while offline.
+					Viewing cached featured content. Install features are disabled while
+					offline.
 				</div>
 			)}
 			<div className="relative h-70">
 				<AnimatePresence initial={false} mode="wait">
 					<div key={activeItem.id} className="absolute w-full h-full">
-						<div className={`w-full h-72 flex transition-all duration-200 rounded-xl relative overflow-hidden group border border-white/10 hover:border-white/20 shadow-lg hover:shadow-xl ${!isOnline ? 'cursor-not-allowed opacity-75' : 'cursor-pointer'}`}>
+						<div
+							className={`w-full h-72 flex transition-all duration-200 rounded-xl relative overflow-hidden group border border-white/10 hover:border-white/20 shadow-lg hover:shadow-xl ${!isOnline ? "cursor-not-allowed opacity-75" : "cursor-pointer"}`}
+						>
 							{activeItem.type === "announcement" ? (
 								<div
 									onClick={() => navigate("/quick-ai")}
@@ -230,16 +233,16 @@ export default function FeaturedCarousel() {
 										transition={{ duration: 0.3 }}
 										className="z-50 absolute inset-0 p-10"
 									>
-											<div className="flex w-full h-full flex-col justify-start items-center">
-												<div className="w-full h-full flex justify-end">
-													{activeItem.logo_url && isOnline && (
-														<img
-															src={activeItem.logo_url}
-															alt={activeItem.name}
-															className="w-24 h-24 rounded-xl object-cover drop-shadow-xl"
-														/>
-													)}
-												</div>
+										<div className="flex w-full h-full flex-col justify-start items-center">
+											<div className="w-full h-full flex justify-end">
+												{activeItem.logo_url && isOnline && (
+													<img
+														src={activeItem.logo_url}
+														alt={activeItem.name}
+														className="w-24 h-24 rounded-xl object-cover drop-shadow-xl"
+													/>
+												)}
+											</div>
 											<div className="flex flex-col justify-end gap-2 w-full h-full -mt-6">
 												<h1 className="font-medium text-4xl tracking-tight">
 													{activeItem.name}
