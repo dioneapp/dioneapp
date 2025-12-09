@@ -58,7 +58,7 @@ export default function Titlebar() {
 				<div className="flex flex-row items-center justify-end h-10 w-full p-6 px-4">
 					<div
 						id={isFullscreen ? "" : "titlebar"}
-						className="absolute top-0 right-0 h-10 w-1/2"
+						className="absolute top-0 right-0 h-10 w-full"
 					/>
 					<div className="flex gap-2 items-center justify-end h-full w-fit relative z-10">
 						<button
