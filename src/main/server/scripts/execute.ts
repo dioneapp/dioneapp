@@ -328,7 +328,9 @@ export async function executeStartup(
 	//     content: `INFO: Executing start: "${selectedStart.name}"\n`,
 	// });
 
-	const shouldCatch = selectedStart.catch || selectedStart.steps?.find((step: any) => step.catch)?.catch;
+	const shouldCatch =
+		selectedStart.catch ||
+		selectedStart.steps?.find((step: any) => step.catch)?.catch;
 	logger.info(`Should catch port: ${shouldCatch}`);
 	io.to(id).emit("installUpdate", {
 		type: "shouldCatch?",
@@ -451,14 +453,15 @@ export async function executeStartup(
 						: "uv";
 				const pythonVersion =
 					typeof selectedStart.env === "object" &&
-						"version" in selectedStart.env
+					"version" in selectedStart.env
 						? selectedStart.env.version
 						: "";
 
 				io.to(id).emit("installUpdate", {
 					type: "log",
-					content: `INFO: Using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""
-						}\n`,
+					content: `INFO: Using virtual environment: ${envName} with ${envType}${
+						pythonVersion ? ` (Python ${pythonVersion})` : ""
+					}\n`,
 				});
 
 				const envCommands = await createVirtualEnvCommands(
@@ -605,60 +608,59 @@ async function createVirtualEnvCommands(
 	// filter and ensure commands is an array of strings without empty strings
 	const commandStrings = Array.isArray(commands)
 		? commands.flatMap((cmd) => {
-			if (typeof cmd === "string" && cmd.trim()) {
-				return [cmd.trim()];
-			}
-			if (
-				cmd &&
-				typeof cmd === "object" &&
-				typeof cmd.command === "string" &&
-				cmd.command.trim()
-			) {
-				// Apply platform filtering
-				if ("platform" in cmd) {
-					const cmdPlatform = cmd.platform.toLowerCase();
-					const normalizedPlatform =
-						currentPlatform === "win32"
-							? "windows"
-							: currentPlatform === "darwin"
-								? "mac"
-								: currentPlatform === "linux"
-									? "linux"
-									: currentPlatform;
-
-					// if platform does not match current platform, skip
-					if (cmdPlatform !== normalizedPlatform) {
-						logger.info(
-							`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
-						);
-						return [];
-					}
+				if (typeof cmd === "string" && cmd.trim()) {
+					return [cmd.trim()];
 				}
+				if (
+					cmd &&
+					typeof cmd === "object" &&
+					typeof cmd.command === "string" &&
+					cmd.command.trim()
+				) {
+					// Apply platform filtering
+					if ("platform" in cmd) {
+						const cmdPlatform = cmd.platform.toLowerCase();
+						const normalizedPlatform =
+							currentPlatform === "win32"
+								? "windows"
+								: currentPlatform === "darwin"
+									? "mac"
+									: currentPlatform === "linux"
+										? "linux"
+										: currentPlatform;
 
-				// Apply GPU filtering
-				if ("gpus" in cmd) {
-					const allowedGpus = Array.isArray(cmd.gpus)
-						? cmd.gpus.map((g: string) => g.toLowerCase())
-						: [cmd.gpus.toLowerCase()];
-
-					if (!allowedGpus.includes(currentGpu.toLowerCase())) {
-						logger.info(
-							`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
-						);
-						return [];
+						// if platform does not match current platform, skip
+						if (cmdPlatform !== normalizedPlatform) {
+							logger.info(
+								`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+							);
+							return [];
+						}
 					}
-				}
 
-				return [cmd.command.trim()];
-			}
-			return [];
-		})
+					// Apply GPU filtering
+					if ("gpus" in cmd) {
+						const allowedGpus = Array.isArray(cmd.gpus)
+							? cmd.gpus.map((g: string) => g.toLowerCase())
+							: [cmd.gpus.toLowerCase()];
+
+						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+							logger.info(
+								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+							);
+							return [];
+						}
+					}
+
+					return [cmd.command.trim()];
+				}
+				return [];
+			})
 		: [];
 
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
 	// join commands without leading/trailing separators; add separators conditionally where used
-
 
 	// variables
 	const variables = getAllValues();
@@ -708,11 +710,8 @@ call "${condaW}" activate "${envPath}"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 ${commandStrings
-					.map(
-						(cmd) =>
-							`${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`,
-					)
-					.join("\n")}
+	.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
+	.join("\n")}
 
 call "${condaW}" deactivate
 (goto) 2>nul & del "%~f0"
@@ -777,11 +776,8 @@ ${activateCmd}
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 ${commandStrings
-					.map(
-						(cmd) =>
-							`${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`,
-					)
-					.join("\n")}
+	.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
+	.join("\n")}
 
 if exist "${envPath}\\Scripts\\deactivate.bat" call "${envPath}\\Scripts\\deactivate.bat"
 (goto) 2>nul & del "%~f0"
