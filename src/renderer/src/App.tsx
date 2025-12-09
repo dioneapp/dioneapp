@@ -1,5 +1,6 @@
 import { useAuthContext } from "@/components/contexts/auth-context";
 import { ErrorBoundary } from "@/components/layout/error-handler";
+import OfflineIndicator from "@/components/layout/offline-indicator";
 import Sidebar from "@/components/layout/sidebar";
 import Titlebar from "@/components/layout/titlebar";
 import Account from "@/pages/account";
@@ -111,6 +112,7 @@ function App() {
 		<TranslationProvider>
 			<div className="h-screen w-screen overflow-hidden" id="main">
 				{pathname !== "/first-time" && <Titlebar />}
+				<OfflineIndicator />
 				<div className="flex h-[calc(100%)]">
 					{pathname !== "/first-time" && pathname !== "/no_access" && (
 						<Sidebar />

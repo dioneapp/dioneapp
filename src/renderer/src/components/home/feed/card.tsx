@@ -1,5 +1,6 @@
 import type { Script } from "@/components/home/feed/types";
 import GeneratedIcon from "@/components/icons/generated-icon";
+import { useOnlineStatus } from "@/utils/use-online-status";
 import {
 	BadgeCheck,
 	Calendar,
@@ -15,11 +16,20 @@ interface ScriptCardProps {
 	script: Script;
 	innerRef?: React.Ref<HTMLDivElement>;
 	deleteScript?: (name: string) => void;
+	disabled?: boolean;
 }
 
-function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
+function ScriptCard({ script, innerRef, deleteScript, disabled = false }: ScriptCardProps) {
+	const isOnline = useOnlineStatus();
+	
 	const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
 		e.currentTarget.src = "/svgs/Dio.svg";
+	};
+
+	const handleClick = (e: React.MouseEvent) => {
+		if (disabled) {
+			e.preventDefault();
+		}
 	};
 
 	return (
@@ -29,7 +39,8 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 					pathname: `/install/${script.isLocal ? encodeURIComponent(script.name) : script.id}`,
 					search: `?isLocal=${script.isLocal}`,
 				}}
-				className="group flex flex-col justify-between gap-4 h-full border border-white/10 hover:border-white/20 transition-all duration-300 rounded-xl p-4 hover:shadow-xl relative overflow-hidden"
+				onClick={handleClick}
+				className={`group flex flex-col justify-between gap-4 h-full border border-white/10 hover:border-white/20 transition-all duration-300 rounded-xl p-4 hover:shadow-xl relative overflow-hidden ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
 				style={{
 					background:
 						"linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 8%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))",
@@ -52,7 +63,7 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 
 				<div className="w-full flex relative z-10">
 					<div className="flex items-center gap-4">
-						{script.logo_url?.startsWith("http") ? (
+						{script.logo_url?.startsWith("http") && isOnline ? (
 							<img
 								src={script.logo_url}
 								onError={handleImageError}

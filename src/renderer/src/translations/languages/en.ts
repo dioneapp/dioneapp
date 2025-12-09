@@ -458,6 +458,7 @@ export const en = {
 		reachedEnd: "You have reached the end.",
 		notEnoughApps: "If you think there are not enough apps,",
 		helpAddMore: "please help us to add more",
+		viewingCached: "You're offline. Viewing cached content. Install features are disabled.",
 		errors: {
 			notArray: "Fetched data is not an array",
 			fetchFailed: "Failed to fetch scripts",
@@ -802,6 +803,7 @@ export const en = {
 	feedErrors: {
 		invalidDataFormat: "Invalid data format from API",
 		failedToFetchScripts: "Failed to fetch scripts",
+		offline: "You're offline and there's no cached content available.",
 	},
 
 	// upload script modal
