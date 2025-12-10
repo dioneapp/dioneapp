@@ -167,6 +167,19 @@ export default function IframeComponent({
 			`);
 			});
 
+			webview.addEventListener("permissionrequest", (event: any) => {
+				const permission = event.permission;
+				if (
+					permission === "media" ||
+					permission === "audioCapture" ||
+					permission === "videoCapture"
+				) {
+					event.request.allow();
+				} else {
+					event.request.deny();
+				}
+			});
+
 			webview.src = iframeSrc;
 			container.appendChild(webview);
 		}
