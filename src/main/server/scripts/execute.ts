@@ -129,16 +129,19 @@ export default async function executeInstallation(
 						`Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					);
 
-					// create virtual environment and execute commands inside it
-					const envCommands = await createVirtualEnvCommands(
-						envName,
+
+					// create virtual environment runner script
+					const runnerScript = await createRunnerScript(
 						commandsArray,
 						configDir,
-						pythonVersion,
-						envType,
+						{
+							name: envName,
+							type: envType,
+							version: pythonVersion,
+						},
 					);
 					resp = await executeCommands(
-						envCommands,
+						runnerScript,
 						configDir,
 						io,
 						id,
@@ -155,9 +158,14 @@ export default async function executeInstallation(
 						},
 					);
 				} else {
-					// execute commands normally
-					resp = await executeCommands(
+					// execute commands via batch script
+					const runnerScript = await createRunnerScript(
 						commandsArray,
+						configDir,
+					);
+
+					resp = await executeCommands(
+						runnerScript,
 						configDir,
 						io,
 						id,
@@ -453,26 +461,28 @@ export async function executeStartup(
 						: "uv";
 				const pythonVersion =
 					typeof selectedStart.env === "object" &&
-					"version" in selectedStart.env
+						"version" in selectedStart.env
 						? selectedStart.env.version
 						: "";
 
 				io.to(id).emit("installUpdate", {
 					type: "log",
-					content: `INFO: Using virtual environment: ${envName} with ${envType}${
-						pythonVersion ? ` (Python ${pythonVersion})` : ""
-					}\n`,
+					content: `INFO: Using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""
+						}\n`,
 				});
 
-				const envCommands = await createVirtualEnvCommands(
-					envName,
+
+				const runnerScript = await createRunnerScript(
 					commandsArray,
 					configDir,
-					pythonVersion,
-					envType,
+					{
+						name: envName,
+						type: envType,
+						version: pythonVersion,
+					},
 				);
 				response = await executeCommands(
-					envCommands,
+					runnerScript,
 					configDir,
 					io,
 					id,
@@ -490,8 +500,12 @@ export async function executeStartup(
 					},
 				);
 			} else {
-				response = await executeCommands(
+				const runnerScript = await createRunnerScript(
 					commandsArray,
+					configDir,
+				);
+				response = await executeCommands(
+					runnerScript,
 					configDir,
 					io,
 					id,
@@ -592,114 +606,139 @@ export async function executeStartup(
 	}
 }
 
-// commands to create virtual environment
-async function createVirtualEnvCommands(
-	envName: string,
-	commands: string[] | any[],
-	baseDir: string,
-	pythonVersion: string,
-	envType = "uv",
-) {
-	const isWindows = process.platform === "win32";
+// helper to filter and process commands
+async function processCommandList(commands: string[] | any[]) {
 	const currentPlatform = process.platform;
 	const { gpu: currentGpu } = await getSystemInfo();
-	const envPath = path.join(baseDir, envName);
 
-	// filter and ensure commands is an array of strings without empty strings
-	const commandStrings = Array.isArray(commands)
+	return Array.isArray(commands)
 		? commands.flatMap((cmd) => {
-				if (typeof cmd === "string" && cmd.trim()) {
-					return [cmd.trim()];
-				}
-				if (
-					cmd &&
-					typeof cmd === "object" &&
-					typeof cmd.command === "string" &&
-					cmd.command.trim()
-				) {
-					// Apply platform filtering
-					if ("platform" in cmd) {
-						const cmdPlatform = cmd.platform.toLowerCase();
-						const normalizedPlatform =
-							currentPlatform === "win32"
-								? "windows"
-								: currentPlatform === "darwin"
-									? "mac"
-									: currentPlatform === "linux"
-										? "linux"
-										: currentPlatform;
+			if (typeof cmd === "string" && cmd.trim()) {
+				return [cmd.trim()];
+			}
+			if (
+				cmd &&
+				typeof cmd === "object" &&
+				typeof cmd.command === "string" &&
+				cmd.command.trim()
+			) {
+				// Apply platform filtering
+				if ("platform" in cmd) {
+					const cmdPlatform = cmd.platform.toLowerCase();
+					const normalizedPlatform =
+						currentPlatform === "win32"
+							? "windows"
+							: currentPlatform === "darwin"
+								? "mac"
+								: currentPlatform === "linux"
+									? "linux"
+									: currentPlatform;
 
-						// if platform does not match current platform, skip
-						if (cmdPlatform !== normalizedPlatform) {
-							logger.info(
-								`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
-							);
-							return [];
-						}
+					// if platform does not match current platform, skip
+					if (cmdPlatform !== normalizedPlatform) {
+						logger.info(
+							`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+						);
+						return [];
 					}
-
-					// Apply GPU filtering
-					if ("gpus" in cmd) {
-						const allowedGpus = Array.isArray(cmd.gpus)
-							? cmd.gpus.map((g: string) => g.toLowerCase())
-							: [cmd.gpus.toLowerCase()];
-
-						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
-							logger.info(
-								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
-							);
-							return [];
-						}
-					}
-
-					return [cmd.command.trim()];
 				}
-				return [];
-			})
+
+				// Apply GPU filtering
+				if ("gpus" in cmd) {
+					const allowedGpus = Array.isArray(cmd.gpus)
+						? cmd.gpus.map((g: string) => g.toLowerCase())
+						: [cmd.gpus.toLowerCase()];
+
+					if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+						logger.info(
+							`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+						);
+						return [];
+					}
+				}
+
+				return [cmd.command.trim()];
+			}
+			return [];
+		})
 		: [];
+}
 
-	// add python version flag if specified
-	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
-	// join commands without leading/trailing separators; add separators conditionally where used
 
-	// variables
-	const variables = getAllValues();
-	const config = userConfig();
-	const arch = getArch();
-	const platform = getOS();
 
-	// NEW: File-based script execution logic to persist venv and avoid cli issues
+// unified runner script generator
+async function createRunnerScript(
+	commands: string[] | any[],
+	baseDir: string,
+	env?: {
+		name: string;
+		type?: string; // default "uv"
+		version?: string;
+	},
+) {
+	const commandStrings = await processCommandList(commands);
+	if (commandStrings.length === 0) return [];
+
+	const isWindows = process.platform === "win32";
 	const scriptExt = isWindows ? "bat" : "sh";
 	const scriptName = `.runner-${Date.now()}-${Math.floor(Math.random() * 10000)}.${scriptExt}`;
 	const scriptPath = path.join(baseDir, scriptName);
 	let scriptContent = "";
 
-	if (envType === "conda") {
-		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
-		const condaW = path.join(
-			config?.defaultBinFolder || path.join(app.getPath("userData")),
-			"bin",
-			"conda",
-			"condabin",
-			"conda.bat",
-		);
-		const condaU = path.join(
-			config?.defaultBinFolder || path.join(app.getPath("userData")),
-			"bin",
-			"conda",
-			"bin",
-			"activate",
-		);
-		const condaUC = path.join(
-			config?.defaultBinFolder || path.join(app.getPath("userData")),
-			"bin",
-			"conda",
-			"bin",
-			"conda",
-		);
-
+	if (!env) {
+		// without env
 		if (isWindows) {
 			scriptContent = `@echo off
+setlocal
+${commandStrings
+					.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
+					.join("\n")}
+(goto) 2>nul & del "%~f0"
+`;
+		} else {
+			scriptContent = `#!/bin/bash
+set -e
+${commandStrings.join("\n")}
+rm "$0"
+`;
+		}
+	} else {
+		// with env
+		const { name: envName, type: envType = "uv", version: pythonVersion } = env;
+		const envPath = path.join(baseDir, envName);
+		// v
+		const variables = getAllValues();
+		const config = userConfig();
+		const arch = getArch();
+		const platform = getOS();
+		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
+		const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
+
+		if (envType === "conda") {
+			const condaW = path.join(
+				config?.defaultBinFolder || path.join(app.getPath("userData")),
+				"bin",
+				"conda",
+				"condabin",
+				"conda.bat",
+			);
+			const condaU = path.join(
+				config?.defaultBinFolder || path.join(app.getPath("userData")),
+				"bin",
+				"conda",
+				"bin",
+				"activate",
+			);
+			const condaUC = path.join(
+				config?.defaultBinFolder || path.join(app.getPath("userData")),
+				"bin",
+				"conda",
+				"bin",
+				"conda",
+			);
+
+			if (isWindows) {
+				scriptContent = `@echo off
 setlocal
 if not exist "${envPath}" (
     echo Creating Conda environment...
@@ -710,15 +749,15 @@ call "${condaW}" activate "${envPath}"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 ${commandStrings
-	.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
-	.join("\n")}
+						.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
+						.join("\n")}
 
 call "${condaW}" deactivate
 (goto) 2>nul & del "%~f0"
 `;
-		} else {
-			// Linux/Mac
-			scriptContent = `#!/bin/bash
+			} else {
+				// Linux/Mac
+				scriptContent = `#!/bin/bash
 set -e
 if [ ! -d "${envPath}" ]; then
     echo "Creating Conda environment..."
@@ -731,70 +770,70 @@ ${commandStrings.join("\n")}
 conda deactivate
 rm "$0"
 `;
-		}
-	} else {
-		// default uv/venv env
-		let activateCmd = "";
-		let createCmd = "";
-
-		const uvFolder =
-			platform === "linux"
-				? arch === "amd64"
-					? "uv-x86_64-unknown-linux-gnu"
-					: "uv-aarch64-unknown-linux-gnu"
-				: platform === "macos"
-					? arch === "amd64"
-						? "uv-x86_64-apple-darwin"
-						: "uv-aarch64-apple-darwin"
-					: "";
-
-		const uvPath = path.join(
-			config?.defaultBinFolder || path.join(app.getPath("userData")),
-			"bin",
-			"uv",
-			uvFolder,
-			process.platform === "win32" ? "uv.exe" : "uv",
-		);
-
-		if (isWindows) {
-			const activateScript = path.join(envPath, "Scripts", "activate.bat");
-			if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
-				addValue("PATH", path.join(envPath, "Scripts"));
 			}
+		} else {
+			// default uv/venv env
+			const uvFolder =
+				platform === "linux"
+					? arch === "amd64"
+						? "uv-x86_64-unknown-linux-gnu"
+						: "uv-aarch64-unknown-linux-gnu"
+					: platform === "macos"
+						? arch === "amd64"
+							? "uv-x86_64-apple-darwin"
+							: "uv-aarch64-apple-darwin"
+						: "";
 
-			createCmd = `if not exist "${envPath}" (
+			const uvPath = path.join(
+				config?.defaultBinFolder || path.join(app.getPath("userData")),
+				"bin",
+				"uv",
+				uvFolder,
+				process.platform === "win32" ? "uv.exe" : "uv",
+			);
+
+			let activateCmd = "";
+			let createCmd = "";
+
+			if (isWindows) {
+				const activateScript = path.join(envPath, "Scripts", "activate.bat");
+				if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
+					addValue("PATH", path.join(envPath, "Scripts"));
+				}
+
+				createCmd = `if not exist "${envPath}" (
     echo Creating virtual environment...
     "${uvPath}" venv ${pythonFlag} "${envName}"
     if %errorlevel% neq 0 exit /b %errorlevel%
 )`;
-			activateCmd = `call "${activateScript}"`;
+				activateCmd = `call "${activateScript}"`;
 
-			scriptContent = `@echo off
+				scriptContent = `@echo off
 setlocal
 ${createCmd}
 ${activateCmd}
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 ${commandStrings
-	.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
-	.join("\n")}
+						.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
+						.join("\n")}
 
 if exist "${envPath}\\Scripts\\deactivate.bat" call "${envPath}\\Scripts\\deactivate.bat"
 (goto) 2>nul & del "%~f0"
 `;
-		} else {
-			const activateScript = path.join(envPath, "bin", "activate");
-			if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
-				addValue("PATH", path.join(envPath, "Scripts"));
-			}
+			} else {
+				const activateScript = path.join(envPath, "bin", "activate");
+				if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
+					addValue("PATH", path.join(envPath, "Scripts"));
+				}
 
-			createCmd = `if [ ! -d "${envPath}" ]; then
+				createCmd = `if [ ! -d "${envPath}" ]; then
     echo "Creating virtual environment..."
     "${uvPath}" venv ${pythonFlag} "${envPath}"
 fi`;
-			activateCmd = `. "${activateScript}"`;
+				activateCmd = `. "${activateScript}"`;
 
-			scriptContent = `#!/bin/bash
+				scriptContent = `#!/bin/bash
 set -e
 ${createCmd}
 ${activateCmd}
@@ -804,6 +843,7 @@ ${commandStrings.join("\n")}
 deactivate
 rm "$0"
 `;
+			}
 		}
 	}
 
