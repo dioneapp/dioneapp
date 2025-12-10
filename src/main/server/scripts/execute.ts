@@ -119,7 +119,7 @@ export default async function executeInstallation(
 							: "uv";
 					const pythonVersion =
 						typeof step.env === "object"
-							? (step.env.version || step.env.python)
+							? step.env.version || step.env.python
 							: undefined;
 
 					io.to(id).emit("installUpdate", {
@@ -129,7 +129,6 @@ export default async function executeInstallation(
 					logger.info(
 						`Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					);
-
 
 					// create virtual environment runner script
 					const runnerScript = await createRunnerScript(
@@ -481,15 +480,16 @@ export async function executeStartup(
 					if (selectedStart.env.type) envType = selectedStart.env.type;
 					if (selectedStart.env.version)
 						pythonVersion = selectedStart.env.version;
-					if (selectedStart.env.python) pythonVersion = selectedStart.env.python;
+					if (selectedStart.env.python)
+						pythonVersion = selectedStart.env.python;
 				}
 
 				io.to(id).emit("installUpdate", {
 					type: "log",
-					content: `INFO: Using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""
-						}\n`,
+					content: `INFO: Using virtual environment: ${envName} with ${envType}${
+						pythonVersion ? ` (Python ${pythonVersion})` : ""
+					}\n`,
 				});
-
 
 				const runnerScript = await createRunnerScript(
 					commandsArray,
@@ -517,10 +517,7 @@ export async function executeStartup(
 					},
 				);
 			} else {
-				const runnerScript = await createRunnerScript(
-					commandsArray,
-					configDir,
-				);
+				const runnerScript = await createRunnerScript(commandsArray, configDir);
 				response = await executeCommands(
 					runnerScript,
 					configDir,
@@ -630,58 +627,56 @@ async function processCommandList(commands: string[] | any[]) {
 
 	return Array.isArray(commands)
 		? commands.flatMap((cmd) => {
-			if (typeof cmd === "string" && cmd.trim()) {
-				return [cmd.trim()];
-			}
-			if (
-				cmd &&
-				typeof cmd === "object" &&
-				typeof cmd.command === "string" &&
-				cmd.command.trim()
-			) {
-				// Apply platform filtering
-				if ("platform" in cmd) {
-					const cmdPlatform = cmd.platform.toLowerCase();
-					const normalizedPlatform =
-						currentPlatform === "win32"
-							? "windows"
-							: currentPlatform === "darwin"
-								? "mac"
-								: currentPlatform === "linux"
-									? "linux"
-									: currentPlatform;
-
-					// if platform does not match current platform, skip
-					if (cmdPlatform !== normalizedPlatform) {
-						logger.info(
-							`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
-						);
-						return [];
-					}
+				if (typeof cmd === "string" && cmd.trim()) {
+					return [cmd.trim()];
 				}
+				if (
+					cmd &&
+					typeof cmd === "object" &&
+					typeof cmd.command === "string" &&
+					cmd.command.trim()
+				) {
+					// Apply platform filtering
+					if ("platform" in cmd) {
+						const cmdPlatform = cmd.platform.toLowerCase();
+						const normalizedPlatform =
+							currentPlatform === "win32"
+								? "windows"
+								: currentPlatform === "darwin"
+									? "mac"
+									: currentPlatform === "linux"
+										? "linux"
+										: currentPlatform;
 
-				// Apply GPU filtering
-				if ("gpus" in cmd) {
-					const allowedGpus = Array.isArray(cmd.gpus)
-						? cmd.gpus.map((g: string) => g.toLowerCase())
-						: [cmd.gpus.toLowerCase()];
-
-					if (!allowedGpus.includes(currentGpu.toLowerCase())) {
-						logger.info(
-							`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
-						);
-						return [];
+						// if platform does not match current platform, skip
+						if (cmdPlatform !== normalizedPlatform) {
+							logger.info(
+								`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+							);
+							return [];
+						}
 					}
-				}
 
-				return [cmd.command.trim()];
-			}
-			return [];
-		})
+					// Apply GPU filtering
+					if ("gpus" in cmd) {
+						const allowedGpus = Array.isArray(cmd.gpus)
+							? cmd.gpus.map((g: string) => g.toLowerCase())
+							: [cmd.gpus.toLowerCase()];
+
+						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+							logger.info(
+								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+							);
+							return [];
+						}
+					}
+
+					return [cmd.command.trim()];
+				}
+				return [];
+			})
 		: [];
 }
-
-
 
 // unified runner script generator
 async function createRunnerScript(
@@ -706,8 +701,8 @@ async function createRunnerScript(
 			scriptContent = `@echo off
 setlocal
 ${commandStrings
-					.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
-					.join("\n")}
+	.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
+	.join("\n")}
 (goto) 2>nul & del "%~f0"
 `;
 		} else {
@@ -763,8 +758,8 @@ call "${condaW}" activate "${envPath}"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 ${commandStrings
-						.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
-						.join("\n")}
+	.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
+	.join("\n")}
 
 call "${condaW}" deactivate
 (goto) 2>nul & del "%~f0"
@@ -829,8 +824,8 @@ ${activateCmd}
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 ${commandStrings
-						.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
-						.join("\n")}
+	.map((cmd) => `${cmd}\nif %errorlevel% neq 0 ( exit /b %errorlevel% )`)
+	.join("\n")}
 
 if exist "${envPath}\\Scripts\\deactivate.bat" call "${envPath}\\Scripts\\deactivate.bat"
 (goto) 2>nul & del "%~f0"
