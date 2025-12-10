@@ -20,7 +20,7 @@ function syncToAsync() {
 	const asyncify = (fn: (...args: any[]) => Promise<any>) => {
 		return (...args: any[]) => {
 			// return the same calll but async
-			fn(...args).catch(() => { });
+			fn(...args).catch(() => {});
 			return undefined;
 		};
 	};
@@ -28,22 +28,22 @@ function syncToAsync() {
 		fs.promises.rm(path, { recursive: true, force: true }),
 	);
 	fs.unlinkSync = asyncify(async (path) =>
-		fs.promises.unlink(path).catch(() => { }),
+		fs.promises.unlink(path).catch(() => {}),
 	);
 	fs.rmdirSync = asyncify(async (path) =>
-		fs.promises.rmdir(path).catch(() => { }),
+		fs.promises.rmdir(path).catch(() => {}),
 	);
 	fs.writeFileSync = asyncify(async (file, data) =>
-		fs.promises.writeFile(String(file), data).catch(() => { }),
+		fs.promises.writeFile(String(file), data).catch(() => {}),
 	);
 	fs.mkdirSync = asyncify(async (path) =>
-		fs.promises.mkdir(path, { recursive: true }).catch(() => { }),
+		fs.promises.mkdir(path, { recursive: true }).catch(() => {}),
 	);
 	fs.renameSync = asyncify(async (oldPath, newPath) =>
-		fs.promises.rename(oldPath, newPath).catch(() => { }),
+		fs.promises.rename(oldPath, newPath).catch(() => {}),
 	);
 	fs.copyFileSync = asyncify(async (src, dest) =>
-		fs.promises.copyFile(src, dest).catch(() => { }),
+		fs.promises.copyFile(src, dest).catch(() => {}),
 	);
 	return () => Object.assign(fs, original);
 }

@@ -31,12 +31,25 @@ function ScriptCard({ script, innerRef, deleteScript }: ScriptCardProps) {
 				}}
 				className="group flex flex-col justify-between gap-4 h-full border border-white/10 hover:border-white/20 transition-all duration-300 rounded-xl p-4 hover:shadow-xl relative overflow-hidden"
 				style={{
-					background: "linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 8%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))",
+					background:
+						"linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 8%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))",
 				}}
 			>
-				<div className="absolute -top-12 -right-12 w-32 h-32 rounded-full blur-3xl pointer-events-none transition-opacity duration-150 opacity-0 group-hover:opacity-100" style={{ backgroundColor: "color-mix(in srgb, var(--theme-accent) 15%, transparent)" }} />
-				<div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full blur-2xl pointer-events-none" style={{ backgroundColor: "color-mix(in srgb, var(--theme-accent) 8%, transparent)" }} />
-				
+				<div
+					className="absolute -top-12 -right-12 w-32 h-32 rounded-full blur-3xl pointer-events-none transition-opacity duration-150 opacity-0 group-hover:opacity-100"
+					style={{
+						backgroundColor:
+							"color-mix(in srgb, var(--theme-accent) 15%, transparent)",
+					}}
+				/>
+				<div
+					className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full blur-2xl pointer-events-none"
+					style={{
+						backgroundColor:
+							"color-mix(in srgb, var(--theme-accent) 8%, transparent)",
+					}}
+				/>
+
 				<div className="w-full flex relative z-10">
 					<div className="flex items-center gap-4">
 						{script.logo_url?.startsWith("http") ? (
