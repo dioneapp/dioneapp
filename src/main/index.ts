@@ -135,6 +135,20 @@ const allowedMediaPermissions = new Set([
 	"videoCapture",
 ]);
 
+const getPermissionRequestOrigin = (
+	details?:
+		| Electron.PermissionRequest
+		| Electron.FilesystemPermissionRequest
+		| Electron.MediaAccessPermissionRequest
+		| Electron.OpenExternalPermissionRequest,
+) => {
+	if (!details) return undefined;
+	if ("securityOrigin" in details && typeof details.securityOrigin === "string") {
+		return details.securityOrigin;
+	}
+	return details.requestingUrl;
+};
+
 const isTrustedMediaRequest = (requestingUrl?: string) => {
 	if (!requestingUrl) return true;
 	try {
@@ -162,9 +176,7 @@ const configurePermissionHandlers = () => {
 				(_webContents, permission, callback, details) => {
 					if (
 						allowedMediaPermissions.has(permission) &&
-						isTrustedMediaRequest(
-							details?.requestingUrl || details?.securityOrigin,
-						)
+						isTrustedMediaRequest(getPermissionRequestOrigin(details))
 					) {
 						callback(true);
 						return;
