@@ -162,7 +162,9 @@ const configurePermissionHandlers = () => {
 				(_webContents, permission, callback, details) => {
 					if (
 						allowedMediaPermissions.has(permission) &&
-						isTrustedMediaRequest(details?.requestingUrl || details?.securityOrigin)
+						isTrustedMediaRequest(
+							details?.requestingUrl || details?.securityOrigin,
+						)
 					) {
 						callback(true);
 						return;
