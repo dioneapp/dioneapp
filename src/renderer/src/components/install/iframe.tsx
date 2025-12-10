@@ -167,6 +167,19 @@ export default function IframeComponent({
 			`);
 			});
 
+			webview.addEventListener("permissionrequest", (event: any) => {
+				const permission = event.permission;
+				if (
+					permission === "media" ||
+					permission === "audioCapture" ||
+					permission === "videoCapture"
+				) {
+					event.request.allow();
+				} else {
+					event.request.deny();
+				}
+			});
+
 			webview.src = iframeSrc;
 			container.appendChild(webview);
 		}
@@ -236,7 +249,10 @@ export default function IframeComponent({
 					>
 						<Share2 className="w-4 h-4" />
 						{tunnelInfo && (
-							<div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-neutral-900 animate-pulse" style={{ backgroundColor: "var(--theme-accent)" }} />
+							<div
+								className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-neutral-900 animate-pulse"
+								style={{ backgroundColor: "var(--theme-accent)" }}
+							/>
 						)}
 						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframeActions.shareOnNetwork")}
@@ -346,24 +362,33 @@ export default function IframeComponent({
 						<Activity className="w-4 h-4" />
 					</button>
 					<div className="absolute bottom-full right-0 mb-3 px-3 py-2.5 bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none w-52 backdrop-blur-md border border-white/10">
-						<div className="text-xs font-semibold mb-2.5">System Performance</div>
+						<div className="text-xs font-semibold mb-2.5">
+							System Performance
+						</div>
 						<div className="space-y-2 text-[10px]">
 							{systemUsage.cpu !== undefined && (
 								<div className="flex justify-between items-center">
 									<span className="text-neutral-400">CPU Usage:</span>
-									<span className="font-semibold">{Math.round(systemUsage.cpu)}%</span>
+									<span className="font-semibold">
+										{Math.round(systemUsage.cpu)}%
+									</span>
 								</div>
 							)}
 							{systemUsage.ram.percent !== undefined && (
 								<div className="flex justify-between items-center">
 									<span className="text-neutral-400">RAM Usage:</span>
-									<span className="font-semibold">{systemUsage.ram.usedGB?.toFixed(1) || 0}GB ({Math.round(systemUsage.ram.percent)}%)</span>
+									<span className="font-semibold">
+										{systemUsage.ram.usedGB?.toFixed(1) || 0}GB (
+										{Math.round(systemUsage.ram.percent)}%)
+									</span>
 								</div>
 							)}
 							{systemUsage.disk !== undefined && (
 								<div className="flex justify-between items-center">
 									<span className="text-neutral-400">Disk Usage:</span>
-									<span className="font-semibold">{systemUsage.disk?.toFixed(1) || 0}%</span>
+									<span className="font-semibold">
+										{systemUsage.disk?.toFixed(1) || 0}%
+									</span>
 								</div>
 							)}
 							{currentPort && (

@@ -129,6 +129,71 @@ const buildWindowOpenHandler = (
 	};
 };
 
+const allowedMediaPermissions = new Set([
+	"media",
+	"audioCapture",
+	"videoCapture",
+]);
+
+const getPermissionRequestOrigin = (
+	details?:
+		| Electron.PermissionRequest
+		| Electron.FilesystemPermissionRequest
+		| Electron.MediaAccessPermissionRequest
+		| Electron.OpenExternalPermissionRequest,
+) => {
+	if (!details) return undefined;
+	if (
+		"securityOrigin" in details &&
+		typeof details.securityOrigin === "string"
+	) {
+		return details.securityOrigin;
+	}
+	return details.requestingUrl;
+};
+
+const isTrustedMediaRequest = (requestingUrl?: string) => {
+	if (!requestingUrl) return true;
+	try {
+		const url = new URL(requestingUrl);
+		return (
+			url.protocol === "https:" ||
+			url.hostname === "localhost" ||
+			url.hostname === "127.0.0.1"
+		);
+	} catch (error) {
+		logger.warn("Failed to parse requestingUrl for media permission:", error);
+		return false;
+	}
+};
+
+const configurePermissionHandlers = () => {
+	const sessionsToConfigure = [
+		session.defaultSession,
+		session.fromPartition("persist:webview"),
+	];
+
+	for (const targetSession of sessionsToConfigure) {
+		try {
+			targetSession.setPermissionRequestHandler(
+				(_webContents, permission, callback, details) => {
+					if (
+						allowedMediaPermissions.has(permission) &&
+						isTrustedMediaRequest(getPermissionRequestOrigin(details))
+					) {
+						callback(true);
+						return;
+					}
+
+					callback(false);
+				},
+			);
+		} catch (error) {
+			logger.warn("Failed to set permission handler for session:", error);
+		}
+	}
+};
+
 // Creates the main application window with specific configurations.
 function createWindow() {
 	try {
@@ -142,7 +207,7 @@ function createWindow() {
 			center: true,
 			autoHideMenuBar: true,
 			titleBarStyle: process.platform === "darwin" ? "default" : "hidden",
-			fullscreenable: false,
+			fullscreenable: true,
 			maximizable: true,
 			fullscreen: false,
 			frame: process.platform === "darwin",
@@ -366,6 +431,7 @@ function createWindow() {
 // Sets up the application when ready.
 app.whenReady().then(async () => {
 	logger.info("Starting app...");
+	configurePermissionHandlers();
 
 	// map to store request origins
 	const requestOrigins = new Map<string, string>();

@@ -5,16 +5,28 @@ export default function PromoBanner() {
 	const { t } = useTranslation();
 
 	return (
-		<div className="mt-6 w-full rounded-xl border border-white/10 overflow-hidden" style={{ background: "linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 8%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))" }}>
+		<div
+			className="mt-6 w-full rounded-xl border border-white/10 overflow-hidden"
+			style={{
+				background:
+					"linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 8%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))",
+			}}
+		>
 			<div className="relative w-full p-5">
 				{/* background effects */}
 				<div
 					className="absolute -top-12 -left-8 w-32 h-32 md:w-48 md:h-48 rounded-full blur-3xl pointer-events-none"
-					style={{ backgroundColor: "color-mix(in srgb, var(--theme-accent) 15%, transparent)" }}
+					style={{
+						backgroundColor:
+							"color-mix(in srgb, var(--theme-accent) 15%, transparent)",
+					}}
 				/>
 				<div
 					className="absolute -bottom-8 -right-8 w-24 h-24 md:w-32 md:h-32 rounded-full blur-2xl pointer-events-none"
-					style={{ backgroundColor: "color-mix(in srgb, var(--theme-accent) 10%, transparent)" }}
+					style={{
+						backgroundColor:
+							"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+					}}
 				/>
 				<div className="relative flex flex-row items-center justify-between gap-4 z-10">
 					<div className="flex flex-col space-y-1.5">

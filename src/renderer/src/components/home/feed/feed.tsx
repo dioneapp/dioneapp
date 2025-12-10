@@ -3,7 +3,9 @@ import type { Script } from "@/components/home/feed/types";
 import Loading from "@/components/home/loading-skeleton";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
+import { FeedCache } from "@/utils/cache";
 import { openLink } from "@/utils/open-link";
+import { useOnlineStatus } from "@/utils/use-online-status";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface ScriptListProps {
@@ -23,15 +25,33 @@ export default function List({
 	const [error, setError] = useState<string | null>(null);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
+	const [isUsingCache, setIsUsingCache] = useState(false);
 	const observer = useRef<IntersectionObserver | null>(null);
 	const limit = 10;
 	const loadingRef = useRef(false);
+	const isOnline = useOnlineStatus();
 
 	const fetchScripts = useCallback(
 		async (pageNum: number) => {
 			if (!hasMore || loadingRef.current) return;
 
 			loadingRef.current = true;
+
+			if (!isOnline) {
+				const cached = FeedCache.get(endpoint);
+				if (cached) {
+					setScripts(cached);
+					setIsUsingCache(true);
+					setHasMore(false);
+					setLoading(false);
+					loadingRef.current = false;
+					return;
+				}
+				setError(t("feedErrors.offline"));
+				setLoading(false);
+				loadingRef.current = false;
+				return;
+			}
 
 			try {
 				const url = new URL(endpoint, "http://localhost");
@@ -61,20 +81,35 @@ export default function List({
 				setScripts((prev) => {
 					const existingIds = new Set(prev.map((s) => s.id));
 					const newItems = data.filter((script) => !existingIds.has(script.id));
-					return [...prev, ...newItems];
+					const updatedScripts = [...prev, ...newItems];
+
+					if (pageNum === 1 && updatedScripts.length > 0) {
+						FeedCache.set(endpoint, updatedScripts);
+					}
+
+					return updatedScripts;
 				});
 
 				setPage(pageNum + 1);
 				setHasMore(data.length >= limit);
+				setIsUsingCache(false);
 			} catch (err) {
 				console.error(err);
-				setError("Failed to fetch scripts");
+
+				const cached = FeedCache.get(endpoint);
+				if (cached && pageNum === 1) {
+					setScripts(cached);
+					setIsUsingCache(true);
+					setHasMore(false);
+				} else {
+					setError("Failed to fetch scripts");
+				}
 			} finally {
 				setLoading(false);
 				loadingRef.current = false;
 			}
 		},
-		[endpoint, hasMore, limit, t],
+		[endpoint, hasMore, limit, isOnline, t],
 	);
 
 	const lastElementRef = useCallback(
@@ -115,12 +150,18 @@ export default function List({
 
 	return (
 		<div className={`w-full ${className} last:mb-4`}>
+			{isUsingCache && (
+				<div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-200 text-sm">
+					{t("feed.viewingCached")}
+				</div>
+			)}
 			<div className="grid grid-cols-2 gap-4">
 				{scripts.map((script, index) => (
 					<ScriptCard
 						key={script.id}
 						script={script}
 						innerRef={index === scripts.length - 1 ? lastElementRef : null}
+						disabled={!isOnline}
 					/>
 				))}
 			</div>

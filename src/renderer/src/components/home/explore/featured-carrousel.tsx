@@ -2,7 +2,9 @@ import { useAuthContext } from "@/components/contexts/auth-context";
 import type { Script } from "@/components/home/feed/types";
 import Icon from "@/components/icons/icon";
 import { apiJson } from "@/utils/api";
+import { FeedCache } from "@/utils/cache";
 import sendEvent from "@/utils/events";
+import { useOnlineStatus } from "@/utils/use-online-status";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -13,14 +15,31 @@ export default function FeaturedCarousel() {
 	const [_error, setError] = useState<string | null>(null);
 	const [gradients, setGradients] = useState<Record<string, string>>({});
 	const [currentIndex, setCurrentIndex] = useState<number>(0);
+	const [isUsingCache, setIsUsingCache] = useState(false);
 	const { user } = useAuthContext();
 	const navigate = useNavigate();
 	const intervalRef = useRef<NodeJS.Timeout | null>(null);
+	const isOnline = useOnlineStatus();
 
 	const interval = 12000;
 
 	useEffect(() => {
 		const fetchScripts = async () => {
+			if (!isOnline) {
+				const cached = FeedCache.get("/db/featured");
+				if (cached) {
+					const sorted = [
+						...cached.filter((s) => s.order === "prior"),
+						...cached.filter((s) => s.order !== "prior"),
+					];
+					setScripts(sorted);
+					generateGradients(sorted);
+					setIsUsingCache(true);
+					setLoading(false);
+					return;
+				}
+			}
+
 			try {
 				const data = await apiJson<Script[]>("/db/featured");
 				if (Array.isArray(data)) {
@@ -30,19 +49,36 @@ export default function FeaturedCarousel() {
 					];
 					setScripts(sorted);
 					generateGradients(sorted);
+
+					if (isOnline) {
+						FeedCache.set("/db/featured", sorted);
+					}
+					setIsUsingCache(false);
 				} else {
 					setError("Fetched data is not an array");
 				}
 			} catch (err) {
 				console.error(err);
-				setError("Failed to fetch scripts");
+
+				const cached = FeedCache.get("/db/featured");
+				if (cached) {
+					const sorted = [
+						...cached.filter((s) => s.order === "prior"),
+						...cached.filter((s) => s.order !== "prior"),
+					];
+					setScripts(sorted);
+					generateGradients(sorted);
+					setIsUsingCache(true);
+				} else {
+					setError("Failed to fetch scripts");
+				}
 			} finally {
 				setLoading(false);
 			}
 		};
 
 		fetchScripts();
-	}, []);
+	}, [isOnline]);
 
 	const slides = [
 		{ type: "announcement", id: "announcement" },
@@ -99,6 +135,10 @@ export default function FeaturedCarousel() {
 	const activeItem = slides[currentIndex] as any;
 
 	const handlePromoClick = async (id: string) => {
+		if (!isOnline) {
+			return;
+		}
+
 		const result = await sendEvent({
 			user: user?.id || "",
 			event: "promo_click",
@@ -111,10 +151,18 @@ export default function FeaturedCarousel() {
 
 	return (
 		<section className="flex flex-col gap-0">
+			{isUsingCache && (
+				<div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-200 text-sm">
+					Viewing cached featured content. Install features are disabled while
+					offline.
+				</div>
+			)}
 			<div className="relative h-70">
 				<AnimatePresence initial={false} mode="wait">
 					<div key={activeItem.id} className="absolute w-full h-full">
-						<div className="w-full h-72 flex transition-all duration-200 rounded-xl relative overflow-hidden group border border-white/10 hover:border-white/20 cursor-pointer shadow-lg hover:shadow-xl">
+						<div
+							className={`w-full h-72 flex transition-all duration-200 rounded-xl relative overflow-hidden group border border-white/10 hover:border-white/20 shadow-lg hover:shadow-xl ${!isOnline ? "cursor-not-allowed opacity-75" : "cursor-pointer"}`}
+						>
 							{activeItem.type === "announcement" ? (
 								<div
 									onClick={() => navigate("/quick-ai")}
@@ -132,7 +180,7 @@ export default function FeaturedCarousel() {
 								>
 									<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
 
-									{activeItem.banner_url ? (
+									{activeItem.banner_url && isOnline ? (
 										<motion.img
 											aria-hidden
 											src={activeItem.banner_url}
@@ -187,7 +235,7 @@ export default function FeaturedCarousel() {
 									>
 										<div className="flex w-full h-full flex-col justify-start items-center">
 											<div className="w-full h-full flex justify-end">
-												{activeItem.logo_url && (
+												{activeItem.logo_url && isOnline && (
 													<img
 														src={activeItem.logo_url}
 														alt={activeItem.name}

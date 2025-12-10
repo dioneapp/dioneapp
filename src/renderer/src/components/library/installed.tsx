@@ -13,6 +13,8 @@ export default function Installed() {
 	const [apps, setApps] = useState<any[]>([]);
 	const [loading, setLoading] = useState<boolean>(true);
 	const CACHE_KEY = "appsCache";
+	const CACHE_TIMESTAMP_KEY = "appsCacheTimestamp";
+	const CACHE_EXPIRY = 24 * 60 * 60 * 1000; // 24h
 
 	useEffect(() => {
 		const getApps = async () => {
@@ -21,46 +23,78 @@ export default function Installed() {
 				return;
 			}
 
-			setApps([]);
+			const normalizeName = (name: string) =>
+				name.toLowerCase().replace(/[\s\-]/g, "");
+
+			const appsToFetch = installedApps.filter((app) => {
+				return !localApps.some(
+					(localApp) =>
+						normalizeName(localApp.name) === normalizeName(app.name),
+				);
+			});
+
+			if (appsToFetch.length === 0) {
+				setApps([]);
+				setLoading(false);
+				return;
+			}
 
 			try {
 				const cachedData = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
+				const cacheTimestamp = Number.parseInt(
+					localStorage.getItem(CACHE_TIMESTAMP_KEY) || "0",
+				);
+				const isCacheValid = Date.now() - cacheTimestamp < CACHE_EXPIRY;
 
-				const normalizeName = (name: string) =>
-					name.toLowerCase().replace(/[\s\-]/g, "");
+				const cachedApps: any[] = [];
+				const appsNeedingFetch: any[] = [];
 
-				const appsToFetch = installedApps.filter((app) => {
-					return !localApps.some(
-						(localApp) =>
-							normalizeName(localApp.name) === normalizeName(app.name),
-					);
-				});
+				for (const app of appsToFetch) {
+					if (cachedData[app.name] && isCacheValid) {
+						cachedApps.push(...cachedData[app.name]);
+					} else {
+						appsNeedingFetch.push(app);
+					}
+				}
 
-				if (appsToFetch.length > 0) {
-					const allAppsData: any[] = [];
+				if (cachedApps.length > 0) {
+					setApps(cachedApps);
+					setLoading(false);
+				} else if (appsNeedingFetch.length === 0) {
+					setLoading(false);
+				}
+
+				if (appsNeedingFetch.length > 0) {
+					const freshAppsData: any[] = [];
+					const newCachedData = { ...cachedData };
 
 					await Promise.all(
-						appsToFetch.map((app) =>
-							apiJson<any[]>(
-								`/db/search/name/${encodeURIComponent(app.name)}`,
-							).then((data) => {
-								cachedData[app.name] = data;
-								allAppsData.push(...data);
-							}),
+						appsNeedingFetch.map((app) =>
+							apiJson<any[]>(`/db/search/name/${encodeURIComponent(app.name)}`)
+								.then((data) => {
+									newCachedData[app.name] = data;
+									freshAppsData.push(...data);
+								})
+								.catch((error) => {
+									console.error(`Error fetching ${app.name}:`, error);
+								}),
 						),
 					);
 
-					setApps(allAppsData);
-					localStorage.setItem(CACHE_KEY, JSON.stringify(cachedData));
+					const allApps = [...cachedApps, ...freshAppsData];
+					setApps(allApps);
+					setLoading(false);
+					localStorage.setItem(CACHE_KEY, JSON.stringify(newCachedData));
+					localStorage.setItem(CACHE_TIMESTAMP_KEY, Date.now().toString());
 				}
 			} catch (error) {
 				console.error("Error loading apps:", error);
+				setLoading(false);
 			}
-			setLoading(false);
 		};
 
 		getApps();
-	}, [installedApps]);
+	}, [installedApps, localApps]);
 
 	return (
 		<>

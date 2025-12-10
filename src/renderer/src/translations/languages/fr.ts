@@ -15,7 +15,7 @@ export const fr = {
 	noAccess: {
 		title: "Rejoindre la liste blanche Dione",
 		description:
-			"Dione est en cours de développement et seul un nombre limité d'utilisateurs peut y accéder. Rejoignez notre liste blanche dès maintenant pour accéder aux futures versions de notre application.",
+			"Dione est en cours de construction et seule une quantité limitée d'utilisateurs peut y accéder. Rejoignez notre liste blanche dès maintenant pour accéder aux futures versions de notre application.",
 		join: "Rejoindre",
 		logout: "Déconnexion",
 	},
@@ -25,7 +25,7 @@ export const fr = {
 		welcome: {
 			title: "Bienvenue sur",
 			subtitle:
-				"Merci de nous rejoindre dès le début de ce voyage. Connectez-vous à votre compte pour commencer.",
+				"Merci de nous rejoindre tôt dans ce voyage. Connectez-vous à votre compte pour commencer.",
 			login: "Se connecter",
 			copyLink: "Copier le lien",
 			skipLogin: "Continuer sans connexion",
@@ -40,17 +40,21 @@ export const fr = {
 		},
 		ready: {
 			title: "Vous êtes prêt !",
-			subtitle: "Nous sommes ravis de vous avoir ici",
+			subtitle: "Nous sommes heureux de vous avoir ici",
 			finish: "Terminer",
 		},
 		clipboard: {
 			success:
-				"Copié dans le presse-papiers avec succès, collez-le maintenant dans votre navigateur !",
+				"Copié dans le presse-papiers, collez-le maintenant dans votre navigateur !",
 		},
 		selectPath: {
-			title: "Sélectionnez le chemin d'installation",
+			title: "Sélectionner le chemin d'installation",
+			description:
+				"Ce dossier contiendra tous vos scripts installés, dépendances et fichiers de projet. Choisissez un emplacement facilement accessible et disposant de suffisamment d'espace de stockage.",
 			button: "Sélectionner un chemin",
 			success: "Suivant",
+			warning:
+				"Ne sélectionnez pas le même dossier où Dione est installé. Cela peut entraîner des conflits et des erreurs lors des mises à jour.",
 		},
 	},
 
@@ -58,7 +62,7 @@ export const fr = {
 	error: {
 		title: "Une erreur inattendue s'est produite",
 		description:
-			"Nous avons détecté une erreur inattendue dans l'application, nous sommes désolés pour la gêne occasionnée.",
+			"Nous avons détecté une erreur inattendue dans l'application, nous sommes désolés pour le désagrément.",
 		return: "Retour",
 		report: {
 			toTeam: "Signaler à l'équipe",
@@ -82,7 +86,7 @@ export const fr = {
 				subtitle: "sur les 7 derniers jours",
 			},
 			shared: {
-				title: "Partagés",
+				title: "Partagé",
 				subtitle: "sur les 7 derniers jours",
 			},
 			streak: {
@@ -100,8 +104,8 @@ export const fr = {
 			downloading: "Téléchargement de %s...",
 			starting: "Démarrage de %s...",
 			uninstalling: "Désinstallation de %s...",
-			reconnecting: "Reconnexion de %s...",
-			retrying: "Tentative de réinstallation de %s...",
+			reconnecting: "Reconnexion à %s...",
+			retrying: "Tentative d'installation de %s à nouveau...",
 			success: {
 				stopped: "%s arrêté avec succès.",
 				uninstalled: "%s désinstallé avec succès.",
@@ -116,7 +120,7 @@ export const fr = {
 				uninstall: "Erreur lors de la désinstallation de %s : %s",
 				serverRunning: "Le serveur est déjà en cours d'exécution.",
 				tooManyApps:
-					"Ralentissez ! Vous avez déjà 6 applications en cours d'exécution simultanément.",
+					"Ralentissez ! Vous avez déjà 6 applications en cours d'exécution en même temps.",
 			},
 		},
 	},
@@ -126,14 +130,14 @@ export const fr = {
 		closing: {
 			title: "Arrêt des applications...",
 			description:
-				"Dione se fermera automatiquement après la fermeture de toutes les applications ouvertes.",
+				"Dione se fermera automatiquement après avoir fermé toutes les applications ouvertes.",
 		},
 	},
 
 	// sidebar component
 	sidebar: {
-		tagline: "Explorez, installez, innovez — en 1 clic.",
-		activeApps: "Applications actives",
+		tagline: "Explorez, Installez, Innovez — en 1 Clic.",
+		activeApps: "Applications Actives",
 		update: {
 			title: "Mise à jour disponible",
 			description:
@@ -147,13 +151,13 @@ export const fr = {
 			account: "Compte",
 			logout: "Déconnexion",
 			login: "Connexion",
-			capture: "Capturer",
+			capture: "Capture",
 		},
 	},
 
 	// home page
 	home: {
-		featured: "À la une",
+		featured: "En Vedette",
 		explore: "Explorer",
 	},
 
@@ -164,27 +168,27 @@ export const fr = {
 			installationDirectory: {
 				label: "Répertoire d'installation",
 				description:
-					"Choisissez où les nouvelles applications seront installées par défaut",
+					"Choisissez l'emplacement où les nouvelles applications seront installées par défaut.",
 			},
 			binDirectory: {
 				label: "Répertoire des binaires",
 				description:
-					"Choisissez où les binaires des applications seront stockés pour un accès facile",
+					"Choisissez l'emplacement où les binaires des applications seront stockés pour un accès facile.",
 			},
 			cleanUninstall: {
 				label: "Désinstallation propre",
 				description:
-					"Supprimez toutes les dépendances associées lors de la désinstallation des applications",
+					"Supprimez toutes les dépendances associées lors de la désinstallation des applications.",
 			},
 			autoOpenAfterInstall: {
-				label: "Ouvrir automatiquement après l'installation",
+				label: "Ouvrir automatiquement après installation",
 				description:
-					"Ouvrez automatiquement les applications pour la première fois après l'installation",
+					"Ouvre automatiquement les applications pour la première fois après l'installation.",
 			},
 			deleteCache: {
 				label: "Supprimer le cache",
 				description:
-					"Supprime toutes les données mises en cache des applications",
+					"Supprime toutes les données mises en cache des applications.",
 				button: "Supprimer le cache",
 				deleting: "Suppression...",
 				deleted: "Supprimé",
@@ -195,14 +199,31 @@ export const fr = {
 			title: "Interface",
 			displayLanguage: {
 				label: "Langue d'affichage",
-				description: "Choisissez votre langue d'interface préférée",
+				description: "Choisissez votre langue d'interface préférée.",
 			},
 			helpTranslate:
 				"🤔 Vous ne voyez pas votre langue ? Aidez-nous à en ajouter d'autres !",
-			compactView: {
-				label: "Vue compacte",
+			theme: {
+				label: "Thème",
+				description: "Choisissez un thème de couleur pour l'application.",
+				themes: {
+					default: "Rêve Pourpre",
+					midnight: "Bleu Nuit",
+					ocean: "Profondeurs Océaniques",
+					forest: "Nuit Forestière",
+					sunset: "Coucher de Soleil",
+					royal: "Pourpre Royal",
+				},
+			},
+			intenseBackgrounds: {
+				label: "Couleurs d'arrière-plan intenses",
 				description:
-					"Utilisez une mise en page plus condensée pour afficher plus de contenu à l'écran",
+					"Utilisez des couleurs d'arrière-plan plus vives au lieu de tons subtils.",
+			},
+			compactView: {
+				label: "Vue Compacte",
+				description:
+					"Utilisez une disposition plus condensée pour afficher plus de contenu à l'écran.",
 			},
 		},
 		notifications: {
@@ -210,30 +231,30 @@ export const fr = {
 			systemNotifications: {
 				label: "Notifications système",
 				description:
-					"Afficher des notifications de bureau pour les événements importants",
+					"Affiche des notifications de bureau pour les événements importants.",
 			},
 			installationAlerts: {
 				label: "Alertes d'installation",
 				description:
-					"Soyez notifié lorsque les installations d'applications sont terminées",
+					"Soyez averti lorsque les installations d'applications sont terminées.",
 			},
 			discordRPC: {
 				label: "Présence riche Discord",
 				description:
-					"Affichez votre activité actuelle dans votre statut Discord",
+					"Affiche votre activité actuelle dans votre statut Discord.",
 			},
 			successSound: {
-				label: "Activer le son de réussite",
+				label: "Activer le son de succès",
 				description:
-					"Activer le son joué lorsque les applications terminent leur installation",
+					"Active le son qui joue lorsque les applications ont fini de s'installer.",
 			},
 		},
 		privacy: {
 			title: "Confidentialité",
 			errorReporting: {
-				label: "Rapports d'erreurs",
+				label: "Rapport d'erreurs",
 				description:
-					"Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes",
+					"Aidez à améliorer Dione en envoyant des rapports d'erreurs anonymes.",
 			},
 		},
 		other: {
@@ -241,33 +262,40 @@ export const fr = {
 			disableAutoUpdate: {
 				label: "Désactiver les mises à jour automatiques",
 				description:
-					"Désactive les mises à jour automatiques. Attention : votre application pourrait manquer des correctifs importants ou des correctifs de sécurité. Cette option n'est pas recommandée pour la plupart des utilisateurs.",
+					"Désactive les mises à jour automatiques. Attention : votre application pourrait manquer des corrections importantes ou des correctifs de sécurité. Cette option n'est pas recommandée pour la plupart des utilisateurs.",
 			},
 			logsDirectory: {
 				label: "Répertoire des journaux",
 				description:
-					"Emplacement où les journaux des applications sont stockés",
+					"Emplacement où sont stockés les journaux de l'application.",
+			},
+			exportLogs: {
+				label: "Exporter les journaux de débogage",
+				description:
+					"Exporte tous les journaux et informations système dans un fichier zip pour le débogage.",
+				button: "Exporter les journaux",
 			},
 			submitFeedback: {
 				label: "Soumettre un commentaire",
-				description: "Signalez tout problème ou difficulté que vous rencontrez",
+				description:
+					"Signalez tout problème ou difficulté que vous rencontrez.",
 				button: "Envoyer le rapport",
 			},
 			showOnboarding: {
 				label: "Afficher l'intégration",
 				description:
-					"Réinitialise Dione à son état initial et affiche à nouveau l'intégration pour la reconfiguration",
+					"Réinitialise Dione à son état initial et réaffiche l'intégration pour une reconfiguration.",
 				button: "Réinitialiser",
 			},
 			variables: {
 				label: "Variables",
-				description: "Gérez les variables de l'application et leurs valeurs",
-				button: "Ouvrir les Variables",
+				description: "Gérer les variables de l'application et leurs valeurs.",
+				button: "Ouvrir les variables",
 			},
 			checkUpdates: {
 				label: "Vérifier les mises à jour",
 				description:
-					"Vérifier les mises à jour et vous notifier quand une nouvelle version est disponible",
+					"Vérifie les mises à jour et vous informe lorsqu'une nouvelle version est disponible.",
 				button: "Vérifier les mises à jour",
 			},
 		},
@@ -275,7 +303,7 @@ export const fr = {
 
 	// report form
 	report: {
-		title: "Décrivez le problème",
+		title: "Décrire le problème",
 		description:
 			"Veuillez fournir des détails sur ce qui s'est passé et ce que vous essayiez de faire.",
 		placeholder:
@@ -316,7 +344,7 @@ export const fr = {
 			connected: "Connecté au serveur",
 			disconnected: "Déconnecté du serveur",
 			error: {
-				socket: "Erreur lors de la configuration du socket",
+				socket: "Erreur lors de la configuration de la socket",
 				install: "❌ Erreur lors de l'installation des dépendances : {error}",
 			},
 			allInstalled: "Toutes les dépendances sont déjà installées.",
@@ -326,12 +354,12 @@ export const fr = {
 	// delete loading modal
 	deleteLoading: {
 		uninstall: {
-			title: "Désinstaller",
+			title: "Désinstallation",
 			deps: "Désinstaller les dépendances",
 			wait: "veuillez patienter...",
 		},
 		uninstalling: {
-			title: "Désinstallation",
+			title: "Désinstallation en cours",
 			deps: "Désinstallation des dépendances",
 			wait: "veuillez patienter...",
 		},
@@ -342,7 +370,7 @@ export const fr = {
 			seconds: "secondes...",
 		},
 		error: {
-			title: "Une erreur inattendue",
+			title: "Une inattendue",
 			subtitle: "erreur",
 			hasOccurred: "s'est produite",
 			deps: "Dione n'a pas pu supprimer de dépendance, veuillez le faire manuellement.",
@@ -358,6 +386,9 @@ export const fr = {
 	// logs component
 	logs: {
 		loading: "Chargement...",
+		openPreview: "Ouvrir l'aperçu",
+		copyLogs: "Copier les journaux",
+		stop: "Arrêter",
 		disclaimer:
 			"Les journaux affichés proviennent de l'application elle-même. Si vous voyez une erreur, veuillez d'abord la signaler aux développeurs de l'application d'origine.",
 		status: {
@@ -391,13 +422,15 @@ export const fr = {
 		uninstall: "Désinstaller",
 		install: "Installer",
 		publishedBy: "Publié par",
+		installed: "Installé",
+		notInstalled: "Non installé",
 	},
 
 	// promo component
 	promo: {
-		title: "Vous voulez apparaître ici ?",
+		title: "Envie d'être présenté ici ?",
 		description: "Présentez votre outil à notre communauté",
-		button: "Être mis en avant",
+		button: "Être présenté",
 	},
 
 	// installed component
@@ -412,7 +445,7 @@ export const fr = {
 	// local component
 	local: {
 		title: "Scripts locaux",
-		upload: "Télécharger un script",
+		upload: "Télécharger le script",
 		noScripts: "Aucun script trouvé",
 		deleting: "Suppression du script, veuillez patienter...",
 		uploadModal: {
@@ -434,6 +467,10 @@ export const fr = {
 	// feed component
 	feed: {
 		noScripts: "Aucun script trouvé",
+		loadingMore: "Chargement de plus...",
+		reachedEnd: "Vous avez atteint la fin.",
+		notEnoughApps: "Si vous pensez qu'il n'y a pas assez d'applications,",
+		helpAddMore: "aidez-nous à en ajouter plus",
 		errors: {
 			notArray: "Les données récupérées ne sont pas un tableau",
 			fetchFailed: "Échec de la récupération des scripts",
@@ -452,5 +489,363 @@ export const fr = {
 			video: "Vidéo",
 			chat: "Chat",
 		},
+	},
+
+	// network share modal
+	networkShare: {
+		title: "Partager",
+		modes: {
+			local: "Local",
+			public: "Public",
+			connecting: "Connexion...",
+		},
+		warning: {
+			title: "Accès Public",
+			description:
+				"Crée une URL publique accessible de n'importe où. Partagez uniquement avec des personnes de confiance.",
+		},
+		local: {
+			shareUrl: "URL de partage",
+			urlDescription:
+				"Partagez cette URL avec les appareils de votre réseau local",
+			localNetwork: "Réseau Local :",
+			description:
+				"Cette URL fonctionne sur les appareils connectés au même réseau.",
+		},
+		public: {
+			shareUrl: "URL Publique",
+			urlDescription:
+				"Partagez cette URL avec n'importe qui, n'importe où dans le monde",
+			passwordTitle: "Mot de passe unique",
+			visitorMessage:
+				"Les visiteurs devront peut-être saisir ceci une fois par appareil pour accéder au tunnel.",
+			stopSharing: "Arrêter le partage",
+		},
+		errors: {
+			noAddress:
+				"Impossible d'obtenir l'adresse réseau. Veuillez vérifier votre connexion.",
+			loadFailed: "Échec du chargement des informations réseau.",
+			noUrl: "Aucune URL disponible à copier.",
+			copyFailed: "Échec de la copie dans le presse-papiers.",
+			tunnelFailed: "Échec du démarrage du tunnel",
+		},
+	},
+
+	// login features modal
+	loginFeatures: {
+		title: "Il vous manque des fonctionnalités",
+		description:
+			"Connectez-vous à Dione pour ne pas manquer ces fonctionnalités.",
+		login: "Se connecter",
+		skip: "Ignorer",
+		features: {
+			customReports: {
+				title: "Envoyer des rapports personnalisés",
+				description:
+					"Envoyez des rapports personnalisés depuis l'application, ce qui accélère le support en cas d'erreurs.",
+			},
+			createProfile: {
+				title: "Créer un profil",
+				description:
+					"Créez un profil pour que la communauté Dione vous connaisse.",
+			},
+			syncData: {
+				title: "Synchroniser vos données",
+				description: "Synchronisez vos données sur tous vos appareils.",
+			},
+			earlyBirds: {
+				title: "Obtenir les mises à jour exclusives",
+				description:
+					"Obtenez des mises à jour exclusives et de nouvelles fonctionnalités avant tout le monde.",
+			},
+			giveOutLikes: {
+				title: "Laisser des likes",
+				description:
+					"Laissez des likes aux applications que vous préférez, pour que plus de gens les utilisent !",
+			},
+			publishScripts: {
+				title: "Publier des scripts",
+				description: "Publiez vos scripts et partagez-les avec le monde.",
+			},
+			achieveGoals: {
+				title: "Atteindre des objectifs",
+				description:
+					"Atteignez des objectifs comme utiliser Dione pendant 7 jours pour obtenir des cadeaux",
+			},
+			getNewswire: {
+				title: "Recevoir la newswire",
+				description:
+					"Recevez des mises à jour par e-mail pour ne pas manquer les nouvelles fonctionnalités.",
+			},
+		},
+	},
+
+	// editor component
+	editor: {
+		selectFile: "Sélectionnez un fichier pour commencer à éditer",
+		previewNotAvailable: "Aperçu non disponible pour ce fichier.",
+		mediaNotSupported:
+			"L'aperçu pour ce type de média n'est pas encore pris en charge.",
+		previewOnly: "Aperçu uniquement",
+		unsaved: "Non sauvegardé",
+		retry: "Réessayer",
+		editorLabel: "Éditeur",
+	},
+
+	// sidebar links
+	links: {
+		discord: "Discord",
+		github: "GitHub",
+		dione: "Dione",
+		builtWith: "construit avec",
+	},
+
+	// update notifications
+	updates: {
+		later: "Plus tard",
+		install: "Installer",
+	},
+
+	// iframe actions
+	iframeActions: {
+		shareOnNetwork: "Partager sur le réseau",
+	},
+
+	// version info
+	versions: {
+		node: "Node",
+		electron: "Electron",
+		chromium: "Chromium",
+	},
+
+	// connection messages
+	connection: {
+		retryLater:
+			"Nous avons des problèmes de connexion, veuillez réessayer plus tard.",
+	},
+
+	// variables modal
+	variables: {
+		title: "Variables d'environnement",
+		addKey: "Ajouter une clé",
+		searchPlaceholder: "Rechercher des variables...",
+		keyPlaceholder: "Clé (ex: MON_VAR)",
+		valuePlaceholder: "Valeur",
+		copyAll: "Tout copier dans le presse-papiers",
+		confirm: "Confirmer",
+		copyPath: "Copier le chemin",
+		copyFullValue: "Copier la valeur complète",
+		deleteKey: "Supprimer la clé",
+	},
+
+	// custom commands modal
+	customCommands: {
+		title: "Lancer avec des paramètres personnalisés",
+		launch: "Lancer",
+	},
+
+	// context menu
+	contextMenu: {
+		copyPath: "Copier le chemin",
+		open: "Ouvrir",
+		reload: "Recharger",
+		rename: "Renommer",
+		delete: "Supprimer",
+	},
+
+	// file tree
+	fileTree: {
+		noFiles: "Aucun fichier trouvé dans cet espace de travail.",
+		media: "Média",
+		binary: "Binaire",
+	},
+
+	// entry name dialog
+	entryDialog: {
+		name: "Nom",
+		createFile: "Créer un fichier",
+		createFolder: "Créer un dossier",
+		renameFile: "Renommer le fichier",
+		renameFolder: "Renommer le dossier",
+		createInRoot: "Ceci sera créé à la racine de l'espace de travail.",
+		createInside: "Ceci sera créé à l'intérieur de {path}.",
+		currentLocation: "Emplacement actuel : {path}.",
+		currentLocationRoot: "Emplacement actuel : racine de l'espace de travail.",
+		rename: "Renommer",
+		placeholderFile: "exemple.ts",
+		placeholderFolder: "Nouveau Dossier",
+	},
+
+	// workspace editor
+	workspaceEditor: {
+		newFile: "Nouveau fichier",
+		newFolder: "Nouveau dossier",
+		retry: "Réessayer",
+		back: "Retour",
+		save: "Sauvegarder",
+		openInExplorer: "Ouvrir dans l'explorateur",
+		resolvingPath: "Résolution du chemin...",
+		workspace: "Espace de travail",
+	},
+
+	// header bar
+	headerBar: {
+		back: "Retour",
+		openInExplorer: "Ouvrir dans l'explorateur",
+		save: "Sauvegarder",
+	},
+
+	// settings page footer
+	settingsFooter: {
+		builtWithLove: "construit avec ♥",
+		getDioneWebsite: "getdione.app",
+		port: "Port",
+		node: "Node:",
+		electron: "Electron:",
+		chromium: "Chrome:",
+	},
+
+	// notifications
+	notifications: {
+		enabled: {
+			title: "Notifications activées",
+			description:
+				"Vous recevrez des notifications pour les événements importants.",
+		},
+		learnMore: "En savoir plus",
+	},
+
+	// language selector
+	languageSelector: {
+		next: "Suivant",
+	},
+
+	// onboarding - select path
+	selectPath: {
+		chooseLocation: "Choisir l'emplacement d'installation",
+		changePath: "Changer de chemin",
+	},
+
+	// browser compatibility
+	browserCompatibility: {
+		audioNotSupported:
+			"Votre navigateur ne prend pas en charge l'élément audio.",
+		videoNotSupported:
+			"Votre navigateur ne prend pas en charge l'élément vidéo.",
+	},
+
+	// library card
+	library: {
+		official: "Officiel",
+	},
+
+	// sidebar updates
+	sidebarUpdate: {
+		newUpdateAvailable: "Nouvelle mise à jour disponible",
+		whatsNew: "Voici les nouveautés",
+	},
+
+	// iframe component labels
+	iframeLabels: {
+		back: "Retour",
+		logs: "Journaux",
+		disk: "Disque",
+		editor: "Éditeur",
+	},
+
+	// progress component
+	progress: {
+		running: "En cours...",
+	},
+
+	// toast messages
+	toastMessages: {
+		copiedToClipboard: "Copié dans le presse-papiers !",
+		keyAndValueRequired: "La clé et la valeur sont requises",
+		variableAdded: "Variable ajoutée",
+		failedToAddVariable: "Échec de l'ajout de la variable",
+		variableRemoved: "Variable supprimée",
+		failedToRemoveVariable: "Échec de la suppression de la variable",
+		valueRemoved: "Valeur supprimée",
+		failedToRemoveValue: "Échec de la suppression de la valeur",
+		pathCopiedToClipboard: "Chemin copié dans le presse-papiers",
+		failedToCopyPath: "Échec de la copie du chemin",
+		unableToOpenLocation: "Impossible d'ouvrir l'emplacement",
+		cannotDeleteWorkspaceRoot:
+			"Impossible de supprimer la racine de l'espace de travail",
+		deleted: "Supprimé",
+		failedToDeleteEntry: "Échec de la suppression de l'entrée",
+		workspaceNotAvailable: "L'espace de travail n'est pas disponible",
+		selectFileOrFolderToRename:
+			"Sélectionnez un fichier ou un dossier à renommer",
+		cannotRenameWorkspaceRoot:
+			"Impossible de renommer la racine de l'espace de travail",
+		entryRenamed: "Entrée renommée",
+		fileSavedSuccessfully: "Fichier enregistré avec succès",
+		failedToSaveFile: "Échec de l'enregistrement du fichier",
+		mediaFilesCannotBeOpened:
+			"Les fichiers multimédias ne peuvent pas être ouverts dans l'éditeur.",
+		binaryFilesCannotBeOpened:
+			"Les fichiers binaires et exécutables ne peuvent pas être ouverts dans l'éditeur.",
+		thisFileTypeCannotBeEdited:
+			"Ce type de fichier ne peut pas encore être édité.",
+	},
+
+	// error messages
+	errorMessages: {
+		workspaceNotFound: "Espace de travail introuvable",
+		failedToLoadWorkspace: "Échec du chargement de l'espace de travail",
+		failedToLoadDirectory: "Échec du chargement du répertoire",
+		unableToOpenWorkspace: "Impossible d'ouvrir l'espace de travail",
+		failedToLoadFile: "Échec du chargement du fichier",
+		nameCannotBeEmpty: "Le nom ne peut pas être vide",
+		nameContainsInvalidCharacters: "Le nom contient des caractères invalides",
+		failedToCreateEntry: "Échec de la création de l'entrée",
+		failedToRenameEntry: "Échec du renommage de l'entrée",
+	},
+
+	// file operations
+	fileOperations: {
+		fileCreated: "Fichier créé",
+		folderCreated: "Dossier créé",
+		untitledFile: "sans_titre.txt",
+		newFolder: "Nouveau Dossier",
+	},
+
+	// confirmation dialogs
+	confirmDialogs: {
+		removeValue: "Êtes-vous sûr de vouloir supprimer",
+		thisValue: "cette valeur",
+		keyAndAllValues: "la clé et toutes ses valeurs",
+		from: "de",
+	},
+
+	// network share modal
+	networkShareErrors: {
+		failedToLoadNetworkInfo: "Échec du chargement des informations réseau.",
+		failedToStartTunnel: "Échec du démarrage du tunnel",
+		failedToCopyToClipboard: "Échec de la copie dans le presse-papiers.",
+	},
+
+	// feed component
+	feedErrors: {
+		invalidDataFormat: "Format de données invalide depuis l'API",
+		failedToFetchScripts: "Échec de la récupération des scripts",
+	},
+
+	// upload script modal
+	uploadScript: {
+		fileLoadedLocally: "Fichier chargé localement",
+	},
+
+	// running apps
+	runningApps: {
+		running: "En cours",
+		thereIsAnAppRunningInBackground:
+			"Une application s'exécute en arrière-plan.",
+		failedToReloadQuickLaunch:
+			"Échec du rechargement des applications de lancement rapide",
+		failedToFetchInstalledApps:
+			"Échec de la récupération des applications installées",
 	},
 } as const;
