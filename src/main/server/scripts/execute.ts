@@ -118,9 +118,10 @@ export default async function executeInstallation(
 							? step.env.type
 							: "uv";
 					const pythonVersion =
-						typeof step.env === "object" && "version" in step.env
-							? step.env.version
-							: "";
+						typeof step.env === "object"
+							? (step.env.version || step.env.python)
+							: undefined;
+
 					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `INFO: Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}\n`,
@@ -134,11 +135,9 @@ export default async function executeInstallation(
 					const runnerScript = await createRunnerScript(
 						commandsArray,
 						configDir,
-						{
-							name: envName,
-							type: envType,
-							version: pythonVersion,
-						},
+						envName,
+						envType,
+						pythonVersion,
 					);
 					resp = await executeCommands(
 						runnerScript,
@@ -451,19 +450,39 @@ export async function executeStartup(
 			let response;
 
 			if (selectedStart.env) {
-				const envName =
-					typeof selectedStart.env === "string"
-						? selectedStart.env
-						: selectedStart.env.name;
-				const envType =
-					typeof selectedStart.env === "object" && "type" in selectedStart.env
-						? selectedStart.env.type
-						: "uv";
-				const pythonVersion =
-					typeof selectedStart.env === "object" &&
-						"version" in selectedStart.env
-						? selectedStart.env.version
-						: "";
+				let envName: string;
+				let envType = "uv";
+				let pythonVersion: string | undefined;
+
+				if (typeof selectedStart.env === "string") {
+					envName = selectedStart.env;
+
+					// find env version
+					if (config.installation && Array.isArray(config.installation)) {
+						const foundStep = config.installation.find((instStep: any) => {
+							if (typeof instStep.env === "string")
+								return instStep.env === envName;
+							if (instStep.env && typeof instStep.env === "object")
+								return instStep.env.name === envName;
+							return false;
+						});
+
+						if (foundStep && typeof foundStep.env === "object") {
+							logger.info(
+								`Found matching env definition in installation for ${envName}`,
+							);
+							if (foundStep.env.type) envType = foundStep.env.type;
+							if (foundStep.env.version) pythonVersion = foundStep.env.version;
+							if (foundStep.env.python) pythonVersion = foundStep.env.python;
+						}
+					}
+				} else {
+					envName = selectedStart.env.name;
+					if (selectedStart.env.type) envType = selectedStart.env.type;
+					if (selectedStart.env.version)
+						pythonVersion = selectedStart.env.version;
+					if (selectedStart.env.python) pythonVersion = selectedStart.env.python;
+				}
 
 				io.to(id).emit("installUpdate", {
 					type: "log",
@@ -475,11 +494,9 @@ export async function executeStartup(
 				const runnerScript = await createRunnerScript(
 					commandsArray,
 					configDir,
-					{
-						name: envName,
-						type: envType,
-						version: pythonVersion,
-					},
+					envName,
+					envType,
+					pythonVersion,
 				);
 				response = await executeCommands(
 					runnerScript,
@@ -670,11 +687,9 @@ async function processCommandList(commands: string[] | any[]) {
 async function createRunnerScript(
 	commands: string[] | any[],
 	baseDir: string,
-	env?: {
-		name: string;
-		type?: string; // default "uv"
-		version?: string;
-	},
+	envName?: string,
+	envType?: string,
+	pythonVersion?: string,
 ) {
 	const commandStrings = await processCommandList(commands);
 	if (commandStrings.length === 0) return [];
@@ -685,7 +700,7 @@ async function createRunnerScript(
 	const scriptPath = path.join(baseDir, scriptName);
 	let scriptContent = "";
 
-	if (!env) {
+	if (!envName) {
 		// without env
 		if (isWindows) {
 			scriptContent = `@echo off
@@ -704,7 +719,6 @@ rm "$0"
 		}
 	} else {
 		// with env
-		const { name: envName, type: envType = "uv", version: pythonVersion } = env;
 		const envPath = path.join(baseDir, envName);
 		// v
 		const variables = getAllValues();
