@@ -58,7 +58,15 @@
       ],
       "icon": "./resources/icon.icns",
       "category": "public.app-category.productivity",
-      "artifactName": "Dione-${version}-Installer-Mac.${ext}"
+      "artifactName": "Dione-${version}-Installer-Mac.${ext}",
+      "entitlements": "resources/entitlements.mac.plist",
+      "entitlementsInherit": "resources/entitlements.mac.plist",
+      "extendInfo": {
+        "NSCameraUsageDescription": "Application requests access to the device's camera.",
+        "NSMicrophoneUsageDescription": "Application requests access to the device's microphone.",
+        "NSDocumentsFolderUsageDescription": "Application requests access to the user's Documents folder.",
+        "NSDownloadsFolderUsageDescription": "Application requests access to the user's Downloads folder."
+      }
     },
     "linux": {
       "target": [

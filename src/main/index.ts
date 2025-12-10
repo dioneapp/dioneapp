@@ -129,6 +129,54 @@ const buildWindowOpenHandler = (
 	};
 };
 
+const allowedMediaPermissions = new Set([
+	"media",
+	"audioCapture",
+	"videoCapture",
+]);
+
+const isTrustedMediaRequest = (requestingUrl?: string) => {
+	if (!requestingUrl) return true;
+	try {
+		const url = new URL(requestingUrl);
+		return (
+			url.protocol === "https:" ||
+			url.hostname === "localhost" ||
+			url.hostname === "127.0.0.1"
+		);
+	} catch (error) {
+		logger.warn("Failed to parse requestingUrl for media permission:", error);
+		return false;
+	}
+};
+
+const configurePermissionHandlers = () => {
+	const sessionsToConfigure = [
+		session.defaultSession,
+		session.fromPartition("persist:webview"),
+	];
+
+	for (const targetSession of sessionsToConfigure) {
+		try {
+			targetSession.setPermissionRequestHandler(
+				(_webContents, permission, callback, details) => {
+					if (
+						allowedMediaPermissions.has(permission) &&
+						isTrustedMediaRequest(details?.requestingUrl || details?.securityOrigin)
+					) {
+						callback(true);
+						return;
+					}
+
+					callback(false);
+				},
+			);
+		} catch (error) {
+			logger.warn("Failed to set permission handler for session:", error);
+		}
+	}
+};
+
 // Creates the main application window with specific configurations.
 function createWindow() {
 	try {
@@ -366,6 +414,7 @@ function createWindow() {
 // Sets up the application when ready.
 app.whenReady().then(async () => {
 	logger.info("Starting app...");
+	configurePermissionHandlers();
 
 	// map to store request origins
 	const requestOrigins = new Map<string, string>();
