@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import os from "node:os";
+import path, { join } from "node:path";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "@/config";
 import {
 	destroyPresence,
@@ -45,9 +48,6 @@ import {
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
-import fs from "node:fs";
-import os from "node:os";
-import path, { join } from "node:path";
 import si from "systeminformation";
 
 dotenvConfig();
