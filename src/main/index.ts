@@ -143,7 +143,10 @@ const getPermissionRequestOrigin = (
 		| Electron.OpenExternalPermissionRequest,
 ) => {
 	if (!details) return undefined;
-	if ("securityOrigin" in details && typeof details.securityOrigin === "string") {
+	if (
+		"securityOrigin" in details &&
+		typeof details.securityOrigin === "string"
+	) {
 		return details.securityOrigin;
 	}
 	return details.requestingUrl;
