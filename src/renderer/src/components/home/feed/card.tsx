@@ -19,9 +19,14 @@ interface ScriptCardProps {
 	disabled?: boolean;
 }
 
-function ScriptCard({ script, innerRef, deleteScript, disabled = false }: ScriptCardProps) {
+function ScriptCard({
+	script,
+	innerRef,
+	deleteScript,
+	disabled = false,
+}: ScriptCardProps) {
 	const isOnline = useOnlineStatus();
-	
+
 	const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
 		e.currentTarget.src = "/svgs/Dio.svg";
 	};
@@ -40,7 +45,7 @@ function ScriptCard({ script, innerRef, deleteScript, disabled = false }: Script
 					search: `?isLocal=${script.isLocal}`,
 				}}
 				onClick={handleClick}
-				className={`group flex flex-col justify-between gap-4 h-full border border-white/10 hover:border-white/20 transition-all duration-300 rounded-xl p-4 hover:shadow-xl relative overflow-hidden ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
+				className={`group flex flex-col justify-between gap-4 h-full border border-white/10 hover:border-white/20 transition-all duration-300 rounded-xl p-4 hover:shadow-xl relative overflow-hidden ${disabled ? "cursor-not-allowed opacity-60" : ""}`}
 				style={{
 					background:
 						"linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 8%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))",

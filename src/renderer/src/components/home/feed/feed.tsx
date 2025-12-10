@@ -82,11 +82,11 @@ export default function List({
 					const existingIds = new Set(prev.map((s) => s.id));
 					const newItems = data.filter((script) => !existingIds.has(script.id));
 					const updatedScripts = [...prev, ...newItems];
-					
+
 					if (pageNum === 1 && updatedScripts.length > 0) {
 						FeedCache.set(endpoint, updatedScripts);
 					}
-					
+
 					return updatedScripts;
 				});
 
@@ -95,7 +95,7 @@ export default function List({
 				setIsUsingCache(false);
 			} catch (err) {
 				console.error(err);
-				
+
 				const cached = FeedCache.get(endpoint);
 				if (cached && pageNum === 1) {
 					setScripts(cached);

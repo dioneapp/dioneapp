@@ -11,7 +11,7 @@ export default function OfflineIndicator() {
 			setShow(true);
 			return;
 		}
-		
+
 		const timer = setTimeout(() => setShow(false), 500);
 		return () => clearTimeout(timer);
 	}, [isOnline]);
