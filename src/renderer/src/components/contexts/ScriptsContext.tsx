@@ -125,10 +125,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	// if app is active show logs instead of actions
 	useEffect(() => {
 		if (!data?.id || !Array.isArray(activeApps)) return;
-
 		const isActive = activeApps.some((app) => app.appId === data.id);
-		console.log("app is active?:", isActive);
-
 		const currentView = show[data.id];
 		if (
 			isActive &&
@@ -487,10 +484,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${
-							sockets[data.id]?.isLocal
-								? encodeURIComponent(data.name)
-								: data.id
+						`/install/${sockets[data.id]?.isLocal
+							? encodeURIComponent(data.name)
+							: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},

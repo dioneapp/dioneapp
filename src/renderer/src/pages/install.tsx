@@ -178,8 +178,6 @@ export default function Install({
 	useEffect(() => {
 		async function stopApp() {
 			if (!data?.id) return;
-
-			console.log("appFinished", appFinished);
 			if (appFinished[data.id] === true) {
 				// stop app on finished
 				await handleStopApp(data.id, data.name);

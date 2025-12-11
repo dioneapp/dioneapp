@@ -52,7 +52,6 @@ function App() {
 
 	useEffect(() => {
 		window.electron.ipcRenderer.invoke("check-first-launch").then((result) => {
-			console.log("is first launch?", result);
 			setIsFirstLaunch(result);
 			localStorage.setItem("firstLaunch", result.toString());
 			setIsLoading(false);
@@ -121,9 +120,9 @@ function App() {
 						className="flex-1 overflow-x-hidden"
 						id={
 							pathname.includes("/install") ||
-							pathname === "/account" ||
-							pathname === "/first-time" ||
-							pathname === "/library"
+								pathname === "/account" ||
+								pathname === "/first-time" ||
+								pathname === "/library"
 								? ""
 								: pathname === "/settings"
 									? "settings"
