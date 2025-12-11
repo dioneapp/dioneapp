@@ -13,6 +13,7 @@ interface DiscordEmbed {
 interface DiscordMessage {
 	content?: string;
 	embeds?: DiscordEmbed[];
+	logContent?: string;
 }
 
 const cooldown = 1 * 60 * 1000;
@@ -36,27 +37,23 @@ export async function sendDiscordReport(
 	lastReportAt = Date.now();
 	// get logs
 	const logs = (await window.electron.ipcRenderer.invoke("get-logs")) || "";
-	const truncatedLogs = logs.length > 882 ? `...${logs.slice(-882)}` : logs;
+	// get app version
+	const version = (await window.electron.ipcRenderer.invoke("get-version")) || "";
 
 	// create embed
 	const embed: DiscordEmbed = {
-		title: additionalInfo?.userReport ? "User Report" : "Error Report",
+		title: additionalInfo?.UserReport ? "User Report" : "Error Report",
 		color: 0xff0000,
 		timestamp: new Date().toISOString(),
 		fields: [
-			{
-				name: "Error",
-				value: error instanceof Error ? error.message : error,
-				inline: false,
-			},
 		],
 	};
 
 	// add stack trace if available
 	if (error instanceof Error && error.stack) {
 		embed.fields?.push({
-			name: "Stack Trace",
-			value: `\`\`\`${error.stack}\`\`\``,
+			name: "Details",
+			value: "\`\`\`" + error.stack + "\`\`\`",
 			inline: false,
 		});
 	}
@@ -78,19 +75,13 @@ export async function sendDiscordReport(
 	// add system info
 	embed.fields?.push({
 		name: "System Info",
-		value: `Computer ID: ${await getComputerId()}\nOS: ${window.electron.process.platform}\nNode: ${window.electron.process.versions.node}\nElectron: ${window.electron.process.versions.electron}`,
-		inline: false,
-	});
-
-	// add last error log
-	embed.fields?.push({
-		name: "Last logs",
-		value: `\`\`\`${truncatedLogs || "No logs available"}\`\`\``,
+		value: `Computer ID: ${await getComputerId()}\nOS: ${window.electron.process.platform}\nDione v${version}`,
 		inline: false,
 	});
 
 	const message: DiscordMessage = {
 		embeds: [embed],
+		logContent: logs,
 	};
 
 	try {

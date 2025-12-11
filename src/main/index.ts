@@ -231,10 +231,10 @@ function createWindow() {
 				sandbox: false,
 				...(process.platform === "linux"
 					? {
-							enableRemoteModule: false,
-							webSecurity: false,
-							allowRunningInsecureContent: true,
-						}
+						enableRemoteModule: false,
+						webSecurity: false,
+						allowRunningInsecureContent: true,
+					}
 					: {}),
 			},
 		});
@@ -918,8 +918,7 @@ app.whenReady().then(async () => {
 				} else {
 					const bodyText = await response.text();
 					logger.warn(
-						`/db/events returned non-JSON (${
-							contentType || "unknown"
+						`/db/events returned non-JSON (${contentType || "unknown"
 						}). Body: ${bodyText.slice(0, 200)}`,
 					);
 					data = { raw: bodyText };
@@ -1066,21 +1065,26 @@ app.whenReady().then(async () => {
 	});
 
 	ipcMain.handle("send-discord-report", async (_, data) => {
-		if (is.dev) {
-			return "dev-mode";
-		}
+		if (is.dev) return "dev-mode";
+
 		try {
 			const webhookUrl = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
 			if (!webhookUrl) {
 				throw new Error("Discord webhook URL not configured");
 			}
 
+			const form = new FormData();
+
+			const { logContent, ...rest } = data;
+			form.append("payload_json", JSON.stringify(rest));
+			if (logContent && typeof logContent === "string") {
+				const blob = new Blob([logContent], { type: "text/plain" });
+				form.append("file", blob, "logs.log");
+			}
+
 			const response = await fetch(webhookUrl, {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify(data),
+				body: form as any,
 			});
 
 			if (!response.ok) {
@@ -1328,8 +1332,8 @@ ipcMain.handle("delete-folder", async (_event, folderPath) => {
 	if (!folderPath) {
 		folderPath = path.join(
 			config?.defaultBinFolder ||
-				config?.defaultInstallFolder ||
-				path.join(app.getPath("userData"), "bin", "cache"),
+			config?.defaultInstallFolder ||
+			path.join(app.getPath("userData"), "bin", "cache"),
 		);
 	}
 
