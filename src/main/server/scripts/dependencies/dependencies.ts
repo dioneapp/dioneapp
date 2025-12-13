@@ -32,7 +32,7 @@ export async function checkOneDependency(
 
 export async function checkDependencies(dioneConfigPath: string): Promise<{
 	success: boolean;
-	missing: { name: string; installed: boolean; reason: string }[];
+	missing: { name: string; installed: boolean; reason: string; version?: string }[];
 	error?: boolean;
 }> {
 	const config = readConfig();
@@ -47,7 +47,7 @@ export async function checkDependencies(dioneConfigPath: string): Promise<{
 	const envType =
 		dioneConfig.installation.find((dep) => dep.env)?.env?.type || "uv";
 
-	const missing: { name: string; installed: boolean; reason: string }[] = [];
+	const missing: { name: string; installed: boolean; reason: string; version?: string }[] = [];
 
 	// if use an environment, check if uv or conda is needed
 	if (envType === "uv" && !dependencies.uv && needEnv) {
@@ -79,6 +79,8 @@ export async function checkDependencies(dioneConfigPath: string): Promise<{
 
 		try {
 			const installed = await entry.isInstalled(binFolder);
+			const required_v = dependencies[depName].version;
+			const actual_v = installed?.version || "";
 			if (!installed.installed) {
 				logger.warn(
 					`Dependency not installed: ${depName}, Reason: ${installed.reason}`,
@@ -87,6 +89,16 @@ export async function checkDependencies(dioneConfigPath: string): Promise<{
 					name: depName,
 					installed: false,
 					reason: installed.reason || "not-installed",
+				});
+			} else if (required_v !== actual_v && required_v !== "latest") {
+				logger.warn(
+					`Dependency ${depName} installed but version does not match: ${required_v} != ${actual_v}`,
+				);
+				missing.push({
+					name: depName,
+					installed: true,
+					reason: "version-mismatch",
+					version: required_v,
 				});
 			}
 		} catch (err) {
@@ -109,6 +121,7 @@ export async function installDependency(
 	depName: string,
 	id: string,
 	io: Server,
+	required_v?: string,
 ) {
 	const config = readConfig();
 	const binFolder = path.join(
@@ -129,7 +142,7 @@ export async function installDependency(
 	}
 
 	try {
-		const result = await entry.install(binFolder, id, io);
+		const result = await entry.install(binFolder, id, io, required_v);
 		if (result.success) {
 			logger.info(`Dependency ${depName} installed successfully`);
 			return { success: true };

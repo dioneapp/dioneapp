@@ -15,11 +15,13 @@ export const dependencyRegistry: Record<
 		isInstalled: (binFolder: string) => Promise<{
 			installed: boolean;
 			reason: string;
+			version?: string;
 		}>;
 		install: (
 			binFolder: string,
 			id: string,
 			io: Server,
+			required_v?: string,
 		) => Promise<{ success: boolean }>;
 		uninstall: (binFolder: string) => Promise<void>;
 	}

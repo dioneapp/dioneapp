@@ -35,12 +35,12 @@ export const createDependenciesRouter = (io: Server) => {
 		}
 
 		let allInstalled = true;
-		for (const depName of dependencies) {
-			logger.info(`Starting installation for dependency: ${depName}`);
-			const result = await installDependency(depName, id, io);
-			if (!result?.success) {
-				allInstalled = false;
-			}
+		for (const dep of dependencies) {
+			const depName = dep.name;
+			const required_v = dep.version;
+			logger.info(`Starting installation for dependency: ${depName} ${required_v && 'with version ' + required_v}`);
+			const result = await installDependency(depName, id, io, required_v);
+			if (!result?.success) allInstalled = false;
 		}
 		res.json({ success: allInstalled });
 	});

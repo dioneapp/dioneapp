@@ -100,9 +100,10 @@ export default function Install({
 	useEffect(() => {
 		async function autoInstallMissingDependencies() {
 			if (!data?.id || !data?.name) return;
-			const missing = (missingDependencies || [])
-				.filter((dep: any) => !dep.installed)
-				.map((dep: any) => dep.name);
+			const missing = missingDependencies.filter(
+				dep => dep.reason === "not-installed" || dep.reason === "version-mismatch",
+			);
+			console.log(missing);
 			if (!missing || missing.length === 0) {
 				await onFinishInstallDeps();
 				return;
@@ -112,10 +113,7 @@ export default function Install({
 			if (show[data.id] !== "logs") {
 				setShow({ [data.id]: "logs" });
 			}
-			addLogLine(
-				data.id,
-				`installing required dependencies: ${missing.join(", ")}`,
-			);
+
 			try {
 				const response = await apiFetch(`/deps/install/${data.id}`, {
 					method: "POST",

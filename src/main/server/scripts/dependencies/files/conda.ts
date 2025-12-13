@@ -18,7 +18,7 @@ const ENVIRONMENT = getAllValues();
 
 export async function isInstalled(
 	binFolder: string,
-): Promise<{ installed: boolean; reason: string }> {
+): Promise<{ installed: boolean; reason: string; version?: string }> {
 	const depFolder = path.join(binFolder, depName);
 	const ENVIRONMENT = getAllValues();
 
@@ -27,7 +27,7 @@ export async function isInstalled(
 	}
 
 	try {
-		await new Promise<string>((resolve, reject) => {
+		const versionOutput = await new Promise<string>((resolve, reject) => {
 			execFile(
 				depName,
 				["--version"],
@@ -41,7 +41,14 @@ export async function isInstalled(
 				},
 			);
 		});
-		return { installed: true, reason: `installed` };
+
+		const match = versionOutput.match(/conda\s+(\d+\.\d+\.\d+)/);
+		if (match && match[1]) {
+			return { installed: true, reason: `installed`, version: match[1] };
+		} else {
+			logger.warn(`Could not parse conda version from output: ${versionOutput}`);
+			return { installed: true, reason: `installed` };
+		}
 	} catch (error: any) {
 		return { installed: false, reason: `error` };
 	}
@@ -51,9 +58,21 @@ export async function install(
 	binFolder: string,
 	id: string,
 	io: Server,
+	requiredVersion?: string,
 ): Promise<{ success: boolean }> {
 	const depFolder = path.join(binFolder, depName);
 	const tempDir = path.join(binFolder, "temp");
+
+	const checkIfInstalled = await isInstalled(binFolder);
+	logger.info(`Checking if ${depName} is installed: ${JSON.stringify(checkIfInstalled)}`);
+	if (checkIfInstalled.installed) {
+		if (requiredVersion && requiredVersion !== "latest" && checkIfInstalled.version !== requiredVersion) {
+			const result = await update(binFolder, id, io, requiredVersion);
+			return { success: result.success };
+		}
+		logger.info(`No update needed for ${depName} ${requiredVersion}`);
+		return { success: true };
+	}
 
 	const platform = getOS(); // window, linux, macos
 	const arch = getArch(); // amd64, arm64, x86
@@ -312,6 +331,66 @@ export async function install(
 	}
 
 	return { success: true };
+}
+
+export async function update(
+	binFolder: string,
+	id: string,
+	io: Server,
+	requiredVersion?: string,
+): Promise<{ success: boolean }> {
+	const depFolder = path.join(binFolder, depName);
+	const ENVIRONMENT = getAllValues();
+
+	if (!fs.existsSync(depFolder) || fs.readdirSync(depFolder).length === 0) {
+		io.to(id).emit("installDep", {
+			type: "error",
+			content: `${depName} is not installed. Please install it first.`,
+		});
+		return { success: false };
+	}
+
+	io.to(id).emit("installDep", {
+		type: "log",
+		content: `Attempting to update ${depName}...`,
+	});
+
+	try {
+		const stdout = await new Promise<string>((resolve, reject) => {
+			execFile(
+				depName,
+				["install", "-y", `conda=${requiredVersion}`],
+				{ env: ENVIRONMENT, cwd: depFolder },
+				(error, stdout, stderr) => {
+					if (error) {
+						logger.error(`Error updating ${depName}: ${error.message}`);
+						logger.error(`stderr: ${stderr}`);
+						reject(new Error(`Failed to update ${depName}: ${stderr || error.message}`));
+					} else {
+						io.to(id).emit("installDep", {
+							type: "log",
+							content: `Update output: ${stdout}`,
+						});
+						resolve(stdout);
+					}
+				},
+			);
+		});
+
+		io.to(id).emit("installDep", {
+			type: "log",
+			content: `${depName} updated successfully.`,
+		});
+
+		return { success: true };
+	} catch (error: any) {
+		io.to(id).emit("installDep", {
+			type: "error",
+			content: `Error updating ${depName}: ${error.message}`,
+		});
+		logger.error(`Error during ${depName} update:`, error);
+		return { success: false };
+	}
 }
 
 export async function uninstall(binFolder: string): Promise<void> {
