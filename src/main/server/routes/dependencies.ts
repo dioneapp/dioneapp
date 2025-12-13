@@ -38,7 +38,9 @@ export const createDependenciesRouter = (io: Server) => {
 		for (const dep of dependencies) {
 			const depName = dep.name;
 			const required_v = dep.version;
-			logger.info(`Starting installation for dependency: ${depName} ${required_v && 'with version ' + required_v}`);
+			logger.info(
+				`Starting installation for dependency: ${depName} ${required_v && "with version " + required_v}`,
+			);
 			const result = await installDependency(depName, id, io, required_v);
 			if (!result?.success) allInstalled = false;
 		}
