@@ -120,9 +120,9 @@ function App() {
 						className="flex-1 overflow-x-hidden"
 						id={
 							pathname.includes("/install") ||
-								pathname === "/account" ||
-								pathname === "/first-time" ||
-								pathname === "/library"
+							pathname === "/account" ||
+							pathname === "/first-time" ||
+							pathname === "/library"
 								? ""
 								: pathname === "/settings"
 									? "settings"

@@ -101,7 +101,8 @@ export default function Install({
 		async function autoInstallMissingDependencies() {
 			if (!data?.id || !data?.name) return;
 			const missing = missingDependencies.filter(
-				dep => dep.reason === "not-installed" || dep.reason === "version-mismatch",
+				(dep) =>
+					dep.reason === "not-installed" || dep.reason === "version-mismatch",
 			);
 			console.log(missing);
 			if (!missing || missing.length === 0) {
