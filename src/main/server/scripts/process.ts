@@ -654,6 +654,12 @@ export const executeCommands = async (
 
 			// remove the cd command
 			command = command.replace(cdRegex, "").trim();
+			// clean && to avoid errors
+			command = command
+				.replace(/&&\s*&&/g, "&&")
+				.replace(/^&&\s*/, "")
+				.replace(/\s*&&$/, "")
+				.trim();
 		}
 
 		if (command.length > 0) {
