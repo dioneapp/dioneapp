@@ -212,8 +212,13 @@ export default async function executeInstallation(
 
 			// if current step is NOT parallel, we await all pending steps (inclusive of current)
 			if (!step.parallel) {
-				await Promise.all(pendingPromises);
+				const results = await Promise.all(pendingPromises);
 				pendingPromises.length = 0;
+
+				if (results.some((res) => res && res.cancelled)) {
+					logger.info("Installation loop stopped due to cancellation.");
+					return; // stop
+				}
 			}
 		}
 		// await any remaining parallel steps at the end
@@ -453,15 +458,14 @@ export async function executeStartup(
 						: "uv";
 				const pythonVersion =
 					typeof selectedStart.env === "object" &&
-					"version" in selectedStart.env
+						"version" in selectedStart.env
 						? selectedStart.env.version
 						: "";
 
 				io.to(id).emit("installUpdate", {
 					type: "log",
-					content: `INFO: Using virtual environment: ${envName} with ${envType}${
-						pythonVersion ? ` (Python ${pythonVersion})` : ""
-					}\n`,
+					content: `INFO: Using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""
+						}\n`,
 				});
 
 				const envCommands = await createVirtualEnvCommands(
@@ -608,54 +612,54 @@ async function createVirtualEnvCommands(
 	// filter and ensure commands is an array of strings without empty strings
 	const commandStrings = Array.isArray(commands)
 		? commands.flatMap((cmd) => {
-				if (typeof cmd === "string" && cmd.trim()) {
-					return [cmd.trim()];
-				}
-				if (
-					cmd &&
-					typeof cmd === "object" &&
-					typeof cmd.command === "string" &&
-					cmd.command.trim()
-				) {
-					// Apply platform filtering
-					if ("platform" in cmd) {
-						const cmdPlatform = cmd.platform.toLowerCase();
-						const normalizedPlatform =
-							currentPlatform === "win32"
-								? "windows"
-								: currentPlatform === "darwin"
-									? "mac"
-									: currentPlatform === "linux"
-										? "linux"
-										: currentPlatform;
+			if (typeof cmd === "string" && cmd.trim()) {
+				return [cmd.trim()];
+			}
+			if (
+				cmd &&
+				typeof cmd === "object" &&
+				typeof cmd.command === "string" &&
+				cmd.command.trim()
+			) {
+				// Apply platform filtering
+				if ("platform" in cmd) {
+					const cmdPlatform = cmd.platform.toLowerCase();
+					const normalizedPlatform =
+						currentPlatform === "win32"
+							? "windows"
+							: currentPlatform === "darwin"
+								? "mac"
+								: currentPlatform === "linux"
+									? "linux"
+									: currentPlatform;
 
-						// if platform does not match current platform, skip
-						if (cmdPlatform !== normalizedPlatform) {
-							logger.info(
-								`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
-							);
-							return [];
-						}
+					// if platform does not match current platform, skip
+					if (cmdPlatform !== normalizedPlatform) {
+						logger.info(
+							`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+						);
+						return [];
 					}
-
-					// Apply GPU filtering
-					if ("gpus" in cmd) {
-						const allowedGpus = Array.isArray(cmd.gpus)
-							? cmd.gpus.map((g: string) => g.toLowerCase())
-							: [cmd.gpus.toLowerCase()];
-
-						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
-							logger.info(
-								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
-							);
-							return [];
-						}
-					}
-
-					return [cmd.command.trim()];
 				}
-				return [];
-			})
+
+				// Apply GPU filtering
+				if ("gpus" in cmd) {
+					const allowedGpus = Array.isArray(cmd.gpus)
+						? cmd.gpus.map((g: string) => g.toLowerCase())
+						: [cmd.gpus.toLowerCase()];
+
+					if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+						logger.info(
+							`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+						);
+						return [];
+					}
+				}
+
+				return [cmd.command.trim()];
+			}
+			return [];
+		})
 		: [];
 
 	// add python version flag if specified
