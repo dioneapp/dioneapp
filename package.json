@@ -36,15 +36,18 @@
     "compression": "maximum",
     "win": {
       "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        }
+        "nsis",
+        "appx"
       ],
       "icon": "./resources/icon.ico",
       "artifactName": "Dione-${version}-Installer-Windows.${ext}"
+    },
+    "appx": {
+      "publisher": "CN=3A6E9F63-62F3-4EF2-AB9D-5666C6C26D6B",
+      "identityName": "deeivihh.dioneapp",
+      "displayName": "Dione: Explore, Install, Innovate — in 1 Click",
+      "publisherDisplayName": "deeivihh",
+      "backgroundColor": "#090909"
     },
     "mac": {
       "target": [
