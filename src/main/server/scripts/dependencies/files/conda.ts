@@ -356,7 +356,7 @@ export async function update(
 	});
 
 	try {
-		const stdout = await new Promise<string>((resolve, reject) => {
+		await new Promise<string>((resolve, reject) => {
 			execFile(
 				depName,
 				["install", "-y", `conda=${requiredVersion}`],
