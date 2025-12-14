@@ -38,22 +38,22 @@ export async function sendDiscordReport(
 	// get logs
 	const logs = (await window.electron.ipcRenderer.invoke("get-logs")) || "";
 	// get app version
-	const version = (await window.electron.ipcRenderer.invoke("get-version")) || "";
+	const version =
+		(await window.electron.ipcRenderer.invoke("get-version")) || "";
 
 	// create embed
 	const embed: DiscordEmbed = {
 		title: additionalInfo?.UserReport ? "User Report" : "Error Report",
 		color: 0xff0000,
 		timestamp: new Date().toISOString(),
-		fields: [
-		],
+		fields: [],
 	};
 
 	// add stack trace if available
 	if (error instanceof Error && error.stack) {
 		embed.fields?.push({
 			name: "Details",
-			value: "\`\`\`" + error.stack + "\`\`\`",
+			value: "```" + error.stack + "```",
 			inline: false,
 		});
 	}

@@ -32,7 +32,12 @@ export async function checkOneDependency(
 
 export async function checkDependencies(dioneConfigPath: string): Promise<{
 	success: boolean;
-	missing: { name: string; installed: boolean; reason: string; version?: string }[];
+	missing: {
+		name: string;
+		installed: boolean;
+		reason: string;
+		version?: string;
+	}[];
 	error?: boolean;
 }> {
 	const config = readConfig();
@@ -47,7 +52,12 @@ export async function checkDependencies(dioneConfigPath: string): Promise<{
 	const envType =
 		dioneConfig.installation.find((dep) => dep.env)?.env?.type || "uv";
 
-	const missing: { name: string; installed: boolean; reason: string; version?: string }[] = [];
+	const missing: {
+		name: string;
+		installed: boolean;
+		reason: string;
+		version?: string;
+	}[] = [];
 
 	// if use an environment, check if uv or conda is needed
 	if (envType === "uv" && !dependencies.uv && needEnv) {

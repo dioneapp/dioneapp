@@ -46,7 +46,9 @@ export async function isInstalled(
 		if (match && match[1]) {
 			return { installed: true, reason: `installed`, version: match[1] };
 		} else {
-			logger.warn(`Could not parse conda version from output: ${versionOutput}`);
+			logger.warn(
+				`Could not parse conda version from output: ${versionOutput}`,
+			);
 			return { installed: true, reason: `installed` };
 		}
 	} catch (error: any) {
@@ -64,9 +66,15 @@ export async function install(
 	const tempDir = path.join(binFolder, "temp");
 
 	const checkIfInstalled = await isInstalled(binFolder);
-	logger.info(`Checking if ${depName} is installed: ${JSON.stringify(checkIfInstalled)}`);
+	logger.info(
+		`Checking if ${depName} is installed: ${JSON.stringify(checkIfInstalled)}`,
+	);
 	if (checkIfInstalled.installed) {
-		if (requiredVersion && requiredVersion !== "latest" && checkIfInstalled.version !== requiredVersion) {
+		if (
+			requiredVersion &&
+			requiredVersion !== "latest" &&
+			checkIfInstalled.version !== requiredVersion
+		) {
 			const result = await update(binFolder, id, io, requiredVersion);
 			return { success: result.success };
 		}
@@ -365,7 +373,11 @@ export async function update(
 					if (error) {
 						logger.error(`Error updating ${depName}: ${error.message}`);
 						logger.error(`stderr: ${stderr}`);
-						reject(new Error(`Failed to update ${depName}: ${stderr || error.message}`));
+						reject(
+							new Error(
+								`Failed to update ${depName}: ${stderr || error.message}`,
+							),
+						);
 					} else {
 						io.to(id).emit("installDep", {
 							type: "log",
