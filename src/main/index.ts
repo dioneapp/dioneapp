@@ -231,10 +231,10 @@ function createWindow() {
 				sandbox: false,
 				...(process.platform === "linux"
 					? {
-							enableRemoteModule: false,
-							webSecurity: false,
-							allowRunningInsecureContent: true,
-						}
+						enableRemoteModule: false,
+						webSecurity: false,
+						allowRunningInsecureContent: true,
+					}
 					: {}),
 			},
 		});
@@ -918,8 +918,7 @@ app.whenReady().then(async () => {
 				} else {
 					const bodyText = await response.text();
 					logger.warn(
-						`/db/events returned non-JSON (${
-							contentType || "unknown"
+						`/db/events returned non-JSON (${contentType || "unknown"
 						}). Body: ${bodyText.slice(0, 200)}`,
 					);
 					data = { raw: bodyText };
@@ -1327,20 +1326,38 @@ ipcMain.handle("check-folder-size", async (_event, folderPath) => {
 	}
 });
 
+const warnFolders = [
+	"Desktop",
+	"Downloads",
+	"Documents",
+	"Windows",
+	"System",
+	"Program Files",
+	"Program Files (x86)",
+	"ProgramData",
+	"Users",
+	"WindowsApps"
+];
+
 ipcMain.handle("delete-folder", async (_event, folderPath) => {
 	const config = readConfig();
 
-	if (!folderPath) {
+	if (!folderPath && (config?.defaultBinFolder || config?.defaultInstallFolder)) {
 		folderPath = path.join(
-			config?.defaultBinFolder ||
-				config?.defaultInstallFolder ||
-				path.join(app.getPath("userData"), "bin", "cache"),
+			(config?.defaultBinFolder || path.join(config?.defaultInstallFolder, "bin")), "cache"
 		);
+	} else {
+		return false;
 	}
 
 	if (!fs.existsSync(folderPath)) {
 		console.warn(`Folder does not exist: ${folderPath}`);
 		return true;
+	}
+
+	if (warnFolders.includes(path.basename(folderPath))) {
+		dialog.showErrorBox("Warning", `You are trying to delete a protected folder: ${folderPath}`);
+		return false;
 	}
 
 	try {
