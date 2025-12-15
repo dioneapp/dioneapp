@@ -39,7 +39,7 @@
         "nsis",
         "appx"
       ],
-      "icon": "./resources/icon.ico",
+      "icon": "./resources/icon.png",
       "artifactName": "Dione-${version}-Installer-Windows.${ext}"
     },
     "appx": {
@@ -47,7 +47,7 @@
       "identityName": "deeivihh.dioneapp",
       "displayName": "Dione Launcher",
       "publisherDisplayName": "deeivihh",
-      "backgroundColor": "#090909"
+      "backgroundColor": "#000000"
     },
     "mac": {
       "target": [
