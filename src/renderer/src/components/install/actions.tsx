@@ -2,6 +2,7 @@ import GeneratedIcon from "@/components/icons/generated-icon";
 import Loading from "@/components/install/loading-skeleton";
 import { useTranslation } from "@/translations/translation-context";
 import { openLink } from "@/utils/open-link";
+import { reportBadContent } from "@/utils/report-bad-content";
 import { AnimatePresence, motion } from "framer-motion";
 import {
 	ArrowLeft,
@@ -10,6 +11,7 @@ import {
 	ChevronDown,
 	CodeXml,
 	Download,
+	Flag,
 	MoreHorizontal,
 	Play,
 	Share2,
@@ -60,6 +62,9 @@ export default function ActionsComponent({
 	const navigate = useNavigate();
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const [moreMenuOpen, setMoreMenuOpen] = useState(false);
+	const [showReportMenu, setShowReportMenu] = useState(false);
+	const [reportStatus, setReportStatus] = useState("");
+	const [reportDetails, setReportDetails] = useState("");
 	const dropdownRef = useRef<HTMLDivElement>(null);
 	const moreMenuRef = useRef<HTMLDivElement>(null);
 
@@ -93,6 +98,79 @@ export default function ActionsComponent({
 
 	return (
 		<AnimatePresence mode="wait">
+			{showReportMenu && (
+				<div className="absolute bg-black/90 backdrop-blur-xs w-screen h-screen z-50">
+					<div className="flex items-center justify-center w-full h-full">
+						<div className="bg-white/10 backdrop-blur-xs w-full max-w-xl p-6 rounded-xl">
+							<h2 className="text-xl font-semibold mb-4">Report inappropriate content</h2>
+							<p className="mb-4 text-sm mt-6">
+								Next, add information about your report to <span className="font-semibold">{data.name || "this project"}</span>:
+							</p>
+							<textarea
+								autoFocus
+								disabled={reportStatus === "loading" || reportStatus === "reported"}
+								value={reportDetails}
+								onChange={(e) => setReportDetails(e.target.value)}
+								placeholder="Add details here..."
+								rows={4}
+								onKeyDown={(e) => {
+									if (e.key === "Enter" && !e.shiftKey) {
+										e.preventDefault();
+										setShowReportMenu(false);
+									}
+								}}
+								className="w-full p-2 border border-white/10 rounded-lg focus:outline-none focus:ring-2 text-neutral-300 focus:ring-white/10 resize-none"
+							/>
+							<div className="flex items-center justify-between mt-4">
+								<div className="flex gap-2 items-center text-xs rounded-full">
+									{reportStatus === "reported" && (
+										<p className="text-green-500">Report submitted successfully!</p>
+									)}
+									{reportStatus === "error" && (
+										<p className="text-red-500">Failed to submit report</p>
+									)}
+									{reportStatus === "loading" && (
+										<p className="text-neutral-400">Submitting report...</p>
+									)}
+								</div>
+								<div className="flex gap-2 items-center">
+									{reportStatus !== "loading" && reportStatus !== "reported" && (
+										<>
+											<button
+												className="px-4 py-1 bg-white/10 hover:bg-white/20 transition-colors rounded-full text-neutral-300 text-sm cursor-pointer"
+												onClick={() => setShowReportMenu(false)}
+											>
+												Cancel
+											</button>
+											<button
+												className="px-4 py-1 bg-white/30 hover:bg-white/40 transition-colors text-sm rounded-full text-white cursor-pointer"
+												onClick={async () => {
+													setReportStatus("loading");
+													const result = await reportBadContent("script", {
+														appid: data?.id,
+														details: reportDetails,
+													});
+													setReportStatus(result);
+												}}
+											>
+												Submit Report
+											</button>
+										</>
+									)}
+									{reportStatus === "reported" && (
+										<button
+											className="px-4 py-1 bg-white text-black hover:bg-white/80 font-semibold transition-opacity rounded-full text-sm cursor-pointer"
+											onClick={() => { setShowReportMenu(false); setReportDetails(""); setReportStatus("") }}
+										>
+											Close
+										</button>
+									)}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
 			{data ? (
 				<motion.div
 					key="actions-content"
@@ -159,10 +237,10 @@ export default function ActionsComponent({
 											style={
 												saved
 													? {
-															color: "var(--theme-accent)",
-															backgroundColor:
-																"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
-														}
+														color: "var(--theme-accent)",
+														backgroundColor:
+															"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+													}
 													: {}
 											}
 										>
@@ -171,9 +249,9 @@ export default function ActionsComponent({
 												style={
 													saved
 														? {
-																fill: "var(--theme-accent)",
-																color: "var(--theme-accent)",
-															}
+															fill: "var(--theme-accent)",
+															color: "var(--theme-accent)",
+														}
 														: {}
 												}
 											/>
@@ -235,16 +313,14 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
-												installed
-													? "bg-green-500/20 text-green-400 border border-green-500/30"
-													: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
-											}`}
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${installed
+												? "bg-green-500/20 text-green-400 border border-green-500/30"
+												: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
+												}`}
 										>
 											<div
-												className={`w-1 h-1 rounded-full ${
-													installed ? "bg-green-400" : "bg-neutral-400"
-												}`}
+												className={`w-1 h-1 rounded-full ${installed ? "bg-green-400" : "bg-neutral-400"
+													}`}
 											/>
 											<span className="hidden sm:inline">
 												{installed
@@ -418,6 +494,21 @@ export default function ActionsComponent({
 															/>
 															<span className="text-xs sm:text-sm">Code</span>
 														</button>
+														{data?.id && !isLocal && (
+															<button
+																type="button"
+																onClick={() => {
+																	setShowReportMenu(true);
+																}}
+																className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
+															>
+																<Flag size={13} className="sm:w-3.5 sm:h-3.5" />
+																<span className="text-xs sm:text-sm">
+																	{t("actions.report")}
+																</span>
+															</button>
+														)
+														}
 														<button
 															type="button"
 															onClick={() => {

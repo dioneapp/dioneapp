@@ -11,6 +11,7 @@ import { createLocalScriptsRouter } from "@/server/routes/local";
 import { createScriptRouter } from "@/server/routes/scripts";
 import searchBarRouter from "@/server/routes/searchbar";
 import { createVariablesRouter } from "@/server/routes/variables";
+import reportRouter from "@/server/routes/report";
 
 export const setupRoutes = (server: Express, io: Server) => {
 	server.get("/", (_req, res) => {
@@ -44,4 +45,7 @@ export const setupRoutes = (server: Express, io: Server) => {
 
 	// ai
 	server.use("/ai", createAIRouter(io));
+
+	// report stuff
+	server.use("/report", reportRouter);
 };
