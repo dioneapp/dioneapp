@@ -33,6 +33,7 @@ export default function AI({
 		ollamaRunning,
 		messageLoading,
 		usingTool,
+		ollamaModel,
 	} = useAIContext();
 	const { logs } = useScriptsContext();
 
@@ -207,6 +208,7 @@ export default function AI({
 								logsEndRef={logsEndRef}
 								messageLoading={messageLoading}
 								usingTool={usingTool}
+								model={ollamaModel}
 							/>
 						</div>
 					)}

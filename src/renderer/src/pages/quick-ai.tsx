@@ -110,6 +110,7 @@ export default function QuickAI() {
 									logsEndRef={logsEndRef}
 									usingTool={usingTool}
 									quickAI
+									model={ollamaModel}
 								/>
 							</div>
 						)}

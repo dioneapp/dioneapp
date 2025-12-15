@@ -1,7 +1,8 @@
 import Icon from "@/components/icons/icon";
-import { Hammer, LoaderCircle } from "lucide-react";
+import { Flag, Hammer, LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { reportBadContent } from "@/utils/report-bad-content";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
@@ -12,13 +13,42 @@ export default function Messages({
 	quickAI,
 	messageLoading,
 	usingTool,
+	model,
 }: {
 	messages: any[];
 	logsEndRef: React.RefObject<HTMLDivElement | null>;
 	quickAI?: boolean;
 	messageLoading?: boolean;
 	usingTool?: { name: string; message: string };
+	model?: string;
 }) {
+	const [reportedMessages, setReportedMessages] = useState<Set<number>>(new Set());
+	const [reportingMessages, setReportingMessages] = useState<Set<number>>(new Set());
+
+	const handleReportMessage = async (index: number, message: any) => {
+		if (reportedMessages.has(index) || reportingMessages.has(index)) return;
+
+		setReportingMessages((prev) => new Set(prev).add(index));
+
+		try {
+			const result = await reportBadContent("ai", undefined, {
+				output: message.content || message.message?.content,
+				model: model,
+				input: messages[index - 1].content || messages[index - 1].message?.content,
+			});
+
+			if (result === "reported") {
+				setReportedMessages((prev) => new Set(prev).add(index));
+			}
+		} finally {
+			setReportingMessages((prev) => {
+				const newSet = new Set(prev);
+				newSet.delete(index);
+				return newSet;
+			});
+		}
+	};
+
 	// scroll to bottom
 	useEffect(() => {
 		if (logsEndRef.current) {
@@ -43,17 +73,17 @@ export default function Messages({
 							<Icon name="Dio" className="w-4 h-4" />
 						</div>
 					)}
-					<div className={`flex flex-col ${quickAI ? "max-w-full" : ""}`}>
+					<div className={`flex flex-col group ${quickAI ? "max-w-full" : ""}`}>
 						{message?.role !== "user" &&
 							message?.message?.tool_calls &&
 							message?.message?.tool_calls?.length > 0 && (
 								<div className="my-2 first:mt-0">
 									{message?.message?.tool_calls[0].function.name ===
 										"read_file" && (
-										<span className="text-xs text-gray-500 dark:text-gray-400">
-											Reading files...
-										</span>
-									)}
+											<span className="text-xs text-gray-500 dark:text-gray-400">
+												Reading files...
+											</span>
+										)}
 								</div>
 							)}
 						<div
@@ -117,6 +147,32 @@ export default function Messages({
 								{message.content || message.message?.content || "No content"}
 							</ReactMarkdown>
 						</div>
+						{message?.role !== "user" && (
+							<button
+								type="button"
+								onClick={(e) => {
+									e.stopPropagation();
+									handleReportMessage(index, message);
+								}}
+								disabled={reportedMessages.has(index) || reportingMessages.has(index)}
+								className={`flex items-center gap-1 text-xs mt-1 cursor-pointer ${reportedMessages.has(index)
+									? "text-green-500"
+									: reportingMessages.has(index)
+										? "text-neutral-400 animate-pulse"
+										: "text-neutral-500 hover:text-red-400"
+									}`}
+								aria-label="Report bad content"
+							>
+								<Flag className="w-3 h-3" />
+								<span className="inline-block w-[60px]">
+									{reportedMessages.has(index)
+										? "Reported!"
+										: reportingMessages.has(index)
+											? "Reporting..."
+											: "Report"}
+								</span>
+							</button>
+						)}
 					</div>
 				</div>
 			))}
