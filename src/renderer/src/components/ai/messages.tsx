@@ -1,8 +1,8 @@
 import Icon from "@/components/icons/icon";
+import { reportBadContent } from "@/utils/report-bad-content";
 import { Flag, Hammer, LoaderCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { reportBadContent } from "@/utils/report-bad-content";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
@@ -22,8 +22,12 @@ export default function Messages({
 	usingTool?: { name: string; message: string };
 	model?: string;
 }) {
-	const [reportedMessages, setReportedMessages] = useState<Set<number>>(new Set());
-	const [reportingMessages, setReportingMessages] = useState<Set<number>>(new Set());
+	const [reportedMessages, setReportedMessages] = useState<Set<number>>(
+		new Set(),
+	);
+	const [reportingMessages, setReportingMessages] = useState<Set<number>>(
+		new Set(),
+	);
 
 	const handleReportMessage = async (index: number, message: any) => {
 		if (reportedMessages.has(index) || reportingMessages.has(index)) return;
@@ -34,7 +38,8 @@ export default function Messages({
 			const result = await reportBadContent("ai", undefined, {
 				output: message.content || message.message?.content,
 				model: model,
-				input: messages[index - 1].content || messages[index - 1].message?.content,
+				input:
+					messages[index - 1].content || messages[index - 1].message?.content,
 			});
 
 			if (result === "reported") {
@@ -80,10 +85,10 @@ export default function Messages({
 								<div className="my-2 first:mt-0">
 									{message?.message?.tool_calls[0].function.name ===
 										"read_file" && (
-											<span className="text-xs text-gray-500 dark:text-gray-400">
-												Reading files...
-											</span>
-										)}
+										<span className="text-xs text-gray-500 dark:text-gray-400">
+											Reading files...
+										</span>
+									)}
 								</div>
 							)}
 						<div
@@ -153,13 +158,16 @@ export default function Messages({
 									e.stopPropagation();
 									handleReportMessage(index, message);
 								}}
-								disabled={reportedMessages.has(index) || reportingMessages.has(index)}
-								className={`flex items-center gap-1 text-xs mt-1 cursor-pointer ${reportedMessages.has(index)
-									? "text-green-500"
-									: reportingMessages.has(index)
-										? "text-neutral-400 animate-pulse"
-										: "text-neutral-500 hover:text-red-400"
-									}`}
+								disabled={
+									reportedMessages.has(index) || reportingMessages.has(index)
+								}
+								className={`flex items-center gap-1 text-xs mt-1 cursor-pointer ${
+									reportedMessages.has(index)
+										? "text-green-500"
+										: reportingMessages.has(index)
+											? "text-neutral-400 animate-pulse"
+											: "text-neutral-500 hover:text-red-400"
+								}`}
 								aria-label="Report bad content"
 							>
 								<Flag className="w-3 h-3" />

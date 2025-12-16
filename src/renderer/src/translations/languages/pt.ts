@@ -72,7 +72,8 @@ export const pt = {
 			success: "Relatório enviado!",
 			failed: "Falha ao enviar relatório",
 			badContent: "Denunciar conteúdo impróprio",
-			badContentDescription: "Em seguida, adicione informações sobre sua denúncia para",
+			badContentDescription:
+				"Em seguida, adicione informações sobre sua denúncia para",
 		},
 	},
 
