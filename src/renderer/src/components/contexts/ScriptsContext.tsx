@@ -247,7 +247,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		while (!isAvailable) {
 			isAvailable = await isLocalAvailable(localPort);
 			if (!isAvailable) {
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+				await new Promise((resolve) => setTimeout(resolve, 3000));
 			}
 		}
 		if (isAvailable) {
@@ -484,10 +484,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${
-							sockets[data.id]?.isLocal
-								? encodeURIComponent(data.name)
-								: data.id
+						`/install/${sockets[data.id]?.isLocal
+							? encodeURIComponent(data.name)
+							: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},
