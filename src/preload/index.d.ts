@@ -31,5 +31,8 @@ declare global {
 		electron: ElectronAPI;
 		api: CustomAPI;
 		captureScreenshot: () => Promise<string | null>;
+		copyToClipboard: {
+			writeText: (text: string) => Promise<void>;
+		};
 	}
 }
