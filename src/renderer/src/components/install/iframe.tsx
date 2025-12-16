@@ -56,6 +56,12 @@ export default function IframeComponent({
 	const [showNetworkShareModal, setShowNetworkShareModal] = useState(false);
 
 	useEffect(() => {
+		return () => {
+			localStorage.removeItem("isFullscreen");
+		};
+	}, []);
+
+	useEffect(() => {
 		const updateSystemUsage = async () => {
 			try {
 				const usage =
