@@ -102,13 +102,21 @@ export default function ActionsComponent({
 				<div className="absolute bg-black/90 backdrop-blur-xs w-screen h-screen z-50">
 					<div className="flex items-center justify-center w-full h-full">
 						<div className="bg-white/10 backdrop-blur-xs w-full max-w-xl p-6 rounded-xl">
-							<h2 className="text-xl font-semibold mb-4">{t("error.report.badContent")}</h2>
+							<h2 className="text-xl font-semibold mb-4">
+								{t("error.report.badContent")}
+							</h2>
 							<p className="mb-4 text-sm mt-6">
-								{t("error.report.badContentDescription")} <span className="font-semibold">{data.name || "this project"}</span>:
+								{t("error.report.badContentDescription")}{" "}
+								<span className="font-semibold">
+									{data.name || "this project"}
+								</span>
+								:
 							</p>
 							<textarea
 								autoFocus
-								disabled={reportStatus === "loading" || reportStatus === "reported"}
+								disabled={
+									reportStatus === "loading" || reportStatus === "reported"
+								}
 								value={reportDetails}
 								onChange={(e) => setReportDetails(e.target.value)}
 								placeholder="Add details here..."
@@ -124,43 +132,52 @@ export default function ActionsComponent({
 							<div className="flex items-center justify-between mt-4">
 								<div className="flex gap-2 items-center text-xs rounded-full">
 									{reportStatus === "reported" && (
-										<p className="text-green-500">{t("error.report.success")}</p>
+										<p className="text-green-500">
+											{t("error.report.success")}
+										</p>
 									)}
 									{reportStatus === "error" && (
 										<p className="text-red-500">{t("error.report.failed")}</p>
 									)}
 									{reportStatus === "loading" && (
-										<p className="text-neutral-400">{t("error.report.sending")}</p>
+										<p className="text-neutral-400">
+											{t("error.report.sending")}
+										</p>
 									)}
 								</div>
 								<div className="flex gap-2 items-center">
-									{reportStatus !== "loading" && reportStatus !== "reported" && (
-										<>
-											<button
-												className="px-4 py-1 bg-white/10 hover:bg-white/20 transition-colors rounded-full text-neutral-300 text-sm cursor-pointer"
-												onClick={() => setShowReportMenu(false)}
-											>
-												{t("common.cancel")}
-											</button>
-											<button
-												className="px-4 py-1 bg-white/30 hover:bg-white/40 transition-colors text-sm rounded-full text-white cursor-pointer"
-												onClick={async () => {
-													setReportStatus("loading");
-													const result = await reportBadContent("script", {
-														appid: data?.id,
-														details: reportDetails,
-													});
-													setReportStatus(result);
-												}}
-											>
-												{t("error.report.submit")}
-											</button>
-										</>
-									)}
+									{reportStatus !== "loading" &&
+										reportStatus !== "reported" && (
+											<>
+												<button
+													className="px-4 py-1 bg-white/10 hover:bg-white/20 transition-colors rounded-full text-neutral-300 text-sm cursor-pointer"
+													onClick={() => setShowReportMenu(false)}
+												>
+													{t("common.cancel")}
+												</button>
+												<button
+													className="px-4 py-1 bg-white/30 hover:bg-white/40 transition-colors text-sm rounded-full text-white cursor-pointer"
+													onClick={async () => {
+														setReportStatus("loading");
+														const result = await reportBadContent("script", {
+															appid: data?.id,
+															details: reportDetails,
+														});
+														setReportStatus(result);
+													}}
+												>
+													{t("error.report.submit")}
+												</button>
+											</>
+										)}
 									{reportStatus === "reported" && (
 										<button
 											className="px-4 py-1 bg-white text-black hover:bg-white/80 font-semibold transition-opacity rounded-full text-sm cursor-pointer"
-											onClick={() => { setShowReportMenu(false); setReportDetails(""); setReportStatus("") }}
+											onClick={() => {
+												setShowReportMenu(false);
+												setReportDetails("");
+												setReportStatus("");
+											}}
 										>
 											{t("toast.close")}
 										</button>
@@ -237,10 +254,10 @@ export default function ActionsComponent({
 											style={
 												saved
 													? {
-														color: "var(--theme-accent)",
-														backgroundColor:
-															"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
-													}
+															color: "var(--theme-accent)",
+															backgroundColor:
+																"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+														}
 													: {}
 											}
 										>
@@ -249,9 +266,9 @@ export default function ActionsComponent({
 												style={
 													saved
 														? {
-															fill: "var(--theme-accent)",
-															color: "var(--theme-accent)",
-														}
+																fill: "var(--theme-accent)",
+																color: "var(--theme-accent)",
+															}
 														: {}
 												}
 											/>
@@ -313,14 +330,16 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${installed
-												? "bg-green-500/20 text-green-400 border border-green-500/30"
-												: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
-												}`}
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
+												installed
+													? "bg-green-500/20 text-green-400 border border-green-500/30"
+													: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
+											}`}
 										>
 											<div
-												className={`w-1 h-1 rounded-full ${installed ? "bg-green-400" : "bg-neutral-400"
-													}`}
+												className={`w-1 h-1 rounded-full ${
+													installed ? "bg-green-400" : "bg-neutral-400"
+												}`}
 											/>
 											<span className="hidden sm:inline">
 												{installed
@@ -507,8 +526,7 @@ export default function ActionsComponent({
 																	{t("error.report.report")}
 																</span>
 															</button>
-														)
-														}
+														)}
 														<button
 															type="button"
 															onClick={() => {

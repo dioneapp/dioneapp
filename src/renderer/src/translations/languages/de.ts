@@ -72,7 +72,8 @@ export const de = {
 			success: "Bericht gesendet!",
 			failed: "Bericht konnte nicht gesendet werden",
 			badContent: "Unangemessenen Inhalt melden",
-			badContentDescription: "Fügen Sie als Nächstes Informationen zu Ihrer Meldung hinzu"
+			badContentDescription:
+				"Fügen Sie als Nächstes Informationen zu Ihrer Meldung hinzu",
 		},
 	},
 

@@ -49,18 +49,18 @@ const initialContextMenuState: ContextMenuState = {
 
 type EntryDialogState =
 	| {
-		mode: "create";
-		entryType: "file" | "directory";
-		parentPath: string;
-		initialName: string;
-	}
+			mode: "create";
+			entryType: "file" | "directory";
+			parentPath: string;
+			initialName: string;
+	  }
 	| {
-		mode: "rename";
-		targetPath: string;
-		targetType: "file" | "directory";
-		parentPath: string;
-		initialName: string;
-	};
+			mode: "rename";
+			targetPath: string;
+			targetType: "file" | "directory";
+			parentPath: string;
+			initialName: string;
+	  };
 
 export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 	const { showToast, isServerRunning } = useScriptsContext();
