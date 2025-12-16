@@ -102,9 +102,9 @@ export default function ActionsComponent({
 				<div className="absolute bg-black/90 backdrop-blur-xs w-screen h-screen z-50">
 					<div className="flex items-center justify-center w-full h-full">
 						<div className="bg-white/10 backdrop-blur-xs w-full max-w-xl p-6 rounded-xl">
-							<h2 className="text-xl font-semibold mb-4">Report inappropriate content</h2>
+							<h2 className="text-xl font-semibold mb-4">{t("error.report.badContent")}</h2>
 							<p className="mb-4 text-sm mt-6">
-								Next, add information about your report to <span className="font-semibold">{data.name || "this project"}</span>:
+								{t("error.report.badContentDescription")} <span className="font-semibold">{data.name || "this project"}</span>:
 							</p>
 							<textarea
 								autoFocus
@@ -124,13 +124,13 @@ export default function ActionsComponent({
 							<div className="flex items-center justify-between mt-4">
 								<div className="flex gap-2 items-center text-xs rounded-full">
 									{reportStatus === "reported" && (
-										<p className="text-green-500">Report submitted successfully!</p>
+										<p className="text-green-500">{t("error.report.success")}</p>
 									)}
 									{reportStatus === "error" && (
-										<p className="text-red-500">Failed to submit report</p>
+										<p className="text-red-500">{t("error.report.failed")}</p>
 									)}
 									{reportStatus === "loading" && (
-										<p className="text-neutral-400">Submitting report...</p>
+										<p className="text-neutral-400">{t("error.report.sending")}</p>
 									)}
 								</div>
 								<div className="flex gap-2 items-center">
@@ -140,7 +140,7 @@ export default function ActionsComponent({
 												className="px-4 py-1 bg-white/10 hover:bg-white/20 transition-colors rounded-full text-neutral-300 text-sm cursor-pointer"
 												onClick={() => setShowReportMenu(false)}
 											>
-												Cancel
+												{t("common.cancel")}
 											</button>
 											<button
 												className="px-4 py-1 bg-white/30 hover:bg-white/40 transition-colors text-sm rounded-full text-white cursor-pointer"
@@ -153,7 +153,7 @@ export default function ActionsComponent({
 													setReportStatus(result);
 												}}
 											>
-												Submit Report
+												{t("error.report.submit")}
 											</button>
 										</>
 									)}
@@ -162,7 +162,7 @@ export default function ActionsComponent({
 											className="px-4 py-1 bg-white text-black hover:bg-white/80 font-semibold transition-opacity rounded-full text-sm cursor-pointer"
 											onClick={() => { setShowReportMenu(false); setReportDetails(""); setReportStatus("") }}
 										>
-											Close
+											{t("toast.close")}
 										</button>
 									)}
 								</div>
@@ -504,7 +504,7 @@ export default function ActionsComponent({
 															>
 																<Flag size={13} className="sm:w-3.5 sm:h-3.5" />
 																<span className="text-xs sm:text-sm">
-																	{t("actions.report")}
+																	{t("error.report.report")}
 																</span>
 															</button>
 														)

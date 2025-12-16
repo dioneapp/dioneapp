@@ -64,9 +64,13 @@ export const zh = {
 		return: "返回",
 		report: {
 			toTeam: "报告给团队",
+			report: "举报",
+			submit: "提交举报",
 			sending: "正在发送报告...",
 			success: "报告已发送！",
 			failed: "发送报告失败",
+			badContent: "举报不当内容",
+			badContentDescription: "接下来，添加有关您的举报信息至",
 		},
 	},
 

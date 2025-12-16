@@ -66,9 +66,13 @@ export const de = {
 		return: "Zurück",
 		report: {
 			toTeam: "An das Team melden",
+			report: "Melden",
+			submit: "Meldung absenden",
 			sending: "Bericht wird gesendet...",
 			success: "Bericht gesendet!",
 			failed: "Bericht konnte nicht gesendet werden",
+			badContent: "Unangemessenen Inhalt melden",
+			badContentDescription: "Fügen Sie als Nächstes Informationen zu Ihrer Meldung hinzu"
 		},
 	},
 

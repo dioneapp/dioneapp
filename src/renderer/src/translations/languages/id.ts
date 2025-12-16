@@ -66,9 +66,13 @@ export const id = {
 		return: "Kembali",
 		report: {
 			toTeam: "Laporkan ke tim",
+			report: "Laporan",
+			submit: "Kirim Laporan",
 			sending: "Mengirim laporan...",
 			success: "Laporan terkirim!",
 			failed: "Gagal mengirim laporan",
+			badContent: "Laporkan konten yang tidak pantas",
+			badContentDescription: "Selanjutnya, tambahkan informasi tentang laporan Anda ke"
 		},
 	},
 

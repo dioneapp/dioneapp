@@ -66,9 +66,13 @@ export const en = {
 		return: "Return",
 		report: {
 			toTeam: "Report to team",
+			report: "Report",
+			submit: "Submit Report",
 			sending: "Sending report...",
 			success: "Report sent!",
 			failed: "Failed to send report",
+			badContent: "Report inappropriate content",
+			badContentDescription: "Next, add information about your report to",
 		},
 	},
 

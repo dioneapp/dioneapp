@@ -66,9 +66,13 @@ export const es = {
 		return: "Regresar",
 		report: {
 			toTeam: "Informar al equipo",
+			report: "Informe",
+			submit: "Enviar informe",
 			sending: "Enviando informe...",
 			success: "¡Informe enviado!",
 			failed: "No se pudo enviar el informe",
+			badContent: "Informar contenido inapropiado",
+			badContentDescription: "A continuación, agregue información sobre su informe a",
 		},
 	},
 

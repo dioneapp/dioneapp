@@ -66,9 +66,13 @@ export const ja = {
 		return: "戻る",
 		report: {
 			toTeam: "チームに報告",
+			report: "報告",
+			submit: "レポートを送信",
 			sending: "レポートを送信中...",
 			success: "レポートを送信しました！",
 			failed: "レポートの送信に失敗しました。",
+			badContent: "不適切なコンテンツを報告",
+			badContentDescription: "次に、レポートに関する情報を追加してください",
 		},
 	},
 

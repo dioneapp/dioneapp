@@ -64,9 +64,13 @@ export const ar = {
 		return: "عودة",
 		report: {
 			toTeam: "الإبلاغ للفريق",
+			report: "تقرير",
+			submit: "إرسال التقرير",
 			sending: "جارٍ إرسال التقرير...",
 			success: "تم إرسال التقرير!",
 			failed: "فشل إرسال التقرير",
+			badContent: "الإبلاغ عن محتوى غير لائق",
+			badContentDescription: "بعد ذلك، أضف معلومات حول تقريرك إلى",
 		},
 	},
 

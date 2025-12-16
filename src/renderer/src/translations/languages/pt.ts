@@ -66,9 +66,13 @@ export const pt = {
 		return: "Retornar",
 		report: {
 			toTeam: "Relatar à equipe",
+			report: "Relatório",
+			submit: "Enviar relatório",
 			sending: "Enviando relatório...",
 			success: "Relatório enviado!",
 			failed: "Falha ao enviar relatório",
+			badContent: "Denunciar conteúdo impróprio",
+			badContentDescription: "Em seguida, adicione informações sobre sua denúncia para",
 		},
 	},
 

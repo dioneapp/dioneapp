@@ -66,9 +66,13 @@ export const fr = {
 		return: "Retour",
 		report: {
 			toTeam: "Signaler à l'équipe",
+			report: "Signaler",
+			submit: "Soumettre le signalement",
 			sending: "Envoi du rapport...",
 			success: "Rapport envoyé !",
 			failed: "Échec de l'envoi du rapport",
+			badContent: "Signaler un contenu inapproprié",
+			badContentDescription: "Ensuite, ajoutez des informations concernant votre signalement à",
 		},
 	},
 
