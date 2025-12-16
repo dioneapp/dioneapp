@@ -141,7 +141,7 @@ export default function NetworkShareModal({
 		}
 
 		try {
-			await navigator.clipboard.writeText(urlToCopy);
+			await window.copyToClipboard.writeText(urlToCopy);
 			setCopied(true);
 			setTimeout(() => setCopied(false), 2000);
 		} catch (err) {
@@ -189,11 +189,10 @@ export default function NetworkShareModal({
 										if (tunnelInfo) stopActiveTunnel();
 										setShareMode("local");
 									}}
-									className={`px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
-										shareMode === "local"
-											? "bg-white text-black shadow-sm"
-											: "text-neutral-400 hover:text-neutral-200"
-									}`}
+									className={`px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${shareMode === "local"
+										? "bg-white text-black shadow-sm"
+										: "text-neutral-400 hover:text-neutral-200"
+										}`}
 								>
 									{t("networkShare.modes.local")}
 								</button>
@@ -207,11 +206,10 @@ export default function NetworkShareModal({
 										}
 									}}
 									disabled={startingTunnel}
-									className={`px-4 py-2.5 cursor-pointer rounded-md text-sm font-medium transition-all duration-200 ${
-										shareMode === "public"
-											? "bg-white text-black shadow-sm"
-											: "text-neutral-400 hover:text-neutral-200"
-									} ${startingTunnel ? "opacity-50 cursor-not-allowed" : ""}`}
+									className={`px-4 py-2.5 cursor-pointer rounded-md text-sm font-medium transition-all duration-200 ${shareMode === "public"
+										? "bg-white text-black shadow-sm"
+										: "text-neutral-400 hover:text-neutral-200"
+										} ${startingTunnel ? "opacity-50 cursor-not-allowed" : ""}`}
 								>
 									{t("networkShare.modes.public")}
 								</button>
@@ -352,9 +350,7 @@ export default function NetworkShareModal({
 																<button
 																	type="button"
 																	onClick={() => {
-																		navigator.clipboard.writeText(
-																			tunnelInfo.password || "",
-																		);
+																		window.copyToClipboard.writeText(tunnelInfo.password || "");
 																		setCopied(true);
 																		setTimeout(() => setCopied(false), 2000);
 																	}}

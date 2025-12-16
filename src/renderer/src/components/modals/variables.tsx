@@ -78,8 +78,8 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 				const err = await res.json().catch(() => null);
 				throw new Error(
 					err?.error ||
-						res.statusText ||
-						t("toastMessages.failedToAddVariable"),
+					res.statusText ||
+					t("toastMessages.failedToAddVariable"),
 				);
 			}
 			showToast("success", t("toastMessages.variableAdded"));
@@ -143,11 +143,11 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 		try {
 			try {
 				window.focus?.();
-			} catch {}
+			} catch { }
 			if (!value) {
 				value = variables;
 			}
-			await navigator.clipboard.writeText(JSON.stringify(value, null, 2));
+			window.copyToClipboard.writeText(JSON.stringify(value, null, 2));
 			showToast("success", t("toastMessages.copiedToClipboard"));
 			setCopied({ [key]: true });
 			setTimeout(() => setCopied({ [key]: false }), 1000);
@@ -204,14 +204,14 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 	// filtered search
 	const filteredVariables = searchTerm
 		? Object.fromEntries(
-				Object.entries(variables).filter(
-					([key, value]) =>
-						key.toLowerCase().includes(searchTerm.toLowerCase()) ||
-						JSON.stringify(value)
-							.toLowerCase()
-							.includes(searchTerm.toLowerCase()),
-				),
-			)
+			Object.entries(variables).filter(
+				([key, value]) =>
+					key.toLowerCase().includes(searchTerm.toLowerCase()) ||
+					JSON.stringify(value)
+						.toLowerCase()
+						.includes(searchTerm.toLowerCase()),
+			),
+		)
 		: variables;
 
 	const renderVariableValue = (key: string, value: any) => {

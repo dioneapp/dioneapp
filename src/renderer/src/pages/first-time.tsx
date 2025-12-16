@@ -37,7 +37,7 @@ export default function FirstTime() {
 	};
 
 	const copyToClipboard = () => {
-		navigator.clipboard.writeText("https://getdione.app/auth/login?app=true");
+		window.copyToClipboard.writeText("https://getdione.app/auth/login?app=true");
 		showToast("success", t("firstTime.clipboard.success"));
 	};
 

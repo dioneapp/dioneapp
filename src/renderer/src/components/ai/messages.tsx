@@ -111,10 +111,9 @@ export default function Messages({
 										const CodeBlockWithCopy = () => {
 											const [copied, setCopied] = useState(false);
 											const handleCopy = () => {
-												navigator.clipboard.writeText(codeText).then(() => {
-													setCopied(true);
-													setTimeout(() => setCopied(false), 1500);
-												});
+												window.copyToClipboard.writeText(codeText);
+												setCopied(true);
+												setTimeout(() => setCopied(false), 1500);
 											};
 											return (
 												<div className="relative group rounded-lg overflow-hidden text-wrap break-all">

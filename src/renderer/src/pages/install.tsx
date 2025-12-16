@@ -619,7 +619,7 @@ export default function Install({
 	const copyLogsToClipboard = () => {
 		showToast("success", t("toast.install.success.logsCopied"));
 		const logsText = getAllAppLogs().join("\n");
-		navigator.clipboard.writeText(logsText);
+		window.copyToClipboard.writeText(logsText);
 	};
 
 	const handleDownload = async () => {
@@ -764,7 +764,7 @@ export default function Install({
 				app_name: data?.name,
 			});
 		}
-		navigator.clipboard.writeText(`dione://download=${data?.id}`);
+		window.copyToClipboard.writeText(`dione://download=${data?.id}`);
 		showToast("success", t("toast.install.success.shared"));
 	}
 

@@ -1,5 +1,5 @@
 import { electronAPI } from "@electron-toolkit/preload";
-import { contextBridge } from "electron";
+import { clipboard, contextBridge } from "electron";
 
 // Custom APIs for renderer
 const api = {
@@ -42,6 +42,9 @@ if (process.contextIsolated) {
 		contextBridge.exposeInMainWorld("api", api);
 		contextBridge.exposeInMainWorld("captureScreenshot", () => {
 			return electronAPI.ipcRenderer.invoke("capture-screenshot");
+		});
+		contextBridge.exposeInMainWorld("copyToClipboard", {
+			writeText: (text: string) => clipboard.writeText(text),
 		});
 	} catch (error) {
 		console.error(error);

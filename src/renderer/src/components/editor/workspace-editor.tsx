@@ -49,18 +49,18 @@ const initialContextMenuState: ContextMenuState = {
 
 type EntryDialogState =
 	| {
-			mode: "create";
-			entryType: "file" | "directory";
-			parentPath: string;
-			initialName: string;
-	  }
+		mode: "create";
+		entryType: "file" | "directory";
+		parentPath: string;
+		initialName: string;
+	}
 	| {
-			mode: "rename";
-			targetPath: string;
-			targetType: "file" | "directory";
-			parentPath: string;
-			initialName: string;
-	  };
+		mode: "rename";
+		targetPath: string;
+		targetType: "file" | "directory";
+		parentPath: string;
+		initialName: string;
+	};
 
 export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 	const { showToast, isServerRunning } = useScriptsContext();
@@ -579,7 +579,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 	const handleCopyNodePath = useCallback(
 		async (node: FileNode) => {
 			try {
-				await navigator.clipboard.writeText(node.absolutePath);
+				window.copyToClipboard.writeText(node.absolutePath);
 				showToast("success", "Path copied to clipboard");
 			} catch (error) {
 				showToast("error", "Failed to copy path");
