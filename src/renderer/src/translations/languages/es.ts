@@ -72,7 +72,8 @@ export const es = {
 			success: "¡Informe enviado!",
 			failed: "No se pudo enviar el informe",
 			badContent: "Informar contenido inapropiado",
-			badContentDescription: "A continuación, agregue información sobre su informe a",
+			badContentDescription:
+				"A continuación, agregue información sobre su informe a",
 		},
 	},
 

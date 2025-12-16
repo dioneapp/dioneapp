@@ -8,10 +8,10 @@ import databaseRouter from "@/server/routes/database";
 import { createDependenciesRouter } from "@/server/routes/dependencies";
 import filesRouter from "@/server/routes/files";
 import { createLocalScriptsRouter } from "@/server/routes/local";
+import reportRouter from "@/server/routes/report";
 import { createScriptRouter } from "@/server/routes/scripts";
 import searchBarRouter from "@/server/routes/searchbar";
 import { createVariablesRouter } from "@/server/routes/variables";
-import reportRouter from "@/server/routes/report";
 
 export const setupRoutes = (server: Express, io: Server) => {
 	server.get("/", (_req, res) => {

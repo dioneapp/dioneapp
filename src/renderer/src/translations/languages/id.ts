@@ -72,7 +72,8 @@ export const id = {
 			success: "Laporan terkirim!",
 			failed: "Gagal mengirim laporan",
 			badContent: "Laporkan konten yang tidak pantas",
-			badContentDescription: "Selanjutnya, tambahkan informasi tentang laporan Anda ke"
+			badContentDescription:
+				"Selanjutnya, tambahkan informasi tentang laporan Anda ke",
 		},
 	},
 
