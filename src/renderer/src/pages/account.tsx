@@ -2,8 +2,14 @@ import { StatCard } from "@/components/account/stat-card";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
+import {
+	CalendarBlankIcon,
+	ClockIcon,
+	FireIcon,
+	ShareNetworkIcon,
+	SignOutIcon,
+} from "@phosphor-icons/react";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Flame, LogOut, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function Account() {
@@ -141,7 +147,7 @@ export default function Account() {
 													title={t("account.stats.timeSpent.title")}
 													subtitle={t("account.stats.timeSpent.subtitle")}
 													value={formatTimeSpent(hoursInApp)}
-													icon={Clock}
+													icon={ClockIcon}
 													className="col-span-2 sm:col-span-1 md:col-span-2 "
 												/>
 												{/* Sessions and apps shared */}
@@ -150,13 +156,13 @@ export default function Account() {
 														title={t("account.stats.sessions.title")}
 														subtitle={t("account.stats.sessions.subtitle")}
 														value={data.sessions.length}
-														icon={Calendar}
+														icon={CalendarBlankIcon}
 													/>
 													<StatCard
 														title={t("account.stats.shared.title")}
 														subtitle={t("account.stats.shared.subtitle")}
 														value={data.shared.length}
-														icon={Share2}
+														icon={ShareNetworkIcon}
 													/>
 												</div>
 												{/* Consecutive days */}
@@ -164,7 +170,7 @@ export default function Account() {
 													title={t("account.stats.streak.title")}
 													subtitle={t("account.stats.streak.subtitle")}
 													value={consecutiveDays}
-													icon={Flame}
+													icon={FireIcon}
 													className="col-span-2 sm:col-span-1 md:col-span-full"
 													isStreak
 													streakDays={consecutiveDays}
@@ -200,7 +206,7 @@ const LogoutButton = ({ logout }: { logout: () => void }) => {
 				onClick={logout}
 				className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 rounded-lg transition-all duration-300 text-red-400 hover:text-red-300 backdrop-blur-sm cursor-pointer"
 			>
-				<LogOut className="w-4 h-4" />
+				<SignOutIcon weight="bold" className="w-4 h-4" />
 				<span className="text-sm font-medium">{t("account.logout")}</span>
 			</motion.button>
 		</motion.div>

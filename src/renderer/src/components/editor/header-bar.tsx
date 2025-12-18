@@ -1,12 +1,12 @@
 import type { FileNode } from "@/components/editor/utils/types";
 import { useTranslation } from "@/translations/translation-context";
 import {
-	ArrowLeft,
-	ExternalLink,
-	Loader2,
-	RefreshCcw,
-	Save,
-} from "lucide-react";
+	ArrowCounterClockwiseIcon,
+	ArrowLeftIcon,
+	ArrowSquareOutIcon,
+	CircleNotchIcon,
+	FloppyDiskIcon,
+} from "@phosphor-icons/react";
 
 interface HeaderBarProps {
 	rootPath: string;
@@ -48,7 +48,7 @@ const HeaderBar = ({
 					className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
 					title={t("headerBar.back")}
 				>
-					<ArrowLeft className="w-4 h-4" />
+					<ArrowLeftIcon weight="bold" className="w-4 h-4" />
 					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 						{t("headerBar.back")}
 					</div>
@@ -60,7 +60,7 @@ const HeaderBar = ({
 					className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
 					title={t("headerBar.openInExplorer")}
 				>
-					<ExternalLink className="w-4 h-4" />
+					<ArrowSquareOutIcon weight="bold" className="w-4 h-4" />
 					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 						{t("headerBar.openInExplorer")}
 					</div>
@@ -72,7 +72,7 @@ const HeaderBar = ({
 					className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
 					title={t("headerBar.reload")}
 				>
-					<RefreshCcw className="w-4 h-4" />
+					<ArrowCounterClockwiseIcon weight="bold" className="w-4 h-4" />
 					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 						{t("headerBar.reload")}
 					</div>
@@ -96,9 +96,12 @@ const HeaderBar = ({
 						{t("headerBar.save")}
 					</div>
 					{isSaving ? (
-						<Loader2 className="w-4 h-4 animate-spin text-black" />
+						<CircleNotchIcon
+							weight="bold"
+							className="w-4 h-4 animate-spin text-black"
+						/>
 					) : (
-						<Save className="w-4 h-4 text-black" />
+						<FloppyDiskIcon weight="bold" className="w-4 h-4 text-black" />
 					)}
 				</button>
 			</div>

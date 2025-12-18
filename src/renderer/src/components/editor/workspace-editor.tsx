@@ -29,7 +29,11 @@ import {
 } from "@/components/editor/utils/utils";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
-import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
+import {
+	CircleNotchIcon,
+	FilePlusIcon,
+	FolderSimplePlusIcon,
+} from "@phosphor-icons/react";
 import {
 	type KeyboardEvent,
 	type MouseEvent,
@@ -1019,7 +1023,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 									className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
 									title={t("workspaceEditor.newFile")}
 								>
-									<FilePlus className="h-3.5 w-3.5" />
+									<FilePlusIcon className="h-3.5 w-3.5" />
 								</button>
 								<button
 									type="button"
@@ -1029,10 +1033,10 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 									className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
 									title={t("workspaceEditor.newFolder")}
 								>
-									<FolderPlus className="h-3.5 w-3.5" />
+									<FolderSimplePlusIcon className="h-3.5 w-3.5" />
 								</button>
 								{isLoadingTree && (
-									<Loader2 className="h-3 w-3 animate-spin text-neutral-300" />
+									<CircleNotchIcon className="h-3 w-3 animate-spin text-neutral-300" />
 								)}
 							</div>
 						</div>
@@ -1079,7 +1083,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 							/>
 						) : workspaceError ? (
 							<div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-neutral-300">
-								<FolderPlus className="h-8 w-8 text-neutral-500" />
+								<FolderSimplePlusIcon className="h-8 w-8 text-neutral-500" />
 								<span>{workspaceError}</span>
 								<button
 									type="button"

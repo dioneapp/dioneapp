@@ -1,11 +1,11 @@
 import {
-	ArrowRight,
-	ChevronLeft,
-	Cpu,
-	Loader2,
-	ShieldCheck,
-	Sparkles,
-} from "lucide-react";
+	ArrowRightIcon,
+	CaretLeftIcon,
+	CpuIcon,
+	ShieldCheckIcon,
+	SparkleIcon,
+	SpinnerGapIcon,
+} from "@phosphor-icons/react";
 import type { Dispatch, SetStateAction } from "react";
 import ProgressBar from "../common/progress-bar";
 import Icon from "../icons/icon";
@@ -57,7 +57,7 @@ export function InstallAIModal({
 								</div>
 								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
 									<div className="flex flex-col items-center text-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-										<Sparkles
+										<SparkleIcon
 											className="w-6 h-6 mb-1"
 											style={{ color: "var(--theme-accent)" }}
 										/>
@@ -69,7 +69,7 @@ export function InstallAIModal({
 										</p>
 									</div>
 									<div className="flex flex-col items-center text-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-										<Cpu
+										<CpuIcon
 											className="w-6 h-6 mb-1"
 											style={{ color: "var(--theme-accent)" }}
 										/>
@@ -81,7 +81,7 @@ export function InstallAIModal({
 										</p>
 									</div>
 									<div className="flex flex-col items-center text-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
-										<ShieldCheck
+										<ShieldCheckIcon
 											className="w-6 h-6 mb-1"
 											style={{ color: "var(--theme-accent)" }}
 										/>
@@ -142,7 +142,7 @@ export function InstallAIModal({
 									installStep === 1 ? "opacity-0 pointer-events-none" : ""
 								}`}
 							>
-								<ChevronLeft className="w-4 h-4" />
+								<CaretLeftIcon className="w-4 h-4" />
 								Back
 							</button>
 
@@ -152,7 +152,7 @@ export function InstallAIModal({
 									className="flex items-center justify-center border border-white/10 rounded-xl px-6 py-2 font-medium text-black cursor-pointer hover:bg-white/90 transition-all text-sm bg-white gap-2 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)]"
 								>
 									Next
-									<ArrowRight className="w-4 h-4" />
+									<ArrowRightIcon weight="bold" className="w-4 h-4" />
 								</button>
 							) : (
 								<button
@@ -167,9 +167,12 @@ export function InstallAIModal({
 										? "Installing..."
 										: "Install Now"}
 									{ollamaStatus === "installing" ? (
-										<Loader2 className="w-4 h-4 animate-spin" />
+										<SpinnerGapIcon
+											weight="bold"
+											className="w-4 h-4 animate-spin"
+										/>
 									) : (
-										<ArrowRight className="w-4 h-4" />
+										<ArrowRightIcon weight="bold" className="w-4 h-4" />
 									)}
 								</button>
 							)}

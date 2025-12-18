@@ -6,8 +6,15 @@ import QuickLaunch from "@/components/layout/quick-launch";
 import { useTranslation } from "@/translations/translation-context";
 import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
+import {
+	BooksIcon,
+	CameraIcon,
+	ClockIcon,
+	GearIcon,
+	UserIcon,
+	XIcon,
+} from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Camera, Clock, Library, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -137,7 +144,7 @@ export default function Sidebar() {
 												{releaseNotes.name}
 											</h3>
 											<span className="flex items-center gap-1 bg-white/10 rounded-full px-3 py-1 text-[10px] text-neutral-300">
-												<Clock className="h-3 w-3" />
+												<ClockIcon className="h-3 w-3" />
 												{new Date(releaseNotes.published_at).toLocaleDateString(
 													undefined,
 													{ year: "numeric", month: "short", day: "numeric" },
@@ -273,7 +280,7 @@ export default function Sidebar() {
 														onClick={() => stopApp(app.appId, app.data?.name)}
 														className="absolute -top-1 -right-1 h-5 w-5 bg-red-500/40 hover:bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex items-center justify-center backdrop-blur-sm"
 													>
-														<X className="h-3 w-3 text-white" />
+														<XIcon className="h-3 w-3 text-white" />
 													</button>
 													<Link
 														to={{
@@ -347,7 +354,7 @@ export default function Sidebar() {
 										onMouseEnter={() => setHoveredTooltip("capture")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
-										<Camera className="h-5 w-5" />
+										<CameraIcon className="h-5 w-5" />
 										{hoveredTooltip === "capture" && (
 											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg">
 												{t("sidebar.tooltips.capture")}
@@ -360,7 +367,7 @@ export default function Sidebar() {
 										onMouseEnter={() => setHoveredTooltip("library")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
-										<Library className="h-5 w-5" />
+										<BooksIcon className="h-5 w-5" />
 										{hoveredTooltip === "library" && (
 											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg">
 												{t("sidebar.tooltips.library")}
@@ -373,7 +380,7 @@ export default function Sidebar() {
 										onMouseEnter={() => setHoveredTooltip("settings")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
-										<Settings className="h-5 w-5" />
+										<GearIcon className="h-5 w-5" />
 										{hoveredTooltip === "settings" && (
 											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg">
 												{t("sidebar.tooltips.settings")}
@@ -403,7 +410,7 @@ export default function Sidebar() {
 											onMouseEnter={() => setHoveredTooltip("account")}
 											onMouseLeave={() => setHoveredTooltip(null)}
 										>
-											<User className="h-5 w-5" />
+											<UserIcon className="h-5 w-5" />
 										</div>
 									) : (
 										<>
@@ -424,7 +431,7 @@ export default function Sidebar() {
 												<span className="h-full w-full flex justify-center items-center border border-white/20 rounded-full bg-white/10">
 													<span>
 														{user?.username.charAt(0).toUpperCase() || (
-															<User className="h-5 w-5" />
+															<UserIcon className="h-5 w-5" />
 														)}
 													</span>
 												</span>
@@ -450,7 +457,7 @@ export default function Sidebar() {
 										onMouseEnter={() => setHoveredTooltip("login")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
-										<User className="h-5 w-5 text-black" />
+										<UserIcon className="h-5 w-5 text-black" />
 										{hoveredTooltip === "login" && (
 											<div
 												className={`${config?.compactMode ? "absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg" : "absolute left-1/2 -translate-x-1/2 top-full z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-lg"}`}
@@ -474,7 +481,7 @@ export default function Sidebar() {
 										onMouseEnter={() => setHoveredTooltip("login")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									>
-										<User className="h-4 w-4" />
+										<UserIcon className="h-4 w-4" />
 									</button>
 								)}
 							</div>
@@ -488,7 +495,7 @@ export default function Sidebar() {
 									onMouseEnter={() => setHoveredTooltip("capture")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
-									<Camera className="h-5 w-5" />
+									<CameraIcon className="h-5 w-5" />
 									{hoveredTooltip === "capture" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 											{t("sidebar.tooltips.capture")}
@@ -501,7 +508,7 @@ export default function Sidebar() {
 									onMouseEnter={() => setHoveredTooltip("library")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
-									<Library className="h-5 w-5" />
+									<BooksIcon className="h-5 w-5" />
 									{hoveredTooltip === "library" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 											{t("sidebar.tooltips.library")}
@@ -514,7 +521,7 @@ export default function Sidebar() {
 									onMouseEnter={() => setHoveredTooltip("settings")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
-									<Settings className="h-5 w-5" />
+									<GearIcon className="h-5 w-5" />
 									{hoveredTooltip === "settings" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-lg">
 											{t("sidebar.tooltips.settings")}

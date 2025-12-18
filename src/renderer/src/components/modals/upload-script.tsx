@@ -1,6 +1,6 @@
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
-import { FileText, X } from "lucide-react";
+import { FileTextIcon, XIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 
 export default function UploadModal({ onClose }: { onClose: () => void }) {
@@ -75,7 +75,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 						className="cursor-pointer z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors duration-200"
 						onClick={onClose}
 					>
-						<X className="h-4 w-4" />
+						<XIcon className="h-4 w-4" />
 					</button>
 				</div>
 				<div className="pt-6 w-full h-full flex flex-col relative z-20">
@@ -96,7 +96,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 								</div>
 							) : (
 								<div className="text-center">
-									<FileText className="h-8 w-8 mx-auto mb-3 text-white/60" />
+									<FileTextIcon className="h-8 w-8 mx-auto mb-3 text-white/60" />
 									<div className="text-white mb-1">
 										{t("local.uploadModal.selectFile")}
 									</div>

@@ -1,6 +1,11 @@
 import type { ContextMenuState } from "@/components/editor/utils/types";
 import { useTranslation } from "@/translations/translation-context";
-import { Copy, ExternalLink, Pencil, RefreshCcw } from "lucide-react";
+import {
+	ArrowCounterClockwiseIcon,
+	ArrowSquareOutIcon,
+	CopyIcon,
+	PencilSimpleIcon,
+} from "@phosphor-icons/react";
 import type { MouseEvent } from "react";
 import { createPortal } from "react-dom";
 
@@ -53,7 +58,7 @@ const ContextMenu = ({
 				className="flex w-full items-center gap-2 rounded px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
 				onClick={(event) => handleClick(event, onCopyPath)}
 			>
-				<Copy className="h-4 w-4" />
+				<CopyIcon className="h-4 w-4" />
 				<span>{t("contextMenu.copyPath")}</span>
 			</button>
 
@@ -63,7 +68,7 @@ const ContextMenu = ({
 					className="flex w-full items-center gap-2 rounded px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
 					onClick={(event) => handleClick(event, onOpenFolder)}
 				>
-					<ExternalLink className="h-4 w-4" />
+					<ArrowSquareOutIcon className="h-4 w-4" />
 					<span>{t("contextMenu.open")}</span>
 				</button>
 			) : (
@@ -72,7 +77,7 @@ const ContextMenu = ({
 					className="flex w-full items-center gap-2 rounded px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
 					onClick={(event) => handleClick(event, onReloadFile)}
 				>
-					<RefreshCcw className="h-4 w-4" />
+					<ArrowCounterClockwiseIcon className="h-4 w-4" />
 					<span>{t("contextMenu.reload")}</span>
 				</button>
 			)}
@@ -82,7 +87,7 @@ const ContextMenu = ({
 				className="flex w-full items-center gap-2 rounded px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
 				onClick={(event) => handleClick(event, onRename)}
 			>
-				<Pencil className="h-4 w-4" />
+				<PencilSimpleIcon className="h-4 w-4" />
 				<span>{t("contextMenu.rename")}</span>
 			</button>
 

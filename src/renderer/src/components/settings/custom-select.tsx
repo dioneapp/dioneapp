@@ -1,5 +1,5 @@
+import { CaretDownIcon } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface CustomSelectProps {
@@ -54,7 +54,7 @@ export default function CustomSelect({
 					transition={{ duration: 0.15 }}
 					className="ml-2"
 				>
-					<ChevronDown className="w-4 h-4" />
+					<CaretDownIcon weight="bold" className="w-4 h-4" />
 				</motion.div>
 			</button>
 

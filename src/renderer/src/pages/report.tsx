@@ -1,6 +1,10 @@
 import { useTranslation } from "@/translations/translation-context";
 import { sendDiscordReport } from "@/utils/discord-webhook";
-import { CheckCircle, Loader2, XCircle } from "lucide-react";
+import {
+	CheckCircleIcon,
+	CircleNotchIcon,
+	XCircleIcon,
+} from "@phosphor-icons/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -104,13 +108,13 @@ export default function ReportPage() {
 					<div className="flex items-center justify-end">
 						{submitStatus === "success" && (
 							<p className="text-green-500 flex items-center mr-4">
-								<CheckCircle className="w-5 h-5 mr-2" />
+								<CheckCircleIcon weight="bold" className="w-5 h-5 mr-2" />
 								{t("report.success")}
 							</p>
 						)}
 						{submitStatus === "error" && (
 							<p className="text-red-500 flex items-center mr-4">
-								<XCircle className="w-5 h-5 mr-2" />
+								<XCircleIcon weight="bold" className="w-5 h-5 mr-2" />
 								{t("report.error")}
 							</p>
 						)}
@@ -122,7 +126,10 @@ export default function ReportPage() {
 							>
 								{isSubmitting ? (
 									<span className="flex items-center">
-										<Loader2 className="w-5 h-5 mr-2 animate-spin" />
+										<CircleNotchIcon
+											weight="bold"
+											className="w-5 h-5 mr-2 animate-spin"
+										/>
 										{t("report.sending")}
 									</span>
 								) : (

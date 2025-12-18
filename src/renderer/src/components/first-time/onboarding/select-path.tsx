@@ -1,6 +1,6 @@
 import { useTranslation } from "@/translations/translation-context";
+import { FolderSimpleIcon } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FolderOpen } from "lucide-react";
 import { useState } from "react";
 
 export default function SelectPath({ onFinish }: { onFinish: () => void }) {
@@ -117,7 +117,7 @@ export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 										{selectedPath ? (
 											<>
 												<div className="mb-2 group-hover:scale-110 transition-transform duration-300">
-													<FolderOpen
+													<FolderSimpleIcon
 														className="w-8 h-8"
 														style={{ color: "var(--theme-accent)" }}
 													/>
@@ -134,7 +134,7 @@ export default function SelectPath({ onFinish }: { onFinish: () => void }) {
 										) : (
 											<>
 												<div className="mb-3 group-hover:scale-110 transition-transform duration-300">
-													<FolderOpen
+													<FolderSimpleIcon
 														className="w-12 h-12"
 														style={{ color: "var(--theme-accent)" }}
 													/>

@@ -1,5 +1,4 @@
-import { Loader2 } from "lucide-react";
-
+import { CircleNotchIcon } from "@phosphor-icons/react";
 export default function Loading() {
 	return (
 		<div className="h-full w-full relative overflow-hidden">
@@ -14,7 +13,7 @@ export default function Loading() {
 			{/* main loading content */}
 			<div className="flex flex-col items-center justify-center h-full w-full py-12">
 				<div className="flex flex-col items-center justify-center h-full w-full">
-					<Loader2 className="h-80 w-80 animate-spin" />
+					<CircleNotchIcon weight="bold" className="h-80 w-80 animate-spin" />
 					<div className="loader w-40">
 						<div className="loaderBar" />
 					</div>

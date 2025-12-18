@@ -1,7 +1,11 @@
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useTranslation } from "@/translations/translation-context";
+import {
+	CheckCircleIcon,
+	CircleNotchIcon,
+	XCircleIcon,
+} from "@phosphor-icons/react";
 import { motion } from "framer-motion";
-import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export default function DeleteLoadingModal({
@@ -57,11 +61,11 @@ export default function DeleteLoadingModal({
 				onClick={onClose}
 				className="absolute top-16 right-16 cursor-pointer"
 			>
-				<X className="h-8 w-8" />
+				<XIcon className="h-8 w-8" />
 			</button> */}
 			{status === "deleting" || status === "deleting_deps" ? (
 				<div className="flex flex-col gap-14 items-center">
-					<Loader2 className="h-24 w-24 animate-spin" />
+					<CircleNotchIcon className="h-24 w-24 animate-spin" />
 					<h1 className="font-medium text-3xl flex flex-col gap-2">
 						{t("deleteLoading.uninstalling.title")}
 						<span className="text-neutral-400 text-sm text-center">
@@ -80,7 +84,7 @@ export default function DeleteLoadingModal({
 				</div>
 			) : status === "deleted" ? (
 				<div className="flex flex-col gap-2 items-center">
-					<CheckCircle className="h-24 w-24 text-green-500" />
+					<CheckCircleIcon className="h-24 w-24 text-green-500" />
 					<h1 className="font-medium text-3xl mt-12">
 						{t("deleteLoading.success.title")}{" "}
 						<span className="text-green-500">
@@ -97,7 +101,7 @@ export default function DeleteLoadingModal({
 				</div>
 			) : status?.startsWith("error") ? (
 				<div className="flex flex-col gap-2 items-center">
-					<XCircle className="h-24 w-24 text-red-500" />
+					<XCircleIcon className="h-24 w-24 text-red-500" />
 					<h1 className="font-medium text-3xl mt-10">
 						{t("deleteLoading.error.title")}{" "}
 						<span className="text-red-500">
@@ -113,7 +117,7 @@ export default function DeleteLoadingModal({
 				</div>
 			) : (
 				<div className="flex flex-col gap-2 items-center">
-					<Loader2 className="h-24 w-24 animate-spin" />
+					<CircleNotchIcon className="h-24 w-24 animate-spin" />
 					<h1 className="font-medium text-3xl mt-10 text-neutral-300">
 						{t("deleteLoading.loading.title")}
 					</h1>

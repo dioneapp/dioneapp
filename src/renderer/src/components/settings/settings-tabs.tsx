@@ -1,13 +1,14 @@
 import { useTranslation } from "@/translations/translation-context";
-import { motion } from "framer-motion";
+import type { Icon } from "@phosphor-icons/react";
 import {
-	Bell,
-	type LucideIcon,
-	Package,
-	Palette,
-	Settings2,
-	Shield,
-} from "lucide-react";
+	BellIcon,
+	PackageIcon,
+	PaletteIcon,
+	ShieldIcon,
+	SlidersHorizontalIcon,
+} from "@phosphor-icons/react";
+import { motion } from "framer-motion";
+import { useMemo } from "react";
 
 export type TabType =
 	| "applications"
@@ -19,7 +20,7 @@ export type TabType =
 interface Tab {
 	id: TabType;
 	label: string;
-	icon: LucideIcon;
+	icon: Icon;
 }
 
 interface SettingsTabsProps {
@@ -33,21 +34,32 @@ export default function SettingsTabs({
 }: SettingsTabsProps) {
 	const { t } = useTranslation();
 
-	const tabs: Tab[] = [
-		{
-			id: "applications",
-			label: t("settings.applications.title"),
-			icon: Package,
-		},
-		{ id: "interface", label: t("settings.interface.title"), icon: Palette },
-		{
-			id: "notifications",
-			label: t("settings.notifications.title"),
-			icon: Bell,
-		},
-		{ id: "privacy", label: t("settings.privacy.title"), icon: Shield },
-		{ id: "other", label: t("settings.other.title"), icon: Settings2 },
-	];
+	const tabs: Tab[] = useMemo(
+		() => [
+			{
+				id: "applications",
+				label: t("settings.applications.title"),
+				icon: PackageIcon,
+			},
+			{
+				id: "interface",
+				label: t("settings.interface.title"),
+				icon: PaletteIcon,
+			},
+			{
+				id: "notifications",
+				label: t("settings.notifications.title"),
+				icon: BellIcon,
+			},
+			{ id: "privacy", label: t("settings.privacy.title"), icon: ShieldIcon },
+			{
+				id: "other",
+				label: t("settings.other.title"),
+				icon: SlidersHorizontalIcon,
+			},
+		],
+		[t],
+	);
 
 	return (
 		<div className="border border-white/10 bg-white/5 backdrop-blur-sm rounded-xl p-1.5 flex gap-2 overflow-x-auto">

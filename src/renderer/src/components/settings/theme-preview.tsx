@@ -1,5 +1,5 @@
 import { type Theme, themes } from "@/utils/theme";
-import { Check } from "lucide-react";
+import { CheckIcon } from "@phosphor-icons/react";
 
 interface ThemePreviewProps {
 	theme: Theme;
@@ -36,7 +36,10 @@ export default function ThemePreview({
 				>
 					{isActive && (
 						<div className="absolute inset-0 flex items-center justify-center bg-black/20">
-							<Check className="w-6 h-6 text-white drop-shadow-lg" />
+							<CheckIcon
+								weight="bold"
+								className="w-6 h-6 text-white drop-shadow-lg"
+							/>
 						</div>
 					)}
 				</div>

@@ -1,7 +1,12 @@
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
-import { Maximize, Minimize as Minimize2, Minus, X } from "lucide-react";
+import {
+	CornersInIcon,
+	CornersOutIcon,
+	MinusIcon,
+	XIcon,
+} from "@phosphor-icons/react";
 import { useState } from "react";
 
 export default function Titlebar() {
@@ -67,7 +72,7 @@ export default function Titlebar() {
 							onClick={handleMinimize}
 							className="cursor-pointer p-1 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
 						>
-							<Minus className="h-5 w-5" />
+							<MinusIcon className="h-5 w-5" />
 						</button>
 						<div id="no-draggable">
 							<button
@@ -77,9 +82,9 @@ export default function Titlebar() {
 								className="cursor-pointer p-1.5 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
 							>
 								{isMaximized ? (
-									<Minimize2 className="h-4 w-4" />
+									<CornersInIcon className="h-5 w-5" />
 								) : (
-									<Maximize className="h-4 w-4" />
+									<CornersOutIcon className="h-5 w-5" />
 								)}
 							</button>
 						</div>
@@ -89,7 +94,7 @@ export default function Titlebar() {
 							onClick={handleClose}
 							className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-all duration-200 text-white/70"
 						>
-							<X className="h-5 w-5" />
+							<XIcon className="h-5 w-5" />
 						</button>
 					</div>
 				</div>

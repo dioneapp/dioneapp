@@ -1,4 +1,4 @@
-import { Folder } from "lucide-react";
+import { FolderSimpleIcon } from "@phosphor-icons/react";
 
 interface CustomInputProps {
 	value: string;
@@ -13,7 +13,9 @@ export default function CustomInput({
 	onChange,
 	onClick,
 	onClickIcon = () => {},
-	icon = <Folder className="w-4 h-4 text-neutral-300" />,
+	icon = (
+		<FolderSimpleIcon weight="bold" className="w-4 h-4 text-neutral-300" />
+	),
 }: CustomInputProps) {
 	return (
 		<div className="flex gap-2 items-center justify-end w-full">

@@ -1,5 +1,9 @@
 import { useTranslation } from "@/translations/translation-context";
-import { ArrowLeft, Bookmark, Share2 } from "lucide-react";
+import {
+	ArrowLeftIcon,
+	BookmarkSimpleIcon,
+	ShareNetworkIcon,
+} from "@phosphor-icons/react";
 import { useNavigate } from "react-router-dom";
 
 export default function Buttons({
@@ -27,7 +31,7 @@ export default function Buttons({
 					onClick={() => navigate(-1)}
 					className="flex items-center gap-2 px-4 py-1.5 border border-white/10 hover:bg-white/10 transition-colors duration-300 rounded-full text-neutral-300 cursor-pointer"
 				>
-					<ArrowLeft className="h-4 w-4" />
+					<ArrowLeftIcon className="h-4 w-4" />
 					<span className="text-xs font-semibold">{t("common.back")}</span>
 				</button>
 			</div>
@@ -40,7 +44,7 @@ export default function Buttons({
 						onClick={() => handleShare()}
 						className="p-2 border border-white/10 hover:bg-white/10 transition-colors duration-300 rounded-full text-neutral-300 cursor-pointer"
 					>
-						<Share2 className="h-4 w-4" />
+						<ShareNetworkIcon className="h-4 w-4" />
 					</button>
 					<button
 						type="button"
@@ -60,9 +64,10 @@ export default function Buttons({
 								: {}
 						}
 					>
-						<Bookmark
+						<BookmarkSimpleIcon
 							className="h-4 w-4"
-							style={saved ? { fill: "var(--theme-accent)" } : {}}
+							weight={saved ? "fill" : "regular"}
+							style={saved ? { color: "var(--theme-accent)" } : {}}
 						/>
 					</button>
 				</div>

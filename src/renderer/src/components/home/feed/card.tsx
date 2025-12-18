@@ -2,13 +2,13 @@ import type { Script } from "@/components/home/feed/types";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import { useOnlineStatus } from "@/utils/use-online-status";
 import {
-	BadgeCheck,
-	Calendar,
-	Download,
-	GitCompare,
-	Tag,
-	Trash,
-} from "lucide-react";
+	ArrowsLeftRightIcon,
+	CalendarBlankIcon,
+	DownloadSimpleIcon,
+	SealCheckIcon,
+	TagSimpleIcon,
+	TrashIcon,
+} from "@phosphor-icons/react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
 
@@ -87,7 +87,7 @@ function ScriptCard({
 									{script.name}
 								</h2>
 								{script.official && (
-									<BadgeCheck
+									<SealCheckIcon
 										className="h-5 w-5 shrink-0"
 										style={{ color: "var(--theme-accent)" }}
 									/>
@@ -109,7 +109,7 @@ function ScriptCard({
 								type="button"
 								className="opacity-0 group-hover:opacity-100 cursor-pointer hover:bg-red-500/20 bg-white/5 border border-white/10 hover:border-red-500/30 rounded-lg p-2 transition-all duration-300 text-neutral-400 hover:text-red-400"
 							>
-								<Trash className="h-3.5 w-3.5" />
+								<TrashIcon className="h-3.5 w-3.5" />
 							</button>
 						</div>
 					)}
@@ -119,25 +119,26 @@ function ScriptCard({
 						<div className="flex items-center gap-2 flex-1 flex-wrap">
 							{script.created_at && (
 								<span className="text-[10px] text-neutral-400 bg-white/5 rounded-full px-2.5 py-1 border border-white/10 flex items-center justify-center my-auto gap-1 transition-all duration-300">
-									<Calendar className="inline h-3 w-3" />
+									<CalendarBlankIcon className="inline h-3 w-3" />
 									{new Date(script.created_at).toLocaleDateString()}
 								</span>
 							)}
 							{script.downloads !== 0 && script.downloads && (
 								<span className="text-[10px] text-neutral-400 bg-white/5 rounded-full px-2.5 py-1 border border-white/10 flex items-center justify-center my-auto gap-1 transition-all duration-300">
-									<Download className="inline h-3 w-3" />
+									<DownloadSimpleIcon className="inline h-3 w-3" />
 									{script.downloads.toLocaleString()}
 								</span>
 							)}
 							{script.tags && (
 								<span className="text-[10px] text-neutral-400 bg-white/5 rounded-full px-2.5 py-1 border border-white/10 flex items-center justify-center my-auto gap-1 transition-all duration-300">
-									<Tag className="inline h-3 w-3" />
+									<TagSimpleIcon className="inline h-3 w-3" />
 									<span className="capitalize">{script.tags}</span>
 								</span>
 							)}
 							{script.version && (
 								<span className="text-[10px] text-neutral-400 bg-white/5 rounded-full px-2.5 py-1 border border-white/10 flex items-center justify-center my-auto gap-1 transition-all duration-300">
-									<GitCompare className="inline h-3 w-3" />v{script.version}
+									<ArrowsLeftRightIcon className="inline h-3 w-3" />v
+									{script.version}
 								</span>
 							)}
 						</div>

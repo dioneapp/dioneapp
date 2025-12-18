@@ -1,18 +1,18 @@
 import NetworkShareModal from "@/components/modals/network-share";
 import { useTranslation } from "@/translations/translation-context";
-import { motion } from "framer-motion";
 import {
-	Activity,
-	ArrowLeft,
-	Folder,
-	Maximize2,
-	PictureInPicture,
-	RotateCcw,
-	Share2,
-	Square,
-	SquareTerminal,
-	X,
-} from "lucide-react";
+	ArrowCounterClockwiseIcon,
+	ArrowLeftIcon,
+	CornersOutIcon,
+	FolderSimpleIcon,
+	PictureInPictureIcon,
+	PulseIcon,
+	ShareNetworkIcon,
+	SquareIcon,
+	TerminalWindowIcon,
+	XIcon,
+} from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -220,7 +220,7 @@ export default function IframeComponent({
 						onClick={() => navigate("/")}
 						title={t("iframeLabels.back")}
 					>
-						<ArrowLeft className="w-4 h-4" />
+						<ArrowLeftIcon weight="bold" className="w-4 h-4" />
 						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.back")}
 						</div>
@@ -231,7 +231,7 @@ export default function IframeComponent({
 						onClick={() => setShow({ [data.id]: "logs" })}
 						title={t("iframeLabels.logs")}
 					>
-						<SquareTerminal className="w-4 h-4" />
+						<TerminalWindowIcon weight="bold" className="w-4 h-4" />
 						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.logs")}
 						</div>
@@ -242,7 +242,7 @@ export default function IframeComponent({
 						className="p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl cursor-pointer relative group"
 						title={t("iframe.openFolder")}
 					>
-						<Folder className="w-4 h-4" />
+						<FolderSimpleIcon weight="bold" className="w-4 h-4" />
 						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.openFolder")}
 						</div>
@@ -253,7 +253,7 @@ export default function IframeComponent({
 						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
 						title={t("iframeActions.shareOnNetwork")}
 					>
-						<Share2 className="w-4 h-4" />
+						<ShareNetworkIcon weight="bold" className="w-4 h-4" />
 						{tunnelInfo && (
 							<div
 								className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-neutral-900 animate-pulse"
@@ -292,7 +292,7 @@ export default function IframeComponent({
 						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
 						onClick={handleOpenNewWindow}
 					>
-						<PictureInPicture className="w-4 h-4" />
+						<PictureInPictureIcon weight="bold" className="w-4 h-4" />
 						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.openNewWindow")}
 						</div>
@@ -303,7 +303,7 @@ export default function IframeComponent({
 							isFullscreen ? handleExitFullscreen : handleEnterFullscreen
 						}
 					>
-						<Maximize2 className="w-4 h-4" />
+						<CornersOutIcon className="w-4 h-4" />
 						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.fullscreen")}
 						</div>
@@ -313,7 +313,7 @@ export default function IframeComponent({
 						onClick={handleReloadIframe2}
 						title={t("iframe.reload")}
 					>
-						<RotateCcw className="w-4 h-4" />
+						<ArrowCounterClockwiseIcon weight="bold" className="w-4 h-4" />
 						<div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.reload")}
 						</div>
@@ -326,7 +326,7 @@ export default function IframeComponent({
 						<div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.stop")}
 						</div>
-						<Square className="w-4 h-4 text-black" />
+						<SquareIcon weight="bold" className="w-4 h-4 text-black" />
 					</motion.button>
 				</div>
 			</motion.div>
@@ -351,7 +351,7 @@ export default function IframeComponent({
 						onClick={handleExitFullscreen}
 						style={{ zIndex: 9999 }}
 					>
-						<X className="h-4 w-4" />
+						<XIcon className="h-4 w-4" />
 					</button>
 				)}
 
@@ -365,7 +365,7 @@ export default function IframeComponent({
 						type="button"
 						className="flex items-center justify-center w-10 h-10 bg-black/80 hover:bg-black/90 border border-white/20 hover:border-white/30 transition-all duration-200 rounded-full shadow-lg backdrop-blur-sm"
 					>
-						<Activity className="w-4 h-4" />
+						<PulseIcon weight="bold" className="w-4 h-4" />
 					</button>
 					<div className="absolute bottom-full right-0 mb-3 px-3 py-2.5 bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none w-52 backdrop-blur-md border border-white/10">
 						<div className="text-xs font-semibold mb-2.5">

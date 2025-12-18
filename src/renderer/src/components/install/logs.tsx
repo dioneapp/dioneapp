@@ -2,9 +2,13 @@ import ProgressBar from "@/components/common/progress-bar";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import TerminalOutput from "@/components/install/terminal-output";
 import { useTranslation } from "@/translations/translation-context";
+import {
+	ArrowSquareOutIcon,
+	CopyIcon,
+	SquareIcon,
+} from "@phosphor-icons/react";
 
 import { MAX_TERMINAL_LINES } from "@/utils/terminal";
-import { Copy, ExternalLink, Square } from "lucide-react";
 import { useEffect, useMemo } from "react";
 
 interface LogsProps {
@@ -72,7 +76,7 @@ export default function LogsComponent({
 							className="group bg-white hover:bg-white/90 transition-all duration-200 rounded-full px-3 py-2 text-black font-medium text-center cursor-pointer shadow-sm hover:shadow-md flex items-center gap-2"
 							onClick={() => setShow({ [appId]: "iframe" })}
 						>
-							<ExternalLink className="h-4 w-4" />
+							<ArrowSquareOutIcon className="h-4 w-4" />
 							<span className="text-sm">{t("logs.openPreview")}</span>
 						</button>
 					)}
@@ -83,7 +87,7 @@ export default function LogsComponent({
 							onClick={copyLogsToClipboard}
 							title={t("logs.copyLogs")}
 						>
-							<Copy size={14} className="sm:w-4 sm:h-4" />
+							<CopyIcon size={14} className="sm:w-4 sm:h-4" />
 						</button>
 						<button
 							type="button"
@@ -91,7 +95,7 @@ export default function LogsComponent({
 							onClick={handleStop}
 							title={t("logs.stop")}
 						>
-							<Square size={14} className="sm:w-4 sm:h-4" />
+							<SquareIcon size={14} className="sm:w-4 sm:h-4" />
 						</button>
 					</div>
 				</div>

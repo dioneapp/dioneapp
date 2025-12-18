@@ -1,5 +1,5 @@
 import { useTranslation } from "@/translations/translation-context";
-import { X } from "lucide-react";
+import { XIcon } from "@phosphor-icons/react";
 
 export default function DeleteDepsModal({
 	inUseDeps,
@@ -38,7 +38,7 @@ export default function DeleteDepsModal({
 						className="cursor-pointer z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-full"
 						onClick={() => setDeleteDepsModal(false)}
 					>
-						<X className="h-3 w-3" />
+						<XIcon className="h-3 w-3" />
 					</button>
 				</div>
 				<div className="pt-6 w-full h-full flex flex-col">

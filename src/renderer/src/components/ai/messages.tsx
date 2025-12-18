@@ -1,6 +1,6 @@
 import Icon from "@/components/icons/icon";
 import { reportBadContent } from "@/utils/report-bad-content";
-import { Flag, Hammer, LoaderCircle } from "lucide-react";
+import { CircleNotchIcon, FlagIcon, HammerIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -170,7 +170,7 @@ export default function Messages({
 								}`}
 								aria-label="Report bad content"
 							>
-								<Flag className="w-3 h-3" />
+								<FlagIcon weight="bold" className="w-3 h-3" />
 								<span className="inline-block w-[60px]">
 									{reportedMessages.has(index)
 										? "Reported!"
@@ -187,7 +187,10 @@ export default function Messages({
 				<div
 					className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-full w-fit text-neutral-500 p-1 px-2`}
 				>
-					<LoaderCircle className="w-3.5 h-3.5 animate-spin duration-100" />
+					<CircleNotchIcon
+						weight="bold"
+						className="w-3.5 h-3.5 animate-spin duration-100"
+					/>
 					<span>Loading...</span>
 					{messages.length <= 2 && " (first time loading, maybe take a while)"}
 				</div>
@@ -196,7 +199,7 @@ export default function Messages({
 				<div
 					className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-full w-fit text-neutral-500 p-1 px-2`}
 				>
-					<Hammer className="w-3.5 h-3.5 duration-100" />
+					<HammerIcon weight="bold" className="w-3.5 h-3.5 duration-100" />
 					<span>{usingTool.message}...</span>
 				</div>
 			)}

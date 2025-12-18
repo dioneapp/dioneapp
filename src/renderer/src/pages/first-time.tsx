@@ -11,8 +11,8 @@ import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
 import { saveExpiresAt, saveId, saveRefreshToken } from "@/utils/secure-tokens";
 import { useToast } from "@/utils/use-toast";
+import { LinkIcon } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Link as LinkIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 

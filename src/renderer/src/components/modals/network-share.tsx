@@ -1,7 +1,7 @@
 import { useTranslation } from "@/translations/translation-context";
 import { getBackendPort } from "@/utils/api";
+import { CheckIcon, CopyIcon, XIcon } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, Copy, X } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
 
@@ -177,7 +177,7 @@ export default function NetworkShareModal({
 								onClick={onClose}
 								className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
 							>
-								<X className="w-4 h-4 text-neutral-400" />
+								<XIcon weight="bold" className="w-4 h-4 text-neutral-400" />
 							</button>
 						</div>
 
@@ -278,9 +278,15 @@ export default function NetworkShareModal({
 																className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
 															>
 																{copied ? (
-																	<Check className="w-4 h-4 text-green-400" />
+																	<CheckIcon
+																		weight="bold"
+																		className="w-4 h-4 text-green-400"
+																	/>
 																) : (
-																	<Copy className="w-4 h-4 text-neutral-400" />
+																	<CopyIcon
+																		weight="bold"
+																		className="w-4 h-4 text-neutral-400"
+																	/>
 																)}
 															</button>
 														</div>
@@ -330,9 +336,15 @@ export default function NetworkShareModal({
 																className="p-1.5 cursor-pointer hover:bg-white/10 rounded-md transition-colors"
 															>
 																{copied ? (
-																	<Check className="w-4 h-4 text-green-400" />
+																	<CheckIcon
+																		weight="bold"
+																		className="w-4 h-4 text-green-400"
+																	/>
 																) : (
-																	<Copy className="w-4 h-4 text-neutral-400" />
+																	<CopyIcon
+																		weight="bold"
+																		className="w-4 h-4 text-neutral-400"
+																	/>
 																)}
 															</button>
 														</div>
@@ -360,7 +372,10 @@ export default function NetworkShareModal({
 																	}}
 																	className="p-1 cursor-pointer hover:bg-white/10 rounded transition-colors"
 																>
-																	<Copy className="w-3.5 h-3.5 text-purple-300" />
+																	<CopyIcon
+																		weight="bold"
+																		className="w-3.5 h-3.5 text-purple-300"
+																	/>
 																</button>
 															</div>
 															<p className="text-purple-300/60 text-xs">

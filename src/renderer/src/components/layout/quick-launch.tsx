@@ -2,8 +2,8 @@ import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import { useTranslation } from "@/translations/translation-context";
 import { useCustomDrag } from "@/utils/quick-launch/use-custom-drag";
+import { PlusIcon, XIcon } from "@phosphor-icons/react";
 import { AnimatePresence, type Variants, motion } from "framer-motion";
-import { Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -231,7 +231,7 @@ export default function QuickLaunch({
 					}}
 					transition={{ duration: 0.2 }}
 				>
-					<Plus
+					<PlusIcon
 						className="h-10 w-10 transition-colors"
 						style={isHovered ? { color: "var(--theme-accent)" } : {}}
 					/>
@@ -391,7 +391,7 @@ export default function QuickLaunch({
 										type="button"
 										onClick={() => setShowAppList(false)}
 									>
-										<X className="h-3 w-3" />
+										<XIcon className="h-3 w-3" />
 									</button>
 								</div>
 								<div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto mt-4">

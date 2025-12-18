@@ -2,7 +2,12 @@ import Icon from "@/components/icons/icon";
 import { useTranslation } from "@/translations/translation-context";
 import { sendDiscordReport } from "@/utils/discord-webhook";
 import { openLink } from "@/utils/open-link";
-import { CheckCircle, Loader2, TvMinimal, XCircle } from "lucide-react";
+import {
+	CheckCircleIcon,
+	CircleNotchIcon,
+	TelevisionSimpleIcon,
+	XCircleIcon,
+} from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -76,16 +81,28 @@ export default function ErrorPage({ error }: { error?: Error }) {
 								>
 									<span className="text-center py-1">
 										{reportStatus === "pending" && (
-											<Loader2 className="w-5 h-5 animate-spin text-orange-500" />
+											<CircleNotchIcon
+												weight="bold"
+												className="w-5 h-5 animate-spin text-orange-500"
+											/>
 										)}
 										{reportStatus === "success" && (
-											<CheckCircle className="w-5 h-5 text-green-500" />
+											<CheckCircleIcon
+												weight="bold"
+												className="w-5 h-5 text-green-500"
+											/>
 										)}
 										{reportStatus === "error" && (
-											<XCircle className="w-5 h-5 text-red-500" />
+											<XCircleIcon
+												weight="bold"
+												className="w-5 h-5 text-red-500"
+											/>
 										)}
 										{reportStatus === "dev-mode" && (
-											<TvMinimal className="w-5 h-5 text-neutral-300" />
+											<TelevisionSimpleIcon
+												weight="bold"
+												className="w-5 h-5 text-neutral-300"
+											/>
 										)}
 									</span>
 									<span

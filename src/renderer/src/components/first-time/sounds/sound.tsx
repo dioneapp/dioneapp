@@ -1,5 +1,5 @@
 import sound from "@/components/first-time/sounds/intro.mp3";
-import { Volume2, VolumeX } from "lucide-react";
+import { SpeakerHighIcon, SpeakerXIcon } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
 
 const ExecuteSound = ({ firstLaunch }: { firstLaunch: string }) => {
@@ -64,9 +64,9 @@ const ExecuteSound = ({ firstLaunch }: { firstLaunch: string }) => {
 					aria-label={isMuted ? "Unmute sound" : "Mute sound"}
 				>
 					{isMuted ? (
-						<VolumeX className="w-4 h-4 text-white/80" />
+						<SpeakerXIcon weight="bold" className="w-4 h-4 text-white/80" />
 					) : (
-						<Volume2 className="w-4 h-4 text-white/80" />
+						<SpeakerHighIcon weight="bold" className="w-4 h-4 text-white/80" />
 					)}
 				</button>
 			)}

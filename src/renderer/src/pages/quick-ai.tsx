@@ -3,14 +3,14 @@ import Models from "@/components/ai/models";
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useAIContext } from "@/components/contexts/ai-context";
 import { InstallAIModal } from "@/components/modals/install-ai";
-import { motion } from "framer-motion";
 import {
-	ArrowRight,
-	BrushCleaning,
-	CornerLeftDown,
-	Play,
-	Square,
-} from "lucide-react";
+	ArrowElbowLeftDownIcon,
+	ArrowRightIcon,
+	BroomIcon,
+	PlayIcon,
+	SquareIcon,
+} from "@phosphor-icons/react";
+import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 export default function QuickAI() {
@@ -74,13 +74,15 @@ export default function QuickAI() {
 										onClick={() => chat("Open FaceFusion")}
 										className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
 									>
-										"Open FaceFusion" <ArrowRight className="ml-2" size={16} />
+										"Open FaceFusion"{" "}
+										<ArrowRightIcon className="ml-2" size={16} />
 									</li>
 									<li
 										onClick={() => chat("Install Applio")}
 										className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
 									>
-										"Install Applio" <ArrowRight className="ml-2" size={16} />
+										"Install Applio"{" "}
+										<ArrowRightIcon className="ml-2" size={16} />
 									</li>
 									<li
 										onClick={() =>
@@ -89,13 +91,13 @@ export default function QuickAI() {
 										className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
 									>
 										"What is the latest application in Dione?"{" "}
-										<ArrowRight className="ml-2" size={16} />
+										<ArrowRightIcon className="ml-2" size={16} />
 									</li>
 								</ul>
 								{!ollamaRunning && ollamaInstalled && !showModelHub && (
 									<div className="absolute left-9 bottom-45 w-44 p-4 h-12">
 										<div className="w-full h-full flex items-center gap-2 text-neutral-400">
-											<CornerLeftDown size={50} />
+											<ArrowElbowLeftDownIcon size={50} />
 											<span>Click here to start Ollama</span>
 										</div>
 									</div>
@@ -133,9 +135,15 @@ export default function QuickAI() {
 								className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group"
 							>
 								{ollamaRunning && ollamaInstalled ? (
-									<Square className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
+									<SquareIcon
+										weight="bold"
+										className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200"
+									/>
 								) : (
-									<Play className="w-4 h-4 text-neutral-400 group-hover:text-neutral-200" />
+									<PlayIcon
+										weight="bold"
+										className="w-4 h-4 text-neutral-400 group-hover:text-neutral-200"
+									/>
 								)}
 							</button>
 							<button
@@ -143,7 +151,7 @@ export default function QuickAI() {
 								onClick={() => setMessages([])}
 								title="Clear chat"
 							>
-								<BrushCleaning className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
+								<BroomIcon className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
 							</button>
 							<div
 								className="w-fit h-6 flex items-center justify-center"

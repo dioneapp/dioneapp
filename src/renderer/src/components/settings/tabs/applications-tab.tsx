@@ -2,8 +2,8 @@ import { useTranslation } from "@/translations/translation-context";
 import AnimatedCount from "@/utils/animate-count";
 import { openFolder } from "@/utils/open-link";
 import { joinPath } from "@/utils/path";
+import { TrashIcon } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
-import { Trash2 } from "lucide-react";
 import CustomInput from "../custom-input";
 import SettingItem from "../setting-item";
 import ToggleSwitch from "../toggle-switch";
@@ -97,7 +97,7 @@ export default function ApplicationsTab({
 						onClick={handleDeleteCache}
 						disabled={deleteCacheStatus === "deleting"}
 					>
-						<Trash2 className="w-4 h-4" />
+						<TrashIcon className="w-4 h-4" />
 						{deleteCacheStatus === null ? (
 							<span>{t("settings.applications.deleteCache.button")}</span>
 						) : (

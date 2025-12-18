@@ -1,13 +1,14 @@
+import "@/components/editor/markdown-preview.css";
 import { useTranslation } from "@/translations/translation-context";
 import Editor, { loader } from "@monaco-editor/react";
 import {
-	AlertCircle,
-	AlertTriangle,
-	GripVertical,
-	Info,
-	Lightbulb,
-	XCircle,
-} from "lucide-react";
+	DotsSixVerticalIcon,
+	InfoIcon,
+	LightbulbFilamentIcon,
+	WarningCircleIcon,
+	WarningIcon,
+	XCircleIcon,
+} from "@phosphor-icons/react";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -15,7 +16,6 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 import remarkGithubBlockquoteAlert from "remark-github-blockquote-alert";
-import "@/components/editor/markdown-preview.css";
 
 loader.config({ monaco });
 
@@ -180,7 +180,7 @@ const MarkdownEditor = ({
 				onMouseDown={handleMouseDown}
 			>
 				<div className="absolute inset-y-0 flex items-center">
-					<GripVertical className="h-4 w-4 text-neutral-600 transition-colors group-hover:text-neutral-400" />
+					<DotsSixVerticalIcon className="h-4 w-4 text-neutral-600 transition-colors group-hover:text-neutral-400" />
 				</div>
 			</div>
 
@@ -236,11 +236,11 @@ const MarkdownEditor = ({
 
 										if (alertType) {
 											const icons = {
-												note: <Info className="h-4 w-4" />,
-												tip: <Lightbulb className="h-4 w-4" />,
-												important: <AlertCircle className="h-4 w-4" />,
-												warning: <AlertTriangle className="h-4 w-4" />,
-												caution: <XCircle className="h-4 w-4" />,
+												note: <InfoIcon className="h-4 w-4" />,
+												tip: <LightbulbFilamentIcon className="h-4 w-4" />,
+												important: <WarningCircleIcon className="h-4 w-4" />,
+												warning: <WarningIcon className="h-4 w-4" />,
+												caution: <XCircleIcon className="h-4 w-4" />,
 											};
 
 											const styles = {

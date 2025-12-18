@@ -1,5 +1,5 @@
 import { useTranslation } from "@/translations/translation-context";
-import { Gpu, Monitor } from "lucide-react";
+import { CpuIcon, MonitorIcon } from "@phosphor-icons/react";
 
 export default function NotSupported({
 	reasons,
@@ -23,9 +23,15 @@ export default function NotSupported({
 					<div className="flex items-start p-6">
 						<div className="absolute">
 							{reasons[0].includes("gpu") ? (
-								<Gpu className="w-64 h-64 -ml-12 mt-36 opacity-80" />
+								<CpuIcon
+									weight="bold"
+									className="w-64 h-64 -ml-12 mt-36 opacity-80"
+								/>
 							) : (
-								<Monitor className="w-64 h-64 -ml-24 mt-38 opacity-80" />
+								<MonitorIcon
+									weight="bold"
+									className="w-64 h-64 -ml-24 mt-38 opacity-80"
+								/>
 							)}
 						</div>
 						<div className="flex flex-col justify-end ml-auto max-w-xl gap-2 text-right">

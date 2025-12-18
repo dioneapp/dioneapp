@@ -1,6 +1,10 @@
 import { languages, useTranslation } from "@/translations/translation-context";
+import {
+	CaretLeftIcon,
+	CaretRightIcon,
+	CheckIcon,
+} from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
 interface LanguageSelectorProps {
@@ -54,7 +58,7 @@ export default function LanguageSelector({
 							disabled={currentPage === 0}
 							className="cursor-pointer enabled:hover:bg-white/10 rounded-full p-1 flex items-center justify-center disabled:opacity-50 transition-colors duration-300"
 						>
-							<ChevronLeft className="w-6 h-6" />
+							<CaretLeftIcon weight="bold" className="w-6 h-6" />
 						</button>
 						<AnimatePresence mode="sync" initial={false}>
 							<div
@@ -88,7 +92,10 @@ export default function LanguageSelector({
 														"linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))",
 												}}
 											>
-												<Check className="w-4 h-4 text-black" />
+												<CheckIcon
+													weight="bold"
+													className="w-4 h-4 text-black"
+												/>
 											</motion.div>
 										)}{" "}
 										<div className="relative w-full h-full">
@@ -137,7 +144,7 @@ export default function LanguageSelector({
 							disabled={currentPage === totalPages - 1}
 							className="cursor-pointer hover:bg-white/10 rounded-full p-1 flex items-center justify-center disabled:opacity-50 transition-colors duration-300"
 						>
-							<ChevronRight className="w-6 h-6" />
+							<CaretRightIcon weight="bold" className="w-6 h-6" />
 						</button>
 					</div>
 					<a

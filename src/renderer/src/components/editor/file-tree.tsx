@@ -2,12 +2,12 @@ import type { FileNode } from "@/components/editor/utils/types";
 import { getFileIconColor } from "@/components/editor/utils/utils";
 import { useTranslation } from "@/translations/translation-context";
 import {
-	ChevronDown,
-	ChevronRight,
-	FileText,
-	Folder,
-	Loader2,
-} from "lucide-react";
+	CaretDownIcon,
+	CaretRightIcon,
+	CircleNotchIcon,
+	FileTextIcon,
+	FolderSimpleIcon,
+} from "@phosphor-icons/react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 
 interface FileTreeProps {
@@ -92,24 +92,24 @@ const FileTree = ({
 							{node.type === "directory" ? (
 								<span className="flex items-center justify-center text-neutral-400">
 									{node.isLoading ? (
-										<Loader2 className="h-4 w-4 animate-spin" />
+										<CircleNotchIcon className="h-4 w-4 animate-spin" />
 									) : node.expanded ? (
-										<ChevronDown className="h-4 w-4" />
+										<CaretDownIcon weight="bold" className="h-4 w-4" />
 									) : (
-										<ChevronRight className="h-4 w-4" />
+										<CaretRightIcon weight="bold" className="h-4 w-4" />
 									)}
 								</span>
 							) : (
 								<span className="flex h-4 w-4 items-center justify-center" />
 							)}
 							{node.type === "directory" ? (
-								<Folder
+								<FolderSimpleIcon
 									className={`h-4 w-4 ${
 										node.isRoot ? "text-sky-200" : "text-sky-300/80"
 									}`}
 								/>
 							) : (
-								<FileText
+								<FileTextIcon
 									className={`h-4 w-4 ${
 										isDisabled
 											? "text-neutral-600"

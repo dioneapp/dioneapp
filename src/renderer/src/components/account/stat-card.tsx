@@ -1,11 +1,12 @@
+import type { IconProps } from "@phosphor-icons/react";
 import { motion } from "framer-motion";
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 
 interface StatCardProps {
 	title: string;
 	subtitle: string;
 	value: string | number;
-	icon: LucideIcon;
+	icon: ComponentType<IconProps>;
 	className?: string;
 	isStreak?: boolean;
 	streakDays?: number;
@@ -50,7 +51,7 @@ export const StatCard = ({
 							{title}
 						</h3>
 						<div className="p-2 bg-white/10 rounded-lg">
-							<Icon className="w-6 h-6 opacity-80" />
+							<Icon weight="bold" className="w-6 h-6 opacity-80" />
 						</div>
 					</div>
 					<h5 className="z-10 text-xs font-medium text-neutral-400">

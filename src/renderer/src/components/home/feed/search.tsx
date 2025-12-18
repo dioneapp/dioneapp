@@ -1,6 +1,12 @@
 import ScriptList from "@/components/home/feed/feed";
 import { useTranslation } from "@/translations/translation-context";
-import { Image, MessageCircle, Search, Video, Volume2 } from "lucide-react";
+import {
+	ChatCircleTextIcon,
+	ImageSquareIcon,
+	MagnifyingGlassIcon,
+	SpeakerHighIcon,
+	VideoCameraIcon,
+} from "@phosphor-icons/react";
 import { useState } from "react";
 
 export default function SearchBar() {
@@ -34,7 +40,7 @@ export default function SearchBar() {
 								"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), color-mix(in srgb, var(--theme-background) 10%, transparent))",
 						}}
 					/>
-					<Search className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none text-neutral-400" />
+					<MagnifyingGlassIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 pointer-events-none text-neutral-400" />
 				</div>
 				<div className="flex gap-3">
 					<button
@@ -74,7 +80,7 @@ export default function SearchBar() {
 						}}
 					>
 						<div className="flex items-center gap-2 justify-center">
-							<Volume2 className="w-4 h-4" />
+							<SpeakerHighIcon weight="bold" className="w-4 h-4" />
 							{t("search.filters.audio")}
 						</div>
 					</button>
@@ -115,7 +121,7 @@ export default function SearchBar() {
 						}}
 					>
 						<div className="flex items-center gap-2 justify-center">
-							<Image className="w-4 h-4" />
+							<ImageSquareIcon weight="bold" className="w-4 h-4" />
 							{t("search.filters.image")}
 						</div>
 					</button>
@@ -156,7 +162,7 @@ export default function SearchBar() {
 						}}
 					>
 						<div className="flex items-center gap-2 justify-center">
-							<Video className="w-4 h-4" />
+							<VideoCameraIcon weight="bold" className="w-4 h-4" />
 							{t("search.filters.video")}
 						</div>
 					</button>
@@ -197,7 +203,7 @@ export default function SearchBar() {
 						}}
 					>
 						<div className="flex items-center gap-2 justify-center">
-							<MessageCircle className="w-4 h-4" />
+							<ChatCircleTextIcon weight="bold" className="w-4 h-4" />
 							{t("search.filters.chat")}
 						</div>
 					</button>

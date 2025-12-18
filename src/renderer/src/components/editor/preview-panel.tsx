@@ -1,5 +1,4 @@
 import Editor, { loader } from "@monaco-editor/react";
-import { Folder, Loader2, RefreshCcw } from "lucide-react";
 import "monaco-editor/esm/vs/basic-languages/monaco.contribution";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import "monaco-editor/esm/vs/language/css/monaco.contribution";
@@ -10,6 +9,11 @@ import "monaco-editor/esm/vs/language/typescript/monaco.contribution";
 import MarkdownEditor from "@/components/editor/markdown-editor";
 import type { FileEncoding, FileNode } from "@/components/editor/utils/types";
 import { useTranslation } from "@/translations/translation-context";
+import {
+	ArrowCounterClockwiseIcon,
+	CircleNotchIcon,
+	FolderSimpleIcon,
+} from "@phosphor-icons/react";
 
 loader.config({ monaco });
 
@@ -105,7 +109,7 @@ const PreviewPane = ({
 	if (!selectedFileNode || selectedFileNode.type !== "file") {
 		return (
 			<div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-neutral-300">
-				<Folder className="h-8 w-8 text-neutral-500" />
+				<FolderSimpleIcon className="h-8 w-8 text-neutral-500" />
 				<span>{t("editor.selectFile")}</span>
 			</div>
 		);
@@ -187,7 +191,7 @@ const PreviewPane = ({
 			<div className="relative flex-1 overflow-hidden">
 				{isLoadingFile ? (
 					<div className="flex h-full items-center justify-center">
-						<Loader2 className="h-6 w-6 animate-spin text-neutral-400" />
+						<CircleNotchIcon className="h-6 w-6 animate-spin text-neutral-400" />
 					</div>
 				) : fileError ? (
 					<div className="flex h-full flex-col items-center justify-center gap-2 text-sm text-neutral-300">
@@ -197,7 +201,7 @@ const PreviewPane = ({
 							onClick={onReloadFile}
 							className="flex items-center gap-2 rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
 						>
-							<RefreshCcw className="h-3.5 w-3.5" />
+							<ArrowCounterClockwiseIcon className="h-3.5 w-3.5" />
 							<span>{t("editor.retry")}</span>
 						</button>
 					</div>

@@ -1,8 +1,14 @@
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, apiJson } from "@/utils/api";
 import { useToast } from "@/utils/use-toast";
+import {
+	CheckIcon,
+	CopyIcon,
+	MagnifyingGlassIcon,
+	TrashIcon,
+	XIcon,
+} from "@phosphor-icons/react";
 import { motion } from "framer-motion";
-import { Check, Copy, Search, Trash, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface Variable {
@@ -233,9 +239,9 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 								title={t("variables.copyPath")}
 							>
 								{copied[index + 1] ? (
-									<Check className="w-3 h-3" />
+									<CheckIcon weight="bold" className="w-3 h-3" />
 								) : (
-									<Copy className="w-3 h-3" />
+									<CopyIcon weight="bold" className="w-3 h-3" />
 								)}
 							</button>
 						</div>
@@ -336,22 +342,25 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 							title={t("variables.copyAll")}
 						>
 							{copied["general"] ? (
-								<Check className="w-4 h-4" />
+								<CheckIcon weight="bold" className="w-4 h-4" />
 							) : (
-								<Copy className="w-4 h-4" />
+								<CopyIcon className="w-4 h-4" />
 							)}
 						</button>
 						<button
 							onClick={onClose}
 							className="p-1 rounded-lg transition-colors text-neutral-400 hover:text-white"
 						>
-							<X className="w-5 h-5" />
+							<XIcon className="w-5 h-5" />
 						</button>
 					</div>
 				</div>
 				<div className="p-4 border-b border-white/10">
 					<div className="relative">
-						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400" />
+						<MagnifyingGlassIcon
+							weight="bold"
+							className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-neutral-400"
+						/>
 						<input
 							type="text"
 							placeholder={t("variables.searchPlaceholder")}
@@ -434,9 +443,9 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 												title={t("variables.copyFullValue")}
 											>
 												{copied[key] ? (
-													<Check className="w-3 h-3" />
+													<CheckIcon weight="bold" className="w-3 h-3" />
 												) : (
-													<Copy className="w-3 h-3" />
+													<CopyIcon weight="bold" className="w-3 h-3" />
 												)}
 											</button>
 											<button
@@ -444,7 +453,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 												className="p-1 rounded text-red-400 hover:text-red-200 shrink-0"
 												title={t("variables.deleteKey")}
 											>
-												<Trash className="w-3 h-3" />
+												<TrashIcon weight="bold" className="w-3 h-3" />
 											</button>
 										</div>
 									</div>
@@ -470,7 +479,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 																	}
 																	className="p-1 rounded text-neutral-400 hover:text-white"
 																>
-																	<Copy className="w-3 h-3" />
+																	<CopyIcon weight="bold" className="w-3 h-3" />
 																</button>
 																<button
 																	onClick={() =>
@@ -478,7 +487,10 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 																	}
 																	className="p-1 rounded text-red-400 hover:text-red-200"
 																>
-																	<Trash className="w-3 h-3" />
+																	<TrashIcon
+																		weight="bold"
+																		className="w-3 h-3"
+																	/>
 																</button>
 															</div>
 														</>

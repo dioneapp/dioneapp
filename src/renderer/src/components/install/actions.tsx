@@ -3,21 +3,20 @@ import Loading from "@/components/install/loading-skeleton";
 import { useTranslation } from "@/translations/translation-context";
 import { openLink } from "@/utils/open-link";
 import { reportBadContent } from "@/utils/report-bad-content";
-import { AnimatePresence, motion } from "framer-motion";
 import {
-	ArrowLeft,
-	BadgeCheck,
-	Bookmark,
-	ChevronDown,
-	CodeXml,
-	Download,
-	Flag,
-	MoreHorizontal,
-	Play,
-	Share2,
-	Trash2,
-	User,
-} from "lucide-react";
+	ArrowLeftIcon,
+	BookmarkSimpleIcon,
+	CaretDownIcon,
+	DotsThreeIcon,
+	DownloadSimpleIcon,
+	FlagIcon,
+	PlayIcon,
+	SealCheckIcon,
+	ShareNetworkIcon,
+	TrashIcon,
+	UserIcon,
+} from "@phosphor-icons/react";
+import { AnimatePresence, motion } from "framer-motion";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -223,15 +222,13 @@ export default function ActionsComponent({
 								}}
 							/>
 						</div>
-
-						{/* Top Bar */}
 						<div className="relative z-10 flex items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 border-b border-white/5">
 							<button
 								type="button"
 								onClick={() => navigate(-1)}
 								className="flex items-center gap-1 sm:gap-1.5 text-neutral-400 hover:text-white transition-colors cursor-pointer"
 							>
-								<ArrowLeft className="h-3.5 w-3.5" />
+								<ArrowLeftIcon className="h-3.5 w-3.5" />
 								<span className="text-xs hidden sm:inline">
 									{t("common.back")}
 								</span>
@@ -245,7 +242,7 @@ export default function ActionsComponent({
 											onClick={handleShare}
 											className="p-1.5 hover:bg-white/10 transition-colors rounded-lg text-neutral-400 hover:text-white cursor-pointer"
 										>
-											<Share2 className="h-3.5 w-3.5" />
+											<ShareNetworkIcon className="h-3.5 w-3.5" />
 										</button>
 										<button
 											type="button"
@@ -261,16 +258,10 @@ export default function ActionsComponent({
 													: {}
 											}
 										>
-											<Bookmark
+											<BookmarkSimpleIcon
 												className="h-3.5 w-3.5 transition-colors"
-												style={
-													saved
-														? {
-																fill: "var(--theme-accent)",
-																color: "var(--theme-accent)",
-															}
-														: {}
-												}
+												weight={saved ? "fill" : "regular"}
+												style={saved ? { color: "var(--theme-accent)" } : {}}
 											/>
 										</button>
 									</>
@@ -310,7 +301,7 @@ export default function ActionsComponent({
 											</h1>
 											{!isLocal && (
 												<p className="text-xs text-neutral-400 flex items-center gap-1 mt-0.5 flex-wrap">
-													<User size={14} />
+													<UserIcon size={14} />
 													{data?.og_author && (
 														<span className="truncate">{data?.og_author}</span>
 													)}
@@ -354,7 +345,10 @@ export default function ActionsComponent({
 									{!isLocal && (
 										<div className="flex items-center gap-2 mt-1 flex-wrap">
 											<div className="flex items-center gap-1 text-xs">
-												<Download size={14} className="text-neutral-400" />
+												<DownloadSimpleIcon
+													size={14}
+													className="text-neutral-400"
+												/>
 												<span
 													className="font-medium"
 													style={{ color: "var(--theme-accent)" }}
@@ -369,7 +363,7 @@ export default function ActionsComponent({
 													className="flex items-center gap-1.5 text-xs hover:underline cursor-pointer"
 													style={{ color: "var(--theme-accent)" }}
 												>
-													<BadgeCheck
+													<SealCheckIcon
 														size={14}
 														className="shrink-0 text-neutral-400"
 													/>
@@ -416,7 +410,7 @@ export default function ActionsComponent({
 														onClick={() => setDropdownOpen((v) => !v)}
 														className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
 													>
-														<Play className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-black" />
+														<PlayIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-black" />
 														<span className="hidden sm:inline">
 															{t("actions.start")}
 														</span>
@@ -425,7 +419,7 @@ export default function ActionsComponent({
 															animate={{ rotate: dropdownOpen ? 180 : 0 }}
 															transition={{ duration: 0.2 }}
 														>
-															<ChevronDown size={14} />
+															<CaretDownIcon size={14} />
 														</motion.div>
 													</button>
 
@@ -471,7 +465,7 @@ export default function ActionsComponent({
 													onClick={() => handleStart()}
 													className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
 												>
-													<Play className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-black" />
+													<PlayIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-black" />
 													<span className="hidden sm:inline">
 														{t("actions.start")}
 													</span>
@@ -487,7 +481,7 @@ export default function ActionsComponent({
 												onClick={() => setMoreMenuOpen((v) => !v)}
 												className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-full text-neutral-300 cursor-pointer border border-white/10"
 											>
-												<MoreHorizontal size={14} className="sm:w-4 sm:h-4" />
+												<DotsThreeIcon size={14} className="sm:w-4 sm:h-4" />
 											</button>
 
 											{moreMenuOpen && (
@@ -507,9 +501,10 @@ export default function ActionsComponent({
 															}}
 															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-white hover:bg-white/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
 														>
-															<CodeXml
+															<code
 																size={13}
 																className="sm:w-3.5 sm:h-3.5"
+																style={{ color: "var(--theme-accent)" }}
 															/>
 															<span className="text-xs sm:text-sm">Code</span>
 														</button>
@@ -521,7 +516,10 @@ export default function ActionsComponent({
 																}}
 																className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
 															>
-																<Flag size={13} className="sm:w-3.5 sm:h-3.5" />
+																<FlagIcon
+																	size={13}
+																	className="sm:w-3.5 sm:h-3.5"
+																/>
 																<span className="text-xs sm:text-sm">
 																	{t("error.report.report")}
 																</span>
@@ -535,7 +533,10 @@ export default function ActionsComponent({
 															}}
 															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
 														>
-															<Trash2 size={13} className="sm:w-3.5 sm:h-3.5" />
+															<TrashIcon
+																size={13}
+																className="sm:w-3.5 sm:h-3.5"
+															/>
 															<span className="text-xs sm:text-sm">
 																{t("actions.uninstall")}
 															</span>
@@ -551,7 +552,7 @@ export default function ActionsComponent({
 										onClick={handleDownload}
 										className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
 									>
-										<Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+										<DownloadSimpleIcon className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
 										<span className="hidden sm:inline">
 											{t("actions.install")}
 										</span>
