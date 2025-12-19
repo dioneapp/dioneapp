@@ -1,7 +1,3 @@
-import { exec, spawn } from "node:child_process";
-import fs from "node:fs";
-import { arch, platform as getPlatform } from "node:os";
-import path from "node:path";
 import {
 	getAllValues,
 	initDefaultEnv,
@@ -10,26 +6,79 @@ import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-m
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
+import { exec, spawn } from "node:child_process";
+import fs from "node:fs";
+import { arch, platform as getPlatform } from "node:os";
+import path from "node:path";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
 
 const activeProcesses = new Set<any>();
 const activePIDs = new Set<number>();
+const processesByApp = new Map<string, Set<number>>();
+
+const registerProcess = (appId: string, pid: number) => {
+	if (!appId || !pid) return;
+	activePIDs.add(pid);
+	const set = processesByApp.get(appId) ?? new Set<number>();
+	set.add(pid);
+	processesByApp.set(appId, set);
+};
+
+const unregisterProcess = (appId: string, pid: number) => {
+	if (pid) {
+		activePIDs.delete(pid);
+	}
+	if (!appId || !processesByApp.has(appId)) return;
+	const set = processesByApp.get(appId);
+	set?.delete(pid);
+	if (set && set.size === 0) {
+		processesByApp.delete(appId);
+	}
+};
+
+const getTrackedPIDs = (appId?: string): number[] => {
+	if (appId && processesByApp.has(appId)) {
+		return Array.from(processesByApp.get(appId) ?? []);
+	}
+	return Array.from(activePIDs);
+};
+
+const clearProcessTracking = (appId?: string) => {
+	if (!appId) {
+		activeProcesses.clear();
+		activePIDs.clear();
+		processesByApp.clear();
+		return;
+	}
+
+	const pids = processesByApp.get(appId);
+	pids?.forEach((pid) => {
+		activePIDs.delete(pid);
+	});
+	processesByApp.delete(appId);
+};
+
+const dropProcessInstance = (pid: number) => {
+	activeProcesses.forEach((proc) => {
+		if (proc?.pid === pid) {
+			activeProcesses.delete(proc);
+		}
+	});
+};
 let processWasCancelled = false;
 
-// kill process and its children
-// currently, this function is only used during the installation of dependencies,
-// as this is a process that must be controlled.
-// it will not work if used in processes that generate non-child threads.
-// in such cases, it is recommended to use the killByPort (l-53) function.
-export const killProcess = async (pid: number, io: Server, id: string) => {
+export const killProcess = async (
+	pid: number,
+	io?: Server,
+	id?: string,
+): Promise<boolean> => {
 	try {
 		processWasCancelled = true;
 		const currentPlatform = getPlatform();
 		if (currentPlatform === "win32") {
 			return new Promise<boolean>((resolve) => {
 				const taskkill = spawn("taskkill", [
-					// cspell:disable-line
 					"/PID",
 					pid.toString(),
 					"/T",
@@ -37,7 +86,9 @@ export const killProcess = async (pid: number, io: Server, id: string) => {
 				]);
 				taskkill.on("close", (code) => {
 					if (code === 0) {
-						io.to(id).emit("installUpdate", {
+						dropProcessInstance(pid);
+						unregisterProcess(id || "", pid);
+						io?.to(id || "").emit("installUpdate", {
 							type: "log",
 							content: "Script killed successfully\n",
 						});
@@ -56,14 +107,15 @@ export const killProcess = async (pid: number, io: Server, id: string) => {
 			});
 		}
 
-		// macos / linux
 		const childPids = await pidtree(pid, { root: true });
 		for (const childPid of childPids) {
 			process.kill(childPid, "SIGKILL");
 		}
 		process.kill(pid, "SIGKILL");
+		dropProcessInstance(pid);
+		unregisterProcess(id || "", pid);
 
-		io.to(id).emit("installUpdate", {
+		io?.to(id || "").emit("installUpdate", {
 			type: "log",
 			content: "Script killed successfully",
 		});
@@ -74,22 +126,32 @@ export const killProcess = async (pid: number, io: Server, id: string) => {
 		return false;
 	}
 };
+
 async function killByPort(
 	port: number,
 	io: Server,
 	id: string,
 ): Promise<boolean> {
 	processWasCancelled = true;
+	const trackedPIDs = getTrackedPIDs(id);
+	const killTracked = async (pids: number[]) => {
+		if (pids.length === 0) return false;
+		const results = await Promise.all(
+			pids.map((pid) => killProcess(pid, io, id)),
+		);
+		return results.some(Boolean);
+	};
 
 	if (!port || isNaN(port)) {
 		logger.warn(
 			"No valid port provided for killByPort. Attempting to kill active processes...",
 		);
-		if (activePIDs.size > 0) {
-			const results = await Promise.all(
-				Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
-			);
-			return results.every(Boolean);
+		if (trackedPIDs.length > 0) {
+			io.to(id).emit("installUpdate", {
+				type: "log",
+				content: "Stopping tracked processes without a port\n",
+			});
+			return killTracked(trackedPIDs);
 		}
 		io.to(id).emit("installUpdate", {
 			type: "log",
@@ -100,7 +162,6 @@ async function killByPort(
 
 	const currentPlatform = getPlatform();
 	if (currentPlatform !== "win32") {
-		// linux/macos
 		const cmd = `lsof -t -i :${port}`;
 		return new Promise((resolve) => {
 			exec(cmd, async (err, stdout, stderr) => {
@@ -111,61 +172,52 @@ async function killByPort(
 						content: `ERROR listing port ${port}: ${stderr}\n`,
 					});
 
-					if (activePIDs.size === 0) {
-						return resolve(true); // no active process to stop
+					if (trackedPIDs.length === 0) {
+						return resolve(true);
 					}
 					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `No port active found, stopping active processes...\n`,
 					});
-					const results = await Promise.all(
-						Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
-					);
-					return resolve(results.every(Boolean));
+					const killed = await killTracked(trackedPIDs);
+					return resolve(killed);
 				}
+
 				const pids = stdout.split(/\r?\n/).filter(Boolean).map(Number);
-				if (pids.length === 0) {
+				const targets = Array.from(new Set([...pids, ...trackedPIDs]));
+				if (targets.length === 0) {
 					io.to(id).emit("installUpdate", {
 						type: "log",
 						content: `No processes found on port ${port}\n`,
 					});
-					if (activePIDs.size === 0) {
-						return resolve(true); // no active process to stop
-					}
-					const results = await Promise.all(
-						Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
-					);
-					return resolve(results.every(Boolean));
+					return resolve(true);
 				}
+
 				Promise.all(
-					pids.map((pid) => {
-						return new Promise<void>((res) => {
+					targets.map((pid) =>
+						new Promise<void>((res) => {
 							try {
 								process.kill(pid, "SIGKILL");
 								logger.info(`Killed PID ${pid} on Linux/macOS`);
 							} catch (e: unknown) {
 								logger.warn(`Failed to kill PID ${pid}: ${e}`);
 							}
+							dropProcessInstance(pid);
+							unregisterProcess(id, pid);
 							res();
-						});
-					}),
-				).then(async () => {
+						}),
+					),
+				).then(() => {
 					io.to(id).emit("installUpdate", {
 						type: "log",
-						content: `Killed processes: ${pids.join(", ")}\n`,
+						content: `Killed processes: ${targets.join(", ")}\n`,
 					});
-					if (activePIDs.size > 0) {
-						await Promise.all(
-							Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
-						);
-					}
 					resolve(true);
 				});
 			});
 		});
 	}
 
-	// win
 	return new Promise((resolve) => {
 		exec("netstat -ano -p tcp", async (err, stdout, stderr) => {
 			if (err) {
@@ -180,7 +232,6 @@ async function killByPort(
 			const matches = lines
 				.map((line) => {
 					const parts = line.trim().split(/\s+/);
-					// format
 					if (parts[1]?.endsWith(`:${port}`) && parts[3] === "LISTENING") {
 						return Number(parts[4]);
 					}
@@ -188,30 +239,20 @@ async function killByPort(
 				})
 				.filter((pid): pid is number => pid !== null);
 
-			if (matches.length === 0) {
+			const targets = Array.from(new Set([...matches, ...trackedPIDs]));
+			if (targets.length === 0) {
 				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: `No processes found on port ${port}\n`,
 				});
-				if (activePIDs.size === 0) {
-					return resolve(true); // no active process to stop
-				}
-				logger.info(
-					`Killing active processes with PIDs ${Array.from(activePIDs).join(", ")}`,
-				);
-				const results = await Promise.all(
-					Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
-				);
-				return resolve(results.every(Boolean));
+				return resolve(true);
 			}
 
-			// kill each PID
-			logger.info(`Killing processes on port ${port}: ${matches.join(", ")}`);
+			logger.info(`Killing processes on port ${port}: ${targets.join(", ")}`);
 			Promise.all(
-				matches.map((pid) => {
-					return new Promise<void>((res) => {
+				targets.map((pid) =>
+					new Promise<void>((res) => {
 						exec(`taskkill /PID ${pid} /T /F`, (killErr, killStderr) => {
-							// cspell:disable-line
 							if (killErr) {
 								logger.warn(`Error killing PID ${pid}: ${killStderr}`);
 								io.to(id).emit("installUpdate", {
@@ -225,19 +266,13 @@ async function killByPort(
 									content: `PID ${pid} killed successfully\n`,
 								});
 							}
+							dropProcessInstance(pid);
+							unregisterProcess(id, pid);
 							res();
 						});
-					});
-				}),
-			).then(async () => {
-				if (activePIDs.size > 0) {
-					await Promise.all(
-						Array.from(activePIDs).map((pid) => killProcess(pid, io, id)),
-					);
-				}
-
-				resolve(true);
-			});
+					}),
+				),
+			).then(() => resolve(true));
 		});
 	});
 }
@@ -251,8 +286,7 @@ export const stopActiveProcess = async (
 	logger.warn(`Stopping any process on port ${port}...`);
 	processWasCancelled = true;
 	const success = await killByPort(port, io, id);
-	activeProcesses.clear();
-	activePIDs.clear();
+	clearProcessTracking(id);
 	return success;
 };
 
@@ -427,7 +461,7 @@ export const executeCommand = async (
 
 		if (pid) {
 			activeProcesses.add(processInstance);
-			activePIDs.add(pid);
+			registerProcess(id, pid);
 			logger.info(`Started process (PID: ${pid}): ${command}`);
 		}
 
@@ -477,7 +511,7 @@ export const executeCommand = async (
 				processInstance.on("exit", (code: number) => {
 					if (pid) {
 						activeProcesses.delete(processInstance);
-						activePIDs.delete(pid);
+						unregisterProcess(id, pid);
 						logger.info(
 							`Process (PID: ${pid}) finished with exit code ${code}`,
 						);
@@ -499,7 +533,7 @@ export const executeCommand = async (
 					});
 					if (pid) {
 						activeProcesses.delete(processInstance);
-						activePIDs.delete(pid);
+						unregisterProcess(id, pid);
 					}
 					resolve({ code: -1, stdout: "", stderr: errorMsg });
 				});
@@ -695,11 +729,9 @@ export const executeCommands = async (
 							Math.log(elapsed + 1000) / Math.log(120000),
 						);
 						const outputProgress = Math.min(0.92, Math.sqrt(outputLines / 50));
-
 						commandProgress = Math.max(
 							commandProgress,
-							0.4 * timeProgress + 0.6 * outputProgress,
-							outputLines > 0 ? 0.05 : 0,
+							Math.max(timeProgress, outputProgress),
 						);
 
 						const overallProgress =
