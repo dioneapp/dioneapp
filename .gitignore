@@ -17,9 +17,6 @@ out
 # apps folder
 apps
 
-# scripts folder
-scripts
-
 # build folder
 /build/
 
