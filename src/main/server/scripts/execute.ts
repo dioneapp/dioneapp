@@ -458,14 +458,15 @@ export async function executeStartup(
 						: "uv";
 				const pythonVersion =
 					typeof selectedStart.env === "object" &&
-						"version" in selectedStart.env
+					"version" in selectedStart.env
 						? selectedStart.env.version
 						: "";
 
 				io.to(id).emit("installUpdate", {
 					type: "log",
-					content: `INFO: Using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""
-						}\n`,
+					content: `INFO: Using virtual environment: ${envName} with ${envType}${
+						pythonVersion ? ` (Python ${pythonVersion})` : ""
+					}\n`,
 				});
 
 				const envCommands = await createVirtualEnvCommands(
@@ -610,38 +611,54 @@ async function createVirtualEnvCommands(
 	const envPath = path.join(baseDir, envName);
 
 	// filter and ensure commands is an array of strings without empty strings
-	const commandStrings = Array.isArray(commands) ? commands.flatMap((cmd) => {
-		if (typeof cmd === "string" && cmd.trim()) {
-			return [cmd.trim()];
-		}
-		if (cmd && typeof cmd === "object" && typeof cmd.command === "string" && cmd.command.trim()) {
-			// Apply platform filtering
-			if ("platform" in cmd) {
-				const cmdPlatform = cmd.platform.toLowerCase();
-				const normalizedPlatform = currentPlatform === "win32" ? "windows" :
-					currentPlatform === "darwin" ? "mac" :
-						currentPlatform === "linux" ? "linux" : currentPlatform;
-				// if platform does not match current platform, skip
-				if (cmdPlatform !== normalizedPlatform) {
-					logger.info(`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`);
-					return [];
+	const commandStrings = Array.isArray(commands)
+		? commands.flatMap((cmd) => {
+				if (typeof cmd === "string" && cmd.trim()) {
+					return [cmd.trim()];
 				}
-			}
+				if (
+					cmd &&
+					typeof cmd === "object" &&
+					typeof cmd.command === "string" &&
+					cmd.command.trim()
+				) {
+					// Apply platform filtering
+					if ("platform" in cmd) {
+						const cmdPlatform = cmd.platform.toLowerCase();
+						const normalizedPlatform =
+							currentPlatform === "win32"
+								? "windows"
+								: currentPlatform === "darwin"
+									? "mac"
+									: currentPlatform === "linux"
+										? "linux"
+										: currentPlatform;
+						// if platform does not match current platform, skip
+						if (cmdPlatform !== normalizedPlatform) {
+							logger.info(
+								`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+							);
+							return [];
+						}
+					}
 
-			// Apply GPU filtering
-			if ("gpus" in cmd) {
-				const allowedGpus = Array.isArray(cmd.gpus) ?
-					cmd.gpus.map((g: string) => g.toLowerCase()) :
-					[cmd.gpus.toLowerCase()];
-				if (!allowedGpus.includes(currentGpu.toLowerCase())) {
-					logger.info(`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`);
-					return [];
+					// Apply GPU filtering
+					if ("gpus" in cmd) {
+						const allowedGpus = Array.isArray(cmd.gpus)
+							? cmd.gpus.map((g: string) => g.toLowerCase())
+							: [cmd.gpus.toLowerCase()];
+						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+							logger.info(
+								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+							);
+							return [];
+						}
+					}
+					return [cmd.command.trim()];
 				}
-			}
-			return [cmd.command.trim()];
-		}
-		return [];
-	}) : [];
+				return [];
+			})
+		: [];
 
 	// add python version flag if specified
 	const pythonFlag = pythonVersion ? `--python ${pythonVersion}` : "";
@@ -654,15 +671,24 @@ async function createVirtualEnvCommands(
 		const pythonArg = pythonVersion ? `python=${pythonVersion}` : "";
 		const condaW = path.join(
 			config?.defaultBinFolder || path.join(app.getPath("userData")),
-			"bin", "conda", "condabin", "conda.bat"
+			"bin",
+			"conda",
+			"condabin",
+			"conda.bat",
 		);
 		const condaU = path.join(
 			config?.defaultBinFolder || path.join(app.getPath("userData")),
-			"bin", "conda", "bin", "activate"
+			"bin",
+			"conda",
+			"bin",
+			"activate",
 		);
 		const condaUC = path.join(
 			config?.defaultBinFolder || path.join(app.getPath("userData")),
-			"bin", "conda", "bin", "conda"
+			"bin",
+			"conda",
+			"bin",
+			"conda",
 		);
 
 		if (isWindows) {
@@ -724,15 +750,23 @@ async function createVirtualEnvCommands(
 	const existsEnv = fs.existsSync(envPath);
 	const arch = getArch();
 	const platform = getOS();
-	const uvFolder = platform === "linux" ?
-		arch === "amd64" ? "uv-x86_64-unknown-linux-gnu" : "uv-aarch64-unknown-linux-gnu" :
-		platform === "macos" ?
-			arch === "amd64" ? "uv-x86_64-apple-darwin" : "uv-aarch64-apple-darwin" : "";
+	const uvFolder =
+		platform === "linux"
+			? arch === "amd64"
+				? "uv-x86_64-unknown-linux-gnu"
+				: "uv-aarch64-unknown-linux-gnu"
+			: platform === "macos"
+				? arch === "amd64"
+					? "uv-x86_64-apple-darwin"
+					: "uv-aarch64-apple-darwin"
+				: "";
 
 	const uvPath = path.join(
 		config?.defaultBinFolder || path.join(app.getPath("userData")),
-		"bin", "uv", uvFolder,
-		process.platform === "win32" ? "uv.exe" : "uv"
+		"bin",
+		"uv",
+		uvFolder,
+		process.platform === "win32" ? "uv.exe" : "uv",
 	);
 
 	if (!existsEnv) {
