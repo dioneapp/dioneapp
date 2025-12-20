@@ -15,7 +15,139 @@ import type { Server } from "socket.io";
 
 const activeProcesses = new Set<any>();
 const activePIDs = new Set<number>();
+// Track all PIDs spawned by each app (including children) for complete cleanup
+const appProcessTrees = new Map<string, Set<number>>();
 let processWasCancelled = false;
+
+// Get all child PIDs of a process (cross-platform)
+async function getAllChildPids(pid: number): Promise<number[]> {
+	const currentPlatform = getPlatform();
+	
+	// On Windows, use PowerShell instead of wmic (which is deprecated/removed)
+	if (currentPlatform === "win32") {
+		return new Promise((resolve) => {
+			// PowerShell command to get all descendant processes
+			const psCommand = `Get-CimInstance Win32_Process | Where-Object { $_.ParentProcessId -eq ${pid} } | Select-Object -ExpandProperty ProcessId`;
+			exec(`powershell -Command "${psCommand}"`, async (error, stdout) => {
+				if (error) {
+					// Process may have exited or no children
+					resolve([pid]);
+					return;
+				}
+				const childPids = stdout.split(/\r?\n/).filter(Boolean).map(Number).filter(n => !isNaN(n));
+				// Recursively get grandchildren
+				const allPids = [pid];
+				for (const childPid of childPids) {
+					const descendants = await getAllChildPids(childPid);
+					allPids.push(...descendants);
+				}
+				resolve(allPids);
+			});
+		});
+	}
+	
+	// macOS/Linux: use pidtree
+	try {
+		const pids = await pidtree(pid, { root: true });
+		return pids;
+	} catch (error) {
+		logger.warn(`Could not get child PIDs for ${pid}: ${error}`);
+		return [pid];
+	}
+}
+
+// Kill entire process tree forcefully (cross-platform)
+export async function killProcessTree(pid: number): Promise<boolean> {
+	const currentPlatform = getPlatform();
+	
+	try {
+		if (currentPlatform === "win32") {
+			// Windows: taskkill with /T flag kills entire process tree
+			return new Promise((resolve) => {
+				exec(`taskkill /PID ${pid} /T /F`, (error, _stdout, stderr) => {
+					if (error) {
+						logger.warn(`taskkill for PID ${pid} returned error (may already be dead): ${stderr}`);
+					}
+					resolve(true);
+				});
+			});
+		} else {
+			// macOS/Linux: get all child PIDs and kill them
+			const allPids = await getAllChildPids(pid);
+			for (const childPid of allPids.reverse()) {
+				try {
+					process.kill(childPid, "SIGKILL");
+					logger.info(`Killed PID ${childPid}`);
+				} catch (e) {
+					// Process may already be dead
+				}
+			}
+			return true;
+		}
+	} catch (error) {
+		logger.error(`Error killing process tree for PID ${pid}: ${error}`);
+		return false;
+	}
+}
+
+// Register a process and its children for an app session
+export function registerAppProcess(appId: string, pid: number): void {
+	if (!appProcessTrees.has(appId)) {
+		appProcessTrees.set(appId, new Set());
+	}
+	appProcessTrees.get(appId)!.add(pid);
+	logger.info(`Registered PID ${pid} for app ${appId}`);
+	
+	// Periodically scan for new child processes (helps track spawned subprocesses like ComfyUI)
+	const scanInterval = setInterval(async () => {
+		if (!appProcessTrees.has(appId)) {
+			clearInterval(scanInterval);
+			return;
+		}
+		try {
+			const childPids = await getAllChildPids(pid);
+			const appPids = appProcessTrees.get(appId);
+			if (appPids) {
+				let foundNew = false;
+				for (const childPid of childPids) {
+					if (!appPids.has(childPid)) {
+						appPids.add(childPid);
+						foundNew = true;
+					}
+				}
+				// Only log when we discover new processes to reduce noise
+				if (foundNew) {
+					logger.info(`Discovered ${childPids.length} child processes for app ${appId}`);
+				}
+			}
+		} catch (e) {
+			// Parent process may have exited, stop scanning
+			clearInterval(scanInterval);
+		}
+	}, 3000); // Scan every 3 seconds
+}
+
+// Kill all processes associated with an app
+export async function killAppProcesses(appId: string, io: Server): Promise<boolean> {
+	const appPids = appProcessTrees.get(appId);
+	if (!appPids || appPids.size === 0) {
+		logger.info(`No tracked processes for app ${appId}`);
+		return true;
+	}
+	
+	logger.info(`Killing ${appPids.size} tracked processes for app ${appId}: ${Array.from(appPids).join(", ")}`);
+	io.to(appId).emit("installUpdate", {
+		type: "log",
+		content: `Stopping ${appPids.size} processes...\n`,
+	});
+	
+	const results = await Promise.all(
+		Array.from(appPids).map(pid => killProcessTree(pid))
+	);
+	
+	appProcessTrees.delete(appId);
+	return results.every(Boolean);
+}
 
 // kill process and its children
 // currently, this function is only used during the installation of dependencies,
@@ -250,6 +382,11 @@ export const stopActiveProcess = async (
 ) => {
 	logger.warn(`Stopping any process on port ${port}...`);
 	processWasCancelled = true;
+	
+	// First, kill all tracked processes for this app (including child processes like ComfyUI)
+	await killAppProcesses(id, io);
+	
+	// Then kill by port as a fallback
 	const success = await killByPort(port, io, id);
 	activeProcesses.clear();
 	activePIDs.clear();
@@ -428,6 +565,9 @@ export const executeCommand = async (
 		if (pid) {
 			activeProcesses.add(processInstance);
 			activePIDs.add(pid);
+			// Register this process for complete cleanup when app stops
+			// This tracks the process tree so child processes (like ComfyUI) get killed too
+			registerAppProcess(id, pid);
 			logger.info(`Started process (PID: ${pid}): ${command}`);
 		}
 
