@@ -1,8 +1,7 @@
 import { useAuthContext } from "@/components/contexts/auth-context";
 import Background from "@/components/first-time/background";
 import SureNotLogin from "@/components/first-time/login";
-import LanguageSelector from "@/components/first-time/onboarding/language-selector";
-import SelectPath from "@/components/first-time/onboarding/select-path";
+import Setup from "@/components/first-time/onboarding/setup";
 import ExecuteSound from "@/components/first-time/sounds/sound";
 import Icon from "@/components/icons/icon";
 import Titlebar from "@/components/layout/titlebar";
@@ -67,15 +66,7 @@ export default function FirstTime() {
 	useEffect(() => {
 		function shouldRedirect() {
 			if (user) {
-				if (
-					firstLaunch === "true" ||
-					firstLaunch === null ||
-					isLogin !== "true"
-				) {
-					changeLevel(3);
-				} else {
-					changeLevel(5);
-				}
+				changeLevel(3);
 			}
 		}
 		shouldRedirect();
@@ -114,15 +105,7 @@ export default function FirstTime() {
 					await saveRefreshToken(data.session.refresh_token);
 					setRefreshSessionToken(data.session.refresh_token);
 					getUser(data.user.id);
-					if (
-						firstLaunch === "true" ||
-						firstLaunch === null ||
-						isLogin !== "true"
-					) {
-						changeLevel(3);
-					} else {
-						changeLevel(5);
-					}
+					changeLevel(3);
 				}
 			}
 
@@ -141,7 +124,7 @@ export default function FirstTime() {
 	}
 
 	function onSelectLanguage() {
-		changeLevel(4);
+		changeLevel(5);
 	}
 
 	const getContainerClasses = () => {
@@ -301,13 +284,7 @@ export default function FirstTime() {
 					<motion.div className={getContainerClasses()}>
 						<div className="flex flex-col gap-4 justify-center items-center">
 							<SureNotLogin
-								onSkip={() => {
-									if (firstLaunch === "true" || firstLaunch === null) {
-										changeLevel(3);
-									} else {
-										changeLevel(4);
-									}
-								}}
+								onSkip={() => changeLevel(3)}
 								onLogin={() => {
 									openLink("https://getdione.app/auth/login?app=true");
 								}}
@@ -330,26 +307,15 @@ export default function FirstTime() {
 						className={getContainerClasses()}
 					>
 						<div className="flex flex-col gap-4 justify-center items-center">
-							<LanguageSelector onSelectLanguage={onSelectLanguage} />
+						<Setup onSelectLanguage={onSelectLanguage} />
 						</div>
-					</motion.div>
-				)}
-				{level === 4 && (
-					<motion.div
-						initial={{ filter: "blur(20px)", y: 30, opacity: 0 }}
-						animate={{ filter: "blur(0px)", y: 0, opacity: 1 }}
-						exit={{
-							opacity: 0,
-							y: -30,
-							filter: "blur(20px)",
-						}}
-						transition={{ duration: 0.5 }}
-						key={4}
-						className={getContainerClasses()}
-					>
-						<div className="flex flex-col gap-4 justify-center items-center">
-							<SelectPath onFinish={() => changeLevel(5)} />
-						</div>
+						<button
+							type="button"
+							onClick={() => changeLevel(2)}
+							className="absolute bottom-12 text-xs text-white/70 hover:text-white cursor-pointer transition-all duration-300"
+						>
+							{t("firstTime.navigation.back")}
+						</button>
 					</motion.div>
 				)}
 				{/* 5 - ready */}
@@ -366,26 +332,57 @@ export default function FirstTime() {
 						transition={{ duration: 0.5, ease: [0.42, 0, 0.58, 1] }}
 						className={getContainerClasses()}
 					>
-						<div className="flex flex-col gap-4 justify-center items-center">
-							<Icon name="Dio" className="w-20 h-20 mb-2" />
-							<h1 className="text-6xl font-semibold">
-								{t("firstTime.ready.title")}
-							</h1>
-							<h2 className="text-neutral-400 text-balance text-center max-w-xl">
-								{t("firstTime.ready.subtitle")} {user?.username}
-							</h2>
-						</div>
-						<div className="mt-4 flex flex-col gap-4">
-							<div className="flex flex-col items-center justify-center">
+						<div className="flex flex-col gap-6 justify-center items-center max-w-xl mx-auto">
+							<motion.div
+								initial={{ scale: 0.9, opacity: 0 }}
+								animate={{ scale: 1, opacity: 1 }}
+								transition={{ delay: 0.2, duration: 0.5 }}
+								className="relative"
+							>
+								<div
+									className="absolute inset-0 blur-2xl opacity-20"
+									style={{
+										background:
+											"radial-gradient(circle, var(--theme-accent), transparent)",
+									}}
+								/>
+								<Icon name="Dio" className="w-20 h-20 relative" />
+							</motion.div>
+
+							<motion.div
+								initial={{ opacity: 0, y: 10 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: 0.3, duration: 0.5 }}
+								className="text-center space-y-3"
+							>
+								<h1 className="text-5xl font-semibold text-white">
+									{t("firstTime.ready.title")}
+								</h1>
+								<p className="text-neutral-400 text-base max-w-md mx-auto">
+									{t("firstTime.ready.subtitle")}{" "}
+									{user?.username && (
+										<span
+											className="font-medium"
+											style={{ color: "var(--theme-accent)" }}
+										>
+											{user.username}
+										</span>
+									)}
+								</p>
+							</motion.div>
+
+							<motion.div
+								initial={{ opacity: 0, y: 10 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ delay: 0.5, duration: 0.5 }}
+							>
 								<Link
 									to="/?loginFinished=true"
-									className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
+									className="px-8 py-2 bg-white text-black rounded-full text-sm font-medium transition-all duration-300 hover:opacity-80 active:scale-[0.97] shadow-lg"
 								>
-									<span className="text-center w-full flex items-center justify-center">
-										{t("firstTime.ready.finish")}
-									</span>
+									{t("firstTime.ready.finish")}
 								</Link>
-							</div>
+							</motion.div>
 						</div>
 					</motion.div>
 				)}
@@ -394,12 +391,14 @@ export default function FirstTime() {
 			{level !== 2 && (
 				<motion.div className="absolute bottom-4 left-1/2 translate-x-[-50%]">
 					<div className="flex gap-2">
-						{[1, 2, 3, 4, 5].map((lvl) => (
+						{[1, 2, 3, 4].map((lvl) => (
 							<div key={lvl} className="py-1">
 								<div
-									className={`w-6 h-1 rounded-full ${lvl === level ? "w-10" : "bg-white/20"}`}
+									className={`w-6 h-1 rounded-full ${
+										lvl === level || (level === 5 && lvl === 4) ? "w-10" : "bg-white/20"
+									}`}
 									style={
-										lvl === level
+										lvl === level || (level === 5 && lvl === 4)
 											? { backgroundColor: "var(--theme-accent)" }
 											: {}
 									}

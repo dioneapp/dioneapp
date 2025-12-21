@@ -36,25 +36,33 @@ export const en = {
 			goBack: "Go back",
 		},
 		languageSelector: {
-			title: "Select your language",
+			title: "Set up Dione",
+			description: "Choose your language and installation path",
+			languageSection: "Language",
+			installationPathSection: "Installation Path",
+			pathDescription: "This folder will contain all your installed scripts, dependencies, and project files. Choose a location that's easily accessible and has enough storage space.",
+			selectFolder: "Select folder",
+			changeFolder: "Change folder",
+			proceedButton: "Select language & path",
+			error: {
+				spaces: "Selected path cannot contain spaces. Please choose a different folder.",
+				updateConfig: "An error occurred while updating the configuration. Please try again.",
+				samePath: "To avoid errors on new updates, choose a different path than the Dione executable.",
+				general: "An error occurred while selecting the path. Please try again.",
+			},
+			success: "Path configured successfully!",
 		},
 		ready: {
 			title: "You are ready!",
-			subtitle: "We are glad to have you here",
+			subtitle: "Welcome to Dione",
 			finish: "Finish",
 		},
 		clipboard: {
 			success:
 				"Copied to the clipboard correctly, now paste it in your browser!",
 		},
-		selectPath: {
-			title: "Select installation path",
-			description:
-				"This folder will contain all your installed scripts, dependencies, and project files. Choose a location that's easily accessible and has enough storage space.",
-			button: "Select a path",
-			success: "Next",
-			warning:
-				"Do not select the same folder where Dione is installed. This can cause conflicts and errors during updates.",
+		navigation: {
+			back: "Back",
 		},
 	},
 
