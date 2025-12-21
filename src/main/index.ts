@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import os from "node:os";
-import path, { join } from "node:path";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "@/config";
 import {
 	destroyPresence,
@@ -48,6 +45,9 @@ import {
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
+import fs from "node:fs";
+import os from "node:os";
+import path, { join } from "node:path";
 import si from "systeminformation";
 
 dotenvConfig();
@@ -724,7 +724,7 @@ app.whenReady().then(async () => {
 			const options: Electron.NotificationConstructorOptions = {
 				title,
 				body,
-				icon: path.resolve(__dirname, "../../resources/icon.ico"),
+				icon: getIconPath(os.platform()),
 				timeoutType: "default",
 				toastXml: xml ? xml : undefined,
 			};
