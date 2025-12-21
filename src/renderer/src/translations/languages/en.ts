@@ -346,6 +346,12 @@ export const en = {
 
 	// delete loading modal
 	deleteLoading: {
+		confirm: {
+			title: "Confirm Uninstall",
+			subtitle: "Select what to remove",
+		},
+		dependencies: "Dependencies",
+		depsDescription: "Select dependencies to uninstall along with the application:",
 		uninstall: {
 			title: "Uninstall",
 			deps: "Uninstall dependencies",
@@ -354,14 +360,16 @@ export const en = {
 		uninstalling: {
 			title: "Uninstalling",
 			deps: "Uninstalling dependencies",
-			wait: "please wait...",
+			wait: "Please wait...",
 		},
+		processing: "Processing...",
 		success: {
 			title: "Uninstalled",
 			subtitle: "successfully",
 			closing: "Closing this modal in",
 			seconds: "seconds...",
 		},
+		autoClosing: "Closing automatically...",
 		error: {
 			title: "An unexpected",
 			subtitle: "error",

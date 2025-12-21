@@ -6,7 +6,6 @@ import IframeComponent from "@/components/install/iframe";
 import LogsComponent from "@/components/install/logs";
 import NotSupported from "@/components/install/not-supported";
 import CustomCommandsModal from "@/components/modals/custom-commands";
-import DeleteDepsModal from "@/components/modals/delete-deps";
 import DeleteLoadingModal from "@/components/modals/delete-loading";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, apiJson } from "@/utils/api";
@@ -894,19 +893,21 @@ export default function Install({
 					onCancel={() => setOpenCustomCommands(false)}
 				/>
 			)}
-			{deleteStatus !== "" && (
+			{(deleteStatus !== "" || deleteDepsModal) && (
 				<DeleteLoadingModal
 					status={deleteStatus}
-					onClose={handleCloseDeleteModal}
-				/>
-			)}
-			{deleteDepsModal && (
-				<DeleteDepsModal
+					onClose={() => {
+						handleCloseDeleteModal();
+						setDeleteDepsModal(false);
+					}}
 					inUseDeps={inUseDeps}
 					selectedDeps={selectedDeps}
 					setSelectedDeps={setSelectedDeps}
-					handleUninstall={handleUninstall}
-					setDeleteDepsModal={setDeleteDepsModal}
+					onConfirm={() => {
+						setDeleteDepsModal(false);
+						handleUninstall(true);
+					}}
+					showDepsSelection={deleteDepsModal}
 				/>
 			)}
 			<div className="relative w-full h-full overflow-auto">
