@@ -5,15 +5,25 @@ import Icon from "@/components/icons/icon";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
-import { closestCenter, DndContext } from "@dnd-kit/core";
+import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
-    arrayMove,
-    horizontalListSortingStrategy,
-    SortableContext,
-    useSortable,
+	SortableContext,
+	arrayMove,
+	horizontalListSortingStrategy,
+	useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Camera, Home, Library, Maximize, Minimize as Minimize2, Minus, Settings, User, X } from "lucide-react";
+import {
+	Camera,
+	Home,
+	Library,
+	Maximize,
+	Minimize as Minimize2,
+	Minus,
+	Settings,
+	User,
+	X,
+} from "lucide-react";
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -30,13 +40,17 @@ export default function TopbarNav() {
 	const navigate = useNavigate();
 
 	const [tabOrder, setTabOrder] = useState(() =>
-		activeApps.filter((app) => app.appId !== "ollama").map((app) => app.appId)
+		activeApps.filter((app) => app.appId !== "ollama").map((app) => app.appId),
 	);
 
 	React.useEffect(() => {
 		setTabOrder((prevOrder) => {
-			const currentIds = activeApps.filter((app) => app.appId !== "ollama").map((app) => app.appId);
-			return currentIds.filter((id) => prevOrder.includes(id)).concat(currentIds.filter((id) => !prevOrder.includes(id)));
+			const currentIds = activeApps
+				.filter((app) => app.appId !== "ollama")
+				.map((app) => app.appId);
+			return currentIds
+				.filter((id) => prevOrder.includes(id))
+				.concat(currentIds.filter((id) => !prevOrder.includes(id)));
 		});
 	}, [activeApps]);
 
@@ -52,7 +66,14 @@ export default function TopbarNav() {
 	}
 
 	function SortableTab({ app }: { app: any }) {
-		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: app.appId });
+		const {
+			attributes,
+			listeners,
+			setNodeRef,
+			transform,
+			transition,
+			isDragging,
+		} = useSortable({ id: app.appId });
 		return (
 			<div
 				ref={setNodeRef}
