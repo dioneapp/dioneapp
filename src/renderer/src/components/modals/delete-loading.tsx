@@ -27,7 +27,7 @@ export default function DeleteLoadingModal({
 	const { t } = useTranslation();
 	const { deleteLogs } = useScriptsContext();
 	const [currentStep, setCurrentStep] = useState<UninstallStep>(
-		showDepsSelection ? "confirm" : "progress"
+		showDepsSelection ? "confirm" : "progress",
 	);
 
 	useEffect(() => {
@@ -55,10 +55,10 @@ export default function DeleteLoadingModal({
 
 	const renderStepIndicator = () => {
 		if (!showDepsSelection || currentStep === "complete") return null;
-		
+
 		const steps = ["confirm", "progress"];
 		const currentIndex = steps.indexOf(currentStep);
-		
+
 		return (
 			<div className="flex justify-center gap-2 mb-6 relative z-10">
 				{steps.map((step, index) => (
@@ -87,24 +87,24 @@ export default function DeleteLoadingModal({
 					animate={{ scale: 1, opacity: 1 }}
 					exit={{ scale: 0.95, opacity: 0 }}
 					transition={{ duration: 0.3, ease: "easeOut" }}
-				className="flex flex-col p-8 rounded-2xl border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden"
-				style={{ minHeight: "450px", maxHeight: "90vh" }}
-			>
-				{/* Top accent bar */}
-				<div
-					className="absolute top-0 left-0 w-full h-1 opacity-50"
-					style={{
-						background:
-							currentStep === "complete"
-								? "#22c55e"
-								: status?.startsWith("error")
-									? "#ef4444"
-									: "var(--theme-accent)",
-					}}
-				/>
+					className="flex flex-col p-8 rounded-2xl border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden"
+					style={{ minHeight: "450px", maxHeight: "90vh" }}
+				>
+					{/* Top accent bar */}
+					<div
+						className="absolute top-0 left-0 w-full h-1 opacity-50"
+						style={{
+							background:
+								currentStep === "complete"
+									? "#22c55e"
+									: status?.startsWith("error")
+										? "#ef4444"
+										: "var(--theme-accent)",
+						}}
+					/>
 
-				{/* Background glow */}
-				<div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+					{/* Background glow */}
+					<div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
 						<div
 							className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl opacity-15"
 							style={{
@@ -138,10 +138,12 @@ export default function DeleteLoadingModal({
 									<div className="flex items-center gap-3 mb-6">
 										<div className="flex-1">
 											<h1 className="font-bold text-2xl text-white">
-												{t("deleteLoading.confirm.title") || "Confirm Uninstall"}
+												{t("deleteLoading.confirm.title") ||
+													"Confirm Uninstall"}
 											</h1>
 											<p className="text-neutral-400 text-sm mt-1">
-												{t("deleteLoading.confirm.subtitle") || "Select what to remove"}
+												{t("deleteLoading.confirm.subtitle") ||
+													"Select what to remove"}
 											</p>
 										</div>
 									</div>
@@ -158,7 +160,7 @@ export default function DeleteLoadingModal({
 													({selectedDeps?.length || 0}/{inUseDeps.length})
 												</span>
 											</div>
-											
+
 											<div className="flex-1 overflow-auto bg-black/40 border border-white/10 rounded-xl p-4 space-y-2">
 												{inUseDeps.map((dep, index) => {
 													const selected = selectedDeps?.includes(dep) || false;
@@ -177,7 +179,7 @@ export default function DeleteLoadingModal({
 																	if (setSelectedDeps && selectedDeps) {
 																		if (selectedDeps.includes(dep)) {
 																			setSelectedDeps(
-																				selectedDeps.filter((d) => d !== dep)
+																				selectedDeps.filter((d) => d !== dep),
 																			);
 																		} else {
 																			setSelectedDeps([...selectedDeps, dep]);
@@ -245,46 +247,46 @@ export default function DeleteLoadingModal({
 									transition={{ duration: 0.3 }}
 									className="flex flex-col items-center justify-center gap-6 flex-1 min-h-0"
 								>
-								<div className="flex flex-col gap-2 text-center">
-									<h1 className="font-bold text-2xl text-white">
-										{t("deleteLoading.uninstalling.title")}
-									</h1>
-									<p className="text-neutral-400 text-sm">
-										{t("deleteLoading.uninstalling.wait")}
-									</p>
-								</div>
-
-								<div className="w-full max-w-md flex flex-col items-center">
-									<ProgressBar
-										mode="indeterminate"
-										label={
-											deleteLogs.length > 0
-												? deleteLogs[deleteLogs.length - 1]?.content
-												: t("deleteLoading.processing") || "Processing..."
-										}
-										status="running"
-									/>
-								</div>
-
-								{/* Logs */}
-								{deleteLogs.length > 0 && (
-									<div className="w-full max-w-md">
-										<div className="flex flex-col gap-1 p-4 border border-white/10 rounded-xl bg-black/40 max-h-48 overflow-auto">
-											{deleteLogs.slice(-20).map((log, i) => (
-												<motion.p
-													key={i}
-													initial={{ opacity: 0, y: -5 }}
-													animate={{ opacity: 1, y: 0 }}
-													className="text-xs text-neutral-400 font-mono"
-												>
-													{log.content}
-												</motion.p>
-											))}
-										</div>
+									<div className="flex flex-col gap-2 text-center">
+										<h1 className="font-bold text-2xl text-white">
+											{t("deleteLoading.uninstalling.title")}
+										</h1>
+										<p className="text-neutral-400 text-sm">
+											{t("deleteLoading.uninstalling.wait")}
+										</p>
 									</div>
-								)}
-							</motion.div>
-						)}
+
+									<div className="w-full max-w-md flex flex-col items-center">
+										<ProgressBar
+											mode="indeterminate"
+											label={
+												deleteLogs.length > 0
+													? deleteLogs[deleteLogs.length - 1]?.content
+													: t("deleteLoading.processing") || "Processing..."
+											}
+											status="running"
+										/>
+									</div>
+
+									{/* Logs */}
+									{deleteLogs.length > 0 && (
+										<div className="w-full max-w-md">
+											<div className="flex flex-col gap-1 p-4 border border-white/10 rounded-xl bg-black/40 max-h-48 overflow-auto">
+												{deleteLogs.slice(-20).map((log, i) => (
+													<motion.p
+														key={i}
+														initial={{ opacity: 0, y: -5 }}
+														animate={{ opacity: 1, y: 0 }}
+														className="text-xs text-neutral-400 font-mono"
+													>
+														{log.content}
+													</motion.p>
+												))}
+											</div>
+										</div>
+									)}
+								</motion.div>
+							)}
 
 							{/* Step 3: Complete or Error */}
 							{currentStep === "complete" && (
@@ -294,14 +296,18 @@ export default function DeleteLoadingModal({
 									animate={{ opacity: 1, scale: 1 }}
 									exit={{ opacity: 0, scale: 0.9 }}
 									transition={{ duration: 0.3 }}
-								className="flex flex-col items-center justify-center gap-6 flex-1 min-h-0"
+									className="flex flex-col items-center justify-center gap-6 flex-1 min-h-0"
 								>
 									{status?.startsWith("error") ? (
 										<>
 											<motion.div
 												initial={{ scale: 0 }}
 												animate={{ scale: 1 }}
-												transition={{ type: "spring", stiffness: 200, damping: 20 }}
+												transition={{
+													type: "spring",
+													stiffness: 200,
+													damping: 20,
+												}}
 												className="p-4 rounded-full bg-red-500/10 border border-red-500/20"
 												style={{
 													boxShadow: "0 0 30px rgba(239, 68, 68, 0.3)",
@@ -309,7 +315,7 @@ export default function DeleteLoadingModal({
 											>
 												<XCircle className="w-16 h-16 text-red-500" />
 											</motion.div>
-										<div className="flex flex-col gap-2 text-center max-w-md">
+											<div className="flex flex-col gap-2 text-center max-w-md">
 												<h1 className="font-bold text-2xl text-white">
 													{t("deleteLoading.error.title")}{" "}
 													<span className="text-red-500">
@@ -324,7 +330,7 @@ export default function DeleteLoadingModal({
 												<button
 													type="button"
 													onClick={onClose}
-												className="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-full text-sm transition-colors cursor-pointer"
+													className="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-full text-sm transition-colors cursor-pointer"
 												>
 													{t("common.close") || "Close"}
 												</button>
@@ -335,7 +341,11 @@ export default function DeleteLoadingModal({
 											<motion.div
 												initial={{ scale: 0 }}
 												animate={{ scale: 1 }}
-												transition={{ type: "spring", stiffness: 200, damping: 20 }}
+												transition={{
+													type: "spring",
+													stiffness: 200,
+													damping: 20,
+												}}
 												className="p-4 rounded-full bg-green-500/10 border border-green-500/20"
 												style={{
 													boxShadow: "0 0 30px rgba(34, 197, 94, 0.3)",
@@ -343,7 +353,7 @@ export default function DeleteLoadingModal({
 											>
 												<CheckCircle className="w-16 h-16 text-green-500" />
 											</motion.div>
-									<div className="flex flex-col gap-2 text-center max-w-md">
+											<div className="flex flex-col gap-2 text-center max-w-md">
 												<h1 className="font-bold text-2xl text-white">
 													{t("deleteLoading.success.title")}{" "}
 													<span className="text-green-500">
@@ -351,7 +361,8 @@ export default function DeleteLoadingModal({
 													</span>
 												</h1>
 												<p className="text-xs text-neutral-500 mt-2">
-													{t("deleteLoading.autoClosing") || "Closing automatically..."}
+													{t("deleteLoading.autoClosing") ||
+														"Closing automatically..."}
 												</p>
 											</div>
 										</>

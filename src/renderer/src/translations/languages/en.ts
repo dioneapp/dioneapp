@@ -40,15 +40,20 @@ export const en = {
 			description: "Choose your language and installation path",
 			languageSection: "Language",
 			installationPathSection: "Installation Path",
-			pathDescription: "This folder will contain all your installed scripts, dependencies, and project files. Choose a location that's easily accessible and has enough storage space.",
+			pathDescription:
+				"This folder will contain all your installed scripts, dependencies, and project files. Choose a location that's easily accessible and has enough storage space.",
 			selectFolder: "Select folder",
 			changeFolder: "Change folder",
 			proceedButton: "Select language & path",
 			error: {
-				spaces: "Selected path cannot contain spaces. Please choose a different folder.",
-				updateConfig: "An error occurred while updating the configuration. Please try again.",
-				samePath: "To avoid errors on new updates, choose a different path than the Dione executable.",
-				general: "An error occurred while selecting the path. Please try again.",
+				spaces:
+					"Selected path cannot contain spaces. Please choose a different folder.",
+				updateConfig:
+					"An error occurred while updating the configuration. Please try again.",
+				samePath:
+					"To avoid errors on new updates, choose a different path than the Dione executable.",
+				general:
+					"An error occurred while selecting the path. Please try again.",
 			},
 			success: "Path configured successfully!",
 		},
@@ -147,12 +152,12 @@ export const en = {
 	},
 
 	// sidebar component
-	   sidebar: {
-		   tagline: "Explore, Install, Innovate — in 1 Click.",
-		   activeApps: "Active Apps",
-		   app: "app",
-		   apps: "apps",
-		   running: "running",
+	sidebar: {
+		tagline: "Explore, Install, Innovate — in 1 Click.",
+		activeApps: "Active Apps",
+		app: "app",
+		apps: "apps",
+		running: "running",
 		update: {
 			title: "Update Available",
 			description:
@@ -230,7 +235,8 @@ export const en = {
 			},
 			layoutMode: {
 				label: "Navigation Layout",
-				description: "Choose between sidebar or topbar navigation. Topbar mode is better for small screens.",
+				description:
+					"Choose between sidebar or topbar navigation. Topbar mode is better for small screens.",
 				sidebar: "Sidebar",
 				topbar: "Topbar",
 			},
@@ -369,7 +375,8 @@ export const en = {
 			subtitle: "Select what to remove",
 		},
 		dependencies: "Dependencies",
-		depsDescription: "Select dependencies to uninstall along with the application:",
+		depsDescription:
+			"Select dependencies to uninstall along with the application:",
 		uninstall: {
 			title: "Uninstall",
 			deps: "Uninstall dependencies",
