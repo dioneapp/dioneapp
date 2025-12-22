@@ -5,8 +5,16 @@ import Icon from "@/components/icons/icon";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
+import { closestCenter, DndContext } from "@dnd-kit/core";
+import {
+    arrayMove,
+    horizontalListSortingStrategy,
+    SortableContext,
+    useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { Camera, Home, Library, Maximize, Minimize as Minimize2, Minus, Settings, User, X } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function TopbarNav() {
@@ -19,6 +27,99 @@ export default function TopbarNav() {
 	const [isMaximized, setIsMaximized] = useState(false);
 	const location = useLocation();
 	const navigate = useNavigate();
+
+	const [tabOrder, setTabOrder] = useState(() =>
+		activeApps.filter((app) => app.appId !== "ollama").map((app) => app.appId)
+	);
+
+	React.useEffect(() => {
+		setTabOrder((prevOrder) => {
+			const currentIds = activeApps.filter((app) => app.appId !== "ollama").map((app) => app.appId);
+			return currentIds.filter((id) => prevOrder.includes(id)).concat(currentIds.filter((id) => !prevOrder.includes(id)));
+		});
+	}, [activeApps]);
+
+	function handleDragEnd(event: any) {
+		const { active, over } = event;
+		if (active.id !== over?.id) {
+			setTabOrder((items) => {
+				const oldIndex = items.indexOf(active.id);
+				const newIndex = items.indexOf(over.id);
+				return arrayMove(items, oldIndex, newIndex);
+			});
+		}
+	}
+
+	function SortableTab({ app }: { app: any }) {
+		const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: app.appId });
+		return (
+			<div
+				ref={setNodeRef}
+				style={{
+					transform: CSS.Transform.toString(transform),
+					transition,
+					opacity: isDragging ? 0.5 : 1,
+					zIndex: isDragging ? 100 : undefined,
+				}}
+				{...attributes}
+				{...listeners}
+				className="relative group"
+			>
+				<button
+					type="button"
+					className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1 hover:bg-white/15 transition-colors shrink-0 focus:outline-none"
+					style={{ textDecoration: "none" }}
+					onClick={() => {
+						navigate({
+							pathname: `/install/${app.isLocal ? app.data?.name : app.appId}`,
+							search: `?isLocal=${app.isLocal}`,
+						});
+					}}
+				>
+					<div className="w-6 h-6 overflow-hidden shrink-0 rounded-lg">
+						{!app.isLocal ? (
+							<>
+								{app.data?.logo_url?.startsWith("http") ? (
+									<img
+										src={app.data.logo_url}
+										alt={app.data.name}
+										className="w-full h-full object-cover rounded-lg"
+									/>
+								) : (
+									<GeneratedIcon
+										name={app?.data?.name || app.appId}
+										className="h-full w-full border border-white/10 group-hover:border-white/20"
+									/>
+								)}
+							</>
+						) : (
+							<GeneratedIcon
+								name={app?.data?.name}
+								className="w-full h-full"
+								roundedClassName="rounded-lg"
+							/>
+						)}
+					</div>
+					<span className="text-xs text-neutral-300 whitespace-nowrap max-w-30 truncate mr-6">
+						{app?.data?.name || app.appId}
+					</span>
+				</button>
+				<button
+					type="button"
+					onClick={() => stopApp(app.appId, app.data?.name || app.appId)}
+					className="ml-2 p-0.5 mr-2 hover:bg-white/20 rounded transition-colors absolute right-0 top-1/2 -translate-y-1/2"
+					style={{ zIndex: 2 }}
+				>
+					<X className="h-3 w-3" />
+				</button>
+				{hoveredTooltip === app.appId && (
+					<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-1 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
+						{app?.data?.name || app.appId}
+					</div>
+				)}
+			</div>
+		);
+	}
 
 	function stopApp(appId: string, appName: string) {
 		handleStopApp(appId, appName);
@@ -230,76 +331,28 @@ export default function TopbarNav() {
 				</div>
 
 				   {/* Second Row: Active Apps */}
-				   {activeApps.length > 0 && (
-					   <div className="flex items-center px-4 gap-2 h-10 border-t border-white/5" id="no-draggable">
+				   {tabOrder.length > 0 && (
+					 <div className="flex items-center px-4 gap-2 h-10 border-t border-white/5" id="no-draggable">
+					   <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+						 <SortableContext items={tabOrder} strategy={horizontalListSortingStrategy}>
 						   <div className="flex items-center gap-2 flex-1 overflow-x-hidden">
-							   {activeApps
-								   ?.filter((app) => app.appId !== "ollama")
-								   .map((app) => {
-									   return (
-										   <div
-											   key={app.appId}
-											   className="relative group"
-											   onMouseEnter={() => setHoveredTooltip(app.appId)}
-											   onMouseLeave={() => setHoveredTooltip(null)}
-										   >
-											   <button
-												   type="button"
-												   className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1 hover:bg-white/15 transition-colors shrink-0 focus:outline-none"
-												   style={{ textDecoration: "none" }}
-												   onClick={() => {
-													   navigate({
-														   pathname: `/install/${app.isLocal ? app.data?.name : app.appId}`,
-														   search: `?isLocal=${app.isLocal}`,
-													   });
-												   }}
-											   >
-												   <div className="w-6 h-6 overflow-hidden shrink-0 rounded-lg">
-													   {!app.isLocal ? (
-														   <>
-															   {app.data?.logo_url?.startsWith("http") ? (
-																   <img
-																	   src={app.data.logo_url}
-																	   alt={app.data.name}
-																	   className="w-full h-full object-cover rounded-lg"
-																   />
-															   ) : (
-																   <GeneratedIcon
-																	   name={app?.data?.name || app.appId}
-																	   className="h-full w-full border border-white/10 group-hover:border-white/20"
-																   />
-															   )}
-														   </>
-													   ) : (
-														   <GeneratedIcon
-															   name={app?.data?.name}
-															   className="w-full h-full"
-															   roundedClassName="rounded-lg"
-														   />
-													   )}
-												   </div>
-												   <span className="text-xs text-neutral-300 whitespace-nowrap max-w-30 truncate mr-6">
-													   {app?.data?.name || app.appId}
-												   </span>
-											   </button>
-											   <button
-												   type="button"
-												   onClick={() => stopApp(app.appId, app.data?.name || app.appId)}
-												   className="ml-2 p-0.5 mr-2 hover:bg-white/20 rounded transition-colors absolute right-0 top-1/2 -translate-y-1/2"
-												   style={{ zIndex: 2 }}
-											   >
-												   <X className="h-3 w-3" />
-											   </button>
-											   {hoveredTooltip === app.appId && (
-												   <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-1 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
-													   {app?.data?.name || app.appId}
-												   </div>
-											   )}
-										   </div>
-									   );
-								   })}
+							 {tabOrder.map((id) => {
+							   const app = activeApps.find((a) => a.appId === id);
+							   if (!app) return null;
+							   return (
+								 <div
+								   key={app.appId}
+								   onMouseEnter={() => setHoveredTooltip(app.appId)}
+								   onMouseLeave={() => setHoveredTooltip(null)}
+								 >
+								   <SortableTab app={app} />
+								 </div>
+							   );
+							 })}
 						   </div>
-					   </div>
+						 </SortableContext>
+					   </DndContext>
+					 </div>
 				   )}
 			</div>
 		</>
