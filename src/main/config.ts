@@ -1,7 +1,7 @@
-import logger from "@/server/utils/logger";
-import { app, dialog } from "electron";
 import fs from "node:fs";
 import path from "node:path";
+import logger from "@/server/utils/logger";
+import { app, dialog } from "electron";
 
 export interface AppConfig {
 	firstLaunch: boolean;

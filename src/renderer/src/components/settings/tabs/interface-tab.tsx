@@ -66,8 +66,14 @@ export default function InterfaceTab({
 					value={config.layoutMode || "sidebar"}
 					onChange={(value) => handleUpdate({ layoutMode: value })}
 					options={[
-						{ value: "sidebar", label: t("settings.interface.layoutMode.sidebar") },
-						{ value: "topbar", label: t("settings.interface.layoutMode.topbar") },
+						{
+							value: "sidebar",
+							label: t("settings.interface.layoutMode.sidebar"),
+						},
+						{
+							value: "topbar",
+							label: t("settings.interface.layoutMode.topbar"),
+						},
 					]}
 				/>
 			</SettingItem>

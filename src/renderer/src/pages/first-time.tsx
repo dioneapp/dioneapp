@@ -307,7 +307,7 @@ export default function FirstTime() {
 						className={getContainerClasses()}
 					>
 						<div className="flex flex-col gap-4 justify-center items-center">
-						<Setup onSelectLanguage={onSelectLanguage} />
+							<Setup onSelectLanguage={onSelectLanguage} />
 						</div>
 						<button
 							type="button"
@@ -395,7 +395,9 @@ export default function FirstTime() {
 							<div key={lvl} className="py-1">
 								<div
 									className={`w-6 h-1 rounded-full ${
-										lvl === level || (level === 5 && lvl === 4) ? "w-10" : "bg-white/20"
+										lvl === level || (level === 5 && lvl === 4)
+											? "w-10"
+											: "bg-white/20"
 									}`}
 									style={
 										lvl === level || (level === 5 && lvl === 4)
