@@ -60,7 +60,7 @@
           ]
         }
       ],
-      "icon": "./resources/icon.icns",
+      "icon": "./resources/dione_liquidglass.icon",
       "category": "public.app-category.productivity",
       "artifactName": "Dione-${version}-Installer-Mac.${ext}",
       "entitlements": "resources/entitlements.mac.plist",
