@@ -1,3 +1,7 @@
+import { exec, spawn } from "node:child_process";
+import fs from "node:fs";
+import { arch, platform as getPlatform } from "node:os";
+import path from "node:path";
 import {
 	getAllValues,
 	initDefaultEnv,
@@ -6,10 +10,6 @@ import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-m
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
-import { exec, spawn } from "node:child_process";
-import fs from "node:fs";
-import { arch, platform as getPlatform } from "node:os";
-import path from "node:path";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
 
@@ -194,18 +194,19 @@ async function killByPort(
 				}
 
 				Promise.all(
-					targets.map((pid) =>
-						new Promise<void>((res) => {
-							try {
-								process.kill(pid, "SIGKILL");
-								logger.info(`Killed PID ${pid} on Linux/macOS`);
-							} catch (e: unknown) {
-								logger.warn(`Failed to kill PID ${pid}: ${e}`);
-							}
-							dropProcessInstance(pid);
-							unregisterProcess(id, pid);
-							res();
-						}),
+					targets.map(
+						(pid) =>
+							new Promise<void>((res) => {
+								try {
+									process.kill(pid, "SIGKILL");
+									logger.info(`Killed PID ${pid} on Linux/macOS`);
+								} catch (e: unknown) {
+									logger.warn(`Failed to kill PID ${pid}: ${e}`);
+								}
+								dropProcessInstance(pid);
+								unregisterProcess(id, pid);
+								res();
+							}),
 					),
 				).then(() => {
 					io.to(id).emit("installUpdate", {
@@ -250,27 +251,28 @@ async function killByPort(
 
 			logger.info(`Killing processes on port ${port}: ${targets.join(", ")}`);
 			Promise.all(
-				targets.map((pid) =>
-					new Promise<void>((res) => {
-						exec(`taskkill /PID ${pid} /T /F`, (killErr, killStderr) => {
-							if (killErr) {
-								logger.warn(`Error killing PID ${pid}: ${killStderr}`);
-								io.to(id).emit("installUpdate", {
-									type: "log",
-									content: `ERROR killing PID ${pid}: ${killStderr}\n`,
-								});
-							} else {
-								logger.info(`PID ${pid} killed successfully`);
-								io.to(id).emit("installUpdate", {
-									type: "log",
-									content: `PID ${pid} killed successfully\n`,
-								});
-							}
-							dropProcessInstance(pid);
-							unregisterProcess(id, pid);
-							res();
-						});
-					}),
+				targets.map(
+					(pid) =>
+						new Promise<void>((res) => {
+							exec(`taskkill /PID ${pid} /T /F`, (killErr, killStderr) => {
+								if (killErr) {
+									logger.warn(`Error killing PID ${pid}: ${killStderr}`);
+									io.to(id).emit("installUpdate", {
+										type: "log",
+										content: `ERROR killing PID ${pid}: ${killStderr}\n`,
+									});
+								} else {
+									logger.info(`PID ${pid} killed successfully`);
+									io.to(id).emit("installUpdate", {
+										type: "log",
+										content: `PID ${pid} killed successfully\n`,
+									});
+								}
+								dropProcessInstance(pid);
+								unregisterProcess(id, pid);
+								res();
+							});
+						}),
 				),
 			).then(() => resolve(true));
 		});
