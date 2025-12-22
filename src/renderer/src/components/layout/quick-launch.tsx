@@ -2,7 +2,7 @@ import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import { useTranslation } from "@/translations/translation-context";
 import { useCustomDrag } from "@/utils/quick-launch/use-custom-drag";
-import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { AnimatePresence, type Variants, motion } from "framer-motion";
 import { Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
@@ -25,8 +25,11 @@ export default function QuickLaunch({
 	const [selectedSlotId, setSelectedSlotId] = useState<string | null>(null);
 	const maxApps = 6;
 
-	const { applyStoredPositions, savePositions } = useCustomDrag({ apps, setApps, maxApps });
-
+	const { applyStoredPositions, savePositions } = useCustomDrag({
+		apps,
+		setApps,
+		maxApps,
+	});
 
 	const backdropVariants: Variants = {
 		hidden: { opacity: 0 },
@@ -42,7 +45,6 @@ export default function QuickLaunch({
 		},
 		exit: { scale: 0.95, opacity: 0 },
 	};
-
 
 	const appItemVariants = {
 		hidden: { opacity: 0, y: 10 },
@@ -65,7 +67,6 @@ export default function QuickLaunch({
 		}
 	}, [apps]);
 
-
 	useEffect(() => {
 		handleReloadQuickLaunch();
 	}, [removedApps]);
@@ -87,7 +88,7 @@ export default function QuickLaunch({
 
 	function addToSlot(app: any) {
 		const targetIndex = selectedSlotId
-			? parseInt(selectedSlotId.replace("slot-", ""), 10)
+			? Number.parseInt(selectedSlotId.replace("slot-", ""), 10)
 			: selectedSlot;
 		if (targetIndex === null || targetIndex === undefined) return;
 
@@ -120,12 +121,19 @@ export default function QuickLaunch({
 
 	const SortableSlot = ({ index }: { index: number }) => {
 		const app = apps[index];
-		const appsInQuickLaunch = apps.map((a) => a?.id).filter(Boolean) as string[];
-		const availableToAdd = availableApps.filter((a) => !appsInQuickLaunch.includes(a.id));
+		const appsInQuickLaunch = apps
+			.map((a) => a?.id)
+			.filter(Boolean) as string[];
+		const availableToAdd = availableApps.filter(
+			(a) => !appsInQuickLaunch.includes(a.id),
+		);
 
 		// Only allow adding to the next sequential slot: all previous slots must be filled
 		// and the current slot must be empty. This handles sparse arrays and missing entries.
-		const previousFilled = index === 0 ? true : Array.from({ length: index }).every((_, i) => Boolean(apps[i]));
+		const previousFilled =
+			index === 0
+				? true
+				: Array.from({ length: index }).every((_, i) => Boolean(apps[i]));
 		const isSlotAllowed = !app && previousFilled;
 		const clickIsDisabled = availableToAdd.length === 0 || !isSlotAllowed;
 
@@ -179,16 +187,19 @@ export default function QuickLaunch({
 				{!compactMode && (
 					<div className="max-w-18 overflow-hidden flex justify-center items-center">
 						{app ? (
-							<p className="text-[12px] text-neutral-300 truncate w-full">{app.name}</p>
+							<p className="text-[12px] text-neutral-300 truncate w-full">
+								{app.name}
+							</p>
 						) : (
-							<p className="text-[12px] text-neutral-400 truncate w-full">{t("quickLaunch.addApp")}</p>
+							<p className="text-[12px] text-neutral-400 truncate w-full">
+								{t("quickLaunch.addApp")}
+							</p>
 						)}
 					</div>
 				)}
 			</div>
 		);
 	};
-
 
 	return (
 		<div
@@ -212,7 +223,7 @@ export default function QuickLaunch({
 					))}
 				</div>
 			</div>
-            
+
 			<AnimatePresence>
 				{showAppList && (
 					<motion.div
@@ -257,7 +268,13 @@ export default function QuickLaunch({
 								</div>
 								<div className="grid grid-cols-3 gap-4 max-h-[60vh] overflow-y-auto mt-4">
 									{availableApps
-										?.filter((app) => !apps.map((a) => a?.id).filter(Boolean).includes(app.id))
+										?.filter(
+											(app) =>
+												!apps
+													.map((a) => a?.id)
+													.filter(Boolean)
+													.includes(app.id),
+										)
 										.map((app) => (
 											<motion.div
 												key={app.id}
