@@ -155,6 +155,9 @@ export const en = {
 	sidebar: {
 		tagline: "Explore, Install, Innovate — in 1 Click.",
 		activeApps: "Active Apps",
+		app: "app",
+		apps: "apps",
+		running: "running",
 		update: {
 			title: "Update Available",
 			description:
@@ -173,6 +176,7 @@ export const en = {
 
 	// home page
 	home: {
+		title: "Home",
 		featured: "Featured",
 		explore: "Explore",
 	},
@@ -228,6 +232,13 @@ export const en = {
 					sunset: "Sunset Glow",
 					royal: "Royal Purple",
 				},
+			},
+			layoutMode: {
+				label: "Navigation Layout",
+				description:
+					"Choose between sidebar or topbar navigation. Topbar mode is better for small screens.",
+				sidebar: "Sidebar",
+				topbar: "Topbar",
 			},
 			intenseBackgrounds: {
 				label: "Intense Background Colors",

@@ -14,6 +14,7 @@ export interface AppConfig {
 	defaultBinFolder: string;
 	defaultLogsPath: string;
 	compactMode: boolean;
+	layoutMode: "sidebar" | "topbar";
 	alwaysUninstallDependencies: boolean;
 	sendAnonymousReports: boolean;
 	enableDiscordRPC: boolean;
@@ -33,6 +34,7 @@ export const defaultConfig: AppConfig = {
 	defaultBinFolder: path.join(app.getPath("userData")),
 	defaultLogsPath: path.join(app.getPath("userData")),
 	compactMode: false,
+	layoutMode: "sidebar",
 	alwaysUninstallDependencies: false,
 	sendAnonymousReports: true,
 	enableDiscordRPC: true,

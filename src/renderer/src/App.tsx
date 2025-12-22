@@ -3,6 +3,7 @@ import { ErrorBoundary } from "@/components/layout/error-handler";
 import OfflineIndicator from "@/components/layout/offline-indicator";
 import Sidebar from "@/components/layout/sidebar";
 import Titlebar from "@/components/layout/titlebar";
+import TopbarNav from "@/components/layout/topbar-nav";
 import Account from "@/pages/account";
 import ErrorPage from "@/pages/error";
 import FirstTime from "@/pages/first-time";
@@ -15,6 +16,7 @@ import QuickAI from "@/pages/quick-ai";
 import Report from "@/pages/report";
 import Settings from "@/pages/settings";
 import { TranslationProvider } from "@/translations/translation-context";
+import { apiJson } from "@/utils/api";
 import { initializeTheme } from "@/utils/theme";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -25,6 +27,10 @@ function App() {
 	const { pathname } = location;
 	const [_isFirstLaunch, setIsFirstLaunch] = useState<boolean>(false);
 	const [_isLoading, setIsLoading] = useState(true);
+	const [config, setConfig] = useState<any | null>(() => {
+		const stored = localStorage.getItem("config");
+		return stored ? JSON.parse(stored) : null;
+	});
 	const navigate = useNavigate();
 
 	// Initialize theme on app load
@@ -67,6 +73,35 @@ function App() {
 				window.electron.ipcRenderer.invoke("init-env");
 			}
 		});
+	}, []);
+
+	useEffect(() => {
+		const handleConfigUpdate = () => {
+			const updatedConfig = localStorage.getItem("config");
+			if (updatedConfig) {
+				setConfig(JSON.parse(updatedConfig));
+			}
+		};
+
+		window.addEventListener("config-updated", handleConfigUpdate);
+		return () =>
+			window.removeEventListener("config-updated", handleConfigUpdate);
+	}, []);
+
+	useEffect(() => {
+		const cachedConfig = localStorage.getItem("config");
+		if (cachedConfig) setConfig(JSON.parse(cachedConfig));
+
+		const fetchConfig = async () => {
+			try {
+				const data = await apiJson<any>("/config");
+				setConfig(data);
+				localStorage.setItem("config", JSON.stringify(data));
+			} catch (error) {
+				console.error("Failed to load config: ", error);
+			}
+		};
+		fetchConfig();
 	}, []);
 
 	useEffect(() => {
@@ -113,14 +148,18 @@ function App() {
 	};
 
 	const PageComponent = getPage();
+	const layoutMode = config?.layoutMode || "sidebar";
+
 	return (
 		<TranslationProvider>
 			<div className="h-screen w-screen overflow-hidden" id="main">
-				{pathname !== "/first-time" && <Titlebar />}
+				{pathname !== "/first-time" && layoutMode === "sidebar" && <Titlebar />}
 				<OfflineIndicator />
-				<div className="flex h-[calc(100%)]">
+				<div
+					className={`flex ${layoutMode === "topbar" ? "flex-col" : ""} h-[calc(100%)]`}
+				>
 					{pathname !== "/first-time" && pathname !== "/no_access" && (
-						<Sidebar />
+						<>{layoutMode === "sidebar" ? <Sidebar /> : <TopbarNav />}</>
 					)}
 					<div
 						className="flex-1 overflow-x-hidden"
