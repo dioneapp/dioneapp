@@ -155,15 +155,11 @@ function App() {
 			<div className="h-screen w-screen overflow-hidden" id="main">
 				{pathname !== "/first-time" && layoutMode === "sidebar" && <Titlebar />}
 				<OfflineIndicator />
-				<div className={`flex ${layoutMode === "topbar" ? "flex-col" : ""} h-[calc(100%)]`}>
+				<div
+					className={`flex ${layoutMode === "topbar" ? "flex-col" : ""} h-[calc(100%)]`}
+				>
 					{pathname !== "/first-time" && pathname !== "/no_access" && (
-						<>
-							{layoutMode === "sidebar" ? (
-								<Sidebar />
-							) : (
-								<TopbarNav />
-							)}
-						</>
+						<>{layoutMode === "sidebar" ? <Sidebar /> : <TopbarNav />}</>
 					)}
 					<div
 						className="flex-1 overflow-x-hidden"

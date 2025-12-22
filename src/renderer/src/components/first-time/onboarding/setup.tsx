@@ -7,9 +7,7 @@ interface SetupProps {
 	onSelectLanguage: () => void;
 }
 
-export default function Setup({
-	onSelectLanguage,
-}: SetupProps) {
+export default function Setup({ onSelectLanguage }: SetupProps) {
 	const { setLanguage, language, t } = useTranslation();
 	const [selectedPath, setSelectedPath] = useState<string | null>(null);
 	const [pathError, setPathError] = useState<string | null>(null);
@@ -25,9 +23,7 @@ export default function Setup({
 			setSelectedPath(result.filePaths[0]);
 			if (result) {
 				if (/\s/.test(result.filePaths[0])) {
-					setPathError(
-						t("firstTime.languageSelector.error.spaces"),
-					);
+					setPathError(t("firstTime.languageSelector.error.spaces"));
 					return;
 				}
 				setPathError(null);
@@ -50,19 +46,13 @@ export default function Setup({
 						setPathSuccess(true);
 						window.electron.ipcRenderer.invoke("init-env");
 					} else {
-						setPathError(
-							t("firstTime.languageSelector.error.updateConfig"),
-						);
+						setPathError(t("firstTime.languageSelector.error.updateConfig"));
 					}
 				} else {
-					setPathError(
-						t("firstTime.languageSelector.error.samePath"),
-					);
+					setPathError(t("firstTime.languageSelector.error.samePath"));
 				}
 			} else {
-				setPathError(
-					t("firstTime.languageSelector.error.general"),
-				);
+				setPathError(t("firstTime.languageSelector.error.general"));
 			}
 		}
 	};
@@ -102,7 +92,9 @@ export default function Setup({
 						<div className="flex items-center justify-between mb-4">
 							<div className="flex items-center gap-2">
 								<Globe className="w-5 h-5" />
-							<h3 className="text-white font-semibold text-lg">{t("firstTime.languageSelector.languageSection")}</h3>
+								<h3 className="text-white font-semibold text-lg">
+									{t("firstTime.languageSelector.languageSection")}
+								</h3>
 							</div>
 						</div>
 						<div className="max-h-96 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
@@ -172,7 +164,9 @@ export default function Setup({
 						>
 							<FolderOpen className="w-8 h-8 text-white/60 group-hover:text-white/80 transition-colors" />
 							<span className="text-white/60 group-hover:text-white/80 transition-colors text-sm">
-							{selectedPath ? t("firstTime.languageSelector.changeFolder") : t("firstTime.languageSelector.selectFolder")}
+								{selectedPath
+									? t("firstTime.languageSelector.changeFolder")
+									: t("firstTime.languageSelector.selectFolder")}
 							</span>
 							{selectedPath && (
 								<span className="text-xs text-white/80 font-mono break-all text-center mt-2">
@@ -221,7 +215,9 @@ export default function Setup({
 								: "bg-white/10 text-white/50 cursor-not-allowed border border-white/10"
 						}`}
 					>
-						{canProceed ? t("languageSelector.next") : t("firstTime.languageSelector.proceedButton")}
+						{canProceed
+							? t("languageSelector.next")
+							: t("firstTime.languageSelector.proceedButton")}
 					</button>
 				</motion.div>
 			</div>
