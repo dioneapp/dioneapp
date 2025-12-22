@@ -57,16 +57,32 @@ export default function InterfaceTab({
 				layout="column"
 			>
 				<ThemeSelector />
-			</SettingItem>{" "}
+			</SettingItem>
 			<SettingItem
-				label={t("settings.interface.compactView.label")}
-				description={t("settings.interface.compactView.description")}
+				label={t("settings.interface.layoutMode.label")}
+				description={t("settings.interface.layoutMode.description")}
 			>
-				<ToggleSwitch
-					enabled={config.compactMode}
-					onChange={() => handleUpdate({ compactMode: !config.compactMode })}
+				<CustomSelect
+					value={config.layoutMode || "sidebar"}
+					onChange={(value) => handleUpdate({ layoutMode: value })}
+					options={[
+						{ value: "sidebar", label: t("settings.interface.layoutMode.sidebar") },
+						{ value: "topbar", label: t("settings.interface.layoutMode.topbar") },
+					]}
 				/>
 			</SettingItem>
+
+			{(config.layoutMode === "sidebar" || !config.layoutMode) && (
+				<SettingItem
+					label={t("settings.interface.compactView.label")}
+					description={t("settings.interface.compactView.description")}
+				>
+					<ToggleSwitch
+						enabled={config.compactMode}
+						onChange={() => handleUpdate({ compactMode: !config.compactMode })}
+					/>
+				</SettingItem>
+			)}
 		</motion.div>
 	);
 }
