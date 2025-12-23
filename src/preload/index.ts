@@ -40,6 +40,8 @@ if (process.contextIsolated) {
 	try {
 		contextBridge.exposeInMainWorld("electron", electronAPI);
 		contextBridge.exposeInMainWorld("api", api);
+		// expose platform to renderer so UI can adapt to macOS specifics
+		contextBridge.exposeInMainWorld("platform", process.platform);
 		contextBridge.exposeInMainWorld("captureScreenshot", () => {
 			return electronAPI.ipcRenderer.invoke("capture-screenshot");
 		});
@@ -54,4 +56,6 @@ if (process.contextIsolated) {
 	window.electron = electronAPI;
 	// @ts-ignore (define in dts)
 	window.api = api;
+	// @ts-ignore (define in dts)
+	window.platform = process.platform;
 }

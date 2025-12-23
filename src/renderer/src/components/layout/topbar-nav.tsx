@@ -5,24 +5,21 @@ import Icon from "@/components/icons/icon";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
-import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
-	SortableContext,
-	arrayMove,
-	horizontalListSortingStrategy,
-	useSortable,
+    arrayMove,
+    useSortable
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-	Camera,
-	Home,
-	Library,
-	Maximize,
-	Minimize as Minimize2,
-	Minus,
-	Settings,
-	User,
-	X,
+    Camera,
+    Home,
+    Library,
+    Maximize,
+    Minimize as Minimize2,
+    Minus,
+    Settings,
+    User,
+    X,
 } from "lucide-react";
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -38,6 +35,9 @@ export default function TopbarNav() {
 	const [isMaximized, setIsMaximized] = useState(false);
 	const location = useLocation();
 	const navigate = useNavigate();
+
+	// detect macOS via preload-exposed platform
+	const isMac = typeof window !== "undefined" && (window as any).platform === "darwin";
 
 	const [tabOrder, setTabOrder] = useState(() =>
 		activeApps.filter((app) => app.appId !== "ollama").map((app) => app.appId),
@@ -197,7 +197,7 @@ export default function TopbarNav() {
 			<div className="w-full flex flex-col bg-black/20 backdrop-blur-xl border-b border-white/10 relative mb-0 pb-0">
 				{/* First Row: Main Navigation + Window Controls */}
 				<div
-					className="flex items-center px-4 gap-4 h-10 relative overflow-hidden"
+					className={`flex items-center px-4 gap-4 h-10 relative overflow-hidden ${isMac ? "pl-6" : ""}`}
 					id="titlebar"
 				>
 					{/* Logo/Brand */}
@@ -330,38 +330,42 @@ export default function TopbarNav() {
 						{/* Separator */}
 						<div className="h-6 w-px bg-white/10 mx-2" />
 
-						{/* Window Controls */}
-						<div id="no-draggable">
-							<button
-								type="button"
-								onClick={handleMinimize}
-								className="cursor-pointer p-1 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
-							>
-								<Minus className="h-5 w-5" />
-							</button>
-						</div>
-						<div id="no-draggable">
-							<button
-								type="button"
-								onClick={handleMaximize}
-								className="cursor-pointer p-1.5 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
-							>
-								{isMaximized ? (
-									<Minimize2 className="h-4 w-4" />
-								) : (
-									<Maximize className="h-4 w-4" />
-								)}
-							</button>
-						</div>
-						<div id="no-draggable">
-							<button
-								type="button"
-								onClick={handleClose}
-								className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-all duration-200 text-white/70"
-							>
-								<X className="h-5 w-5" />
-							</button>
-						</div>
+						{/* Window Controls - hidden on macOS (native traffic lights show) */}
+						{!isMac && (
+							<>
+								<div id="no-draggable">
+									<button
+										type="button"
+										onClick={handleMinimize}
+										className="cursor-pointer p-1 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
+										>
+											<Minus className="h-5 w-5" />
+										</button>
+									</div>
+									<div id="no-draggable">
+										<button
+											type="button"
+											onClick={handleMaximize}
+											className="cursor-pointer p-1.5 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
+											>
+											{isMaximized ? (
+												<Minimize2 className="h-4 w-4" />
+											) : (
+												<Maximize className="h-4 w-4" />
+											)}
+											</button>
+										</div>
+										<div id="no-draggable">
+											<button
+												type="button"
+												onClick={handleClose}
+												className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-all duration-200 text-white/70"
+											>
+												<X className="h-5 w-5" />
+											</button>
+										</div>
+							</>
+						)}
 					</div>
 				</div>
 

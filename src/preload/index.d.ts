@@ -34,5 +34,6 @@ declare global {
 		copyToClipboard: {
 			writeText: (text: string) => Promise<void>;
 		};
+		platform?: string;
 	}
 }
