@@ -314,6 +314,7 @@ export const executeCommand = async (
 
 	// command options with enhanced environment for build tools
 	const baseEnv = {
+		...process.env,
 		...ENVIRONMENT,
 		PYTHONUNBUFFERED: "1",
 		NODE_NO_BUFFERING: "1",
