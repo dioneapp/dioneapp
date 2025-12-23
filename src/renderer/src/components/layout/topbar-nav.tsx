@@ -209,8 +209,18 @@ export default function TopbarNav() {
 					{/* Logo/Brand */}
 					<Link
 						to="/"
-						className="flex items-center gap-2 mr-4 relative z-10 shrink-0"
+						className={`flex items-center gap-2 relative z-10 shrink-0 ${isMac ? "" : "mr-4"}`}
 						id="no-draggable"
+						style={
+							isMac
+								? {
+										position: "absolute",
+										left: "50%",
+										top: "50%",
+										transform: "translate(-50%, -50%)",
+									}
+								: undefined
+						}
 					>
 						<Icon name="Dio" className="w-5 h-5" />
 						<span className="text-sm font-semibold text-neutral-200">
