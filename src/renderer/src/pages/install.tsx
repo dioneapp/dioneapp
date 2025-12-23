@@ -373,8 +373,8 @@ export default function Install({
 				}
 			}
 
-			if (!installedApps.includes(data.name)) {
-				setInstalledApps((prevApps) => [...prevApps, data.name]);
+			if (!installedApps.some((app) => app.name === data.name)) {
+				setInstalledApps((prevApps) => [...prevApps, { name: data.name }]);
 				setWasJustInstalled(true);
 			}
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
@@ -596,7 +596,7 @@ export default function Install({
 			setInstalled(false);
 			await fetchIfDownloaded();
 			setInstalledApps((prevApps) =>
-				prevApps.filter((app) => app !== data.name),
+				prevApps.filter((app) => app.name !== data.name),
 			);
 			setApps((prevApps) => prevApps.filter((app) => app?.name !== data.name));
 		} else {
@@ -716,7 +716,7 @@ export default function Install({
 
 	async function onFinishInstallDeps() {
 		// remove app from installed apps
-		setInstalledApps((prevApps) => prevApps.filter((app) => app !== data.name));
+		setInstalledApps((prevApps) => prevApps.filter((app) => app.name !== data.name));
 		setApps((prevApps) => prevApps.filter((app) => app?.name !== data.name));
 
 		// clear missing deps
