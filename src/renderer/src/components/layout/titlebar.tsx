@@ -12,7 +12,8 @@ export default function Titlebar() {
 	const isFullscreen = localStorage.getItem("isFullscreen") === "true";
 
 	// detect macOS via preload-exposed platform
-	const isMac = typeof window !== "undefined" && (window as any).platform === "darwin";
+	const isMac =
+		typeof window !== "undefined" && (window as any).platform === "darwin";
 
 	const handleClose = async () => {
 		if (Object.keys(isServerRunning).length !== 0) {
@@ -72,31 +73,31 @@ export default function Titlebar() {
 									id="minimize-button"
 									onClick={handleMinimize}
 									className="cursor-pointer p-1 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
-									>
-										<Minus className="h-5 w-5" />
-									</button>
-									<div id="no-draggable">
-										<button
-											type="button"
-											id="maximize-button"
-											onClick={handleMaximize}
-											className="cursor-pointer p-1.5 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
-											>
-												{isMaximized ? (
-													<Minimize2 className="h-4 w-4" />
-												) : (
-													<Maximize className="h-4 w-4" />
-												)}
-											</button>
-										</div>
+								>
+									<Minus className="h-5 w-5" />
+								</button>
+								<div id="no-draggable">
 									<button
 										type="button"
-										id="close-button"
-										onClick={handleClose}
-										className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-all duration-200 text-white/70"
-										>
-											<X className="h-5 w-5" />
-										</button>
+										id="maximize-button"
+										onClick={handleMaximize}
+										className="cursor-pointer p-1.5 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
+									>
+										{isMaximized ? (
+											<Minimize2 className="h-4 w-4" />
+										) : (
+											<Maximize className="h-4 w-4" />
+										)}
+									</button>
+								</div>
+								<button
+									type="button"
+									id="close-button"
+									onClick={handleClose}
+									className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-all duration-200 text-white/70"
+								>
+									<X className="h-5 w-5" />
+								</button>
 							</>
 						)}
 					</div>

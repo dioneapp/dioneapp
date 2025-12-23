@@ -5,21 +5,18 @@ import Icon from "@/components/icons/icon";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
-import {
-    arrayMove,
-    useSortable
-} from "@dnd-kit/sortable";
+import { arrayMove, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-    Camera,
-    Home,
-    Library,
-    Maximize,
-    Minimize as Minimize2,
-    Minus,
-    Settings,
-    User,
-    X,
+	Camera,
+	Home,
+	Library,
+	Maximize,
+	Minimize as Minimize2,
+	Minus,
+	Settings,
+	User,
+	X,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -38,7 +35,8 @@ export default function TopbarNav() {
 	const navigate = useNavigate();
 
 	// detect macOS via preload-exposed platform
-	const isMac = typeof window !== "undefined" && (window as any).platform === "darwin";
+	const isMac =
+		typeof window !== "undefined" && (window as any).platform === "darwin";
 
 	useEffect(() => {
 		const ipc = (window as any)?.electron?.ipcRenderer;
@@ -385,32 +383,32 @@ export default function TopbarNav() {
 										type="button"
 										onClick={handleMinimize}
 										className="cursor-pointer p-1 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
-										>
-											<Minus className="h-5 w-5" />
-										</button>
-									</div>
-									<div id="no-draggable">
-										<button
-											type="button"
-											onClick={handleMaximize}
-											className="cursor-pointer p-1.5 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
-											>
-											{isMaximized ? (
-												<Minimize2 className="h-4 w-4" />
-											) : (
-												<Maximize className="h-4 w-4" />
-											)}
-											</button>
-										</div>
-										<div id="no-draggable">
-											<button
-												type="button"
-												onClick={handleClose}
-												className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-all duration-200 text-white/70"
-											>
-												<X className="h-5 w-5" />
-											</button>
-										</div>
+									>
+										<Minus className="h-5 w-5" />
+									</button>
+								</div>
+								<div id="no-draggable">
+									<button
+										type="button"
+										onClick={handleMaximize}
+										className="cursor-pointer p-1.5 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
+									>
+										{isMaximized ? (
+											<Minimize2 className="h-4 w-4" />
+										) : (
+											<Maximize className="h-4 w-4" />
+										)}
+									</button>
+								</div>
+								<div id="no-draggable">
+									<button
+										type="button"
+										onClick={handleClose}
+										className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-all duration-200 text-white/70"
+									>
+										<X className="h-5 w-5" />
+									</button>
+								</div>
 							</>
 						)}
 					</div>
