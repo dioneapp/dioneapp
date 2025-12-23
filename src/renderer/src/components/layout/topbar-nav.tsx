@@ -21,7 +21,7 @@ import {
     User,
     X,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function TopbarNav() {
@@ -33,11 +33,37 @@ export default function TopbarNav() {
 	const [avatarError, setAvatarError] = useState(false);
 	const [showModal, setShowModal] = useState(false);
 	const [isMaximized, setIsMaximized] = useState(false);
+	const [isFullscreen, setIsFullscreen] = useState(false);
 	const location = useLocation();
 	const navigate = useNavigate();
 
 	// detect macOS via preload-exposed platform
 	const isMac = typeof window !== "undefined" && (window as any).platform === "darwin";
+
+	useEffect(() => {
+		const ipc = (window as any)?.electron?.ipcRenderer;
+		if (!ipc) return;
+
+		const syncFullscreenState = async () => {
+			try {
+				const fullscreen = await ipc.invoke("app:is-fullscreen");
+				setIsFullscreen(!!fullscreen);
+			} catch (error) {
+				console.error("Failed to get fullscreen state", error);
+			}
+		};
+
+		const handleFullscreenChange = (_event: any, fullscreen: boolean) => {
+			setIsFullscreen(!!fullscreen);
+		};
+
+		syncFullscreenState();
+		ipc.on("app:fullscreen-changed", handleFullscreenChange);
+
+		return () => {
+			ipc.removeListener("app:fullscreen-changed", handleFullscreenChange);
+		};
+	}, []);
 
 	const [tabOrder, setTabOrder] = useState(() =>
 		activeApps.filter((app) => app.appId !== "ollama").map((app) => app.appId),
@@ -177,6 +203,12 @@ export default function TopbarNav() {
 		setIsMaximized(maximized);
 	};
 
+	const macTrafficPadding =
+		isMac && !isFullscreen
+			? "calc(env(safe-area-inset-left, 0px) + 72px)"
+			: undefined;
+	const macNavOffset = isMac && !isFullscreen ? 12 : undefined;
+
 	return (
 		<>
 			{showModal && (
@@ -201,9 +233,7 @@ export default function TopbarNav() {
 					id="titlebar"
 					style={{
 						// Leave room for macOS traffic lights
-						paddingLeft: isMac
-							? "calc(env(safe-area-inset-left, 0px) + 72px)"
-							: undefined,
+						paddingLeft: macTrafficPadding,
 					}}
 				>
 					{/* Logo/Brand */}
@@ -231,7 +261,7 @@ export default function TopbarNav() {
 					{/* Navigation Links */}
 					<div
 						className="flex items-center gap-2 flex-1 relative z-10"
-						style={{ paddingLeft: isMac ? 12 : undefined }}
+						style={{ paddingLeft: macNavOffset }}
 					>
 						<Link
 							to="/"
@@ -392,9 +422,7 @@ export default function TopbarNav() {
 						className="flex items-center px-4 gap-2 h-10 border-t border-white/5"
 						id="no-draggable"
 						style={{
-							paddingLeft: isMac
-								? "calc(env(safe-area-inset-left, 0px) + 72px)"
-								: undefined,
+							paddingLeft: macTrafficPadding,
 						}}
 					>
 						<div className="flex items-center gap-2 flex-1 overflow-x-hidden">

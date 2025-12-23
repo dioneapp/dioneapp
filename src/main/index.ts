@@ -410,6 +410,16 @@ function createWindow() {
 		buildWindowOpenHandler(mainWindow.webContents),
 	);
 
+	mainWindow.on("enter-full-screen", () => {
+		if (!mainWindow || mainWindow.isDestroyed()) return;
+		mainWindow.webContents.send("app:fullscreen-changed", true);
+	});
+
+	mainWindow.on("leave-full-screen", () => {
+		if (!mainWindow || mainWindow.isDestroyed()) return;
+		mainWindow.webContents.send("app:fullscreen-changed", false);
+	});
+
 	const gotTheLock = app.requestSingleInstanceLock();
 	if (!gotTheLock) {
 		app.quit();
@@ -441,6 +451,11 @@ function createWindow() {
 		}
 		mainWindow.maximize();
 		return true;
+	});
+
+	ipcMain.handle("app:is-fullscreen", () => {
+		if (!mainWindow) return false;
+		return mainWindow.isFullScreen();
 	});
 }
 
