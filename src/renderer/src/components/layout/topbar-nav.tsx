@@ -21,7 +21,7 @@ import {
     User,
     X,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function TopbarNav() {
@@ -33,11 +33,37 @@ export default function TopbarNav() {
 	const [avatarError, setAvatarError] = useState(false);
 	const [showModal, setShowModal] = useState(false);
 	const [isMaximized, setIsMaximized] = useState(false);
+	const [isFullscreen, setIsFullscreen] = useState(false);
 	const location = useLocation();
 	const navigate = useNavigate();
 
 	// detect macOS via preload-exposed platform
 	const isMac = typeof window !== "undefined" && (window as any).platform === "darwin";
+
+	useEffect(() => {
+		const ipc = (window as any)?.electron?.ipcRenderer;
+		if (!ipc) return;
+
+		const syncFullscreenState = async () => {
+			try {
+				const fullscreen = await ipc.invoke("app:is-fullscreen");
+				setIsFullscreen(!!fullscreen);
+			} catch (error) {
+				console.error("Failed to get fullscreen state", error);
+			}
+		};
+
+		const handleFullscreenChange = (_event: any, fullscreen: boolean) => {
+			setIsFullscreen(!!fullscreen);
+		};
+
+		syncFullscreenState();
+		ipc.on("app:fullscreen-changed", handleFullscreenChange);
+
+		return () => {
+			ipc.removeListener("app:fullscreen-changed", handleFullscreenChange);
+		};
+	}, []);
 
 	const [tabOrder, setTabOrder] = useState(() =>
 		activeApps.filter((app) => app.appId !== "ollama").map((app) => app.appId),
@@ -177,6 +203,12 @@ export default function TopbarNav() {
 		setIsMaximized(maximized);
 	};
 
+	const macTrafficPadding =
+		isMac && !isFullscreen
+			? "calc(env(safe-area-inset-left, 0px) + 72px)"
+			: undefined;
+	const macNavOffset = isMac && !isFullscreen ? 12 : undefined;
+
 	return (
 		<>
 			{showModal && (
@@ -197,14 +229,28 @@ export default function TopbarNav() {
 			<div className="w-full flex flex-col bg-black/20 backdrop-blur-xl border-b border-white/10 relative mb-0 pb-0">
 				{/* First Row: Main Navigation + Window Controls */}
 				<div
-					className={`flex items-center px-4 gap-4 h-10 relative overflow-hidden ${isMac ? "pl-6" : ""}`}
+					className="flex items-center px-4 gap-4 h-10 relative overflow-hidden"
 					id="titlebar"
+					style={{
+						// Leave room for macOS traffic lights
+						paddingLeft: macTrafficPadding,
+					}}
 				>
 					{/* Logo/Brand */}
 					<Link
 						to="/"
-						className="flex items-center gap-2 mr-4 relative z-10 shrink-0"
+						className={`flex items-center gap-2 relative z-10 shrink-0 ${isMac ? "" : "mr-4"}`}
 						id="no-draggable"
+						style={
+							isMac
+								? {
+										position: "absolute",
+										left: "50%",
+										top: "50%",
+										transform: "translate(-50%, -50%)",
+									}
+								: undefined
+						}
 					>
 						<Icon name="Dio" className="w-5 h-5" />
 						<span className="text-sm font-semibold text-neutral-200">
@@ -213,7 +259,10 @@ export default function TopbarNav() {
 					</Link>
 
 					{/* Navigation Links */}
-					<div className="flex items-center gap-2 flex-1 relative z-10">
+					<div
+						className="flex items-center gap-2 flex-1 relative z-10"
+						style={{ paddingLeft: macNavOffset }}
+					>
 						<Link
 							to="/"
 							id="no-draggable"
@@ -327,12 +376,10 @@ export default function TopbarNav() {
 							</button>
 						)}
 
-						{/* Separator */}
-						<div className="h-6 w-px bg-white/10 mx-2" />
-
-						{/* Window Controls - hidden on macOS (native traffic lights show) */}
+						{/* Separator + window controls - hidden on macOS (native traffic lights show) */}
 						{!isMac && (
 							<>
+								<div className="h-6 w-px bg-white/10 mx-2" />
 								<div id="no-draggable">
 									<button
 										type="button"
@@ -374,6 +421,9 @@ export default function TopbarNav() {
 					<div
 						className="flex items-center px-4 gap-2 h-10 border-t border-white/5"
 						id="no-draggable"
+						style={{
+							paddingLeft: macTrafficPadding,
+						}}
 					>
 						<div className="flex items-center gap-2 flex-1 overflow-x-hidden">
 							{activeApps
