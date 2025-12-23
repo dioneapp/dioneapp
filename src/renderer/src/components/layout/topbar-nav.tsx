@@ -229,7 +229,10 @@ export default function TopbarNav() {
 					</Link>
 
 					{/* Navigation Links */}
-					<div className="flex items-center gap-2 flex-1 relative z-10">
+					<div
+						className="flex items-center gap-2 flex-1 relative z-10"
+						style={{ paddingLeft: isMac ? 12 : undefined }}
+					>
 						<Link
 							to="/"
 							id="no-draggable"

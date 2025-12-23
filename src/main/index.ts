@@ -196,11 +196,16 @@ const configurePermissionHandlers = () => {
 
 // Creates the main application window with specific configurations.
 function createWindow() {
+	let trafficLightPosition: { x: number; y: number } | undefined;
 	try {
 		logger.info("Creating main window...");
 		const currentConfig = readConfig();
 		const useCustomTopbarOnMac =
 			process.platform === "darwin" && currentConfig?.layoutMode === "topbar";
+		trafficLightPosition =
+			process.platform === "darwin" && useCustomTopbarOnMac
+				? { x: 16, y: 12 }
+				: undefined;
 
 		mainWindow = new BrowserWindow({
 			width: 1200,
@@ -232,6 +237,7 @@ function createWindow() {
 			...(process.platform === "darwin"
 				? { icon: getIconPath("darwin"), vibrancy: "hud" }
 				: {}),
+			...(trafficLightPosition ? { trafficLightPosition } : {}),
 			webPreferences: {
 				contextIsolation: true,
 				nodeIntegration: false,
@@ -255,6 +261,7 @@ function createWindow() {
 			width: 1200,
 			height: 800,
 			show: false,
+			...(trafficLightPosition ? { trafficLightPosition } : {}),
 			webPreferences: {
 				contextIsolation: true,
 				nodeIntegration: false,
