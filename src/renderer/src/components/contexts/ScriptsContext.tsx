@@ -35,7 +35,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const terminalStatesRef = useRef<Record<string, TerminalNormalizer>>({});
 	const [exitRef, setExitRef] = useState<boolean>(false);
 	const pathname = useLocation().pathname;
-	const [installedApps, setInstalledApps] = useState<string[]>([]);
+	const [installedApps, setInstalledApps] = useState<{ name: string }[]>([]);
 	const [socket] = useState<any>(null);
 	const [logs, setLogs] = useState<Record<string, string[]>>({});
 	const [statusLog, setStatusLog] = useState<
@@ -136,6 +136,14 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			setShow({ [data.id]: "logs" });
 		}
 	}, [activeApps, data?.id, show]);
+
+	// Initialize installedApps on mount (needed for topbar layout which doesn't render QuickLaunch)
+	const initializedRef = useRef(false);
+	useEffect(() => {
+		if (initializedRef.current) return;
+		initializedRef.current = true;
+		handleReloadQuickLaunch();
+	}, []);
 
 	const handleReloadQuickLaunch = async () => {
 		try {
