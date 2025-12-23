@@ -81,7 +81,6 @@ export default function Sidebar() {
 	}
 	const [avatarError, setAvatarError] = useState(false);
 
-	// updates
 	const [updateAvailable, setUpdateAvailable] = useState(false);
 	const [updateDownloaded, setUpdateDownloaded] = useState(false);
 	const [releaseNotes, setReleaseNotes] = useState<any>(null);
@@ -173,45 +172,35 @@ export default function Sidebar() {
 				{updateDownloaded && releaseNotes && (
 					<motion.div
 						key="update-modal"
-						initial={{ opacity: 0, filter: "blur(10)" }}
-						animate={{
-							opacity: 1,
-							filter: "blur(0px)",
-							backdropFilter: "blur(10px)",
-						}}
-						exit={{ opacity: 0, filter: "blur(10)" }}
-						transition={{ duration: 0.2 }}
-						style={{ zIndex: 100 }}
-						className="fixed inset-0 bg-black/90 flex items-center justify-center"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.18 }}
+						className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
 					>
-						<div className="fixed inset-0 flex items-center justify-center z-50">
-							<div className="bg-white/10 backdrop-blur-2xl rounded-xl max-w-2xl w-full p-4 flex flex-col items-start justify-center gap-6 text-center shadow-xl border border-white/5">
-								<div className="flex flex-col justify-center items-start gap-2">
-									<h1 className="text-center font-medium tracking-tighter text-3xl text-neutral-200 text-balance whitespace-pre-line">
-										{t("sidebarUpdate.newUpdateAvailable")}
-									</h1>
-									<h2 className="text-center text-neutral-400">
-										{t("sidebarUpdate.whatsNew")}
-									</h2>
-									<div className="mt-2 bg-white/10 p-4 rounded-lg overflow-hidden flex flex-col gap-2 items-start justify-center">
-										<div className="flex flex-col sm:flex-row gap-2 sm:items-center sm:justify-between w-full">
-											<h3 className="text-xl text-neutral-100 font-semibold text-balance wrap-break-word">
+						<div className="max-w-2xl w-full px-6">
+							<div className="bg-neutral-900/80 border border-white/6 rounded-2xl p-6 shadow-2xl backdrop-blur-md text-left">
+								<div className="flex flex-col gap-3">
+									<div>
+										<h1 className="text-2xl font-semibold text-neutral-50">
+											{t("sidebarUpdate.newUpdateAvailable")}
+										</h1>
+										<p className="text-sm text-neutral-400">
+											{t("sidebarUpdate.whatsNew")}
+										</p>
+									</div>
+
+									<div className="mt-2 bg-neutral-800/40 p-4 rounded-lg">
+										<div className="flex items-center justify-between gap-4">
+											<h3 className="text-lg text-neutral-100 font-medium break-words">
 												{releaseNotes.name}
 											</h3>
-											<span className="flex items-center gap-1 bg-white/10 rounded-full px-3 py-1 text-[10px] text-neutral-300">
-												<Clock className="h-3 w-3" />
-												{new Date(releaseNotes.published_at).toLocaleDateString(
-													undefined,
-													{ year: "numeric", month: "short", day: "numeric" },
-												)}{" "}
-												&bull;{" "}
-												{new Date(releaseNotes.published_at).toLocaleTimeString(
-													[],
-													{ hour: "2-digit", minute: "2-digit" },
-												)}
+											<span className="text-xs text-neutral-300 flex items-center gap-2">
+												<Clock className="h-4 w-4" />
+												{new Date(releaseNotes.published_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}, {new Date(releaseNotes.published_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
 											</span>
 										</div>
-										<ul className="text-neutral-300 text-xs max-h-32 text-balance text-left list-disc pl-4 space-y-1 overflow-auto">
+										<ul className="text-neutral-300 text-sm mt-3 list-disc pl-5 max-h-40 overflow-auto space-y-1">
 											{releaseNotes.body
 												.split(/\r?\n/)
 												.filter((line) => line.trim().startsWith("* "))
@@ -220,22 +209,21 @@ export default function Sidebar() {
 												))}
 										</ul>
 									</div>
-								</div>
-								<div className="w-full flex justify-end items-center gap-2">
-									<button
-										onClick={() => setUpdateDownloaded(false)}
-										className="bg-white/10 hover:bg-white/15 text-neutral-300 border border-white/5 px-4 py-1 text-sm font-medium rounded-lg cursor-pointer"
-									>
-										<span>{t("updates.later")}</span>
-									</button>
-									<button
-										onClick={() =>
-											window.electron.ipcRenderer.send("quit_and_install")
-										}
-										className="bg-white hover:opacity-80 border border-white text-black px-4 py-1 text-sm font-medium rounded-lg cursor-pointer"
-									>
-										<span>{t("updates.install")}</span>
-									</button>
+
+									<div className="mt-4 flex justify-end gap-3">
+										<button
+											onClick={() => setUpdateDownloaded(false)}
+											className="px-5 py-2 text-sm rounded-full bg-transparent border border-white/10 text-neutral-300 hover:bg-white/10 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl"
+										>
+											{t("updates.later")}
+										</button>
+										<button
+											onClick={() => window.electron.ipcRenderer.send("quit_and_install")}
+											className="px-5 py-2 text-sm rounded-full bg-white text-black font-medium hover:opacity-95 transition-opacity duration-150 cursor-pointer shadow-lg hover:shadow-xl"
+										>
+											{t("updates.install")}
+										</button>
+									</div>
 								</div>
 							</div>
 						</div>
