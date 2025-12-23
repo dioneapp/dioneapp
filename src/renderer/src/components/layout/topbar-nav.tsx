@@ -197,8 +197,14 @@ export default function TopbarNav() {
 			<div className="w-full flex flex-col bg-black/20 backdrop-blur-xl border-b border-white/10 relative mb-0 pb-0">
 				{/* First Row: Main Navigation + Window Controls */}
 				<div
-					className={`flex items-center px-4 gap-4 h-10 relative overflow-hidden ${isMac ? "pl-6" : ""}`}
+					className="flex items-center px-4 gap-4 h-10 relative overflow-hidden"
 					id="titlebar"
+					style={{
+						// Leave room for macOS traffic lights
+						paddingLeft: isMac
+							? "calc(env(safe-area-inset-left, 0px) + 72px)"
+							: undefined,
+					}}
 				>
 					{/* Logo/Brand */}
 					<Link
@@ -374,6 +380,11 @@ export default function TopbarNav() {
 					<div
 						className="flex items-center px-4 gap-2 h-10 border-t border-white/5"
 						id="no-draggable"
+						style={{
+							paddingLeft: isMac
+								? "calc(env(safe-area-inset-left, 0px) + 72px)"
+								: undefined,
+						}}
 					>
 						<div className="flex items-center gap-2 flex-1 overflow-x-hidden">
 							{activeApps
