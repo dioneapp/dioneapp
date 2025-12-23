@@ -343,12 +343,10 @@ export default function TopbarNav() {
 							</button>
 						)}
 
-						{/* Separator */}
-						<div className="h-6 w-px bg-white/10 mx-2" />
-
-						{/* Window Controls - hidden on macOS (native traffic lights show) */}
+						{/* Separator + window controls - hidden on macOS (native traffic lights show) */}
 						{!isMac && (
 							<>
+								<div className="h-6 w-px bg-white/10 mx-2" />
 								<div id="no-draggable">
 									<button
 										type="button"
