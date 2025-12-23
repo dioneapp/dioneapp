@@ -197,7 +197,15 @@ export default function Sidebar() {
 											</h3>
 											<span className="text-xs text-neutral-300 flex items-center gap-2">
 												<Clock className="h-4 w-4" />
-												{new Date(releaseNotes.published_at).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" })}, {new Date(releaseNotes.published_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+												{new Date(releaseNotes.published_at).toLocaleDateString(
+													undefined,
+													{ year: "numeric", month: "short", day: "numeric" },
+												)}
+												,{" "}
+												{new Date(releaseNotes.published_at).toLocaleTimeString(
+													[],
+													{ hour: "2-digit", minute: "2-digit" },
+												)}
 											</span>
 										</div>
 										<ul className="text-neutral-300 text-sm mt-3 list-disc pl-5 max-h-40 overflow-auto space-y-1">
@@ -218,7 +226,9 @@ export default function Sidebar() {
 											{t("updates.later")}
 										</button>
 										<button
-											onClick={() => window.electron.ipcRenderer.send("quit_and_install")}
+											onClick={() =>
+												window.electron.ipcRenderer.send("quit_and_install")
+											}
 											className="px-5 py-2 text-sm rounded-full bg-white text-black font-medium hover:opacity-95 transition-opacity duration-150 cursor-pointer shadow-lg hover:shadow-xl"
 										>
 											{t("updates.install")}

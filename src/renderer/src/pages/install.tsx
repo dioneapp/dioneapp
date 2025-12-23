@@ -716,7 +716,9 @@ export default function Install({
 
 	async function onFinishInstallDeps() {
 		// remove app from installed apps
-		setInstalledApps((prevApps) => prevApps.filter((app) => app.name !== data.name));
+		setInstalledApps((prevApps) =>
+			prevApps.filter((app) => app.name !== data.name),
+		);
 		setApps((prevApps) => prevApps.filter((app) => app?.name !== data.name));
 
 		// clear missing deps
