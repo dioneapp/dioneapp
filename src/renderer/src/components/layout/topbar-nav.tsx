@@ -121,7 +121,7 @@ export default function TopbarNav() {
 			>
 				<button
 					type="button"
-					className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-1 hover:bg-white/15 transition-colors shrink-0 focus:outline-none"
+					className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-0.75 hover:bg-white/15 transition-colors shrink-0 focus:outline-none"
 					style={{ textDecoration: "none" }}
 					onClick={() => {
 						navigate({
@@ -167,7 +167,7 @@ export default function TopbarNav() {
 					<X className="h-3 w-3" />
 				</button>
 				{hoveredTooltip === app.appId && (
-					<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-1 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
+					<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
 						{app?.data?.name || app.appId}
 					</div>
 				)}
@@ -245,18 +245,14 @@ export default function TopbarNav() {
 					{/* Logo/Brand */}
 					<Link
 						to="/"
-						className={`flex items-center gap-2 relative z-10 shrink-0 ${isMac ? "" : "mr-4"}`}
+						className="flex items-center gap-2 absolute z-10 shrink-0"
 						id="no-draggable"
-						style={
-							isMac
-								? {
-										position: "absolute",
-										left: "50%",
-										top: "50%",
-										transform: "translate(-50%, -50%)",
-									}
-								: undefined
-						}
+						style={{
+							position: "absolute",
+							left: "50%",
+							top: "50%",
+							transform: "translate(-50%, -50%)",
+						}}
 					>
 						<Icon name="Dio" className="w-5 h-5" />
 						<span className="text-sm font-semibold text-neutral-200">
@@ -272,7 +268,7 @@ export default function TopbarNav() {
 						<Link
 							to="/"
 							id="no-draggable"
-							className={`px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
+							className={`px-3 py-0.75 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
 								isActivePath("/")
 									? "bg-white/15 text-white"
 									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
@@ -285,7 +281,7 @@ export default function TopbarNav() {
 						<Link
 							to="/library"
 							id="no-draggable"
-							className={`px-3 py-1.5 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
+							className={`px-3 py-0.75 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
 								isActivePath("/library")
 									? "bg-white/15 text-white"
 									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
@@ -299,7 +295,7 @@ export default function TopbarNav() {
 					{/* Right side actions */}
 					<div className="flex items-center gap-2 relative z-10 shrink-0">
 						{activeApps.length > 0 && (
-							<div className="flex items-center gap-1 px-2 py-1 bg-white/10 rounded-full">
+							<div className="flex items-center gap-1 px-2 py-0.75 bg-white/10 rounded-full">
 								<div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
 								<span className="text-xs text-neutral-400">
 									{activeApps.length}{" "}
@@ -314,13 +310,13 @@ export default function TopbarNav() {
 							type="button"
 							id="no-draggable"
 							onClick={() => window.captureScreenshot()}
-							className="p-2 hover:bg-white/10 rounded-lg transition-colors relative"
+							className="p-1.5 hover:bg-white/10 rounded-lg transition-colors relative"
 							onMouseEnter={() => setHoveredTooltip("capture")}
 							onMouseLeave={() => setHoveredTooltip(null)}
 						>
 							<Camera className="h-4 w-4" />
 							{hoveredTooltip === "capture" && (
-								<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-1 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
+								<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
 									{t("sidebar.tooltips.capture")}
 								</div>
 							)}
@@ -329,7 +325,7 @@ export default function TopbarNav() {
 						<Link
 							to="/settings"
 							id="no-draggable"
-							className={`p-2 rounded-lg transition-colors relative ${
+							className={`p-1.5 rounded-lg transition-colors relative ${
 								isActivePath("/settings") ? "bg-white/15" : "hover:bg-white/10"
 							}`}
 							onMouseEnter={() => setHoveredTooltip("settings")}
@@ -337,7 +333,7 @@ export default function TopbarNav() {
 						>
 							<Settings className="h-4 w-4" />
 							{hoveredTooltip === "settings" && (
-								<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-1 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
+								<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
 									{t("sidebar.tooltips.settings")}
 								</div>
 							)}
@@ -372,7 +368,7 @@ export default function TopbarNav() {
 							<button
 								type="button"
 								id="no-draggable"
-								className="px-3 py-1.5 bg-white hover:bg-white/90 text-black font-medium rounded-lg transition-all duration-200 flex items-center gap-2 text-sm"
+								className="px-3 py-0.75 bg-white hover:bg-white/90 text-black font-medium rounded-lg transition-all duration-200 flex items-center gap-2 text-sm cursor-pointer"
 								onClick={() =>
 									openLink("https://getdione.app/auth/login?app=true")
 								}

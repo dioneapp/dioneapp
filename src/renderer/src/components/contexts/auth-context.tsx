@@ -1,15 +1,15 @@
 import type { AuthContextType } from "@/components/contexts/types/context-types";
 import { apiFetch } from "@/utils/api";
 import {
-	deleteExpiresAt,
-	deleteId,
-	deleteRefreshToken,
-	getExpiresAt,
-	getId,
-	getRefreshToken,
-	saveExpiresAt,
-	saveId,
-	saveRefreshToken,
+    deleteExpiresAt,
+    deleteId,
+    deleteRefreshToken,
+    getExpiresAt,
+    getId,
+    getRefreshToken,
+    saveExpiresAt,
+    saveId,
+    saveRefreshToken,
 } from "@/utils/secure-tokens";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +31,9 @@ export function AuthContextProvider({
 		(async () => {
 			const id = await getId();
 			if (id) {
-				fetchUser(id);
+				await fetchUser(id);
+			} else {
+				setLoading(false);
 			}
 		})();
 	}, []);
@@ -41,7 +43,10 @@ export function AuthContextProvider({
 			setLoading(true);
 			const storedToken = await getRefreshToken();
 			const sessionExpiresAt = await getExpiresAt();
-			if (!storedToken || !sessionExpiresAt) return;
+			if (!storedToken || !sessionExpiresAt) {
+				setLoading(false);
+				return;
+			}
 			// refresh token if session expires
 			if (sessionExpiresAt * 1000 < Date.now()) {
 				await refreshSession(storedToken);
@@ -83,8 +88,10 @@ export function AuthContextProvider({
 			const userData = await response.json();
 			await saveId(id);
 			setUser(userData[0]);
+			setLoading(false);
 		} else {
 			setUser(null);
+			setLoading(false);
 		}
 	}
 
