@@ -677,12 +677,7 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 	if (process.platform === "win32") {
 		// These are critical for Windows system tools and DLL loading
 		const essentialVars = [
-			"SystemRoot", "SystemDrive", "windir", "COMPUTERNAME",
-			"USERPROFILE", "APPDATA", "LOCALAPPDATA", "TEMP", "TMP",
-			"PROGRAMFILES", "PROGRAMFILES(X86)", "COMMONPROGRAMFILES", "COMMONPROGRAMFILES(X86)",
-			"PROGRAMDATA", "PUBLIC", "HOMEDRIVE", "HOMEPATH",
-			"NUMBER_OF_PROCESSORS", "PROCESSOR_ARCHITECTURE", "PROCESSOR_IDENTIFIER", "PROCESSOR_LEVEL",
-		];
+			"PROGRAMFILES", ];
 		for (const v of essentialVars) {
 			if (process.env[v]) {
 				systemVars[v] = process.env[v];
