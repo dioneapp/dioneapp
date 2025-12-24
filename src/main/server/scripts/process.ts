@@ -304,132 +304,8 @@ export const executeCommand = async (
 ): Promise<{ code: number; stdout: string; stderr: string }> => {
 	let stdoutData = "";
 	let stderrData = "";
-	let enhancedEnv = {};
+	const enhancedEnv = await getEnhancedEnv(needsBuildTools || false);
 	const logs = logsType || "installUpdate";
-	const ENVIRONMENT = getAllValues();
-
-	if (ENVIRONMENT === null) {
-		initDefaultEnv();
-	}
-
-	// command options with enhanced environment for build tools
-	const baseEnv = {
-		...process.env,
-		...ENVIRONMENT,
-		PYTHONUNBUFFERED: "1",
-		NODE_NO_BUFFERING: "1",
-		FORCE_UNBUFFERED_OUTPUT: "1",
-		PYTHONIOENCODING: "UTF-8",
-		FORCE_COLOR: "1",
-		GRADIO_SERVER_NAME: "0.0.0.0", // Allow Gradio to accept connections from network
-		// fix for py-cpuinfo not detecting Intel Core Ultra CPUs and other newer x86_64 processors
-		...(process.platform === "win32" && {
-			PROCESSOR_ARCHITECTURE:
-				process.env.PROCESSOR_ARCHITECTURE ||
-				(arch() === "x64" ? "AMD64" : arch() === "ia32" ? "x86" : "AMD64"),
-			PROCESSOR_ARCHITEW6432: process.env.PROCESSOR_ARCHITEW6432 || "AMD64",
-		}),
-		// cross-platform CUDA detection for deepspeed compatibility
-		// set CUDA_HOME if not already set and try to detect it automatically
-		CUDA_HOME:
-			process.env.CUDA_HOME ||
-			(() => {
-				if (process.platform === "win32") {
-					// windows - check standard NVIDIA GPU Computing Toolkit installation
-					const cudaBasePath =
-						"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA";
-					const versions = [
-						"v13.0",
-						"v12.9",
-						"v12.8",
-						"v12.7",
-						"v12.6",
-						"v12.5",
-						"v12.4",
-						"v12.3",
-						"v12.2",
-						"v12.1",
-						"v12.0",
-						"v11.8",
-						"v11.7",
-					];
-					for (const version of versions) {
-						const cudaPath = path.join(cudaBasePath, version);
-						if (fs.existsSync(path.join(cudaPath, "bin", "nvcc.exe"))) {
-							return cudaPath;
-						}
-					}
-				} else if (process.platform === "linux") {
-					// linux - check common CUDA installation paths
-					const commonPaths = [
-						"/usr/local/cuda",
-						"/opt/cuda",
-						"/usr/local/cuda-13.0",
-						"/usr/local/cuda-12.9",
-						"/usr/local/cuda-12.8",
-						"/usr/local/cuda-12.7",
-						"/usr/local/cuda-12.6",
-						"/usr/local/cuda-12.5",
-						"/usr/local/cuda-12.4",
-						"/usr/local/cuda-12.3",
-						"/usr/local/cuda-12.2",
-						"/usr/local/cuda-12.1",
-						"/usr/local/cuda-12.0",
-						"/usr/local/cuda-11.8",
-						"/usr/local/cuda-11.7",
-					];
-					for (const cudaPath of commonPaths) {
-						if (fs.existsSync(path.join(cudaPath, "bin", "nvcc"))) {
-							return cudaPath;
-						}
-					}
-				}
-				// macos is not included as Apple dropped CUDA support after macOS Mojave (10.14)
-				return undefined;
-			})(),
-		// set to "1" to skip CUDA check
-		DS_BUILD_OPS: "0",
-		DS_SKIP_CUDA_CHECK: "1",
-	};
-
-	// avoid re-initializing using cache
-	const _cacheKey = "__buildToolsEnv";
-	const _fnAny = executeCommand as unknown as Record<string, any>;
-
-	const initializeBuildTools = async () => {
-		logger.info(`This script requires build tools. Initializing...`);
-		const buildTools = BuildToolsManager.getInstance();
-		const buildToolsReady = await buildTools.initialize();
-
-		if (!buildToolsReady) {
-			logger.warn("Build tools initialization failed. Compilation may fail.");
-			io.to(id).emit(logs, {
-				type: "log",
-				content:
-					"WARNING: Build tools initialization failed. Compilation may fail.\n",
-			});
-			return baseEnv;
-		}
-
-		logger.info("Build tools ready for native compilation");
-		io.to(id).emit(logs, {
-			type: "log",
-			content: "Build tools initialized for native module compilation\n",
-		});
-		return buildTools.getEnhancedEnvironment(ENVIRONMENT);
-	};
-
-	if (needsBuildTools) {
-		// initialize once per process and reuse the enhanced env for subsequent commands
-		if (!_fnAny[_cacheKey]) {
-			_fnAny[_cacheKey] = await initializeBuildTools();
-		} else {
-			logger.info("Reusing cached build tools environment");
-		}
-		enhancedEnv = _fnAny[_cacheKey];
-	} else {
-		enhancedEnv = baseEnv;
-	}
 
 	try {
 		// // if active process exists, kill it (disabled for multiple apps)
@@ -438,10 +314,6 @@ export const executeCommand = async (
 		const currentPlatform = getPlatform();
 		const isWindows = currentPlatform === "win32";
 
-		// io.to(id).emit(logs, {
-		//     type: "log",
-		//     content: `Working on directory: ${workingDir}\n`,
-		// });
 		logger.info(`Working on directory: ${workingDir}`);
 		const spawnOptions = {
 			cwd: workingDir,
@@ -771,3 +643,122 @@ export const executeCommands = async (
 	}
 	return { cancelled: false };
 };
+
+export const getEnhancedEnv = async (needsBuildTools: boolean) => {
+	const ENVIRONMENT = getAllValues();
+
+	if (ENVIRONMENT === null) {
+		initDefaultEnv();
+	}
+
+	// command options with enhanced environment for build tools
+	const baseEnv = {
+		...ENVIRONMENT,
+		PYTHONUNBUFFERED: "1",
+		NODE_NO_BUFFERING: "1",
+		FORCE_UNBUFFERED_OUTPUT: "1",
+		PYTHONIOENCODING: "UTF-8",
+		FORCE_COLOR: "1",
+		GRADIO_SERVER_NAME: "0.0.0.0", // Allow Gradio to accept connections from network
+		// fix for py-cpuinfo not detecting Intel Core Ultra CPUs and other newer x86_64 processors
+		...(process.platform === "win32" && {
+			PROCESSOR_ARCHITECTURE:
+				process.env.PROCESSOR_ARCHITECTURE ||
+				(arch() === "x64" ? "AMD64" : arch() === "ia32" ? "x86" : "AMD64"),
+			PROCESSOR_ARCHITEW6432: process.env.PROCESSOR_ARCHITEW6432 || "AMD64",
+		}),
+		// cross-platform CUDA detection for deepspeed compatibility
+		// set CUDA_HOME if not already set and try to detect it automatically
+		CUDA_HOME:
+			process.env.CUDA_HOME ||
+			(() => {
+				if (process.platform === "win32") {
+					// windows - check standard NVIDIA GPU Computing Toolkit installation
+					const cudaBasePath =
+						"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA";
+					const versions = [
+						"v13.0",
+						"v12.9",
+						"v12.8",
+						"v12.7",
+						"v12.6",
+						"v12.5",
+						"v12.4",
+						"v12.3",
+						"v12.2",
+						"v12.1",
+						"v12.0",
+						"v11.8",
+						"v11.7",
+					];
+					for (const version of versions) {
+						const cudaPath = path.join(cudaBasePath, version);
+						if (fs.existsSync(path.join(cudaPath, "bin", "nvcc.exe"))) {
+							return cudaPath;
+						}
+					}
+				} else if (process.platform === "linux") {
+					// linux - check common CUDA installation paths
+					const commonPaths = [
+						"/usr/local/cuda",
+						"/opt/cuda",
+						"/usr/local/cuda-13.0",
+						"/usr/local/cuda-12.9",
+						"/usr/local/cuda-12.8",
+						"/usr/local/cuda-12.7",
+						"/usr/local/cuda-12.6",
+						"/usr/local/cuda-12.5",
+						"/usr/local/cuda-12.4",
+						"/usr/local/cuda-12.3",
+						"/usr/local/cuda-12.2",
+						"/usr/local/cuda-12.1",
+						"/usr/local/cuda-12.0",
+						"/usr/local/cuda-11.8",
+						"/usr/local/cuda-11.7",
+					];
+					for (const cudaPath of commonPaths) {
+						if (fs.existsSync(path.join(cudaPath, "bin", "nvcc"))) {
+							return cudaPath;
+						}
+					}
+				}
+				// macos is not included as Apple dropped CUDA support after macOS Mojave (10.14)
+				return undefined;
+			})(),
+		// set to "1" to skip CUDA check
+		DS_BUILD_OPS: "0",
+		DS_SKIP_CUDA_CHECK: "1",
+		// fix nvidia-smi
+
+	};
+
+	// avoid re-initializing using cache
+	const _cacheKey = "__buildToolsEnv";
+	const _fnAny = executeCommand as unknown as Record<string, any>;
+
+	const initializeBuildTools = async () => {
+		logger.info(`This script requires build tools. Initializing...`);
+		const buildTools = BuildToolsManager.getInstance();
+		const buildToolsReady = await buildTools.initialize();
+
+		if (!buildToolsReady) {
+			logger.warn("Build tools initialization failed. Compilation may fail.");
+			return baseEnv;
+		}
+
+		logger.info("Build tools ready for native compilation");
+		return buildTools.getEnhancedEnvironment(ENVIRONMENT);
+	};
+
+	if (needsBuildTools) {
+		// initialize once per process and reuse the enhanced env for subsequent commands
+		if (!_fnAny[_cacheKey]) {
+			_fnAny[_cacheKey] = await initializeBuildTools();
+		} else {
+			logger.info("Reusing cached build tools environment");
+		}
+		return _fnAny[_cacheKey];
+	} else {
+		return baseEnv;
+	}
+}
