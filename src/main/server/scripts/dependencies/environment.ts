@@ -3,6 +3,7 @@ import path from "path";
 import { readConfig } from "@/config";
 import { getOS } from "@/server/scripts/dependencies/utils/system";
 import { app } from "electron";
+import logger from "@/server/utils/logger";
 
 function splitKeyValue(line: string): [string, string] | null {
 	const index = line.indexOf("=");
@@ -195,10 +196,34 @@ export function initDefaultEnv() {
 			"C:\\Windows\\System32",
 			"C:\\Windows",
 			"C:\\Windows\\System32\\wbem",
-			"C:\\Windows\\System32\\nvidia-smi.exe",
 			"C:\\Windows\\System32\\WindowsPowerShell\\v1.0",
 			`${path.join(appData, "..", "Local", "Microsoft", "WindowsApps")}`,
 		];
+
+		const systemPaths = (process.env.PATH || process.env.Path || "").split(
+			separator,
+		);
+
+		const nvidiaPaths = systemPaths.filter((p) =>
+			fs.existsSync(path.join(p, "nvidia-smi.exe")),
+		);
+
+		const uniqueNvidiaPaths = [
+			...new Set(
+				nvidiaPaths.map((p) => path.join(p, "nvidia-smi.exe").toLowerCase()),
+			),
+		];
+		uniqueNvidiaPaths.forEach((nvidiaPath) => {
+			const originalPath = nvidiaPaths.find(
+				(p) =>
+					path.join(p, "nvidia-smi.exe").toLowerCase() === nvidiaPath,
+			);
+			if (originalPath) {
+				const fullPath = path.join(originalPath, "nvidia-smi.exe");
+				logger.info("Found NVIDIA-SMI at: " + fullPath);
+				basicEnv.push(fullPath);
+			}
+		});
 
 		// check if have basics paths
 		basicEnv.forEach((basicPath) => {
