@@ -5,7 +5,13 @@ import Icon from "@/components/icons/icon";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
-import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from "@dnd-kit/core";
+import {
+	DndContext,
+	PointerSensor,
+	closestCenter,
+	useSensor,
+	useSensors,
+} from "@dnd-kit/core";
 import {
 	SortableContext,
 	arrayMove,
@@ -427,18 +433,25 @@ export default function TopbarNav() {
 							paddingLeft: macTrafficPadding,
 						}}
 					>
-							<div className="flex items-center gap-2 flex-1 overflow-x-hidden">
-								<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-									<SortableContext items={tabOrder} strategy={horizontalListSortingStrategy}>
-										{tabOrder
-											.map((id) => activeApps.find((a: any) => a.appId === id))
-											.filter(Boolean)
-											.map((app: any) => (
-												<SortableTab key={app.appId} app={app} />
-											))}
-									</SortableContext>
-								</DndContext>
-							</div>
+						<div className="flex items-center gap-2 flex-1 overflow-x-hidden">
+							<DndContext
+								sensors={sensors}
+								collisionDetection={closestCenter}
+								onDragEnd={handleDragEnd}
+							>
+								<SortableContext
+									items={tabOrder}
+									strategy={horizontalListSortingStrategy}
+								>
+									{tabOrder
+										.map((id) => activeApps.find((a: any) => a.appId === id))
+										.filter(Boolean)
+										.map((app: any) => (
+											<SortableTab key={app.appId} app={app} />
+										))}
+								</SortableContext>
+							</DndContext>
+						</div>
 					</div>
 				)}
 			</div>
