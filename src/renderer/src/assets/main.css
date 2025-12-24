@@ -153,6 +153,11 @@ iframe::-webkit-scrollbar-thumb {
 			transparent 100%);
 }
 
+.overflow-y-overlay {
+	overflow-y: overlay;
+	scrollbar-gutter: stable both-edges;
+}
+
 #main {
 	border: none !important;
 	box-shadow: none !important;
