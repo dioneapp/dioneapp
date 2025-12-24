@@ -1,15 +1,15 @@
 import type { AuthContextType } from "@/components/contexts/types/context-types";
 import { apiFetch } from "@/utils/api";
 import {
-    deleteExpiresAt,
-    deleteId,
-    deleteRefreshToken,
-    getExpiresAt,
-    getId,
-    getRefreshToken,
-    saveExpiresAt,
-    saveId,
-    saveRefreshToken,
+	deleteExpiresAt,
+	deleteId,
+	deleteRefreshToken,
+	getExpiresAt,
+	getId,
+	getRefreshToken,
+	saveExpiresAt,
+	saveId,
+	saveRefreshToken,
 } from "@/utils/secure-tokens";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
