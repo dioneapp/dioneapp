@@ -103,11 +103,10 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 									type="button"
 									key={key}
 									onClick={() => setLanguage(key as any)}
-									className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between group ${
-										language === key
-											? "bg-white/20 border border-white/30"
-											: "bg-white/5 hover:bg-white/10 border border-transparent"
-									}`}
+									className={`w-full cursor-pointer text-left px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between group ${language === key
+										? "bg-white/20 border border-white/30"
+										: "bg-white/5 hover:bg-white/10 border border-transparent"
+										}`}
 								>
 									<span className="font-medium">{value}</span>
 									{language === key && (
@@ -156,11 +155,10 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 						<button
 							type="button"
 							onClick={handlePathSelection}
-							className={`w-full min-h-32 border-2 border-dashed rounded-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 group p-4 ${
-								selectedPath
-									? "border-white/30 bg-white/5"
-									: "border-white/20 hover:border-white/40 hover:bg-white/5"
-							}`}
+							className={`w-full cursor-pointer min-h-32 border-2 border-dashed rounded-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 group p-4 ${selectedPath
+								? "border-white/30 bg-white/5"
+								: "border-white/20 hover:border-white/40 hover:bg-white/5"
+								}`}
 						>
 							<FolderOpen className="w-8 h-8 text-white/60 group-hover:text-white/80 transition-colors" />
 							<span className="text-white/60 group-hover:text-white/80 transition-colors text-sm">
@@ -209,11 +207,10 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 						type="button"
 						onClick={onSelectLanguage}
 						disabled={!canProceed}
-						className={`px-6 py-2 mb-8 cursor-pointer transition-all duration-300 rounded-full text-sm font-medium ${
-							canProceed
-								? "bg-white text-black hover:opacity-80 active:scale-[0.97] shadow-lg"
-								: "bg-white/10 text-white/50 cursor-not-allowed border border-white/10"
-						}`}
+						className={`px-6 py-2 mb-8 cursor-pointer transition-all duration-300 rounded-full text-sm font-medium ${canProceed
+							? "bg-white text-black hover:opacity-80 active:scale-[0.97] shadow-lg"
+							: "bg-white/10 text-white/50 cursor-not-allowed border border-white/10"
+							}`}
 					>
 						{canProceed
 							? t("languageSelector.next")

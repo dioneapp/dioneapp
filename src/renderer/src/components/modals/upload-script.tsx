@@ -83,7 +83,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 						<button
 							onClick={handleFileUpload}
 							type="button"
-							className="w-full px-6 py-6 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-sm font-medium text-neutral-300 border-2 border-dashed border-white/20 hover:border-white/40 cursor"
+							className="w-full cursor-pointer px-6 py-6 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-sm font-medium text-neutral-300 border-2 border-dashed border-white/20 hover:border-white/40 cursor"
 						>
 							{scriptFile ? (
 								<div className="text-center">

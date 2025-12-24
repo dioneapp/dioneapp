@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";
+import logo from "../../../assets/logo.png";
 
 interface ScriptCardProps {
 	script: Script;
@@ -28,7 +29,7 @@ function ScriptCard({
 	const isOnline = useOnlineStatus();
 
 	const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-		e.currentTarget.src = "/svgs/Dio.svg";
+		e.currentTarget.src = logo;
 	};
 
 	const handleClick = (e: React.MouseEvent) => {

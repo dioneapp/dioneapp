@@ -181,7 +181,7 @@ export default function List({
 			{!loading && !error && !hasMore && (
 				<div className="text-center text-neutral-500 text-sm flex flex-col gap-2 mt-12">
 					<span>{t("feed.reachedEnd")}</span>
-					<span className="text-neutral-400">
+					<span>
 						{t("feed.notEnoughApps")}{" "}
 						<span
 							onClick={() =>
@@ -189,7 +189,7 @@ export default function List({
 									"https://docs.getdione.app/developer-guide/creating-a-dione-script",
 								)
 							}
-							className="cursor-pointer hover:text-neutral-200 underline underline-offset-4 text-neutral-300 transition-colors duration-300"
+							className="cursor-pointer hover:text-neutral-300 underline underline-offset-4 text-neutral-400 transition-colors duration-300"
 						>
 							{t("feed.helpAddMore")}
 						</span>

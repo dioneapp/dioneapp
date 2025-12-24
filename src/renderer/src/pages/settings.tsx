@@ -108,7 +108,7 @@ export default function Settings() {
 			if (
 				updatedConfig.enableDesktopNotifications === true &&
 				updatedConfig.enableDesktopNotifications !==
-					config.enableDesktopNotifications
+				config.enableDesktopNotifications
 			) {
 				const xml = `
 				<toast launch="dione://action=navigate&amp;contentId=351" activationType="protocol">
@@ -295,6 +295,9 @@ export default function Settings() {
 						openVariablesModal={openVariablesModal}
 						handleReportError={handleReportError}
 						handleResetSettings={handleResetSettings}
+						packVersion={packVersion || "loading..."}
+						port={port || 0}
+						versions={versions}
 					/>
 				);
 
@@ -305,7 +308,7 @@ export default function Settings() {
 
 	return (
 		<>
-			<div className="min-h-screen bg-background pt-4">
+			<div className="h-full pt-4">
 				<div className="max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
 					<main className="flex flex-col gap-6 py-5">
 						{/* Header */}
@@ -321,19 +324,12 @@ export default function Settings() {
 
 						{/* Tab Content */}
 						{config && (
-							<div className="border border-white/10 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm rounded-xl p-6 min-h-[400px]">
+							<div className="border border-white/10 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-sm rounded-xl p-6 h-full">
 								<AnimatePresence mode="wait">
 									{renderTabContent()}
 								</AnimatePresence>
 							</div>
 						)}
-
-						{/* Footer */}
-						<SettingsFooter
-							packVersion={packVersion}
-							port={port}
-							versions={versions}
-						/>
 					</main>
 				</div>
 			</div>

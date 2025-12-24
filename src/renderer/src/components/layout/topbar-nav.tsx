@@ -274,11 +274,10 @@ export default function TopbarNav() {
 						<Link
 							to="/"
 							id="no-draggable"
-							className={`px-3 py-0.75 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
-								isActivePath("/")
+							className={`px-3 py-0.75 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/")
 									? "bg-white/15 text-white"
 									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-							}`}
+								}`}
 						>
 							<Home className="h-4 w-4" />
 							<span>{t("home.title")}</span>
@@ -287,11 +286,10 @@ export default function TopbarNav() {
 						<Link
 							to="/library"
 							id="no-draggable"
-							className={`px-3 py-0.75 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
-								isActivePath("/library")
+							className={`px-3 py-0.75 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/library")
 									? "bg-white/15 text-white"
 									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-							}`}
+								}`}
 						>
 							<Library className="h-4 w-4" />
 							<span>{t("sidebar.tooltips.library")}</span>
@@ -316,7 +314,7 @@ export default function TopbarNav() {
 							type="button"
 							id="no-draggable"
 							onClick={() => window.captureScreenshot()}
-							className="p-1.5 hover:bg-white/10 rounded-lg transition-colors relative"
+							className="p-1.5 hover:bg-white/10 rounded-lg transition-colors relative cursor-pointer"
 							onMouseEnter={() => setHoveredTooltip("capture")}
 							onMouseLeave={() => setHoveredTooltip(null)}
 						>
@@ -331,9 +329,8 @@ export default function TopbarNav() {
 						<Link
 							to="/settings"
 							id="no-draggable"
-							className={`p-1.5 rounded-lg transition-colors relative ${
-								isActivePath("/settings") ? "bg-white/15" : "hover:bg-white/10"
-							}`}
+							className={`p-1.5 rounded-lg transition-colors relative ${isActivePath("/settings") ? "bg-white/15" : "hover:bg-white/10"
+								}`}
 							onMouseEnter={() => setHoveredTooltip("settings")}
 							onMouseLeave={() => setHoveredTooltip(null)}
 						>

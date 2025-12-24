@@ -935,7 +935,7 @@ export default function Install({
 					/>
 				)}
 
-				<div className="flex h-screen w-full relative z-10">
+				<div className="flex h-full w-full relative z-10">
 					<div className="w-full h-full flex justify-center items-center">
 						<AnimatePresence>
 							{show[data?.id] === "iframe" && (

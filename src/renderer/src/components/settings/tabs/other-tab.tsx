@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import CustomInput from "../custom-input";
 import SettingItem from "../setting-item";
 import ToggleSwitch from "../toggle-switch";
+import SettingsFooter from "../settings-footer";
 
 interface OtherTabProps {
 	config: any;
@@ -14,6 +15,9 @@ interface OtherTabProps {
 	openVariablesModal: (state: boolean) => void;
 	handleReportError: () => void;
 	handleResetSettings: () => void;
+	packVersion: string;
+	port: number;
+	versions: { node: string; electron: string; chrome: string; };
 }
 
 export default function OtherTab({
@@ -25,6 +29,9 @@ export default function OtherTab({
 	openVariablesModal,
 	handleReportError,
 	handleResetSettings,
+	packVersion,
+	port,
+	versions,
 }: OtherTabProps) {
 	const { t } = useTranslation();
 
@@ -126,6 +133,12 @@ export default function OtherTab({
 					{t("settings.other.showOnboarding.button")}
 				</button>
 			</SettingItem>
+
+			<SettingsFooter
+				packVersion={packVersion}
+				port={port}
+				versions={versions}
+			/>
 		</motion.div>
 	);
 }

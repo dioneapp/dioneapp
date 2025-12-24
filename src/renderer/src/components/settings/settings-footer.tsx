@@ -19,8 +19,8 @@ export default function SettingsFooter({
 	const { t } = useTranslation();
 
 	return (
-		<div className="w-full flex items-end justify-between text-xs text-neutral-500 mt-4">
-			<div>
+		<div className="flex justify-between w-full text-[10px] text-neutral-500 mt-5">
+			<div className="mt-auto">
 				<a
 					href="https://getdione.app"
 					target="_blank"

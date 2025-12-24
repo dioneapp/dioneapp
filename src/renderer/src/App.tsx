@@ -123,7 +123,6 @@ function App() {
 		"/settings": Settings,
 		"/first-time": FirstTime,
 		"/library": Library,
-		"/no_access": NoAccess,
 		"/account": Account,
 		"/report": Report,
 		"/quick-ai": QuickAI,
@@ -156,25 +155,13 @@ function App() {
 				{pathname !== "/first-time" && layoutMode === "sidebar" && <Titlebar />}
 				<OfflineIndicator />
 				<div
-					className={`flex ${layoutMode === "topbar" ? "flex-col" : ""} h-[calc(100%)]`}
+					className={`flex ${layoutMode === "topbar" ? "flex-col" : ""} h-screen`}
 				>
-					{pathname !== "/first-time" && pathname !== "/no_access" && (
+					{pathname !== "/first-time" && (
 						<>{layoutMode === "sidebar" ? <Sidebar /> : <TopbarNav />}</>
 					)}
-					<div
-						className="flex-1 overflow-x-hidden"
-						id={
-							pathname.includes("/install") ||
-							pathname === "/account" ||
-							pathname === "/first-time" ||
-							pathname === "/library"
-								? ""
-								: pathname === "/settings"
-									? "settings"
-									: "view"
-						}
-					>
-						<div className="page page-transition" key={location.pathname}>
+					<div className="flex-1 h-full overflow-x-hidden">
+						<div className="page page-transition h-full" key={location.pathname}>
 							<ErrorBoundary>
 								<PageComponent />
 							</ErrorBoundary>
