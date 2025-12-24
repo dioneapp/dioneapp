@@ -93,23 +93,25 @@ body {
 
 ::-webkit-scrollbar {
 	width: 6px;
+	height: 6px;
 }
 
-::-webkit-scrollbar-thumb:hover,
-::-webkit-scrollbar-thumb:active {
-	background: rgba(255, 255, 255, 0.4);
-}
-
-::-webkit-scrollbar:hover {
-	background: rgba(255, 255, 255, 0.2);
-}
-
-::-webkit-scrollbar-track {
+:hover::-webkit-scrollbar-track {
 	background: rgba(255, 255, 255, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
+	background: transparent;
+	border-radius: 2px;
+}
+
+*:hover::-webkit-scrollbar-thumb {
 	background: rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active {
+	background: rgba(255, 255, 255, 0.3);
 }
 
 iframe::-webkit-scrollbar {
