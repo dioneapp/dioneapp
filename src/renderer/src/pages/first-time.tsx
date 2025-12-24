@@ -13,14 +13,12 @@ import { useToast } from "@/utils/use-toast";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link as LinkIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function FirstTime() {
 	const { t } = useTranslation();
-	const [searchParams] = useSearchParams();
 	const { user, setUser, setRefreshSessionToken } = useAuthContext();
 	const firstLaunch = localStorage.getItem("firstLaunch");
-	const isLogin = searchParams.get("login");
 	// toast stuff
 	const { addToast } = useToast();
 	const showToast = (

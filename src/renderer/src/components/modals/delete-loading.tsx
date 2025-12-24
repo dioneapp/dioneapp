@@ -31,19 +31,23 @@ export default function DeleteLoadingModal({
 	);
 
 	useEffect(() => {
+		let timeout: ReturnType<typeof setTimeout> | null = null;
+
 		if (status === "deleted") {
 			setCurrentStep("complete");
-			const timeout = setTimeout(() => {
+			timeout = setTimeout(() => {
 				onClose();
 			}, 2000);
-
-			return () => clearTimeout(timeout);
 		} else if (status === "deleting" || status === "deleting_deps") {
 			setCurrentStep("progress");
 		} else if (status?.startsWith("error")) {
 			setCurrentStep("complete");
 			// Don't auto-close on error - let user manually close
 		}
+
+		return () => {
+			if (timeout) clearTimeout(timeout);
+		};
 	}, [status, onClose]);
 
 	const handleConfirmUninstall = () => {
