@@ -651,9 +651,50 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		initDefaultEnv();
 	}
 
+	// Ensure nvidia-smi directory is in PATH for GPU detection in child processes
+	let enhancedPath = ENVIRONMENT.PATH || "";
+	if (process.platform === "win32") {
+		const systemPath = process.env.PATH || process.env.Path || "";
+		const separator = ";";
+		const systemPaths = systemPath.split(separator);
+		
+		// Find directories containing nvidia-smi.exe and add them if not already present
+		for (const p of systemPaths) {
+			if (fs.existsSync(path.join(p, "nvidia-smi.exe"))) {
+				const normalizedP = path.normalize(p).toLowerCase();
+				const currentPaths = enhancedPath.toLowerCase().split(separator);
+				if (!currentPaths.some(cp => path.normalize(cp).toLowerCase() === normalizedP)) {
+					enhancedPath = enhancedPath ? `${enhancedPath}${separator}${p}` : p;
+					logger.info(`Added nvidia-smi path to environment: ${p}`);
+				}
+			}
+		}
+	}
+
 	// command options with enhanced environment for build tools
+	// Start with essential Windows system variables that tools like nvidia-smi need
+	const systemVars: Record<string, string | undefined> = {};
+	if (process.platform === "win32") {
+		// These are critical for Windows system tools and DLL loading
+		const essentialVars = [
+			"SystemRoot", "SystemDrive", "windir", "COMPUTERNAME",
+			"USERPROFILE", "APPDATA", "LOCALAPPDATA", "TEMP", "TMP",
+			"PROGRAMFILES", "PROGRAMFILES(X86)", "COMMONPROGRAMFILES", "COMMONPROGRAMFILES(X86)",
+			"PROGRAMDATA", "PUBLIC", "HOMEDRIVE", "HOMEPATH",
+			"NUMBER_OF_PROCESSORS", "PROCESSOR_ARCHITECTURE", "PROCESSOR_IDENTIFIER", "PROCESSOR_LEVEL",
+		];
+		for (const v of essentialVars) {
+			if (process.env[v]) {
+				systemVars[v] = process.env[v];
+			}
+		}
+	}
+	
 	const baseEnv = {
+		...systemVars,
 		...ENVIRONMENT,
+		PATH: enhancedPath,
+		Path: enhancedPath, // Windows sometimes uses Path instead of PATH
 		PYTHONUNBUFFERED: "1",
 		NODE_NO_BUFFERING: "1",
 		FORCE_UNBUFFERED_OUTPUT: "1",
