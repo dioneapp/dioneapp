@@ -206,12 +206,12 @@ export default function IframeComponent({
 	};
 
 	return (
-		<div className="w-full h-full flex flex-col gap-3 p-6">
+		<div className="w-full h-full flex flex-col gap-3 pt-3 pb-6 px-6">
 			<motion.div
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.4 }}
-				className="w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 p-2 mt-2"
+				className="w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 p-2"
 			>
 				<div className="flex items-center gap-1.5">
 					<button
