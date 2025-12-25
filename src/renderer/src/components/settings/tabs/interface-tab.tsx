@@ -46,7 +46,7 @@ export default function InterfaceTab({
 					href="https://github.com/dioneapp/dioneapp"
 					target="_blank"
 					rel="noopener noreferrer"
-					className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-3 py-1 rounded-full bg-white/10 hover:bg-white/15 inline-block"
+					className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-3 py-1 rounded-xl bg-white/10 hover:bg-white/15 inline-block"
 				>
 					{t("settings.interface.helpTranslate")}
 				</a>

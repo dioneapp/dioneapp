@@ -5,9 +5,9 @@ export default function Loading() {
 		<div className="h-full w-full relative overflow-hidden">
 			{/* background effects */}
 			<div className="absolute inset-0 flex justify-center items-center">
-				<div className="absolute bg-white h-[70vh] w-[70vh] rounded-full blur-3xl opacity-[0.01]" />
+				<div className="absolute bg-white h-[70vh] w-[70vh] rounded-xl blur-3xl opacity-[0.01]" />
 				<div
-					className="opacity-10 h-[50vh] w-[50vh] rounded-full blur-2xl"
+					className="opacity-10 h-[50vh] w-[50vh] rounded-xl blur-2xl"
 					style={{ backgroundColor: "var(--theme-accent)" }}
 				/>
 			</div>

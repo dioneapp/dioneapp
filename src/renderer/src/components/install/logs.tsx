@@ -69,7 +69,7 @@ export default function LogsComponent({
 					{iframeAvailable && (
 						<button
 							type="button"
-							className="group bg-white hover:bg-white/90 transition-all duration-200 rounded-full px-3 py-2 text-black font-medium text-center cursor-pointer shadow-sm hover:shadow-md flex items-center gap-2"
+							className="group bg-white hover:bg-white/90 transition-all duration-200 rounded-xl px-3 py-2 text-black font-medium text-center cursor-pointer shadow-sm hover:shadow-md flex items-center gap-2"
 							onClick={() => setShow({ [appId]: "iframe" })}
 						>
 							<ExternalLink className="h-4 w-4" />
@@ -79,7 +79,7 @@ export default function LogsComponent({
 					<div className={`flex gap-1.5 ${!iframeAvailable ? "ml-auto" : ""}`}>
 						<button
 							type="button"
-							className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-full text-neutral-300 cursor-pointer border border-white/10"
+							className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-xl text-neutral-300 cursor-pointer border border-white/10"
 							onClick={copyLogsToClipboard}
 							title={t("logs.copyLogs")}
 						>
@@ -87,7 +87,7 @@ export default function LogsComponent({
 						</button>
 						<button
 							type="button"
-							className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-full text-neutral-300 cursor-pointer border border-white/10"
+							className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-xl text-neutral-300 cursor-pointer border border-white/10"
 							onClick={handleStop}
 							title={t("logs.stop")}
 						>

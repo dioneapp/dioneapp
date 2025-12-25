@@ -1,10 +1,10 @@
 import {
-	ArrowRight,
-	ChevronLeft,
-	Cpu,
-	Loader2,
-	ShieldCheck,
-	Sparkles,
+    ArrowRight,
+    ChevronLeft,
+    Cpu,
+    Loader2,
+    ShieldCheck,
+    Sparkles,
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import ProgressBar from "../common/progress-bar";
@@ -26,13 +26,13 @@ export function InstallAIModal({
 	return (
 		<div className="absolute inset-0 w-full h-screen bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center">
 			<div className="w-full h-full flex items-center justify-center max-w-2xl mx-auto p-4">
-				<div className="flex flex-col p-8 rounded-2xl border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden min-h-[500px]">
+				<div className="flex flex-col p-8 rounded-ml border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden min-h-[500px]">
 					<div className="absolute top-0 left-0 w-full h-1 bg-white opacity-50" />
 
 					<div className="flex-1 flex flex-col items-center justify-center w-full">
 						{installStep === 1 && (
 							<div className="flex gap-4 flex-col items-center justify-center w-full h-fit text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-								<div className="p-3 rounded-full bg-white/5 border border-white/10 mb-2">
+								<div className="p-3 rounded-xl bg-white/5 border border-white/10 mb-2">
 									<Icon name="Dio" className="w-8 h-8 text-white" />
 								</div>
 								<h1 className="text-3xl font-bold text-white tracking-tight">
@@ -98,7 +98,7 @@ export function InstallAIModal({
 
 						{installStep === 3 && (
 							<div className="flex gap-4 flex-col items-center justify-center w-full h-fit text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
-								<div className="p-3 rounded-full bg-white/5 border border-white/10 mb-2">
+								<div className="p-3 rounded-xl bg-white/5 border border-white/10 mb-2">
 									<Icon name="Dio" className="w-8 h-8 text-white" />
 								</div>
 								<h1 className="text-3xl font-bold text-white tracking-tight">
@@ -128,7 +128,7 @@ export function InstallAIModal({
 							{[1, 2, 3].map((step) => (
 								<div
 									key={step}
-									className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+									className={`w-2 h-2 rounded-xl transition-colors duration-300 ${
 										step === installStep ? "bg-white" : "bg-white/20"
 									}`}
 								/>

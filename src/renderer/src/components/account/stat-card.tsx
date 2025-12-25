@@ -49,7 +49,7 @@ export const StatCard = ({
 						<h3 className="z-10 text-2xl font-medium text-white w-full">
 							{title}
 						</h3>
-						<div className="p-2 bg-white/10 rounded-lg">
+						<div className="p-2 bg-white/10 rounded-xl">
 							<Icon className="w-6 h-6 opacity-80" />
 						</div>
 					</div>
@@ -73,7 +73,7 @@ export const StatCard = ({
 									initial={{ scale: 0 }}
 									animate={{ scale: 1 }}
 									transition={{ delay: day * 0.1 }}
-									className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+									className={`h-1.5 flex-1 rounded-xl transition-all duration-300 ${
 										day <= (streakDays || 0) ? "" : "bg-neutral-700"
 									}`}
 									style={

@@ -1,12 +1,13 @@
+import "@/components/editor/markdown-preview.css";
 import { useTranslation } from "@/translations/translation-context";
 import Editor, { loader } from "@monaco-editor/react";
 import {
-	AlertCircle,
-	AlertTriangle,
-	GripVertical,
-	Info,
-	Lightbulb,
-	XCircle,
+    AlertCircle,
+    AlertTriangle,
+    GripVertical,
+    Info,
+    Lightbulb,
+    XCircle,
 } from "lucide-react";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -15,7 +16,6 @@ import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 import remarkGithubBlockquoteAlert from "remark-github-blockquote-alert";
-import "@/components/editor/markdown-preview.css";
 
 loader.config({ monaco });
 
@@ -282,7 +282,7 @@ const MarkdownEditor = ({
 
 											return (
 												<div
-													className={`mb-4 rounded-lg border-l-4 p-4 ${styles[alertType as keyof typeof styles]}`}
+													className={`mb-4 rounded-xl border-l-4 p-4 ${styles[alertType as keyof typeof styles]}`}
 												>
 													<div className="mb-2 flex items-center gap-2 font-semibold">
 														{icons[alertType as keyof typeof icons]}

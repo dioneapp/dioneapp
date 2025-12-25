@@ -2,11 +2,11 @@ import type { FileNode } from "@/components/editor/utils/types";
 import { getFileIconColor } from "@/components/editor/utils/utils";
 import { useTranslation } from "@/translations/translation-context";
 import {
-	ChevronDown,
-	ChevronRight,
-	FileText,
-	Folder,
-	Loader2,
+    ChevronDown,
+    ChevronRight,
+    FileText,
+    Folder,
+    Loader2,
 } from "lucide-react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 
@@ -52,7 +52,7 @@ const FileTree = ({
 			const indent = node.isRoot ? 8 : 12 + depth * 16;
 			const fileIconColor =
 				node.type === "file" ? getFileIconColor(node.name) : undefined;
-			const rowClass = `group flex w-full items-center justify-between gap-2 px-2 py-1 active:rounded-md transition-colors ${
+			const rowClass = `group flex w-full items-center justify-between gap-2 px-2 py-1 active:rounded-xl transition-colors ${
 				isDisabled
 					? isActive
 						? "bg-white/5 text-neutral-400 cursor-not-allowed"
@@ -121,7 +121,7 @@ const FileTree = ({
 								{node.name}
 								{node.relativePath === selectedFile && isDirty && (
 									<span
-										className="ml-2 inline-block h-2 w-2 rounded-full bg-amber-400"
+										className="ml-2 inline-block h-2 w-2 rounded-xl bg-amber-400"
 										aria-hidden
 									/>
 								)}

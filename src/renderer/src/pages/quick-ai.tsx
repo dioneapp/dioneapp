@@ -5,11 +5,11 @@ import { useAIContext } from "@/components/contexts/ai-context";
 import { InstallAIModal } from "@/components/modals/install-ai";
 import { motion } from "framer-motion";
 import {
-	ArrowRight,
-	BrushCleaning,
-	CornerLeftDown,
-	Play,
-	Square,
+    ArrowRight,
+    BrushCleaning,
+    CornerLeftDown,
+    Play,
+    Square,
 } from "lucide-react";
 import { useEffect, useRef } from "react";
 
@@ -72,13 +72,13 @@ export default function QuickAI() {
 								<ul className="text-sm gap-2 flex flex-col items-start justify-start w-full text-pretty max-w-2xl text-neutral-300 ">
 									<li
 										onClick={() => chat("Open FaceFusion")}
-										className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
+										className="bg-white/10 px-4 py-1 rounded-xl flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
 									>
 										"Open FaceFusion" <ArrowRight className="ml-2" size={16} />
 									</li>
 									<li
 										onClick={() => chat("Install Applio")}
-										className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
+										className="bg-white/10 px-4 py-1 rounded-xl flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
 									>
 										"Install Applio" <ArrowRight className="ml-2" size={16} />
 									</li>
@@ -86,7 +86,7 @@ export default function QuickAI() {
 										onClick={() =>
 											chat("What is the latest application in Dione?")
 										}
-										className="bg-white/10 px-4 py-1 rounded-lg flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
+										className="bg-white/10 px-4 py-1 rounded-xl flex gap-2 items-center hover:text-neutral-100 cursor-pointer transition-colors duration-200"
 									>
 										"What is the latest application in Dione?"{" "}
 										<ArrowRight className="ml-2" size={16} />
@@ -130,7 +130,7 @@ export default function QuickAI() {
 										? handleStopOllama
 										: handleStartOllama
 								}
-								className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group"
+								className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-xl p-1 group"
 							>
 								{ollamaRunning && ollamaInstalled ? (
 									<Square className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
@@ -139,7 +139,7 @@ export default function QuickAI() {
 								)}
 							</button>
 							<button
-								className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-full p-1 group"
+								className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-xl p-1 group"
 								onClick={() => setMessages([])}
 								title="Clear chat"
 							>
@@ -149,7 +149,7 @@ export default function QuickAI() {
 								className="w-fit h-6 flex items-center justify-center"
 								onClick={() => setShowModelHub(!showModelHub)}
 							>
-								<button className="w-full h-full flex items-center justify-center cursor-pointer border border-white/10 outline-none rounded-full px-4 text-[11.5px] text-neutral-300 hover:text-neutral-200 hover:bg-white/10 hover:border-transparent transition-all duration-200">
+								<button className="w-full h-full flex items-center justify-center cursor-pointer border border-white/10 outline-none rounded-xl px-4 text-[11.5px] text-neutral-300 hover:text-neutral-200 hover:bg-white/10 hover:border-transparent transition-all duration-200">
 									<span className="truncate text-center">
 										{ollamaModel || "Loading..."}
 									</span>
@@ -158,12 +158,12 @@ export default function QuickAI() {
 						</div>
 						<div className="flex flex-col gap-2 items-end justify-center mr-auto w-full h-full text-[10px] text-neutral-400 font-medium">
 							{ollamaRunning && (
-								<div className="p-1 px-3 rounded-full bg-green-500/5 backdrop-blur-3xl">
+								<div className="p-1 px-3 rounded-xl bg-green-500/5 backdrop-blur-3xl">
 									Ollama running
 								</div>
 							)}
 							{!ollamaRunning && (
-								<div className="p-1 px-3 rounded-full bg-red-500/5 backdrop-blur-3xl">
+								<div className="p-1 px-3 rounded-xl bg-red-500/5 backdrop-blur-3xl">
 									Ollama not running
 								</div>
 							)}

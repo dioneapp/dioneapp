@@ -6,29 +6,29 @@ import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
 import {
-	DndContext,
-	PointerSensor,
-	closestCenter,
-	useSensor,
-	useSensors,
+    DndContext,
+    PointerSensor,
+    closestCenter,
+    useSensor,
+    useSensors,
 } from "@dnd-kit/core";
 import {
-	SortableContext,
-	arrayMove,
-	horizontalListSortingStrategy,
-	useSortable,
+    SortableContext,
+    arrayMove,
+    horizontalListSortingStrategy,
+    useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-	Camera,
-	Home,
-	Library,
-	Maximize,
-	Minimize as Minimize2,
-	Minus,
-	Settings,
-	User,
-	X,
+    Camera,
+    Home,
+    Library,
+    Maximize,
+    Minimize as Minimize2,
+    Minus,
+    Settings,
+    User,
+    X,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -127,7 +127,7 @@ export default function TopbarNav() {
 			>
 				<button
 					type="button"
-					className="flex items-center gap-1.5 bg-white/10 rounded-lg px-2 py-0.75 hover:bg-white/15 transition-colors shrink-0 focus:outline-none"
+					className="flex items-center gap-1.5 bg-white/10 rounded-xl px-2 py-0.75 hover:bg-white/15 transition-colors shrink-0 focus:outline-none"
 					style={{ textDecoration: "none" }}
 					onClick={() => {
 						navigate({
@@ -136,14 +136,14 @@ export default function TopbarNav() {
 						});
 					}}
 				>
-					<div className="w-6 h-6 overflow-hidden shrink-0 rounded-lg">
+					<div className="w-6 h-6 overflow-hidden shrink-0 rounded-xl">
 						{!app.isLocal ? (
 							<>
 								{app.data?.logo_url?.startsWith("http") ? (
 									<img
 										src={app.data.logo_url}
 										alt={app.data.name}
-										className="w-full h-full object-cover rounded-lg"
+										className="w-full h-full object-cover rounded-xl"
 									/>
 								) : (
 									<GeneratedIcon
@@ -156,7 +156,7 @@ export default function TopbarNav() {
 							<GeneratedIcon
 								name={app?.data?.name}
 								className="w-full h-full"
-								roundedClassName="rounded-lg"
+								roundedClassName="rounded-xl"
 							/>
 						)}
 					</div>
@@ -167,13 +167,13 @@ export default function TopbarNav() {
 				<button
 					type="button"
 					onClick={() => stopApp(app.appId, app.data?.name || app.appId)}
-					className="ml-2 p-0.5 mr-2 hover:bg-white/20 rounded transition-colors absolute right-0 top-1/2 -translate-y-1/2"
+					className="ml-2 p-0.5 mr-2 hover:bg-white/20 rounded-xl transition-colors absolute right-0 top-1/2 -translate-y-1/2"
 					style={{ zIndex: 2 }}
 				>
 					<X className="h-3 w-3" />
 				</button>
 				{hoveredTooltip === app.appId && (
-					<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
+					<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-xl">
 						{app?.data?.name || app.appId}
 					</div>
 				)}
@@ -274,7 +274,7 @@ export default function TopbarNav() {
 						<Link
 							to="/"
 							id="no-draggable"
-							className={`px-3 py-0.75 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/")
+							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/")
 									? "bg-white/15 text-white"
 									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
 								}`}
@@ -286,7 +286,7 @@ export default function TopbarNav() {
 						<Link
 							to="/library"
 							id="no-draggable"
-							className={`px-3 py-0.75 rounded-lg transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/library")
+							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/library")
 									? "bg-white/15 text-white"
 									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
 								}`}
@@ -299,8 +299,8 @@ export default function TopbarNav() {
 					{/* Right side actions */}
 					<div className="flex items-center gap-2 relative z-10 shrink-0">
 						{activeApps.length > 0 && (
-							<div className="flex items-center gap-1 px-2 py-0.75 bg-white/10 rounded-full">
-								<div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
+							<div className="flex items-center gap-1 px-2 py-0.75 bg-white/10 rounded-xl">
+								<div className="h-2 w-2 rounded-xl bg-green-500 animate-pulse" />
 								<span className="text-xs text-neutral-400">
 									{activeApps.length}{" "}
 									{activeApps.length === 1
@@ -314,13 +314,13 @@ export default function TopbarNav() {
 							type="button"
 							id="no-draggable"
 							onClick={() => window.captureScreenshot()}
-							className="p-1.5 hover:bg-white/10 rounded-lg transition-colors relative cursor-pointer"
+							className="p-1.5 hover:bg-white/10 rounded-xl transition-colors relative cursor-pointer"
 							onMouseEnter={() => setHoveredTooltip("capture")}
 							onMouseLeave={() => setHoveredTooltip(null)}
 						>
 							<Camera className="h-4 w-4" />
 							{hoveredTooltip === "capture" && (
-								<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
+								<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-xl">
 									{t("sidebar.tooltips.capture")}
 								</div>
 							)}
@@ -329,14 +329,14 @@ export default function TopbarNav() {
 						<Link
 							to="/settings"
 							id="no-draggable"
-							className={`p-1.5 rounded-lg transition-colors relative ${isActivePath("/settings") ? "bg-white/15" : "hover:bg-white/10"
+							className={`p-1.5 rounded-xl transition-colors relative ${isActivePath("/settings") ? "bg-white/15" : "hover:bg-white/10"
 								}`}
 							onMouseEnter={() => setHoveredTooltip("settings")}
 							onMouseLeave={() => setHoveredTooltip(null)}
 						>
 							<Settings className="h-4 w-4" />
 							{hoveredTooltip === "settings" && (
-								<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-lg">
+								<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-xl">
 									{t("sidebar.tooltips.settings")}
 								</div>
 							)}
@@ -347,17 +347,17 @@ export default function TopbarNav() {
 							<Link
 								to="/account"
 								id="no-draggable"
-								className="flex items-center gap-2 p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+								className="flex items-center gap-2 p-1.5 hover:bg-white/10 rounded-xl transition-colors"
 							>
 								{!avatarError ? (
 									<img
 										src={user.avatar}
 										alt={user.username}
-										className="h-6 w-6 rounded-full"
+										className="h-6 w-6 rounded-xl"
 										onError={() => setAvatarError(true)}
 									/>
 								) : (
-									<div className="h-6 w-6 rounded-full bg-white/20 flex items-center justify-center">
+									<div className="h-6 w-6 rounded-xl bg-white/20 flex items-center justify-center">
 										<User className="h-4 w-4" />
 									</div>
 								)}
@@ -371,7 +371,7 @@ export default function TopbarNav() {
 							<button
 								type="button"
 								id="no-draggable"
-								className="px-3 py-0.75 bg-white hover:bg-white/90 text-black font-medium rounded-lg transition-all duration-200 flex items-center gap-2 text-sm cursor-pointer"
+								className="px-3 py-0.75 bg-white hover:bg-white/90 text-black font-medium rounded-xl transition-all duration-200 flex items-center gap-2 text-sm cursor-pointer"
 								onClick={() =>
 									openLink("https://getdione.app/auth/login?app=true")
 								}
@@ -389,7 +389,7 @@ export default function TopbarNav() {
 									<button
 										type="button"
 										onClick={handleMinimize}
-										className="cursor-pointer p-1 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
+										className="cursor-pointer p-1 hover:bg-white/10 rounded-xl transition-all duration-200 text-white/70 hover:text-white"
 									>
 										<Minus className="h-5 w-5" />
 									</button>
@@ -398,7 +398,7 @@ export default function TopbarNav() {
 									<button
 										type="button"
 										onClick={handleMaximize}
-										className="cursor-pointer p-1.5 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
+										className="cursor-pointer p-1.5 hover:bg-white/10 rounded-xl transition-all duration-200 text-white/70 hover:text-white"
 									>
 										{isMaximized ? (
 											<Minimize2 className="h-4 w-4" />
@@ -411,7 +411,7 @@ export default function TopbarNav() {
 									<button
 										type="button"
 										onClick={handleClose}
-										className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-all duration-200 text-white/70"
+										className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-all duration-200 text-white/70"
 									>
 										<X className="h-5 w-5" />
 									</button>

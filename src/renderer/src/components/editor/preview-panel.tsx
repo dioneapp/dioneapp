@@ -126,7 +126,7 @@ const PreviewPane = ({
 					<img
 						src={filePreviewUrl}
 						alt={selectedFileNode.name}
-						className="max-h-full max-w-full rounded-md shadow-lg"
+						className="max-h-full max-w-full rounded-xl shadow-lg"
 					/>
 				</div>
 			);
@@ -171,14 +171,14 @@ const PreviewPane = ({
 				<div className="flex items-center gap-2 min-w-0">
 					{fileEncoding === "base64" && (
 						<span
-							className="rounded-md bg-neutral-800 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-400 whitespace-nowrap"
+							className="rounded-xl bg-neutral-800 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-400 whitespace-nowrap"
 							title={fileMimeType ?? undefined}
 						>
 							{t("editor.previewOnly")}
 						</span>
 					)}
 					{isDirty && (
-						<span className="rounded-full bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300 whitespace-nowrap">
+						<span className="rounded-xl bg-amber-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-300 whitespace-nowrap">
 							{t("editor.unsaved")}
 						</span>
 					)}
@@ -195,7 +195,7 @@ const PreviewPane = ({
 						<button
 							type="button"
 							onClick={onReloadFile}
-							className="flex items-center gap-2 rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
+							className="flex items-center gap-2 rounded-xl border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
 						>
 							<RefreshCcw className="h-3.5 w-3.5" />
 							<span>{t("editor.retry")}</span>

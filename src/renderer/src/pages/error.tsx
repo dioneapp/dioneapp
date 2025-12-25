@@ -59,7 +59,7 @@ export default function ErrorPage({ error }: { error?: Error }) {
 							<button
 								onClick={() => navigate(-1)}
 								type="button"
-								className=" py-1 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold text-center cursor-pointer"
+								className=" py-1 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-xl text-black font-semibold text-center cursor-pointer"
 							>
 								{t("error.return")}
 							</button>
@@ -71,7 +71,7 @@ export default function ErrorPage({ error }: { error?: Error }) {
 										openLink("https://github.com/dioneapp/dioneapp/issues")
 									}
 									type="button"
-									className="px-4 border border-white/10 enabled:hover:bg-white/10 transition-colors duration-400 rounded-full text-neutral-300 py-1 text-center enabled:cursor-pointer flex gap-2"
+									className="px-4 border border-white/10 enabled:hover:bg-white/10 transition-colors duration-400 rounded-xl text-neutral-300 py-1 text-center enabled:cursor-pointer flex gap-2"
 									disabled
 								>
 									<span className="text-center py-1">
@@ -108,7 +108,7 @@ export default function ErrorPage({ error }: { error?: Error }) {
 							<button
 								onClick={() => handleReportError()}
 								type="button"
-								className="px-4 bg-white/10 hover:bg-white/20 transition-colors duration-400 rounded-full text-center cursor-pointer py-1"
+								className="px-4 bg-white/10 hover:bg-white/20 transition-colors duration-400 rounded-xl text-center cursor-pointer py-1"
 							>
 								{t("error.report.toTeam")}
 							</button>

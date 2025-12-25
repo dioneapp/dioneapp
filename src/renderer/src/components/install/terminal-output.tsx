@@ -22,7 +22,7 @@ const getLineStyle = (line: string): string => {
 		return "text-green-400/90 bg-gradient-to-r from-green-500/8 to-transparent border-l-2 border-green-500/60 pl-3 py-1 my-0.5 rounded-r";
 	if (lower.includes("info"))
 		return "text-blue-400/90 bg-gradient-to-r from-blue-500/8 to-transparent border-l-2 border-blue-500/60 pl-3 py-1 my-0.5 rounded-r";
-	return "text-neutral-400/90 hover:bg-white/[0.03] transition-all duration-150 py-0.5 px-2 rounded";
+	return "text-neutral-400/90 hover:bg-white/[0.03] transition-all duration-150 py-0.5 px-2 rounded-xl";
 };
 
 export default function TerminalOutput({

@@ -5,18 +5,18 @@ import { openLink } from "@/utils/open-link";
 import { reportBadContent } from "@/utils/report-bad-content";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-	ArrowLeft,
-	BadgeCheck,
-	Bookmark,
-	ChevronDown,
-	CodeXml,
-	Download,
-	Flag,
-	MoreHorizontal,
-	Play,
-	Share2,
-	Trash2,
-	User,
+    ArrowLeft,
+    BadgeCheck,
+    Bookmark,
+    ChevronDown,
+    CodeXml,
+    Download,
+    Flag,
+    MoreHorizontal,
+    Play,
+    Share2,
+    Trash2,
+    User,
 } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
@@ -127,10 +127,10 @@ export default function ActionsComponent({
 										setShowReportMenu(false);
 									}
 								}}
-								className="w-full p-2 border border-white/10 rounded-lg focus:outline-none focus:ring-2 text-neutral-300 focus:ring-white/10 resize-none"
+								className="w-full p-2 border border-white/10 rounded-xl focus:outline-none focus:ring-2 text-neutral-300 focus:ring-white/10 resize-none"
 							/>
 							<div className="flex items-center justify-between mt-4">
-								<div className="flex gap-2 items-center text-xs rounded-full">
+								<div className="flex gap-2 items-center text-xs rounded-xl">
 									{reportStatus === "reported" && (
 										<p className="text-green-500">
 											{t("error.report.success")}
@@ -150,13 +150,13 @@ export default function ActionsComponent({
 										reportStatus !== "reported" && (
 											<>
 												<button
-													className="px-4 py-1 bg-white/10 hover:bg-white/20 transition-colors rounded-full text-neutral-300 text-sm cursor-pointer"
+													className="px-4 py-1 bg-white/10 hover:bg-white/20 transition-colors rounded-xl text-neutral-300 text-sm cursor-pointer"
 													onClick={() => setShowReportMenu(false)}
 												>
 													{t("common.cancel")}
 												</button>
 												<button
-													className="px-4 py-1 bg-white/30 hover:bg-white/40 transition-colors text-sm rounded-full text-white cursor-pointer"
+													className="px-4 py-1 bg-white/30 hover:bg-white/40 transition-colors text-sm rounded-xl text-white cursor-pointer"
 													onClick={async () => {
 														setReportStatus("loading");
 														const result = await reportBadContent("script", {
@@ -172,7 +172,7 @@ export default function ActionsComponent({
 										)}
 									{reportStatus === "reported" && (
 										<button
-											className="px-4 py-1 bg-white text-black hover:bg-white/80 font-semibold transition-opacity rounded-full text-sm cursor-pointer"
+											className="px-4 py-1 bg-white text-black hover:bg-white/80 font-semibold transition-opacity rounded-xl text-sm cursor-pointer"
 											onClick={() => {
 												setShowReportMenu(false);
 												setReportDetails("");
@@ -209,14 +209,14 @@ export default function ActionsComponent({
 						/>
 						<div className="absolute inset-0 overflow-hidden pointer-events-none overflow-hidden rounded-xl">
 							<div
-								className="absolute -top-16 -right-16 w-32 sm:w-48 h-32 sm:h-48 rounded-full blur-3xl"
+								className="absolute -top-16 -right-16 w-32 sm:w-48 h-32 sm:h-48 rounded-xl blur-3xl"
 								style={{
 									backgroundColor:
 										"color-mix(in srgb, var(--theme-accent) 20%, transparent)",
 								}}
 							/>
 							<div
-								className="absolute -bottom-8 -left-8 w-24 sm:w-32 h-24 sm:h-32 rounded-full blur-2xl"
+								className="absolute -bottom-8 -left-8 w-24 sm:w-32 h-24 sm:h-32 rounded-xl blur-2xl"
 								style={{
 									backgroundColor:
 										"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
@@ -243,14 +243,14 @@ export default function ActionsComponent({
 										<button
 											type="button"
 											onClick={handleShare}
-											className="p-1.5 hover:bg-white/10 transition-colors rounded-lg text-neutral-400 hover:text-white cursor-pointer"
+											className="p-1.5 hover:bg-white/10 transition-colors rounded-xl text-neutral-400 hover:text-white cursor-pointer"
 										>
 											<Share2 className="h-3.5 w-3.5" />
 										</button>
 										<button
 											type="button"
 											onClick={handleSave}
-											className="p-1.5 transition-colors rounded-lg cursor-pointer text-neutral-400 hover:text-white hover:bg-white/10"
+											className="p-1.5 transition-colors rounded-xl cursor-pointer text-neutral-400 hover:text-white hover:bg-white/10"
 											style={
 												saved
 													? {
@@ -283,7 +283,7 @@ export default function ActionsComponent({
 							{/* App Header */}
 							<div className="flex items-start gap-3 sm:gap-4">
 								{/* App Icon */}
-								<div className="relative h-12 w-12 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-lg sm:rounded-xl border border-white/10 shadow-lg">
+								<div className="relative h-12 w-12 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-xl sm:rounded-xl border border-white/10 shadow-lg">
 									{/* biome-ignore lint/complexity/useOptionalChain: if you change && to || it will break */}
 									{data?.logo_url && data?.logo_url?.startsWith("http") ? (
 										<img
@@ -330,14 +330,14 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
 												installed
 													? "bg-green-500/20 text-green-400 border border-green-500/30"
 													: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
 											}`}
 										>
 											<div
-												className={`w-1 h-1 rounded-full ${
+												className={`w-1 h-1 rounded-xl ${
 													installed ? "bg-green-400" : "bg-neutral-400"
 												}`}
 											/>
@@ -401,7 +401,7 @@ export default function ActionsComponent({
 									<button
 										type="button"
 										onClick={handleReconnect}
-										className="flex-1 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-neutral-500/30 hover:bg-neutral-500/40 transition-colors duration-200 rounded-full text-white font-medium cursor-pointer border border-white/10"
+										className="flex-1 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-neutral-500/30 hover:bg-neutral-500/40 transition-colors duration-200 rounded-xl text-white font-medium cursor-pointer border border-white/10"
 									>
 										{t("actions.reconnect")}
 									</button>
@@ -414,7 +414,7 @@ export default function ActionsComponent({
 													<button
 														type="button"
 														onClick={() => setDropdownOpen((v) => !v)}
-														className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
+														className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-xl text-black font-semibold cursor-pointer"
 													>
 														<Play className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-black" />
 														<span className="hidden sm:inline">
@@ -448,7 +448,7 @@ export default function ActionsComponent({
 																				handleStart(start);
 																				setDropdownOpen(false);
 																			}}
-																			className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-white hover:bg-white/10 rounded-lg cursor-pointer transition-colors duration-150 flex flex-col gap-0.5"
+																			className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-white hover:bg-white/10 rounded-xl cursor-pointer transition-colors duration-150 flex flex-col gap-0.5"
 																		>
 																			<span className="text-xs sm:text-sm font-semibold">
 																				{start.name}
@@ -469,7 +469,7 @@ export default function ActionsComponent({
 												<button
 													type="button"
 													onClick={() => handleStart()}
-													className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
+													className="w-full flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-xl text-black font-semibold cursor-pointer"
 												>
 													<Play className="h-3 w-3 sm:h-3.5 sm:w-3.5 fill-black" />
 													<span className="hidden sm:inline">
@@ -485,7 +485,7 @@ export default function ActionsComponent({
 											<button
 												type="button"
 												onClick={() => setMoreMenuOpen((v) => !v)}
-												className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-full text-neutral-300 cursor-pointer border border-white/10"
+												className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-xl text-neutral-300 cursor-pointer border border-white/10"
 											>
 												<MoreHorizontal size={14} className="sm:w-4 sm:h-4" />
 											</button>
@@ -505,7 +505,7 @@ export default function ActionsComponent({
 																handleOpenEditor();
 																setMoreMenuOpen(false);
 															}}
-															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-white hover:bg-white/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
+															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-white hover:bg-white/10 rounded-xl cursor-pointer transition-colors duration-150 flex items-center gap-2"
 														>
 															<CodeXml
 																size={13}
@@ -519,7 +519,7 @@ export default function ActionsComponent({
 																onClick={() => {
 																	setShowReportMenu(true);
 																}}
-																className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
+																className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-red-400 hover:bg-red-500/10 rounded-xl cursor-pointer transition-colors duration-150 flex items-center gap-2"
 															>
 																<Flag size={13} className="sm:w-3.5 sm:h-3.5" />
 																<span className="text-xs sm:text-sm">
@@ -533,7 +533,7 @@ export default function ActionsComponent({
 																handleDeleteDeps();
 																setMoreMenuOpen(false);
 															}}
-															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-red-400 hover:bg-red-500/10 rounded-lg cursor-pointer transition-colors duration-150 flex items-center gap-2"
+															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-red-400 hover:bg-red-500/10 rounded-xl cursor-pointer transition-colors duration-150 flex items-center gap-2"
 														>
 															<Trash2 size={13} className="sm:w-3.5 sm:h-3.5" />
 															<span className="text-xs sm:text-sm">
@@ -549,7 +549,7 @@ export default function ActionsComponent({
 									<button
 										type="button"
 										onClick={handleDownload}
-										className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-full text-black font-semibold cursor-pointer"
+										className="flex-1 flex items-center justify-center gap-1.5 sm:gap-2 py-1.5 sm:py-2 px-3 sm:px-4 text-xs sm:text-sm bg-white hover:bg-white/90 transition-colors duration-200 rounded-xl text-black font-semibold cursor-pointer"
 									>
 										<Download className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
 										<span className="hidden sm:inline">

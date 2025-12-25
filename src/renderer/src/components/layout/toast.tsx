@@ -84,7 +84,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
 								buttonAction?.();
 								onClose();
 							}}
-							className="text-xs bg-neutral-800 rounded-full border border-white/10 px-4 py-1 z-50 cursor-pointer hover:bg-neutral-700 transition-colors duration-300"
+							className="text-xs bg-neutral-800 rounded-xl border border-white/10 px-4 py-1 z-50 cursor-pointer hover:bg-neutral-700 transition-colors duration-300"
 						>
 							{buttonText}
 						</button>

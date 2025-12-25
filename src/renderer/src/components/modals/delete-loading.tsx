@@ -68,7 +68,7 @@ export default function DeleteLoadingModal({
 				{steps.map((step, index) => (
 					<div
 						key={step}
-						className={`h-1.5 rounded-full transition-all duration-300 ${
+						className={`h-1.5 rounded-xl transition-all duration-300 ${
 							index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
 						}`}
 					/>
@@ -91,7 +91,7 @@ export default function DeleteLoadingModal({
 					animate={{ scale: 1, opacity: 1 }}
 					exit={{ scale: 0.95, opacity: 0 }}
 					transition={{ duration: 0.3, ease: "easeOut" }}
-					className="flex flex-col p-8 rounded-2xl border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden"
+					className="flex flex-col p-8 rounded-ml border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden"
 					style={{ minHeight: "450px", maxHeight: "90vh" }}
 				>
 					{/* Top accent bar */}
@@ -108,9 +108,9 @@ export default function DeleteLoadingModal({
 					/>
 
 					{/* Background glow */}
-					<div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+					<div className="absolute inset-0 rounded-ml overflow-hidden pointer-events-none">
 						<div
-							className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-full blur-3xl opacity-15"
+							className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-xl blur-3xl opacity-15"
 							style={{
 								backgroundColor:
 									currentStep === "complete"
@@ -174,7 +174,7 @@ export default function DeleteLoadingModal({
 															initial={{ opacity: 0, x: -10 }}
 															animate={{ opacity: 1, x: 0 }}
 															transition={{ delay: index * 0.03 }}
-															className="flex items-center gap-3 p-3 rounded-lg cursor-pointer select-none transition-colors hover:bg-white/5 border border-transparent hover:border-white/5"
+															className="flex items-center gap-3 p-3 rounded-xl cursor-pointer select-none transition-colors hover:bg-white/5 border border-transparent hover:border-white/5"
 														>
 															<input
 																type="checkbox"
@@ -190,7 +190,7 @@ export default function DeleteLoadingModal({
 																		}
 																	}
 																}}
-																className="form-checkbox h-4 w-4 rounded border-white/20 bg-transparent focus:ring-0 focus:outline-none cursor-pointer"
+																className="form-checkbox h-4 w-4 rounded-xl border-white/20 bg-transparent focus:ring-0 focus:outline-none cursor-pointer"
 																style={{ accentColor: "var(--theme-accent)" }}
 															/>
 															<span className="text-sm text-neutral-200 font-medium font-mono">
@@ -226,14 +226,14 @@ export default function DeleteLoadingModal({
 										<button
 											type="button"
 											onClick={onClose}
-											className="px-6 py-2 text-sm bg-white/10 hover:bg-white/20 transition-colors rounded-full text-white font-medium cursor-pointer"
+											className="px-6 py-2 text-sm bg-white/10 hover:bg-white/20 transition-colors rounded-xl text-white font-medium cursor-pointer"
 										>
 											{t("common.cancel")}
 										</button>
 										<button
 											type="button"
 											onClick={handleConfirmUninstall}
-											className="px-6 py-2 text-sm bg-white hover:bg-white/90 transition-colors rounded-full text-black font-semibold cursor-pointer"
+											className="px-6 py-2 text-sm bg-white hover:bg-white/90 transition-colors rounded-xl text-black font-semibold cursor-pointer"
 										>
 											{t("actions.uninstall")}
 										</button>
@@ -312,7 +312,7 @@ export default function DeleteLoadingModal({
 													stiffness: 200,
 													damping: 20,
 												}}
-												className="p-4 rounded-full bg-red-500/10 border border-red-500/20"
+												className="p-4 rounded-xl bg-red-500/10 border border-red-500/20"
 												style={{
 													boxShadow: "0 0 30px rgba(239, 68, 68, 0.3)",
 												}}
@@ -334,7 +334,7 @@ export default function DeleteLoadingModal({
 												<button
 													type="button"
 													onClick={onClose}
-													className="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-full text-sm transition-colors cursor-pointer"
+													className="mt-4 px-6 py-2 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl text-sm transition-colors cursor-pointer"
 												>
 													{t("common.close") || "Close"}
 												</button>
@@ -350,7 +350,7 @@ export default function DeleteLoadingModal({
 													stiffness: 200,
 													damping: 20,
 												}}
-												className="p-4 rounded-full bg-green-500/10 border border-green-500/20"
+												className="p-4 rounded-xl bg-green-500/10 border border-green-500/20"
 												style={{
 													boxShadow: "0 0 30px rgba(34, 197, 94, 0.3)",
 												}}

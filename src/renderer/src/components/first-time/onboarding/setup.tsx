@@ -103,7 +103,7 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 									type="button"
 									key={key}
 									onClick={() => setLanguage(key as any)}
-									className={`w-full cursor-pointer text-left px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between group ${language === key
+									className={`w-full cursor-pointer text-left px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-between group ${language === key
 										? "bg-white/20 border border-white/30"
 										: "bg-white/5 hover:bg-white/10 border border-transparent"
 										}`}
@@ -113,7 +113,7 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 										<motion.div
 											initial={{ scale: 0 }}
 											animate={{ scale: 1 }}
-											className="w-5 h-5 rounded-full flex items-center justify-center"
+											className="w-5 h-5 rounded-xl flex items-center justify-center"
 											style={{
 												background:
 													"linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))",
@@ -155,7 +155,7 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 						<button
 							type="button"
 							onClick={handlePathSelection}
-							className={`w-full cursor-pointer min-h-32 border-2 border-dashed rounded-lg transition-all duration-300 flex flex-col items-center justify-center gap-2 group p-4 ${selectedPath
+							className={`w-full cursor-pointer min-h-32 border-2 border-dashed rounded-xl transition-all duration-300 flex flex-col items-center justify-center gap-2 group p-4 ${selectedPath
 								? "border-white/30 bg-white/5"
 								: "border-white/20 hover:border-white/40 hover:bg-white/5"
 								}`}
@@ -177,7 +177,7 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 							<motion.div
 								initial={{ opacity: 0, y: -10 }}
 								animate={{ opacity: 1, y: 0 }}
-								className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg"
+								className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl"
 							>
 								<p className="text-sm text-red-400">{pathError}</p>
 							</motion.div>
@@ -187,7 +187,7 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 							<motion.div
 								initial={{ opacity: 0, y: -10 }}
 								animate={{ opacity: 1, y: 0 }}
-								className="mt-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg"
+								className="mt-4 p-3 bg-green-500/10 border border-green-500/30 rounded-xl"
 							>
 								<p className="text-sm text-green-400">
 									{t("firstTime.languageSelector.success")}
@@ -207,7 +207,7 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 						type="button"
 						onClick={onSelectLanguage}
 						disabled={!canProceed}
-						className={`px-6 py-2 mb-8 cursor-pointer transition-all duration-300 rounded-full text-sm font-medium ${canProceed
+						className={`px-6 py-2 mb-8 cursor-pointer transition-all duration-300 rounded-xl text-sm font-medium ${canProceed
 							? "bg-white text-black hover:opacity-80 active:scale-[0.97] shadow-lg"
 							: "bg-white/10 text-white/50 cursor-not-allowed border border-white/10"
 							}`}

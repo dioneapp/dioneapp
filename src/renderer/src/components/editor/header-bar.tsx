@@ -1,11 +1,11 @@
 import type { FileNode } from "@/components/editor/utils/types";
 import { useTranslation } from "@/translations/translation-context";
 import {
-	ArrowLeft,
-	ExternalLink,
-	Loader2,
-	RefreshCcw,
-	Save,
+    ArrowLeft,
+    ExternalLink,
+    Loader2,
+    RefreshCcw,
+    Save,
 } from "lucide-react";
 
 interface HeaderBarProps {
@@ -45,11 +45,11 @@ const HeaderBar = ({
 				<button
 					type="button"
 					onClick={onBack}
-					className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer"
+					className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-xl relative group cursor-pointer"
 					title={t("headerBar.back")}
 				>
 					<ArrowLeft className="w-4 h-4" />
-					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 						{t("headerBar.back")}
 					</div>
 				</button>
@@ -57,11 +57,11 @@ const HeaderBar = ({
 					type="button"
 					onClick={onOpenInExplorer}
 					disabled={!rootPath}
-					className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+					className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-xl relative group cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
 					title={t("headerBar.openInExplorer")}
 				>
 					<ExternalLink className="w-4 h-4" />
-					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 						{t("headerBar.openInExplorer")}
 					</div>
 				</button>
@@ -69,11 +69,11 @@ const HeaderBar = ({
 					type="button"
 					onClick={onReloadFile}
 					disabled={!selectedFileNode || selectedFileNode.type !== "file"}
-					className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-md relative group cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+					className="flex items-center justify-center p-1.5 h-full hover:bg-white/10 border border-white/10 transition-colors rounded-xl relative group cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
 					title={t("headerBar.reload")}
 				>
 					<RefreshCcw className="w-4 h-4" />
-					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 						{t("headerBar.reload")}
 					</div>
 				</button>
@@ -89,10 +89,10 @@ const HeaderBar = ({
 						!selectedFileNode ||
 						selectedFileNode.type !== "file"
 					}
-					className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-md relative group cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+					className="flex items-center justify-center p-1.5 h-full hover:bg-white/80 bg-white transition-colors rounded-xl relative group cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
 					title={t("headerBar.save")}
 				>
-					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+					<div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 px-1 py-0.5 text-[10px] text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
 						{t("headerBar.save")}
 					</div>
 					{isSaving ? (

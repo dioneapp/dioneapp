@@ -118,7 +118,7 @@ export default function ReportPage() {
 							<button
 								type="submit"
 								disabled={isSubmitting}
-								className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+								className="px-6 py-2 text-sm font-medium bg-white text-black rounded-xl hover:bg-white/80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
 							>
 								{isSubmitting ? (
 									<span className="flex items-center">
@@ -132,7 +132,7 @@ export default function ReportPage() {
 							<button
 								type="button"
 								onClick={() => navigate(-1)}
-								className="px-5 py-2 text-sm font-medium bg-white/10 text-white rounded-full hover:bg-white/20 cursor-pointer transition-colors"
+								className="px-5 py-2 text-sm font-medium bg-white/10 text-white rounded-xl hover:bg-white/20 cursor-pointer transition-colors"
 							>
 								{t("common.cancel")}
 							</button>

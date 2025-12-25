@@ -92,7 +92,7 @@ export default function ApplicationsTab({
 			>
 				<div className="flex flex-col gap-2 group">
 					<button
-						className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full enabled:hover:bg-white/80 disabled:bg-white/80 transition-colors enabled:cursor-pointer flex gap-2 items-center justify-center"
+						className="px-6 py-2 text-sm font-medium bg-white text-black rounded-xl enabled:hover:bg-white/80 disabled:bg-white/80 transition-colors enabled:cursor-pointer flex gap-2 items-center justify-center"
 						type="button"
 						onClick={handleDeleteCache}
 						disabled={deleteCacheStatus === "deleting"}
@@ -117,7 +117,7 @@ export default function ApplicationsTab({
 										: t("settings.applications.deleteCache.error")}
 							</span>
 						)}
-						<div className="flex gap-0 items-center justify-center text-xs bg-black/20 rounded-full font-mono px-2">
+						<div className="flex gap-0 items-center justify-center text-xs bg-black/20 rounded-xl font-mono px-2">
 							<AnimatedCount
 								value={cacheSize || 0}
 								suffix="GB"
