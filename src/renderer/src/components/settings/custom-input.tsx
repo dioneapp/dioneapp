@@ -34,7 +34,7 @@ export default function CustomInput({
 				/>
 				<button
 					onClick={() => onClickIcon()}
-					className="bg-white/10 rounded-r-full px-4 border border-white/5 hover:bg-white/20 transition-colors duration-200 cursor-pointer"
+					className="bg-white/10 rounded-r-xl px-4 border border-white/5 hover:bg-white/20 transition-colors duration-200 cursor-pointer"
 					type="button"
 				>
 					{icon}
