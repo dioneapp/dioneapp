@@ -55,6 +55,34 @@ export default function IframeComponent({
 	const [isFullscreen, setIsFullscreen] = useState(false);
 	const [showNetworkShareModal, setShowNetworkShareModal] = useState(false);
 
+	const [layoutMode, setLayoutMode] = useState<string>(() => {
+		const stored = localStorage.getItem("config");
+		if (!stored) return "sidebar";
+		try {
+			const cfg = JSON.parse(stored);
+			return cfg?.layoutMode || "sidebar";
+		} catch {
+			return "sidebar";
+		}
+	});
+
+	useEffect(() => {
+		const handleConfigUpdate = () => {
+			const updated = localStorage.getItem("config");
+			if (updated) {
+				try {
+					const cfg = JSON.parse(updated);
+					setLayoutMode(cfg?.layoutMode || "sidebar");
+				} catch {
+					// ignore
+				}
+			}
+		};
+
+		window.addEventListener("config-updated", handleConfigUpdate);
+		return () => window.removeEventListener("config-updated", handleConfigUpdate);
+	}, []);
+
 	useEffect(() => {
 		return () => {
 			localStorage.removeItem("isFullscreen");
@@ -206,12 +234,12 @@ export default function IframeComponent({
 	};
 
 	return (
-		<div className="w-full h-full flex flex-col gap-3 pt-3 pb-6 px-6">
+		<div className={`w-full h-full flex flex-col gap-3 p-3 ${layoutMode === "topbar" ? "pt-3" : "pt-9"}`}>
 			<motion.div
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.4 }}
-				className="w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 p-2"
+				className="w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 p-2 mt-2"
 			>
 				<div className="flex items-center gap-1.5">
 					<button
