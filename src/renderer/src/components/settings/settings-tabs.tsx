@@ -1,12 +1,12 @@
 import { useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
 import {
-    Bell,
-    type LucideIcon,
-    Package,
-    Palette,
-    Settings2,
-    Shield,
+	Bell,
+	type LucideIcon,
+	Package,
+	Palette,
+	Settings2,
+	Shield,
 } from "lucide-react";
 
 export type TabType =
