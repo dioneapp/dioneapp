@@ -125,16 +125,13 @@ export default function TopbarNav() {
 				{...listeners}
 				className="relative group"
 			>
-				<button
-					type="button"
+				<Link
+					to={{
+						pathname: `/install/${app.isLocal ? app.data?.name : app.appId}`,
+						search: `?isLocal=${app.isLocal}`,
+					}}
 					className="flex items-center gap-1.5 bg-white/10 rounded-xl px-2 py-0.75 hover:bg-white/15 transition-colors shrink-0 focus:outline-none"
 					style={{ textDecoration: "none" }}
-					onClick={() => {
-						navigate({
-							pathname: `/install/${app.isLocal ? app.data?.name : app.appId}`,
-							search: `?isLocal=${app.isLocal}`,
-						});
-					}}
 				>
 					<div className="w-6 h-6 overflow-hidden shrink-0 rounded-xl">
 						{!app.isLocal ? (
@@ -163,7 +160,7 @@ export default function TopbarNav() {
 					<span className="text-xs text-neutral-300 whitespace-nowrap max-w-30 truncate mr-6">
 						{app?.data?.name || app.appId}
 					</span>
-				</button>
+				</Link>
 				<button
 					type="button"
 					onClick={() => stopApp(app.appId, app.data?.name || app.appId)}
