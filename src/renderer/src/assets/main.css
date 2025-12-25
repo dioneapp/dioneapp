@@ -9,6 +9,11 @@
 	--theme-background: #080808;
 }
 
+::selection {
+	background: var(--theme-accent);
+	color: var(--theme-background);
+}
+
 body {
 	color: #fff;
 	background-color: var(--theme-background);

@@ -338,7 +338,7 @@ export default function IframeComponent({
 				transition={{ duration: 0.5 }}
 				className={`w-full h-full rounded-xl border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl relative transition-all duration-500 ${isFullscreen ? "fullscreen-anim" : ""}`}
 				style={{
-					borderRadius: isFullscreen ? "0" : "6px",
+					borderRadius: isFullscreen ? "0" : "12px",
 					zIndex: isFullscreen ? 99999 : 1,
 					transition:
 						"box-shadow 0.5s, border-radius 0.5s, opacity 0.5s, transform 0.5s",
