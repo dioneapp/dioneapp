@@ -6,29 +6,29 @@ import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
 import {
-    DndContext,
-    PointerSensor,
-    closestCenter,
-    useSensor,
-    useSensors,
+	DndContext,
+	PointerSensor,
+	closestCenter,
+	useSensor,
+	useSensors,
 } from "@dnd-kit/core";
 import {
-    SortableContext,
-    arrayMove,
-    horizontalListSortingStrategy,
-    useSortable,
+	SortableContext,
+	arrayMove,
+	horizontalListSortingStrategy,
+	useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-    Camera,
-    Home,
-    Library,
-    Maximize,
-    Minimize as Minimize2,
-    Minus,
-    Settings,
-    User,
-    X,
+	Camera,
+	Home,
+	Library,
+	Maximize,
+	Minimize as Minimize2,
+	Minus,
+	Settings,
+	User,
+	X,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -271,10 +271,11 @@ export default function TopbarNav() {
 						<Link
 							to="/"
 							id="no-draggable"
-							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/")
+							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
+								isActivePath("/")
 									? "bg-white/15 text-white"
 									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-								}`}
+							}`}
 						>
 							<Home className="h-4 w-4" />
 							<span>{t("home.title")}</span>
@@ -283,10 +284,11 @@ export default function TopbarNav() {
 						<Link
 							to="/library"
 							id="no-draggable"
-							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/library")
+							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
+								isActivePath("/library")
 									? "bg-white/15 text-white"
 									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-								}`}
+							}`}
 						>
 							<Library className="h-4 w-4" />
 							<span>{t("sidebar.tooltips.library")}</span>
@@ -326,8 +328,9 @@ export default function TopbarNav() {
 						<Link
 							to="/settings"
 							id="no-draggable"
-							className={`p-1.5 rounded-xl transition-colors relative ${isActivePath("/settings") ? "bg-white/15" : "hover:bg-white/10"
-								}`}
+							className={`p-1.5 rounded-xl transition-colors relative ${
+								isActivePath("/settings") ? "bg-white/15" : "hover:bg-white/10"
+							}`}
 							onMouseEnter={() => setHoveredTooltip("settings")}
 							onMouseLeave={() => setHoveredTooltip(null)}
 						>

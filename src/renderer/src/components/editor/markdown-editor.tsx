@@ -2,12 +2,12 @@ import "@/components/editor/markdown-preview.css";
 import { useTranslation } from "@/translations/translation-context";
 import Editor, { loader } from "@monaco-editor/react";
 import {
-    AlertCircle,
-    AlertTriangle,
-    GripVertical,
-    Info,
-    Lightbulb,
-    XCircle,
+	AlertCircle,
+	AlertTriangle,
+	GripVertical,
+	Info,
+	Lightbulb,
+	XCircle,
 } from "lucide-react";
 import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
 import { useCallback, useEffect, useRef, useState } from "react";

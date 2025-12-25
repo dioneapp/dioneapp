@@ -1,11 +1,11 @@
 import type { FileNode } from "@/components/editor/utils/types";
 import { useTranslation } from "@/translations/translation-context";
 import {
-    ArrowLeft,
-    ExternalLink,
-    Loader2,
-    RefreshCcw,
-    Save,
+	ArrowLeft,
+	ExternalLink,
+	Loader2,
+	RefreshCcw,
+	Save,
 } from "lucide-react";
 
 interface HeaderBarProps {

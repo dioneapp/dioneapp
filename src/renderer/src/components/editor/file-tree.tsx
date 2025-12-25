@@ -2,11 +2,11 @@ import type { FileNode } from "@/components/editor/utils/types";
 import { getFileIconColor } from "@/components/editor/utils/utils";
 import { useTranslation } from "@/translations/translation-context";
 import {
-    ChevronDown,
-    ChevronRight,
-    FileText,
-    Folder,
-    Loader2,
+	ChevronDown,
+	ChevronRight,
+	FileText,
+	Folder,
+	Loader2,
 } from "lucide-react";
 import type { KeyboardEvent, MouseEvent, ReactNode } from "react";
 
