@@ -16,7 +16,8 @@
   "homepage": "https://getdione.app",
   "pnpm": {
     "onlyBuiltDependencies": [
-      "node-pty"
+      "node-pty",
+      "electron"
     ]
   },
   "scripts": {
