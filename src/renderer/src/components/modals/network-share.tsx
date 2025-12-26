@@ -175,21 +175,21 @@ export default function NetworkShareModal({
 							<button
 								type="button"
 								onClick={onClose}
-								className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
+								className="p-1.5 hover:bg-white/10 rounded-xl transition-colors cursor-pointer"
 							>
 								<X className="w-4 h-4 text-neutral-400" />
 							</button>
 						</div>
 
 						<div className="p-5 space-y-4">
-							<div className="grid grid-cols-2 gap-2 p-1 bg-black/30 rounded-lg">
+							<div className="grid grid-cols-2 gap-2 p-1 bg-black/30 rounded-xl">
 								<button
 									type="button"
 									onClick={() => {
 										if (tunnelInfo) stopActiveTunnel();
 										setShareMode("local");
 									}}
-									className={`px-4 py-2.5 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer ${
+									className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer ${
 										shareMode === "local"
 											? "bg-white text-black shadow-sm"
 											: "text-neutral-400 hover:text-neutral-200"
@@ -207,7 +207,7 @@ export default function NetworkShareModal({
 										}
 									}}
 									disabled={startingTunnel}
-									className={`px-4 py-2.5 cursor-pointer rounded-md text-sm font-medium transition-all duration-200 ${
+									className={`px-4 py-2.5 cursor-pointer rounded-xl text-sm font-medium transition-all duration-200 ${
 										shareMode === "public"
 											? "bg-white text-black shadow-sm"
 											: "text-neutral-400 hover:text-neutral-200"
@@ -220,13 +220,13 @@ export default function NetworkShareModal({
 							<div className="min-h-[200px]">
 								{startingTunnel && (
 									<div className="space-y-3">
-										<div className="bg-black/30 rounded-lg px-3 py-2.5 h-[42px] animate-pulse">
-											<div className="h-4 bg-white/10 rounded w-3/4"></div>
+										<div className="bg-black/30 rounded-xl px-3 py-2.5 h-[42px] animate-pulse">
+											<div className="h-4 bg-white/10 rounded-xl w-3/4"></div>
 										</div>
-										<div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 space-y-2 animate-pulse">
-											<div className="h-3 bg-purple-500/20 rounded w-24"></div>
-											<div className="h-6 bg-purple-500/20 rounded"></div>
-											<div className="h-2 bg-purple-500/20 rounded w-4/5"></div>
+										<div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-3 space-y-2 animate-pulse">
+											<div className="h-3 bg-purple-500/20 rounded-xl w-24"></div>
+											<div className="h-6 bg-purple-500/20 rounded-xl"></div>
+											<div className="h-2 bg-purple-500/20 rounded-xl w-4/5"></div>
 										</div>
 									</div>
 								)}
@@ -234,16 +234,16 @@ export default function NetworkShareModal({
 								{!startingTunnel &&
 									(initialLoading ? (
 										<div className="space-y-3 animate-pulse">
-											<div className="bg-black/30 rounded-lg px-3 py-2.5 h-[42px]">
-												<div className="h-4 bg-white/10 rounded w-3/4"></div>
+											<div className="bg-black/30 rounded-xl px-3 py-2.5 h-[42px]">
+												<div className="h-4 bg-white/10 rounded-xl w-3/4"></div>
 											</div>
-											<div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3 h-[60px]">
-												<div className="h-3 bg-blue-500/20 rounded w-full mb-2"></div>
-												<div className="h-3 bg-blue-500/20 rounded w-2/3"></div>
+											<div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 h-[60px]">
+												<div className="h-3 bg-blue-500/20 rounded-xl w-full mb-2"></div>
+												<div className="h-3 bg-blue-500/20 rounded-xl w-2/3"></div>
 											</div>
 										</div>
 									) : error ? (
-										<div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-200 text-xs">
+										<div className="bg-red-500/10 border border-red-500/20 rounded-xl p-3 text-red-200 text-xs">
 											{error}
 										</div>
 									) : (
@@ -265,7 +265,7 @@ export default function NetworkShareModal({
 														<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
 															{t("networkShare.local.shareUrl") || "Share URL"}
 														</label>
-														<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
+														<div className="flex items-center gap-2 bg-black/30 rounded-xl px-3 py-2.5 border border-white/5">
 															<input
 																type="text"
 																readOnly
@@ -275,7 +275,7 @@ export default function NetworkShareModal({
 															<button
 																type="button"
 																onClick={handleCopy}
-																className="p-1.5 hover:bg-white/10 rounded-md transition-colors cursor-pointer"
+																className="p-1.5 hover:bg-white/10 rounded-xl transition-colors cursor-pointer"
 															>
 																{copied ? (
 																	<Check className="w-4 h-4 text-green-400" />
@@ -289,7 +289,7 @@ export default function NetworkShareModal({
 																"Share this URL with devices on your local network"}
 														</p>
 													</div>
-													<div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+													<div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3">
 														<p className="text-blue-200 text-xs wrap-break-word">
 															<strong>
 																{t("networkShare.local.localNetwork")}
@@ -317,7 +317,7 @@ export default function NetworkShareModal({
 														<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
 															{t("networkShare.public.shareUrl")}
 														</label>
-														<div className="flex items-center gap-2 bg-black/30 rounded-lg px-3 py-2.5 border border-white/5">
+														<div className="flex items-center gap-2 bg-black/30 rounded-xl px-3 py-2.5 border border-white/5">
 															<input
 																type="text"
 																readOnly
@@ -327,7 +327,7 @@ export default function NetworkShareModal({
 															<button
 																type="button"
 																onClick={handleCopy}
-																className="p-1.5 cursor-pointer hover:bg-white/10 rounded-md transition-colors"
+																className="p-1.5 cursor-pointer hover:bg-white/10 rounded-xl transition-colors"
 															>
 																{copied ? (
 																	<Check className="w-4 h-4 text-green-400" />
@@ -341,11 +341,11 @@ export default function NetworkShareModal({
 														</p>
 													</div>{" "}
 													{tunnelInfo.password && (
-														<div className="bg-purple-500/10 border border-purple-500/20 rounded-lg p-3 space-y-2">
+														<div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-3 space-y-2">
 															<p className="text-purple-200 text-xs font-medium">
 																{t("networkShare.public.passwordTitle")}
 															</p>
-															<div className="flex items-center gap-2 bg-black/30 rounded px-2 py-1.5 group">
+															<div className="flex items-center gap-2 bg-black/30 rounded-xl px-2 py-1.5 group">
 																<code className="flex-1 text-purple-300 font-mono text-xs blur-sm group-hover:blur-none transition-all duration-200 select-none group-hover:select-text">
 																	{tunnelInfo.password}
 																</code>
@@ -358,7 +358,7 @@ export default function NetworkShareModal({
 																		setCopied(true);
 																		setTimeout(() => setCopied(false), 2000);
 																	}}
-																	className="p-1 cursor-pointer hover:bg-white/10 rounded transition-colors"
+																	className="p-1 cursor-pointer hover:bg-white/10 rounded-xl transition-colors"
 																>
 																	<Copy className="w-3.5 h-3.5 text-purple-300" />
 																</button>
@@ -372,7 +372,7 @@ export default function NetworkShareModal({
 														<button
 															type="button"
 															onClick={stopActiveTunnel}
-															className="text-xs cursor-pointer px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-md transition-colors font-medium"
+															className="text-xs cursor-pointer px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded-xl transition-colors font-medium"
 														>
 															{t("networkShare.public.stopSharing")}
 														</button>

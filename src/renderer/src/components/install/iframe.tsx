@@ -55,6 +55,34 @@ export default function IframeComponent({
 	const [isFullscreen, setIsFullscreen] = useState(false);
 	const [showNetworkShareModal, setShowNetworkShareModal] = useState(false);
 
+	const [layoutMode, setLayoutMode] = useState<string>(() => {
+		const stored = localStorage.getItem("config");
+		if (!stored) return "sidebar";
+		try {
+			const cfg = JSON.parse(stored);
+			return cfg?.layoutMode || "sidebar";
+		} catch {
+			return "sidebar";
+		}
+	});
+
+	useEffect(() => {
+		const handleConfigUpdate = () => {
+			const updated = localStorage.getItem("config");
+			if (updated) {
+				try {
+					const cfg = JSON.parse(updated);
+					setLayoutMode(cfg?.layoutMode || "sidebar");
+				} catch {
+					// ignore
+				}
+			}
+		};
+
+		window.addEventListener("config-updated", handleConfigUpdate);
+		return () => window.removeEventListener("config-updated", handleConfigUpdate);
+	}, []);
+
 	useEffect(() => {
 		return () => {
 			localStorage.removeItem("isFullscreen");
@@ -206,7 +234,7 @@ export default function IframeComponent({
 	};
 
 	return (
-		<div className="w-full h-full flex flex-col gap-3 p-6">
+		<div className={`w-full h-full flex flex-col gap-3 p-3 ${layoutMode === "topbar" ? "pt-3" : "pt-9"}`}>
 			<motion.div
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
@@ -221,7 +249,7 @@ export default function IframeComponent({
 						title={t("iframeLabels.back")}
 					>
 						<ArrowLeft className="w-4 h-4" />
-						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.back")}
 						</div>
 					</button>
@@ -232,7 +260,7 @@ export default function IframeComponent({
 						title={t("iframeLabels.logs")}
 					>
 						<SquareTerminal className="w-4 h-4" />
-						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.logs")}
 						</div>
 					</button>
@@ -243,7 +271,7 @@ export default function IframeComponent({
 						title={t("iframe.openFolder")}
 					>
 						<Folder className="w-4 h-4" />
-						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.openFolder")}
 						</div>
 					</button>
@@ -256,11 +284,11 @@ export default function IframeComponent({
 						<Share2 className="w-4 h-4" />
 						{tunnelInfo && (
 							<div
-								className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border border-neutral-900 animate-pulse"
+								className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-xl border border-neutral-900 animate-pulse"
 								style={{ backgroundColor: "var(--theme-accent)" }}
 							/>
 						)}
-						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframeActions.shareOnNetwork")}
 						</div>
 					</button>{" "}
@@ -272,7 +300,7 @@ export default function IframeComponent({
 						<img
 							src={data.logo_url}
 							alt={data.title || data.name}
-							className="w-7 h-7 rounded-lg object-cover shrink-0"
+							className="w-7 h-7 rounded-xl object-cover shrink-0"
 						/>
 					)}
 					<div className="flex flex-col justify-center min-w-0 max-w-md">
@@ -293,7 +321,7 @@ export default function IframeComponent({
 						onClick={handleOpenNewWindow}
 					>
 						<PictureInPicture className="w-4 h-4" />
-						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.openNewWindow")}
 						</div>
 					</motion.button>
@@ -304,7 +332,7 @@ export default function IframeComponent({
 						}
 					>
 						<Maximize2 className="w-4 h-4" />
-						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.fullscreen")}
 						</div>
 					</motion.button>
@@ -314,7 +342,7 @@ export default function IframeComponent({
 						title={t("iframe.reload")}
 					>
 						<RotateCcw className="w-4 h-4" />
-						<div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+						<div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.reload")}
 						</div>
 					</motion.button>
@@ -323,7 +351,7 @@ export default function IframeComponent({
 						onClick={handleStop}
 						title={t("iframe.stop")}
 					>
-						<div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
+						<div className="absolute z-50 bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
 							{t("iframe.stop")}
 						</div>
 						<Square className="w-4 h-4 text-black" />
@@ -336,9 +364,9 @@ export default function IframeComponent({
 				key="iframe"
 				exit={{ opacity: 0, scale: 0.95 }}
 				transition={{ duration: 0.5 }}
-				className={`w-full h-full rounded-md border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl relative transition-all duration-500 ${isFullscreen ? "fullscreen-anim" : ""}`}
+				className={`w-full h-full rounded-xl border border-white/10 bg-black/50 backdrop-blur-sm overflow-hidden shadow-xl relative transition-all duration-500 ${isFullscreen ? "fullscreen-anim" : ""}`}
 				style={{
-					borderRadius: isFullscreen ? "0" : "6px",
+					borderRadius: isFullscreen ? "0" : "12px",
 					zIndex: isFullscreen ? 99999 : 1,
 					transition:
 						"box-shadow 0.5s, border-radius 0.5s, opacity 0.5s, transform 0.5s",
@@ -346,7 +374,7 @@ export default function IframeComponent({
 			>
 				{isFullscreen && (
 					<button
-						className="absolute cursor-pointer top-10 left-10 z-50 flex items-center justify-center p-2 bg-neutral-800/80 hover:bg-neutral-800 border border-white/10 backdrop-blur-3xl rounded-full"
+						className="absolute cursor-pointer top-10 left-10 z-50 flex items-center justify-center p-2 bg-neutral-800/80 hover:bg-neutral-800 border border-white/10 backdrop-blur-3xl rounded-xl"
 						type="button"
 						onClick={handleExitFullscreen}
 						style={{ zIndex: 9999 }}
@@ -363,11 +391,11 @@ export default function IframeComponent({
 				<div className="absolute bottom-4 right-4 z-40 group">
 					<button
 						type="button"
-						className="flex items-center justify-center w-10 h-10 bg-black/80 hover:bg-black/90 border border-white/20 hover:border-white/30 transition-all duration-200 rounded-full shadow-lg backdrop-blur-sm"
+						className="flex items-center justify-center w-10 h-10 bg-black/80 hover:bg-black/90 border border-white/20 hover:border-white/30 transition-all duration-200 rounded-xl shadow-lg backdrop-blur-sm"
 					>
 						<Activity className="w-4 h-4" />
 					</button>
-					<div className="absolute bottom-full right-0 mb-3 px-3 py-2.5 bg-black/90 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none w-52 backdrop-blur-md border border-white/10">
+					<div className="absolute bottom-full right-0 mb-3 px-3 py-2.5 bg-black/90 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity shadow-xl pointer-events-none w-52 backdrop-blur-md border border-white/10">
 						<div className="text-xs font-semibold mb-2.5">
 							System Performance
 						</div>

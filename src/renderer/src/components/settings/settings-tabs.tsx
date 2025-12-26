@@ -1,12 +1,12 @@
 import { useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
 import {
-	Bell,
-	type LucideIcon,
-	Package,
-	Palette,
-	Settings2,
-	Shield,
+    Bell,
+    type LucideIcon,
+    Package,
+    Palette,
+    Settings2,
+    Shield,
 } from "lucide-react";
 
 export type TabType =
@@ -57,7 +57,7 @@ export default function SettingsTabs({
 					<button
 						key={tab.id}
 						onClick={() => onTabChange(tab.id)}
-						className={`relative cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
+						className={`relative cursor-pointer flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap ${
 							activeTab === tab.id
 								? "text-white"
 								: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
@@ -67,7 +67,7 @@ export default function SettingsTabs({
 						{activeTab === tab.id && (
 							<motion.div
 								layoutId="activeTab"
-								className="absolute inset-0 border rounded-lg"
+								className="absolute inset-0 border rounded-xl"
 								style={{
 									background: `linear-gradient(to right, color-mix(in srgb, var(--theme-gradient-from) 20%, transparent), color-mix(in srgb, var(--theme-gradient-to) 20%, transparent))`,
 									borderColor: `color-mix(in srgb, var(--theme-accent) 30%, transparent)`,

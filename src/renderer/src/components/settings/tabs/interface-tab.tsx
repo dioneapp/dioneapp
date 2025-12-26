@@ -26,7 +26,7 @@ export default function InterfaceTab({
 			animate={{ opacity: 1, y: 0 }}
 			exit={{ opacity: 0, y: -20 }}
 			transition={{ duration: 0.2 }}
-			className="flex flex-col gap-6"
+			className="flex flex-col gap-3"
 		>
 			<SettingItem
 				label={t("settings.interface.displayLanguage.label")}
@@ -46,7 +46,7 @@ export default function InterfaceTab({
 					href="https://github.com/dioneapp/dioneapp"
 					target="_blank"
 					rel="noopener noreferrer"
-					className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-3 py-1 rounded-full bg-white/10 hover:bg-white/15 inline-block"
+					className="text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 px-3 py-1 rounded-xl bg-white/10 hover:bg-white/15 inline-block"
 				>
 					{t("settings.interface.helpTranslate")}
 				</a>

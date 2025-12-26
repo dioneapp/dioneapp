@@ -151,7 +151,7 @@ export default function List({
 	return (
 		<div className={`w-full ${className} last:mb-4`}>
 			{isUsingCache && (
-				<div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-200 text-sm">
+				<div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-200 text-sm">
 					{t("feed.viewingCached")}
 				</div>
 			)}

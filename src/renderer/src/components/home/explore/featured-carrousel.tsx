@@ -152,7 +152,7 @@ export default function FeaturedCarousel() {
 	return (
 		<section className="flex flex-col gap-0">
 			{isUsingCache && (
-				<div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-yellow-200 text-sm">
+				<div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl text-yellow-200 text-sm">
 					Viewing cached featured content. Install features are disabled while
 					offline.
 				</div>
@@ -264,7 +264,7 @@ export default function FeaturedCarousel() {
 											e.preventDefault();
 											handleDotClick(index);
 										}}
-										className={`w-2 h-2 rounded-full transition-all duration-300 ${
+										className={`w-2 h-2 rounded-xl transition-all duration-300 ${
 											index === currentIndex
 												? "bg-white w-6"
 												: "bg-white/50 hover:bg-white/70"
@@ -294,10 +294,10 @@ export function CarrouselSkeleton() {
 									<div className="w-24 h-24 rounded-xl bg-gray-200/20 animate-pulse" />
 								</div>
 								<div className="flex flex-col justify-end gap-2 w-full h-full -mt-6">
-									<div className="h-10 w-3/4 rounded-md bg-gray-200/20 animate-pulse" />
+									<div className="h-10 w-3/4 rounded-xl bg-gray-200/20 animate-pulse" />
 									<div className="space-y-2 mt-2">
-										<div className="h-4 w-full rounded-md bg-gray-200/20 animate-pulse" />
-										<div className="h-4 w-4/5 rounded-md bg-gray-200/20 animate-pulse" />
+										<div className="h-4 w-full rounded-xl bg-gray-200/20 animate-pulse" />
+										<div className="h-4 w-4/5 rounded-xl bg-gray-200/20 animate-pulse" />
 									</div>
 								</div>
 							</div>
@@ -305,7 +305,7 @@ export function CarrouselSkeleton() {
 								{[...Array(5)].map((_, index) => (
 									<div
 										key={index}
-										className={`h-2 rounded-full bg-gray-200/30 animate-pulse ${
+										className={`h-2 rounded-xl bg-gray-200/30 animate-pulse ${
 											index === 0 ? "w-6" : "w-2"
 										}`}
 									/>

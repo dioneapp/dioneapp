@@ -224,12 +224,12 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 							<span className="text-neutral-500 text-xs w-6 shrink-0">
 								{index + 1}.
 							</span>
-							<code className="flex-1 text-sm bg-white/5 px-2 py-1 rounded border border-white/10 break-all">
+							<code className="flex-1 text-sm bg-white/5 px-2 py-1 rounded-xl border border-white/10 break-all">
 								{path}
 							</code>
 							<button
 								onClick={() => handleCopy(index + 1, path)}
-								className="opacity-0 group-hover:opacity-100 p-1 rounded text-neutral-400 hover:text-white transition-all shrink-0"
+								className="opacity-0 group-hover:opacity-100 p-1 rounded-xl text-neutral-400 hover:text-white transition-all shrink-0"
 								title={t("variables.copyPath")}
 							>
 								{copied[index + 1] ? (
@@ -280,14 +280,14 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 						<h2 className="text-xl font-semibold text-white">
 							{t("variables.title")}
 						</h2>
-						<span className="text-sm text-neutral-400 bg-white/10 px-2 py-1 rounded-full">
+						<span className="text-sm text-neutral-400 bg-white/10 px-2 py-1 rounded-xl">
 							{Object.keys(filteredVariables).length} variables
 						</span>
 					</div>
 					{/* remove alert */}
 					{pendingRemove && (
 						<div className="absolute inset-0 z-2500 flex items-center justify-center bg-black/60">
-							<div className="bg-neutral-800 border border-white/10 rounded-lg p-4 max-w-lg w-full mx-4">
+							<div className="bg-neutral-800 border border-white/10 rounded-xl p-4 max-w-lg w-full mx-4">
 								<p className="text-sm text-neutral-300 mb-3">
 									{t("confirmDialogs.removeValue")}{" "}
 									{pendingRemove.value
@@ -299,7 +299,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 								<div className="flex justify-end gap-2">
 									<button
 										onClick={() => setPendingRemove(null)}
-										className="px-4 text-sm py-1 rounded-full bg-white/5"
+										className="px-4 text-sm py-1 rounded-xl bg-white/5"
 									>
 										{t("common.cancel")}
 									</button>
@@ -313,7 +313,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 											else await handleRemoveKey(pendingRemove.key);
 											setPendingRemove(null);
 										}}
-										className="px-4 text-sm py-1 rounded-full bg-red-600/50 hover:bg-red-600/60 text-white"
+										className="px-4 text-sm py-1 rounded-xl bg-red-600/50 hover:bg-red-600/60 text-white"
 									>
 										{t("variables.confirm")}
 									</button>
@@ -324,7 +324,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 					<div className="flex items-center gap-2">
 						<button
 							onClick={() => setNewVariableModalOpen(!newVariableModalOpen)}
-							className="w-full rounded-full bg-white/10 px-4 p-1 mr-2 flex justify-center items-center gap-2 hover:bg-white/20 cursor-pointer"
+							className="w-full rounded-xl bg-white/10 px-4 p-1 mr-2 flex justify-center items-center gap-2 hover:bg-white/20 cursor-pointer"
 						>
 							<span className="text-xs text-neutral-300">
 								{t("variables.addKey")}
@@ -332,7 +332,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 						</button>
 						<button
 							onClick={() => handleCopy("general")}
-							className="p-1 hover:text-white rounded-lg transition-colors text-neutral-400"
+							className="p-1 hover:text-white rounded-xl transition-colors text-neutral-400"
 							title={t("variables.copyAll")}
 						>
 							{copied["general"] ? (
@@ -343,7 +343,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 						</button>
 						<button
 							onClick={onClose}
-							className="p-1 rounded-lg transition-colors text-neutral-400 hover:text-white"
+							className="p-1 rounded-xl transition-colors text-neutral-400 hover:text-white"
 						>
 							<X className="w-5 h-5" />
 						</button>
@@ -357,7 +357,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 							placeholder={t("variables.searchPlaceholder")}
 							value={searchTerm}
 							onChange={(e) => setSearchTerm(e.target.value)}
-							className="w-full bg-white/10 border border-white/5 text-white placeholder-neutral-400 pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:border-opacity-50"
+							className="w-full bg-white/10 border border-white/5 text-white placeholder-neutral-400 pl-10 pr-4 py-2 rounded-xl focus:outline-none focus:ring-2 focus:border-opacity-50"
 							style={
 								{
 									"--tw-ring-color": "var(--theme-accent)",
@@ -380,25 +380,25 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 								placeholder={t("variables.keyPlaceholder")}
 								value={newKey}
 								onChange={(e) => setNewKey(e.target.value)}
-								className="w-full bg-white/10 border border-white/10 text-white placeholder-neutral-400 px-3 py-2 rounded-lg focus:outline-none pointer-events-auto"
+								className="w-full bg-white/10 border border-white/10 text-white placeholder-neutral-400 px-3 py-2 rounded-xl focus:outline-none pointer-events-auto"
 							/>
 							<textarea
 								placeholder={t("variables.valuePlaceholder")}
 								value={newValue}
 								onChange={(e) => setNewValue(e.target.value)}
-								className="w-full bg-white/10 border border-white/10 text-white placeholder-neutral-400 px-3 py-2 rounded-lg focus:outline-none h-24 resize-none pointer-events-auto"
+								className="w-full bg-white/10 border border-white/10 text-white placeholder-neutral-400 px-3 py-2 rounded-xl focus:outline-none h-24 resize-none pointer-events-auto"
 							/>
 							<div className="flex justify-end gap-2">
 								<button
 									onClick={() => setNewVariableModalOpen(false)}
-									className="px-4 py-1 rounded-full bg-white/5 hover:bg-white/10 text-white text-sm disabled:opacity-60"
+									className="px-4 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-white text-sm disabled:opacity-60"
 								>
 									{t("common.cancel")}
 								</button>
 								<button
 									onClick={handleAddVariable}
 									disabled={saving}
-									className="px-4 py-1 rounded-full bg-white hover:bg-white/80 text-black text-sm disabled:opacity-60"
+									className="px-4 py-1 rounded-xl bg-white hover:bg-white/80 text-black text-sm disabled:opacity-60"
 								>
 									{saving ? "Adding..." : t("variables.confirm")}
 								</button>
@@ -409,14 +409,14 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 				<div className="flex-1 overflow-auto p-6">
 					{loading ? (
 						<div className="flex items-center justify-center h-32">
-							<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+							<div className="animate-spin rounded-xl h-8 w-8 border-b-2 border-white"></div>
 						</div>
 					) : (
 						<div className="space-y-4">
 							{Object.entries(filteredVariables).map(([key, value]) => (
 								<div
 									key={key}
-									className="bg-white/5 rounded-lg p-4 border border-white/10"
+									className="bg-white/5 rounded-xl p-4 border border-white/10"
 								>
 									<div className="flex items-start justify-between gap-4 mb-3">
 										<div className="flex items-center gap-2">
@@ -430,7 +430,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 										<div className="flex items-center gap-2">
 											<button
 												onClick={() => handleCopy(key, value)}
-												className="p-1 rounded text-neutral-400 hover:text-white shrink-0"
+												className="p-1 rounded-xl text-neutral-400 hover:text-white shrink-0"
 												title={t("variables.copyFullValue")}
 											>
 												{copied[key] ? (
@@ -441,7 +441,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 											</button>
 											<button
 												onClick={() => setPendingRemove({ key })}
-												className="p-1 rounded text-red-400 hover:text-red-200 shrink-0"
+												className="p-1 rounded-xl text-red-400 hover:text-red-200 shrink-0"
 												title={t("variables.deleteKey")}
 											>
 												<Trash className="w-3 h-3" />
@@ -460,7 +460,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 															{index + 1}.
 														</span>
 														<>
-															<code className="flex-1 text-sm bg-white/5 px-2 py-1 rounded border border-white/10 break-all">
+															<code className="flex-1 text-sm bg-white/5 px-2 py-1 rounded-xl border border-white/10 break-all">
 																{path}
 															</code>
 															<div className="flex items-center gap-0 opacity-0 group-hover:opacity-100">
@@ -468,7 +468,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 																	onClick={() =>
 																		handleCopy(`${key}-${index}`, path)
 																	}
-																	className="p-1 rounded text-neutral-400 hover:text-white"
+																	className="p-1 rounded-xl text-neutral-400 hover:text-white"
 																>
 																	<Copy className="w-3 h-3" />
 																</button>
@@ -476,7 +476,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 																	onClick={() =>
 																		setPendingRemove({ key, value: path })
 																	}
-																	className="p-1 rounded text-red-400 hover:text-red-200"
+																	className="p-1 rounded-xl text-red-400 hover:text-red-200"
 																>
 																	<Trash className="w-3 h-3" />
 																</button>

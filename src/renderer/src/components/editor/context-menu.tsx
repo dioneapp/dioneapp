@@ -50,7 +50,7 @@ const ContextMenu = ({
 		>
 			<button
 				type="button"
-				className="flex w-full items-center gap-2 rounded px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
+				className="flex w-full items-center gap-2 rounded-xl px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
 				onClick={(event) => handleClick(event, onCopyPath)}
 			>
 				<Copy className="h-4 w-4" />
@@ -60,7 +60,7 @@ const ContextMenu = ({
 			{isDirectory ? (
 				<button
 					type="button"
-					className="flex w-full items-center gap-2 rounded px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
+					className="flex w-full items-center gap-2 rounded-xl px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
 					onClick={(event) => handleClick(event, onOpenFolder)}
 				>
 					<ExternalLink className="h-4 w-4" />
@@ -69,7 +69,7 @@ const ContextMenu = ({
 			) : (
 				<button
 					type="button"
-					className="flex w-full items-center gap-2 rounded px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
+					className="flex w-full items-center gap-2 rounded-xl px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
 					onClick={(event) => handleClick(event, onReloadFile)}
 				>
 					<RefreshCcw className="h-4 w-4" />
@@ -79,7 +79,7 @@ const ContextMenu = ({
 
 			<button
 				type="button"
-				className="flex w-full items-center gap-2 rounded px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
+				className="flex w-full items-center gap-2 rounded-xl px-2 py-1 text-left hover:bg-white/5 cursor-pointer"
 				onClick={(event) => handleClick(event, onRename)}
 			>
 				<Pencil className="h-4 w-4" />
@@ -88,7 +88,7 @@ const ContextMenu = ({
 
 			<button
 				type="button"
-				className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-rose-400 hover:bg-white/5 cursor-pointer"
+				className="flex w-full items-center gap-2 rounded-xl px-2 py-1 text-left text-rose-400 hover:bg-white/5 cursor-pointer"
 				onClick={(event) => handleClick(event, onDelete)}
 			>
 				<span>{t("contextMenu.delete")}</span>

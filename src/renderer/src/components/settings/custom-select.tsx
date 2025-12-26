@@ -46,7 +46,7 @@ export default function CustomSelect({
 			<button
 				type="button"
 				onClick={() => setIsOpen(!isOpen)}
-				className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-4 w-44 rounded-full text-sm focus:outline-none hover:bg-white/20 cursor-pointer flex items-center justify-between"
+				className="bg-white/10 border text-left border-white/5 text-neutral-200 h-10 px-4 w-44 rounded-xl text-sm focus:outline-none hover:bg-white/20 cursor-pointer flex items-center justify-between"
 			>
 				<span>{options.find((opt) => opt.value === value)?.label}</span>
 				<motion.div

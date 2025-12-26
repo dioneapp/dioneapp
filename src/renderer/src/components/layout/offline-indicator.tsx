@@ -20,7 +20,7 @@ export default function OfflineIndicator() {
 
 	return (
 		<div className="fixed top-16 right-4 z-9999 animate-in slide-in-from-top-2 duration-300">
-			<div className="flex items-center gap-2 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-lg backdrop-blur-sm shadow-lg">
+			<div className="flex items-center gap-2 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-xl backdrop-blur-sm shadow-lg">
 				<WifiOff className="w-4 h-4 text-red-400" />
 				<span className="text-sm text-red-200">You're offline</span>
 			</div>

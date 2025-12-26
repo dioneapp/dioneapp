@@ -109,10 +109,10 @@ export default function AI({
 								}}
 								transition={{ duration: 0.2 }}
 								key="open-div"
-								className="flex items-center justify-end w-79 gap-2 rounded-full rounded-r-none"
+								className="flex items-center justify-end w-79 gap-2 rounded-xl rounded-r-none"
 							>
 								<motion.div
-									className="absolute inset-0 -z-10 rounded-full -mr-12 blur"
+									className="absolute inset-0 -z-10 rounded-xl -mr-12 blur"
 									style={{
 										background:
 											"linear-gradient(45deg, #7c3aed, #6d28d9, #a855f7, #d946ef, #ec4899)",
@@ -131,7 +131,7 @@ export default function AI({
 								<motion.input
 									type="text"
 									autoFocus
-									className="w-full h-10 px-4 text-sm rounded-full text-white/90 placeholder-white/50 focus:outline-none"
+									className="w-full h-10 px-4 text-sm rounded-xl text-white/90 placeholder-white/50 focus:outline-none"
 									placeholder="Ask AI..."
 									onKeyDown={(e) => {
 										if (e.key === "Escape") {
@@ -149,10 +149,10 @@ export default function AI({
 					<motion.div key="closed-div" title={open ? "Close" : "Open"}>
 						<div
 							onClick={() => setOpen(!open)}
-							className="h-10 w-10 rounded-full backdrop-blur-3xl opacity-80 cursor-pointer"
+							className="h-10 w-10 rounded-xl backdrop-blur-3xl opacity-80 cursor-pointer"
 						>
 							<motion.div
-								className="w-full h-full rounded-full shadow-2xl blur-[6px] hover:blur-xs transition-all duration-300"
+								className="w-full h-full rounded-xl shadow-2xl blur-[6px] hover:blur-xs transition-all duration-300"
 								style={{
 									background:
 										"linear-gradient(45deg, #7c3aed, #6d28d9, #a855f7, #d946ef, #ec4899)",
@@ -169,7 +169,7 @@ export default function AI({
 							/>
 						</div>
 						{!open && (
-							<span className="bg-black rounded text-sm blur-xl group-hover:blur-none group-hover:right-12 opacity-0 group-hover:opacity-100 transition-all duration-200 absolute right-4 top-1/2 -translate-y-1/2 px-3 whitespace-nowrap">
+							<span className="bg-black rounded-xl text-sm blur-xl group-hover:blur-none group-hover:right-12 opacity-0 group-hover:opacity-100 transition-all duration-200 absolute right-4 top-1/2 -translate-y-1/2 px-3 whitespace-nowrap">
 								Use AI
 							</span>
 						)}
@@ -187,12 +187,12 @@ export default function AI({
 				>
 					<div className="flex flex-col gap-2 items-end justify-center mr-auto w-full h-full text-[10px] mb-2 text-neutral-400 font-medium">
 						{ollamaRunning && (
-							<div className="p-1 px-3 rounded-full bg-green-500/05 backdrop-blur-3xl">
+							<div className="p-1 px-3 rounded-xl bg-green-500/05 backdrop-blur-3xl">
 								Ollama running
 							</div>
 						)}
 						{!ollamaRunning && (
-							<div className="p-1 px-3 rounded-full bg-red-500/05 backdrop-blur-3xl">
+							<div className="p-1 px-3 rounded-xl bg-red-500/05 backdrop-blur-3xl">
 								Ollama not running
 							</div>
 						)}
@@ -200,7 +200,7 @@ export default function AI({
 					{messages && messages.length > 0 && (
 						<div
 							id="logs"
-							className="backdrop-blur-3xl rounded-2xl p-4 pb-8 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto"
+							className="backdrop-blur-3xl rounded-ml p-4 pb-8 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto"
 							style={{ scrollbarWidth: "none" }}
 						>
 							<Messages

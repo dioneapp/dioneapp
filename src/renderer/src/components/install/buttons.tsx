@@ -25,7 +25,7 @@ export default function Buttons({
 				<button
 					type="button"
 					onClick={() => navigate(-1)}
-					className="flex items-center gap-2 px-4 py-1.5 border border-white/10 hover:bg-white/10 transition-colors duration-300 rounded-full text-neutral-300 cursor-pointer"
+					className="flex items-center gap-2 px-4 py-1.5 border border-white/10 hover:bg-white/10 transition-colors duration-300 rounded-xl text-neutral-300 cursor-pointer"
 				>
 					<ArrowLeft className="h-4 w-4" />
 					<span className="text-xs font-semibold">{t("common.back")}</span>
@@ -38,14 +38,14 @@ export default function Buttons({
 					<button
 						type="button"
 						onClick={() => handleShare()}
-						className="p-2 border border-white/10 hover:bg-white/10 transition-colors duration-300 rounded-full text-neutral-300 cursor-pointer"
+						className="p-2 border border-white/10 hover:bg-white/10 transition-colors duration-300 rounded-xl text-neutral-300 cursor-pointer"
 					>
 						<Share2 className="h-4 w-4" />
 					</button>
 					<button
 						type="button"
 						onClick={() => handleSave()}
-						className={`p-2 border transition-colors duration-300 rounded-full cursor-pointer ${
+						className={`p-2 border transition-colors duration-300 rounded-xl cursor-pointer ${
 							!saved && "border-white/10 hover:bg-white/10 text-neutral-300"
 						}`}
 						style={

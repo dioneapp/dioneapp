@@ -3,7 +3,7 @@ export default function Loading() {
 		<div className="w-full">
 			<div className="grid grid-cols-2 gap-4">
 				<div
-					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-lg p-4 items-center"
+					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-xl p-4 items-center"
 					style={{
 						background:
 							"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)",
@@ -12,13 +12,13 @@ export default function Loading() {
 					<div className="flex w-full gap-2 animate-pulse">
 						<div className="h-16 w-16 rounded-xl bg-white/10" />
 						<div className="flex flex-col gap-1 flex-1 min-w-0 mt-1">
-							<div className="h-6 bg-white/10 rounded w-3/4" />
-							<div className="h-4 bg-white/10 rounded w-1/2 mt-2" />
+							<div className="h-6 bg-white/10 rounded-xl w-3/4" />
+							<div className="h-4 bg-white/10 rounded-xl w-1/2 mt-2" />
 						</div>
 					</div>
 				</div>
 				<div
-					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-lg p-4 items-center"
+					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-xl p-4 items-center"
 					style={{
 						background:
 							"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)",
@@ -27,13 +27,13 @@ export default function Loading() {
 					<div className="flex w-full gap-2 animate-pulse">
 						<div className="h-16 w-16 rounded-xl bg-white/10" />
 						<div className="flex flex-col gap-1 flex-1 min-w-0 mt-1">
-							<div className="h-6 bg-white/10 rounded w-3/4" />
-							<div className="h-4 bg-white/10 rounded w-1/2 mt-2" />
+							<div className="h-6 bg-white/10 rounded-xl w-3/4" />
+							<div className="h-4 bg-white/10 rounded-xl w-1/2 mt-2" />
 						</div>
 					</div>
 				</div>
 				<div
-					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-lg p-4 items-center"
+					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-xl p-4 items-center"
 					style={{
 						background:
 							"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)",
@@ -42,13 +42,13 @@ export default function Loading() {
 					<div className="flex w-full gap-2 animate-pulse">
 						<div className="h-16 w-16 rounded-xl bg-white/10" />
 						<div className="flex flex-col gap-1 flex-1 min-w-0 mt-1">
-							<div className="h-6 bg-white/10 rounded w-3/4" />
-							<div className="h-4 bg-white/10 rounded w-1/2 mt-2" />
+							<div className="h-6 bg-white/10 rounded-xl w-3/4" />
+							<div className="h-4 bg-white/10 rounded-xl w-1/2 mt-2" />
 						</div>
 					</div>
 				</div>
 				<div
-					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-lg p-4 items-center"
+					className="group flex gap-4 h-auto min-h-[120px] border border-white/10 backdrop-blur-3xl rounded-xl p-4 items-center"
 					style={{
 						background:
 							"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), transparent)",
@@ -57,8 +57,8 @@ export default function Loading() {
 					<div className="flex w-full gap-2 animate-pulse">
 						<div className="h-16 w-16 rounded-xl bg-white/10" />
 						<div className="flex flex-col gap-1 flex-1 min-w-0 mt-1">
-							<div className="h-6 bg-white/10 rounded w-3/4" />
-							<div className="h-4 bg-white/10 rounded w-1/2 mt-2" />
+							<div className="h-6 bg-white/10 rounded-xl w-3/4" />
+							<div className="h-4 bg-white/10 rounded-xl w-1/2 mt-2" />
 						</div>
 					</div>
 				</div>

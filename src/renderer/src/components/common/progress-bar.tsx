@@ -33,11 +33,11 @@ export default function ProgressBar({
 	return (
 		<div className="w-full flex flex-col gap-1.5 select-none">
 			<div
-				className={`w-full h-1 rounded-full overflow-hidden ${trackColor} relative`}
+				className={`w-full h-1 rounded-xl overflow-hidden ${trackColor} relative`}
 			>
 				{mode === "determinate" ? (
 					<div
-						className={`${color} h-full transition-all duration-300 ease-out rounded-full`}
+						className={`${color} h-full transition-all duration-300 ease-out rounded-xl`}
 						style={{ width: `${clamped}%` }}
 					/>
 				) : (
