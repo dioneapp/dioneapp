@@ -11,6 +11,7 @@ import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
 import pidtree from "pidtree";
+import * as pty from "node-pty";
 import type { Server } from "socket.io";
 
 const activeProcesses = new Set<any>();
@@ -62,6 +63,14 @@ const clearProcessTracking = (appId?: string) => {
 const dropProcessInstance = (pid: number) => {
 	activeProcesses.forEach((proc) => {
 		if (proc?.pid === pid) {
+			// Try to kill PTY process gracefully first
+			if (typeof proc.kill === "function") {
+				try {
+					proc.kill();
+				} catch (e) {
+					// Ignore errors, process might already be dead
+				}
+			}
 			activeProcesses.delete(proc);
 		}
 	});
@@ -292,7 +301,7 @@ export const stopActiveProcess = async (
 	return success;
 };
 
-// execute command
+// execute command using PTY for proper terminal emulation
 export const executeCommand = async (
 	command: string,
 	io: Server,
@@ -302,28 +311,17 @@ export const executeCommand = async (
 	logsType?: string,
 	options?: { onOutput?: (text: string) => void },
 ): Promise<{ code: number; stdout: string; stderr: string }> => {
-	let stdoutData = "";
-	let stderrData = "";
+	let outputData = "";
 	const enhancedEnv = await getEnhancedEnv(needsBuildTools || false);
 	const logs = logsType || "installUpdate";
 
 	try {
-		// // if active process exists, kill it (disabled for multiple apps)
-		// await stopActiveProcess(io, id);
-
 		const currentPlatform = getPlatform();
 		const isWindows = currentPlatform === "win32";
 
 		logger.info(`Working on directory: ${workingDir}`);
-		const spawnOptions = {
-			cwd: workingDir,
-			shell: true,
-			windowsHide: true,
-			detached: false,
-			env: enhancedEnv,
-		};
 
-		// handle git commands
+		// handle git commands on non-Windows
 		if (!isWindows && command.startsWith("git ")) {
 			const result = await useGit(command, workingDir, io, id);
 			if (result) {
@@ -331,86 +329,60 @@ export const executeCommand = async (
 			}
 		}
 
-		const processInstance = spawn(command, spawnOptions);
-		const pid = processInstance.pid;
+		// Use PTY for proper terminal emulation (needed for NVML, conda, etc.)
+		const shell = isWindows 
+			? (process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe")
+			: (process.env.SHELL || "/bin/bash");
 
-		if (pid) {
-			activeProcesses.add(processInstance);
-			registerProcess(id, pid);
-			logger.info(`Started process (PID: ${pid}): ${command}`);
+		logger.info(`Using shell: ${shell}`);
+		logger.info(`Command: ${command}`);
+
+		// Spawn shell and write command to it (avoids argument escaping issues)
+		const ptyProcess = pty.spawn(shell, [], {
+			name: "xterm-256color",
+			cols: 120,
+			rows: 30,
+			cwd: workingDir,
+			env: enhancedEnv as { [key: string]: string },
+		});
+
+		const pid = ptyProcess.pid;
+
+		// Write the command to the shell's stdin, then exit
+		if (isWindows) {
+			ptyProcess.write(`${command}\r\nexit\r\n`);
+		} else {
+			ptyProcess.write(`${command}; exit\n`);
 		}
 
-		logger.info(`Executing: ${command}`);
+		if (pid) {
+			activeProcesses.add(ptyProcess);
+			registerProcess(id, pid);
+			logger.info(`Started PTY process (PID: ${pid}): ${command}`);
+		}
 
-		processInstance.stdout.on("data", (data: Buffer) => {
-			const text = data.toString("utf8");
-			if (text) {
-				stdoutData += text;
-				io.to(id).emit(logs, { type: "log", content: text });
-				options?.onOutput?.(text);
-				logger.info(`[stdout] ${text}`);
-			}
-		});
-		processInstance.stderr.on("data", (data: Buffer) => {
-			const text = data.toString("utf8");
-			if (text) {
-				stderrData += text;
-				if (text.match(/error|fatal|unexpected/i)) {
-					io.to(id).emit(logs, { type: "log", content: text });
-					// logger.error(`[stderr-error] ${text}`);
-					// killProcess(processInstance, io, id);
-					io.to(id).emit(logs, {
-						type: "log",
-						content: `"${command}": ${text}`,
-					});
-					// io.to(id).emit(logs, {
-					//     type: "status",
-					//     status: "error",
-					//     content: "Error detected",
-					// });
-					// return;
-				}
-				if (text.match(/warning|warn|deprecated/i)) {
-					io.to(id).emit(logs, { type: "log", content: `WARN: ${text}` });
-					logger.warn(`[stderr-warn] ${text}`);
-				} else {
-					io.to(id).emit(logs, { type: "log", content: `OUT: ${text}` });
-					logger.info(`[stderr-info] ${text}`);
-				}
-				options?.onOutput?.(text);
+		logger.info(`Executing (PTY): ${command}`);
+
+		ptyProcess.onData((data: string) => {
+			if (data) {
+				outputData += data;
+				io.to(id).emit(logs, { type: "log", content: data });
+				options?.onOutput?.(data);
+				// Don't log every output line to avoid spam
 			}
 		});
 
 		return new Promise<{ code: number; stdout: string; stderr: string }>(
 			(resolve) => {
-				processInstance.on("exit", (code: number) => {
+				ptyProcess.onExit(({ exitCode }) => {
 					if (pid) {
-						activeProcesses.delete(processInstance);
+						activeProcesses.delete(ptyProcess);
 						unregisterProcess(id, pid);
 						logger.info(
-							`Process (PID: ${pid}) finished with exit code ${code}`,
+							`PTY Process (PID: ${pid}) finished with exit code ${exitCode}`,
 						);
 					}
-					resolve({ code, stdout: stdoutData, stderr: stderrData });
-				});
-
-				processInstance.on("error", (error) => {
-					const errorMsg = `Failed to start command: ${error.message}`;
-					logger.error(errorMsg);
-					io.to(id).emit(logs, {
-						type: "log",
-						content: `ERROR: ${errorMsg}\n`,
-					});
-					io.to(id).emit(logs, {
-						type: "status",
-						status: "error",
-						content: "Failed to start process",
-					});
-					if (pid) {
-						activeProcesses.delete(processInstance);
-						unregisterProcess(id, pid);
-					}
-					resolve({ code: -1, stdout: "", stderr: errorMsg });
+					resolve({ code: exitCode, stdout: outputData, stderr: "" });
 				});
 			},
 		);
@@ -651,24 +623,23 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		initDefaultEnv();
 	}
 
-	
 	// command options with enhanced environment for build tools
-	// Start with essential Windows system variables that tools like nvidia-smi need
-	const systemVars: Record<string, string | undefined> = {};
-	if (process.platform === "win32") {
-		// These are critical for Windows system tools and DLL loading
-		const essentialVars = [
-			"PROGRAMFILES", ];
-		for (const v of essentialVars) {
-			if (process.env[v]) {
-				systemVars[v] = process.env[v];
-			}
-		}
-	}
-	
 	const baseEnv = {
-		...systemVars,
 		...ENVIRONMENT,
+		// Essential Windows system variables needed for PTY and system tools
+		...(process.platform === "win32" && {
+			ComSpec: process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe",
+			SystemRoot: process.env.SystemRoot || "C:\\Windows",
+			SystemDrive: process.env.SystemDrive || "C:",
+			windir: process.env.windir || "C:\\Windows",
+			USERPROFILE: process.env.USERPROFILE,
+			APPDATA: process.env.APPDATA,
+			LOCALAPPDATA: process.env.LOCALAPPDATA,
+			PROGRAMFILES: process.env.PROGRAMFILES,
+			"PROGRAMFILES(X86)": process.env["PROGRAMFILES(X86)"],
+			HOMEDRIVE: process.env.HOMEDRIVE,
+			HOMEPATH: process.env.HOMEPATH,
+		}),
 		PYTHONUNBUFFERED: "1",
 		NODE_NO_BUFFERING: "1",
 		FORCE_UNBUFFERED_OUTPUT: "1",
