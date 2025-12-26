@@ -73,7 +73,7 @@ export default function Messages({
 				>
 					{message?.role !== "user" && (
 						<div
-							className={`rounded-full flex items-center justify-center ${quickAI ? "" : "pt-1"}`}
+							className={`rounded-xl flex items-center justify-center ${quickAI ? "" : "pt-1"}`}
 						>
 							<Icon name="Dio" className="w-4 h-4" />
 						</div>
@@ -121,12 +121,12 @@ export default function Messages({
 												setTimeout(() => setCopied(false), 1500);
 											};
 											return (
-												<div className="relative group rounded-lg overflow-hidden text-wrap break-all">
+												<div className="relative group rounded-xl overflow-hidden text-wrap break-all">
 													<button
 														type="button"
 														onClick={handleCopy}
 														aria-label="Copy code"
-														className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 cursor-pointer bg-white/10 backdrop-blur-3xl border border-white/5 text-xs px-4 py-1 rounded-full transition-opacity text-wrap break-all"
+														className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 cursor-pointer bg-white/10 backdrop-blur-3xl border border-white/5 text-xs px-4 py-1 rounded-xl transition-opacity text-wrap break-all"
 													>
 														{copied ? "Copied!" : "Copy"}
 													</button>
@@ -139,7 +139,7 @@ export default function Messages({
 											<CodeBlockWithCopy />
 										) : (
 											<code
-												className="bg-neutral-800 rounded text-sm font-mono text-wrap break-all"
+												className="bg-neutral-800 rounded-xl text-sm font-mono text-wrap break-all"
 												{...props}
 											>
 												{children}
@@ -185,7 +185,7 @@ export default function Messages({
 			))}
 			{messageLoading && !usingTool?.name && (
 				<div
-					className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-full w-fit text-neutral-500 p-1 px-2`}
+					className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-xl w-fit text-neutral-500 p-1 px-2`}
 				>
 					<LoaderCircle className="w-3.5 h-3.5 animate-spin duration-100" />
 					<span>Loading...</span>
@@ -194,7 +194,7 @@ export default function Messages({
 			)}
 			{usingTool?.name && messageLoading && (
 				<div
-					className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-full w-fit text-neutral-500 p-1 px-2`}
+					className={`flex gap-2 text-xs ${quickAI ? "items-center justify-center mx-12" : "items-start justify-start"} animate-pulse rounded-xl w-fit text-neutral-500 p-1 px-2`}
 				>
 					<Hammer className="w-3.5 h-3.5 duration-100" />
 					<span>{usingTool.message}...</span>

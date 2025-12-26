@@ -21,7 +21,7 @@ export default function CustomCommandsModal({
 						<h2 className="text-lg font-semibold text-white">
 							{t("customCommands.title")}
 						</h2>
-						<ul className="w-full rounded text-sm text-neutral-300 font-mono flex flex-col gap-2 max-h-64 overflow-y-auto">
+						<ul className="w-full rounded-xl text-sm text-neutral-300 font-mono flex flex-col gap-2 max-h-64 overflow-y-auto">
 							{Object.entries(commands).map(([oldCommand, newCommand]) => (
 								<li key={oldCommand} className="flex flex-col gap-1">
 									<span className="select-all text-[10px] text-neutral-400 truncate">
@@ -30,7 +30,7 @@ export default function CustomCommandsModal({
 									<input
 										onChange={(e) => onEdit(oldCommand, e.target.value)}
 										value={newCommand}
-										className="w-full focus:outline-none rounded px-2 py-1 bg-white/10 border border-white/10 text-white text-sm"
+										className="w-full focus:outline-none rounded-xl px-2 py-1 bg-white/10 border border-white/10 text-white text-sm"
 									/>
 								</li>
 							))}
@@ -38,13 +38,13 @@ export default function CustomCommandsModal({
 						<div className="mt-4 flex justify-end gap-2">
 							<button
 								onClick={onCancel}
-								className="cursor-pointer bg-white/10 hover:bg-white/20 text-neutral-200 font-medium rounded-full p-1 px-4 text-sm"
+								className="cursor-pointer bg-white/10 hover:bg-white/20 text-neutral-200 font-medium rounded-xl p-1 px-4 text-sm"
 							>
 								{t("common.cancel")}
 							</button>
 							<button
 								onClick={onLaunch}
-								className="cursor-pointer bg-white hover:bg-white/80 text-black font-semibold rounded-full p-1 px-4 text-sm"
+								className="cursor-pointer bg-white hover:bg-white/80 text-black font-semibold rounded-xl p-1 px-4 text-sm"
 							>
 								{t("customCommands.launch")}
 							</button>
@@ -53,7 +53,7 @@ export default function CustomCommandsModal({
 					{/* background effects */}
 					<div className="absolute w-full h-full overflow-hidden pointer-events-none">
 						<div
-							className="absolute top-0 left-2/4 w-32 h-32 rounded-full -translate-y-1/2 blur-3xl"
+							className="absolute top-0 left-2/4 w-32 h-32 rounded-xl -translate-y-1/2 blur-3xl"
 							style={{ backgroundColor: "var(--theme-blur)" }}
 						/>
 					</div>

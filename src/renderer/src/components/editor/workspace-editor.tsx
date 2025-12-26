@@ -6,38 +6,38 @@ import FileTree from "@/components/editor/file-tree";
 import HeaderBar from "@/components/editor/header-bar";
 import PreviewPane from "@/components/editor/preview-panel";
 import {
-	mediaMimeMap,
-	previewableMediaExtensions,
-	unsupportedExtensions,
+    mediaMimeMap,
+    previewableMediaExtensions,
+    unsupportedExtensions,
 } from "@/components/editor/utils/constants";
 import type {
-	ContextMenuState,
-	EditorViewProps,
-	FileContentResponse,
-	FileEncoding,
-	FileEntryResponse,
-	FileNode,
+    ContextMenuState,
+    EditorViewProps,
+    FileContentResponse,
+    FileEncoding,
+    FileEntryResponse,
+    FileNode,
 } from "@/components/editor/utils/types";
 import {
-	findNodeByPath,
-	getExtensionKey,
-	getLanguageFromPath,
-	getParentPath,
-	isValidEntryNameClient,
-	normalizeRelativePath,
-	updateTreeNode,
+    findNodeByPath,
+    getExtensionKey,
+    getLanguageFromPath,
+    getParentPath,
+    isValidEntryNameClient,
+    normalizeRelativePath,
+    updateTreeNode,
 } from "@/components/editor/utils/utils";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { FilePlus, FolderPlus, Loader2 } from "lucide-react";
 import {
-	type KeyboardEvent,
-	type MouseEvent,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
+    type KeyboardEvent,
+    type MouseEvent,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
 
 const initialContextMenuState: ContextMenuState = {
@@ -1016,7 +1016,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 									onClick={() => {
 										openCreateEntryDialog("file");
 									}}
-									className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
+									className="inline-flex h-7 w-7 items-center justify-center rounded-xl border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
 									title={t("workspaceEditor.newFile")}
 								>
 									<FilePlus className="h-3.5 w-3.5" />
@@ -1026,7 +1026,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 									onClick={() => {
 										openCreateEntryDialog("directory");
 									}}
-									className="inline-flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
+									className="inline-flex h-7 w-7 items-center justify-center rounded-xl border border-white/10 bg-white/2 text-neutral-300 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/50 cursor-pointer"
 									title={t("workspaceEditor.newFolder")}
 								>
 									<FolderPlus className="h-3.5 w-3.5" />
@@ -1043,7 +1043,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 									<button
 										type="button"
 										onClick={handleRefreshWorkspace}
-										className="self-start rounded-md border border-white/10 px-3 py-1 text-neutral-200 transition-colors hover:bg-white/10"
+										className="self-start rounded-xl border border-white/10 px-3 py-1 text-neutral-200 transition-colors hover:bg-white/10"
 									>
 										{t("workspaceEditor.retry")}
 									</button>
@@ -1084,7 +1084,7 @@ export default function WorkspaceEditor({ data, setShow }: EditorViewProps) {
 								<button
 									type="button"
 									onClick={handleRefreshWorkspace}
-									className="rounded-md border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
+									className="rounded-xl border border-white/10 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-white/10"
 								>
 									{t("workspaceEditor.retry")}
 								</button>

@@ -29,7 +29,7 @@ export default function ThemePreview({
 			{/* Theme Color Preview */}
 			<div className="flex gap-2 items-center">
 				<div
-					className="w-12 h-12 rounded-lg border border-white/20 relative overflow-hidden"
+					className="w-12 h-12 rounded-xl border border-white/20 relative overflow-hidden"
 					style={{
 						background: `linear-gradient(135deg, ${themeColors.gradient.from} 0%, ${themeColors.gradient.to} 100%)`,
 					}}
@@ -44,15 +44,15 @@ export default function ThemePreview({
 					<p className="text-sm font-medium text-white">{themeColors.name}</p>
 					<div className="flex gap-1.5 mt-1">
 						<div
-							className="w-3 h-3 rounded-full border border-white/20"
+							className="w-3 h-3 rounded-xl border border-white/20"
 							style={{ backgroundColor: themeColors.accent }}
 						/>
 						<div
-							className="w-3 h-3 rounded-full border border-white/20"
+							className="w-3 h-3 rounded-xl border border-white/20"
 							style={{ backgroundColor: themeColors.accentSecondary }}
 						/>
 						<div
-							className="w-3 h-3 rounded-full border border-white/20"
+							className="w-3 h-3 rounded-xl border border-white/20"
 							style={{
 								backgroundColor: isIntense
 									? themeColors.background.intense

@@ -59,11 +59,11 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 		>
 			<div className="p-6 rounded-xl border border-white/10 shadow-lg relative overflow-hidden max-w-2xl w-full backdrop-blur-md">
 				<div
-					className="absolute top-0 left-0.5/4 w-32 h-32 rounded-full -translate-y-1/2 blur-3xl z-10"
+					className="absolute top-0 left-0.5/4 w-32 h-32 rounded-xl -translate-y-1/2 blur-3xl z-10"
 					style={{ backgroundColor: "var(--theme-blur)" }}
 				/>
 				<div
-					className="absolute -top-10 -left-14 blur-3xl max-w-64 w-full h-64 rounded-full rounded-bl-none rounded-tl-none opacity-40"
+					className="absolute -top-10 -left-14 blur-3xl max-w-64 w-full h-64 rounded-xl rounded-bl-none rounded-tl-none opacity-40"
 					style={{ backgroundColor: "var(--theme-blur)" }}
 				/>{" "}
 				<div className="flex justify-between w-full items-center relative z-20">
@@ -72,7 +72,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 					</h2>
 					<button
 						type="button"
-						className="cursor-pointer z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-full transition-colors duration-200"
+						className="cursor-pointer z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors duration-200"
 						onClick={onClose}
 					>
 						<X className="h-4 w-4" />
@@ -83,7 +83,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 						<button
 							onClick={handleFileUpload}
 							type="button"
-							className="w-full cursor-pointer px-6 py-6 bg-white/10 hover:bg-white/20 rounded-lg transition-all duration-300 text-sm font-medium text-neutral-300 border-2 border-dashed border-white/20 hover:border-white/40 cursor"
+							className="w-full cursor-pointer px-6 py-6 bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-300 text-sm font-medium text-neutral-300 border-2 border-dashed border-white/20 hover:border-white/40 cursor"
 						>
 							{scriptFile ? (
 								<div className="text-center">
@@ -106,7 +106,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 					</div>
 
 					{error && (
-						<div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm">
+						<div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-300 text-sm">
 							{error}
 						</div>
 					)}
@@ -116,14 +116,14 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 							required
 							value={scriptName}
 							onChange={(e) => setScriptName(e.target.value)}
-							className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-neutral-400 focus:outline-none focus:border-white/30 transition-colors text-sm"
+							className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-neutral-400 focus:outline-none focus:border-white/30 transition-colors text-sm"
 							type="text"
 							placeholder={t("local.uploadModal.scriptName")}
 						/>
 						<textarea
 							value={scriptDescription}
 							onChange={(e) => setScriptDescription(e.target.value)}
-							className="w-full h-24 px-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder-neutral-400 resize-none focus:outline-none focus:border-white/30 transition-colors text-sm"
+							className="w-full h-24 px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-neutral-400 resize-none focus:outline-none focus:border-white/30 transition-colors text-sm"
 							placeholder={t("local.uploadModal.scriptDescription")}
 						/>
 					</div>
@@ -133,7 +133,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 						<button
 							onClick={onClose}
 							type="button"
-							className="flex items-center justify-center gap-2 px-4 py-2 text-sm bg-white/10 hover:bg-white/20 transition-colors duration-400 rounded-full text-neutral-300 font-medium cursor-pointer"
+							className="flex items-center justify-center gap-2 px-4 py-2 text-sm bg-white/10 hover:bg-white/20 transition-colors duration-400 rounded-xl text-neutral-300 font-medium cursor-pointer"
 						>
 							{t("common.cancel")}
 						</button>
@@ -143,7 +143,7 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 							onClick={handleUpload}
 							type="button"
 							disabled={!scriptName || !scriptFile || isUploading}
-							className="flex items-center justify-center gap-2 px-4 py-2 text-sm bg-white hover:bg-white/80 transition-colors duration-400 rounded-full text-black font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+							className="flex items-center justify-center gap-2 px-4 py-2 text-sm bg-white hover:bg-white/80 transition-colors duration-400 rounded-xl text-black font-semibold cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
 						>
 							<span className="font-semibold">
 								{isUploading

@@ -25,7 +25,7 @@ export default function SearchBar() {
 						onChange={(e) => setSearch(e.target.value)}
 						placeholder={t("search.placeholder")}
 						className="w-full h-10 text-sm text-white 
-                        border border-white/5 hover:border-white/20 rounded-lg px-4 pr-10 hover:shadow-lg
+                        border border-white/5 hover:border-white/20 rounded-xl px-4 pr-10 hover:shadow-lg
                         placeholder:text-neutral-400 
                         focus:outline-none focus:border-white/20
                         active:border-white/20 active:outline-none"

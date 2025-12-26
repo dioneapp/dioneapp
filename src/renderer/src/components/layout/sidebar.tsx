@@ -8,10 +8,10 @@ import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
-	SortableContext,
-	arrayMove,
-	useSortable,
-	verticalListSortingStrategy,
+    SortableContext,
+    arrayMove,
+    useSortable,
+    verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { AnimatePresence, motion } from "framer-motion";
@@ -179,7 +179,7 @@ export default function Sidebar() {
 						className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
 					>
 						<div className="max-w-2xl w-full px-6">
-							<div className="bg-neutral-900/80 border border-white/6 rounded-2xl p-6 shadow-2xl backdrop-blur-md text-left">
+							<div className="bg-neutral-900/80 border border-white/6 rounded-ml p-6 shadow-2xl backdrop-blur-md text-left">
 								<div className="flex flex-col gap-3">
 									<div>
 										<h1 className="text-2xl font-semibold text-neutral-50">
@@ -190,7 +190,7 @@ export default function Sidebar() {
 										</p>
 									</div>
 
-									<div className="mt-2 bg-neutral-800/40 p-4 rounded-lg">
+									<div className="mt-2 bg-neutral-800/40 p-4 rounded-xl">
 										<div className="flex items-center justify-between gap-4">
 											<h3 className="text-lg text-neutral-100 font-medium break-words">
 												{releaseNotes.name}
@@ -221,7 +221,7 @@ export default function Sidebar() {
 									<div className="mt-4 flex justify-end gap-3">
 										<button
 											onClick={() => setUpdateDownloaded(false)}
-											className="px-5 py-2 text-sm rounded-full bg-transparent border border-white/10 text-neutral-300 hover:bg-white/10 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl"
+											className="px-5 py-2 text-sm rounded-xl bg-transparent border border-white/10 text-neutral-300 hover:bg-white/10 transition-colors duration-200 cursor-pointer shadow-lg hover:shadow-xl"
 										>
 											{t("updates.later")}
 										</button>
@@ -229,7 +229,7 @@ export default function Sidebar() {
 											onClick={() =>
 												window.electron.ipcRenderer.send("quit_and_install")
 											}
-											className="px-5 py-2 text-sm rounded-full bg-white text-black font-medium hover:opacity-95 transition-opacity duration-150 cursor-pointer shadow-lg hover:shadow-xl"
+											className="px-5 py-2 text-sm rounded-xl bg-white text-black font-medium hover:opacity-95 transition-opacity duration-150 cursor-pointer shadow-lg hover:shadow-xl"
 										>
 											{t("updates.install")}
 										</button>
@@ -244,14 +244,14 @@ export default function Sidebar() {
 				className={`relative flex flex-col items-center justify-center border-r border-white/10 overflow-hidden ${config?.compactMode ? "max-w-24 w-24" : "max-w-70 w-70"}`}
 			>
 				<div
-					className="absolute -top-16 -right-8 w-48 h-48 rounded-full blur-3xl pointer-events-none"
+					className="absolute -top-16 -right-8 w-48 h-48 rounded-xl blur-3xl pointer-events-none"
 					style={{
 						backgroundColor:
 							"color-mix(in srgb, var(--theme-accent) 8%, transparent)",
 					}}
 				/>
 				<div
-					className="absolute -bottom-16 -left-8 w-40 h-40 rounded-full blur-3xl pointer-events-none"
+					className="absolute -bottom-16 -left-8 w-40 h-40 rounded-xl blur-3xl pointer-events-none"
 					style={{
 						backgroundColor:
 							"color-mix(in srgb, var(--theme-accent) 5%, transparent)",
@@ -283,7 +283,7 @@ export default function Sidebar() {
 								<button
 									type="button"
 									onClick={() => openLink("https://getdione.app/discord")}
-									className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/90 transition-all duration-300 rounded-full text-black font-semibold py-1.5 text-center cursor-pointer shadow-lg hover:shadow-xl"
+									className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/90 transition-all duration-300 rounded-xl text-black font-semibold py-1.5 text-center cursor-pointer shadow-lg hover:shadow-xl"
 								>
 									<Icon name="Discord" className="h-4 w-4" />
 
@@ -293,7 +293,7 @@ export default function Sidebar() {
 								<button
 									type="button"
 									onClick={() => openLink("https://getdione.app/github")}
-									className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/90 transition-all duration-300 rounded-full text-black font-semibold py-1.5 text-center cursor-pointer shadow-lg hover:shadow-xl"
+									className="flex items-center justify-center gap-2 text-xs w-full bg-white hover:bg-white/90 transition-all duration-300 rounded-xl text-black font-semibold py-1.5 text-center cursor-pointer shadow-lg hover:shadow-xl"
 								>
 									<Icon name="GitHub" className="h-4 w-4" />
 
@@ -349,7 +349,7 @@ export default function Sidebar() {
 																	onClick={() =>
 																		stopApp(app.appId, app.data?.name)
 																	}
-																	className="absolute -top-1 -right-1 h-5 w-5 bg-red-500/40 hover:bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex items-center justify-center backdrop-blur-sm"
+																	className="absolute -top-1 -right-1 h-5 w-5 bg-red-500/40 hover:bg-red-500 rounded-xl opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 flex items-center justify-center backdrop-blur-sm"
 																>
 																	<X className="h-3 w-3 text-white" />
 																</button>
@@ -361,7 +361,7 @@ export default function Sidebar() {
 																	className={
 																		config?.compactMode
 																			? "w-12 h-12 rounded-xl flex items-center justify-center"
-																			: "w-full h-10 rounded-lg flex items-center gap-3 px-3" +
+																			: "w-full h-10 rounded-xl flex items-center gap-3 px-3" +
 																			" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
 																	}
 																>
@@ -370,7 +370,7 @@ export default function Sidebar() {
 																			config?.compactMode
 																				? "w-8 h-8"
 																				: "w-6 h-6" +
-																				" overflow-hidden shrink-0 rounded-lg"
+																				" overflow-hidden shrink-0 rounded-xl"
 																		}
 																	>
 																		{!app.isLocal ? (
@@ -381,7 +381,7 @@ export default function Sidebar() {
 																					<img
 																						src={app.data.logo_url}
 																						alt={app.data.name}
-																						className="w-full h-full object-cover rounded-lg"
+																						className="w-full h-full object-cover rounded-xl"
 																					/>
 																				) : (
 																					<GeneratedIcon
@@ -395,7 +395,7 @@ export default function Sidebar() {
 																			<GeneratedIcon
 																				name={app?.data?.name}
 																				className="w-full h-full"
-																				roundedClassName="rounded-lg"
+																				roundedClassName="rounded-xl"
 																			/>
 																		)}
 																	</div>
@@ -426,7 +426,7 @@ export default function Sidebar() {
 						<QuickLaunch compactMode={config?.compactMode} />
 					)}
 					<div
-						className={`mt-auto h-0.5 rounded-full w-full from-transparent via-white/40 to-transparent bg-linear-to-l ${!config?.compactMode ? "mb-4" : ""}`}
+						className={`mt-auto h-0.5 rounded-xl w-full from-transparent via-white/40 to-transparent bg-linear-to-l ${!config?.compactMode ? "mb-4" : ""}`}
 					/>
 					<div
 						className={`mb-4 flex gap-2 items-center justify-center w-full h-fit group transition-all duration-500 ${loading ? "[&_div_div]:opacity-100 [&_div_div]:blur-none [&_div_div]:mt-0" : "hover:[&_div_div]:opacity-100 hover:[&_div_div]:blur-none [&_div_div]:-mt-24 hover:[&_div_div]:mt-0 [&_div_div]:opacity-0 [&_div_div]:blur-lg"} ${config?.compactMode ? "flex-col" : ""}`}
@@ -443,7 +443,7 @@ export default function Sidebar() {
 									>
 										<Camera className="h-5 w-5" />
 										{hoveredTooltip === "capture" && (
-											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg">
+											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-xl">
 												{t("sidebar.tooltips.capture")}
 											</div>
 										)}
@@ -456,7 +456,7 @@ export default function Sidebar() {
 									>
 										<Library className="h-5 w-5" />
 										{hoveredTooltip === "library" && (
-											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg">
+											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-xl">
 												{t("sidebar.tooltips.library")}
 											</div>
 										)}
@@ -469,7 +469,7 @@ export default function Sidebar() {
 									>
 										<Settings className="h-5 w-5" />
 										{hoveredTooltip === "settings" && (
-											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg">
+											<div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-xl">
 												{t("sidebar.tooltips.settings")}
 											</div>
 										)}
@@ -482,7 +482,7 @@ export default function Sidebar() {
 						>
 							{user && (
 								<Link
-									className={`cursor-pointer overflow-hidden flex items-center justify-center transition-opacity duration-200 ${loading ? "cursor-auto" : ""} h-9 w-9 rounded-full ${!user?.avatar_url && "border border-white/20"}`}
+									className={`cursor-pointer overflow-hidden flex items-center justify-center transition-opacity duration-200 ${loading ? "cursor-auto" : ""} h-9 w-9 rounded-xl ${!user?.avatar_url && "border border-white/20"}`}
 									to="/account"
 									onMouseEnter={
 										!loading ? () => setHoveredTooltip("account") : undefined
@@ -493,7 +493,7 @@ export default function Sidebar() {
 								>
 									{loading && !user ? (
 										<div
-											className="w-full h-full border border-white/10 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center cursor-pointer"
+											className="w-full h-full border border-white/10 hover:bg-white/10 rounded-xl transition-colors flex items-center justify-center cursor-pointer"
 											onMouseEnter={() => setHoveredTooltip("account")}
 											onMouseLeave={() => setHoveredTooltip(null)}
 										>
@@ -515,7 +515,7 @@ export default function Sidebar() {
 													}}
 												/>
 											) : (
-												<span className="h-full w-full flex justify-center items-center border border-white/20 rounded-full bg-white/10">
+												<span className="h-full w-full flex justify-center items-center border border-white/20 rounded-xl bg-white/10">
 													<span>
 														{user?.username.charAt(0).toUpperCase() || (
 															<User className="h-5 w-5" />
@@ -547,7 +547,7 @@ export default function Sidebar() {
 										<User className="h-5 w-5 text-black" />
 										{hoveredTooltip === "login" && (
 											<div
-												className={`${config?.compactMode ? "absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-lg" : "absolute left-1/2 -translate-x-1/2 top-full z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-lg"}`}
+												className={`${config?.compactMode ? "absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap rounded-xl" : "absolute left-1/2 -translate-x-1/2 top-full z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-xl"}`}
 											>
 												{t("sidebar.tooltips.login")}
 											</div>
@@ -610,7 +610,7 @@ export default function Sidebar() {
 								>
 									<Settings className="h-5 w-5" />
 									{hoveredTooltip === "settings" && (
-										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-lg">
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-xl">
 											{t("sidebar.tooltips.settings")}
 										</div>
 									)}

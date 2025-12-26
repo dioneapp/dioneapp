@@ -211,7 +211,7 @@ export default function FirstTime() {
 								}}
 								whileTap={{ scale: 0.95 }}
 								transition={{ type: "spring", stiffness: 400, damping: 20 }}
-								className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer relative overflow-hidden"
+								className="bg-white/10 w-28 rounded-xl p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer relative overflow-hidden"
 								onClick={() => {
 									// changeLevel(2);
 									openLink("https://getdione.app/auth/login?app=true");
@@ -267,7 +267,7 @@ export default function FirstTime() {
 								</h3>
 								<button
 									type="button"
-									className="bg-white/10 w-28 rounded-full p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
+									className="bg-white/10 w-28 rounded-xl p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
 									onClick={() => {
 										changeLevel(1);
 									}}
@@ -376,7 +376,7 @@ export default function FirstTime() {
 							>
 								<Link
 									to="/?loginFinished=true"
-									className="px-8 py-2 bg-white text-black rounded-full text-sm font-medium transition-all duration-300 hover:opacity-80 active:scale-[0.97] shadow-lg"
+									className="px-8 py-2 bg-white text-black rounded-xl text-sm font-medium transition-all duration-300 hover:opacity-80 active:scale-[0.97] shadow-lg"
 								>
 									{t("firstTime.ready.finish")}
 								</Link>
@@ -392,7 +392,7 @@ export default function FirstTime() {
 						{[1, 2, 3, 4].map((lvl) => (
 							<div key={lvl} className="py-1">
 								<div
-									className={`w-6 h-1 rounded-full ${
+									className={`w-6 h-1 rounded-xl ${
 										lvl === level || (level === 5 && lvl === 4)
 											? "w-10"
 											: "bg-white/20"

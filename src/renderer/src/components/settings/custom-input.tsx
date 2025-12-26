@@ -22,7 +22,7 @@ export default function CustomInput({
 					required
 					readOnly
 					onClick={onClick}
-					className="bg-white/10 border border-r-none border-white/5 text-neutral-200 font-mono text-sm h-10 px-4 rounded-full rounded-r-none truncate max-w-[calc(100%-12rem)] min-w-[18rem] focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-200"
+					className="bg-white/10 border border-r-none border-white/5 text-neutral-200 font-mono text-sm h-10 px-4 rounded-xl rounded-r-none truncate max-w-[calc(100%-12rem)] min-w-[18rem] focus:outline-none hover:bg-white/20 cursor-pointer transition-colors duration-200"
 					type="text"
 					value={value}
 					onChange={(e) => {
@@ -34,7 +34,7 @@ export default function CustomInput({
 				/>
 				<button
 					onClick={() => onClickIcon()}
-					className="bg-white/10 rounded-r-full px-4 border border-white/5 hover:bg-white/20 transition-colors duration-200 cursor-pointer"
+					className="bg-white/10 rounded-r-xl px-4 border border-white/5 hover:bg-white/20 transition-colors duration-200 cursor-pointer"
 					type="button"
 				>
 					{icon}

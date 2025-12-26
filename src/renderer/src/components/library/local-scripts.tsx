@@ -61,7 +61,7 @@ export default function LocalScripts() {
 				<button
 					onClick={() => setOpenModal(true)}
 					type="button"
-					className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-full transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
+					className="px-6 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all duration-300 text-sm font-medium whitespace-nowrap cursor-pointer"
 				>
 					{t("local.upload")}
 				</button>

@@ -59,7 +59,7 @@ const ExecuteSound = ({ firstLaunch }: { firstLaunch: string }) => {
 			{firstLaunch === "true" && (
 				<button
 					onClick={toggleMute}
-					className="absolute bottom-4 right-4 p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors duration-200"
+					className="absolute bottom-4 right-4 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors duration-200"
 					style={{ zIndex: 9999 }}
 					aria-label={isMuted ? "Unmute sound" : "Mute sound"}
 				>

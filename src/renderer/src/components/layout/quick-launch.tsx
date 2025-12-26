@@ -243,7 +243,7 @@ export default function QuickLaunch({
 							exit="exit"
 						>
 							<div
-								className="absolute top-0 left-0.5/4 w-32 h-32 rounded-full -translate-y-1/2 blur-3xl z-10"
+								className="absolute top-0 left-0.5/4 w-32 h-32 rounded-xl -translate-y-1/2 blur-3xl z-10"
 								style={{ backgroundColor: "var(--theme-blur)" }}
 							/>
 							<div className="relative z-10">
@@ -259,7 +259,7 @@ export default function QuickLaunch({
 										</p>
 									</div>
 									<button
-										className="cursor-pointer z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-full"
+										className="cursor-pointer z-50 flex items-center justify-center p-2 bg-white/10 hover:bg-white/20 rounded-xl"
 										type="button"
 										onClick={() => setShowAppList(false)}
 									>

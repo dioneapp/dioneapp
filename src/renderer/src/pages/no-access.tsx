@@ -33,14 +33,14 @@ export default function NoAccess() {
 					</p>
 					<div className="flex gap-2 mt-6">
 						<button
-							className="bg-white hover:opacity-80 transition-opacity duration-300 rounded-full px-10 py-2 text-sm font-semibold text-black cursor-pointer"
+							className="bg-white hover:opacity-80 transition-opacity duration-300 rounded-xl px-10 py-2 text-sm font-semibold text-black cursor-pointer"
 							onClick={() => openLink("https://getdione.app/beta/join")}
 							type="button"
 						>
 							{t("noAccess.join")}
 						</button>
 						<button
-							className="border border-white/10 hover:bg-white/10 transition-colors duration-300 rounded-full px-8 py-2 text-sm font-medium text-neutral-400 cursor-pointer"
+							className="border border-white/10 hover:bg-white/10 transition-colors duration-300 rounded-xl px-8 py-2 text-sm font-medium text-neutral-400 cursor-pointer"
 							onClick={() => logout()}
 							type="button"
 						>

@@ -72,7 +72,7 @@ export default function Titlebar() {
 									type="button"
 									id="minimize-button"
 									onClick={handleMinimize}
-									className="cursor-pointer p-1 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
+									className="cursor-pointer p-1 hover:bg-white/10 rounded-xl transition-all duration-200 text-white/70 hover:text-white"
 								>
 									<Minus className="h-5 w-5" />
 								</button>
@@ -81,7 +81,7 @@ export default function Titlebar() {
 										type="button"
 										id="maximize-button"
 										onClick={handleMaximize}
-										className="cursor-pointer p-1.5 hover:bg-white/10 rounded-md transition-all duration-200 text-white/70 hover:text-white"
+										className="cursor-pointer p-1.5 hover:bg-white/10 rounded-xl transition-all duration-200 text-white/70 hover:text-white"
 									>
 										{isMaximized ? (
 											<Minimize2 className="h-4 w-4" />
@@ -94,7 +94,7 @@ export default function Titlebar() {
 									type="button"
 									id="close-button"
 									onClick={handleClose}
-									className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-md transition-all duration-200 text-white/70"
+									className="cursor-pointer p-1 hover:bg-red-500/20 hover:text-red-400 rounded-xl transition-all duration-200 text-white/70"
 								>
 									<X className="h-5 w-5" />
 								</button>

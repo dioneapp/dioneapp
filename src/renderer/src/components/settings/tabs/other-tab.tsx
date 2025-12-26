@@ -3,8 +3,8 @@ import { openFolder } from "@/utils/open-link";
 import { motion } from "framer-motion";
 import CustomInput from "../custom-input";
 import SettingItem from "../setting-item";
-import ToggleSwitch from "../toggle-switch";
 import SettingsFooter from "../settings-footer";
+import ToggleSwitch from "../toggle-switch";
 
 interface OtherTabProps {
 	config: any;
@@ -63,7 +63,7 @@ export default function OtherTab({
 			>
 				<button
 					onClick={() => handleCheckUpdates()}
-					className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+					className="px-6 py-2 text-sm font-medium bg-white text-black rounded-xl hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
 					type="button"
 				>
 					{t("settings.other.checkUpdates.button")}
@@ -88,7 +88,7 @@ export default function OtherTab({
 			>
 				<button
 					onClick={() => openVariablesModal(true)}
-					className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+					className="px-6 py-2 text-sm font-medium bg-white text-black rounded-xl hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
 					type="button"
 				>
 					{t("settings.other.variables.button")}
@@ -101,7 +101,7 @@ export default function OtherTab({
 			>
 				<button
 					onClick={() => handleExportLogs()}
-					className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+					className="px-6 py-2 text-sm font-medium bg-white text-black rounded-xl hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
 					type="button"
 				>
 					{t("settings.other.exportLogs.button")}
@@ -114,7 +114,7 @@ export default function OtherTab({
 			>
 				<button
 					onClick={() => handleReportError()}
-					className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+					className="px-6 py-2 text-sm font-medium bg-white text-black rounded-xl hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
 					type="button"
 				>
 					{t("settings.other.submitFeedback.button")}
@@ -127,7 +127,7 @@ export default function OtherTab({
 			>
 				<button
 					onClick={() => handleResetSettings()}
-					className="px-6 py-2 text-sm font-medium bg-white text-black rounded-full hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
+					className="px-6 py-2 text-sm font-medium bg-white text-black rounded-xl hover:bg-white/80 disabled:opacity-50 transition-colors cursor-pointer"
 					type="button"
 				>
 					{t("settings.other.showOnboarding.button")}
