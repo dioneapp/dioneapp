@@ -10,8 +10,8 @@ import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-m
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
-import pidtree from "pidtree";
 import pty from "@lydell/node-pty";
+import pidtree from "pidtree";
 import type { Server } from "socket.io";
 
 const activeProcesses = new Set<any>();
@@ -331,8 +331,8 @@ export const executeCommand = async (
 
 		// Use PTY for proper terminal emulation (needed for NVML, conda, etc.)
 		const shell = isWindows
-			? (process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe")
-			: (process.env.SHELL || "/bin/bash");
+			? process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe"
+			: process.env.SHELL || "/bin/bash";
 
 		logger.info(`Using shell: ${shell}`);
 		logger.info(`Command: ${command}`);
@@ -715,7 +715,6 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		DS_BUILD_OPS: "0",
 		DS_SKIP_CUDA_CHECK: "1",
 		// fix nvidia-smi
-
 	};
 
 	// avoid re-initializing using cache
@@ -747,4 +746,4 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 	} else {
 		return baseEnv;
 	}
-}
+};

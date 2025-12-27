@@ -160,7 +160,10 @@ function App() {
 						<>{layoutMode === "sidebar" ? <Sidebar /> : <TopbarNav />}</>
 					)}
 					<div className="flex-1 h-full overflow-x-hidden overflow-y-overlay">
-						<div className="page page-transition h-full" key={location.pathname}>
+						<div
+							className="page page-transition h-full"
+							key={location.pathname}
+						>
 							<ErrorBoundary>
 								<PageComponent />
 							</ErrorBoundary>

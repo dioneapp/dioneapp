@@ -1,10 +1,10 @@
 import {
-    ArrowRight,
-    ChevronLeft,
-    Cpu,
-    Loader2,
-    ShieldCheck,
-    Sparkles,
+	ArrowRight,
+	ChevronLeft,
+	Cpu,
+	Loader2,
+	ShieldCheck,
+	Sparkles,
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import ProgressBar from "../common/progress-bar";

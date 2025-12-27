@@ -270,10 +270,11 @@ export default function TopbarNav() {
 						<Link
 							to="/"
 							id="no-draggable"
-							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/")
-								? "bg-white/15 text-white"
-								: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-								}`}
+							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
+								isActivePath("/")
+									? "bg-white/15 text-white"
+									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
+							}`}
 						>
 							<Home className="h-4 w-4" />
 							<span>{t("home.title")}</span>
@@ -282,10 +283,11 @@ export default function TopbarNav() {
 						<Link
 							to="/library"
 							id="no-draggable"
-							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/library")
-								? "bg-white/15 text-white"
-								: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-								}`}
+							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
+								isActivePath("/library")
+									? "bg-white/15 text-white"
+									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
+							}`}
 						>
 							<Library className="h-4 w-4" />
 							<span>{t("sidebar.tooltips.library")}</span>
@@ -325,8 +327,9 @@ export default function TopbarNav() {
 						<Link
 							to="/settings"
 							id="no-draggable"
-							className={`p-1.5 rounded-xl transition-colors relative ${isActivePath("/settings") ? "bg-white/15" : "hover:bg-white/10"
-								}`}
+							className={`p-1.5 rounded-xl transition-colors relative ${
+								isActivePath("/settings") ? "bg-white/15" : "hover:bg-white/10"
+							}`}
 							onMouseEnter={() => setHoveredTooltip("settings")}
 							onMouseLeave={() => setHoveredTooltip(null)}
 						>

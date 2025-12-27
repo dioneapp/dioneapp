@@ -107,7 +107,7 @@ export default function Settings() {
 			if (
 				updatedConfig.enableDesktopNotifications === true &&
 				updatedConfig.enableDesktopNotifications !==
-				config.enableDesktopNotifications
+					config.enableDesktopNotifications
 			) {
 				const xml = `
 				<toast launch="dione://action=navigate&amp;contentId=351" activationType="protocol">
