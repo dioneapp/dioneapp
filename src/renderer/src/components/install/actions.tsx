@@ -5,18 +5,18 @@ import { openLink } from "@/utils/open-link";
 import { reportBadContent } from "@/utils/report-bad-content";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-    ArrowLeft,
-    BadgeCheck,
-    Bookmark,
-    ChevronDown,
-    CodeXml,
-    Download,
-    Flag,
-    MoreHorizontal,
-    Play,
-    Share2,
-    Trash2,
-    User,
+	ArrowLeft,
+	BadgeCheck,
+	Bookmark,
+	ChevronDown,
+	CodeXml,
+	Download,
+	Flag,
+	MoreHorizontal,
+	Play,
+	Share2,
+	Trash2,
+	User,
 } from "lucide-react";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";

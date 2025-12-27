@@ -2,8 +2,8 @@ import fs from "fs";
 import path from "path";
 import { readConfig } from "@/config";
 import { getOS } from "@/server/scripts/dependencies/utils/system";
-import { app } from "electron";
 import logger from "@/server/utils/logger";
+import { app } from "electron";
 
 function splitKeyValue(line: string): [string, string] | null {
 	const index = line.indexOf("=");
@@ -215,8 +215,7 @@ export function initDefaultEnv() {
 		];
 		uniqueNvidiaPaths.forEach((nvidiaPath) => {
 			const originalPath = nvidiaPaths.find(
-				(p) =>
-					path.join(p, "nvidia-smi.exe").toLowerCase() === nvidiaPath,
+				(p) => path.join(p, "nvidia-smi.exe").toLowerCase() === nvidiaPath,
 			);
 			if (originalPath) {
 				const fullPath = path.join(originalPath, "nvidia-smi.exe");

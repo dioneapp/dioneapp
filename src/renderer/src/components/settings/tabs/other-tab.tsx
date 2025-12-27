@@ -17,7 +17,7 @@ interface OtherTabProps {
 	handleResetSettings: () => void;
 	packVersion: string;
 	port: number;
-	versions: { node: string; electron: string; chrome: string; };
+	versions: { node: string; electron: string; chrome: string };
 }
 
 export default function OtherTab({

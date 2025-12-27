@@ -2,12 +2,12 @@ import type { Script } from "@/components/home/feed/types";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import { useOnlineStatus } from "@/utils/use-online-status";
 import {
-    BadgeCheck,
-    Calendar,
-    Download,
-    GitCompare,
-    Tag,
-    Trash,
+	BadgeCheck,
+	Calendar,
+	Download,
+	GitCompare,
+	Tag,
+	Trash,
 } from "lucide-react";
 import { memo } from "react";
 import { Link } from "react-router-dom";

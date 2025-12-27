@@ -2,7 +2,7 @@ import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import VariablesModal from "@/components/modals/variables";
 import SettingsTabs, {
-    type TabType,
+	type TabType,
 } from "@/components/settings/settings-tabs";
 import ApplicationsTab from "@/components/settings/tabs/applications-tab";
 import InterfaceTab from "@/components/settings/tabs/interface-tab";
@@ -107,7 +107,7 @@ export default function Settings() {
 			if (
 				updatedConfig.enableDesktopNotifications === true &&
 				updatedConfig.enableDesktopNotifications !==
-				config.enableDesktopNotifications
+					config.enableDesktopNotifications
 			) {
 				const xml = `
 				<toast launch="dione://action=navigate&amp;contentId=351" activationType="protocol">
