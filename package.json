@@ -16,8 +16,11 @@
   "homepage": "https://getdione.app",
   "pnpm": {
     "onlyBuiltDependencies": [
-      "node-pty",
-      "electron"
+      "@biomejs/biome",
+      "electron",
+      "electron-winstaller",
+      "esbuild",
+      "sharp"
     ]
   },
   "scripts": {
