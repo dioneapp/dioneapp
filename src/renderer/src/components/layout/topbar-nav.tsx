@@ -6,32 +6,32 @@ import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
 import {
-    DndContext,
-    PointerSensor,
-    closestCenter,
-    useSensor,
-    useSensors,
+	DndContext,
+	PointerSensor,
+	closestCenter,
+	useSensor,
+	useSensors,
 } from "@dnd-kit/core";
 import {
-    SortableContext,
-    arrayMove,
-    horizontalListSortingStrategy,
-    useSortable,
+	SortableContext,
+	arrayMove,
+	horizontalListSortingStrategy,
+	useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-    Camera,
-    Home,
-    Library,
-    Maximize,
-    Minimize as Minimize2,
-    Minus,
-    Settings,
-    User,
-    X,
+	Camera,
+	Home,
+	Library,
+	Maximize,
+	Minimize as Minimize2,
+	Minus,
+	Settings,
+	User,
+	X,
 } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 export default function TopbarNav() {
 	const { t } = useTranslation();
@@ -44,7 +44,6 @@ export default function TopbarNav() {
 	const [isMaximized, setIsMaximized] = useState(false);
 	const [isFullscreen, setIsFullscreen] = useState(false);
 	const location = useLocation();
-	const navigate = useNavigate();
 
 	// detect macOS via preload-exposed platform
 	const isMac =
@@ -79,7 +78,7 @@ export default function TopbarNav() {
 		activeApps.filter((app) => app.appId !== "ollama").map((app) => app.appId),
 	);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		setTabOrder((prevOrder) => {
 			const currentIds = activeApps
 				.filter((app) => app.appId !== "ollama")
@@ -272,8 +271,8 @@ export default function TopbarNav() {
 							to="/"
 							id="no-draggable"
 							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/")
-									? "bg-white/15 text-white"
-									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
+								? "bg-white/15 text-white"
+								: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
 								}`}
 						>
 							<Home className="h-4 w-4" />
@@ -284,8 +283,8 @@ export default function TopbarNav() {
 							to="/library"
 							id="no-draggable"
 							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/library")
-									? "bg-white/15 text-white"
-									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
+								? "bg-white/15 text-white"
+								: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
 								}`}
 						>
 							<Library className="h-4 w-4" />

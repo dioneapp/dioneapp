@@ -11,7 +11,6 @@ import Home from "@/pages/home";
 import Install from "@/pages/install";
 import Library from "@/pages/library";
 import Loading from "@/pages/loading";
-import NoAccess from "@/pages/no-access";
 import QuickAI from "@/pages/quick-ai";
 import Report from "@/pages/report";
 import Settings from "@/pages/settings";

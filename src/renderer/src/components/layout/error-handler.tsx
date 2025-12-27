@@ -1,10 +1,14 @@
 // src/components/ErrorBoundary.tsx
 import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import ErrorPage from "@/pages/error";
-import React from "react";
+import * as React from "react";
 
 interface ErrorBoundaryProps {
 	children: React.ReactNode;
+}
+
+interface ErrorBoundaryInnerProps extends ErrorBoundaryProps {
+	stopApps: () => void;
 }
 
 interface ErrorBoundaryState {
@@ -12,11 +16,11 @@ interface ErrorBoundaryState {
 	error?: Error;
 }
 
-export class ErrorBoundary extends React.Component<
-	ErrorBoundaryProps,
+class ErrorBoundaryInner extends React.Component<
+	ErrorBoundaryInnerProps,
 	ErrorBoundaryState
 > {
-	constructor(props: ErrorBoundaryProps) {
+	constructor(props: ErrorBoundaryInnerProps) {
 		super(props);
 		this.state = { hasError: false };
 	}
@@ -25,24 +29,31 @@ export class ErrorBoundary extends React.Component<
 		return { hasError: true };
 	}
 
-	async stopApps() {
-		const { activeApps, handleStopApp } = useScriptsContext();
-		for (const app of activeApps) {
-			handleStopApp(app.id, app.name);
-		}
-	}
-
 	componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
 		console.error("ErrorBoundary caught an error:", error, errorInfo);
 		this.setState({ error });
+
+		// Stop apps when an error is caught
+		this.props.stopApps();
 	}
 
 	render() {
 		if (this.state.hasError) {
-			this.stopApps();
 			return <ErrorPage error={this.state.error} />;
 		}
 
 		return this.props.children;
 	}
 }
+
+export const ErrorBoundary = (props: ErrorBoundaryProps) => {
+	const { activeApps, handleStopApp } = useScriptsContext();
+
+	const stopApps = () => {
+		for (const app of activeApps) {
+			handleStopApp(app.id, app.name);
+		}
+	};
+
+	return <ErrorBoundaryInner {...props} stopApps={stopApps} />;
+};
