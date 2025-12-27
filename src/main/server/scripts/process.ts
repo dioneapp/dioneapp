@@ -11,7 +11,7 @@ import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
 import pidtree from "pidtree";
-import * as pty from "node-pty";
+import pty from "@lydell/node-pty";
 import type { Server } from "socket.io";
 
 const activeProcesses = new Set<any>();
@@ -330,7 +330,7 @@ export const executeCommand = async (
 		}
 
 		// Use PTY for proper terminal emulation (needed for NVML, conda, etc.)
-		const shell = isWindows 
+		const shell = isWindows
 			? (process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe")
 			: (process.env.SHELL || "/bin/bash");
 
