@@ -1,4 +1,3 @@
-import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import Icon from "@/components/icons/icon";
@@ -8,16 +7,17 @@ import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
-    SortableContext,
-    arrayMove,
-    useSortable,
-    verticalListSortingStrategy,
+	SortableContext,
+	arrayMove,
+	useSortable,
+	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, Clock, Library, Settings, User, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useScriptsContext } from "../contexts/scripts-context";
 
 export default function Sidebar() {
 	const { t } = useTranslation();

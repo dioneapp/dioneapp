@@ -1,4 +1,3 @@
-import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import Icon from "@/components/icons/icon";
@@ -32,6 +31,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useScriptsContext } from "../contexts/scripts-context";
 
 export default function TopbarNav() {
 	const { t } = useTranslation();

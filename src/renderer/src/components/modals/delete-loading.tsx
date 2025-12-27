@@ -1,9 +1,9 @@
-import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useTranslation } from "@/translations/translation-context";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle, Package, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import ProgressBar from "../common/progress-bar";
+import { useScriptsContext } from "../contexts/scripts-context";
 
 type UninstallStep = "confirm" | "progress" | "complete";
 

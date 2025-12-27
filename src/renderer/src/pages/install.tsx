@@ -1,4 +1,3 @@
-import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import WorkspaceEditor from "@/components/editor/editor";
 import ActionsComponent from "@/components/install/actions";
@@ -13,6 +12,7 @@ import sendEvent from "@/utils/events";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useScriptsContext } from "../components/contexts/scripts-context";
 
 export default function Install({
 	id,

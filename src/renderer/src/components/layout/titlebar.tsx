@@ -1,8 +1,8 @@
-import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { Maximize, Minimize as Minimize2, Minus, X } from "lucide-react";
 import { useState } from "react";
+import { useScriptsContext } from "../contexts/scripts-context";
 
 export default function Titlebar() {
 	const { t } = useTranslation();

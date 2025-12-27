@@ -1,8 +1,7 @@
-import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import VariablesModal from "@/components/modals/variables";
 import SettingsTabs, {
-    type TabType,
+	type TabType,
 } from "@/components/settings/settings-tabs";
 import ApplicationsTab from "@/components/settings/tabs/applications-tab";
 import InterfaceTab from "@/components/settings/tabs/interface-tab";
@@ -16,6 +15,7 @@ import { useToast } from "@/utils/use-toast";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useScriptsContext } from "../components/contexts/scripts-context";
 
 export default function Settings() {
 	const [port, setPort] = useState<number | null>(null);

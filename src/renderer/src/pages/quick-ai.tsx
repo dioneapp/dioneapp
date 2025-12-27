@@ -1,17 +1,17 @@
 import Messages from "@/components/ai/messages";
 import Models from "@/components/ai/models";
-import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import { useAIContext } from "@/components/contexts/ai-context";
 import { InstallAIModal } from "@/components/modals/install-ai";
 import { motion } from "framer-motion";
 import {
-    ArrowRight,
-    BrushCleaning,
-    CornerLeftDown,
-    Play,
-    Square,
+	ArrowRight,
+	BrushCleaning,
+	CornerLeftDown,
+	Play,
+	Square,
 } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { useScriptsContext } from "../components/contexts/scripts-context";
 
 export default function QuickAI() {
 	const { logs } = useScriptsContext();
