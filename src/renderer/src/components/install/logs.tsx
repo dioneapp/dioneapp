@@ -1,7 +1,7 @@
 import ProgressBar from "@/components/common/progress-bar";
-import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import TerminalOutput from "@/components/install/terminal-output";
 import { useTranslation } from "@/translations/translation-context";
+import { useScriptsContext } from "../contexts/scripts-context";
 
 import { MAX_TERMINAL_LINES } from "@/utils/terminal";
 import { Copy, ExternalLink, Square } from "lucide-react";

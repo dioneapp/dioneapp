@@ -1,7 +1,7 @@
 import { apiFetch } from "@/utils/api";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useScriptsContext } from "./ScriptsContext";
+import { useScriptsContext } from "./scripts-context";
 import type { AIContextType } from "./types/context-types";
 
 const defaultModel = "gemma3:12b";

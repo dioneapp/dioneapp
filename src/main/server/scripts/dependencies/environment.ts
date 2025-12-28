@@ -215,8 +215,7 @@ export function initDefaultEnv() {
 		];
 		uniqueNvidiaPaths.forEach((nvidiaPath) => {
 			const originalPath = nvidiaPaths.find(
-				(p) =>
-					path.join(p, "nvidia-smi.exe").toLowerCase() === nvidiaPath,
+				(p) => path.join(p, "nvidia-smi.exe").toLowerCase() === nvidiaPath,
 			);
 			if (originalPath) {
 				const fullPath = path.join(originalPath, "nvidia-smi.exe");

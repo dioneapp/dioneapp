@@ -80,7 +80,8 @@ export default function IframeComponent({
 		};
 
 		window.addEventListener("config-updated", handleConfigUpdate);
-		return () => window.removeEventListener("config-updated", handleConfigUpdate);
+		return () =>
+			window.removeEventListener("config-updated", handleConfigUpdate);
 	}, []);
 
 	useEffect(() => {
@@ -122,23 +123,20 @@ export default function IframeComponent({
 	}, []);
 
 	const handleEnterFullscreen = () => {
-		const container = document.getElementById(
-			"iframe-container",
-		) as HTMLElement;
-		if (container && !document.fullscreenElement) {
-			container.requestFullscreen().catch((err) => {
-				console.error(`Error attempting to enable fullscreen: ${err.message}`);
-				return;
-			});
-
-			localStorage.setItem("isFullscreen", "true");
+		try {
+			window.electron.ipcRenderer.send("new-window", iframeSrc);
+		} catch (err) {
+			console.error("Failed to open preview window", err);
 		}
 	};
 
 	const handleExitFullscreen = () => {
-		if (document.fullscreenElement) {
-			document.exitFullscreen();
+		try {
+			window.electron.ipcRenderer.send("close-preview-window");
 			localStorage.removeItem("isFullscreen");
+			setIsFullscreen(false);
+		} catch (err) {
+			console.error("Failed to close preview window", err);
 		}
 	};
 
@@ -146,16 +144,6 @@ export default function IframeComponent({
 		if (!data?.id) return;
 		setShow({ [data.id]: "editor" });
 	};
-
-	useEffect(() => {
-		const handleFullscreenChange = () => {
-			setIsFullscreen(!!document.fullscreenElement);
-		};
-		document.addEventListener("fullscreenchange", handleFullscreenChange);
-		return () => {
-			document.removeEventListener("fullscreenchange", handleFullscreenChange);
-		};
-	}, []);
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
@@ -234,7 +222,9 @@ export default function IframeComponent({
 	};
 
 	return (
-		<div className={`w-full h-full flex flex-col gap-3 p-3 ${layoutMode === "topbar" ? "pt-3" : "pt-9"}`}>
+		<div
+			className={`w-full h-full flex flex-col gap-3 p-3 ${layoutMode === "topbar" ? "pt-3" : "pt-9"}`}
+		>
 			<motion.div
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}

@@ -332,10 +332,8 @@ export const executeCommand = async (
 		// Use PTY for proper terminal emulation (needed for NVML, conda, etc.)
 		// On Windows, use cmd.exe with /Q (quiet mode) to disable command echoing
 		const shell = isWindows
-			? (process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe")
-			: (process.env.SHELL || "/bin/bash");
-		
-		const shellArgs = isWindows ? ["/Q"] : [];
+			? process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe"
+			: process.env.SHELL || "/bin/bash";
 
 		logger.info(`Using shell: ${shell}`);
 		logger.info(`Command: ${command}`);
@@ -739,7 +737,6 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		DS_BUILD_OPS: "0",
 		DS_SKIP_CUDA_CHECK: "1",
 		// fix nvidia-smi
-
 	};
 
 	// avoid re-initializing using cache
@@ -771,4 +768,4 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 	} else {
 		return baseEnv;
 	}
-}
+};

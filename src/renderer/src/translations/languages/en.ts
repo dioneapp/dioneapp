@@ -368,6 +368,42 @@ export const en = {
 		},
 	},
 
+	// install AI modal
+	installAI: {
+		step1: {
+			title: "Meet Dio AI",
+			description:
+				"Your intelligent assistant integrated directly into Dione. Experience a new way to interact with your applications.",
+		},
+		step2: {
+			title: "Features",
+			description: "Everything you need, right here.",
+			features: {
+				free: {
+					title: "Free to use",
+					description: "No subscriptions or hidden fees.",
+				},
+				local: {
+					title: "Local Processing",
+					description: "Runs entirely on your hardware.",
+				},
+				private: {
+					title: "Private & Secure",
+					description: "Your data never leaves your device.",
+				},
+			},
+		},
+		step3: {
+			title: "Install Ollama",
+			description: "Dio AI uses Ollama to work with LLMs within your system.",
+			installing: "Installing...",
+			startingDownload: "Starting download...",
+			installNow: "Install Now",
+		},
+		back: "Back",
+		next: "Next",
+	},
+
 	// delete loading modal
 	deleteLoading: {
 		confirm: {

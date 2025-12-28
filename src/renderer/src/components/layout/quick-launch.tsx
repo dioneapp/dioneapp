@@ -1,4 +1,3 @@
-import { useScriptsContext } from "@/components/contexts/ScriptsContext";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import { useTranslation } from "@/translations/translation-context";
 import { useCustomDrag } from "@/utils/quick-launch/use-custom-drag";
@@ -6,6 +5,7 @@ import { AnimatePresence, type Variants, motion } from "framer-motion";
 import { Plus, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { useScriptsContext } from "../contexts/scripts-context";
 
 export default function QuickLaunch({
 	compactMode,
