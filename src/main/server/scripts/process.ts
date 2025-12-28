@@ -10,8 +10,8 @@ import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-m
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
-import pidtree from "pidtree";
 import pty from "@lydell/node-pty";
+import pidtree from "pidtree";
 import type { Server } from "socket.io";
 
 const activeProcesses = new Set<any>();
