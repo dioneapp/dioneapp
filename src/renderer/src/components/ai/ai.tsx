@@ -200,7 +200,7 @@ export default function AI({
 					{messages && messages.length > 0 && (
 						<div
 							id="logs"
-							className="backdrop-blur-3xl rounded-ml p-4 pb-8 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto"
+							className="backdrop-blur-3xl rounded-xl p-4 pb-8 text-neutral-200 text-sm shadow-lg w-90 max-h-80 overflow-y-auto"
 							style={{ scrollbarWidth: "none" }}
 						>
 							<Messages

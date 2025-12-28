@@ -91,7 +91,7 @@ export default function DeleteLoadingModal({
 					animate={{ scale: 1, opacity: 1 }}
 					exit={{ scale: 0.95, opacity: 0 }}
 					transition={{ duration: 0.3, ease: "easeOut" }}
-					className="flex flex-col p-8 rounded-ml border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden"
+					className="flex flex-col p-8 rounded-xl border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden"
 					style={{ minHeight: "450px", maxHeight: "90vh" }}
 				>
 					{/* Top accent bar */}
@@ -108,7 +108,7 @@ export default function DeleteLoadingModal({
 					/>
 
 					{/* Background glow */}
-					<div className="absolute inset-0 rounded-ml overflow-hidden pointer-events-none">
+					<div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
 						<div
 							className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-xl blur-3xl opacity-15"
 							style={{

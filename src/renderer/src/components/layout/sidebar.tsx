@@ -179,7 +179,7 @@ export default function Sidebar() {
 						className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
 					>
 						<div className="max-w-2xl w-full px-6">
-							<div className="bg-neutral-900/80 border border-white/6 rounded-ml p-6 shadow-2xl backdrop-blur-md text-left">
+							<div className="bg-neutral-900/80 border border-white/6 rounded-xl p-6 shadow-2xl backdrop-blur-md text-left">
 								<div className="flex flex-col gap-3">
 									<div>
 										<h1 className="text-2xl font-semibold text-neutral-50">
@@ -362,7 +362,7 @@ export default function Sidebar() {
 																		config?.compactMode
 																			? "w-12 h-12 rounded-xl flex items-center justify-center"
 																			: "w-full h-10 rounded-xl flex items-center gap-3 px-3" +
-																			" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
+																				" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
 																	}
 																>
 																	<div
@@ -370,7 +370,7 @@ export default function Sidebar() {
 																			config?.compactMode
 																				? "w-8 h-8"
 																				: "w-6 h-6" +
-																				" overflow-hidden shrink-0 rounded-xl"
+																					" overflow-hidden shrink-0 rounded-xl"
 																		}
 																	>
 																		{!app.isLocal ? (
@@ -502,10 +502,10 @@ export default function Sidebar() {
 									) : (
 										<>
 											{!avatarError &&
-												user?.avatar_url &&
-												user?.avatar_url !== "" &&
-												user?.avatar_url !== null &&
-												user?.avatar_url !== undefined ? (
+											user?.avatar_url &&
+											user?.avatar_url !== "" &&
+											user?.avatar_url !== null &&
+											user?.avatar_url !== undefined ? (
 												<img
 													src={user?.avatar_url}
 													alt="user avatar"

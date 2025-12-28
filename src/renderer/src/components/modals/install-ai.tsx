@@ -1,10 +1,11 @@
+import { useTranslation } from "@/translations/translation-context";
 import {
-    ArrowRight,
-    ChevronLeft,
-    Cpu,
-    Loader2,
-    ShieldCheck,
-    Sparkles,
+	ArrowRight,
+	ChevronLeft,
+	Cpu,
+	Loader2,
+	ShieldCheck,
+	Sparkles,
 } from "lucide-react";
 import type { Dispatch, SetStateAction } from "react";
 import ProgressBar from "../common/progress-bar";
@@ -23,10 +24,11 @@ export function InstallAIModal({
 	logs: Record<string, string[]>;
 	downloadOllama: () => void;
 }) {
+	const { t } = useTranslation();
 	return (
 		<div className="absolute inset-0 w-full h-screen bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center">
 			<div className="w-full h-full flex items-center justify-center max-w-2xl mx-auto p-4">
-				<div className="flex flex-col p-8 rounded-ml border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden min-h-[500px]">
+				<div className="flex flex-col p-8 rounded-xl border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden min-h-[500px]">
 					<div className="absolute top-0 left-0 w-full h-1 bg-white opacity-50" />
 
 					<div className="flex-1 flex flex-col items-center justify-center w-full">
@@ -36,11 +38,10 @@ export function InstallAIModal({
 									<Icon name="Dio" className="w-8 h-8 text-white" />
 								</div>
 								<h1 className="text-3xl font-bold text-white tracking-tight">
-									Meet Dio AI
+									{t("installAI.step1.title")}
 								</h1>
 								<p className="text-neutral-400 text-pretty max-w-md text-sm">
-									Your intelligent assistant integrated directly into Dione.
-									Experience a new way to interact with your applications.
+									{t("installAI.step1.description")}
 								</p>
 							</div>
 						)}
@@ -49,10 +50,10 @@ export function InstallAIModal({
 							<div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
 								<div className="text-center mb-8">
 									<h2 className="text-2xl font-bold text-white mb-2">
-										Features
+										{t("installAI.step2.title")}
 									</h2>
 									<p className="text-neutral-400 text-sm">
-										Everything you need, right here.
+										{t("installAI.step2.description")}
 									</p>
 								</div>
 								<div className="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
@@ -62,10 +63,10 @@ export function InstallAIModal({
 											style={{ color: "var(--theme-accent)" }}
 										/>
 										<h3 className="text-white font-medium text-sm">
-											Free to use
+											{t("installAI.step2.features.free.title")}
 										</h3>
 										<p className="text-neutral-500 text-xs">
-											No subscriptions or hidden fees.
+											{t("installAI.step2.features.free.description")}
 										</p>
 									</div>
 									<div className="flex flex-col items-center text-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
@@ -74,10 +75,10 @@ export function InstallAIModal({
 											style={{ color: "var(--theme-accent)" }}
 										/>
 										<h3 className="text-white font-medium text-sm">
-											Local Processing
+											{t("installAI.step2.features.local.title")}
 										</h3>
 										<p className="text-neutral-500 text-xs">
-											Runs entirely on your hardware.
+											{t("installAI.step2.features.local.description")}
 										</p>
 									</div>
 									<div className="flex flex-col items-center text-center gap-2 p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
@@ -86,10 +87,10 @@ export function InstallAIModal({
 											style={{ color: "var(--theme-accent)" }}
 										/>
 										<h3 className="text-white font-medium text-sm">
-											Private & Secure
+											{t("installAI.step2.features.private.title")}
 										</h3>
 										<p className="text-neutral-500 text-xs">
-											Your data never leaves your device.
+											{t("installAI.step2.features.private.description")}
 										</p>
 									</div>
 								</div>
@@ -102,10 +103,10 @@ export function InstallAIModal({
 									<Icon name="Dio" className="w-8 h-8 text-white" />
 								</div>
 								<h1 className="text-3xl font-bold text-white tracking-tight">
-									Install Ollama
+									{t("installAI.step3.title")}
 								</h1>
 								<p className="text-neutral-400 text-pretty max-w-md text-sm mb-8">
-									Dio AI uses Ollama to work with LLMs within your system.
+									{t("installAI.step3.description")}
 								</p>
 
 								{ollamaStatus === "installing" && (
@@ -114,7 +115,7 @@ export function InstallAIModal({
 											mode="indeterminate"
 											label={
 												logs["ollama"]?.[logs["ollama"].length - 1] ||
-												"Starting download..."
+												t("installAI.step3.startingDownload")
 											}
 										/>
 									</div>
@@ -143,7 +144,7 @@ export function InstallAIModal({
 								}`}
 							>
 								<ChevronLeft className="w-4 h-4" />
-								Back
+								{t("installAI.back")}
 							</button>
 
 							{installStep < 3 ? (
@@ -151,7 +152,7 @@ export function InstallAIModal({
 									onClick={() => setInstallStep((s) => Math.min(3, s + 1))}
 									className="flex items-center justify-center border border-white/10 rounded-xl px-6 py-2 font-medium text-black cursor-pointer hover:bg-white/90 transition-all text-sm bg-white gap-2 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)]"
 								>
-									Next
+									{t("installAI.next")}
 									<ArrowRight className="w-4 h-4" />
 								</button>
 							) : (
@@ -164,8 +165,8 @@ export function InstallAIModal({
 									className="flex items-center justify-center border border-white/10 rounded-xl px-6 py-2 font-medium text-black cursor-pointer hover:bg-white/90 transition-all text-sm bg-white gap-2 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] disabled:bg-white/50 disabled:text-black/50 disabled:cursor-not-allowed disabled:shadow-none"
 								>
 									{ollamaStatus === "installing"
-										? "Installing..."
-										: "Install Now"}
+										? t("installAI.step3.installing")
+										: t("installAI.step3.installNow")}
 									{ollamaStatus === "installing" ? (
 										<Loader2 className="w-4 h-4 animate-spin" />
 									) : (

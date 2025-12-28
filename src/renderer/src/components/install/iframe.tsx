@@ -80,7 +80,8 @@ export default function IframeComponent({
 		};
 
 		window.addEventListener("config-updated", handleConfigUpdate);
-		return () => window.removeEventListener("config-updated", handleConfigUpdate);
+		return () =>
+			window.removeEventListener("config-updated", handleConfigUpdate);
 	}, []);
 
 	useEffect(() => {
@@ -143,8 +144,6 @@ export default function IframeComponent({
 		if (!data?.id) return;
 		setShow({ [data.id]: "editor" });
 	};
-
-
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
@@ -223,7 +222,9 @@ export default function IframeComponent({
 	};
 
 	return (
-		<div className={`w-full h-full flex flex-col gap-3 p-3 ${layoutMode === "topbar" ? "pt-3" : "pt-9"}`}>
+		<div
+			className={`w-full h-full flex flex-col gap-3 p-3 ${layoutMode === "topbar" ? "pt-3" : "pt-9"}`}
+		>
 			<motion.div
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
