@@ -122,23 +122,20 @@ export default function IframeComponent({
 	}, []);
 
 	const handleEnterFullscreen = () => {
-		const container = document.getElementById(
-			"iframe-container",
-		) as HTMLElement;
-		if (container && !document.fullscreenElement) {
-			container.requestFullscreen().catch((err) => {
-				console.error(`Error attempting to enable fullscreen: ${err.message}`);
-				return;
-			});
-
-			localStorage.setItem("isFullscreen", "true");
+		try {
+			window.electron.ipcRenderer.send("new-window", iframeSrc);
+		} catch (err) {
+			console.error("Failed to open preview window", err);
 		}
 	};
 
 	const handleExitFullscreen = () => {
-		if (document.fullscreenElement) {
-			document.exitFullscreen();
+		try {
+			window.electron.ipcRenderer.send("close-preview-window");
 			localStorage.removeItem("isFullscreen");
+			setIsFullscreen(false);
+		} catch (err) {
+			console.error("Failed to close preview window", err);
 		}
 	};
 
@@ -147,15 +144,7 @@ export default function IframeComponent({
 		setShow({ [data.id]: "editor" });
 	};
 
-	useEffect(() => {
-		const handleFullscreenChange = () => {
-			setIsFullscreen(!!document.fullscreenElement);
-		};
-		document.addEventListener("fullscreenchange", handleFullscreenChange);
-		return () => {
-			document.removeEventListener("fullscreenchange", handleFullscreenChange);
-		};
-	}, []);
+
 
 	const containerRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
