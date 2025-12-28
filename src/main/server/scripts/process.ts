@@ -10,8 +10,8 @@ import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-m
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
-import pidtree from "pidtree";
 import pty from "@lydell/node-pty";
+import pidtree from "pidtree";
 import type { Server } from "socket.io";
 
 const activeProcesses = new Set<any>();
@@ -364,24 +364,24 @@ export const executeCommand = async (
 		ptyProcess.onData((data: string) => {
 			if (data) {
 				let filteredData = data;
-				
+
 				// Filter out Windows cmd.exe noise
 				if (isWindows) {
 					// Remove Windows version banner and copyright (handles chunked data)
 					filteredData = filteredData
-						.replace(/Microsoft Windows \[Version [^\]]+\][^\n]*/gi, '')
-						.replace(/\(c\) Microsoft Corporation[^\n]*/gi, '')
+						.replace(/Microsoft Windows \[Version [^\]]+\][^\n]*/gi, "")
+						.replace(/\(c\) Microsoft Corporation[^\n]*/gi, "")
 						// Remove cmd.exe path prefixes like ":\WINDOWS\system32\cmd.exe"
-						.replace(/:\\WINDOWS\\system32\\cmd\.exe[^\n]*/gi, '')
+						.replace(/:\\WINDOWS\\system32\\cmd\.exe[^\n]*/gi, "")
 						// Remove prompt lines like "C:\path>" at start of lines
-						.replace(/^[A-Za-z]:\\[^>\r\n]*>/gm, '')
+						.replace(/^[A-Za-z]:\\[^>\r\n]*>/gm, "")
 						// Remove "exit" command echo
-						.replace(/^exit\s*$/gm, '')
+						.replace(/^exit\s*$/gm, "")
 						// Clean up excessive whitespace/newlines
-						.replace(/[\r\n]{3,}/g, '\n\n')
-						.replace(/^\s*[\r\n]+/, '');
+						.replace(/[\r\n]{3,}/g, "\n\n")
+						.replace(/^\s*[\r\n]+/, "");
 				}
-				
+
 				if (filteredData.trim()) {
 					outputData += filteredData;
 					io.to(id).emit(logs, { type: "log", content: filteredData });
