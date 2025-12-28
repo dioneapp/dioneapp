@@ -330,6 +330,7 @@ export const executeCommand = async (
 		}
 
 		// Use PTY for proper terminal emulation (needed for NVML, conda, etc.)
+		// On Windows, use cmd.exe with /Q (quiet mode) to disable command echoing
 		const shell = isWindows
 			? process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe"
 			: process.env.SHELL || "/bin/bash";
@@ -338,7 +339,7 @@ export const executeCommand = async (
 		logger.info(`Command: ${command}`);
 
 		// Spawn shell and write command to it (avoids argument escaping issues)
-		const ptyProcess = pty.spawn(shell, [], {
+		const ptyProcess = pty.spawn(shell, shellArgs, {
 			name: "xterm-256color",
 			cols: 120,
 			rows: 30,
@@ -365,9 +366,30 @@ export const executeCommand = async (
 
 		ptyProcess.onData((data: string) => {
 			if (data) {
-				outputData += data;
-				io.to(id).emit(logs, { type: "log", content: data });
-				options?.onOutput?.(data);
+				let filteredData = data;
+				
+				// Filter out Windows cmd.exe noise
+				if (isWindows) {
+					// Remove Windows version banner and copyright (handles chunked data)
+					filteredData = filteredData
+						.replace(/Microsoft Windows \[Version [^\]]+\][^\n]*/gi, '')
+						.replace(/\(c\) Microsoft Corporation[^\n]*/gi, '')
+						// Remove cmd.exe path prefixes like ":\WINDOWS\system32\cmd.exe"
+						.replace(/:\\WINDOWS\\system32\\cmd\.exe[^\n]*/gi, '')
+						// Remove prompt lines like "C:\path>" at start of lines
+						.replace(/^[A-Za-z]:\\[^>\r\n]*>/gm, '')
+						// Remove "exit" command echo
+						.replace(/^exit\s*$/gm, '')
+						// Clean up excessive whitespace/newlines
+						.replace(/[\r\n]{3,}/g, '\n\n')
+						.replace(/^\s*[\r\n]+/, '');
+				}
+				
+				if (filteredData.trim()) {
+					outputData += filteredData;
+					io.to(id).emit(logs, { type: "log", content: filteredData });
+					options?.onOutput?.(filteredData);
+				}
 				// Don't log every output line to avoid spam
 			}
 		});
