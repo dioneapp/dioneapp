@@ -331,15 +331,12 @@ export const executeCommand = async (
 
 		// Use PTY for proper terminal emulation (needed for NVML, conda, etc.)
 		// On Windows, use cmd.exe with /Q (quiet mode) to disable command echoing
-		const shell = isWindows
+		const shellArgs = isWindows
 			? process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe"
 			: process.env.SHELL || "/bin/bash";
 
-		logger.info(`Using shell: ${shell}`);
-		logger.info(`Command: ${command}`);
-
 		// Spawn shell and write command to it (avoids argument escaping issues)
-		const ptyProcess = pty.spawn(shell, shellArgs, {
+		const ptyProcess = pty.spawn(shellArgs, [], {
 			name: "xterm-256color",
 			cols: 120,
 			rows: 30,
