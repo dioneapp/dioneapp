@@ -28,10 +28,7 @@ const getColorizedLine = (line: string): string => {
 	return line;
 };
 
-export default function TerminalOutput({
-	lines,
-	id,
-}: TerminalOutputProps) {
+export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
 	const terminalRef = useRef<Terminal | null>(null);
 	const fitAddonRef = useRef<FitAddon | null>(null);
@@ -45,8 +42,8 @@ export default function TerminalOutput({
 			allowTransparency: true,
 			disableStdin: true,
 			theme: {
-				background: '#00000000',
-				foreground: '#a3a3a3',
+				background: "#00000000",
+				foreground: "#a3a3a3",
 			},
 			fontSize: 13,
 			scrollback: 5000,
@@ -61,25 +58,31 @@ export default function TerminalOutput({
 		term.open(containerRef.current);
 		fitAddon.fit();
 
-		const canvas = containerRef.current?.querySelector('canvas') as HTMLCanvasElement;
+		const canvas = containerRef.current?.querySelector(
+			"canvas",
+		) as HTMLCanvasElement;
 		if (canvas) {
-			canvas.style.backgroundColor = 'transparent';
-			const ctx = canvas.getContext('2d');
+			canvas.style.backgroundColor = "transparent";
+			const ctx = canvas.getContext("2d");
 			if (ctx) {
 				ctx.clearRect(0, 0, canvas.width, canvas.height);
 			}
 		}
 
-		const viewport = containerRef.current?.querySelector('.xterm-viewport') as HTMLElement;
+		const viewport = containerRef.current?.querySelector(
+			".xterm-viewport",
+		) as HTMLElement;
 		if (viewport) {
-			viewport.style.backgroundColor = 'transparent';
-			viewport.style.scrollbarWidth = 'none';
-			viewport.style.overflowY = 'scroll';
+			viewport.style.backgroundColor = "transparent";
+			viewport.style.scrollbarWidth = "none";
+			viewport.style.overflowY = "scroll";
 		}
 
-		const screen = containerRef.current?.querySelector('.xterm-screen') as HTMLElement;
+		const screen = containerRef.current?.querySelector(
+			".xterm-screen",
+		) as HTMLElement;
 		if (screen) {
-			screen.style.backgroundColor = 'transparent';
+			screen.style.backgroundColor = "transparent";
 		}
 
 		terminalRef.current = term;
@@ -92,7 +95,6 @@ export default function TerminalOutput({
 			lastProcessedIndex.current = 0;
 		};
 	}, [id]);
-
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -112,9 +114,7 @@ export default function TerminalOutput({
 		}
 		const newLines = lines.slice(lastProcessedIndex.current);
 		if (newLines.length > 0) {
-			const chunk = newLines
-				.map(getColorizedLine)
-				.join("\r\n");
+			const chunk = newLines.map(getColorizedLine).join("\r\n");
 
 			const wasAtBottom =
 				term.buffer.active.cursorY >= term.buffer.active.length - 2;

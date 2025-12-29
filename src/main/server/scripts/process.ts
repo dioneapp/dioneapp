@@ -1,7 +1,3 @@
-import { exec, spawn } from "node:child_process";
-import fs from "node:fs";
-import { arch, platform as getPlatform } from "node:os";
-import path from "node:path";
 import {
 	getAllValues,
 	initDefaultEnv,
@@ -11,6 +7,10 @@ import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import { useGit } from "@/server/utils/useGit";
 import pty from "@lydell/node-pty";
+import { exec, spawn } from "node:child_process";
+import fs from "node:fs";
+import { arch, platform as getPlatform } from "node:os";
+import path from "node:path";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
 
@@ -24,6 +24,63 @@ const registerProcess = (appId: string, pid: number) => {
 	const set = processesByApp.get(appId) ?? new Set<number>();
 	set.add(pid);
 	processesByApp.set(appId, set);
+};
+
+// Helpers to avoid leaking full filesystem paths in logs
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+const sanitizePathForLog = (p?: string) => {
+	if (!p) return "";
+	try {
+		return path.basename(p) || p;
+	} catch (e) {
+		return p;
+	}
+};
+const maskPathsInLine = (line: string, workingDir?: string) => {
+	let out = line;
+	// remove exact working dir occurrences (replace with basename)
+	if (workingDir) {
+		try {
+			const esc = escapeRegExp(workingDir);
+			out = out.replace(new RegExp(esc, "g"), sanitizePathForLog(workingDir));
+		} catch (e) {
+			// ignore
+		}
+	}
+
+	// shorten absolute Windows paths (e.g. C:\some\path\to\file)
+	const windowsAbs = /[A-Za-z]:\\(?:[^\\\r\n]+\\)*[^\\\r\n]*/g;
+	// shorten POSIX absolute paths (/usr/local/bin/...)
+	const posixAbs = /\/(?:[^\/\r\n]+\/)*[^\/\r\n]*/g;
+
+	const shortenPathForLog = (p: string) => {
+		try {
+			const parts = p.split(/[\\\/]+/).filter(Boolean);
+			const isFile = /\.[a-zA-Z0-9]+$/.test(parts[parts.length - 1] || "");
+			const take = isFile ? 3 : 2;
+			const slice = parts.slice(-take);
+			return slice.join(path.sep);
+		} catch (e) {
+			return path.basename(p);
+		}
+	};
+
+	out = out.replace(windowsAbs, (m) => shortenPathForLog(m));
+	// only apply posix replacement if the match looks like a path with at least 2 segments
+	out = out.replace(posixAbs, (m) => {
+		if (m.split("/").filter(Boolean).length > 1) return shortenPathForLog(m);
+		return m;
+	});
+
+	// strip Windows drive-style prompt prefixes like "C:\\some\\path>"
+	out = out.replace(/^[A-Za-z]:\\[^>\r\n]*>/gm, "");
+
+	// strip any leading shell prompt that ends with '>' (e.g. "appdir>")
+	out = out.replace(/^[^>\r\n]{1,120}>\s*/gm, "");
+
+	// also strip common echoed command prefixes like "> "
+	out = out.replace(/^[>\s]+/, "");
+	return out;
 };
 
 const unregisterProcess = (appId: string, pid: number) => {
@@ -319,7 +376,7 @@ export const executeCommand = async (
 		const currentPlatform = getPlatform();
 		const isWindows = currentPlatform === "win32";
 
-		logger.info(`Working on directory: ${workingDir}`);
+		logger.info(`Working on directory: ${sanitizePathForLog(workingDir)}`);
 
 		// handle git commands on non-Windows
 		if (!isWindows && command.startsWith("git ")) {
@@ -329,23 +386,21 @@ export const executeCommand = async (
 			}
 		}
 
-		// Use PTY for proper terminal emulation (needed for NVML, conda, etc.)
-		// On Windows, use cmd.exe with /Q (quiet mode) to disable command echoing
-		const shellArgs = isWindows
+		const shell = isWindows
 			? process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe"
 			: process.env.SHELL || "/bin/bash";
 
-		// Spawn shell and write command to it (avoids argument escaping issues)
-		const ptyProcess = pty.spawn(shellArgs, [], {
+		const shellArgs = isWindows ? ["/Q", "/D"] : [];
+
+		const ptyProcess = pty.spawn(shell, shellArgs, {
 			name: "xterm-256color",
 			cols: 200,
 			rows: 100,
 			cwd: workingDir,
-			env: enhancedEnv as { [key: string]: string },
+			env: enhancedEnv as Record<string, string>,
 		});
 
 		const pid = ptyProcess.pid;
-
 
 		// Write the command to the shell's stdin, then exit
 		if (isWindows) {
@@ -357,19 +412,23 @@ export const executeCommand = async (
 		if (pid) {
 			activeProcesses.add(ptyProcess);
 			registerProcess(id, pid);
-			logger.info(`Started PTY process (PID: ${pid}): ${command}`);
+			logger.info(`Started PTY process (PID: ${pid}): ${maskPathsInLine(command, workingDir)}`);
 		}
 
-		logger.info(`Executing (PTY): ${command}`);
+		logger.info(`Executing (PTY): ${maskPathsInLine(command, workingDir)}`);
 
 		let buffer = "";
 
 		const cleanANSI = (text: string) =>
 			text
-				.replace(/\x1b\[[0-9;]*[JK]/g, '')
-				.replace(/\x1b\[[0-9;]*[HfABCD]/g, '')
-				.replace(/\x1b\[[su]/g, '')
-				.replace(/Microsoft Windows \[Version [^\]]+\][^\n]*/gi, "");
+				.replace(/\x1b\[[0-9;]*[JK]/g, "")
+				.replace(/\x1b\[[0-9;]*[HfABCD]/g, "")
+				.replace(/\x1b\[[su]/g, "")
+				.replace(/Microsoft Windows \[Version [^\]]+\][^\n]*/gi, "")
+				.replace(
+					/(?:Copyright\s*\(c\)\s*|\(c\)\s*)?Microsoft\s*Corporation\.?\s*All\s*rights\s*reserved\.?/gi,
+					"",
+				);
 
 		ptyProcess.onData((data: string) => {
 			buffer += data;
@@ -380,13 +439,14 @@ export const executeCommand = async (
 				const cleanLine = cleanANSI(line);
 				buffer = buffer.slice(index + 1);
 
+				const masked = maskPathsInLine(cleanLine, workingDir);
+				options?.onOutput?.(masked);
 				io.to(id).emit(logs, {
 					type: "log",
-					content: cleanLine,
+					content: masked,
 				});
 			}
 		});
-
 
 		return new Promise<{ code: number; stdout: string; stderr: string }>(
 			(resolve) => {
@@ -529,10 +589,10 @@ export const executeCommands = async (
 				: path.join(currentWorkingDir, targetDir);
 
 			if (!fs.existsSync(newWorkingDir)) {
-				logger.error(`Directory does not exist: ${newWorkingDir}`);
+				logger.error(`Directory does not exist: ${sanitizePathForLog(newWorkingDir)}`);
 				io.to(id).emit("installUpdate", {
 					type: "log",
-					content: `ERROR: Directory does not exist: ${newWorkingDir}\n`,
+					content: `ERROR: Directory does not exist: ${sanitizePathForLog(newWorkingDir)}\n`,
 				});
 				io.to(id).emit("installUpdate", {
 					type: "status",
@@ -543,10 +603,11 @@ export const executeCommands = async (
 			}
 
 			currentWorkingDir = newWorkingDir;
-			logger.info(`Changed working directory to: ${currentWorkingDir}`);
+			const sanitized = sanitizePathForLog(currentWorkingDir);
+			logger.info(`Changed working directory to: ${sanitized}`);
 			io.to(id).emit("installUpdate", {
 				type: "log",
-				content: `INFO: Changed working directory to: ${currentWorkingDir}\n`,
+				content: `INFO: Changed working directory to: ${sanitized}\n`,
 			});
 
 			// remove the cd command

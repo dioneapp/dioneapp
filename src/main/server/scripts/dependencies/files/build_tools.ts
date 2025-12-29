@@ -1,12 +1,12 @@
-import child_process from "node:child_process";
-import fs from "node:fs";
-import path from "path";
 import {
 	ensureBuildToolsInstalled,
 	verifyBuildToolsPaths,
 } from "@/server/scripts/dependencies/utils/build-tools";
 import { getOS } from "@/server/scripts/dependencies/utils/system";
 import logger from "@/server/utils/logger";
+import child_process from "node:child_process";
+import fs from "node:fs";
+import path from "path";
 import type { Server } from "socket.io";
 
 const depName = "build_tools";
@@ -170,7 +170,14 @@ export async function uninstall(binFolder: string): Promise<void> {
 
 		const spawnResult = child_process.spawnSync(
 			"powershell.exe",
-			["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", psCommand],
+			[
+				"-NoLogo",
+				"-NoProfile",
+				"-ExecutionPolicy",
+				"Bypass",
+				"-Command",
+				psCommand,
+			],
 			{
 				stdio: "inherit",
 				shell: false,

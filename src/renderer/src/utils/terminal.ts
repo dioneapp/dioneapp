@@ -34,7 +34,13 @@ export class TerminalNormalizer {
 				continue;
 			}
 			const code = ch.charCodeAt(0);
-			if (code < 32 && ch !== "\t" && ch !== "\r" && ch !== "\b" && code !== 27) {
+			if (
+				code < 32 &&
+				ch !== "\t" &&
+				ch !== "\r" &&
+				ch !== "\b" &&
+				code !== 27
+			) {
 				continue;
 			}
 			this.state.current += ch;
@@ -67,5 +73,5 @@ export class TerminalNormalizer {
 }
 
 export function sanitizeForClipboard(lines: string[]): string {
-	return lines.map(line => line.replace(ANSI_REGEX, "")).join("\n");
+	return lines.map((line) => line.replace(ANSI_REGEX, "")).join("\n");
 }

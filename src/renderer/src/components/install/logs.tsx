@@ -31,14 +31,12 @@ export default function LogsComponent({
 
 	const processedLogs = useMemo(() => {
 		return logs?.[appId] || [];
-	}, [logs, appId])
+	}, [logs, appId]);
 
 	return (
 		<div className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden">
 			<div className="flex flex-col gap-2 p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-hidden w-full bg-[#080808]/40 hide-scrollbar">
-				<TerminalOutput
-					lines={processedLogs}
-				/>
+				<TerminalOutput lines={processedLogs} />
 				{progress &&
 					progress[appId]?.steps &&
 					progress[appId].steps.length > 1 &&

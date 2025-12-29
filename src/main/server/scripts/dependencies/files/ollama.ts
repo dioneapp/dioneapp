@@ -1,6 +1,3 @@
-import { execFile, spawn } from "child_process";
-import fs, { createWriteStream } from "fs";
-import path from "path";
 import {
 	addValue,
 	getAllValues,
@@ -8,6 +5,9 @@ import {
 } from "@/server/scripts/dependencies/environment";
 import { getArch, getOS } from "@/server/scripts/dependencies/utils/system";
 import logger from "@/server/utils/logger";
+import { execFile, spawn } from "child_process";
+import fs, { createWriteStream } from "fs";
+import path from "path";
 import type { Server } from "socket.io";
 
 const depName = "ollama";
@@ -124,6 +124,8 @@ export async function install(
 		windows: {
 			file: "powershell",
 			args: [
+				"-NoLogo",
+				"-NoProfile",
 				"-Command",
 				`Expand-Archive -Path '${exe}' -DestinationPath '${depFolder}' -Force`,
 			],

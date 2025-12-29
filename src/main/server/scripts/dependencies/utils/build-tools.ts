@@ -1,3 +1,4 @@
+import logger from "@/server/utils/logger";
 import { execSync, spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
@@ -8,7 +9,6 @@ import os from "node:os";
 import path from "node:path";
 import { pipeline as streamPipeline } from "node:stream/promises";
 import { setTimeout as delay } from "node:timers/promises";
-import logger from "@/server/utils/logger";
 
 type LogLevel = "info" | "warn" | "error";
 
@@ -127,7 +127,7 @@ function isProcessElevated(): boolean {
 	if (!isWindows()) return true;
 	try {
 		const output = execSync(
-			'powershell -NoProfile -Command "[Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent().IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)"',
+			'powershell -NoLogo -NoProfile -Command "[Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent().IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)"',
 			{ encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
 		);
 		return output.trim().toLowerCase() === "true";
@@ -283,7 +283,7 @@ function unblockFile(filePath: string, onLog?: LogSink) {
 	const command = `try { Unblock-File -Path "${escapeForPowerShellDoubleQuotes(filePath)}" -ErrorAction SilentlyContinue } catch { }`;
 
 	try {
-		spawnSync("powershell", ["-NoProfile", "-Command", command], {
+		spawnSync("powershell", ["-NoLogo", "-NoProfile", "-Command", command], {
 			windowsHide: true,
 			stdio: "ignore",
 		});
@@ -323,10 +323,14 @@ foreach ($mode in $accessModes) {
 exit 1
 `.trim();
 
-		const result = spawnSync("powershell", ["-NoProfile", "-Command", script], {
-			windowsHide: true,
-			encoding: "utf8",
-		});
+		const result = spawnSync(
+			"powershell",
+			["-NoLogo", "-NoProfile", "-Command", script],
+			{
+				windowsHide: true,
+				encoding: "utf8",
+			},
+		);
 
 		const exitCode =
 			typeof result.status === "number" ? result.status : result.signal ? 1 : 0;
@@ -787,6 +791,7 @@ try {
 
 	const argsBase64 = encodeArgumentsToBase64(options.args);
 	const psArguments = [
+		"-NoLogo",
 		"-NoProfile",
 		"-ExecutionPolicy",
 		"Bypass",
@@ -849,7 +854,7 @@ function ensureDiskSpace(targetPath: string, onLog?: LogSink): boolean {
 		const root = path.parse(targetPath).root;
 		const driveLetter =
 			root.replace(/\\/g, "").replace(/\//g, "").charAt(0) || "C";
-		const command = `powershell -NoProfile -Command \"(Get-PSDrive -Name '${driveLetter}').Free\"`;
+		const command = `powershell -NoLogo -NoProfile -Command \"(Get-PSDrive -Name '${driveLetter}').Free\"`;
 		const output = execSync(command, {
 			encoding: "utf8",
 			stdio: ["ignore", "pipe", "ignore"],
@@ -920,7 +925,7 @@ foreach ($name in $names) {
 Start-Sleep -Milliseconds 200`.trim();
 
 	try {
-		spawnSync("powershell", ["-NoProfile", "-Command", script], {
+		spawnSync("powershell", ["-NoLogo", "-NoProfile", "-Command", script], {
 			windowsHide: true,
 			stdio: "ignore",
 		});

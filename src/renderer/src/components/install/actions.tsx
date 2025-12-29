@@ -254,10 +254,10 @@ export default function ActionsComponent({
 											style={
 												saved
 													? {
-														color: "var(--theme-accent)",
-														backgroundColor:
-															"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
-													}
+															color: "var(--theme-accent)",
+															backgroundColor:
+																"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+														}
 													: {}
 											}
 										>
@@ -266,9 +266,9 @@ export default function ActionsComponent({
 												style={
 													saved
 														? {
-															fill: "var(--theme-accent)",
-															color: "var(--theme-accent)",
-														}
+																fill: "var(--theme-accent)",
+																color: "var(--theme-accent)",
+															}
 														: {}
 												}
 											/>
@@ -330,14 +330,16 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${installed
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
+												installed
 													? "bg-green-500/20 text-green-400 border border-green-500/30"
 													: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
-												}`}
+											}`}
 										>
 											<div
-												className={`w-1 h-1 rounded-xl ${installed ? "bg-green-400" : "bg-neutral-400"
-													}`}
+												className={`w-1 h-1 rounded-xl ${
+													installed ? "bg-green-400" : "bg-neutral-400"
+												}`}
 											/>
 											<span className="hidden sm:inline">
 												{installed

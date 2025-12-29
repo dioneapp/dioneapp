@@ -146,16 +146,20 @@ iframe::-webkit-scrollbar-thumb {
 }
 
 #logs {
-	-webkit-mask-image: linear-gradient(to bottom,
-			transparent 0%,
-			black 2%,
-			black 99%,
-			transparent 100%);
-	mask-image: linear-gradient(to bottom,
-			transparent 0%,
-			black 2%,
-			black 99%,
-			transparent 100%);
+	-webkit-mask-image: linear-gradient(
+		to bottom,
+		transparent 0%,
+		black 2%,
+		black 99%,
+		transparent 100%
+	);
+	mask-image: linear-gradient(
+		to bottom,
+		transparent 0%,
+		black 2%,
+		black 99%,
+		transparent 100%
+	);
 }
 
 .overflow-y-overlay {
@@ -167,7 +171,8 @@ iframe::-webkit-scrollbar-thumb {
 	border: none !important;
 	box-shadow: none !important;
 	outline: none !important;
-	transition: opacity 0.8s cubic-bezier(0.42, 0, 0.58, 1), transform 0.8s cubic-bezier(0.42, 0, 0.58, 1);
+	transition: opacity 0.8s cubic-bezier(0.42, 0, 0.58, 1), transform 0.8s
+		cubic-bezier(0.42, 0, 0.58, 1);
 	opacity: 1;
 	transform: scale(1);
 }
