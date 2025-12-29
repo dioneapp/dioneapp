@@ -1,90 +1,137 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { Terminal } from "@xterm/xterm";
+import { FitAddon } from "@xterm/addon-fit";
+import "@xterm/xterm/css/xterm.css";
 
 interface TerminalOutputProps {
 	lines: string[];
 	id?: string;
-	className?: string;
-	containerClassName?: string;
-	autoScroll?: boolean;
 }
 
-const removePrefix = (line: string): string => {
-	return line.replace(/^\s*(INFO:|WARN:|OUT:)\s*/i, "");
-};
+// colorize lines based on content
+const getColorizedLine = (line: string): string => {
+	if (line.includes("\x1b[")) return line;
 
-const getLineStyle = (line: string): string => {
-	const lower = line.toLowerCase();
-	if (lower.includes("warn"))
-		return "text-yellow-400/90 bg-gradient-to-r from-yellow-500/8 to-transparent border-l-2 border-yellow-500/60 pl-3 py-1 my-0.5 rounded-r-xl";
-	if (lower.includes("error") || lower.includes("fail"))
-		return "text-red-400/90 bg-gradient-to-r from-red-500/8 to-transparent border-l-2 border-red-500/60 pl-3 py-1 my-0.5 rounded-r-xl";
-	if (lower.includes("success") || lower.includes("complete"))
-		return "text-green-400/90 bg-gradient-to-r from-green-500/8 to-transparent border-l-2 border-green-500/60 pl-3 py-1 my-0.5 rounded-r-xl";
-	if (lower.includes("info"))
-		return "text-blue-400/90 bg-gradient-to-r from-blue-500/8 to-transparent border-l-2 border-blue-500/60 pl-3 py-1 my-0.5 rounded-r-xl";
-	return "text-neutral-400/90 hover:bg-white/[0.03] transition-all duration-150 py-0.5 px-2 rounded-xl";
+	const rules = [
+		{ regex: /\bwarn(ing)?\b/i, color: 33 },
+		{ regex: /\berror|fail(ed)?\b/i, color: 31 },
+		{ regex: /\bsuccess|complete(d)?\b/i, color: 32 },
+		{ regex: /\binfo\b/i, color: 34 },
+	];
+
+	for (const { regex, color } of rules) {
+		if (regex.test(line)) {
+			return `\x1b[${color}m${line}\x1b[0m`;
+		}
+	}
+
+	return line;
 };
 
 export default function TerminalOutput({
 	lines,
 	id,
-	className,
-	containerClassName,
-	autoScroll = true,
 }: TerminalOutputProps) {
 	const containerRef = useRef<HTMLDivElement | null>(null);
-	const prevLengthRef = useRef<number>(0);
-
-	const processedLines = useMemo(() => {
-		if (!Array.isArray(lines)) return [];
-		return lines
-			.filter((l) => !l.trim().startsWith("warnings.warn("))
-			.map((l, i) => {
-				const content = removePrefix(l.trimStart());
-				const style = getLineStyle(l);
-				return {
-					key: i,
-					content,
-					style,
-				};
-			});
-	}, [lines]);
+	const terminalRef = useRef<Terminal | null>(null);
+	const fitAddonRef = useRef<FitAddon | null>(null);
+	const lastProcessedIndex = useRef<number>(0);
 
 	useEffect(() => {
-		const el = containerRef.current;
-		if (!el || !autoScroll) return;
+		if (!containerRef.current) return;
 
-		const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 48;
-		const grew = lines.length >= prevLengthRef.current;
+		const term = new Terminal({
+			convertEol: true,
+			allowTransparency: true,
+			disableStdin: true,
+			theme: {
+				background: '#00000000',
+				foreground: '#a3a3a3',
+			},
+			fontSize: 13,
+			scrollback: 5000,
+			lineHeight: 1.4,
+		});
 
-		if (nearBottom || grew) el.scrollTop = el.scrollHeight;
-		prevLengthRef.current = lines.length;
-	}, [lines, autoScroll]);
+		const fitAddon = new FitAddon();
+		term.loadAddon(fitAddon);
+		term.blur();
+		term.element?.setAttribute("tabindex", "-1");
+
+		term.open(containerRef.current);
+		fitAddon.fit();
+
+		const canvas = containerRef.current?.querySelector('canvas') as HTMLCanvasElement;
+		if (canvas) {
+			canvas.style.backgroundColor = 'transparent';
+			const ctx = canvas.getContext('2d');
+			if (ctx) {
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+			}
+		}
+
+		const viewport = containerRef.current?.querySelector('.xterm-viewport') as HTMLElement;
+		if (viewport) {
+			viewport.style.backgroundColor = 'transparent';
+			viewport.style.scrollbarWidth = 'none';
+			viewport.style.overflowY = 'scroll';
+		}
+
+		const screen = containerRef.current?.querySelector('.xterm-screen') as HTMLElement;
+		if (screen) {
+			screen.style.backgroundColor = 'transparent';
+		}
+
+		terminalRef.current = term;
+		fitAddonRef.current = fitAddon;
+
+		return () => {
+			term.dispose();
+			terminalRef.current = null;
+			fitAddonRef.current = null;
+			lastProcessedIndex.current = 0;
+		};
+	}, [id]);
+
+
+	useEffect(() => {
+		const handleResize = () => {
+			fitAddonRef.current?.fit();
+		};
+		window.addEventListener("resize", handleResize);
+		return () => window.removeEventListener("resize", handleResize);
+	}, []);
+
+	useEffect(() => {
+		const term = terminalRef.current;
+		if (!term) return;
+
+		if (lines.length < lastProcessedIndex.current) {
+			term.reset();
+			lastProcessedIndex.current = 0;
+		}
+		const newLines = lines.slice(lastProcessedIndex.current);
+		if (newLines.length > 0) {
+			const chunk = newLines
+				.map(getColorizedLine)
+				.join("\r\n");
+
+			const wasAtBottom =
+				term.buffer.active.cursorY >= term.buffer.active.length - 2;
+
+			term.write(chunk + "\r\n");
+
+			if (wasAtBottom) {
+				term.scrollToBottom();
+			}
+
+			lastProcessedIndex.current = lines.length;
+		}
+	}, [lines]);
 
 	return (
-		<div
-			id={id}
-			ref={containerRef}
-			role="log"
-			aria-live="polite"
-			aria-relevant="additions text"
-			className={
-				containerClassName ??
-				"mx-auto max-h-96 overflow-auto hide-scrollbar select-text bg-neutral-950 rounded-xl p-4 border border-neutral-800"
-			}
-		>
-			<pre
-				className={
-					className ??
-					"whitespace-pre-wrap break-words text-justify font-mono text-[13px] leading-relaxed space-y-1"
-				}
-			>
-				{processedLines.map((line) => (
-					<div key={line.key} className={`${line.style} group relative`}>
-						{line.content}
-					</div>
-				))}
-			</pre>
+		<div id={id} className="mb-2">
+			<div ref={containerRef} className="h-full w-full" />
 		</div>
 	);
 }

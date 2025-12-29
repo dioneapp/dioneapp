@@ -338,13 +338,14 @@ export const executeCommand = async (
 		// Spawn shell and write command to it (avoids argument escaping issues)
 		const ptyProcess = pty.spawn(shellArgs, [], {
 			name: "xterm-256color",
-			cols: 120,
-			rows: 30,
+			cols: 200,
+			rows: 100,
 			cwd: workingDir,
 			env: enhancedEnv as { [key: string]: string },
 		});
 
 		const pid = ptyProcess.pid;
+
 
 		// Write the command to the shell's stdin, then exit
 		if (isWindows) {
@@ -361,35 +362,31 @@ export const executeCommand = async (
 
 		logger.info(`Executing (PTY): ${command}`);
 
+		let buffer = "";
+
+		const cleanANSI = (text: string) =>
+			text
+				.replace(/\x1b\[[0-9;]*[JK]/g, '')
+				.replace(/\x1b\[[0-9;]*[HfABCD]/g, '')
+				.replace(/\x1b\[[su]/g, '')
+				.replace(/Microsoft Windows \[Version [^\]]+\][^\n]*/gi, "");
+
 		ptyProcess.onData((data: string) => {
-			if (data) {
-				let filteredData = data;
+			buffer += data;
 
-				// Filter out Windows cmd.exe noise
-				if (isWindows) {
-					// Remove Windows version banner and copyright (handles chunked data)
-					filteredData = filteredData
-						.replace(/Microsoft Windows \[Version [^\]]+\][^\n]*/gi, "")
-						.replace(/\(c\) Microsoft Corporation[^\n]*/gi, "")
-						// Remove cmd.exe path prefixes like ":\WINDOWS\system32\cmd.exe"
-						.replace(/:\\WINDOWS\\system32\\cmd\.exe[^\n]*/gi, "")
-						// Remove prompt lines like "C:\path>" at start of lines
-						.replace(/^[A-Za-z]:\\[^>\r\n]*>/gm, "")
-						// Remove "exit" command echo
-						.replace(/^exit\s*$/gm, "")
-						// Clean up excessive whitespace/newlines
-						.replace(/[\r\n]{3,}/g, "\n\n")
-						.replace(/^\s*[\r\n]+/, "");
-				}
+			let index;
+			while ((index = buffer.indexOf("\n")) !== -1) {
+				const line = buffer.slice(0, index + 1);
+				const cleanLine = cleanANSI(line);
+				buffer = buffer.slice(index + 1);
 
-				if (filteredData.trim()) {
-					outputData += filteredData;
-					io.to(id).emit(logs, { type: "log", content: filteredData });
-					options?.onOutput?.(filteredData);
-				}
-				// Don't log every output line to avoid spam
+				io.to(id).emit(logs, {
+					type: "log",
+					content: cleanLine,
+				});
 			}
 		});
+
 
 		return new Promise<{ code: number; stdout: string; stderr: string }>(
 			(resolve) => {
@@ -733,7 +730,10 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		// set to "1" to skip CUDA check
 		DS_BUILD_OPS: "0",
 		DS_SKIP_CUDA_CHECK: "1",
-		// fix nvidia-smi
+		// fix ansi
+		TERM: "xterm",
+		COLUMNS: "200",
+		LINES: "100",
 	};
 
 	// avoid re-initializing using cache

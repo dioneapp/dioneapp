@@ -5,7 +5,7 @@ import { useScriptsContext } from "../contexts/scripts-context";
 
 import { MAX_TERMINAL_LINES } from "@/utils/terminal";
 import { Copy, ExternalLink, Square } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 interface LogsProps {
 	logs: Record<string, string[]>;
@@ -31,21 +31,13 @@ export default function LogsComponent({
 
 	const processedLogs = useMemo(() => {
 		return logs?.[appId] || [];
-	}, [logs, appId]);
-
-	useEffect(() => {
-		console.log(progress?.[appId]?.steps?.length);
-	}, [progress?.[appId]?.steps?.length]);
+	}, [logs, appId])
 
 	return (
 		<div className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden">
-			<div className="p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-auto w-full bg-[#080808]/40 hide-scrollbar">
+			<div className="flex flex-col gap-2 p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-hidden w-full bg-[#080808]/40 hide-scrollbar">
 				<TerminalOutput
-					id="logs"
 					lines={processedLogs}
-					containerClassName="mx-auto max-h-96 hide-scrollbar overflow-auto pointer-events-auto select-text pb-4"
-					className="whitespace-pre-wrap break-words font-mono text-xs text-left flex gap-1 flex-col text-neutral-400 leading-5"
-					autoScroll
 				/>
 				{progress &&
 					progress[appId]?.steps &&

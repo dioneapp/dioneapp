@@ -159,9 +159,9 @@ function App() {
 					{pathname !== "/first-time" && (
 						<>{layoutMode === "sidebar" ? <Sidebar /> : <TopbarNav />}</>
 					)}
-					<div className="flex-1 h-full overflow-x-hidden overflow-y-overlay">
+					<div className="flex-1 w-full h-full overflow-x-hidden overflow-y-overlay">
 						<div
-							className="page page-transition h-full"
+							className="page page-transition w-full h-full"
 							key={location.pathname}
 						>
 							<ErrorBoundary>
