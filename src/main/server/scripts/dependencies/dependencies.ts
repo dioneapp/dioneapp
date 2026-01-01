@@ -20,8 +20,12 @@ export function readDioneConfig(filePath: string): any {
 
 export async function checkOneDependency(
 	depName: string,
-	binFolder: string,
 ): Promise<{ installed: boolean; reason: string }> {
+	const config = readConfig();
+	const binFolder = path.join(
+		config?.defaultBinFolder || path.join(app.getPath("userData")),
+		"bin",
+	);
 	const entry = dependencyRegistry[depName];
 	if (!entry) {
 		return { installed: false, reason: "not-installed" };

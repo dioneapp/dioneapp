@@ -299,9 +299,25 @@ export async function install(
 									`${condaW} tos accept --channel main && ${condaW} init --all`,
 									{ cwd: depFolder, env: ENVIRONMENT },
 								);
+								execSync(
+									`${condaW} clean -y --all`,
+									{ cwd: depFolder, env: ENVIRONMENT },
+								);
+								execSync(
+									`${condaW} install -y -c conda-forge`,
+									{ cwd: depFolder, env: ENVIRONMENT },
+								);
 							} else {
 								execSync(
 									`${condaU} tos accept --channel main && ${condaU} init --all`,
+									{ cwd: depFolder, env: ENVIRONMENT },
+								);
+								execSync(
+									`${condaU} clean -y --all`,
+									{ cwd: depFolder, env: ENVIRONMENT },
+								);
+								execSync(
+									`${condaU} install -y -c conda-forge`,
 									{ cwd: depFolder, env: ENVIRONMENT },
 								);
 							}

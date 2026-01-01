@@ -2,7 +2,7 @@ import fs from "node:fs";
 import https from "node:https";
 import path from "node:path";
 import { checkDependencies } from "@/server/scripts/dependencies/dependencies";
-import executeInstallation from "@/server/scripts/execute";
+import executeInstallation, { checkConda } from "@/server/scripts/execute";
 import { checkSystem } from "@/server/scripts/system";
 import { resolveScriptPaths } from "@/server/scripts/utils/paths";
 import { supabase } from "@/server/utils/database";
@@ -205,6 +205,13 @@ export function downloadFile(
 							content: "All system requirements are met.\n",
 						});
 					}
+
+					// check if conda is installed
+					const condaCheck = await checkConda(io, id);
+					if (!condaCheck) {
+						return;
+					}
+					logger.info(`Conda CHECK: ${JSON.stringify(condaCheck)}`);
 
 					// download finished, now checking dependencies
 					const result = await checkDependencies(FILE_PATH);

@@ -700,6 +700,32 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		initDefaultEnv();
 	}
 
+
+	if (ENVIRONMENT.CONDA_ROOT || ENVIRONMENT.CONDA_EXE) {
+		const separator = process.platform === "win32" ? ";" : ":";
+		const currentPath = ENVIRONMENT.PATH || "";
+		const prependPath = (p: string, paths: string) => {
+			if (!p) return paths;
+			return p + separator + paths;
+		};
+
+		let newPath = currentPath;
+		// Add standard conda bin paths to the front
+		if (process.platform === "win32") {
+			if (ENVIRONMENT.CONDA_ROOT) {
+				newPath = prependPath(path.join(ENVIRONMENT.CONDA_ROOT, "Scripts"), newPath);
+				newPath = prependPath(path.join(ENVIRONMENT.CONDA_ROOT, "Library", "bin"), newPath);
+				newPath = prependPath(path.join(ENVIRONMENT.CONDA_ROOT), newPath);
+			}
+		} else {
+			if (ENVIRONMENT.CONDA_ROOT) {
+				newPath = prependPath(path.join(ENVIRONMENT.CONDA_ROOT, "bin"), newPath);
+			}
+		}
+
+		ENVIRONMENT.PATH = newPath;
+	}
+
 	// command options with enhanced environment for build tools
 	const baseEnv = {
 		...ENVIRONMENT,
