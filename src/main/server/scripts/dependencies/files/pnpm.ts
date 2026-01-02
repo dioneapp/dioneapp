@@ -5,6 +5,9 @@ import {
 	runRemove,
 
 } from "../utils/base-root";
+import { addValue, removeKey, removeValue } from "../environment";
+import path from "path";
+import fs from "fs";
 
 const depName = "pnpm";
 
@@ -36,10 +39,30 @@ export async function install(
 			type: "log",
 			content: `${depName} installed successfully via npm`,
 		});
+
+		const cacheDir = path.join(binFolder, "cache", depName);
+		const depFolder = path.join(binFolder, depName);
+		if (!fs.existsSync(cacheDir)) {
+			fs.mkdirSync(cacheDir, { recursive: true });
+		}
+		if (!fs.existsSync(depFolder)) {
+			fs.mkdirSync(depFolder, { recursive: true });
+		}
+		addValue("PATH", path.join(depFolder));
+		addValue("NPM_CONFIG_CACHE", path.join(cacheDir));
+		addValue("XDG_CACHE_HOME", path.join(binFolder, "cache", depName, "cache"));
+		addValue("XDG_STATE_HOME", path.join(binFolder, "cache", depName, "state"));
+		addValue("XDG_DATA_HOME", path.join(binFolder, "cache", depName, "data"));
 	}
 	return { success };
 }
 
-export async function uninstall(_binFolder: string): Promise<void> {
+export async function uninstall(binFolder: string): Promise<void> {
 	await runRemove(depName, null as any);
+	const depFolder = path.join(binFolder, depName);
+	removeValue(path.join(depFolder), "PATH");
+	removeKey("NPM_CONFIG_CACHE");
+	removeKey("XDG_CACHE_HOME");
+	removeKey("XDG_STATE_HOME");
+	removeKey("XDG_DATA_HOME");
 }

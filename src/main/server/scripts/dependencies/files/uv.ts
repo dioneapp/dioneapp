@@ -4,6 +4,9 @@ import {
 	runInstall,
 	runRemove,
 } from "../utils/base-root";
+import { addValue, removeKey, removeValue } from "../environment";
+import path from "path";
+import fs from "fs";
 
 const depName = "uv";
 
@@ -22,9 +25,28 @@ export async function install(
 	io: Server,
 ): Promise<{ success: boolean }> {
 	const success = await runInstall(depName, ["-c", "conda-forge"], io, id, binFolder);
+	if (success) {
+		const cacheDir = path.join(binFolder, "cache", depName);
+		const depFolder = path.join(binFolder, depName);
+		if (!fs.existsSync(cacheDir)) {
+			fs.mkdirSync(cacheDir, { recursive: true });
+		}
+		if (!fs.existsSync(depFolder)) {
+			fs.mkdirSync(depFolder, { recursive: true });
+		}
+		addValue("PATH", path.join(depFolder));
+		addValue("UV_PYTHON_INSTALL_DIR", path.join(cacheDir));
+		addValue("UV_CACHE_DIR", cacheDir);
+		addValue("PIP_CACHE_DIR", path.join(binFolder, "cache", "pip"));
+	}
 	return { success };
 }
 
-export async function uninstall(_binFolder: string): Promise<void> {
+export async function uninstall(binFolder: string): Promise<void> {
 	await runRemove(depName, null as any);
+	const depFolder = path.join(binFolder, depName);
+	removeValue(path.join(depFolder), "PATH");
+	removeKey("UV_PYTHON_INSTALL_DIR");
+	removeKey("UV_CACHE_DIR");
+	removeKey("PIP_CACHE_DIR");
 }
