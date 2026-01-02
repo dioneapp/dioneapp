@@ -1,13 +1,13 @@
 import { useAuthContext } from "@/components/contexts/auth-context";
-import VariablesModal from "@/components/modals/variables";
+import VariablesModal from "@/components/features/modals/variables";
 import SettingsTabs, {
 	type TabType,
-} from "@/components/settings/settings-tabs";
-import ApplicationsTab from "@/components/settings/tabs/applications-tab";
-import InterfaceTab from "@/components/settings/tabs/interface-tab";
-import NotificationsTab from "@/components/settings/tabs/notifications-tab";
-import OtherTab from "@/components/settings/tabs/other-tab";
-import PrivacyTab from "@/components/settings/tabs/privacy-tab";
+} from "@/components/features/settings/settings-tabs";
+import ApplicationsTab from "@/components/features/settings/tabs/applications-tab";
+import InterfaceTab from "@/components/features/settings/tabs/interface-tab";
+import NotificationsTab from "@/components/features/settings/tabs/notifications-tab";
+import OtherTab from "@/components/features/settings/tabs/other-tab";
+import PrivacyTab from "@/components/features/settings/tabs/privacy-tab";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, apiJson, getBackendPort } from "@/utils/api";
 import { joinPath } from "@/utils/path";

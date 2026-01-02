@@ -1,4 +1,5 @@
 import { useAuthContext } from "@/components/contexts/auth-context";
+import { Button } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { openLink } from "@/utils/open-link";
 import { useEffect } from "react";
@@ -32,20 +33,21 @@ export default function NoAccess() {
 						{t("noAccess.description")}
 					</p>
 					<div className="flex gap-2 mt-6">
-						<button
-							className="bg-white hover:opacity-80 transition-opacity duration-300 rounded-xl px-10 py-2 text-sm font-semibold text-black cursor-pointer"
+						<Button
+							variant="primary"
+							size="sm"
 							onClick={() => openLink("https://getdione.app/beta/join")}
-							type="button"
 						>
 							{t("noAccess.join")}
-						</button>
-						<button
-							className="border border-white/10 hover:bg-white/10 transition-colors duration-300 rounded-xl px-8 py-2 text-sm font-medium text-neutral-400 cursor-pointer"
+						</Button>
+						<Button
+							variant="outline"
+							size="sm"
 							onClick={() => logout()}
-							type="button"
+							className="text-neutral-400"
 						>
 							{t("noAccess.logout")}
-						</button>
+						</Button>
 					</div>
 				</div>
 			</div>

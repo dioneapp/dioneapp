@@ -412,7 +412,9 @@ export const executeCommand = async (
 		if (pid) {
 			activeProcesses.add(ptyProcess);
 			registerProcess(id, pid);
-			logger.info(`Started PTY process (PID: ${pid}): ${maskPathsInLine(command, workingDir)}`);
+			logger.info(
+				`Started PTY process (PID: ${pid}): ${maskPathsInLine(command, workingDir)}`,
+			);
 		}
 
 		logger.info(`Executing (PTY): ${maskPathsInLine(command, workingDir)}`);
@@ -589,7 +591,9 @@ export const executeCommands = async (
 				: path.join(currentWorkingDir, targetDir);
 
 			if (!fs.existsSync(newWorkingDir)) {
-				logger.error(`Directory does not exist: ${sanitizePathForLog(newWorkingDir)}`);
+				logger.error(
+					`Directory does not exist: ${sanitizePathForLog(newWorkingDir)}`,
+				);
 				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: `ERROR: Directory does not exist: ${sanitizePathForLog(newWorkingDir)}\n`,
