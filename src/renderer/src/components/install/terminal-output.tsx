@@ -29,61 +29,33 @@ const getColorizedLine = (line: string): string => {
 };
 
 export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
-	const containerRef = useRef<HTMLDivElement | null>(null);
+	const containerRef = useRef<HTMLDivElement>(null);
 	const terminalRef = useRef<Terminal | null>(null);
 	const fitAddonRef = useRef<FitAddon | null>(null);
-	const lastProcessedIndex = useRef<number>(0);
+	const lastProcessedIndex = useRef(0);
 
 	useEffect(() => {
 		if (!containerRef.current) return;
-
 		const term = new Terminal({
 			convertEol: true,
 			allowTransparency: true,
-			disableStdin: true,
+			allowProposedApi: true,
+			screenReaderMode: true,
+			altClickMovesCursor: false,
+			macOptionIsMeta: true,
 			theme: {
 				background: "#00000000",
 				foreground: "#a3a3a3",
+				cursor: "#ffffff",
 			},
-			fontSize: 13,
-			scrollback: 5000,
-			lineHeight: 1.4,
+			fontSize: 12.5,
+			scrollback: 99999999999,
 		});
 
 		const fitAddon = new FitAddon();
 		term.loadAddon(fitAddon);
-		term.blur();
-		term.element?.setAttribute("tabindex", "-1");
-
 		term.open(containerRef.current);
 		fitAddon.fit();
-
-		const canvas = containerRef.current?.querySelector(
-			"canvas",
-		) as HTMLCanvasElement;
-		if (canvas) {
-			canvas.style.backgroundColor = "transparent";
-			const ctx = canvas.getContext("2d");
-			if (ctx) {
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-			}
-		}
-
-		const viewport = containerRef.current?.querySelector(
-			".xterm-viewport",
-		) as HTMLElement;
-		if (viewport) {
-			viewport.style.backgroundColor = "transparent";
-			viewport.style.scrollbarWidth = "none";
-			viewport.style.overflowY = "scroll";
-		}
-
-		const screen = containerRef.current?.querySelector(
-			".xterm-screen",
-		) as HTMLElement;
-		if (screen) {
-			screen.style.backgroundColor = "transparent";
-		}
 
 		terminalRef.current = term;
 		fitAddonRef.current = fitAddon;
@@ -97,41 +69,34 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 	}, [id]);
 
 	useEffect(() => {
-		const handleResize = () => {
-			fitAddonRef.current?.fit();
-		};
+		const handleResize = () => fitAddonRef.current?.fit();
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
 	useEffect(() => {
 		const term = terminalRef.current;
-		if (!term) return;
+		if (!term || lines.length === 0) return;
 
-		if (lines.length < lastProcessedIndex.current) {
-			term.reset();
-			lastProcessedIndex.current = 0;
-		}
+		// Write línea por línea para evitar glitches ANSI
 		const newLines = lines.slice(lastProcessedIndex.current);
-		if (newLines.length > 0) {
-			const chunk = newLines.map(getColorizedLine).join("\r\n");
+		let wasAtBottom = term.buffer.active.cursorY >= term.buffer.active.baseY + term.rows - 1;
 
-			const wasAtBottom =
-				term.buffer.active.cursorY >= term.buffer.active.length - 2;
+		newLines.forEach((line) => {
+			const colored = getColorizedLine(line);  // Tu función OK
+			term.write(colored + (colored.includes('\n') ? '' : '\r\n'));
+		});
 
-			term.write(chunk + "\r\n");
+		lastProcessedIndex.current = lines.length;
 
-			if (wasAtBottom) {
-				term.scrollToBottom();
-			}
-
-			lastProcessedIndex.current = lines.length;
+		if (wasAtBottom) {
+			term.scrollToBottom();
 		}
 	}, [lines]);
 
 	return (
-		<div id={id} className="mb-2">
-			<div ref={containerRef} className="h-full w-full" />
+		<div id={id} className="h-[400px] w-full min-h-[200px]">  {/* Altura fija clave */}
+			<div ref={containerRef} className="w-full h-full" />
 		</div>
 	);
 }

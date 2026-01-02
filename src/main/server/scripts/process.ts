@@ -359,6 +359,13 @@ export const stopActiveProcess = async (
 };
 
 // execute command using PTY for proper terminal emulation
+const stripAnsi = (str: string) => {
+	return str
+		.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, "")
+		.replace(/\x1b\][0-9;]*(?:[a-zA-Z]|[^\x07]*\x07)/g, "")
+		.replace(/\x1b[PX^_].*?\x1b\\/g, "");
+};
+
 export const executeCommand = async (
 	command: string,
 	io: Server,
@@ -371,14 +378,14 @@ export const executeCommand = async (
 	let outputData = "";
 	const enhancedEnv = await getEnhancedEnv(needsBuildTools || false);
 	const logs = logsType || "installUpdate";
+	const START_TOKEN = `:::LOG_START_${Date.now()}:::`;
+	let isLogStarted = false;
 
 	try {
 		const currentPlatform = getPlatform();
 		const isWindows = currentPlatform === "win32";
-
 		logger.info(`Working on directory: ${sanitizePathForLog(workingDir)}`);
 
-		// handle git commands on non-Windows
 		if (!isWindows && command.startsWith("git ")) {
 			const result = await useGit(command, workingDir, io, id);
 			if (result) {
@@ -390,60 +397,62 @@ export const executeCommand = async (
 			? process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe"
 			: process.env.SHELL || "/bin/bash";
 
-		const shellArgs = isWindows ? ["/Q", "/D"] : [];
+		const shellArgs = isWindows ? ["/Q"] : [];
 
 		const ptyProcess = pty.spawn(shell, shellArgs, {
 			name: "xterm-256color",
-			cols: 200,
-			rows: 100,
+			cols: 100,
+			rows: 30,
 			cwd: workingDir,
 			env: enhancedEnv as Record<string, string>,
 		});
 
 		const pid = ptyProcess.pid;
 
-		// Write the command to the shell's stdin, then exit
 		if (isWindows) {
-			ptyProcess.write(`${command}\r\nexit\r\n`);
+			ptyProcess.write(`@echo off\r\nchcp 65001 >nul\r\necho ${START_TOKEN}\r\n${command}\r\nexit\r\n`);
 		} else {
-			ptyProcess.write(`${command}; exit\n`);
+			ptyProcess.write(`echo "${START_TOKEN}"; ${command}; exit\n`);
 		}
+
+		logger.info(`Executing: ${command.length > 300 ? command.substring(0, 300) + "..." : command}`);
 
 		if (pid) {
 			activeProcesses.add(ptyProcess);
 			registerProcess(id, pid);
-			logger.info(`Started PTY process (PID: ${pid}): ${maskPathsInLine(command, workingDir)}`);
 		}
 
-		logger.info(`Executing (PTY): ${maskPathsInLine(command, workingDir)}`);
-
 		let buffer = "";
-
-		const cleanANSI = (text: string) =>
-			text
-				.replace(/\x1b\[[0-9;]*[JK]/g, "")
-				.replace(/\x1b\[[0-9;]*[HfABCD]/g, "")
-				.replace(/\x1b\[[su]/g, "")
-				.replace(/Microsoft Windows \[Version [^\]]+\][^\n]*/gi, "")
-				.replace(
-					/(?:Copyright\s*\(c\)\s*|\(c\)\s*)?Microsoft\s*Corporation\.?\s*All\s*rights\s*reserved\.?/gi,
-					"",
-				);
 
 		ptyProcess.onData((data: string) => {
 			buffer += data;
 
 			let index;
 			while ((index = buffer.indexOf("\n")) !== -1) {
-				const line = buffer.slice(0, index + 1);
-				const cleanLine = cleanANSI(line);
+				const rawLine = buffer.slice(0, index + 1);
 				buffer = buffer.slice(index + 1);
 
-				const masked = maskPathsInLine(cleanLine, workingDir);
-				options?.onOutput?.(masked);
+				const cleanLine = stripAnsi(rawLine).trim();
+
+				if (!isLogStarted) {
+					if (cleanLine.includes(START_TOKEN)) {
+						isLogStarted = true;
+					}
+					continue;
+				}
+
+				if (!cleanLine) continue;
+				if (cleanLine.includes(START_TOKEN)) continue;
+				if (command && cleanLine.includes(command)) continue;
+				if (cleanLine.includes("Microsoft Windows")) continue;
+				if (cleanLine.endsWith("exit")) continue;
+				if (rawLine.includes("]0;") || rawLine.includes("Is a directory")) continue;
+
+				outputData += rawLine;
+				options?.onOutput?.(rawLine);
 				io.to(id).emit(logs, {
 					type: "log",
-					content: masked,
+					content: rawLine,
 				});
 			}
 		});
@@ -819,8 +828,8 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		DS_SKIP_CUDA_CHECK: "1",
 		// fix ansi
 		TERM: "xterm",
-		COLUMNS: "200",
-		LINES: "100",
+		COLUMNS: "100",
+		LINES: "30",
 	};
 
 	// avoid re-initializing using cache
