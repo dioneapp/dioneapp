@@ -8,94 +8,107 @@ interface TerminalOutputProps {
 	id?: string;
 }
 
-// colorize lines based on content
-const getColorizedLine = (line: string): string => {
-	if (line.includes("\x1b[")) return line;
-
-	const rules = [
-		{ regex: /\bwarn(ing)?\b/i, color: 33 },
-		{ regex: /\berror|fail(ed)?\b/i, color: 31 },
-		{ regex: /\bsuccess|complete(d)?\b/i, color: 32 },
-		{ regex: /\binfo\b/i, color: 34 },
-	];
-
-	for (const { regex, color } of rules) {
-		if (regex.test(line)) {
-			return `\x1b[${color}m${line}\x1b[0m`;
-		}
-	}
-
-	return line;
-};
-
 export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const terminalRef = useRef<Terminal | null>(null);
 	const fitAddonRef = useRef<FitAddon | null>(null);
 	const lastProcessedIndex = useRef(0);
+	const activeColorRef = useRef<number | null>(null);
 
 	useEffect(() => {
 		if (!containerRef.current) return;
+
 		const term = new Terminal({
 			convertEol: true,
 			allowTransparency: true,
-			allowProposedApi: true,
-			screenReaderMode: true,
-			altClickMovesCursor: false,
-			macOptionIsMeta: true,
 			theme: {
 				background: "#00000000",
 				foreground: "#a3a3a3",
 				cursor: "#ffffff",
 			},
 			fontSize: 12.5,
-			scrollback: 99999999999,
+			scrollback: 1000,
 		});
 
 		const fitAddon = new FitAddon();
 		term.loadAddon(fitAddon);
 		term.open(containerRef.current);
-		fitAddon.fit();
 
 		terminalRef.current = term;
 		fitAddonRef.current = fitAddon;
 
+		const handleResize = () => {
+			if (!fitAddonRef.current || !terminalRef.current) return;
+			fitAddonRef.current.fit();
+			const { cols, rows } = terminalRef.current;
+			if (id) {
+				// @ts-ignore
+				window.electron?.ipcRenderer?.send("terminal:resize", { id, cols, rows });
+			}
+		};
+
+		const timeoutId = setTimeout(() => {
+			handleResize();
+		}, 10);
+
+		const observer = new ResizeObserver(() => {
+			handleResize();
+		});
+		observer.observe(containerRef.current);
+
 		return () => {
+			clearTimeout(timeoutId);
+			observer.disconnect();
 			term.dispose();
-			terminalRef.current = null;
-			fitAddonRef.current = null;
-			lastProcessedIndex.current = 0;
 		};
 	}, [id]);
-
-	useEffect(() => {
-		const handleResize = () => fitAddonRef.current?.fit();
-		window.addEventListener("resize", handleResize);
-		return () => window.removeEventListener("resize", handleResize);
-	}, []);
 
 	useEffect(() => {
 		const term = terminalRef.current;
 		if (!term || lines.length === 0) return;
 
-		// Write línea por línea para evitar glitches ANSI
 		const newLines = lines.slice(lastProcessedIndex.current);
-		let wasAtBottom = term.buffer.active.cursorY >= term.buffer.active.baseY + term.rows - 1;
+		const colorRules = [
+			{ regex: /\bwarn(ing)?\b/i, color: 33 },
+			{ regex: /\berror|fail(ed)?\b/i, color: 31 },
+			{ regex: /\bsuccess|complete(d)?\b/i, color: 32 },
+			{ regex: /\binfo\b/i, color: 34 },
+		];
 
 		newLines.forEach((line) => {
-			const colored = getColorizedLine(line);  // Tu función OK
-			term.write(colored + (colored.includes('\n') ? '' : '\r\n'));
+			if (line.includes("\x1b")) {
+				term.write(line + (line.includes('\n') ? '' : '\r\n'));
+				activeColorRef.current = null;
+				return;
+			}
+			let matchFound = false;
+			for (const { regex, color } of colorRules) {
+				if (regex.test(line)) {
+					activeColorRef.current = color;
+					term.write(`\x1b[${color}m${line}${line.includes('\n') ? '' : '\r\n'}`);
+					matchFound = true;
+					break;
+				}
+			}
+			if (!matchFound) {
+				const trimmed = line.trim();
+				const isContinuation = activeColorRef.current && trimmed.length > 0 && /^[a-z]/.test(trimmed);
+
+				if (isContinuation) {
+					term.write(line + (line.includes('\n') ? '' : '\r\n'));
+				} else {
+					activeColorRef.current = null;
+					term.write(`\x1b[0m${line}${line.includes('\n') ? '' : '\r\n'}`);
+				}
+			}
 		});
 
 		lastProcessedIndex.current = lines.length;
-
-		if (wasAtBottom) {
-			term.scrollToBottom();
-		}
+		term.scrollToBottom();
 	}, [lines]);
 
 	return (
-		<div id={id} className="h-[400px] w-full min-h-[200px]">  {/* Altura fija clave */}
+		<div className="h-full w-full overflow-hidden rounded-lg p-2">
 			<div ref={containerRef} className="w-full h-full" />
 		</div>
 	);

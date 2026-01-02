@@ -345,6 +345,22 @@ async function killByPort(
 	});
 }
 
+// resize active process
+export const resizeTerminal = (id: string, cols: number, rows: number) => {
+	const pids = getTrackedPIDs(id);
+	pids.forEach((pid) => {
+		activeProcesses.forEach((proc) => {
+			if (proc?.pid === pid && typeof proc.resize === "function") {
+				try {
+					proc.resize(cols, rows);
+				} catch (e) {
+					logger.warn(`Failed to resize process ${pid}: ${e}`);
+				}
+			}
+		});
+	});
+};
+
 // is active process running?
 export const stopActiveProcess = async (
 	io: Server,
@@ -401,8 +417,8 @@ export const executeCommand = async (
 
 		const ptyProcess = pty.spawn(shell, shellArgs, {
 			name: "xterm-256color",
-			cols: 100,
-			rows: 30,
+			cols: 80,
+			rows: 25,
 			cwd: workingDir,
 			env: enhancedEnv as Record<string, string>,
 		});
@@ -828,8 +844,8 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		DS_SKIP_CUDA_CHECK: "1",
 		// fix ansi
 		TERM: "xterm",
-		COLUMNS: "100",
-		LINES: "30",
+		COLUMNS: "80",
+		LINES: "25",
 	};
 
 	// avoid re-initializing using cache
