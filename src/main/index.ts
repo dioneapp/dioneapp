@@ -49,6 +49,7 @@ import {
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
 import si from "systeminformation";
+import { resizeTerminal } from "./server/scripts/process";
 
 dotenvConfig();
 
@@ -246,10 +247,10 @@ function createWindow() {
 				sandbox: false,
 				...(process.platform === "linux"
 					? {
-							enableRemoteModule: false,
-							webSecurity: false,
-							allowRunningInsecureContent: true,
-						}
+						enableRemoteModule: false,
+						webSecurity: false,
+						allowRunningInsecureContent: true,
+					}
 					: {}),
 			},
 		});
@@ -699,6 +700,12 @@ app.whenReady().then(async () => {
 
 	ipcMain.on("ping", () => console.log("pong"));
 
+	ipcMain.on("terminal:resize", (_event, { id, cols, rows }) => {
+		if (id && cols && rows) {
+			resizeTerminal(id, cols, rows);
+		}
+	});
+
 	ipcMain.handle("app:close", async () => {
 		mainWindow.hide();
 		// close ollama (if running)
@@ -949,8 +956,7 @@ app.whenReady().then(async () => {
 				} else {
 					const bodyText = await response.text();
 					logger.warn(
-						`/db/events returned non-JSON (${
-							contentType || "unknown"
+						`/db/events returned non-JSON (${contentType || "unknown"
 						}). Body: ${bodyText.slice(0, 200)}`,
 					);
 					data = { raw: bodyText };
@@ -1380,7 +1386,7 @@ ipcMain.handle("delete-folder", async (_event, folderPath) => {
 	) {
 		folderPath = path.join(
 			config?.defaultBinFolder ||
-				path.join(config?.defaultInstallFolder, "bin"),
+			path.join(config?.defaultInstallFolder, "bin"),
 			"cache",
 		);
 	} else {

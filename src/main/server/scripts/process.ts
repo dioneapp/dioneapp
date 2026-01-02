@@ -18,6 +18,21 @@ const activeProcesses = new Set<any>();
 const activePIDs = new Set<number>();
 const processesByApp = new Map<string, Set<number>>();
 
+export const resizeTerminal = (id: string, cols: number, rows: number) => {
+	const pids = getTrackedPIDs(id);
+	pids.forEach((pid) => {
+		activeProcesses.forEach((proc) => {
+			if (proc?.pid === pid && typeof proc.resize === "function") {
+				try {
+					proc.resize(cols, rows);
+				} catch (e) {
+					logger.warn(`Failed to resize process ${pid}: ${e}`);
+				}
+			}
+		});
+	});
+};
+
 const registerProcess = (appId: string, pid: number) => {
 	if (!appId || !pid) return;
 	activePIDs.add(pid);
@@ -26,8 +41,6 @@ const registerProcess = (appId: string, pid: number) => {
 	processesByApp.set(appId, set);
 };
 
-// Helpers to avoid leaking full filesystem paths in logs
-const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const sanitizePathForLog = (p?: string) => {
 	if (!p) return "";
 	try {
@@ -35,52 +48,6 @@ const sanitizePathForLog = (p?: string) => {
 	} catch (e) {
 		return p;
 	}
-};
-const maskPathsInLine = (line: string, workingDir?: string) => {
-	let out = line;
-	// remove exact working dir occurrences (replace with basename)
-	if (workingDir) {
-		try {
-			const esc = escapeRegExp(workingDir);
-			out = out.replace(new RegExp(esc, "g"), sanitizePathForLog(workingDir));
-		} catch (e) {
-			// ignore
-		}
-	}
-
-	// shorten absolute Windows paths (e.g. C:\some\path\to\file)
-	const windowsAbs = /[A-Za-z]:\\(?:[^\\\r\n]+\\)*[^\\\r\n]*/g;
-	// shorten POSIX absolute paths (/usr/local/bin/...)
-	const posixAbs = /\/(?:[^\/\r\n]+\/)*[^\/\r\n]*/g;
-
-	const shortenPathForLog = (p: string) => {
-		try {
-			const parts = p.split(/[\\\/]+/).filter(Boolean);
-			const isFile = /\.[a-zA-Z0-9]+$/.test(parts[parts.length - 1] || "");
-			const take = isFile ? 3 : 2;
-			const slice = parts.slice(-take);
-			return slice.join(path.sep);
-		} catch (e) {
-			return path.basename(p);
-		}
-	};
-
-	out = out.replace(windowsAbs, (m) => shortenPathForLog(m));
-	// only apply posix replacement if the match looks like a path with at least 2 segments
-	out = out.replace(posixAbs, (m) => {
-		if (m.split("/").filter(Boolean).length > 1) return shortenPathForLog(m);
-		return m;
-	});
-
-	// strip Windows drive-style prompt prefixes like "C:\\some\\path>"
-	out = out.replace(/^[A-Za-z]:\\[^>\r\n]*>/gm, "");
-
-	// strip any leading shell prompt that ends with '>' (e.g. "appdir>")
-	out = out.replace(/^[^>\r\n]{1,120}>\s*/gm, "");
-
-	// also strip common echoed command prefixes like "> "
-	out = out.replace(/^[>\s]+/, "");
-	return out;
 };
 
 const unregisterProcess = (appId: string, pid: number) => {
@@ -359,6 +326,13 @@ export const stopActiveProcess = async (
 };
 
 // execute command using PTY for proper terminal emulation
+const stripAnsi = (str: string) => {
+	return str
+		.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, "")
+		.replace(/\x1b\][0-9;]*(?:[a-zA-Z]|[^\x07]*\x07)/g, "")
+		.replace(/\x1b[PX^_].*?\x1b\\/g, "");
+};
+
 export const executeCommand = async (
 	command: string,
 	io: Server,
@@ -371,6 +345,8 @@ export const executeCommand = async (
 	let outputData = "";
 	const enhancedEnv = await getEnhancedEnv(needsBuildTools || false);
 	const logs = logsType || "installUpdate";
+	const START_TOKEN = `:::LOG_START_${Date.now()}:::`;
+	let isLogStarted = false;
 
 	try {
 		const currentPlatform = getPlatform();
@@ -390,60 +366,61 @@ export const executeCommand = async (
 			? process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe"
 			: process.env.SHELL || "/bin/bash";
 
-		const shellArgs = isWindows ? ["/Q", "/D"] : [];
+		const shellArgs = isWindows ? ["/Q"] : [];
 
 		const ptyProcess = pty.spawn(shell, shellArgs, {
 			name: "xterm-256color",
-			cols: 200,
-			rows: 100,
+			cols: 80,
+			rows: 25,
 			cwd: workingDir,
 			env: enhancedEnv as Record<string, string>,
 		});
 
 		const pid = ptyProcess.pid;
 
-		// Write the command to the shell's stdin, then exit
 		if (isWindows) {
-			ptyProcess.write(`${command}\r\nexit\r\n`);
+			ptyProcess.write(`@echo off\r\nchcp 65001 >nul\r\necho ${START_TOKEN}\r\n${command}\r\nexit\r\n`);
 		} else {
-			ptyProcess.write(`${command}; exit\n`);
+			ptyProcess.write(`echo "${START_TOKEN}"; ${command}; exit\n`);
 		}
+
+		logger.info(`Executing: ${command.length > 300 ? command.substring(0, 300) + "..." : command}`);
 
 		if (pid) {
 			activeProcesses.add(ptyProcess);
 			registerProcess(id, pid);
-			logger.info(`Started PTY process (PID: ${pid}): ${maskPathsInLine(command, workingDir)}`);
 		}
 
-		logger.info(`Executing (PTY): ${maskPathsInLine(command, workingDir)}`);
-
 		let buffer = "";
-
-		const cleanANSI = (text: string) =>
-			text
-				.replace(/\x1b\[[0-9;]*[JK]/g, "")
-				.replace(/\x1b\[[0-9;]*[HfABCD]/g, "")
-				.replace(/\x1b\[[su]/g, "")
-				.replace(/Microsoft Windows \[Version [^\]]+\][^\n]*/gi, "")
-				.replace(
-					/(?:Copyright\s*\(c\)\s*|\(c\)\s*)?Microsoft\s*Corporation\.?\s*All\s*rights\s*reserved\.?/gi,
-					"",
-				);
-
 		ptyProcess.onData((data: string) => {
 			buffer += data;
 
 			let index;
 			while ((index = buffer.indexOf("\n")) !== -1) {
-				const line = buffer.slice(0, index + 1);
-				const cleanLine = cleanANSI(line);
+				const rawLine = buffer.slice(0, index + 1);
 				buffer = buffer.slice(index + 1);
 
-				const masked = maskPathsInLine(cleanLine, workingDir);
-				options?.onOutput?.(masked);
+				const cleanLine = stripAnsi(rawLine).trim();
+
+				if (!isLogStarted) {
+					if (cleanLine.includes(START_TOKEN)) {
+						isLogStarted = true;
+					}
+					continue;
+				}
+
+				if (!cleanLine) continue;
+				if (cleanLine.includes(START_TOKEN)) continue;
+				if (command && cleanLine.includes(command)) continue;
+				if (cleanLine.includes("Microsoft Windows")) continue;
+				if (cleanLine.endsWith("exit")) continue;
+				if (rawLine.includes("]0;") || rawLine.includes("Is a directory")) continue;
+
+				outputData += rawLine;
+				options?.onOutput?.(rawLine);
 				io.to(id).emit(logs, {
 					type: "log",
-					content: masked,
+					content: rawLine,
 				});
 			}
 		});
@@ -793,8 +770,8 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		DS_SKIP_CUDA_CHECK: "1",
 		// fix ansi
 		TERM: "xterm",
-		COLUMNS: "200",
-		LINES: "100",
+		COLUMNS: "80",
+		LINES: "25",
 	};
 
 	// avoid re-initializing using cache
