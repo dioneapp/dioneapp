@@ -35,7 +35,7 @@ export default function LogsComponent({
 
 	return (
 		<div className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden">
-			<div className="flex flex-col gap-2 p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-hidden w-full bg-[#080808]/40 hide-scrollbar">
+			<div className="flex flex-col gap-2 p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-hidden w-full bg-[#080808]/40 h-[500px] hide-scrollbar">
 				<TerminalOutput lines={processedLogs} />
 				{progress &&
 					progress[appId]?.steps &&
