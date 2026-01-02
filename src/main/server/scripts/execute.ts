@@ -787,26 +787,25 @@ async function createVirtualEnvCommands(
 	}
 
 	const existsEnv = fs.existsSync(envPath);
-	const arch = getArch();
-	const platform = getOS();
-	const uvFolder =
-		platform === "linux"
-			? arch === "amd64"
-				? "uv-x86_64-unknown-linux-gnu"
-				: "uv-aarch64-unknown-linux-gnu"
-			: platform === "macos"
-				? arch === "amd64"
-					? "uv-x86_64-apple-darwin"
-					: "uv-aarch64-apple-darwin"
-				: "";
+	// find uv path
+	let uvPath = "";
+	const condaRoot = variables.CONDA_ROOT;
+	if (condaRoot) {
+		const possiblePaths =
+			process.platform === "win32"
+				? [
+					path.join(condaRoot, "Scripts", "uv.exe"),
+					path.join(condaRoot, "bin", "uv.exe"),
+					path.join(condaRoot, "uv.exe"),
+					path.join(condaRoot, "Library", "bin", "uv.exe"),
+				]
+				: [path.join(condaRoot, "bin", "uv")];
 
-	const uvPath = path.join(
-		config?.defaultBinFolder || path.join(app.getPath("userData")),
-		"bin",
-		"uv",
-		uvFolder,
-		process.platform === "win32" ? "uv.exe" : "uv",
-	);
+		const found = possiblePaths.find((p) => fs.existsSync(p));
+		if (found) {
+			uvPath = found;
+		}
+	}
 
 	if (!existsEnv) {
 		{

@@ -34,7 +34,6 @@ export async function install(
 		if (!fs.existsSync(depFolder)) {
 			fs.mkdirSync(depFolder, { recursive: true });
 		}
-		addValue("PATH", path.join(depFolder));
 		addValue("UV_PYTHON_INSTALL_DIR", path.join(cacheDir));
 		addValue("UV_CACHE_DIR", cacheDir);
 		addValue("PIP_CACHE_DIR", path.join(binFolder, "cache", "pip"));
@@ -44,8 +43,6 @@ export async function install(
 
 export async function uninstall(binFolder: string): Promise<void> {
 	await runRemove(depName, null as any);
-	const depFolder = path.join(binFolder, depName);
-	removeValue(path.join(depFolder), "PATH");
 	removeKey("UV_PYTHON_INSTALL_DIR");
 	removeKey("UV_CACHE_DIR");
 	removeKey("PIP_CACHE_DIR");
