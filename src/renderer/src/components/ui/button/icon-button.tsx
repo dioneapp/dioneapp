@@ -30,9 +30,7 @@ const iconButtonVariants = cva(
 	},
 );
 
-export interface IconButtonProps
-	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-		VariantProps<typeof iconButtonVariants> {
+export type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof iconButtonVariants> & {
 	icon: React.ReactNode;
 	tooltip?: string;
 	accentColor?: boolean;
@@ -80,3 +78,4 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
 IconButton.displayName = "IconButton";
 
 export { IconButton, iconButtonVariants };
+

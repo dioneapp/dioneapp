@@ -229,7 +229,7 @@ export default function IframeComponent({
 				initial={{ opacity: 0, y: -10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.4 }}
-				className="w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 p-2 mt-2"
+				className={`w-full flex items-center justify-between gap-3 rounded-xl border border-white/10 p-2 ${layoutMode === "topbar" ? "mt-0" : "mt-2"}`}
 			>
 				<div className="flex items-center gap-1.5">
 					<button
