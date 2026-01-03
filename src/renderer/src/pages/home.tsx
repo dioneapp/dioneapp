@@ -1,5 +1,5 @@
-import Explore from "@/components/home/explore/explore";
-import Featured from "@/components/home/featured/featured";
+import Explore from "@/components/features/home/explore/explore";
+import Featured from "@/components/features/home/featured/featured";
 import { useTranslation } from "@/translations/translation-context";
 
 export default function Home() {

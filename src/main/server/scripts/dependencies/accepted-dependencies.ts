@@ -1,4 +1,4 @@
-import * as build_tools from "@/server/scripts/dependencies/files/build_tools";
+import * as build_tools from "./files/build-tools";
 import * as conda from "@/server/scripts/dependencies/files/conda";
 import * as cuda from "@/server/scripts/dependencies/files/cuda";
 import * as ffmpeg from "@/server/scripts/dependencies/files/ffmpeg";

@@ -1,9 +1,9 @@
 import { useAuthContext } from "@/components/contexts/auth-context";
-import { ErrorBoundary } from "@/components/layout/error-handler";
-import OfflineIndicator from "@/components/layout/offline-indicator";
-import Sidebar from "@/components/layout/sidebar";
-import Titlebar from "@/components/layout/titlebar";
-import TopbarNav from "@/components/layout/topbar-nav";
+import { ErrorBoundary } from "@/components/features/layout/error-handler";
+import OfflineIndicator from "@/components/features/layout/offline-indicator";
+import Sidebar from "@/components/features/layout/sidebar";
+import Titlebar from "@/components/features/layout/titlebar";
+import TopbarNav from "@/components/features/layout/topbar-nav";
 import Account from "@/pages/account";
 import ErrorPage from "@/pages/error";
 import FirstTime from "@/pages/first-time";

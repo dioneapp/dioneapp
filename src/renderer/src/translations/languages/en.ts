@@ -753,10 +753,8 @@ export const en = {
 	settingsFooter: {
 		builtWithLove: "built with ♥",
 		getDioneWebsite: "getdione.app",
+		version: "Version",
 		port: "Port",
-		node: "Node:",
-		electron: "Electron:",
-		chromium: "Chrome:",
 	},
 
 	// notifications

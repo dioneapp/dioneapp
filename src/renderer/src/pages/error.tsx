@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui";
 import Icon from "@/components/icons/icon";
 import { useTranslation } from "@/translations/translation-context";
 import { sendDiscordReport } from "@/utils/discord-webhook";
@@ -56,23 +57,25 @@ export default function ErrorPage({ error }: { error?: Error }) {
 						{(!settings.sendAnonymousReports ||
 							reportStatus === "success" ||
 							reportStatus === "error") && (
-							<button
+							<Button
+								variant="primary"
+								size="md"
 								onClick={() => navigate(-1)}
-								type="button"
-								className=" py-1 px-4 bg-white hover:bg-white/80 transition-colors duration-400 rounded-xl text-black font-semibold text-center cursor-pointer"
+								className="px-4"
 							>
 								{t("error.return")}
-							</button>
+							</Button>
 						)}
 						{(settings.sendAnonymousReports || reportStatus !== "idle") && (
 							<div className="absolute bottom-6 shadow-xl z-50">
-								<button
+								<Button
+									variant="outline"
+									size="md"
 									onClick={() =>
 										openLink("https://github.com/dioneapp/dioneapp/issues")
 									}
-									type="button"
-									className="px-4 border border-white/10 enabled:hover:bg-white/10 transition-colors duration-400 rounded-xl text-neutral-300 py-1 text-center enabled:cursor-pointer flex gap-2"
 									disabled
+									className="px-4 gap-2"
 								>
 									<span className="text-center py-1">
 										{reportStatus === "pending" && (
@@ -101,17 +104,18 @@ export default function ErrorPage({ error }: { error?: Error }) {
 														: "Error reporting disabled in dev mode"}
 										</p>
 									</span>
-								</button>
+								</Button>
 							</div>
 						)}
 						{!settings.sendAnonymousReports && reportStatus === "idle" && (
-							<button
+							<Button
+								variant="secondary"
+								size="md"
 								onClick={() => handleReportError()}
-								type="button"
-								className="px-4 bg-white/10 hover:bg-white/20 transition-colors duration-400 rounded-xl text-center cursor-pointer py-1"
+								className="px-4"
 							>
 								{t("error.report.toTeam")}
-							</button>
+							</Button>
 						)}
 					</div>
 				</main>
