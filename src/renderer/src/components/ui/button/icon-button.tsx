@@ -1,4 +1,4 @@
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps, cva } from "class-variance-authority";
 import type React from "react";
 import { forwardRef } from "react";
 
@@ -30,11 +30,12 @@ const iconButtonVariants = cva(
 	},
 );
 
-export type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & VariantProps<typeof iconButtonVariants> & {
-	icon: React.ReactNode;
-	tooltip?: string;
-	accentColor?: boolean;
-}
+export type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
+	VariantProps<typeof iconButtonVariants> & {
+		icon: React.ReactNode;
+		tooltip?: string;
+		accentColor?: boolean;
+	};
 
 const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
 	(
@@ -78,4 +79,3 @@ const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
 IconButton.displayName = "IconButton";
 
 export { IconButton, iconButtonVariants };
-

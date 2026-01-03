@@ -1,9 +1,9 @@
+import { useAIContext } from "@/components/contexts/ai-context";
+import { useScriptsContext } from "@/components/contexts/scripts-context";
 import Messages from "@/components/features/ai/messages";
 import { Input } from "@/components/ui";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { useAIContext } from "@/components/contexts/ai-context";
-import { useScriptsContext } from "@/components/contexts/scripts-context";
 import { InstallAIModal } from "../modals/install-ai";
 
 export default function AI({

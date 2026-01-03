@@ -313,16 +313,26 @@ export default function ActionsComponent({
 													{data?.og_author && (
 														<button
 															type="button"
-															onClick={() => data?.og_author_url && openLink(`${data?.og_author_url}`)}
+															onClick={() =>
+																data?.og_author_url &&
+																openLink(`${data?.og_author_url}`)
+															}
 															className="flex items-center gap-1 text-xs cursor-pointer hover:underline"
 															style={{ color: "var(--theme-accent)" }}
 														>
-															<User size={14} className="shrink-0 text-neutral-400" />
-															<span className="truncate">{data?.og_author}</span>
+															<User
+																size={14}
+																className="shrink-0 text-neutral-400"
+															/>
+															<span className="truncate">
+																{data?.og_author}
+															</span>
 														</button>
 													)}
 													{data?.og_author && data?.author && (
-														<span className="mx-0.5 text-xs text-neutral-400">•</span>
+														<span className="mx-0.5 text-xs text-neutral-400">
+															•
+														</span>
 													)}
 													{data?.author && (
 														<button
@@ -331,7 +341,12 @@ export default function ActionsComponent({
 															className="flex items-center gap-1 text-xs cursor-pointer truncate hover:underline"
 															style={{ color: "var(--theme-accent)" }}
 														>
-															{!data?.og_author && <User size={14} className="shrink-0 text-neutral-400" />}
+															{!data?.og_author && (
+																<User
+																	size={14}
+																	className="shrink-0 text-neutral-400"
+																/>
+															)}
 															<span>{data?.author}</span>
 														</button>
 													)}

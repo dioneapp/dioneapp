@@ -1,8 +1,8 @@
+import { useAIContext } from "@/components/contexts/ai-context";
 import Messages from "@/components/features/ai/messages";
 import Models from "@/components/features/ai/models";
-import { Button, Input } from "@/components/ui";
-import { useAIContext } from "@/components/contexts/ai-context";
 import { InstallAIModal } from "@/components/features/modals/install-ai";
+import { Button, Input } from "@/components/ui";
 import { motion } from "framer-motion";
 import {
 	ArrowRight,

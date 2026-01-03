@@ -1,7 +1,7 @@
+import { Button, Input } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { Input, Button } from "@/components/ui";
 
 interface EntryNameDialogProps {
 	open: boolean;

@@ -1,3 +1,7 @@
+import { execFile, spawn } from "child_process";
+import fs, { rmdir } from "fs";
+import https from "https";
+import path from "path";
 import {
 	addValue,
 	getAllValues,
@@ -6,10 +10,6 @@ import {
 } from "@/server/scripts/dependencies/environment";
 import { getArch, getOS } from "@/server/scripts/dependencies/utils/system";
 import logger from "@/server/utils/logger";
-import { execFile, spawn } from "child_process";
-import fs, { rmdir } from "fs";
-import https from "https";
-import path from "path";
 import type { Server } from "socket.io";
 
 const depName = "cuda";

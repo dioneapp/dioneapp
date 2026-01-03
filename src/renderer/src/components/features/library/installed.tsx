@@ -1,11 +1,11 @@
+import { useScriptsContext } from "@/components/contexts/scripts-context";
 import ScriptCard from "@/components/features/home/feed/card";
-import Icon from "@/components/icons/icon";
 import Loading from "@/components/features/install/loading-skeleton";
+import Icon from "@/components/icons/icon";
 import { useTranslation } from "@/translations/translation-context";
 import { apiJson } from "@/utils/api";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useScriptsContext } from "@/components/contexts/scripts-context";
 
 export default function Installed() {
 	const { t } = useTranslation();
