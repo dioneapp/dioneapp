@@ -133,14 +133,14 @@ export default function TopbarNav() {
 					className="flex items-center gap-1.5 bg-white/10 rounded-xl px-2 py-0.75 hover:bg-white/15 transition-colors shrink-0 focus:outline-none"
 					style={{ textDecoration: "none" }}
 				>
-					<div className="w-6 h-6 overflow-hidden shrink-0 rounded-xl">
+					<div className="w-6 h-6 overflow-hidden shrink-0 rounded-lg">
 						{!app.isLocal ? (
 							<>
 								{app.data?.logo_url?.startsWith("http") ? (
 									<img
 										src={app.data.logo_url}
 										alt={app.data.name}
-										className="w-full h-full object-cover rounded-xl"
+										className="w-full h-full object-cover rounded-lg"
 									/>
 								) : (
 									<GeneratedIcon
@@ -153,7 +153,7 @@ export default function TopbarNav() {
 							<GeneratedIcon
 								name={app?.data?.name}
 								className="w-full h-full"
-								roundedClassName="rounded-xl"
+								roundedClassName="rounded-lg"
 							/>
 						)}
 					</div>

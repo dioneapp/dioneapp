@@ -373,7 +373,7 @@ export default function Sidebar() {
 																			config?.compactMode
 																				? "w-8 h-8"
 																				: "w-6 h-6" +
-																					" overflow-hidden shrink-0 rounded-xl"
+																					" overflow-hidden shrink-0 rounded-lg"
 																		}
 																	>
 																		{!app.isLocal ? (
@@ -384,7 +384,7 @@ export default function Sidebar() {
 																					<img
 																						src={app.data.logo_url}
 																						alt={app.data.name}
-																						className="w-full h-full object-cover rounded-xl"
+																							className="w-full h-full object-cover rounded-lg"
 																					/>
 																				) : (
 																					<GeneratedIcon
@@ -398,7 +398,7 @@ export default function Sidebar() {
 																			<GeneratedIcon
 																				name={app?.data?.name}
 																				className="w-full h-full"
-																				roundedClassName="rounded-xl"
+																				roundedClassName="rounded-lg"
 																			/>
 																		)}
 																	</div>

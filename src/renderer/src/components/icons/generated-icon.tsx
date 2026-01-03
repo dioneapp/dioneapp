@@ -57,7 +57,7 @@ function colorsFromName(name: string) {
 export default function GeneratedIcon({
 	name,
 	className = "",
-	roundedClassName = "rounded-xl",
+	roundedClassName = "rounded-lg",
 	isSidebarIcon = false,
 }: GeneratedIconProps) {
 	const safeName = name ?? "?";
