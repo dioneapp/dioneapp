@@ -3,20 +3,25 @@ import logger from "@/server/utils/logger";
 import si from "systeminformation";
 
 export async function getSystemInfo() {
-	let os;
+	let os = "unknown";
 	let gpu = "unknown";
 
 	try {
-		const gpus = (await si.graphics()).controllers;
-		const mainGPU = gpus.find((gpu) => /nvidia|amd/i.test(gpu.vendor));
-		if (mainGPU) {
-			if (/nvidia/i.test(mainGPU.vendor)) {
-				gpu = "nvidia";
-			} else if (/amd/i.test(mainGPU.vendor)) {
-				gpu = "amd";
-			}
+		const graphics = await si.graphics();
+		const gpus = graphics.controllers.map(gpu => gpu.vendor.toLowerCase());
+		if (graphics) {
+			if (gpus.some(g => /nvidia/i.test(g))) gpu = "nvidia";
+			if (gpus.some(g => /amd|advanced micro devices/i.test(g))) gpu = "amd";
+			if (gpus.some(g => /apple/i.test(g))) gpu = "apple";
 		}
-		os = (await si.osInfo()).platform;
+		const osInfo = await si.osInfo();
+		const platform = osInfo.platform;
+
+		os = platform.toLowerCase();
+		if (os === "darwin") {
+			os = "mac";
+		}
+
 	} catch (error) {
 		logger.error(`Error getting system info: ${error}`);
 	}
