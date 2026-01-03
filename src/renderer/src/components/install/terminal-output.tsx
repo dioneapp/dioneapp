@@ -27,7 +27,7 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 				cursor: "#ffffff",
 			},
 			fontSize: 12.5,
-			scrollback: 1000,
+			scrollback: 99999999,
 		});
 
 		const fitAddon = new FitAddon();
