@@ -1,7 +1,3 @@
-import { exec, spawn } from "node:child_process";
-import fs from "node:fs";
-import { arch, platform as getPlatform } from "node:os";
-import path from "node:path";
 import {
 	getAllValues,
 	initDefaultEnv,
@@ -10,7 +6,9 @@ import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-m
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import pty from "@lydell/node-pty";
-import pidtree from "pidtree";
+import fs from "node:fs";
+import { arch, platform as getPlatform } from "node:os";
+import path from "node:path";
 import type { Server } from "socket.io";
 import { useGit } from "../utils/use-git";
 
@@ -422,6 +420,8 @@ export const executeCommands = async (
 			let outputLines = 0;
 			const startTime = Date.now();
 			let lastProgressEmit = 0;
+			let installingPackages = 0;
+			let totalPackages = 0;
 
 			// emit initial progress for this command starting
 			if (options?.onProgress) {
@@ -444,15 +444,52 @@ export const executeCommands = async (
 						outputLines++;
 						const elapsed = Date.now() - startTime;
 
+						const pipInstallMatch = text.match(/Collecting\s+(\S+)/i);
+						const pipInstalledMatch = text.match(
+							/Successfully\s+installed\s+(.+)/i,
+						);
+						const uvInstalledMatch = text.match(/Installed\s+(\d+)\s+package/i);
+						const uvResolvingMatch = text.match(/Resolved\s+(\d+)\s+package/i);
+
+						if (pipInstallMatch) {
+							totalPackages++;
+						}
+						if (pipInstalledMatch) {
+							const packages = pipInstalledMatch[1]
+								.split(/\s+/)
+								.filter((p) => p.trim());
+							installingPackages = packages.length;
+						}
+						if (uvInstalledMatch) {
+							installingPackages = parseInt(uvInstalledMatch[1]);
+						}
+						if (uvResolvingMatch) {
+							totalPackages = parseInt(uvResolvingMatch[1]);
+						}
+
+						let packageProgress = 0;
+						if (totalPackages > 0 && installingPackages > 0) {
+							packageProgress = Math.min(
+								0.95,
+								installingPackages / totalPackages,
+							);
+						}
+
 						const timeProgress = Math.min(
-							0.92,
-							Math.log(elapsed + 1000) / Math.log(120000),
+							0.85,
+							Math.log(elapsed + 1000) / Math.log(300000),
 						);
-						const outputProgress = Math.min(0.92, Math.sqrt(outputLines / 50));
-						commandProgress = Math.max(
-							commandProgress,
-							Math.max(timeProgress, outputProgress),
-						);
+
+						const outputProgress = Math.min(0.85, Math.sqrt(outputLines / 100));
+
+						if (packageProgress > 0) {
+							commandProgress = Math.max(commandProgress, packageProgress);
+						} else {
+							commandProgress = Math.max(
+								commandProgress,
+								Math.max(timeProgress, outputProgress),
+							);
+						}
 
 						const overallProgress =
 							(completedCommands + commandProgress) / totalCommands;

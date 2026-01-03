@@ -207,7 +207,7 @@ export default function ActionsComponent({
 									"linear-gradient(135deg, color-mix(in srgb, var(--theme-gradient-from) 10%, transparent), color-mix(in srgb, var(--theme-background) 50%, transparent), color-mix(in srgb, var(--theme-background) 80%, transparent))",
 							}}
 						/>
-						<div className="absolute inset-0 overflow-hidden pointer-events-none overflow-hidden rounded-xl">
+						<div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
 							<div
 								className="absolute -top-16 -right-16 w-32 sm:w-48 h-32 sm:h-48 rounded-xl blur-3xl"
 								style={{
@@ -356,16 +356,32 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap ${
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap border ${
 												installed
-													? "bg-green-500/20 text-green-400 border border-green-500/30"
-													: "bg-neutral-500/20 text-neutral-400 border border-neutral-500/30"
+													? ""
+													: "bg-neutral-500/20 text-neutral-400 border-neutral-500/30"
 											}`}
+											style={
+												installed
+													? {
+															backgroundColor:
+																"color-mix(in srgb, var(--theme-accent) 20%, transparent)",
+															color: "var(--theme-accent)",
+															borderColor:
+																"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
+														}
+													: {}
+											}
 										>
 											<div
 												className={`w-1 h-1 rounded-xl ${
-													installed ? "bg-green-400" : "bg-neutral-400"
+													installed ? "" : "bg-neutral-400"
 												}`}
+												style={
+													installed
+														? { backgroundColor: "var(--theme-accent)" }
+														: {}
+												}
 											/>
 											<span className="hidden sm:inline">
 												{installed
