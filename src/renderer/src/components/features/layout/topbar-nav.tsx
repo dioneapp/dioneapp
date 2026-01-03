@@ -268,11 +268,10 @@ export default function TopbarNav() {
 						<Link
 							to="/"
 							id="no-draggable"
-							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
-								isActivePath("/")
-									? "bg-white/15 text-white"
-									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-							}`}
+							className={`px-3 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/")
+								? "bg-white/15 text-white"
+								: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
+								}`}
 						>
 							<Home className="h-4 w-4" />
 							<span>{t("home.title")}</span>
@@ -281,11 +280,10 @@ export default function TopbarNav() {
 						<Link
 							to="/library"
 							id="no-draggable"
-							className={`px-3 py-0.75 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
-								isActivePath("/library")
-									? "bg-white/15 text-white"
-									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-							}`}
+							className={`px-3 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/library")
+								? "bg-white/15 text-white"
+								: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
+								}`}
 						>
 							<Library className="h-4 w-4" />
 							<span>{t("sidebar.tooltips.library")}</span>
@@ -317,21 +315,16 @@ export default function TopbarNav() {
 							onMouseLeave={() => setHoveredTooltip(null)}
 						></IconButton>
 
-						<Link
-							to="/settings"
-							id="no-draggable"
-							className={`p-1.5 rounded-xl transition-colors relative ${
-								isActivePath("/settings") ? "bg-white/15" : "hover:bg-white/10"
-							}`}
-							onMouseEnter={() => setHoveredTooltip("settings")}
-							onMouseLeave={() => setHoveredTooltip(null)}
-						>
-							<Settings className="h-4 w-4" />
-							{hoveredTooltip === "settings" && (
-								<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-xl">
-									{t("sidebar.tooltips.settings")}
-								</div>
-							)}
+						<Link to="/settings">
+							<IconButton
+								id="no-draggable"
+								variant="ghost"
+								size="sm"
+								icon={<Settings className="h-4 w-4" />}
+								className="relative"
+								onMouseEnter={() => setHoveredTooltip("settings")}
+								onMouseLeave={() => setHoveredTooltip(null)}
+							></IconButton>
 						</Link>
 
 						{/* User Section */}
@@ -343,7 +336,7 @@ export default function TopbarNav() {
 							>
 								{!avatarError ? (
 									<img
-										src={user.avatar}
+										src={user.avatar_url}
 										alt={user.username}
 										className="h-6 w-6 rounded-xl"
 										onError={() => setAvatarError(true)}
@@ -446,7 +439,7 @@ export default function TopbarNav() {
 						</div>
 					</div>
 				)}
-			</div>
+			</div >
 		</>
 	);
 }
