@@ -101,7 +101,7 @@ export default function TopbarNav() {
 		}
 	}
 
-	const sensors = useSensors(useSensor(PointerSensor));
+	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
 
 	function SortableTab({ app }: { app: any }) {
 		const {
@@ -111,6 +111,7 @@ export default function TopbarNav() {
 			transform,
 			transition,
 			isDragging,
+			setActivatorNodeRef,
 		} = useSortable({ id: app.appId });
 		return (
 			<div
@@ -125,50 +126,53 @@ export default function TopbarNav() {
 				{...listeners}
 				className="relative group"
 			>
-				<Link
-					to={{
-						pathname: `/install/${app.isLocal ? app.data?.name : app.appId}`,
-						search: `?isLocal=${app.isLocal}`,
-					}}
-					className="flex items-center gap-1.5 bg-white/10 rounded-xl px-2 py-0.75 hover:bg-white/15 transition-colors shrink-0 focus:outline-none"
-					style={{ textDecoration: "none" }}
-				>
-					<div className="w-6 h-6 overflow-hidden shrink-0 rounded-lg">
-						{!app.isLocal ? (
-							<>
-								{app.data?.logo_url?.startsWith("http") ? (
-									<img
-										src={app.data.logo_url}
-										alt={app.data.name}
-										className="w-full h-full object-cover rounded-lg"
-									/>
-								) : (
-									<GeneratedIcon
-										name={app?.data?.name || app.appId}
-										className="h-full w-full border border-white/10 group-hover:border-white/20"
-									/>
-								)}
-							</>
-						) : (
-							<GeneratedIcon
-								name={app?.data?.name}
-								className="w-full h-full"
-								roundedClassName="rounded-lg"
-							/>
-						)}
-					</div>
-					<span className="text-xs text-neutral-300 whitespace-nowrap max-w-30 truncate mr-6">
-						{app?.data?.name || app.appId}
-					</span>
-				</Link>
-				<IconButton
-					onClick={() => stopApp(app.appId, app.data?.name || app.appId)}
-					variant="ghost"
-					size="xs"
-					className="ml-2 mr-2 absolute right-0 top-1/2 -translate-y-1/2 text-white hover:text-red-400 hover:bg-red-500/20"
-					style={{ zIndex: 2 }}
-					icon={<X className="h-3 w-3" />}
-				/>
+				<div className="bg-white/10 hover:bg-white/15 rounded-r-none rounded-xl transition-colors focus:outline-none flex gap-1">
+					<Link
+						ref={setActivatorNodeRef}
+						to={{
+							pathname: `/install/${app.isLocal ? app.data?.name : app.appId}`,
+							search: `?isLocal=${app.isLocal}`,
+						}}
+						className="flex items-center gap-2"
+						style={{ textDecoration: "none" }}
+					>
+						<div className="w-6 h-6 overflow-hidden shrink-0 rounded-lg">
+							{!app.isLocal ? (
+								<>
+									{app.data?.logo_url?.startsWith("http") ? (
+										<img
+											src={app.data.logo_url}
+											alt={app.data.name}
+											className="w-full h-full object-cover rounded-lg"
+										/>
+									) : (
+										<GeneratedIcon
+											name={app?.data?.name || app.appId}
+											className="h-full w-full border border-white/10 group-hover:border-white/20"
+										/>
+									)}
+								</>
+							) : (
+								<GeneratedIcon
+									name={app?.data?.name}
+									className="w-full h-full"
+									roundedClassName="rounded-lg"
+								/>
+							)}
+						</div>
+						<span className="text-xs text-neutral-300 whitespace-nowrap max-w-30 truncate mr-6">
+							{app?.data?.name || app.appId}
+						</span>
+					</Link>
+					<IconButton
+						onClick={() => stopApp(app.appId, app.data?.name || app.appId)}
+						variant="ghost"
+						size="xs"
+						className="flex"
+						style={{ zIndex: 2 }}
+						icon={<X className="h-3 w-3" />}
+					/>
+				</div>
 				{hoveredTooltip === app.appId && (
 					<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-xl">
 						{app?.data?.name || app.appId}
@@ -293,7 +297,7 @@ export default function TopbarNav() {
 					{/* Right side actions */}
 					<div className="flex items-center gap-2 relative z-10 shrink-0">
 						{activeApps.length > 0 && (
-							<div className="flex items-center gap-1 px-2 py-0.75 bg-white/10 rounded-xl">
+							<div className="flex items-center gap-1 px-3 py-1.5 bg-white/10">
 								<div className="h-2 w-2 rounded-xl bg-green-500 animate-pulse" />
 								<span className="text-xs text-neutral-400">
 									{activeApps.length}{" "}
@@ -412,7 +416,7 @@ export default function TopbarNav() {
 				{/* Second Row: Active Apps */}
 				{activeApps.length > 0 && (
 					<div
-						className="flex items-center px-4 gap-2 h-10 border-t border-white/5"
+						className="flex items-center px-4 gap-2 border-t border-white/5"
 						id="no-draggable"
 						style={{
 							paddingLeft: macTrafficPadding,
