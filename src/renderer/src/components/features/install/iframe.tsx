@@ -6,7 +6,6 @@ import {
 	ArrowLeft,
 	Folder,
 	Maximize2,
-	PictureInPicture,
 	RotateCcw,
 	Share2,
 	Square,

@@ -309,22 +309,33 @@ export default function ActionsComponent({
 												{data?.name}
 											</h1>
 											{!isLocal && (
-												<p className="text-xs text-neutral-400 flex items-center gap-1 mt-0.5 flex-wrap">
-													<User size={14} />
+												<div className="flex items-center gap-1 mt-0.5 flex-wrap">
 													{data?.og_author && (
-														<span className="truncate">{data?.og_author}</span>
+														<button
+															type="button"
+															onClick={() => data?.og_author_url && openLink(`${data?.og_author_url}`)}
+															className="flex items-center gap-1 text-xs cursor-pointer hover:underline"
+															style={{ color: "var(--theme-accent)" }}
+														>
+															<User size={14} className="shrink-0 text-neutral-400" />
+															<span className="truncate">{data?.og_author}</span>
+														</button>
 													)}
 													{data?.og_author && data?.author && (
-														<span className="mx-0.5">•</span>
+														<span className="mx-0.5 text-xs text-neutral-400">•</span>
 													)}
-													<span
-														className="hover:underline cursor-pointer truncate"
-														style={{ color: "var(--theme-accent)" }}
-														onClick={() => openLink(`${data?.author_url}`)}
-													>
-														{data?.author}
-													</span>
-												</p>
+													{data?.author && (
+														<button
+															type="button"
+															onClick={() => openLink(`${data?.author_url}`)}
+															className="flex items-center gap-1 text-xs cursor-pointer truncate hover:underline"
+															style={{ color: "var(--theme-accent)" }}
+														>
+															{!data?.og_author && <User size={14} className="shrink-0 text-neutral-400" />}
+															<span>{data?.author}</span>
+														</button>
+													)}
+												</div>
 											)}
 										</div>
 
@@ -366,7 +377,7 @@ export default function ActionsComponent({
 												<button
 													type="button"
 													onClick={() => openLink(data?.script_url)}
-													className="flex items-center gap-1.5 text-xs hover:underline cursor-pointer"
+													className="flex items-center gap-1.5 text-xs cursor-pointer hover:underline"
 													style={{ color: "var(--theme-accent)" }}
 												>
 													<BadgeCheck
