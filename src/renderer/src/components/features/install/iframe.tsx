@@ -207,10 +207,6 @@ export default function IframeComponent({
 		}
 	}, [iframeSrc]);
 
-	const handleOpenNewWindow = () => {
-		window.electron.ipcRenderer.send("new-window", iframeSrc);
-	};
-
 	const handleReloadIframe2 = () => {
 		const container = containerRef.current;
 		if (container) {
@@ -306,15 +302,6 @@ export default function IframeComponent({
 				</div>
 
 				<div className="flex gap-1.5">
-					<motion.button
-						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
-						onClick={handleOpenNewWindow}
-					>
-						<PictureInPicture className="w-4 h-4" />
-						<div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-[10px] bg-black/90 text-white rounded-xl opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap shadow-lg">
-							{t("iframe.openNewWindow")}
-						</div>
-					</motion.button>
 					<motion.button
 						className="flex items-center justify-center p-2 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all duration-200 rounded-xl relative group cursor-pointer"
 						onClick={
