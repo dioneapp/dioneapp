@@ -1,5 +1,5 @@
 import Icon from "@/components/icons/icon";
-import { Button, Card } from "@/components/ui";
+import { Button, Card, Modal } from "@/components/ui";
 import ProgressBar from "@/components/ui/progress-bar";
 import { useTranslation } from "@/translations/translation-context";
 import {
@@ -27,12 +27,18 @@ export function InstallAIModal({
 }) {
 	const { t } = useTranslation();
 	return (
-		<div className="absolute inset-0 w-full h-screen bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center">
-			<div className="w-full h-full flex items-center justify-center max-w-2xl mx-auto p-4">
-				<div className="flex flex-col p-8 rounded-xl border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden min-h-[500px]">
-					<div className="absolute top-0 left-0 w-full h-1 bg-white opacity-50" />
+		<Modal
+			isOpen={true}
+			onClose={() => {}}
+			maxWidth="2xl"
+			showCloseButton={false}
+			closeOnBackdropClick={false}
+			closeOnEscape={false}
+		>
+			<div className="flex flex-col rounded-xl w-full relative overflow-hidden min-h-[500px]">
+				<div className="absolute top-0 left-0 w-full h-1 bg-white opacity-50" />
 
-					<div className="flex-1 flex flex-col items-center justify-center w-full">
+				<div className="flex-1 flex flex-col items-center justify-center w-full">
 						{installStep === 1 && (
 							<div className="flex gap-4 flex-col items-center justify-center w-full h-fit text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
 								<div className="p-3 rounded-xl bg-white/5 border border-white/10 mb-2">
@@ -135,10 +141,9 @@ export function InstallAIModal({
 								)}
 							</div>
 						)}
-					</div>
 
-					<div className="w-full flex flex-col gap-6 mt-8">
-						<div className="flex justify-center gap-2">
+						<div className="w-full flex flex-col gap-6 mt-8">
+							<div className="flex justify-center gap-2">
 							{[1, 2, 3].map((step) => (
 								<div
 									key={step}
@@ -195,6 +200,6 @@ export function InstallAIModal({
 					</div>
 				</div>
 			</div>
-		</div>
+		</Modal>
 	);
 }

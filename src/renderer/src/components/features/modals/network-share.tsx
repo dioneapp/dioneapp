@@ -1,8 +1,7 @@
-import { Button, Card, IconButton } from "@/components/ui";
+import { Button, Card, Modal, ModalBody } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { getBackendPort } from "@/utils/api";
-import { AnimatePresence, motion } from "framer-motion";
-import { Check, Copy, X } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
 
@@ -152,38 +151,15 @@ export default function NetworkShareModal({
 	};
 
 	return (
-		<AnimatePresence>
-			{isOpen && (
-				<motion.div
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					exit={{ opacity: 0 }}
-					className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-					onClick={onClose}
-				>
-					<motion.div
-						initial={{ opacity: 0, scale: 0.95 }}
-						animate={{ opacity: 1, scale: 1 }}
-						exit={{ opacity: 0, scale: 0.95 }}
-						transition={{ duration: 0.2 }}
-						className="w-full max-w-md overflow-hidden rounded-xl border border-white/10 bg-neutral-900 shadow-2xl"
-						onClick={(e) => e.stopPropagation()}
-					>
-						<div className="flex w-full items-center justify-between px-5 py-4">
-							<h3 className="text-base font-semibold text-white">
-								{t("networkShare.title")}
-							</h3>
-							<IconButton
-								onClick={onClose}
-								icon={<X className="w-4 h-4" />}
-								variant="ghost"
-								size="icon-sm"
-								className="text-neutral-400"
-							/>
-						</div>
-
-						<div className="p-5 space-y-4">
-							<div className="grid grid-cols-2 gap-2 p-1 bg-black/30 rounded-xl">
+		<Modal
+			isOpen={isOpen}
+			onClose={onClose}
+			maxWidth="md"
+			showCloseButton={true}
+			title={t("networkShare.title")}
+		>
+			<ModalBody className="space-y-4">
+				<div className="grid grid-cols-2 gap-2 p-1 bg-black/30 rounded-xl">
 								<Button
 									variant={shareMode === "local" ? "primary" : "ghost"}
 									size="md"
@@ -388,10 +364,7 @@ export default function NetworkShareModal({
 										</>
 									))}
 							</div>
-						</div>
-					</motion.div>
-				</motion.div>
-			)}
-		</AnimatePresence>
-	);
-}
+					</ModalBody>
+				</Modal>
+			);
+		}

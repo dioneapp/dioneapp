@@ -1,5 +1,5 @@
 import { useScriptsLogsContext } from "@/components/contexts/scripts-context";
-import { Button, Card, Checkbox } from "@/components/ui";
+import { Button, Card, Checkbox, Modal } from "@/components/ui";
 import ProgressBar from "@/components/ui/progress-bar";
 import { useTranslation } from "@/translations/translation-context";
 import { AnimatePresence, motion } from "framer-motion";
@@ -79,55 +79,51 @@ export default function DeleteLoadingModal({
 	};
 
 	return (
-		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			exit={{ opacity: 0 }}
-			transition={{ duration: 0.2 }}
-			className="absolute inset-0 w-full h-full bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center"
+		<Modal
+			isOpen={true}
+			onClose={onClose}
+			maxWidth="2xl"
+			showCloseButton={false}
+			closeOnBackdropClick={false}
+			closeOnEscape={false}
 		>
-			<div className="w-full h-full flex items-center justify-center max-w-2xl mx-auto p-4">
-				<motion.div
-					initial={{ scale: 0.95, opacity: 0 }}
-					animate={{ scale: 1, opacity: 1 }}
-					exit={{ scale: 0.95, opacity: 0 }}
-					transition={{ duration: 0.3, ease: "easeOut" }}
-					className="flex flex-col p-8 rounded-xl border border-white/10 backdrop-blur-3xl bg-neutral-950/80 w-full shadow-2xl relative overflow-hidden"
-					style={{ minHeight: "450px", maxHeight: "90vh" }}
-				>
-					{/* Top accent bar */}
+			<div
+				className="flex flex-col rounded-xl w-full relative overflow-hidden"
+				style={{ minHeight: "450px", maxHeight: "90vh" }}
+			>
+				{/* Top accent bar */}
+				<div
+					className="absolute top-0 left-0 w-full h-1 opacity-50"
+					style={{
+						background:
+							currentStep === "complete"
+								? "#22c55e"
+								: status?.startsWith("error")
+									? "#ef4444"
+									: "var(--theme-accent)",
+					}}
+				/>
+
+				{/* Background glow */}
+				<div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
 					<div
-						className="absolute top-0 left-0 w-full h-1 opacity-50"
+						className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-xl blur-3xl opacity-15"
 						style={{
-							background:
+							backgroundColor:
 								currentStep === "complete"
 									? "#22c55e"
 									: status?.startsWith("error")
 										? "#ef4444"
-										: "var(--theme-accent)",
+										: "var(--theme-blur)",
 						}}
 					/>
+				</div>
 
-					{/* Background glow */}
-					<div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
-						<div
-							className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-xl blur-3xl opacity-15"
-							style={{
-								backgroundColor:
-									currentStep === "complete"
-										? "#22c55e"
-										: status?.startsWith("error")
-											? "#ef4444"
-											: "var(--theme-blur)",
-							}}
-						/>
-					</div>
+				{/* Step Indicator */}
+				{renderStepIndicator()}
 
-					{/* Step Indicator */}
-					{renderStepIndicator()}
-
-					{/* Content */}
-					<div className="flex-1 flex flex-col relative z-10 overflow-hidden min-h-0">
+				{/* Content */}
+				<div className="flex-1 flex flex-col relative z-10 overflow-hidden min-h-0">
 						<AnimatePresence mode="wait">
 							{/* Step 1: Confirmation & Selection */}
 							{currentStep === "confirm" && showDepsSelection && (
@@ -379,8 +375,6 @@ export default function DeleteLoadingModal({
 							)}
 						</AnimatePresence>
 					</div>
-				</motion.div>
 			</div>
-		</motion.div>
-	);
-}
+		</Modal>
+	);}

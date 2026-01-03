@@ -12,10 +12,10 @@ import {
 	Square,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useScriptsContext } from "../components/contexts/scripts-context";
+import { useScriptsLogsContext } from "../components/contexts/scripts-context";
 
 export default function QuickAI() {
-	const { logs } = useScriptsContext();
+	const { logs } = useScriptsLogsContext();
 	const {
 		chat,
 		messages,

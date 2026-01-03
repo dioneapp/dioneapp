@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import type React from "react";
 import { useEffect } from "react";
+import { createPortal } from "react-dom";
 
 interface ModalProps {
 	isOpen: boolean;
@@ -46,10 +47,10 @@ export default function Modal({
 		return () => document.removeEventListener("keydown", handleEscape);
 	}, [isOpen, onClose, closeOnEscape]);
 
-	return (
+	const modalContent = (
 		<AnimatePresence>
 			{isOpen && (
-				<div className="absolute inset-0 w-full h-full z-50 flex justify-center items-center">
+				<div className="fixed inset-0 w-full h-full z-50 flex justify-center items-center p-4">
 					{/* Backdrop */}
 					<motion.div
 						initial={{ opacity: 0 }}
@@ -57,7 +58,7 @@ export default function Modal({
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.2 }}
 						onClick={closeOnBackdropClick ? onClose : undefined}
-						className="absolute inset-0 backdrop-blur-sm bg-[#080808]/80"
+						className="fixed inset-0 backdrop-blur-sm bg-[#080808]/80"
 					/>
 
 					{/* Modal Content */}
@@ -66,7 +67,7 @@ export default function Modal({
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						exit={{ opacity: 0, scale: 0.95, y: 20 }}
 						transition={{ duration: 0.2, ease: "easeOut" }}
-						className={`relative ${maxWidthClasses[maxWidth]} w-full border border-white/10 rounded-xl bg-[#080808] flex flex-col overflow-hidden`}
+						className={`relative ${maxWidthClasses[maxWidth]} w-full border border-white/10 rounded-xl bg-[#080808] flex flex-col overflow-hidden mx-auto my-auto`}
 					>
 						{/* Header */}
 						{(title || showCloseButton) && (
@@ -101,6 +102,8 @@ export default function Modal({
 			)}
 		</AnimatePresence>
 	);
+
+	return createPortal(modalContent, document.body);
 }
 
 interface ModalFooterProps {

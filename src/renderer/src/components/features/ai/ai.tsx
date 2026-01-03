@@ -1,5 +1,5 @@
 import { useAIContext } from "@/components/contexts/ai-context";
-import { useScriptsContext } from "@/components/contexts/scripts-context";
+import { useScriptsLogsContext } from "@/components/contexts/scripts-context";
 import Messages from "@/components/features/ai/messages";
 import { Input } from "@/components/ui";
 import { AnimatePresence, motion } from "framer-motion";
@@ -36,7 +36,7 @@ export default function AI({
 		usingTool,
 		ollamaModel,
 	} = useAIContext();
-	const { logs } = useScriptsContext();
+	const { logs } = useScriptsLogsContext();
 
 	useEffect(() => {
 		if (open) {
