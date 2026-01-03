@@ -160,211 +160,209 @@ export default function NetworkShareModal({
 		>
 			<ModalBody className="space-y-4">
 				<div className="grid grid-cols-2 gap-2 p-1 bg-black/30 rounded-xl">
-								<Button
-									variant={shareMode === "local" ? "primary" : "ghost"}
-									size="md"
-									onClick={() => {
-										if (tunnelInfo) stopActiveTunnel();
-										setShareMode("local");
-									}}
-									className="rounded-xl"
-								>
-									{t("networkShare.modes.local")}
-								</Button>
-								<Button
-									variant={shareMode === "public" ? "primary" : "ghost"}
-									size="md"
-									onClick={() => {
-										if (tunnelInfo) {
-											stopActiveTunnel();
-										} else {
-											startPublicTunnel();
-										}
-									}}
-									disabled={startingTunnel}
-									className="rounded-xl"
-								>
-									{t("networkShare.modes.public")}
-								</Button>
+					<Button
+						variant={shareMode === "local" ? "primary" : "ghost"}
+						size="md"
+						onClick={() => {
+							if (tunnelInfo) stopActiveTunnel();
+							setShareMode("local");
+						}}
+						className="rounded-xl"
+					>
+						{t("networkShare.modes.local")}
+					</Button>
+					<Button
+						variant={shareMode === "public" ? "primary" : "ghost"}
+						size="md"
+						onClick={() => {
+							if (tunnelInfo) {
+								stopActiveTunnel();
+							} else {
+								startPublicTunnel();
+							}
+						}}
+						disabled={startingTunnel}
+						className="rounded-xl"
+					>
+						{t("networkShare.modes.public")}
+					</Button>
+				</div>
+				<div className="min-h-[200px]">
+					{startingTunnel && (
+						<div className="space-y-3">
+							<div className="bg-black/30 rounded-xl px-3 py-2.5 h-[42px] animate-pulse">
+								<div className="h-4 bg-white/10 rounded-xl w-3/4"></div>
 							</div>
-							<div className="min-h-[200px]">
-								{startingTunnel && (
+							<div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-3 space-y-2 animate-pulse">
+								<div className="h-3 bg-purple-500/20 rounded-xl w-24"></div>
+								<div className="h-6 bg-purple-500/20 rounded-xl"></div>
+								<div className="h-2 bg-purple-500/20 rounded-xl w-4/5"></div>
+							</div>
+						</div>
+					)}
+
+					{!startingTunnel &&
+						(initialLoading ? (
+							<div className="space-y-3 animate-pulse">
+								<div className="bg-black/30 rounded-xl px-3 py-2.5 h-[42px]">
+									<div className="h-4 bg-white/10 rounded-xl w-3/4"></div>
+								</div>
+								<div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 h-[60px]">
+									<div className="h-3 bg-blue-500/20 rounded-xl w-full mb-2"></div>
+									<div className="h-3 bg-blue-500/20 rounded-xl w-2/3"></div>
+								</div>
+							</div>
+						) : error ? (
+							<Card
+								variant="danger"
+								padding="md"
+								className="text-red-200 text-xs"
+							>
+								{error}
+							</Card>
+						) : (
+							<>
+								{shareMode === "local" && localUrl && (
 									<div className="space-y-3">
-										<div className="bg-black/30 rounded-xl px-3 py-2.5 h-[42px] animate-pulse">
-											<div className="h-4 bg-white/10 rounded-xl w-3/4"></div>
+										<div className="flex items-center justify-center pb-2">
+											<div className="bg-black/30 p-4 rounded-xl border border-white/5">
+												<QRCodeSVG
+													value={localUrl}
+													size={180}
+													level="H"
+													fgColor="#ffffff"
+													bgColor="transparent"
+												/>
+											</div>
 										</div>
-										<div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-3 space-y-2 animate-pulse">
-											<div className="h-3 bg-purple-500/20 rounded-xl w-24"></div>
-											<div className="h-6 bg-purple-500/20 rounded-xl"></div>
-											<div className="h-2 bg-purple-500/20 rounded-xl w-4/5"></div>
+										<div className="space-y-2">
+											<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+												{t("networkShare.local.shareUrl") || "Share URL"}
+											</label>
+											<div className="flex items-center gap-2 bg-black/30 rounded-xl px-3 py-2.5 border border-white/5">
+												<input
+													type="text"
+													readOnly
+													value={localUrl}
+													className="flex-1 select-all bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
+												/>
+												<Button
+													variant="ghost"
+													size="sm"
+													onClick={handleCopy}
+													className="p-1.5"
+												>
+													{copied ? (
+														<Check className="w-4 h-4 text-green-400" />
+													) : (
+														<Copy className="w-4 h-4 text-neutral-400" />
+													)}
+												</Button>
+											</div>
+											<p className="text-xs text-neutral-500">
+												{t("networkShare.local.urlDescription") ||
+													"Share this URL with devices on your local network"}
+											</p>
 										</div>
+										<Card variant="info" padding="md">
+											<p className="text-blue-200 text-xs wrap-break-word">
+												<strong>{t("networkShare.local.localNetwork")}</strong>{" "}
+												{t("networkShare.local.description")}
+											</p>
+										</Card>
 									</div>
 								)}
 
-								{!startingTunnel &&
-									(initialLoading ? (
-										<div className="space-y-3 animate-pulse">
-											<div className="bg-black/30 rounded-xl px-3 py-2.5 h-[42px]">
-												<div className="h-4 bg-white/10 rounded-xl w-3/4"></div>
-											</div>
-											<div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 h-[60px]">
-												<div className="h-3 bg-blue-500/20 rounded-xl w-full mb-2"></div>
-												<div className="h-3 bg-blue-500/20 rounded-xl w-2/3"></div>
+								{shareMode === "public" && tunnelInfo && (
+									<div className="space-y-3">
+										<div className="flex items-center justify-center pb-2">
+											<div className="bg-black/30 p-4 rounded-xl border border-white/5">
+												<QRCodeSVG
+													value={tunnelInfo.shortUrl || tunnelInfo.url}
+													size={180}
+													level="H"
+													fgColor="#ffffff"
+													bgColor="transparent"
+												/>
 											</div>
 										</div>
-									) : error ? (
-										<Card
-											variant="danger"
-											padding="md"
-											className="text-red-200 text-xs"
-										>
-											{error}
-										</Card>
-									) : (
-										<>
-											{shareMode === "local" && localUrl && (
-												<div className="space-y-3">
-													<div className="flex items-center justify-center pb-2">
-														<div className="bg-black/30 p-4 rounded-xl border border-white/5">
-															<QRCodeSVG
-																value={localUrl}
-																size={180}
-																level="H"
-																fgColor="#ffffff"
-																bgColor="transparent"
-															/>
-														</div>
-													</div>
-													<div className="space-y-2">
-														<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
-															{t("networkShare.local.shareUrl") || "Share URL"}
-														</label>
-														<div className="flex items-center gap-2 bg-black/30 rounded-xl px-3 py-2.5 border border-white/5">
-															<input
-																type="text"
-																readOnly
-																value={localUrl}
-																className="flex-1 select-all bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
-															/>
-															<Button
-																variant="ghost"
-																size="sm"
-																onClick={handleCopy}
-																className="p-1.5"
-															>
-																{copied ? (
-																	<Check className="w-4 h-4 text-green-400" />
-																) : (
-																	<Copy className="w-4 h-4 text-neutral-400" />
-																)}
-															</Button>
-														</div>
-														<p className="text-xs text-neutral-500">
-															{t("networkShare.local.urlDescription") ||
-																"Share this URL with devices on your local network"}
-														</p>
-													</div>
-													<Card variant="info" padding="md">
-														<p className="text-blue-200 text-xs wrap-break-word">
-															<strong>
-																{t("networkShare.local.localNetwork")}
-															</strong>{" "}
-															{t("networkShare.local.description")}
-														</p>
-													</Card>
-												</div>
-											)}
-
-											{shareMode === "public" && tunnelInfo && (
-												<div className="space-y-3">
-													<div className="flex items-center justify-center pb-2">
-														<div className="bg-black/30 p-4 rounded-xl border border-white/5">
-															<QRCodeSVG
-																value={tunnelInfo.shortUrl || tunnelInfo.url}
-																size={180}
-																level="H"
-																fgColor="#ffffff"
-																bgColor="transparent"
-															/>
-														</div>
-													</div>
-													<div className="space-y-2">
-														<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
-															{t("networkShare.public.shareUrl")}
-														</label>
-														<div className="flex items-center gap-2 bg-black/30 rounded-xl px-3 py-2.5 border border-white/5">
-															<input
-																type="text"
-																readOnly
-																value={tunnelInfo.shortUrl || tunnelInfo.url}
-																className="flex-1 bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
-															/>
-															<Button
-																variant="ghost"
-																size="sm"
-																onClick={handleCopy}
-																className="p-1.5"
-															>
-																{copied ? (
-																	<Check className="w-4 h-4 text-green-400" />
-																) : (
-																	<Copy className="w-4 h-4 text-neutral-400" />
-																)}
-															</Button>
-														</div>
-														<p className="text-xs text-neutral-500">
-															{t("networkShare.public.urlDescription")}
-														</p>
-													</div>{" "}
-													{tunnelInfo.password && (
-														<Card
-															variant="warning"
-															padding="md"
-															className="space-y-2"
-														>
-															<p className="text-purple-200 text-xs font-medium">
-																{t("networkShare.public.passwordTitle")}
-															</p>
-															<div className="flex items-center gap-2 bg-black/30 rounded-xl px-2 py-1.5 group">
-																<code className="flex-1 text-purple-300 font-mono text-xs blur-sm group-hover:blur-none transition-all duration-200 select-none group-hover:select-text">
-																	{tunnelInfo.password}
-																</code>
-																<Button
-																	variant="ghost"
-																	size="sm"
-																	onClick={() => {
-																		window.copyToClipboard.writeText(
-																			tunnelInfo.password || "",
-																		);
-																		setCopied(true);
-																		setTimeout(() => setCopied(false), 2000);
-																	}}
-																	className="p-1"
-																>
-																	<Copy className="w-3.5 h-3.5 text-purple-300" />
-																</Button>
-															</div>
-															<p className="text-purple-300/60 text-xs">
-																{t("networkShare.public.visitorMessage")}
-															</p>
-														</Card>
+										<div className="space-y-2">
+											<label className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+												{t("networkShare.public.shareUrl")}
+											</label>
+											<div className="flex items-center gap-2 bg-black/30 rounded-xl px-3 py-2.5 border border-white/5">
+												<input
+													type="text"
+													readOnly
+													value={tunnelInfo.shortUrl || tunnelInfo.url}
+													className="flex-1 bg-transparent text-neutral-200 text-sm font-mono focus:outline-none cursor-text"
+												/>
+												<Button
+													variant="ghost"
+													size="sm"
+													onClick={handleCopy}
+													className="p-1.5"
+												>
+													{copied ? (
+														<Check className="w-4 h-4 text-green-400" />
+													) : (
+														<Copy className="w-4 h-4 text-neutral-400" />
 													)}
-													<div className="flex items-center justify-end pt-1">
-														<Button
-															variant="danger"
-															size="sm"
-															onClick={stopActiveTunnel}
-															className="text-xs"
-														>
-															{t("networkShare.public.stopSharing")}
-														</Button>
-													</div>
+												</Button>
+											</div>
+											<p className="text-xs text-neutral-500">
+												{t("networkShare.public.urlDescription")}
+											</p>
+										</div>{" "}
+										{tunnelInfo.password && (
+											<Card
+												variant="warning"
+												padding="md"
+												className="space-y-2"
+											>
+												<p className="text-purple-200 text-xs font-medium">
+													{t("networkShare.public.passwordTitle")}
+												</p>
+												<div className="flex items-center gap-2 bg-black/30 rounded-xl px-2 py-1.5 group">
+													<code className="flex-1 text-purple-300 font-mono text-xs blur-sm group-hover:blur-none transition-all duration-200 select-none group-hover:select-text">
+														{tunnelInfo.password}
+													</code>
+													<Button
+														variant="ghost"
+														size="sm"
+														onClick={() => {
+															window.copyToClipboard.writeText(
+																tunnelInfo.password || "",
+															);
+															setCopied(true);
+															setTimeout(() => setCopied(false), 2000);
+														}}
+														className="p-1"
+													>
+														<Copy className="w-3.5 h-3.5 text-purple-300" />
+													</Button>
 												</div>
-											)}
-										</>
-									))}
-							</div>
-					</ModalBody>
-				</Modal>
-			);
-		}
+												<p className="text-purple-300/60 text-xs">
+													{t("networkShare.public.visitorMessage")}
+												</p>
+											</Card>
+										)}
+										<div className="flex items-center justify-end pt-1">
+											<Button
+												variant="danger"
+												size="sm"
+												onClick={stopActiveTunnel}
+												className="text-xs"
+											>
+												{t("networkShare.public.stopSharing")}
+											</Button>
+										</div>
+									</div>
+								)}
+							</>
+						))}
+				</div>
+			</ModalBody>
+		</Modal>
+	);
+}
