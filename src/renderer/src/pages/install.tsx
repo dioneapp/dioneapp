@@ -12,7 +12,7 @@ import sendEvent from "@/utils/events";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useScriptsContext } from "../components/contexts/scripts-context";
+import { useScriptsContext, useScriptsLogsContext } from "../components/contexts/scripts-context";
 
 export default function Install({
 	id,
@@ -25,7 +25,7 @@ export default function Install({
 }) {
 	const {
 		setInstalledApps,
-		logs,
+
 		isServerRunning,
 		setIsServerRunning,
 		setData,
@@ -45,9 +45,7 @@ export default function Install({
 		connectApp,
 		handleReloadQuickLaunch,
 		handleStopApp,
-		addLogLine,
-		clearLogs,
-		getAllAppLogs,
+
 		activeApps,
 		appFinished,
 		loadIframe,
@@ -58,6 +56,13 @@ export default function Install({
 		setWasJustInstalled,
 		shouldCatch,
 	} = useScriptsContext();
+
+	const {
+		logs,
+		addLogLine,
+		clearLogs,
+		getAllAppLogs,
+	} = useScriptsLogsContext();
 
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -477,7 +482,7 @@ export default function Install({
 		try {
 			console.log("stopping...");
 			const response = await apiFetch(
-				`/scripts/stop/${data.name}/${data.id}/${catchPort[data.id]}`,
+				`/scripts/stop/${data.name}/${data.id}`,
 				{
 					method: "GET",
 				},

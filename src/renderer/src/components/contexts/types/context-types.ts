@@ -48,16 +48,31 @@ export type DependencyDiagnosticsState = Record<
 	Record<string, DependencyDiagnostic>
 >;
 
-export interface ScriptsContextType {
-	setInstalledApps: React.Dispatch<React.SetStateAction<any[]>>;
-	installedApps: any[];
-	socket: any;
+export interface ScriptsLogContextType {
 	logs: Record<string, string[]>;
 	setLogs: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
+	addLog: (appId: string, message: string) => void;
+	addLogLine: (appId: string, message: string) => void;
+	clearLogs: (appId: string) => void;
+	getAllAppLogs: () => string[];
 	statusLog: Record<string, { status: string; content: string }>;
 	setStatusLog: React.Dispatch<
 		React.SetStateAction<Record<string, { status: string; content: string }>>
 	>;
+	progress: Record<string, ProgressState>;
+	setProgress: React.Dispatch<
+		React.SetStateAction<Record<string, ProgressState>>
+	>;
+	deleteLogs: any[];
+	setDeleteLogs: React.Dispatch<React.SetStateAction<any[]>>;
+}
+
+export interface ScriptsContextType {
+	setInstalledApps: React.Dispatch<React.SetStateAction<any[]>>;
+	installedApps: any[];
+	socket: any;
+	// log related properties moved to ScriptsLogContextType
+
 	isServerRunning: Record<string, boolean>;
 	setIsServerRunning: React.Dispatch<
 		React.SetStateAction<Record<string, boolean>>
@@ -97,7 +112,7 @@ export interface ScriptsContextType {
 	apps: any[];
 	setApps: React.Dispatch<React.SetStateAction<any[]>>;
 	socketRef: any;
-	deleteLogs: any[];
+
 	handleReloadQuickLaunch: () => Promise<void>;
 	removedApps: any[];
 	setRemovedApps: React.Dispatch<React.SetStateAction<any[]>>;
@@ -108,10 +123,6 @@ export interface ScriptsContextType {
 	sockets: Record<string, { socket: Socket; isLocal?: boolean }>;
 	activeApps: any[];
 	handleStopApp: (appId: string, appName: string) => void;
-	addLog: (appId: string, message: string) => void;
-	addLogLine: (appId: string, message: string) => void;
-	clearLogs: (appId: string) => void;
-	getAllAppLogs: () => string[];
 	appFinished: Record<string, boolean>;
 	setAppFinished: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	loadIframe: (port: number) => void;
@@ -123,10 +134,7 @@ export interface ScriptsContextType {
 	notSupported: Record<string, { reasons: string[] }>;
 	wasJustInstalled: boolean;
 	setWasJustInstalled: React.Dispatch<React.SetStateAction<boolean>>;
-	progress: Record<string, ProgressState>;
-	setProgress: React.Dispatch<
-		React.SetStateAction<Record<string, ProgressState>>
-	>;
+
 	shouldCatch: Record<string, boolean>;
 	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	isLocal?: boolean;
@@ -157,7 +165,6 @@ export interface SetupSocketProps {
 		buttonAction?: () => void,
 	) => void;
 	stopCheckingRef: React.MutableRefObject<boolean>;
-	statusLog: Record<string, { status: string; content: string }>;
 	setStatusLog: React.Dispatch<
 		React.SetStateAction<Record<string, { status: string; content: string }>>
 	>;

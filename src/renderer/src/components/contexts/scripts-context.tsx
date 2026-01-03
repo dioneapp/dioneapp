@@ -3,6 +3,7 @@ import type {
 	DependencyDiagnosticsState,
 	ProgressState,
 	ScriptsContextType,
+	ScriptsLogContextType,
 } from "@/components/contexts/types/context-types";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, getBackendPort } from "@/utils/api";
@@ -15,11 +16,13 @@ import {
 	useEffect,
 	useRef,
 	useState,
+	useMemo,
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Socket } from "socket.io-client";
 
 const AppContext = createContext<ScriptsContextType | undefined>(undefined);
+const LogContext = createContext<ScriptsLogContextType | undefined>(undefined);
 
 export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const { t } = useTranslation();
@@ -145,7 +148,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		handleReloadQuickLaunch();
 	}, []);
 
-	const handleReloadQuickLaunch = async () => {
+	const handleReloadQuickLaunch = useCallback(async () => {
 		try {
 			// get all installed apps
 			const installedResponse = await apiFetch("/scripts/installed");
@@ -228,7 +231,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			console.error("Error in handleReloadQuickLaunch:", error);
 			showToast("error", t("runningApps.failedToReloadQuickLaunch"));
 		}
-	};
+	}, [localApps, removedApps, t]);
 
 	const isLocalAvailable = async (port: number): Promise<boolean> => {
 		try {
@@ -246,7 +249,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	const stopCheckingRef = useRef(true);
 	const isLoadingIframeRef = useRef(false);
-	const loadIframe = async (localPort: number) => {
+	const loadIframe = useCallback(async (localPort: number) => {
 		if (stopCheckingRef.current || isLoadingIframeRef.current) return;
 
 		stopCheckingRef.current = false;
@@ -276,9 +279,52 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		}
 
 		isLoadingIframeRef.current = false;
-	};
+	}, [data]);
 
-	async function connectApp(appId: string, isLocal?: boolean) {
+	// multiple logs
+	const addLog = useCallback((appId: string, message: string) => {
+		if (!terminalStatesRef.current[appId]) {
+			terminalStatesRef.current[appId] = new TerminalNormalizer();
+		}
+		const normalizer = terminalStatesRef.current[appId];
+		normalizer.feed(message);
+		const newLines = normalizer.getRenderableLines();
+		setLogs((prevLogs) => ({
+			...prevLogs,
+			[appId]: newLines,
+		}));
+	}, []);
+
+	const addLogLine = useCallback((appId: string, message: string) => {
+		if (!terminalStatesRef.current[appId]) {
+			terminalStatesRef.current[appId] = new TerminalNormalizer();
+		}
+		const normalizer = terminalStatesRef.current[appId];
+		normalizer.feed(message + "\n");
+		const newLines = normalizer.getRenderableLines();
+		setLogs((prevLogs) => ({
+			...prevLogs,
+			[appId]: newLines,
+		}));
+	}, []);
+
+	const clearLogs = useCallback((appId: string) => {
+		setLogs((prevLogs) => ({ ...prevLogs, [appId]: [] }));
+		if (terminalStatesRef.current[appId]) {
+			terminalStatesRef.current[appId].clear();
+			delete terminalStatesRef.current[appId];
+		}
+		setStatusLog((prevStatusLog) => ({
+			...prevStatusLog,
+			[appId]: { status: "", content: "" },
+		}));
+	}, []);
+
+	const getAllAppLogs = useCallback(() => {
+		return Object.values(logs).flat();
+	}, [logs]);
+
+	const connectApp = useCallback(async (appId: string, isLocal?: boolean) => {
 		// reuse existing connection attempt
 		if (connectingRef.current[appId]) {
 			return connectingRef.current[appId];
@@ -343,7 +389,6 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				errorRef,
 				showToast,
 				stopCheckingRef,
-				statusLog,
 				setStatusLog,
 				setDeleteLogs,
 				data,
@@ -368,17 +413,15 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		} finally {
 			connectingRef.current[appId] = null;
 		}
-	}
+	}, [addLog, loadIframe, data, shouldCatch, setStatusLog]);
 
-	function disconnectApp(appId: string) {
+	const disconnectApp = useCallback((appId: string) => {
 		const socketToClose = socketsRef.current[appId];
 		if (!socketToClose) return;
 
 		socketToClose.socket.disconnect();
 		delete socketsRef.current[appId];
 		setSockets({ ...socketsRef.current });
-		// clear any pending connection promise so future connects start fresh
-		connectingRef.current[appId] === null;
 
 		setDependencyDiagnostics((prev) => {
 			if (!prev[appId]) return prev;
@@ -391,50 +434,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			const filtered = prev.filter((app) => app.appId !== appId);
 			return filtered;
 		});
-	}
-
-	// multiple logs
-	const addLog = useCallback((appId: string, message: string) => {
-		if (!terminalStatesRef.current[appId]) {
-			terminalStatesRef.current[appId] = new TerminalNormalizer();
-		}
-		const normalizer = terminalStatesRef.current[appId];
-		normalizer.feed(message);
-		const newLines = normalizer.getRenderableLines();
-		setLogs((prevLogs) => ({
-			...prevLogs,
-			[appId]: newLines,
-		}));
 	}, []);
-
-	const addLogLine = useCallback((appId: string, message: string) => {
-		if (!terminalStatesRef.current[appId]) {
-			terminalStatesRef.current[appId] = new TerminalNormalizer();
-		}
-		const normalizer = terminalStatesRef.current[appId];
-		normalizer.feed(message + "\n");
-		const newLines = normalizer.getRenderableLines();
-		setLogs((prevLogs) => ({
-			...prevLogs,
-			[appId]: newLines,
-		}));
-	}, []);
-
-	const clearLogs = useCallback((appId: string) => {
-		setLogs((prevLogs) => ({ ...prevLogs, [appId]: [] }));
-		if (terminalStatesRef.current[appId]) {
-			terminalStatesRef.current[appId].clear();
-			delete terminalStatesRef.current[appId];
-		}
-		setStatusLog((prevStatusLog) => ({
-			...prevStatusLog,
-			[appId]: { status: "", content: "" },
-		}));
-	}, []);
-
-	const getAllAppLogs = useCallback(() => {
-		return Object.values(logs).flat();
-	}, [logs]);
 
 	// get info about active apps
 	useEffect(() => {
@@ -492,10 +492,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${
-							sockets[data.id]?.isLocal
-								? encodeURIComponent(data.name)
-								: data.id
+						`/install/${sockets[data.id]?.isLocal
+							? encodeURIComponent(data.name)
+							: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},
@@ -504,10 +503,10 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		}
 	}, [pathname.includes("/install"), isServerRunning[data?.id]]);
 
-	const handleStopApp = async (appId: string, appName: string) => {
+	const handleStopApp = useCallback(async (appId: string, appName: string) => {
 		try {
 			const response = await apiFetch(
-				`/scripts/stop/${appName}/${appId}/${catchPort[appId]}`,
+				`/scripts/stop/${appName}/${appId}`,
 				{
 					method: "GET",
 				},
@@ -543,84 +542,135 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			setCatchPort({ [appId]: 0 });
 			handleReloadQuickLaunch();
 		}
-	};
+	}, [catchPort, wasJustInstalled, clearLogs, addLogLine, disconnectApp, handleReloadQuickLaunch]);
 
 	useEffect(() => {
 		localStorage.setItem("quickLaunchRemovedApps", JSON.stringify(removedApps));
 	}, [removedApps]);
 
+	const mainContextValue = useMemo(() => ({
+		setInstalledApps,
+		installedApps,
+		socket,
+		isServerRunning,
+		setIsServerRunning,
+		setData,
+		data,
+		error,
+		setError,
+		setIframeAvailable,
+		iframeAvailable,
+		setMissingDependencies,
+		missingDependencies,
+		dependencyDiagnostics,
+		setDependencyDiagnostics,
+		show,
+		setShow,
+		showToast,
+		stopCheckingRef,
+		iframeSrc,
+		setIframeSrc,
+		catchPort,
+		setCatchPort,
+		exitRef,
+		setExitRef,
+		apps,
+		setApps,
+		socketRef,
+		handleReloadQuickLaunch,
+		removedApps,
+		setRemovedApps,
+		availableApps,
+		setAvailableApps,
+		connectApp,
+		disconnectApp,
+		sockets,
+		activeApps,
+		handleStopApp,
+		appFinished,
+		setAppFinished,
+		loadIframe,
+		setLocalApps,
+		localApps,
+		setNotSupported,
+		notSupported,
+		wasJustInstalled,
+		setWasJustInstalled,
+		shouldCatch,
+		setShouldCatch,
+	}), [
+		installedApps,
+		socket,
+		isServerRunning,
+		data,
+		error,
+		iframeAvailable,
+		missingDependencies,
+		dependencyDiagnostics,
+		show,
+		iframeSrc,
+		catchPort,
+		exitRef,
+		apps,
+		handleReloadQuickLaunch,
+		removedApps,
+		availableApps,
+		connectApp,
+		disconnectApp,
+		sockets,
+		activeApps,
+		handleStopApp,
+		appFinished,
+		loadIframe,
+		localApps,
+		notSupported,
+		wasJustInstalled,
+		shouldCatch
+	]);
+
+	const logContextValue = useMemo(() => ({
+		logs,
+		setLogs,
+		addLog,
+		addLogLine,
+		clearLogs,
+		getAllAppLogs,
+		statusLog,
+		setStatusLog,
+		progress,
+		setProgress,
+		deleteLogs,
+		setDeleteLogs,
+	}), [
+		logs,
+		addLog,
+		addLogLine,
+		clearLogs,
+		getAllAppLogs,
+		statusLog,
+		progress,
+		deleteLogs,
+	]);
+
 	return (
-		<AppContext.Provider
-			value={{
-				setInstalledApps,
-				installedApps,
-				socket,
-				logs,
-				setLogs,
-				statusLog,
-				setStatusLog,
-				isServerRunning,
-				setIsServerRunning,
-				data,
-				setData,
-				error,
-				setError,
-				setIframeAvailable,
-				iframeAvailable,
-				setMissingDependencies,
-				missingDependencies,
-				dependencyDiagnostics,
-				setDependencyDiagnostics,
-				setShow,
-				show,
-				showToast,
-				stopCheckingRef,
-				iframeSrc,
-				setIframeSrc,
-				catchPort,
-				setCatchPort,
-				exitRef,
-				setExitRef,
-				apps,
-				setApps,
-				socketRef,
-				deleteLogs,
-				handleReloadQuickLaunch,
-				removedApps,
-				setRemovedApps,
-				availableApps,
-				setAvailableApps,
-				connectApp,
-				disconnectApp,
-				sockets,
-				activeApps,
-				handleStopApp,
-				addLog,
-				addLogLine,
-				clearLogs,
-				getAllAppLogs,
-				appFinished,
-				setAppFinished,
-				loadIframe,
-				setLocalApps,
-				localApps,
-				setNotSupported,
-				notSupported,
-				wasJustInstalled,
-				setWasJustInstalled,
-				progress,
-				setProgress,
-				shouldCatch,
-				setShouldCatch,
-			}}
-		>
-			{children}
+		<AppContext.Provider value={mainContextValue}>
+			<LogContext.Provider value={logContextValue}>
+				{children}
+			</LogContext.Provider>
 		</AppContext.Provider>
 	);
 }
 
 export function useScriptsContext() {
 	const context = useContext(AppContext);
+	if (!context) {
+		throw new Error("Context must be used within an provider");
+	}
+	return context;
+}
+
+export function useScriptsLogsContext() {
+	const context = useContext(LogContext);
 	if (!context) {
 		throw new Error("Context must be used within an provider");
 	}

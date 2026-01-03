@@ -1,7 +1,7 @@
 import ProgressBar from "@/components/common/progress-bar";
 import TerminalOutput from "@/components/install/terminal-output";
 import { useTranslation } from "@/translations/translation-context";
-import { useScriptsContext } from "../contexts/scripts-context";
+import { useScriptsLogsContext } from "../contexts/scripts-context";
 
 import { MAX_TERMINAL_LINES } from "@/utils/terminal";
 import { Copy, ExternalLink, Square } from "lucide-react";
@@ -26,7 +26,7 @@ export default function LogsComponent({
 	appId,
 	executing,
 }: LogsProps) {
-	const { progress } = useScriptsContext();
+	const { progress } = useScriptsLogsContext();
 	const { t } = useTranslation();
 
 	const processedLogs = useMemo(() => {
