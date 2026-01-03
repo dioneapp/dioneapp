@@ -1,10 +1,10 @@
+import { useScriptsLogsContext } from "@/components/contexts/scripts-context";
 import { Button, Card, Checkbox } from "@/components/ui";
 import ProgressBar from "@/components/ui/progress-bar";
 import { useTranslation } from "@/translations/translation-context";
 import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle, Package, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useScriptsLogsContext } from "../contexts/scripts-context";
 
 type UninstallStep = "confirm" | "progress" | "complete";
 

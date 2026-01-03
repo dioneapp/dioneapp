@@ -1,10 +1,10 @@
 import ProgressBar from "@/components/ui/progress-bar";
 import TerminalOutput from "@/components/features/install/terminal-output";
 import { useTranslation } from "@/translations/translation-context";
-import { useScriptsLogsContext } from "../contexts/scripts-context";
 import { MAX_TERMINAL_LINES } from "@/utils/terminal";
 import { Copy, ExternalLink, Square } from "lucide-react";
 import { useMemo } from "react";
+import { useScriptsLogsContext } from "@/components/contexts/scripts-context";
 
 interface LogsProps {
 	logs: Record<string, string[]>;
