@@ -5,7 +5,7 @@ import {
 import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-manager";
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
-import { useGit } from "@/server/utils/useGit";
+import { useGit } from "../utils/use-git";
 import pty from "@lydell/node-pty";
 import { exec, spawn } from "node:child_process";
 import fs from "node:fs";
@@ -389,9 +389,6 @@ export const executeCommand = async (
 		if (pid) {
 			activeProcesses.add(ptyProcess);
 			registerProcess(id, pid);
-			logger.info(
-				`Started PTY process (PID: ${pid}): ${maskPathsInLine(command, workingDir)}`,
-			);
 		}
 
 		let buffer = "";

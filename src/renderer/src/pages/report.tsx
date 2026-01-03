@@ -71,12 +71,12 @@ export default function ReportPage() {
 						</p>
 						<div className="grid grid-cols-2 gap-4 text-sm">
 							<div>
-								<span className="text-neutral-400">OS:</span>
+								<span className="text-neutral-400">OS</span>
 								<span className="ml-2">{window.electron.process.platform}</span>
 							</div>
 							<div>
 								<span className="text-neutral-400">
-									{t("settingsFooter.node")}
+									Node
 								</span>
 								<span className="ml-2">
 									{window.electron.process.versions.node}
@@ -84,7 +84,7 @@ export default function ReportPage() {
 							</div>
 							<div>
 								<span className="text-neutral-400">
-									{t("settingsFooter.electron")}
+									Electron
 								</span>
 								<span className="ml-2">
 									{window.electron.process.versions.electron}
@@ -92,7 +92,7 @@ export default function ReportPage() {
 							</div>
 							<div>
 								<span className="text-neutral-400">
-									{t("settingsFooter.chromium")}
+									Chromium
 								</span>
 								<span className="ml-2">
 									{window.electron.process.versions.chrome}

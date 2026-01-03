@@ -105,7 +105,7 @@ export default function ApplicationsTab({
 			>
 				<div className="flex flex-col gap-2 group">
 					<Button
-						variant="primary"
+						variant="tertiary"
 						size="md"
 						onClick={handleDeleteCache}
 						disabled={deleteCacheStatus === "deleting"}

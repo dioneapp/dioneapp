@@ -1,6 +1,6 @@
 import http from "node:http";
 import { setupRoutes } from "@/server/routes/setup";
-import { getAvailablePort } from "@/server/utils/getPort";
+import { getAvailablePort } from "./utils/get-port";
 import logger from "@/server/utils/logger";
 import { start as setupSocket } from "@/socket/socket";
 import cors from "cors";

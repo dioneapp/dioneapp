@@ -18,7 +18,11 @@ export default function SettingsFooter({
 	const { t } = useTranslation();
 
 	return (
-		<div className="flex justify-between w-full text-[10px] text-neutral-500 mt-5">
+		<>
+			<div
+						className={`h-0.5 rounded-xl w-full from-transparent via-white/40 to-transparent bg-linear-to-l mt-6`}
+					/>
+			<div className="flex justify-between w-full text-[10px] text-neutral-500  ">
 			<div className="mt-auto">
 				<a
 					href="https://getdione.app"
@@ -31,14 +35,13 @@ export default function SettingsFooter({
 				<p className="mt-1">built with &hearts;</p>
 			</div>
 			<div className="text-right">
-				<p>v{packVersion || "0.0.0"}</p>
-				<p className="mt-1">
-					{t("settingsFooter.port")} {port}
-				</p>
+				<p>{t("settingsFooter.version")} {packVersion || "0.0.0"}</p>
+				<p>{t("settingsFooter.port")} {port}</p>
 				<p>Node v{versions.node}</p>
 				<p>Electron v{versions.electron}</p>
 				<p>Chromium v{versions.chrome}</p>
 			</div>
 		</div>
+		</>
 	);
 }

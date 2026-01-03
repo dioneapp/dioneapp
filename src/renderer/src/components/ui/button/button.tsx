@@ -8,6 +8,7 @@ const buttonVariants = cva(
 		variants: {
 			variant: {
 				primary: "bg-white hover:bg-white/80 text-black font-semibold",
+				tertiary: "bg-white hover:bg-white/90 text-black font-medium",
 				secondary:
 					"bg-white/10 hover:bg-white/20 text-neutral-200 border border-white/10",
 				outline: "border border-white/10 hover:bg-white/10 text-neutral-300",
@@ -70,3 +71,4 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
+

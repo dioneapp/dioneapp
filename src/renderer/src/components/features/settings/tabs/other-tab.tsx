@@ -63,7 +63,7 @@ export default function OtherTab({
 				description={t("settings.other.checkUpdates.description")}
 			>
 				<Button
-					variant="secondary"
+					variant="tertiary"
 					size="md"
 					onClick={() => handleCheckUpdates()}
 				>
@@ -101,7 +101,7 @@ export default function OtherTab({
 				description={t("settings.other.variables.description")}
 			>
 				<Button
-					variant="secondary"
+					variant="tertiary"
 					size="md"
 					onClick={() => openVariablesModal(true)}
 				>
@@ -114,7 +114,7 @@ export default function OtherTab({
 				description={t("settings.other.exportLogs.description")}
 			>
 				<Button
-					variant="secondary"
+					variant="tertiary"
 					size="md"
 					onClick={() => handleExportLogs()}
 				>
@@ -127,7 +127,7 @@ export default function OtherTab({
 				description={t("settings.other.submitFeedback.description")}
 			>
 				<Button
-					variant="secondary"
+					variant="tertiary"
 					size="md"
 					onClick={() => handleReportError()}
 				>
@@ -140,7 +140,7 @@ export default function OtherTab({
 				description={t("settings.other.showOnboarding.description")}
 			>
 				<Button
-					variant="secondary"
+					variant="tertiary"
 					size="md"
 					onClick={() => handleResetSettings()}
 				>
