@@ -8,7 +8,7 @@ import {
 } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
-import { FileText, X } from "lucide-react";
+import { FileText } from "lucide-react";
 import { useState } from "react";
 
 export default function UploadModal({ onClose }: { onClose: () => void }) {
