@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import { arch, platform as getPlatform } from "node:os";
+import path from "node:path";
 import {
 	getAllValues,
 	initDefaultEnv,
@@ -6,9 +9,6 @@ import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-m
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import pty from "@lydell/node-pty";
-import fs from "node:fs";
-import { arch, platform as getPlatform } from "node:os";
-import path from "node:path";
 import type { Server } from "socket.io";
 import { useGit } from "../utils/use-git";
 
@@ -461,10 +461,10 @@ export const executeCommands = async (
 							installingPackages = packages.length;
 						}
 						if (uvInstalledMatch) {
-							installingPackages = parseInt(uvInstalledMatch[1]);
+							installingPackages = Number.parseInt(uvInstalledMatch[1]);
 						}
 						if (uvResolvingMatch) {
-							totalPackages = parseInt(uvResolvingMatch[1]);
+							totalPackages = Number.parseInt(uvResolvingMatch[1]);
 						}
 
 						let packageProgress = 0;
