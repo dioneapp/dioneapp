@@ -1,7 +1,7 @@
-import { useEffect, useRef } from "react";
-import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+import { Terminal } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
+import { useEffect, useRef } from "react";
 
 interface TerminalOutputProps {
 	lines: string[];
@@ -14,6 +14,7 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 	const fitAddonRef = useRef<FitAddon | null>(null);
 	const lastProcessedIndex = useRef(0);
 	const activeColorRef = useRef<number | null>(null);
+	const userScrolledUp = useRef(false);
 
 	useEffect(() => {
 		if (!containerRef.current) return;
@@ -21,13 +22,41 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 		const term = new Terminal({
 			convertEol: true,
 			allowTransparency: true,
+			wordSeparator: " ()[]{}',\"`",
 			theme: {
 				background: "#00000000",
-				foreground: "#a3a3a3",
-				cursor: "#ffffff",
+				foreground: "#d4d4d8",
+				cursor: "rgba(255, 255, 255, 0.8)",
+				cursorAccent: "#000000",
+				selectionBackground: "rgba(255, 255, 255, 0.2)",
+				black: "#18181b",
+				red: "#ef4444",
+				green: "#22c55e",
+				yellow: "#eab308",
+				blue: "#3b82f6",
+				magenta: "#a855f7",
+				cyan: "#06b6d4",
+				white: "#e4e4e7",
+				brightBlack: "#52525b",
+				brightRed: "#f87171",
+				brightGreen: "#4ade80",
+				brightYellow: "#facc15",
+				brightBlue: "#60a5fa",
+				brightMagenta: "#c084fc",
+				brightCyan: "#22d3ee",
+				brightWhite: "#fafafa",
 			},
 			fontSize: 12.5,
+			fontFamily:
+				"'Geist Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Monaco', monospace",
+			fontWeight: "400",
+			fontWeightBold: "600",
+			lineHeight: 1.4,
+			letterSpacing: 0,
+			cursorBlink: true,
+			cursorStyle: "bar",
 			scrollback: 99999999,
+			smoothScrollDuration: 120,
 		});
 
 		const fitAddon = new FitAddon();
@@ -42,7 +71,11 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 			fitAddonRef.current.fit();
 			const { cols, rows } = terminalRef.current;
 			if (id) {
-				window.electron?.ipcRenderer?.send("terminal:resize", { id, cols, rows });
+				window.electron?.ipcRenderer?.send("terminal:resize", {
+					id,
+					cols,
+					rows,
+				});
 			}
 		};
 
@@ -54,6 +87,19 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 			handleResize();
 		});
 		observer.observe(containerRef.current);
+
+		const handleScroll = () => {
+			if (!term) return;
+			const buffer = term.buffer.active;
+			const viewport = term.rows;
+			const scrollPosition = buffer.viewportY;
+			const maxScroll = buffer.baseY;
+
+			const isAtBottom = scrollPosition >= maxScroll - viewport - 3;
+			userScrolledUp.current = !isAtBottom;
+		};
+
+		term.onScroll(handleScroll);
 
 		return () => {
 			clearTimeout(timeoutId);
@@ -68,46 +114,83 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 
 		const newLines = lines.slice(lastProcessedIndex.current);
 		const colorRules = [
-			{ regex: /\bwarn(ing)?\b/i, color: 33 },
-			{ regex: /\berror|fail(ed)?\b/i, color: 31 },
-			{ regex: /\bsuccess|complete(d)?\b/i, color: 32 },
-			{ regex: /\binfo\b/i, color: 34 },
+			{ regex: /\b(warn(ing)?|caution)\b/i, color: 93, style: "\x1b[1m" }, // bright yellow bold
+			{
+				regex: /\b(error|fail(ed)?|fatal|critical)\b/i,
+				color: 91,
+				style: "\x1b[1m",
+			}, // bright red bold
+			{
+				regex: /\b(success|complete(d)?|done|finished)\b/i,
+				color: 92,
+				style: "\x1b[1m",
+			}, // bright green bold
+			{ regex: /\b(info|note|notice)\b/i, color: 96, style: "\x1b[1m" }, // bright cyan bold
+			{ regex: /\b(debug|trace)\b/i, color: 90, style: "" }, // bright black (gray)
+			{
+				regex: /\b(start(ing|ed)?|initializ(e|ing|ed)|launch(ing|ed)?)\b/i,
+				color: 94,
+				style: "\x1b[1m",
+			}, // bright blue bold
 		];
 
 		newLines.forEach((line) => {
-			if (line.includes("\x1b")) {
-				term.write(line + (line.includes('\n') ? '' : '\r\n'));
+			// Detect ANSI sequences or lines ending with \r (carriage return)
+			// These should be written as-is without adding line breaks
+			const hasAnsi =
+				line.includes("\x1b") ||
+				line.endsWith("\r") ||
+				/\x1b\[|\[\d+m|\[\d+;\d+H|\[K|\[\?25|[⠋⠙⠹⠸⠼⠴⠦⠧⠇]/.test(line);
+
+			if (hasAnsi) {
+				// Write directly - ANSI codes and \r handle positioning
+				term.write(line);
 				activeColorRef.current = null;
 				return;
 			}
+
 			let matchFound = false;
-			for (const { regex, color } of colorRules) {
+			for (const { regex, color, style } of colorRules) {
 				if (regex.test(line)) {
 					activeColorRef.current = color;
-					term.write(`\x1b[${color}m${line}${line.includes('\n') ? '' : '\r\n'}`);
+					const formattedLine = style
+						? `${style}\x1b[${color}m${line}\x1b[0m`
+						: `\x1b[${color}m${line}\x1b[0m`;
+					term.write(formattedLine + (line.includes("\n") ? "" : "\r\n"));
 					matchFound = true;
 					break;
 				}
 			}
+
 			if (!matchFound) {
 				const trimmed = line.trim();
-				const isContinuation = activeColorRef.current && trimmed.length > 0 && /^[a-z]/.test(trimmed);
+				const isContinuation =
+					activeColorRef.current &&
+					trimmed.length > 0 &&
+					/^[a-z]/.test(trimmed);
 
 				if (isContinuation) {
-					term.write(line + (line.includes('\n') ? '' : '\r\n'));
+					term.write(line + (line.includes("\n") ? "" : "\r\n"));
 				} else {
 					activeColorRef.current = null;
-					term.write(`\x1b[0m${line}${line.includes('\n') ? '' : '\r\n'}`);
+					term.write(`\x1b[0m${line}${line.includes("\n") ? "" : "\r\n"}`);
 				}
 			}
 		});
 
 		lastProcessedIndex.current = lines.length;
-		term.scrollToBottom();
+
+		if (!userScrolledUp.current) {
+			setTimeout(() => {
+				if (term && !userScrolledUp.current) {
+					term.scrollToBottom();
+				}
+			}, 0);
+		}
 	}, [lines]);
 
 	return (
-		<div className="h-full w-full overflow-hidden rounded-lg p-2">
+		<div className="h-full w-full overflow-hidden rounded-xl">
 			<div ref={containerRef} className="w-full h-full" />
 		</div>
 	);

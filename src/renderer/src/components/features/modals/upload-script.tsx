@@ -71,14 +71,13 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 				<h2 className="font-semibold text-xl flex items-center justify-center">
 					{t("local.uploadModal.title")}
 				</h2>
-
 			</div>
 			<ModalBody>
 				<Button
 					variant="secondary"
 					size="lg"
 					onClick={handleFileUpload}
-				className="w-full px-8 py-12 border-2 border-dashed border-white/20 hover:border-white/40"
+					className="w-full px-8 py-12 border-2 border-dashed border-white/20 hover:border-white/40"
 				>
 					{scriptFile ? (
 						<div className="text-center">

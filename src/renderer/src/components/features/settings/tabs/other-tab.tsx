@@ -113,11 +113,7 @@ export default function OtherTab({
 				label={t("settings.other.exportLogs.label")}
 				description={t("settings.other.exportLogs.description")}
 			>
-				<Button
-					variant="tertiary"
-					size="md"
-					onClick={() => handleExportLogs()}
-				>
+				<Button variant="tertiary" size="md" onClick={() => handleExportLogs()}>
 					{t("settings.other.exportLogs.button")}
 				</Button>
 			</SettingItem>

@@ -1,6 +1,6 @@
+import { useAuthContext } from "@/components/contexts/auth-context";
 import { StatCard } from "@/components/features/account/stat-card";
 import { Button } from "@/components/ui";
-import { useAuthContext } from "@/components/contexts/auth-context";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
 import { motion } from "framer-motion";

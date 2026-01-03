@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import { arch, platform as getPlatform } from "node:os";
+import path from "node:path";
 import {
 	getAllValues,
 	initDefaultEnv,
@@ -5,14 +8,9 @@ import {
 import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-manager";
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
-import { useGit } from "../utils/use-git";
 import pty from "@lydell/node-pty";
-import { exec, spawn } from "node:child_process";
-import fs from "node:fs";
-import { arch, platform as getPlatform } from "node:os";
-import path from "node:path";
-import pidtree from "pidtree";
 import type { Server } from "socket.io";
+import { useGit } from "../utils/use-git";
 
 const activeProcesses = new Set<any>();
 const activePIDs = new Set<number>();
@@ -112,21 +110,30 @@ const dropProcesses = async (id?: string, pid?: number) => {
 let processWasCancelled = false;
 
 // is active process running?
-export const stopActiveProcess = async (io: Server, id: string, pid?: number) => {
+export const stopActiveProcess = async (
+	io: Server,
+	id: string,
+	pid?: number,
+) => {
 	processWasCancelled = true;
 
 	if (pid) {
-		io.to(id).emit("installUpdate", { type: "log", content: `Killing process with id ${pid}\n` });
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: `Killing process with id ${pid}\n`,
+		});
 		logger.info(`Killing process with id ${pid}`);
 	} else {
-		io.to(id).emit("installUpdate", { type: "log", content: `Killing all processes for app ${id}\n` });
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: `Killing all processes for app ${id}\n`,
+		});
 		logger.info(`Killing all processes for app ${id}`);
 	}
 
 	await dropProcesses(id, pid);
 	return true;
 };
-
 
 // execute command using PTY for proper terminal emulation
 const stripAnsi = (str: string) => {
@@ -182,12 +189,16 @@ export const executeCommand = async (
 		const pid = ptyProcess.pid;
 
 		if (isWindows) {
-			ptyProcess.write(`@echo off\r\nchcp 65001 >nul\r\necho ${START_TOKEN}\r\n${command}\r\nexit\r\n`);
+			ptyProcess.write(
+				`@echo off\r\nchcp 65001 >nul\r\necho ${START_TOKEN}\r\n${command}\r\nexit\r\n`,
+			);
 		} else {
 			ptyProcess.write(`echo "${START_TOKEN}"; ${command}; exit\n`);
 		}
 
-		logger.info(`Executing: ${command.length > 300 ? command.substring(0, 300) + "..." : command}`);
+		logger.info(
+			`Executing: ${command.length > 300 ? command.substring(0, 300) + "..." : command}`,
+		);
 
 		if (pid) {
 			activeProcesses.add(ptyProcess);
@@ -217,7 +228,8 @@ export const executeCommand = async (
 				if (command && cleanLine.includes(command)) continue;
 				if (cleanLine.includes("Microsoft Windows")) continue;
 				if (cleanLine.endsWith("exit")) continue;
-				if (rawLine.includes("]0;") || rawLine.includes("Is a directory")) continue;
+				if (rawLine.includes("]0;") || rawLine.includes("Is a directory"))
+					continue;
 
 				outputData += rawLine;
 				options?.onOutput?.(rawLine);
@@ -408,6 +420,8 @@ export const executeCommands = async (
 			let outputLines = 0;
 			const startTime = Date.now();
 			let lastProgressEmit = 0;
+			let installingPackages = 0;
+			let totalPackages = 0;
 
 			// emit initial progress for this command starting
 			if (options?.onProgress) {
@@ -430,15 +444,52 @@ export const executeCommands = async (
 						outputLines++;
 						const elapsed = Date.now() - startTime;
 
+						const pipInstallMatch = text.match(/Collecting\s+(\S+)/i);
+						const pipInstalledMatch = text.match(
+							/Successfully\s+installed\s+(.+)/i,
+						);
+						const uvInstalledMatch = text.match(/Installed\s+(\d+)\s+package/i);
+						const uvResolvingMatch = text.match(/Resolved\s+(\d+)\s+package/i);
+
+						if (pipInstallMatch) {
+							totalPackages++;
+						}
+						if (pipInstalledMatch) {
+							const packages = pipInstalledMatch[1]
+								.split(/\s+/)
+								.filter((p) => p.trim());
+							installingPackages = packages.length;
+						}
+						if (uvInstalledMatch) {
+							installingPackages = Number.parseInt(uvInstalledMatch[1]);
+						}
+						if (uvResolvingMatch) {
+							totalPackages = Number.parseInt(uvResolvingMatch[1]);
+						}
+
+						let packageProgress = 0;
+						if (totalPackages > 0 && installingPackages > 0) {
+							packageProgress = Math.min(
+								0.95,
+								installingPackages / totalPackages,
+							);
+						}
+
 						const timeProgress = Math.min(
-							0.92,
-							Math.log(elapsed + 1000) / Math.log(120000),
+							0.85,
+							Math.log(elapsed + 1000) / Math.log(300000),
 						);
-						const outputProgress = Math.min(0.92, Math.sqrt(outputLines / 50));
-						commandProgress = Math.max(
-							commandProgress,
-							Math.max(timeProgress, outputProgress),
-						);
+
+						const outputProgress = Math.min(0.85, Math.sqrt(outputLines / 100));
+
+						if (packageProgress > 0) {
+							commandProgress = Math.max(commandProgress, packageProgress);
+						} else {
+							commandProgress = Math.max(
+								commandProgress,
+								Math.max(timeProgress, outputProgress),
+							);
+						}
 
 						const overallProgress =
 							(completedCommands + commandProgress) / totalCommands;

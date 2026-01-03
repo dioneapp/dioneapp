@@ -1,11 +1,11 @@
-import { Button } from "@/components/ui";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import Background from "@/components/features/first-time/background";
 import SureNotLogin from "@/components/features/first-time/login";
 import Setup from "@/components/features/first-time/onboarding/setup";
 import ExecuteSound from "@/components/features/first-time/sounds/sound";
-import Icon from "@/components/icons/icon";
 import Titlebar from "@/components/features/layout/titlebar";
+import Icon from "@/components/icons/icon";
+import { Button } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";

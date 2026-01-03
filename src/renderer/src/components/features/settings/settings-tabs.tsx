@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
 import {
@@ -8,7 +9,6 @@ import {
 	Settings2,
 	Shield,
 } from "lucide-react";
-import { Button } from "@/components/ui";
 
 export type TabType =
 	| "applications"
