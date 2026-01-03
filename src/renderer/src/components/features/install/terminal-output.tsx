@@ -22,6 +22,7 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 		const term = new Terminal({
 			convertEol: true,
 			allowTransparency: true,
+			wordSeparator: " ()[]{}',\"`",
 			theme: {
 				background: "#00000000",
 				foreground: "#d4d4d8",
@@ -189,7 +190,7 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 	}, [lines]);
 
 	return (
-		<div className="h-full w-full overflow-hidden rounded-xl p-1">
+		<div className="h-full w-full overflow-hidden rounded-xl">
 			<div ref={containerRef} className="w-full h-full" />
 		</div>
 	);
