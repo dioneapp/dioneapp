@@ -12,7 +12,10 @@ import sendEvent from "@/utils/events";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useScriptsContext, useScriptsLogsContext } from "../components/contexts/scripts-context";
+import {
+	useScriptsContext,
+	useScriptsLogsContext,
+} from "../components/contexts/scripts-context";
 
 export default function Install({
 	id,
@@ -57,12 +60,8 @@ export default function Install({
 		shouldCatch,
 	} = useScriptsContext();
 
-	const {
-		logs,
-		addLogLine,
-		clearLogs,
-		getAllAppLogs,
-	} = useScriptsLogsContext();
+	const { logs, addLogLine, clearLogs, getAllAppLogs } =
+		useScriptsLogsContext();
 
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -481,12 +480,9 @@ export default function Install({
 	async function stop(type?: string) {
 		try {
 			console.log("stopping...");
-			const response = await apiFetch(
-				`/scripts/stop/${data.name}/${data.id}`,
-				{
-					method: "GET",
-				},
-			);
+			const response = await apiFetch(`/scripts/stop/${data.name}/${data.id}`, {
+				method: "GET",
+			});
 			if (response.status === 200) {
 				setShow({ [data?.id]: "actions" });
 				setInstalled(true);

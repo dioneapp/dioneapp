@@ -375,7 +375,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 						continue;
 					}
 				}
-			} catch { }
+			} catch {}
 
 			// 5. if nothing matched, return normal content
 			if (thoughtMatch) {

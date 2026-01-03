@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui";
 import Icon from "@/components/icons/icon";
+import { Button } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { sendDiscordReport } from "@/utils/discord-webhook";
 import { openLink } from "@/utils/open-link";

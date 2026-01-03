@@ -14,9 +14,9 @@ import {
 	useCallback,
 	useContext,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
-	useMemo,
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import type { Socket } from "socket.io-client";
@@ -249,37 +249,40 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	const stopCheckingRef = useRef(true);
 	const isLoadingIframeRef = useRef(false);
-	const loadIframe = useCallback(async (localPort: number) => {
-		if (stopCheckingRef.current || isLoadingIframeRef.current) return;
+	const loadIframe = useCallback(
+		async (localPort: number) => {
+			if (stopCheckingRef.current || isLoadingIframeRef.current) return;
 
-		stopCheckingRef.current = false;
+			stopCheckingRef.current = false;
 
-		let isAvailable = false;
-		while (!isAvailable) {
-			isAvailable = await isLocalAvailable(localPort);
-			if (!isAvailable) {
-				await new Promise((resolve) => setTimeout(resolve, 3000));
+			let isAvailable = false;
+			while (!isAvailable) {
+				isAvailable = await isLocalAvailable(localPort);
+				if (!isAvailable) {
+					await new Promise((resolve) => setTimeout(resolve, 3000));
+				}
 			}
-		}
-		if (isAvailable) {
-			stopCheckingRef.current = true;
-			isLoadingIframeRef.current = true;
-			setIframeSrc((prev) => ({
-				...prev,
-				[data?.id]: `http://localhost:${localPort}`,
-			}));
-			setShow({ [data?.id]: "iframe" });
-			setIframeAvailable((prev) => ({ ...prev, [data?.id]: true }));
-			showToast("default", `${data.name || "Script"} has opened a preview.`);
-			window.electron.ipcRenderer.invoke(
-				"notify",
-				"Preview...",
-				`${data.name} has opened a preview.`,
-			);
-		}
+			if (isAvailable) {
+				stopCheckingRef.current = true;
+				isLoadingIframeRef.current = true;
+				setIframeSrc((prev) => ({
+					...prev,
+					[data?.id]: `http://localhost:${localPort}`,
+				}));
+				setShow({ [data?.id]: "iframe" });
+				setIframeAvailable((prev) => ({ ...prev, [data?.id]: true }));
+				showToast("default", `${data.name || "Script"} has opened a preview.`);
+				window.electron.ipcRenderer.invoke(
+					"notify",
+					"Preview...",
+					`${data.name} has opened a preview.`,
+				);
+			}
 
-		isLoadingIframeRef.current = false;
-	}, [data]);
+			isLoadingIframeRef.current = false;
+		},
+		[data],
+	);
 
 	// multiple logs
 	const addLog = useCallback((appId: string, message: string) => {
@@ -324,96 +327,104 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		return Object.values(logs).flat();
 	}, [logs]);
 
-	const connectApp = useCallback(async (appId: string, isLocal?: boolean) => {
-		// reuse existing connection attempt
-		if (connectingRef.current[appId]) {
-			return connectingRef.current[appId];
-		}
-
-		const connectPromise = (async () => {
-			const existing = socketsRef.current[appId];
-			if (existing && existing.socket) {
-				try {
-					// already fully connected -> nothing to do
-					if (existing.socket.connected) {
-						return;
-					}
-					// try reconnecting existing socket
-					if (typeof existing.socket.connect === "function") {
-						console.log(`Reconnecting socket for ${appId}...`);
-						existing.socket.connect();
-						setSockets({ ...socketsRef.current });
-						// wait for connection or timeout
-						await new Promise<void>((resolve) => {
-							const to = setTimeout(() => {
-								console.warn(`Timeout waiting for socket ${appId} to connect`);
-								resolve();
-							}, 2000);
-							existing.socket.once("connect", () => {
-								clearTimeout(to);
-								resolve();
-							});
-						});
-						if (existing.socket.connected) return;
-					}
-				} catch (err) {
-					console.warn("Reconnect attempt failed, will recreate socket:", err);
-				}
-
-				// cleanup dead socket
-				try {
-					if (
-						existing.socket &&
-						typeof existing.socket.disconnect === "function"
-					) {
-						existing.socket.disconnect();
-					}
-				} catch (e) {
-					/* ignore */
-				}
-				delete socketsRef.current[appId];
-				setSockets({ ...socketsRef.current });
+	const connectApp = useCallback(
+		async (appId: string, isLocal?: boolean) => {
+			// reuse existing connection attempt
+			if (connectingRef.current[appId]) {
+				return connectingRef.current[appId];
 			}
 
-			const port = await getBackendPort();
-			const newSocket = setupSocket({
-				appId,
-				addLog,
-				port,
-				setMissingDependencies,
-				setDependencyDiagnostics,
-				setIframeAvailable,
-				setCatchPort,
-				loadIframe,
-				setIframeSrc,
-				errorRef,
-				showToast,
-				stopCheckingRef,
-				setStatusLog,
-				setDeleteLogs,
-				data,
-				socketsRef,
-				setAppFinished,
-				setNotSupported,
-				setWasJustInstalled,
-				setProgress,
-				setShouldCatch,
-				shouldCatch,
-			});
-			socketsRef.current[appId] = {
-				socket: newSocket,
-				isLocal,
-			};
-			setSockets({ ...socketsRef.current });
-		})();
+			const connectPromise = (async () => {
+				const existing = socketsRef.current[appId];
+				if (existing && existing.socket) {
+					try {
+						// already fully connected -> nothing to do
+						if (existing.socket.connected) {
+							return;
+						}
+						// try reconnecting existing socket
+						if (typeof existing.socket.connect === "function") {
+							console.log(`Reconnecting socket for ${appId}...`);
+							existing.socket.connect();
+							setSockets({ ...socketsRef.current });
+							// wait for connection or timeout
+							await new Promise<void>((resolve) => {
+								const to = setTimeout(() => {
+									console.warn(
+										`Timeout waiting for socket ${appId} to connect`,
+									);
+									resolve();
+								}, 2000);
+								existing.socket.once("connect", () => {
+									clearTimeout(to);
+									resolve();
+								});
+							});
+							if (existing.socket.connected) return;
+						}
+					} catch (err) {
+						console.warn(
+							"Reconnect attempt failed, will recreate socket:",
+							err,
+						);
+					}
 
-		connectingRef.current[appId] = connectPromise;
-		try {
-			await connectPromise;
-		} finally {
-			connectingRef.current[appId] = null;
-		}
-	}, [addLog, loadIframe, data, shouldCatch, setStatusLog]);
+					// cleanup dead socket
+					try {
+						if (
+							existing.socket &&
+							typeof existing.socket.disconnect === "function"
+						) {
+							existing.socket.disconnect();
+						}
+					} catch (e) {
+						/* ignore */
+					}
+					delete socketsRef.current[appId];
+					setSockets({ ...socketsRef.current });
+				}
+
+				const port = await getBackendPort();
+				const newSocket = setupSocket({
+					appId,
+					addLog,
+					port,
+					setMissingDependencies,
+					setDependencyDiagnostics,
+					setIframeAvailable,
+					setCatchPort,
+					loadIframe,
+					setIframeSrc,
+					errorRef,
+					showToast,
+					stopCheckingRef,
+					setStatusLog,
+					setDeleteLogs,
+					data,
+					socketsRef,
+					setAppFinished,
+					setNotSupported,
+					setWasJustInstalled,
+					setProgress,
+					setShouldCatch,
+					shouldCatch,
+				});
+				socketsRef.current[appId] = {
+					socket: newSocket,
+					isLocal,
+				};
+				setSockets({ ...socketsRef.current });
+			})();
+
+			connectingRef.current[appId] = connectPromise;
+			try {
+				await connectPromise;
+			} finally {
+				connectingRef.current[appId] = null;
+			}
+		},
+		[addLog, loadIframe, data, shouldCatch, setStatusLog],
+	);
 
 	const disconnectApp = useCallback((appId: string) => {
 		const socketToClose = socketsRef.current[appId];
@@ -492,9 +503,10 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${sockets[data.id]?.isLocal
-							? encodeURIComponent(data.name)
-							: data.id
+						`/install/${
+							sockets[data.id]?.isLocal
+								? encodeURIComponent(data.name)
+								: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},
@@ -503,154 +515,167 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 		}
 	}, [pathname.includes("/install"), isServerRunning[data?.id]]);
 
-	const handleStopApp = useCallback(async (appId: string, appName: string) => {
-		try {
-			const response = await apiFetch(
-				`/scripts/stop/${appName}/${appId}`,
-				{
+	const handleStopApp = useCallback(
+		async (appId: string, appName: string) => {
+			try {
+				const response = await apiFetch(`/scripts/stop/${appName}/${appId}`, {
 					method: "GET",
-				},
-			);
+				});
 
-			if (response.status === 200) {
-				setShow({ [appId]: "actions" });
-				if (!wasJustInstalled) {
-					window.electron.ipcRenderer.invoke(
-						"notify",
-						"Stopping...",
-						`${appName} stopped successfully.`,
-					);
-					showToast("success", `Successfully stopped ${appName}`);
+				if (response.status === 200) {
+					setShow({ [appId]: "actions" });
+					if (!wasJustInstalled) {
+						window.electron.ipcRenderer.invoke(
+							"notify",
+							"Stopping...",
+							`${appName} stopped successfully.`,
+						);
+						showToast("success", `Successfully stopped ${appName}`);
+					}
+					clearLogs(appId);
+					setIsServerRunning((prev) => ({ ...prev, [appId]: false }));
+				} else {
+					showToast("error", `Error stopping ${appName}: ${response.status}`);
 				}
-				clearLogs(appId);
-				setIsServerRunning((prev) => ({ ...prev, [appId]: false }));
-			} else {
-				showToast("error", `Error stopping ${appName}: ${response.status}`);
+			} catch (error) {
+				showToast("error", `Error stopping ${appName}: ${error}`);
+				window.electron.ipcRenderer.invoke(
+					"notify",
+					"Error...",
+					`Error stopping ${appName}: ${error}`,
+				);
+				addLogLine(appId, `Error stopping ${appName}: ${error}`);
+			} finally {
+				disconnectApp(appId);
+				setAppFinished({ [appId]: false });
+				setShouldCatch({ [appId]: false });
+				setCatchPort({ [appId]: 0 });
+				handleReloadQuickLaunch();
 			}
-		} catch (error) {
-			showToast("error", `Error stopping ${appName}: ${error}`);
-			window.electron.ipcRenderer.invoke(
-				"notify",
-				"Error...",
-				`Error stopping ${appName}: ${error}`,
-			);
-			addLogLine(appId, `Error stopping ${appName}: ${error}`);
-		} finally {
-			disconnectApp(appId);
-			setAppFinished({ [appId]: false });
-			setShouldCatch({ [appId]: false });
-			setCatchPort({ [appId]: 0 });
-			handleReloadQuickLaunch();
-		}
-	}, [catchPort, wasJustInstalled, clearLogs, addLogLine, disconnectApp, handleReloadQuickLaunch]);
+		},
+		[
+			catchPort,
+			wasJustInstalled,
+			clearLogs,
+			addLogLine,
+			disconnectApp,
+			handleReloadQuickLaunch,
+		],
+	);
 
 	useEffect(() => {
 		localStorage.setItem("quickLaunchRemovedApps", JSON.stringify(removedApps));
 	}, [removedApps]);
 
-	const mainContextValue = useMemo(() => ({
-		setInstalledApps,
-		installedApps,
-		socket,
-		isServerRunning,
-		setIsServerRunning,
-		setData,
-		data,
-		error,
-		setError,
-		setIframeAvailable,
-		iframeAvailable,
-		setMissingDependencies,
-		missingDependencies,
-		dependencyDiagnostics,
-		setDependencyDiagnostics,
-		show,
-		setShow,
-		showToast,
-		stopCheckingRef,
-		iframeSrc,
-		setIframeSrc,
-		catchPort,
-		setCatchPort,
-		exitRef,
-		setExitRef,
-		apps,
-		setApps,
-		socketRef,
-		handleReloadQuickLaunch,
-		removedApps,
-		setRemovedApps,
-		availableApps,
-		setAvailableApps,
-		connectApp,
-		disconnectApp,
-		sockets,
-		activeApps,
-		handleStopApp,
-		appFinished,
-		setAppFinished,
-		loadIframe,
-		setLocalApps,
-		localApps,
-		setNotSupported,
-		notSupported,
-		wasJustInstalled,
-		setWasJustInstalled,
-		shouldCatch,
-		setShouldCatch,
-	}), [
-		installedApps,
-		socket,
-		isServerRunning,
-		data,
-		error,
-		iframeAvailable,
-		missingDependencies,
-		dependencyDiagnostics,
-		show,
-		iframeSrc,
-		catchPort,
-		exitRef,
-		apps,
-		handleReloadQuickLaunch,
-		removedApps,
-		availableApps,
-		connectApp,
-		disconnectApp,
-		sockets,
-		activeApps,
-		handleStopApp,
-		appFinished,
-		loadIframe,
-		localApps,
-		notSupported,
-		wasJustInstalled,
-		shouldCatch
-	]);
+	const mainContextValue = useMemo(
+		() => ({
+			setInstalledApps,
+			installedApps,
+			socket,
+			isServerRunning,
+			setIsServerRunning,
+			setData,
+			data,
+			error,
+			setError,
+			setIframeAvailable,
+			iframeAvailable,
+			setMissingDependencies,
+			missingDependencies,
+			dependencyDiagnostics,
+			setDependencyDiagnostics,
+			show,
+			setShow,
+			showToast,
+			stopCheckingRef,
+			iframeSrc,
+			setIframeSrc,
+			catchPort,
+			setCatchPort,
+			exitRef,
+			setExitRef,
+			apps,
+			setApps,
+			socketRef,
+			handleReloadQuickLaunch,
+			removedApps,
+			setRemovedApps,
+			availableApps,
+			setAvailableApps,
+			connectApp,
+			disconnectApp,
+			sockets,
+			activeApps,
+			handleStopApp,
+			appFinished,
+			setAppFinished,
+			loadIframe,
+			setLocalApps,
+			localApps,
+			setNotSupported,
+			notSupported,
+			wasJustInstalled,
+			setWasJustInstalled,
+			shouldCatch,
+			setShouldCatch,
+		}),
+		[
+			installedApps,
+			socket,
+			isServerRunning,
+			data,
+			error,
+			iframeAvailable,
+			missingDependencies,
+			dependencyDiagnostics,
+			show,
+			iframeSrc,
+			catchPort,
+			exitRef,
+			apps,
+			handleReloadQuickLaunch,
+			removedApps,
+			availableApps,
+			connectApp,
+			disconnectApp,
+			sockets,
+			activeApps,
+			handleStopApp,
+			appFinished,
+			loadIframe,
+			localApps,
+			notSupported,
+			wasJustInstalled,
+			shouldCatch,
+		],
+	);
 
-	const logContextValue = useMemo(() => ({
-		logs,
-		setLogs,
-		addLog,
-		addLogLine,
-		clearLogs,
-		getAllAppLogs,
-		statusLog,
-		setStatusLog,
-		progress,
-		setProgress,
-		deleteLogs,
-		setDeleteLogs,
-	}), [
-		logs,
-		addLog,
-		addLogLine,
-		clearLogs,
-		getAllAppLogs,
-		statusLog,
-		progress,
-		deleteLogs,
-	]);
+	const logContextValue = useMemo(
+		() => ({
+			logs,
+			setLogs,
+			addLog,
+			addLogLine,
+			clearLogs,
+			getAllAppLogs,
+			statusLog,
+			setStatusLog,
+			progress,
+			setProgress,
+			deleteLogs,
+			setDeleteLogs,
+		}),
+		[
+			logs,
+			addLog,
+			addLogLine,
+			clearLogs,
+			getAllAppLogs,
+			statusLog,
+			progress,
+			deleteLogs,
+		],
+	);
 
 	return (
 		<AppContext.Provider value={mainContextValue}>

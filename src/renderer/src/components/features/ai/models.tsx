@@ -1,6 +1,6 @@
+import { useScriptsContext } from "@/components/contexts/scripts-context";
 import { apiFetch } from "@/utils/api";
 import { useEffect, useState } from "react";
-import { useScriptsContext } from "@/components/contexts/scripts-context";
 
 export default function Models({
 	setOllamaModel,

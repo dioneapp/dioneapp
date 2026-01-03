@@ -8,11 +8,11 @@ export async function getSystemInfo() {
 
 	try {
 		const graphics = await si.graphics();
-		const gpus = graphics.controllers.map(gpu => gpu.vendor.toLowerCase());
+		const gpus = graphics.controllers.map((gpu) => gpu.vendor.toLowerCase());
 		if (graphics) {
-			if (gpus.some(g => /nvidia/i.test(g))) gpu = "nvidia";
-			if (gpus.some(g => /amd|advanced micro devices/i.test(g))) gpu = "amd";
-			if (gpus.some(g => /apple/i.test(g))) gpu = "apple";
+			if (gpus.some((g) => /nvidia/i.test(g))) gpu = "nvidia";
+			if (gpus.some((g) => /amd|advanced micro devices/i.test(g))) gpu = "amd";
+			if (gpus.some((g) => /apple/i.test(g))) gpu = "apple";
 		}
 		const osInfo = await si.osInfo();
 		const platform = osInfo.platform;
@@ -21,7 +21,6 @@ export async function getSystemInfo() {
 		if (os === "darwin") {
 			os = "mac";
 		}
-
 	} catch (error) {
 		logger.error(`Error getting system info: ${error}`);
 	}

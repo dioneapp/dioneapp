@@ -1,12 +1,12 @@
-import { Button } from "@/components/ui";
+import { useScriptsContext } from "@/components/contexts/scripts-context";
 import ScriptCard from "@/components/features/home/feed/card";
 import type { Script } from "@/components/features/home/feed/types";
 import UploadModal from "@/components/features/modals/upload-script";
+import { Button } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, apiJson } from "@/utils/api";
 import { useToast } from "@/utils/use-toast";
 import { useEffect, useState } from "react";
-import { useScriptsContext } from "@/components/contexts/scripts-context";
 
 export default function LocalScripts() {
 	const { t } = useTranslation();

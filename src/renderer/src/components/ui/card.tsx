@@ -33,7 +33,7 @@ const cardVariants = cva(
 
 export interface CardProps
 	extends React.HTMLAttributes<HTMLDivElement>,
-	VariantProps<typeof cardVariants> {
+		VariantProps<typeof cardVariants> {
 	as?: "div" | "section" | "article";
 	variant?: VariantProps<typeof cardVariants>["variant"];
 	padding?: VariantProps<typeof cardVariants>["padding"];

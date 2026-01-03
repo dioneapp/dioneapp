@@ -1,6 +1,6 @@
-import { useEffect, useRef } from "react";
-import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
+import { Terminal } from "@xterm/xterm";
+import { useEffect, useRef } from "react";
 import "@xterm/xterm/css/xterm.css";
 
 interface TerminalOutputProps {
@@ -42,7 +42,11 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 			fitAddonRef.current.fit();
 			const { cols, rows } = terminalRef.current;
 			if (id) {
-				window.electron?.ipcRenderer?.send("terminal:resize", { id, cols, rows });
+				window.electron?.ipcRenderer?.send("terminal:resize", {
+					id,
+					cols,
+					rows,
+				});
 			}
 		};
 
@@ -76,7 +80,7 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 
 		newLines.forEach((line) => {
 			if (line.includes("\x1b")) {
-				term.write(line + (line.includes('\n') ? '' : '\r\n'));
+				term.write(line + (line.includes("\n") ? "" : "\r\n"));
 				activeColorRef.current = null;
 				return;
 			}
@@ -84,20 +88,25 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 			for (const { regex, color } of colorRules) {
 				if (regex.test(line)) {
 					activeColorRef.current = color;
-					term.write(`\x1b[${color}m${line}${line.includes('\n') ? '' : '\r\n'}`);
+					term.write(
+						`\x1b[${color}m${line}${line.includes("\n") ? "" : "\r\n"}`,
+					);
 					matchFound = true;
 					break;
 				}
 			}
 			if (!matchFound) {
 				const trimmed = line.trim();
-				const isContinuation = activeColorRef.current && trimmed.length > 0 && /^[a-z]/.test(trimmed);
+				const isContinuation =
+					activeColorRef.current &&
+					trimmed.length > 0 &&
+					/^[a-z]/.test(trimmed);
 
 				if (isContinuation) {
-					term.write(line + (line.includes('\n') ? '' : '\r\n'));
+					term.write(line + (line.includes("\n") ? "" : "\r\n"));
 				} else {
 					activeColorRef.current = null;
-					term.write(`\x1b[0m${line}${line.includes('\n') ? '' : '\r\n'}`);
+					term.write(`\x1b[0m${line}${line.includes("\n") ? "" : "\r\n"}`);
 				}
 			}
 		});

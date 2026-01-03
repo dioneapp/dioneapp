@@ -1,4 +1,3 @@
-import * as build_tools from "./files/build-tools";
 import * as conda from "@/server/scripts/dependencies/files/conda";
 import * as cuda from "@/server/scripts/dependencies/files/cuda";
 import * as ffmpeg from "@/server/scripts/dependencies/files/ffmpeg";
@@ -8,6 +7,7 @@ import * as ollama from "@/server/scripts/dependencies/files/ollama";
 import * as pnpm from "@/server/scripts/dependencies/files/pnpm";
 import * as uv from "@/server/scripts/dependencies/files/uv";
 import type { Server } from "socket.io";
+import * as build_tools from "./files/build-tools";
 
 export const dependencyRegistry: Record<
 	string,

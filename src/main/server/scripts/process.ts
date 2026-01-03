@@ -1,3 +1,7 @@
+import { exec, spawn } from "node:child_process";
+import fs from "node:fs";
+import { arch, platform as getPlatform } from "node:os";
+import path from "node:path";
 import {
 	getAllValues,
 	initDefaultEnv,
@@ -5,14 +9,10 @@ import {
 import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-manager";
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
-import { useGit } from "../utils/use-git";
 import pty from "@lydell/node-pty";
-import { exec, spawn } from "node:child_process";
-import fs from "node:fs";
-import { arch, platform as getPlatform } from "node:os";
-import path from "node:path";
 import pidtree from "pidtree";
 import type { Server } from "socket.io";
+import { useGit } from "../utils/use-git";
 
 const activeProcesses = new Set<any>();
 const activePIDs = new Set<number>();
@@ -112,21 +112,30 @@ const dropProcesses = async (id?: string, pid?: number) => {
 let processWasCancelled = false;
 
 // is active process running?
-export const stopActiveProcess = async (io: Server, id: string, pid?: number) => {
+export const stopActiveProcess = async (
+	io: Server,
+	id: string,
+	pid?: number,
+) => {
 	processWasCancelled = true;
 
 	if (pid) {
-		io.to(id).emit("installUpdate", { type: "log", content: `Killing process with id ${pid}\n` });
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: `Killing process with id ${pid}\n`,
+		});
 		logger.info(`Killing process with id ${pid}`);
 	} else {
-		io.to(id).emit("installUpdate", { type: "log", content: `Killing all processes for app ${id}\n` });
+		io.to(id).emit("installUpdate", {
+			type: "log",
+			content: `Killing all processes for app ${id}\n`,
+		});
 		logger.info(`Killing all processes for app ${id}`);
 	}
 
 	await dropProcesses(id, pid);
 	return true;
 };
-
 
 // execute command using PTY for proper terminal emulation
 const stripAnsi = (str: string) => {
@@ -182,12 +191,16 @@ export const executeCommand = async (
 		const pid = ptyProcess.pid;
 
 		if (isWindows) {
-			ptyProcess.write(`@echo off\r\nchcp 65001 >nul\r\necho ${START_TOKEN}\r\n${command}\r\nexit\r\n`);
+			ptyProcess.write(
+				`@echo off\r\nchcp 65001 >nul\r\necho ${START_TOKEN}\r\n${command}\r\nexit\r\n`,
+			);
 		} else {
 			ptyProcess.write(`echo "${START_TOKEN}"; ${command}; exit\n`);
 		}
 
-		logger.info(`Executing: ${command.length > 300 ? command.substring(0, 300) + "..." : command}`);
+		logger.info(
+			`Executing: ${command.length > 300 ? command.substring(0, 300) + "..." : command}`,
+		);
 
 		if (pid) {
 			activeProcesses.add(ptyProcess);
@@ -217,7 +230,8 @@ export const executeCommand = async (
 				if (command && cleanLine.includes(command)) continue;
 				if (cleanLine.includes("Microsoft Windows")) continue;
 				if (cleanLine.endsWith("exit")) continue;
-				if (rawLine.includes("]0;") || rawLine.includes("Is a directory")) continue;
+				if (rawLine.includes("]0;") || rawLine.includes("Is a directory"))
+					continue;
 
 				outputData += rawLine;
 				options?.onOutput?.(rawLine);
