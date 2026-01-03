@@ -9,7 +9,7 @@ import {
 	installDependency,
 } from "@/server/scripts/dependencies/dependencies";
 import { getAllValues } from "@/server/scripts/dependencies/environment";
-import { killProcess } from "@/server/scripts/process";
+import { stopActiveProcess } from "@/server/scripts/process";
 import logger from "@/server/utils/logger";
 import { app } from "electron";
 import express from "express";
@@ -118,7 +118,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 			return res.status(400).json({ error: "No Ollama server running" });
 		}
 
-		await killProcess(activeProcess.pid, io, "ollama");
+		await stopActiveProcess(io, "ollama", activeProcess.pid);
 		activeProcess = null;
 
 		res.json({ message: "Ollama server stopped" });
@@ -375,7 +375,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 						continue;
 					}
 				}
-			} catch {}
+			} catch { }
 
 			// 5. if nothing matched, return normal content
 			if (thoughtMatch) {

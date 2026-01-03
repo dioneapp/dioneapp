@@ -70,12 +70,12 @@ export function createScriptRouter(io: Server) {
 		}
 	});
 	// stop a script by name
-	router.get("/stop/:name/:id/:port", async (req, res) => {
-		const { name, id, port } = req.params;
+	router.get("/stop/:name/:id", async (req, res) => {
+		const { name, id } = req.params;
 		const { sanitizedName, workingDir } = resolveScriptPaths(name);
 		logger.info(`Stopping script '${sanitizedName}' on '${workingDir}'`);
 		try {
-			const success = await stopActiveProcess(io, id, port);
+			const success = await stopActiveProcess(io, id);
 			if (success) {
 				res.status(200).send({ message: "Process stopped successfully" });
 			} else {
