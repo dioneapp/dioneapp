@@ -1,11 +1,11 @@
 import { useAuthContext } from "@/components/contexts/auth-context";
-import WorkspaceEditor from "@/components/editor/editor";
-import ActionsComponent from "@/components/install/actions";
-import IframeComponent from "@/components/install/iframe";
-import LogsComponent from "@/components/install/logs";
-import NotSupported from "@/components/install/not-supported";
-import CustomCommandsModal from "@/components/modals/custom-commands";
-import DeleteLoadingModal from "@/components/modals/delete-loading";
+import WorkspaceEditor from "@/components/features/editor/editor";
+import ActionsComponent from "@/components/features/install/actions";
+import IframeComponent from "@/components/features/install/iframe";
+import LogsComponent from "@/components/features/install/logs";
+import NotSupported from "@/components/features/install/not-supported";
+import CustomCommandsModal from "@/components/features/modals/custom-commands";
+import DeleteLoadingModal from "@/components/features/modals/delete-loading";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, apiJson } from "@/utils/api";
 import sendEvent from "@/utils/events";

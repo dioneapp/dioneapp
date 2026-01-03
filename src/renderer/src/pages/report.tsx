@@ -1,3 +1,4 @@
+import { Button, Textarea } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { sendDiscordReport } from "@/utils/discord-webhook";
 import { CheckCircle, Loader2, XCircle } from "lucide-react";
@@ -50,7 +51,7 @@ export default function ReportPage() {
 						<p className="text-sm text-neutral-400">
 							{t("report.description")}
 						</p>
-						<textarea
+						<Textarea
 							value={description}
 							onChange={(e) => setDescription(e.target.value)}
 							className="mt-4 w-full max-h-54 min-h-48 px-4 py-3 bg-white/5 rounded-xl focus:outline-none focus:ring-1 transition-all duration-200 focus:ring-white/10 border border-white/10 text-base"
@@ -70,12 +71,12 @@ export default function ReportPage() {
 						</p>
 						<div className="grid grid-cols-2 gap-4 text-sm">
 							<div>
-								<span className="text-neutral-400">OS:</span>
+								<span className="text-neutral-400">OS</span>
 								<span className="ml-2">{window.electron.process.platform}</span>
 							</div>
 							<div>
 								<span className="text-neutral-400">
-									{t("settingsFooter.node")}
+									Node
 								</span>
 								<span className="ml-2">
 									{window.electron.process.versions.node}
@@ -83,7 +84,7 @@ export default function ReportPage() {
 							</div>
 							<div>
 								<span className="text-neutral-400">
-									{t("settingsFooter.electron")}
+									Electron
 								</span>
 								<span className="ml-2">
 									{window.electron.process.versions.electron}
@@ -91,7 +92,7 @@ export default function ReportPage() {
 							</div>
 							<div>
 								<span className="text-neutral-400">
-									{t("settingsFooter.chromium")}
+									Chromium
 								</span>
 								<span className="ml-2">
 									{window.electron.process.versions.chrome}
@@ -115,10 +116,12 @@ export default function ReportPage() {
 							</p>
 						)}
 						<div className="flex gap-3 mt-2">
-							<button
+							<Button
 								type="submit"
+								variant="primary"
+								size="md"
 								disabled={isSubmitting}
-								className="px-6 py-2 text-sm font-medium bg-white text-black rounded-xl hover:bg-white/80 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors"
+								className="px-6"
 							>
 								{isSubmitting ? (
 									<span className="flex items-center">
@@ -128,14 +131,16 @@ export default function ReportPage() {
 								) : (
 									<span>{t("report.send")}</span>
 								)}
-							</button>
-							<button
+							</Button>
+							<Button
 								type="button"
+								variant="secondary"
+								size="md"
 								onClick={() => navigate(-1)}
-								className="px-5 py-2 text-sm font-medium bg-white/10 text-white rounded-xl hover:bg-white/20 cursor-pointer transition-colors"
+								className="px-5"
 							>
 								{t("common.cancel")}
-							</button>
+							</Button>
 						</div>
 					</div>
 				</form>

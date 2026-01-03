@@ -1,10 +1,11 @@
+import { Button } from "@/components/ui";
 import { useAuthContext } from "@/components/contexts/auth-context";
-import Background from "@/components/first-time/background";
-import SureNotLogin from "@/components/first-time/login";
-import Setup from "@/components/first-time/onboarding/setup";
-import ExecuteSound from "@/components/first-time/sounds/sound";
+import Background from "@/components/features/first-time/background";
+import SureNotLogin from "@/components/features/first-time/login";
+import Setup from "@/components/features/first-time/onboarding/setup";
+import ExecuteSound from "@/components/features/first-time/sounds/sound";
 import Icon from "@/components/icons/icon";
-import Titlebar from "@/components/layout/titlebar";
+import Titlebar from "@/components/features/layout/titlebar";
 import { useTranslation } from "@/translations/translation-context";
 import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
@@ -231,16 +232,15 @@ export default function FirstTime() {
 									{t("firstTime.welcome.login")}
 								</span>
 							</motion.button>
-							<button
-								type="button"
-								className="text-xs text-white opacity-50 flex items-center justify-center gap-1 hover:opacity-80 transition-opacity duration-300 cursor-pointer"
+							<Button
+								variant="ghost"
+								size="sm"
 								onClick={copyToClipboard}
+								className="text-xs text-white opacity-50 hover:opacity-80 gap-1"
 							>
-								<span>
-									<LinkIcon className="w-4 h-4" />
-								</span>
+								<LinkIcon className="w-4 h-4" />
 								<span>{t("firstTime.welcome.copyLink")}</span>
-							</button>
+							</Button>
 						</motion.div>
 						<span
 							onClick={() => {
@@ -265,15 +265,16 @@ export default function FirstTime() {
 								<h3 className="text-white/50 text-xs">
 									{t("firstTime.loggingIn.authError")}
 								</h3>
-								<button
-									type="button"
-									className="bg-white/10 w-28 rounded-xl p-1.5 text-sm text-neutral-300 hover:bg-white/20 transition-colors duration-300 cursor-pointer"
-									onClick={() => {
-										changeLevel(1);
-									}}
-								>
-									{t("firstTime.loggingIn.goBack")}
-								</button>
+							<Button
+								variant="secondary"
+								size="sm"
+								onClick={() => {
+									changeLevel(1);
+								}}
+								className="w-28"
+							>
+								{t("firstTime.loggingIn.retry")}
+							</Button>
 							</div>
 						</div>
 					</motion.div>
@@ -307,13 +308,14 @@ export default function FirstTime() {
 						<div className="flex flex-col gap-4 justify-center items-center">
 							<Setup onSelectLanguage={onSelectLanguage} />
 						</div>
-						<button
-							type="button"
+						<Button
+							variant="ghost"
+							size="sm"
 							onClick={() => changeLevel(2)}
-							className="absolute bottom-12 text-xs text-white/70 hover:text-white cursor-pointer transition-all duration-300"
+							className="absolute bottom-12 text-xs text-white/70 hover:text-white"
 						>
 							{t("firstTime.navigation.back")}
-						</button>
+						</Button>
 					</motion.div>
 				)}
 				{/* 5 - ready */}

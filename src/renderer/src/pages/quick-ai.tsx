@@ -1,7 +1,8 @@
-import Messages from "@/components/ai/messages";
-import Models from "@/components/ai/models";
+import Messages from "@/components/features/ai/messages";
+import Models from "@/components/features/ai/models";
+import { Button, Input } from "@/components/ui";
 import { useAIContext } from "@/components/contexts/ai-context";
-import { InstallAIModal } from "@/components/modals/install-ai";
+import { InstallAIModal } from "@/components/features/modals/install-ai";
 import { motion } from "framer-motion";
 import {
 	ArrowRight,
@@ -10,7 +11,7 @@ import {
 	Play,
 	Square,
 } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useScriptsContext } from "../components/contexts/scripts-context";
 
 export default function QuickAI() {
@@ -38,6 +39,7 @@ export default function QuickAI() {
 		downloadOllama,
 	} = useAIContext();
 	const logsEndRef = useRef<HTMLDivElement>(null);
+	const [inputValue, setInputValue] = useState("");
 
 	useEffect(() => {
 		checkOllama();
@@ -119,7 +121,9 @@ export default function QuickAI() {
 				<div className="w-full max-w-2xl h-full flex flex-col justify-end mx-auto items-center">
 					<div className="flex items-center justify-between px-0.5 w-full">
 						<div className="flex gap-2 items-center justify-start w-full">
-							<button
+							<Button
+								variant="outline"
+								size="icon-sm"
 								title={
 									ollamaRunning && ollamaInstalled
 										? "Stop Ollama"
@@ -130,31 +134,33 @@ export default function QuickAI() {
 										? handleStopOllama
 										: handleStartOllama
 								}
-								className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-xl p-1 group"
+								className="border-white/40 hover:border-neutral-200 group"
 							>
 								{ollamaRunning && ollamaInstalled ? (
 									<Square className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
 								) : (
 									<Play className="w-4 h-4 text-neutral-400 group-hover:text-neutral-200" />
 								)}
-							</button>
-							<button
-								className="w-6 h-full flex items-center justify-center cursor-pointer border border-white/40 hover:border-neutral-200 rounded-xl p-1 group"
+							</Button>
+							<Button
+								variant="outline"
+								size="icon-sm"
 								onClick={() => setMessages([])}
 								title="Clear chat"
+								className="border-white/40 hover:border-neutral-200 group"
 							>
 								<BrushCleaning className="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-200" />
-							</button>
-							<div
-								className="w-fit h-6 flex items-center justify-center"
+							</Button>
+							<Button
+								variant="ghost"
+								size="sm"
 								onClick={() => setShowModelHub(!showModelHub)}
+								className="border border-white/10 hover:border-transparent text-[11.5px] h-6 px-4"
 							>
-								<button className="w-full h-full flex items-center justify-center cursor-pointer border border-white/10 outline-none rounded-xl px-4 text-[11.5px] text-neutral-300 hover:text-neutral-200 hover:bg-white/10 hover:border-transparent transition-all duration-200">
-									<span className="truncate text-center">
-										{ollamaModel || "Loading..."}
-									</span>
-								</button>
-							</div>
+								<span className="truncate text-center">
+									{ollamaModel || "Loading..."}
+								</span>
+							</Button>
 						</div>
 						<div className="flex flex-col gap-2 items-end justify-center mr-auto w-full h-full text-[10px] text-neutral-400 font-medium">
 							{ollamaRunning && (
@@ -188,15 +194,17 @@ export default function QuickAI() {
 							}}
 						/>
 						<div className="flex max-w-2xl min-h-15 h-15 bg-white/5 backdrop-blur-3xl border hover:border-neutral-700 border-white/5 w-full rounded-xl overflow-hidden">
-							<input
+							<Input
 								className="w-full h-full focus:outline-neutral-800 rounded-xl border-none bg-transparent text-white px-4"
 								type="text"
 								placeholder="Ask Dio..."
+								value={inputValue}
+								onChange={(e) => setInputValue(e.target.value)}
 								autoFocus
 								onKeyDown={(e) => {
 									if (e.key === "Enter") {
-										chat(e.currentTarget.value);
-										e.currentTarget.value = "";
+										chat(inputValue);
+										setInputValue("");
 									}
 								}}
 							/>

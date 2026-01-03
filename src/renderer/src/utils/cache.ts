@@ -1,4 +1,4 @@
-import type { Script } from "@/components/home/feed/types";
+import type { Script } from "@/components/features/home/feed/types";
 
 const CACHE_PREFIX = "dione_cache_";
 const CACHE_EXPIRY = 7 * 24 * 60 * 60 * 1000; // 7d

@@ -5,7 +5,7 @@ import {
 import BuildToolsManager from "@/server/scripts/dependencies/utils/build-tools-manager";
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
-import { useGit } from "@/server/utils/useGit";
+import { useGit } from "../utils/use-git";
 import pty from "@lydell/node-pty";
 import { exec, spawn } from "node:child_process";
 import fs from "node:fs";
@@ -369,7 +369,9 @@ export const executeCommands = async (
 				: path.join(currentWorkingDir, targetDir);
 
 			if (!fs.existsSync(newWorkingDir)) {
-				logger.error(`Directory does not exist: ${sanitizePathForLog(newWorkingDir)}`);
+				logger.error(
+					`Directory does not exist: ${sanitizePathForLog(newWorkingDir)}`,
+				);
 				io.to(id).emit("installUpdate", {
 					type: "log",
 					content: `ERROR: Directory does not exist: ${sanitizePathForLog(newWorkingDir)}\n`,

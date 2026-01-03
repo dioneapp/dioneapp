@@ -1,5 +1,5 @@
-import Installed from "@/components/library/installed";
-import LocalScripts from "@/components/library/local-scripts";
+import Installed from "@/components/features/library/installed";
+import LocalScripts from "@/components/features/library/local-scripts";
 
 export default function Library() {
 	return (

@@ -1,6 +1,6 @@
 import { readConfig } from "@/config";
 import logger from "@/server/utils/logger";
-import { ActivityType, Client } from "minimal-discord-rpc";
+import { ActivityType, Client } from "simple-discord-rpc";
 
 const clientId = "1374430697024000112";
 let rpc: Client | null = null;

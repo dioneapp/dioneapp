@@ -1,4 +1,5 @@
-import { StatCard } from "@/components/account/stat-card";
+import { StatCard } from "@/components/features/account/stat-card";
+import { Button } from "@/components/ui";
 import { useAuthContext } from "@/components/contexts/auth-context";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
@@ -196,13 +197,14 @@ const LogoutButton = ({ logout }: { logout: () => void }) => {
 			transition={{ delay: 0.6, duration: 0.3 }}
 			className="flex justify-end mb-auto"
 		>
-			<motion.button
+			<Button
 				onClick={logout}
-				className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 hover:border-red-500/50 rounded-xl transition-all duration-300 text-red-400 hover:text-red-300 backdrop-blur-sm cursor-pointer"
+				variant="danger"
+				className="flex items-center gap-2"
 			>
 				<LogOut className="w-4 h-4" />
 				<span className="text-sm font-medium">{t("account.logout")}</span>
-			</motion.button>
+			</Button>
 		</motion.div>
 	);
 };
