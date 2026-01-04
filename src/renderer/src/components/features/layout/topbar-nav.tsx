@@ -101,7 +101,9 @@ export default function TopbarNav() {
 		}
 	}
 
-	const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 8 } }));
+	const sensors = useSensors(
+		useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+	);
 
 	function SortableTab({ app }: { app: any }) {
 		const {
