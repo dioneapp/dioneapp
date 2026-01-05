@@ -122,9 +122,9 @@ export default function TerminalOutput({ content, id }: TerminalOutputProps) {
 
 		if (newContent) {
 			const colorizedContent = newContent
-				.replace(/^(ERROR[^•\r\n]*)/gim, '\x1b[91m$1\x1b[0m')
-				.replace(/^(INFO[^•\r\n]*)/gim, '\x1b[94m$1\x1b[0m')
-				.replace(/^(WARN[^•\r\n]*)/gim, '\x1b[93m$1\x1b[0m');
+				.replace(/^(ERROR[^•\r\n]*)/gim, "\x1b[91m$1\x1b[0m")
+				.replace(/^(INFO[^•\r\n]*)/gim, "\x1b[94m$1\x1b[0m")
+				.replace(/^(WARN[^•\r\n]*)/gim, "\x1b[93m$1\x1b[0m");
 			term.write(colorizedContent);
 			lastContentLength.current = content.length;
 

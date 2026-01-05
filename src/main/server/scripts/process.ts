@@ -216,20 +216,20 @@ export const executeCommand = async (
 
 		const cleanTerminal = (data: string): string => {
 			let cleaned = data;
-			cleaned = cleaned.replace(/\x1B\][^\x07]*\x07/g, '');
+			cleaned = cleaned.replace(/\x1B\][^\x07]*\x07/g, "");
 			cleaned = cleaned.replace(
 				/\x1B\[2J|\x1B\[H|\x1B\?25[hl]|\x1B\?9001[hl]|\x1B\?1004[hl]/g,
-				''
+				"",
 			);
-			cleaned = cleaned.replace(/[\r\n]{4,}/g, '\r\n');
+			cleaned = cleaned.replace(/[\r\n]{4,}/g, "\r\n");
 
 			return cleaned;
 		};
 
 		ptyProcess.onData((data: string) => {
 			if (data.includes(START_TOKEN)) return;
-			if (data.includes('Microsoft Windows')) return;
-			if (data.includes('exit')) return;
+			if (data.includes("Microsoft Windows")) return;
+			if (data.includes("exit")) return;
 
 			const cleanData = cleanTerminal(data);
 
@@ -257,7 +257,11 @@ export const executeCommand = async (
 							status: "error",
 							content: "Error detected",
 						});
-						log(io, id, `ERROR: Process finished with exit code ${exitCode || 0}, please try again.`);
+						log(
+							io,
+							id,
+							`ERROR: Process finished with exit code ${exitCode || 0}, please try again.`,
+						);
 						resolve({ code: exitCode || 0, stdout: outputData, stderr: "" });
 					} else {
 						io.to(id).emit(logs, {
@@ -306,7 +310,11 @@ export const executeCommands = async (
 			logger.info(
 				`Process with id ${id} cancelled - stopping remaining commands`,
 			);
-			log(io, id, `INFO: Process with id ${id} cancelled - stopping remaining commands`);
+			log(
+				io,
+				id,
+				`INFO: Process with id ${id} cancelled - stopping remaining commands`,
+			);
 			return { cancelled: true, id };
 		}
 
@@ -330,7 +338,11 @@ export const executeCommands = async (
 					logger.info(
 						`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
 					);
-					log(io, id, `INFO: Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`);
+					log(
+						io,
+						id,
+						`INFO: Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+					);
 					continue;
 				}
 			}
@@ -344,7 +356,11 @@ export const executeCommands = async (
 					logger.info(
 						`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
 					);
-					log(io, id, `INFO: Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`);
+					log(
+						io,
+						id,
+						`INFO: Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+					);
 					continue;
 				}
 			}
@@ -376,7 +392,11 @@ export const executeCommands = async (
 				logger.error(
 					`Directory does not exist: ${sanitizePathForLog(newWorkingDir)}`,
 				);
-				log(io, id, `ERROR: Directory does not exist: ${sanitizePathForLog(newWorkingDir)}`);
+				log(
+					io,
+					id,
+					`ERROR: Directory does not exist: ${sanitizePathForLog(newWorkingDir)}`,
+				);
 				io.to(id).emit("installUpdate", {
 					type: "status",
 					status: "error",
