@@ -1,7 +1,7 @@
-import fs from "node:fs";
-import path from "node:path";
 import logger from "@/server/utils/logger";
 import { app, dialog } from "electron";
+import fs from "node:fs";
+import path from "node:path";
 
 export interface AppConfig {
 	firstLaunch: boolean;
@@ -74,7 +74,15 @@ export const writeConfig = (config: AppConfig) => {
 		fs.mkdirSync(config.defaultBinFolder, { recursive: true });
 	}
 
-	if (config.defaultInstallFolder === root) {
+	const normalizedInstallFolder = path
+		.resolve(config.defaultInstallFolder)
+		.toLowerCase();
+	const normalizedBinFolder = path
+		.resolve(config.defaultBinFolder)
+		.toLowerCase();
+	const normalizedRoot = path.resolve(root).toLowerCase();
+
+	if (normalizedInstallFolder === normalizedRoot) {
 		logger.warn(
 			"Default install folder is set to the current working directory. This may cause issues.",
 		);
@@ -84,7 +92,7 @@ export const writeConfig = (config: AppConfig) => {
 		);
 		config.defaultInstallFolder = path.join(app.getPath("userData"));
 	}
-	if (config.defaultBinFolder === root) {
+	if (normalizedBinFolder === normalizedRoot) {
 		logger.warn(
 			"Default bin folder is set to the current working directory. This may cause issues.",
 		);
@@ -112,7 +120,14 @@ export const updateConfig = (newSettings: Partial<AppConfig>) => {
 
 	if (newSettings.defaultBinFolder) {
 		if (newSettings?.defaultBinFolder !== currentConfig?.defaultBinFolder) {
-			fs.mkdirSync(newSettings?.defaultBinFolder!, { recursive: true });
+			try {
+				if (!fs.existsSync(newSettings.defaultBinFolder)) {
+					fs.mkdirSync(newSettings.defaultBinFolder, { recursive: true });
+					console.log(`Created directory: ${newSettings.defaultBinFolder}`);
+				}
+			} catch (error) {
+				logger.error(`Failed to create bin folder: ${error}`);
+			}
 		}
 	}
 
@@ -120,7 +135,14 @@ export const updateConfig = (newSettings: Partial<AppConfig>) => {
 		if (
 			newSettings?.defaultInstallFolder !== currentConfig?.defaultInstallFolder
 		) {
-			fs.mkdirSync(newSettings?.defaultInstallFolder!, { recursive: true });
+			try {
+				if (!fs.existsSync(newSettings.defaultInstallFolder)) {
+					fs.mkdirSync(newSettings.defaultInstallFolder, { recursive: true });
+					console.log(`Created directory: ${newSettings.defaultInstallFolder}`);
+				}
+			} catch (error) {
+				logger.error(`Failed to create install folder: ${error}`);
+			}
 		}
 	}
 
