@@ -242,7 +242,7 @@ export default function TopbarNav() {
 			<div className="w-full flex flex-col bg-black/20 backdrop-blur-xl border-b border-white/10 relative mb-0 pb-0">
 				{/* First Row: Main Navigation + Window Controls */}
 				<div
-					className="flex items-center px-4 gap-4 h-10 relative overflow-hidden"
+					className="flex items-center px-4 gap-4 h-10 relative overflow-visible"
 					id="titlebar"
 					style={{
 						// Leave room for macOS traffic lights
@@ -252,7 +252,7 @@ export default function TopbarNav() {
 					{/* Logo/Brand */}
 					<Link
 						to="/"
-						className="flex items-center gap-2 absolute z-10 shrink-0"
+						className="flex items-center gap-2 absolute z-20 shrink-0 cursor-pointer"
 						id="no-draggable"
 						style={{
 							position: "absolute",
@@ -266,7 +266,7 @@ export default function TopbarNav() {
 							Dione
 						</span>
 					</Link>
-
+					
 					{/* Navigation Links */}
 					<div
 						className="flex items-center gap-2 flex-1 relative z-10"
