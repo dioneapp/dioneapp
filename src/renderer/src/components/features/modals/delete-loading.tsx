@@ -69,9 +69,8 @@ export default function DeleteLoadingModal({
 				{steps.map((step, index) => (
 					<div
 						key={step}
-						className={`h-1.5 rounded-xl transition-all duration-300 ${
-							index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
-						}`}
+						className={`h-1.5 rounded-xl transition-all duration-300 ${index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
+							}`}
 					/>
 				))}
 			</div>
@@ -91,21 +90,9 @@ export default function DeleteLoadingModal({
 				className="flex flex-col rounded-xl w-full relative overflow-hidden"
 				style={{ minHeight: "450px", maxHeight: "90vh" }}
 			>
-				{/* Top accent bar */}
-				<div
-					className="absolute top-0 left-0 w-full h-1 opacity-50"
-					style={{
-						background:
-							currentStep === "complete"
-								? "#22c55e"
-								: status?.startsWith("error")
-									? "#ef4444"
-									: "var(--theme-accent)",
-					}}
-				/>
 
 				{/* Background glow */}
-				<div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none">
+				<div className="absolute inset-0 rounded-xl overflow-visible pointer-events-none">
 					<div
 						className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 rounded-xl blur-3xl opacity-15"
 						style={{
