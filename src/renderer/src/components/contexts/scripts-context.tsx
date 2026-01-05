@@ -40,7 +40,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const pathname = useLocation().pathname;
 	const [installedApps, setInstalledApps] = useState<{ name: string }[]>([]);
 	const [socket] = useState<any>(null);
-	const [logs, setLogs] = useState<Record<string, string[]>>({});
+	const [logs, setLogs] = useState<Record<string, string>>({});
 	const [statusLog, setStatusLog] = useState<
 		Record<string, { status: string; content: string }>
 	>({});
@@ -120,6 +120,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const [wasJustInstalled, setWasJustInstalled] = useState<boolean>(false);
 	// progress state
 	const [progress, setProgress] = useState<Record<string, ProgressState>>({});
+	// stop button state
+	const [canStop, setCanStop] = useState<Record<string, boolean>>({});
 
 	useEffect(() => {
 		setData(null);
@@ -286,33 +288,23 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 	// multiple logs
 	const addLog = useCallback((appId: string, message: string) => {
-		if (!terminalStatesRef.current[appId]) {
-			terminalStatesRef.current[appId] = new TerminalNormalizer();
-		}
-		const normalizer = terminalStatesRef.current[appId];
-		normalizer.feed(message);
-		const newLines = normalizer.getRenderableLines();
 		setLogs((prevLogs) => ({
 			...prevLogs,
-			[appId]: newLines,
+			[appId]: (prevLogs[appId] || '') + message,
 		}));
 	}, []);
 
-	const addLogLine = useCallback((appId: string, message: string) => {
-		if (!terminalStatesRef.current[appId]) {
-			terminalStatesRef.current[appId] = new TerminalNormalizer();
-		}
-		const normalizer = terminalStatesRef.current[appId];
-		normalizer.feed(message + "\n");
-		const newLines = normalizer.getRenderableLines();
-		setLogs((prevLogs) => ({
-			...prevLogs,
-			[appId]: newLines,
-		}));
-	}, []);
+	const addLogLine = useCallback(
+		(appId: string, message: string) => {
+			const finalMessage =
+				message.endsWith('\n') || message.endsWith('\r\n') ? message : `${message}\n`;
+			addLog(appId, finalMessage);
+		},
+		[addLog],
+	);
 
 	const clearLogs = useCallback((appId: string) => {
-		setLogs((prevLogs) => ({ ...prevLogs, [appId]: [] }));
+		setLogs((prevLogs) => ({ ...prevLogs, [appId]: "" }));
 		if (terminalStatesRef.current[appId]) {
 			terminalStatesRef.current[appId].clear();
 			delete terminalStatesRef.current[appId];
@@ -408,6 +400,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 					setProgress,
 					setShouldCatch,
 					shouldCatch,
+					setCanStop,
+					canStop,
 				});
 				socketsRef.current[appId] = {
 					socket: newSocket,
@@ -503,10 +497,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${
-							sockets[data.id]?.isLocal
-								? encodeURIComponent(data.name)
-								: data.id
+						`/install/${sockets[data.id]?.isLocal
+							? encodeURIComponent(data.name)
+							: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},
@@ -618,6 +611,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			setWasJustInstalled,
 			shouldCatch,
 			setShouldCatch,
+			canStop,
+			setCanStop,
 		}),
 		[
 			installedApps,
@@ -647,6 +642,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			notSupported,
 			wasJustInstalled,
 			shouldCatch,
+			canStop,
+			setCanStop,
 		],
 	);
 

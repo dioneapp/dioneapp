@@ -12,11 +12,23 @@ import pty from "@lydell/node-pty";
 import type { Server } from "socket.io";
 import { useGit } from "../utils/use-git";
 
+export const log = (io: Server, id: string, content: string, type?: string) => {
+	if (!type) {
+		type = "installUpdate";
+	}
+	io.to(id).emit(type, {
+		type: "log",
+		content: `${content}\r\n`,
+	});
+};
+
 const activeProcesses = new Set<any>();
 const activePIDs = new Set<number>();
 const processesByApp = new Map<string, Set<number>>();
+const processesDimensions = new Map<string, { cols: number; rows: number }>();
 
 export const resizeTerminal = (id: string, cols: number, rows: number) => {
+	processesDimensions.set(id, { cols, rows });
 	const pids = getTrackedPIDs(id);
 	pids.forEach((pid) => {
 		activeProcesses.forEach((proc) => {
@@ -37,6 +49,19 @@ const registerProcess = (appId: string, pid: number) => {
 	const set = processesByApp.get(appId) ?? new Set<number>();
 	set.add(pid);
 	processesByApp.set(appId, set);
+
+	const dims = processesDimensions.get(appId);
+	if (dims) {
+		activeProcesses.forEach((proc) => {
+			if (proc?.pid === pid && typeof proc.resize === "function") {
+				try {
+					proc.resize(dims.cols, dims.rows);
+				} catch (e) {
+					logger.warn(`Failed to resize process ${pid} on register: ${e}`);
+				}
+			}
+		});
+	}
 };
 
 const sanitizePathForLog = (p?: string) => {
@@ -69,11 +94,10 @@ const getTrackedPIDs = (appId?: string): number[] => {
 
 const dropProcesses = async (id?: string, pid?: number) => {
 	if (pid) {
-		// kill single process
 		activeProcesses.forEach((proc) => {
 			if (proc?.pid === pid) {
 				try {
-					proc.write("\x03"); // SIGINT
+					proc.write("\x03");
 					setTimeout(() => proc.kill(), 50);
 				} catch (e) {
 					logger.warn(`Failed to kill process ${pid}: ${e}`);
@@ -83,9 +107,9 @@ const dropProcesses = async (id?: string, pid?: number) => {
 		});
 		unregisterProcess(id!, pid);
 	} else if (id) {
-		// kill all processes associated with this app id
 		const pids = processesByApp.get(id);
 		logger.info(`Process managed by ${id}: ${pids}`);
+		if (!pids) return;
 		if (pids) {
 			for (const trackedPID of pids) {
 				activeProcesses.forEach((proc) => {
@@ -109,7 +133,6 @@ const dropProcesses = async (id?: string, pid?: number) => {
 };
 let processWasCancelled = false;
 
-// is active process running?
 export const stopActiveProcess = async (
 	io: Server,
 	id: string,
@@ -118,29 +141,15 @@ export const stopActiveProcess = async (
 	processWasCancelled = true;
 
 	if (pid) {
-		io.to(id).emit("installUpdate", {
-			type: "log",
-			content: `Killing process with id ${pid}\n`,
-		});
+		log(io, id, `Killing process with id ${pid}`);
 		logger.info(`Killing process with id ${pid}`);
 	} else {
-		io.to(id).emit("installUpdate", {
-			type: "log",
-			content: `Killing all processes for app ${id}\n`,
-		});
+		log(io, id, `Killing all processes for app ${id}`);
 		logger.info(`Killing all processes for app ${id}`);
 	}
 
 	await dropProcesses(id, pid);
 	return true;
-};
-
-// execute command using PTY for proper terminal emulation
-const stripAnsi = (str: string) => {
-	return str
-		.replace(/\x1b\[[0-9;]*[a-zA-Z]/g, "")
-		.replace(/\x1b\][0-9;]*(?:[a-zA-Z]|[^\x07]*\x07)/g, "")
-		.replace(/\x1b[PX^_].*?\x1b\\/g, "");
 };
 
 export const executeCommand = async (
@@ -156,11 +165,11 @@ export const executeCommand = async (
 	const enhancedEnv = await getEnhancedEnv(needsBuildTools || false);
 	const logs = logsType || "installUpdate";
 	const START_TOKEN = `:::LOG_START_${Date.now()}:::`;
-	let isLogStarted = false;
 
 	try {
 		const currentPlatform = getPlatform();
 		const isWindows = currentPlatform === "win32";
+		const dims = processesDimensions.get(id) ?? { cols: 120, rows: 40 };
 
 		logger.info(`Working on directory: ${sanitizePathForLog(workingDir)}`);
 
@@ -180,8 +189,8 @@ export const executeCommand = async (
 
 		const ptyProcess = pty.spawn(shell, shellArgs, {
 			name: "xterm-256color",
-			cols: 80,
-			rows: 25,
+			cols: dims.cols,
+			rows: dims.rows,
 			cwd: workingDir,
 			env: enhancedEnv as Record<string, string>,
 		});
@@ -190,10 +199,10 @@ export const executeCommand = async (
 
 		if (isWindows) {
 			ptyProcess.write(
-				`@echo off\r\nchcp 65001 >nul\r\necho ${START_TOKEN}\r\n${command}\r\nexit\r\n`,
+				`@echo off\r\nchcp 65001 >nul\r\necho ${START_TOKEN}\r\n${command}\r\nexit %ERRORLEVEL%\r\n`,
 			);
 		} else {
-			ptyProcess.write(`echo "${START_TOKEN}"; ${command}; exit\n`);
+			ptyProcess.write(`echo "${START_TOKEN}"; ${command}; exit $?\n`);
 		}
 
 		logger.info(
@@ -205,39 +214,31 @@ export const executeCommand = async (
 			registerProcess(id, pid);
 		}
 
-		let buffer = "";
+		const cleanTerminal = (data: string): string => {
+			let cleaned = data;
+			cleaned = cleaned.replace(/\x1B\][^\x07]*\x07/g, '');
+			cleaned = cleaned.replace(
+				/\x1B\[2J|\x1B\[H|\x1B\?25[hl]|\x1B\?9001[hl]|\x1B\?1004[hl]/g,
+				''
+			);
+			cleaned = cleaned.replace(/[\r\n]{4,}/g, '\r\n');
+
+			return cleaned;
+		};
+
 		ptyProcess.onData((data: string) => {
-			buffer += data;
+			if (data.includes(START_TOKEN)) return;
+			if (data.includes('Microsoft Windows')) return;
+			if (data.includes('exit')) return;
 
-			let index;
-			while ((index = buffer.indexOf("\n")) !== -1) {
-				const rawLine = buffer.slice(0, index + 1);
-				buffer = buffer.slice(index + 1);
+			const cleanData = cleanTerminal(data);
 
-				const cleanLine = stripAnsi(rawLine).trim();
-
-				if (!isLogStarted) {
-					if (cleanLine.includes(START_TOKEN)) {
-						isLogStarted = true;
-					}
-					continue;
-				}
-
-				if (!cleanLine) continue;
-				if (cleanLine.includes(START_TOKEN)) continue;
-				if (command && cleanLine.includes(command)) continue;
-				if (cleanLine.includes("Microsoft Windows")) continue;
-				if (cleanLine.endsWith("exit")) continue;
-				if (rawLine.includes("]0;") || rawLine.includes("Is a directory"))
-					continue;
-
-				outputData += rawLine;
-				options?.onOutput?.(rawLine);
-				io.to(id).emit(logs, {
-					type: "log",
-					content: rawLine,
-				});
-			}
+			outputData += cleanData;
+			options?.onOutput?.(cleanData);
+			io.to(id).emit(logs, {
+				type: "log",
+				content: cleanData,
+			});
 		});
 
 		return new Promise<{ code: number; stdout: string; stderr: string }>(
@@ -250,7 +251,22 @@ export const executeCommand = async (
 							`PTY Process (PID: ${pid}) finished with exit code ${exitCode || 0}`,
 						);
 					}
-					resolve({ code: exitCode || 0, stdout: outputData, stderr: "" });
+					if (exitCode !== 0) {
+						io.to(id).emit(logs, {
+							type: "status",
+							status: "error",
+							content: "Error detected",
+						});
+						log(io, id, `ERROR: Process finished with exit code ${exitCode || 0}, please try again.`);
+						resolve({ code: exitCode || 0, stdout: outputData, stderr: "" });
+					} else {
+						io.to(id).emit(logs, {
+							type: "status",
+							status: "success",
+							content: "Process finished successfully",
+						});
+						resolve({ code: exitCode || 0, stdout: outputData, stderr: "" });
+					}
 				});
 			},
 		);
@@ -261,10 +277,6 @@ export const executeCommand = async (
 			type: "status",
 			status: "error",
 			content: "Error detected",
-		});
-		io.to(id).emit(logs, {
-			type: "log",
-			content: `ERROR: ${errorMsg}\n`,
 		});
 		return { code: -1, stdout: "", stderr: errorMsg };
 	}
@@ -281,36 +293,28 @@ export const executeCommands = async (
 		onProgress?: (progress: number) => void;
 	},
 ): Promise<{ cancelled: boolean; id?: string }> => {
-	// reset cancellation state for a new command batch
 	processWasCancelled = false;
 	let currentWorkingDir = workingDir;
-	const currentPlatform = getPlatform(); // "win32", "linux", "darwin"
+	const currentPlatform = getPlatform();
 	const { gpu: currentGpu } = await getSystemInfo();
 
-	// track progress across commands
 	const totalCommands = commands.length;
 	let completedCommands = 0;
 
 	for (const cmd of commands) {
-		// if user requested cancellation, stop processing further commands
 		if (processWasCancelled) {
 			logger.info(
 				`Process with id ${id} cancelled - stopping remaining commands`,
 			);
-			io.to(id).emit("installUpdate", {
-				type: "log",
-				content: "INFO: Process cancelled - stopping remaining commands\n",
-			});
+			log(io, id, `INFO: Process with id ${id} cancelled - stopping remaining commands`);
 			return { cancelled: true, id };
 		}
 
 		let command: string;
 
-		// if string use it
 		if (typeof cmd === "string") {
 			command = cmd;
 		} else if (typeof cmd === "object" && cmd !== null) {
-			// if object includes platform, check if it matches current platform
 			if ("platform" in cmd) {
 				const cmdPlatform = cmd.platform.toLowerCase();
 				const normalizedPlatform =
@@ -322,20 +326,15 @@ export const executeCommands = async (
 								? "linux"
 								: currentPlatform;
 
-				// if platform does not match current platform, skip
 				if (cmdPlatform !== normalizedPlatform) {
 					logger.info(
 						`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
 					);
-					io.to(id).emit("installUpdate", {
-						type: "log",
-						content: `INFO: Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}\n`,
-					});
+					log(io, id, `INFO: Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`);
 					continue;
 				}
 			}
 
-			// if object includes gpus, check if it matches current gpu vendor
 			if ("gpus" in cmd) {
 				const allowedGpus = Array.isArray(cmd.gpus)
 					? cmd.gpus.map((g: string) => g.toLowerCase())
@@ -345,23 +344,16 @@ export const executeCommands = async (
 					logger.info(
 						`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
 					);
-					io.to(id).emit("installUpdate", {
-						type: "log",
-						content: `INFO: Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU\n`,
-					});
-					continue; // skip command
+					log(io, id, `INFO: Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`);
+					continue;
 				}
 			}
 
-			// if object includes command, use it
 			if ("command" in cmd) {
 				command = cmd.command;
 			} else {
 				logger.error(`Invalid command object: ${JSON.stringify(cmd)}`);
-				io.to(id).emit("installUpdate", {
-					type: "log",
-					content: `ERROR: Invalid command object: ${JSON.stringify(cmd)}\n`,
-				});
+				log(io, id, `ERROR: Invalid command object: ${JSON.stringify(cmd)}`);
 				continue;
 			}
 		} else {
@@ -384,10 +376,7 @@ export const executeCommands = async (
 				logger.error(
 					`Directory does not exist: ${sanitizePathForLog(newWorkingDir)}`,
 				);
-				io.to(id).emit("installUpdate", {
-					type: "log",
-					content: `ERROR: Directory does not exist: ${sanitizePathForLog(newWorkingDir)}\n`,
-				});
+				log(io, id, `ERROR: Directory does not exist: ${sanitizePathForLog(newWorkingDir)}`);
 				io.to(id).emit("installUpdate", {
 					type: "status",
 					status: "error",
@@ -399,14 +388,9 @@ export const executeCommands = async (
 			currentWorkingDir = newWorkingDir;
 			const sanitized = sanitizePathForLog(currentWorkingDir);
 			logger.info(`Changed working directory to: ${sanitized}`);
-			io.to(id).emit("installUpdate", {
-				type: "log",
-				content: `INFO: Changed working directory to: ${sanitized}\n`,
-			});
+			log(io, id, `INFO: Changed working directory to: ${sanitized}`);
 
-			// remove the cd command
 			command = command.replace(cdRegex, "").trim();
-			// clean && to avoid errors
 			command = command
 				.replace(/&&\s*&&/g, "&&")
 				.replace(/^&&\s*/, "")
@@ -415,7 +399,6 @@ export const executeCommands = async (
 		}
 
 		if (command.length > 0) {
-			// track progress within this command
 			let commandProgress = 0;
 			let outputLines = 0;
 			const startTime = Date.now();
@@ -423,7 +406,6 @@ export const executeCommands = async (
 			let installingPackages = 0;
 			let totalPackages = 0;
 
-			// emit initial progress for this command starting
 			if (options?.onProgress) {
 				const baseProgress = completedCommands / totalCommands;
 				options.onProgress(baseProgress);
@@ -506,12 +488,11 @@ export const executeCommands = async (
 			if (response.code !== 0) {
 				if (processWasCancelled) {
 					logger.info("Process was manually cancelled");
-					io.to(id).emit("installUpdate", {
-						type: "log",
-						content: "INFO: Process was manually cancelled\n",
-					});
+					log(io, id, "INFO: Process was manually cancelled");
 					return { cancelled: true };
 				}
+				await dropProcesses(id);
+				processWasCancelled = true;
 				throw new Error(
 					response.stderr || `Command failed with exit code ${response.code}`,
 				);
@@ -533,10 +514,8 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		initDefaultEnv();
 	}
 
-	// command options with enhanced environment for build tools
 	const baseEnv = {
 		...ENVIRONMENT,
-		// Essential Windows system variables needed for PTY and system tools
 		...(process.platform === "win32" && {
 			ComSpec: process.env.ComSpec || "C:\\Windows\\System32\\cmd.exe",
 			SystemRoot: process.env.SystemRoot || "C:\\Windows",
@@ -555,21 +534,17 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 		FORCE_UNBUFFERED_OUTPUT: "1",
 		PYTHONIOENCODING: "UTF-8",
 		FORCE_COLOR: "1",
-		GRADIO_SERVER_NAME: "0.0.0.0", // Allow Gradio to accept connections from network
-		// fix for py-cpuinfo not detecting Intel Core Ultra CPUs and other newer x86_64 processors
+		GRADIO_SERVER_NAME: "0.0.0.0",
 		...(process.platform === "win32" && {
 			PROCESSOR_ARCHITECTURE:
 				process.env.PROCESSOR_ARCHITECTURE ||
 				(arch() === "x64" ? "AMD64" : arch() === "ia32" ? "x86" : "AMD64"),
 			PROCESSOR_ARCHITEW6432: process.env.PROCESSOR_ARCHITEW6432 || "AMD64",
 		}),
-		// cross-platform CUDA detection for deepspeed compatibility
-		// set CUDA_HOME if not already set and try to detect it automatically
 		CUDA_HOME:
 			process.env.CUDA_HOME ||
 			(() => {
 				if (process.platform === "win32") {
-					// windows - check standard NVIDIA GPU Computing Toolkit installation
 					const cudaBasePath =
 						"C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA";
 					const versions = [
@@ -594,7 +569,6 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 						}
 					}
 				} else if (process.platform === "linux") {
-					// linux - check common CUDA installation paths
 					const commonPaths = [
 						"/usr/local/cuda",
 						"/opt/cuda",
@@ -618,15 +592,12 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 						}
 					}
 				}
-				// macos is not included as Apple dropped CUDA support after macOS Mojave (10.14)
 				return undefined;
 			})(),
-		// set to "1" to skip CUDA check
 		DS_BUILD_OPS: "0",
 		DS_SKIP_CUDA_CHECK: "1",
 	};
 
-	// avoid re-initializing using cache
 	const _cacheKey = "__buildToolsEnv";
 	const _fnAny = executeCommand as unknown as Record<string, any>;
 
@@ -645,7 +616,6 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 	};
 
 	if (needsBuildTools) {
-		// initialize once per process and reuse the enhanced env for subsequent commands
 		if (!_fnAny[_cacheKey]) {
 			_fnAny[_cacheKey] = await initializeBuildTools();
 		} else {

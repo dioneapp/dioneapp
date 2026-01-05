@@ -7,7 +7,7 @@ import {
 	getAllValues,
 } from "@/server/scripts/dependencies/environment";
 import { getArch, getOS } from "@/server/scripts/dependencies/utils/system";
-import { executeCommands } from "@/server/scripts/process";
+import { executeCommands, log } from "@/server/scripts/process";
 import { getSystemInfo } from "@/server/scripts/system";
 import logger from "@/server/utils/logger";
 import {
@@ -64,10 +64,7 @@ export default async function executeInstallation(
 	const dependencies = Object.keys(dependenciesObj);
 	const needsBuildTools = dependencies.includes("build_tools");
 
-	io.to(id).emit("installUpdate", {
-		type: "log",
-		content: `INFO: Found ${installation.length} installation steps to execute\n`,
-	});
+	log(io, id, `INFO: Found ${installation.length} installation steps to execute\n`);
 
 	// initialize structured progress for installation run
 	const runId = generateRunId(`${id}:install`);
@@ -90,10 +87,7 @@ export default async function executeInstallation(
 		const runStep = async (step: any, i: number) => {
 			const stepId = `step-${i + 1}`;
 
-			io.to(id).emit("installUpdate", {
-				type: "log",
-				content: `INFO: Starting step "${step.name}"\n`,
-			});
+			log(io, id, `INFO: Starting step "${step.name}"`);
 			io.to(id).emit("installUpdate", {
 				type: "status",
 				status: "pending",
@@ -121,10 +115,7 @@ export default async function executeInstallation(
 						typeof step.env === "object" && "version" in step.env
 							? step.env.version
 							: "";
-					io.to(id).emit("installUpdate", {
-						type: "log",
-						content: `INFO: Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}\n`,
-					});
+					log(io, id, `Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`);
 					logger.info(
 						`Creating/using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""}`,
 					);
@@ -176,10 +167,7 @@ export default async function executeInstallation(
 				}
 
 				if (resp?.cancelled) {
-					io.to(id).emit("installUpdate", {
-						type: "log",
-						content: `INFO: Installation cancelled with run id ${runId} - stopping remaining steps`,
-					});
+					log(io, id, `INFO: Installation cancelled with run id ${runId} - stopping remaining steps`);
 					emitRunProgress(io, id, {
 						type: "run_finished",
 						runId,
@@ -188,10 +176,7 @@ export default async function executeInstallation(
 					return { cancelled: true };
 				}
 
-				io.to(id).emit("installUpdate", {
-					type: "log",
-					content: `INFO: Completed step "${step.name}"\n`,
-				});
+				log(io, id, `INFO: Completed step "${step.name}"`);
 				io.to(id).emit("installUpdate", {
 					type: "status",
 					status: "success",
@@ -263,23 +248,15 @@ export async function executeStartup(
 
 	// download finished, now checking dependencies
 	const result = await checkDependencies(path.join(pathname, "dione.json"));
-	logger.info(`RESULT: ${JSON.stringify(result)}`);
 	if (result.success) {
-		io.to(id).emit("installUpdate", {
-			type: "log",
-			content: "All required dependencies are installed.\n",
-		});
+		log(io, id, "All required dependencies are installed.");
 		io.to(id).emit("installUpdate", {
 			type: "status",
 			status: "success",
 			content: "Dependencies installed",
 		});
 	} else if (result.error) {
-		io.to(id).emit("installUpdate", {
-			type: "log",
-			content:
-				"We have not been able to read the configuration file due to an error, check that Dione.json is well formulated as JSON.\n",
-		});
+		log(io, id, "We have not been able to read the configuration file due to an error, check that Dione.json is well formulated as JSON.");
 		io.to(id).emit("installUpdate", {
 			type: "status",
 			status: "error",
@@ -290,10 +267,7 @@ export async function executeStartup(
 	} else {
 		io.to(id).emit("missingDeps", result.missing);
 		const depsList = result.missing.map((dep) => dep.name).join(", ");
-		io.to(id).emit("installUpdate", {
-			type: "log",
-			content: `Installing dependencies: ${depsList}\n`,
-		});
+		log(io, id, `Installing dependencies: ${depsList}`);
 		io.to(id).emit("installUpdate", {
 			type: "status",
 			status: "pending",
@@ -309,10 +283,7 @@ export async function executeStartup(
 			(s: any) => s.name.toLowerCase() === startName.toLowerCase(),
 		);
 		if (!selectedStart) {
-			io.to(id).emit("installUpdate", {
-				type: "log",
-				content: `ERROR: Start option "${startName}" not found`,
-			});
+			log(io, id, `ERROR: Start option "${startName}" not found`);
 			return;
 		}
 	} else {
@@ -320,10 +291,7 @@ export async function executeStartup(
 		selectedStart =
 			config.start && config.start.length > 0 ? config.start[0] : null;
 		if (!selectedStart) {
-			io.to(id).emit("installUpdate", {
-				type: "log",
-				content: "INFO: No start options found\n",
-			});
+			log(io, id, "INFO: No start options found");
 			return;
 		}
 	}
@@ -379,10 +347,7 @@ export async function executeStartup(
 		const runStep = async (step: any, i: number) => {
 			const stepId = `step-${i + 1}`;
 
-			io.to(id).emit("installUpdate", {
-				type: "log",
-				content: `INFO: Starting step ${step.name}\n`,
-			});
+			log(io, id, `INFO: Starting step ${step.name}`);
 			io.to(id).emit("installUpdate", {
 				type: "status",
 				status: "pending",
@@ -400,10 +365,7 @@ export async function executeStartup(
 					commandStr = cmd.toString();
 				}
 				if (replaceCommands && commandStr in replaceCommands) {
-					io.to(id).emit("installUpdate", {
-						type: "log",
-						content: `INFO: Replacing command "${commandStr}" with "${replaceCommands[commandStr]}"\n`,
-					});
+					log(io, id, `INFO: Replacing command "${commandStr}" with "${replaceCommands[commandStr]}"`);
 					return replaceCommands[commandStr];
 				}
 
@@ -415,10 +377,7 @@ export async function executeStartup(
 					type: "catch",
 					content: selectedStart.catch,
 				});
-				io.to(id).emit("installUpdate", {
-					type: "info",
-					content: `Watching port ${selectedStart.catch}\n`,
-				});
+				log(io, id, `INFO: Watching port ${selectedStart.catch}`);
 			}
 
 			const outputHandler = (text: string) => {
@@ -458,16 +417,12 @@ export async function executeStartup(
 						: "uv";
 				const pythonVersion =
 					typeof selectedStart.env === "object" &&
-					"version" in selectedStart.env
+						"version" in selectedStart.env
 						? selectedStart.env.version
 						: "";
 
-				io.to(id).emit("installUpdate", {
-					type: "log",
-					content: `INFO: Using virtual environment: ${envName} with ${envType}${
-						pythonVersion ? ` (Python ${pythonVersion})` : ""
-					}\n`,
-				});
+				log(io, id, `INFO: Using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""
+					}`);
 
 				const envCommands = await createVirtualEnvCommands(
 					envName,
@@ -515,10 +470,7 @@ export async function executeStartup(
 				);
 			}
 			if (response?.cancelled) {
-				io.to(id).emit("installUpdate", {
-					type: "log",
-					content: `INFO: Startup cancelled with run id ${response.id || "no id"} - stopping remaining steps\n`,
-				});
+				log(io, id, `INFO: Startup cancelled with run id ${response.id || "no id"} - stopping remaining steps`);
 				emitRunProgress(io, id, {
 					type: "run_finished",
 					runId,
@@ -528,10 +480,7 @@ export async function executeStartup(
 			}
 
 			if (response?.error) {
-				io.to(id).emit("installUpdate", {
-					type: "log",
-					content: `ERROR: Failed in step "${step.name}": ${response.error}`,
-				});
+				log(io, id, `ERROR: Failed in step "${step.name}": ${response.error}`);
 				io.to(id).emit("installUpdate", {
 					type: "status",
 					status: "error",
@@ -545,10 +494,7 @@ export async function executeStartup(
 				throw new Error(response.error);
 			}
 
-			io.to(id).emit("installUpdate", {
-				type: "log",
-				content: `INFO: Completed step "${step.name}"`,
-			});
+			log(io, id, `INFO: Completed step "${step.name}"`);
 			io.to(id).emit("installUpdate", {
 				type: "status",
 				status: "success",
@@ -584,10 +530,6 @@ export async function executeStartup(
 		}
 	} catch (error) {
 		io.to(id).emit("installUpdate", {
-			type: "log",
-			content: `ERROR: Failed in default startup: ${error}\n`,
-		});
-		io.to(id).emit("installUpdate", {
 			type: "status",
 			status: "error",
 			content: "Error detected",
@@ -613,54 +555,54 @@ async function createVirtualEnvCommands(
 	// filter and ensure commands is an array of strings without empty strings
 	const commandStrings = Array.isArray(commands)
 		? commands.flatMap((cmd) => {
-				if (typeof cmd === "string" && cmd.trim()) {
-					return [cmd.trim()];
-				}
-				if (
-					cmd &&
-					typeof cmd === "object" &&
-					typeof cmd.command === "string" &&
-					cmd.command.trim()
-				) {
-					// Apply platform filtering
-					if ("platform" in cmd) {
-						const cmdPlatform = cmd.platform.toLowerCase();
-						const normalizedPlatform =
-							currentPlatform === "win32"
-								? "windows"
-								: currentPlatform === "darwin"
-									? "mac"
-									: currentPlatform === "linux"
-										? "linux"
-										: currentPlatform;
+			if (typeof cmd === "string" && cmd.trim()) {
+				return [cmd.trim()];
+			}
+			if (
+				cmd &&
+				typeof cmd === "object" &&
+				typeof cmd.command === "string" &&
+				cmd.command.trim()
+			) {
+				// Apply platform filtering
+				if ("platform" in cmd) {
+					const cmdPlatform = cmd.platform.toLowerCase();
+					const normalizedPlatform =
+						currentPlatform === "win32"
+							? "windows"
+							: currentPlatform === "darwin"
+								? "mac"
+								: currentPlatform === "linux"
+									? "linux"
+									: currentPlatform;
 
-						// if platform does not match current platform, skip
-						if (cmdPlatform !== normalizedPlatform) {
-							logger.info(
-								`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
-							);
-							return [];
-						}
+					// if platform does not match current platform, skip
+					if (cmdPlatform !== normalizedPlatform) {
+						logger.info(
+							`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+						);
+						return [];
 					}
-
-					// Apply GPU filtering
-					if ("gpus" in cmd) {
-						const allowedGpus = Array.isArray(cmd.gpus)
-							? cmd.gpus.map((g: string) => g.toLowerCase())
-							: [cmd.gpus.toLowerCase()];
-
-						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
-							logger.info(
-								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
-							);
-							return [];
-						}
-					}
-
-					return [cmd.command.trim()];
 				}
-				return [];
-			})
+
+				// Apply GPU filtering
+				if ("gpus" in cmd) {
+					const allowedGpus = Array.isArray(cmd.gpus)
+						? cmd.gpus.map((g: string) => g.toLowerCase())
+						: [cmd.gpus.toLowerCase()];
+
+					if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+						logger.info(
+							`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+						);
+						return [];
+					}
+				}
+
+				return [cmd.command.trim()];
+			}
+			return [];
+		})
 		: [];
 
 	// add python version flag if specified
@@ -723,7 +665,7 @@ async function createVirtualEnvCommands(
 			addValue("PATH", path.join(envPath, "Scripts"));
 		}
 		{
-			const between = middle ? ` ${middle} && ` : " && ";
+			const between = middle ? ` && ${middle} && ` : " && ";
 			return [
 				`if not exist "${envPath}" (uv venv ${pythonFlag} "${envName}")`,
 				`call "${activateScript}"${between}call "${deactivateScript}"`,
@@ -761,7 +703,7 @@ async function createVirtualEnvCommands(
 
 	if (!existsEnv) {
 		{
-			const between = middle ? ` ${middle} && ` : " && ";
+			const between = middle ? ` && ${middle} && ` : " && ";
 			return [
 				// create new env
 				`"${uvPath}" venv ${pythonFlag} "${envPath}"`,
@@ -770,7 +712,7 @@ async function createVirtualEnvCommands(
 			];
 		}
 	}
-	const between = middle ? ` ${middle} && ` : " && ";
+	const between = middle ? ` && ${middle} && ` : " && ";
 	return [
 		// use existing env
 		`. "${activateScript}"${between}deactivate`,

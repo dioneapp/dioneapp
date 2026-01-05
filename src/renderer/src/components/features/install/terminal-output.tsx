@@ -4,16 +4,14 @@ import "@xterm/xterm/css/xterm.css";
 import { useEffect, useRef } from "react";
 
 interface TerminalOutputProps {
-	lines: string[];
+	content: string;
 	id?: string;
 }
-
-export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
+export default function TerminalOutput({ content, id }: TerminalOutputProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const terminalRef = useRef<Terminal | null>(null);
 	const fitAddonRef = useRef<FitAddon | null>(null);
-	const lastProcessedIndex = useRef(0);
-	const activeColorRef = useRef<number | null>(null);
+	const lastContentLength = useRef(0);
 	const userScrolledUp = useRef(false);
 
 	useEffect(() => {
@@ -22,6 +20,7 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 		const term = new Terminal({
 			convertEol: true,
 			allowTransparency: true,
+			disableStdin: false,
 			wordSeparator: " ()[]{}',\"`",
 			theme: {
 				background: "#00000000",
@@ -68,7 +67,11 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 
 		const handleResize = () => {
 			if (!fitAddonRef.current || !terminalRef.current) return;
-			fitAddonRef.current.fit();
+			try {
+				fitAddonRef.current.fit();
+			} catch (e) {
+				console.error("Fit addon failed:", e);
+			}
 			const { cols, rows } = terminalRef.current;
 			if (id) {
 				window.electron?.ipcRenderer?.send("terminal:resize", {
@@ -79,14 +82,14 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 			}
 		};
 
-		const timeoutId = setTimeout(() => {
-			handleResize();
-		}, 10);
+		requestAnimationFrame(() => handleResize());
 
 		const observer = new ResizeObserver(() => {
 			handleResize();
 		});
 		observer.observe(containerRef.current);
+
+		window.addEventListener("resize", handleResize);
 
 		const handleScroll = () => {
 			if (!term) return;
@@ -102,92 +105,38 @@ export default function TerminalOutput({ lines, id }: TerminalOutputProps) {
 		term.onScroll(handleScroll);
 
 		return () => {
-			clearTimeout(timeoutId);
 			observer.disconnect();
+			window.removeEventListener("resize", handleResize);
 			term.dispose();
+			lastContentLength.current = 0;
 		};
 	}, [id]);
 
 	useEffect(() => {
 		const term = terminalRef.current;
-		if (!term || lines.length === 0) return;
+		if (!term) return;
 
-		const newLines = lines.slice(lastProcessedIndex.current);
-		const colorRules = [
-			{ regex: /\b(warn(ing)?|caution)\b/i, color: 93, style: "\x1b[1m" }, // bright yellow bold
-			{
-				regex: /\b(error|fail(ed)?|fatal|critical)\b/i,
-				color: 91,
-				style: "\x1b[1m",
-			}, // bright red bold
-			{
-				regex: /\b(success|complete(d)?|done|finished)\b/i,
-				color: 92,
-				style: "\x1b[1m",
-			}, // bright green bold
-			{ regex: /\b(info|note|notice)\b/i, color: 96, style: "\x1b[1m" }, // bright cyan bold
-			{ regex: /\b(debug|trace)\b/i, color: 90, style: "" }, // bright black (gray)
-			{
-				regex: /\b(start(ing|ed)?|initializ(e|ing|ed)|launch(ing|ed)?)\b/i,
-				color: 94,
-				style: "\x1b[1m",
-			}, // bright blue bold
-		];
+		if (!content || content.length === lastContentLength.current) return;
 
-		newLines.forEach((line) => {
-			// Detect ANSI sequences or lines ending with \r (carriage return)
-			// These should be written as-is without adding line breaks
-			const hasAnsi =
-				line.includes("\x1b") ||
-				line.endsWith("\r") ||
-				/\x1b\[|\[\d+m|\[\d+;\d+H|\[K|\[\?25|[⠋⠙⠹⠸⠼⠴⠦⠧⠇]/.test(line);
+		const newContent = content.substring(lastContentLength.current);
 
-			if (hasAnsi) {
-				// Write directly - ANSI codes and \r handle positioning
-				term.write(line);
-				activeColorRef.current = null;
-				return;
+		if (newContent) {
+			const colorizedContent = newContent
+				.replace(/^(ERROR[^•\r\n]*)/gim, '\x1b[91m$1\x1b[0m')
+				.replace(/^(INFO[^•\r\n]*)/gim, '\x1b[94m$1\x1b[0m')
+				.replace(/^(WARN[^•\r\n]*)/gim, '\x1b[93m$1\x1b[0m');
+			term.write(colorizedContent);
+			lastContentLength.current = content.length;
+
+			if (!userScrolledUp.current) {
+				requestAnimationFrame(() => {
+					if (term && !userScrolledUp.current) {
+						term.scrollToBottom();
+					}
+				});
 			}
-
-			let matchFound = false;
-			for (const { regex, color, style } of colorRules) {
-				if (regex.test(line)) {
-					activeColorRef.current = color;
-					const formattedLine = style
-						? `${style}\x1b[${color}m${line}\x1b[0m`
-						: `\x1b[${color}m${line}\x1b[0m`;
-					term.write(formattedLine + (line.includes("\n") ? "" : "\r\n"));
-					matchFound = true;
-					break;
-				}
-			}
-
-			if (!matchFound) {
-				const trimmed = line.trim();
-				const isContinuation =
-					activeColorRef.current &&
-					trimmed.length > 0 &&
-					/^[a-z]/.test(trimmed);
-
-				if (isContinuation) {
-					term.write(line + (line.includes("\n") ? "" : "\r\n"));
-				} else {
-					activeColorRef.current = null;
-					term.write(`\x1b[0m${line}${line.includes("\n") ? "" : "\r\n"}`);
-				}
-			}
-		});
-
-		lastProcessedIndex.current = lines.length;
-
-		if (!userScrolledUp.current) {
-			setTimeout(() => {
-				if (term && !userScrolledUp.current) {
-					term.scrollToBottom();
-				}
-			}, 0);
 		}
-	}, [lines]);
+	}, [content]);
 
 	return (
 		<div className="h-full w-full overflow-hidden rounded-xl">
