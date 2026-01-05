@@ -8,6 +8,7 @@ import * as pnpm from "@/server/scripts/dependencies/files/pnpm";
 import * as uv from "@/server/scripts/dependencies/files/uv";
 import type { Server } from "socket.io";
 import * as build_tools from "./files/build-tools";
+import * as git_lfs from "./files/git-lfs";
 
 export const dependencyRegistry: Record<
 	string,
@@ -35,4 +36,5 @@ export const dependencyRegistry: Record<
 	build_tools,
 	cuda,
 	ollama,
+	git_lfs
 };

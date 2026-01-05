@@ -152,6 +152,7 @@ export async function installDependency(
 	}
 
 	try {
+		logger.info(`Installing dependency ${depName}...`);
 		const result = await entry.install(binFolder, id, io, required_v);
 		if (result.success) {
 			logger.info(`Dependency ${depName} installed successfully`);
