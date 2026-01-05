@@ -33,10 +33,7 @@ export default function LogsComponent({
 	return (
 		<div className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden">
 			<div className="flex flex-col gap-2 p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-hidden w-full bg-[#080808]/40 h-[500px] hide-scrollbar">
-				<TerminalOutput
-					content={logs[appId] || ""}
-					id={appId}
-				/>
+				<TerminalOutput content={logs[appId] || ""} id={appId} />
 				{progress &&
 					progress[appId]?.steps &&
 					progress[appId].steps.length > 1 &&
@@ -62,7 +59,9 @@ export default function LogsComponent({
 						</button>
 					)}
 					{canStop && (
-						<div className={`flex gap-1.5 ${!iframeAvailable ? "ml-auto" : ""}`}>
+						<div
+							className={`flex gap-1.5 ${!iframeAvailable ? "ml-auto" : ""}`}
+						>
 							<button
 								type="button"
 								className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-xl text-neutral-300 cursor-pointer border border-white/10"

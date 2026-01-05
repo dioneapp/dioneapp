@@ -7,7 +7,7 @@ import type {
 } from "@/components/contexts/types/context-types";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, getBackendPort } from "@/utils/api";
-import { TerminalNormalizer } from "@/utils/terminal";
+import type { TerminalNormalizer } from "@/utils/terminal";
 import { useToast } from "@/utils/use-toast";
 import {
 	createContext,
@@ -290,14 +290,16 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const addLog = useCallback((appId: string, message: string) => {
 		setLogs((prevLogs) => ({
 			...prevLogs,
-			[appId]: (prevLogs[appId] || '') + message,
+			[appId]: (prevLogs[appId] || "") + message,
 		}));
 	}, []);
 
 	const addLogLine = useCallback(
 		(appId: string, message: string) => {
 			const finalMessage =
-				message.endsWith('\n') || message.endsWith('\r\n') ? message : `${message}\n`;
+				message.endsWith("\n") || message.endsWith("\r\n")
+					? message
+					: `${message}\n`;
 			addLog(appId, finalMessage);
 		},
 		[addLog],
@@ -497,9 +499,10 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${sockets[data.id]?.isLocal
-							? encodeURIComponent(data.name)
-							: data.id
+						`/install/${
+							sockets[data.id]?.isLocal
+								? encodeURIComponent(data.name)
+								: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},

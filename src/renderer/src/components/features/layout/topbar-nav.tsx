@@ -11,7 +11,7 @@ import {
 	PointerSensor,
 	closestCenter,
 	useSensor,
-	useSensors
+	useSensors,
 } from "@dnd-kit/core";
 import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 import {
@@ -172,7 +172,7 @@ export default function TopbarNav() {
 						variant="ghost"
 						size="xs"
 						className="flex items-center justify-center hover:bg-red-500/20 hover:text-red-400 transition-all duration-200 rounded-lg"
-						style={{ zIndex: 2, cursor: 'default' }}
+						style={{ zIndex: 2, cursor: "default" }}
 						icon={<X className="h-3.5 w-3.5" />}
 					/>
 				</div>
@@ -431,7 +431,9 @@ export default function TopbarNav() {
 							<DndContext
 								sensors={sensors}
 								collisionDetection={closestCenter}
-								onDragEnd={handleDragEnd}							modifiers={[restrictToHorizontalAxis]}							>
+								onDragEnd={handleDragEnd}
+								modifiers={[restrictToHorizontalAxis]}
+							>
 								<SortableContext
 									items={tabOrder}
 									strategy={horizontalListSortingStrategy}

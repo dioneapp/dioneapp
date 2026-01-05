@@ -36,5 +36,5 @@ export const dependencyRegistry: Record<
 	build_tools,
 	cuda,
 	ollama,
-	git_lfs
+	git_lfs,
 };
