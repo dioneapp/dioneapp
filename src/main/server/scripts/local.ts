@@ -7,6 +7,7 @@ import { checkSystem } from "@/server/scripts/system";
 import { getAppsRoot, sanitizeScriptName } from "@/server/scripts/utils/paths";
 import logger from "@/server/utils/logger";
 import type { Server } from "socket.io";
+import { log } from "./process";
 
 const getAppFolder = () => {
 	const folder = getAppsRoot();
@@ -121,24 +122,19 @@ export async function loadLocalScript(name: string, io: Server) {
 		});
 		return;
 	} else {
-		io.to(id).emit("installUpdate", {
-			type: "log",
-			content: "All system requirements are met.\n",
-		});
+		log(io, id, "All system requirements are met.");
 	}
 	// check deps
 	const result = await checkDependencies(dioneConfigPath);
 	if (result.success) {
-		io.to(id).emit("installUpdate", {
-			type: "log",
-			content: "All required dependencies are installed.\n",
-		});
+		log(io, id, "All required dependencies are installed.");
 		io.to(id).emit("installUpdate", {
 			type: "status",
 			status: "success",
 			content: "Dependencies installed",
 		});
 		// checking dependencies finished, now executing installation
+		io.to(id).emit("enableStop"); // this will enable the stop button
 		await executeInstallation(dioneConfigPath, io, id).catch((error) => {
 			console.error(`Unhandled error: ${error.message}`);
 			process.exit(1);

@@ -34,7 +34,7 @@ export interface DependencyDiagnostic {
 	exitCode?: number;
 	needsReboot?: boolean;
 	uacCancelled?: boolean;
-	logs?: string[];
+	logs?: string;
 	sdkVersion?: string;
 	installPath?: string;
 	vcvarsPath?: string;
@@ -49,8 +49,8 @@ export type DependencyDiagnosticsState = Record<
 >;
 
 export interface ScriptsLogContextType {
-	logs: Record<string, string[]>;
-	setLogs: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
+	logs: Record<string, string>;
+	setLogs: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 	addLog: (appId: string, message: string) => void;
 	addLogLine: (appId: string, message: string) => void;
 	clearLogs: (appId: string) => void;
@@ -138,6 +138,8 @@ export interface ScriptsContextType {
 	shouldCatch: Record<string, boolean>;
 	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	isLocal?: boolean;
+	canStop: Record<string, boolean>;
+	setCanStop: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 }
 
 // Socket types
@@ -184,6 +186,8 @@ export interface SetupSocketProps {
 	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	shouldCatch: Record<string, boolean>;
 	isLocal?: boolean;
+	setCanStop: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	canStop: Record<string, boolean>;
 }
 
 export interface AIContextType {

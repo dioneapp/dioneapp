@@ -220,6 +220,7 @@ export function downloadFile(
 							content: "Dependencies installed",
 						});
 						// checking dependencies finished, now executing installation
+						io.to(id).emit("enableStop"); // this will enable the stop button
 						await executeInstallation(FILE_PATH, io, id).catch((error) => {
 							console.error(`Unhandled error: ${error.message}`);
 							process.exit(1);

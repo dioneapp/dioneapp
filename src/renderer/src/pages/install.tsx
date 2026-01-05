@@ -28,7 +28,6 @@ export default function Install({
 }) {
 	const {
 		setInstalledApps,
-
 		isServerRunning,
 		setIsServerRunning,
 		setData,
@@ -48,7 +47,6 @@ export default function Install({
 		connectApp,
 		handleReloadQuickLaunch,
 		handleStopApp,
-
 		activeApps,
 		appFinished,
 		loadIframe,
@@ -58,6 +56,7 @@ export default function Install({
 		wasJustInstalled,
 		setWasJustInstalled,
 		shouldCatch,
+		canStop,
 	} = useScriptsContext();
 
 	const { logs, addLogLine, clearLogs, getAllAppLogs } =
@@ -960,6 +959,7 @@ export default function Install({
 									setShow={setShow}
 									appId={data?.id}
 									executing={executing}
+									canStop={canStop[data?.id]}
 								/>
 							)}{" "}
 							{show[data?.id] === "actions" && (

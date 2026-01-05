@@ -111,6 +111,7 @@ export function createScriptRouter(io: Server) {
 			});
 
 			console.log("selected start option:", selectedStart);
+			io.to(id).emit("enableStop");
 			await executeStartup(
 				workingDir,
 				io,
