@@ -146,9 +146,10 @@ export default function Settings() {
 	};
 
 	async function handleSaveDir(setting1: string, setting2?: string) {
+		const currentPath = joinPath(config[setting1]);
 		const result = await window.electron.ipcRenderer.invoke(
 			"save-dir",
-			joinPath(config[setting1], "apps"),
+			currentPath,
 		);
 		if (!result.canceled && result.filePaths[0]) {
 			const chosen = result.filePaths[0];

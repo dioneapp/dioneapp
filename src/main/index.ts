@@ -1,6 +1,3 @@
-import fs from "node:fs";
-import os from "node:os";
-import path, { join } from "node:path";
 import { defaultConfig, deleteConfig, readConfig, writeConfig } from "@/config";
 import {
 	destroyPresence,
@@ -48,6 +45,9 @@ import {
 } from "electron";
 import { autoUpdater } from "electron-updater";
 import { machineIdSync } from "node-machine-id";
+import fs from "node:fs";
+import os from "node:os";
+import path, { join } from "node:path";
 import si from "systeminformation";
 import { resizeTerminal } from "./server/scripts/process";
 
@@ -781,9 +781,26 @@ app.whenReady().then(async () => {
 
 	// save dir
 	ipcMain.handle("save-dir", async (_event, path: string) => {
+		const fs = require("fs");
+
 		if (!path) {
-			path = app.getPath("desktop");
+			path = app.getPath("downloads");
+		} else {
+			// Check if path exists, if not use downloads as fallback
+			try {
+				if (!fs.existsSync(path)) {
+					console.log(
+						`Path does not exist: ${path}, using downloads as fallback`,
+					);
+					path = app.getPath("downloads");
+				}
+			} catch (err) {
+				console.error(`Error checking path: ${err}`);
+				path = app.getPath("downloads");
+			}
 		}
+
+		console.log(`Opening folder picker with defaultPath: ${path}`);
 
 		const result = await dialog.showOpenDialog({
 			defaultPath: path,
@@ -792,6 +809,8 @@ app.whenReady().then(async () => {
 			message: "Select a directory",
 			securityScopedBookmarks: true,
 		});
+
+		console.log(`Folder picker result: ${JSON.stringify(result)}`);
 
 		return result;
 	});

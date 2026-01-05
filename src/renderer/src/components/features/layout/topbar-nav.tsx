@@ -11,8 +11,9 @@ import {
 	PointerSensor,
 	closestCenter,
 	useSensor,
-	useSensors,
+	useSensors
 } from "@dnd-kit/core";
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 import {
 	SortableContext,
 	arrayMove,
@@ -128,17 +129,17 @@ export default function TopbarNav() {
 				{...listeners}
 				className="relative group"
 			>
-				<div className="bg-white/10 hover:bg-white/15 rounded-r-none rounded-xl transition-colors focus:outline-none flex gap-1">
+				<div className="bg-linear-to-br from-white/10 to-white/5 hover:from-white/15 hover:to-white/10  rounded-xl transition-all duration-300 flex items-center gap-1 pr-1 pl-2 py-0.5 shadow-sm hover:shadow-md">
 					<Link
 						ref={setActivatorNodeRef}
 						to={{
 							pathname: `/install/${app.isLocal ? app.data?.name : app.appId}`,
 							search: `?isLocal=${app.isLocal}`,
 						}}
-						className="flex items-center gap-2"
+						className="flex items-center gap-2.5 transition-opacity hover:opacity-90 cursor-grab active:cursor-grabbing"
 						style={{ textDecoration: "none" }}
 					>
-						<div className="w-6 h-6 overflow-hidden shrink-0 rounded-lg">
+						<div className="w-7 h-7 overflow-hidden shrink-0 rounded-lg transition-all">
 							{!app.isLocal ? (
 								<>
 									{app.data?.logo_url?.startsWith("http") ? (
@@ -162,7 +163,7 @@ export default function TopbarNav() {
 								/>
 							)}
 						</div>
-						<span className="text-xs text-neutral-300 whitespace-nowrap max-w-30 truncate mr-6">
+						<span className="text-sm font-regular text-white/90 group-hover:text-white whitespace-nowrap max-w-32 truncate mr-1 transition-colors">
 							{app?.data?.name || app.appId}
 						</span>
 					</Link>
@@ -170,13 +171,13 @@ export default function TopbarNav() {
 						onClick={() => stopApp(app.appId, app.data?.name || app.appId)}
 						variant="ghost"
 						size="xs"
-						className="flex"
-						style={{ zIndex: 2 }}
-						icon={<X className="h-3 w-3" />}
+						className="flex items-center justify-center hover:bg-red-500/20 hover:text-red-400 transition-all duration-200 rounded-lg"
+						style={{ zIndex: 2, cursor: 'default' }}
+						icon={<X className="h-3.5 w-3.5" />}
 					/>
 				</div>
 				{hoveredTooltip === app.appId && (
-					<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-0.75 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl whitespace-nowrap rounded-xl">
+					<div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 z-50 px-3 py-1.5 bg-black/95 text-white text-xs font-medium shadow-xl backdrop-blur-xl whitespace-nowrap rounded-lg border border-white/10 animate-in fade-in-0 zoom-in-95 duration-200">
 						{app?.data?.name || app.appId}
 					</div>
 				)}
@@ -301,8 +302,8 @@ export default function TopbarNav() {
 					{/* Right side actions */}
 					<div className="flex items-center gap-2 relative z-10 shrink-0">
 						{activeApps.length > 0 && (
-							<div className="flex items-center gap-1 px-3 py-1.5 bg-white/10">
-								<div className="h-2 w-2 rounded-xl bg-green-500 animate-pulse" />
+							<div className="flex items-center gap-1 px-3 py-1 bg-white/10 rounded-xl">
+								<div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
 								<span className="text-xs text-neutral-400">
 									{activeApps.length}{" "}
 									{activeApps.length === 1
@@ -420,18 +421,17 @@ export default function TopbarNav() {
 				{/* Second Row: Active Apps */}
 				{activeApps.length > 0 && (
 					<div
-						className="flex items-center px-4 gap-2 border-t border-white/5"
+						className="flex items-center px-4 gap-3 border-t border-white/5 bg-linear-to-b from-white/2 to-transparent py-2 animate-in slide-in-from-top-2 duration-300"
 						id="no-draggable"
 						style={{
 							paddingLeft: macTrafficPadding,
 						}}
 					>
-						<div className="flex items-center gap-2 flex-1 overflow-x-hidden">
+						<div className="flex flex-nowrap items-center gap-2 flex-1 overflow-x-auto scrollbar-hide">
 							<DndContext
 								sensors={sensors}
 								collisionDetection={closestCenter}
-								onDragEnd={handleDragEnd}
-							>
+								onDragEnd={handleDragEnd}							modifiers={[restrictToHorizontalAxis]}							>
 								<SortableContext
 									items={tabOrder}
 									strategy={horizontalListSortingStrategy}
