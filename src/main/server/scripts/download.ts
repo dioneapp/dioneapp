@@ -118,9 +118,11 @@ export function downloadFile(
 	commit: string,
 	force?: boolean,
 ) {
+	const repoInfo = extractInfo(GITHUB_URL);
+
 	io.to(id).emit("installUpdate", {
 		type: "log",
-		content: `Downloading script from ${GITHUB_URL}\n`,
+		content: `Downloading script from ${repoInfo.repo}\n`,
 	});
 	io.to(id).emit("installUpdate", {
 		type: "status",
@@ -131,8 +133,6 @@ export function downloadFile(
 	let url = GITHUB_URL;
 	if (!GITHUB_URL.includes("raw.githubusercontent.com")) {
 		try {
-			const repoInfo = extractInfo(GITHUB_URL);
-
 			if (repoInfo.branch && repoInfo.filePath) {
 				// if URL contains branch and file path, use them
 				url = `https://raw.githubusercontent.com/${repoInfo.repo}/${repoInfo.branch}/${repoInfo.filePath}`;

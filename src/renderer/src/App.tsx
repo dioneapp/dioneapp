@@ -157,9 +157,9 @@ function App() {
 					className={`flex ${layoutMode === "topbar" ? "flex-col" : ""} h-screen`}
 				>
 					{pathname !== "/first-time" && (
-						<>{layoutMode === "sidebar" ? <Sidebar /> : <TopbarNav />}</>
+						<div className={`${layoutMode === "topbar" ? "absolute w-full" : "h-full"}`}>{layoutMode === "sidebar" ? <Sidebar /> : <TopbarNav />}</div>
 					)}
-					<div className="flex-1 w-full h-full overflow-x-hidden overflow-y-overlay">
+					<div className={`flex-1 ${layoutMode === "topbar" ? "mt-6	" : ""} w-full h-full overflow-x-hidden overflow-y-overlay`}>
 						<div
 							className="page page-transition w-full h-full"
 							key={location.pathname}

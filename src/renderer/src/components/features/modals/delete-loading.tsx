@@ -69,9 +69,8 @@ export default function DeleteLoadingModal({
 				{steps.map((step, index) => (
 					<div
 						key={step}
-						className={`h-1.5 rounded-xl transition-all duration-300 ${
-							index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
-						}`}
+						className={`h-1.5 rounded-xl transition-all duration-300 ${index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
+							}`}
 					/>
 				))}
 			</div>
@@ -88,7 +87,7 @@ export default function DeleteLoadingModal({
 			closeOnEscape={false}
 		>
 			<div
-				className="flex flex-col rounded-xl w-full relative overflow-hidden"
+				className="flex flex-col rounded-xl w-full relative overflow-visible"
 				style={{ minHeight: "450px", maxHeight: "90vh" }}
 			>
 				{/* Background glow */}

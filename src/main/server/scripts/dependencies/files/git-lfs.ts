@@ -89,7 +89,7 @@ export async function install(
 		windows: {
 			amd64: `https://github.com/git-lfs/git-lfs/releases/download/v${version}/git-lfs-windows-amd64-v${version}.zip`,
 			arm64: `https://github.com/git-lfs/git-lfs/releases/download/v${version}/git-lfs-windows-arm64-v${version}.zip`,
-			x86: `https://github.com/git-lfs/git-lfs/releases/download	v${version}/git-lfs-windows-386-v${version}.zip`,
+			x86: `https://github.com/git-lfs/git-lfs/releases/download/v${version}/git-lfs-windows-386-v${version}.zip`,
 		},
 	};
 
@@ -291,7 +291,7 @@ chmod +x "${depFolder}/git-lfs"
 		if (fs.existsSync(installerPath)) {
 			fs.rmSync(installerPath, { force: true });
 		}
-	} catch {}
+	} catch { }
 
 	addValue("PATH", depFolder);
 

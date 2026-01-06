@@ -239,7 +239,7 @@ export default function TopbarNav() {
 					</div>
 				</ModalBody>
 			</Modal>
-			<div className="w-full flex flex-col bg-black/20 backdrop-blur-xl border-b border-white/10 relative mb-0 pb-0">
+			<div className="w-full flex flex-col bg-black/20 backdrop-blur-lg border-b border-white/10 relative mb-0 pb-0 z-50">
 				{/* First Row: Main Navigation + Window Controls */}
 				<div
 					className="flex items-center px-4 gap-4 h-10 relative overflow-visible"
@@ -266,7 +266,7 @@ export default function TopbarNav() {
 							Dione
 						</span>
 					</Link>
-					
+
 					{/* Navigation Links */}
 					<div
 						className="flex items-center gap-2 flex-1 relative z-10"
@@ -275,11 +275,10 @@ export default function TopbarNav() {
 						<Link
 							to="/"
 							id="no-draggable"
-							className={`px-3 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
-								isActivePath("/")
-									? "bg-white/15 text-white"
-									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-							}`}
+							className={`px-3 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/")
+								? "bg-white/15 text-white"
+								: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
+								}`}
 						>
 							<Home className="h-4 w-4" />
 							<span>{t("home.title")}</span>
@@ -288,11 +287,10 @@ export default function TopbarNav() {
 						<Link
 							to="/library"
 							id="no-draggable"
-							className={`px-3 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${
-								isActivePath("/library")
-									? "bg-white/15 text-white"
-									: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
-							}`}
+							className={`px-3 py-1.5 rounded-xl transition-all duration-200 flex items-center gap-2 text-sm shrink-0 ${isActivePath("/library")
+								? "bg-white/15 text-white"
+								: "text-neutral-400 hover:text-neutral-200 hover:bg-white/5"
+								}`}
 						>
 							<Library className="h-4 w-4" />
 							<span>{t("sidebar.tooltips.library")}</span>

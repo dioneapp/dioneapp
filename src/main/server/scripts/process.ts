@@ -109,7 +109,7 @@ const dropProcesses = async (id?: string, pid?: number) => {
 	} else if (id) {
 		const pids = processesByApp.get(id);
 		logger.info(`Process managed by ${id}: ${pids}`);
-		if (!pids) return;
+		if (!pids || pids.size === 0) return;
 		if (pids) {
 			for (const trackedPID of pids) {
 				activeProcesses.forEach((proc) => {
@@ -221,7 +221,7 @@ export const executeCommand = async (
 				/\x1B\[2J|\x1B\[H|\x1B\?25[hl]|\x1B\?9001[hl]|\x1B\?1004[hl]/g,
 				"",
 			);
-			cleaned = cleaned.replace(/[\r\n]{4,}/g, "\r\n");
+			cleaned = cleaned.replace(/[\r\n]{4,}/g, "");
 
 			return cleaned;
 		};
