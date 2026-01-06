@@ -291,7 +291,7 @@ chmod +x "${depFolder}/git-lfs"
 		if (fs.existsSync(installerPath)) {
 			fs.rmSync(installerPath, { force: true });
 		}
-	} catch { }
+	} catch {}
 
 	addValue("PATH", depFolder);
 
