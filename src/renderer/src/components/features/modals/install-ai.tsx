@@ -22,14 +22,14 @@ export function InstallAIModal({
 	installStep: number;
 	setInstallStep: Dispatch<SetStateAction<number>>;
 	ollamaStatus: string;
-	logs: Record<string, string[]>;
+	logs: Record<string, string>;
 	downloadOllama: () => void;
 }) {
 	const { t } = useTranslation();
 	return (
 		<Modal
 			isOpen={true}
-			onClose={() => {}}
+			onClose={() => { }}
 			maxWidth="2xl"
 			showCloseButton={false}
 			closeOnBackdropClick={false}
@@ -147,9 +147,8 @@ export function InstallAIModal({
 							{[1, 2, 3].map((step) => (
 								<div
 									key={step}
-									className={`w-2 h-2 rounded-xl transition-colors duration-300 ${
-										step === installStep ? "bg-white" : "bg-white/20"
-									}`}
+									className={`w-2 h-2 rounded-xl transition-colors duration-300 ${step === installStep ? "bg-white" : "bg-white/20"
+										}`}
 								/>
 							))}
 						</div>
