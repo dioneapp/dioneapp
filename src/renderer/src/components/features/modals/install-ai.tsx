@@ -29,7 +29,7 @@ export function InstallAIModal({
 	return (
 		<Modal
 			isOpen={true}
-			onClose={() => { }}
+			onClose={() => {}}
 			maxWidth="2xl"
 			showCloseButton={false}
 			closeOnBackdropClick={false}
@@ -147,8 +147,9 @@ export function InstallAIModal({
 							{[1, 2, 3].map((step) => (
 								<div
 									key={step}
-									className={`w-2 h-2 rounded-xl transition-colors duration-300 ${step === installStep ? "bg-white" : "bg-white/20"
-										}`}
+									className={`w-2 h-2 rounded-xl transition-colors duration-300 ${
+										step === installStep ? "bg-white" : "bg-white/20"
+									}`}
 								/>
 							))}
 						</div>
