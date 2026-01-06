@@ -188,7 +188,7 @@
     "simple-discord-rpc": "^1.0.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "systeminformation": "^5.28.9",
+    "systeminformation": "^5.30.0",
     "tailwindcss": "^4.1.17",
     "winston": "^3.19.0"
   },
