@@ -318,7 +318,10 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	}, []);
 
 	const getAllAppLogs = useCallback(() => {
-		return Object.values(logs).flat();
+		const ansiRegex = /\x1b\[[0-9;?]*[a-zA-Z]/g;
+		return Object.values(logs)
+			.flat()
+			.map((log) => log.replace(ansiRegex, ""));
 	}, [logs]);
 
 	const connectApp = useCallback(
@@ -499,10 +502,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${
-							sockets[data.id]?.isLocal
-								? encodeURIComponent(data.name)
-								: data.id
+						`/install/${sockets[data.id]?.isLocal
+							? encodeURIComponent(data.name)
+							: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},
