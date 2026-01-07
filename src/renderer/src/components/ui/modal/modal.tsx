@@ -50,7 +50,7 @@ export default function Modal({
 	const modalContent = (
 		<AnimatePresence>
 			{isOpen && (
-				<div className="fixed inset-0 w-full h-full z-50 flex justify-center items-center p-4">
+				<div className="fixed inset-0 w-full min-h-40 h-full z-50 flex justify-center items-center p-4">
 					{/* Backdrop */}
 					<motion.div
 						initial={{ opacity: 0 }}
