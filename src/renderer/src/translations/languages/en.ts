@@ -164,6 +164,15 @@ export const en = {
 				"A new version of Dione is available, please restart the app to update.",
 			tooltip: "New update available, please restart Dione to update.",
 		},
+		login: {
+			title: "Welcome back!",
+			description: "Sign in to your Dione account to access all features, sync your projects, and personalize your experience.",
+			loginButton: "Sign in with Dione",
+			later: "Maybe later",
+			waitingTitle: "Waiting for sign in...",
+			waitingDescription: "Complete the sign in process in your browser to continue.",
+			cancel: "Cancel",
+		},
 		tooltips: {
 			library: "Library",
 			settings: "Settings",

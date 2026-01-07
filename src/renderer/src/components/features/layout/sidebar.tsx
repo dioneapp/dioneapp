@@ -10,10 +10,10 @@ import { openLink } from "@/utils/open-link";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
-    SortableContext,
-    arrayMove,
-    useSortable,
-    verticalListSortingStrategy,
+	SortableContext,
+	arrayMove,
+	useSortable,
+	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { AnimatePresence, motion } from "framer-motion";
@@ -86,6 +86,8 @@ export default function Sidebar() {
 	const [updateAvailable, setUpdateAvailable] = useState(false);
 	const [updateDownloaded, setUpdateDownloaded] = useState(false);
 	const [releaseNotes, setReleaseNotes] = useState<any>(null);
+	const [showLoginModal, setShowLoginModal] = useState(false);
+	const [waitingForLogin, setWaitingForLogin] = useState(false);
 
 	useEffect(() => {
 		window.electron.ipcRenderer.invoke("check-update");
@@ -168,8 +170,106 @@ export default function Sidebar() {
 		fetchReleaseNotes();
 	}, [updateAvailable]);
 
+	useEffect(() => {
+		if (waitingForLogin && user) {
+			setWaitingForLogin(false);
+			setShowLoginModal(false);
+		}
+	}, [user, waitingForLogin]);
+
 	return (
 		<>
+			<AnimatePresence>
+				{showLoginModal && (
+					<motion.div
+						key="login-modal"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						transition={{ duration: 0.18 }}
+						className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm"
+						onClick={() => setShowLoginModal(false)}
+					>
+						<motion.div 
+							className="max-w-md w-full px-6"
+							onClick={(e) => e.stopPropagation()}
+							initial={{ scale: 0.95, opacity: 0, y: 10 }}
+							animate={{ scale: 1, opacity: 1, y: 0 }}
+							exit={{ scale: 0.95, opacity: 0, y: 10 }}
+							transition={{ duration: 0.18, ease: "easeOut" }}
+						>
+							<div className="bg-neutral-900/95 border border-white/10 rounded-xl p-8 shadow-2xl backdrop-blur-xl text-left relative overflow-hidden">
+								<div
+									className="absolute -top-24 -right-24 w-56 h-56 rounded-xl blur-3xl pointer-events-none"
+									style={{
+										background: "radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
+										opacity: 0.15,
+									}}
+								/>
+								<div
+									className="absolute -bottom-24 -left-24 w-56 h-56 rounded-xl blur-3xl pointer-events-none"
+									style={{
+										background: "radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
+										opacity: 0.1,
+									}}
+								/>
+								<div className="relative z-10">
+									<div className="text-center mb-8">
+										<h1 className="text-3xl font-bold text-neutral-50 mb-3">
+											{waitingForLogin ? t("sidebar.login.waitingTitle") : t("sidebar.login.title")}
+										</h1>
+										<p className="text-sm text-neutral-400 leading-relaxed px-4">
+											{waitingForLogin ? t("sidebar.login.waitingDescription") : t("sidebar.login.description")}
+										</p>
+									</div>
+
+									{!waitingForLogin ? (
+										<div className="flex flex-col gap-4">
+											<Button
+												onClick={() => {
+													openLink("https://getdione.app/auth/login?app=true");
+													setWaitingForLogin(true);
+												}}
+												variant="accent"
+												size="lg"
+												className="w-full shadow-lg hover:shadow-xl transition-all duration-200"
+											>
+												<User className="h-5 w-5" />
+												<span className="font-semibold text-base">{t("sidebar.login.loginButton")}</span>
+											</Button>
+											<p
+												onClick={() => setShowLoginModal(false)}
+												className="text-center text-sm text-neutral-500 hover:text-neutral-300 cursor-pointer transition-colors"
+											>
+												{t("sidebar.login.later")}
+											</p>
+										</div>
+									) : (
+										<div className="flex flex-col gap-4">
+											<div className="flex items-center justify-center gap-2 py-4">
+												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+											</div>
+											<Button
+												onClick={() => {
+													setWaitingForLogin(false);
+													setShowLoginModal(false);
+												}}
+												variant="outline"
+												size="md"
+												className="w-full"
+											>
+												{t("sidebar.login.cancel")}
+											</Button>
+										</div>
+									)}
+								</div>
+							</div>
+						</motion.div>
+					</motion.div>
+				)}
+			</AnimatePresence>
 			<AnimatePresence>
 				{updateDownloaded && releaseNotes && (
 					<motion.div
@@ -544,8 +644,8 @@ export default function Sidebar() {
 						{!config?.compactMode && (
 							<div className="flex gap-2 items-center justify-start w-full h-full">
 								{!user && (
-									<Link
-										to={"/first-time?login=true"}
+									<button
+										onClick={() => setShowLoginModal(true)}
 										className="w-9 h-9 border border-white/10 hover:bg-white hover:border-white/20 bg-white/90 rounded-xl transition-all duration-200 flex gap-1 items-center justify-center relative cursor-pointer shadow-lg hover:shadow-xl"
 										onMouseEnter={() => setHoveredTooltip("login")}
 										onMouseLeave={() => setHoveredTooltip(null)}
@@ -558,7 +658,7 @@ export default function Sidebar() {
 												{t("sidebar.tooltips.login")}
 											</div>
 										)}
-									</Link>
+									</button>
 								)}
 							</div>
 						)}
@@ -570,9 +670,7 @@ export default function Sidebar() {
 										variant="accent"
 										size="md"
 										className="w-9.5 h-9.5"
-										onClick={() =>
-											openLink("https://getdione.app/auth/login?app=true")
-										}
+										onClick={() => setShowLoginModal(true)}
 										onMouseEnter={() => setHoveredTooltip("login")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									/>
