@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const svgPathArg = process.argv[2];
-const inputSvg = svgPathArg 
+const inputSvg = svgPathArg
   ? path.resolve(svgPathArg)
   : path.join(__dirname, '..', 'Logo.svg');
 
@@ -21,58 +21,54 @@ if (!fs.existsSync(tempDir)) {
 
 async function generatePNG(): Promise<void> {
   await sharp(inputSvg, { density: 600 })
-    .resize(512, 512, {
-      kernel: sharp.kernel.lanczos3,
-      fit: 'contain',
-      background: { r: 0, g: 0, b: 0, alpha: 0 }
-    })
-    .png({ 
-      quality: 100,
-      compressionLevel: 9,
-      palette: false
-    })
+    .resize(1024, 1024, { kernel: 'nearest' as const, fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+    .png({ quality: 100, compressionLevel: 0, adaptiveFiltering: false, palette: false })
     .toFile(path.join(outputDir, 'icon.png'));
 }
 
 async function generateICO(): Promise<void> {
-  const tempPngPath = path.join(tempDir, 'ico_temp.png');
-  await sharp(inputSvg, { density: 800 })
-    .resize(512, 512, {
-      kernel: sharp.kernel.lanczos3,
-      fit: 'contain',
-      background: { r: 0, g: 0, b: 0, alpha: 0 }
-    })
-    .png({ quality: 100, compressionLevel: 0 })
-    .toFile(tempPngPath);
-  
-  await icongen(tempPngPath, outputDir, {
-    ico: {
-      name: 'icon',
-      sizes: [16, 20, 24, 32, 40, 48, 64, 96, 128, 256]
-    }
+  const basePng = path.join(outputDir, 'icon.png');
+  const icoSizes = [16, 24, 32, 40, 48, 64, 96, 128, 256];
+  let icoSourcePath: string;
+
+  for (const size of icoSizes) {
+    const tempPngPath = path.join(tempDir, `ico_${size}.png`);
+    await sharp(basePng)
+      .resize(size, size, {
+        kernel: 'nearest' as const,
+        background: { r: 0, g: 0, b: 0, alpha: 0 }
+      })
+      .png({ quality: 100, compressionLevel: 0, adaptiveFiltering: false })
+      .toFile(tempPngPath);
+
+    if (size === 256) icoSourcePath = tempPngPath;
+  }
+
+  await icongen(icoSourcePath!, outputDir, {
+    ico: { name: 'icon', sizes: icoSizes }
   } as any);
 }
 
 async function generateICNS(): Promise<void> {
-  const highResPng = path.join(tempDir, 'icon_1024.png');
-  await sharp(inputSvg, { density: 600 })
-    .resize(1024, 1024, {
-      kernel: sharp.kernel.lanczos3,
-      fit: 'contain',
-      background: { r: 0, g: 0, b: 0, alpha: 0 }
-    })
-    .png({ 
-      quality: 100,
-      compressionLevel: 9,
-      palette: false
-    })
-    .toFile(highResPng);
-  
-  await icongen(highResPng, outputDir, {
-    icns: {
-      name: 'icon',
-      sizes: [16, 32, 64, 128, 256, 512, 1024]
-    }
+  const basePng = path.join(outputDir, 'icon.png');
+  const icnsSizes = [16, 32, 64, 128, 256, 512, 1024];
+  let icnsSourcePath: string;
+
+  for (const size of icnsSizes) {
+    const tempPngPath = path.join(tempDir, `icns_${size}.png`);
+    await sharp(basePng)
+      .resize(size, size, {
+        kernel: 'nearest' as const,
+        background: { r: 0, g: 0, b: 0, alpha: 0 }
+      })
+      .png({ quality: 100, compressionLevel: 0, adaptiveFiltering: false })
+      .toFile(tempPngPath);
+
+    if (size === 1024) icnsSourcePath = tempPngPath;
+  }
+
+  await icongen(icnsSourcePath!, outputDir, {
+    icns: { name: 'icon', sizes: icnsSizes }
   } as any);
 }
 
@@ -87,21 +83,21 @@ async function main(): Promise<void> {
     if (!fs.existsSync(inputSvg)) {
       throw new Error(`SVG file not found at: ${inputSvg}`);
     }
-    
+
     if (!inputSvg.toLowerCase().endsWith('.svg')) {
       throw new Error('Input file must be an SVG file');
     }
-    
+
     console.log(`Generating icons from ${path.basename(inputSvg)}...`);
-    
+
     await generatePNG();
     await generateICO();
     await generateICNS();
-    
+
     cleanup();
-    
+
     console.log('✓ Icons generated successfully!');
-    
+
   } catch (error) {
     console.error('Error:', error instanceof Error ? error.message : error);
     cleanup();
