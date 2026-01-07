@@ -1,15 +1,15 @@
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
-import { useEffect, useRef } from "react";
+import { RefObject, useEffect, useRef } from "react";
 
 interface TerminalOutputProps {
 	content: string;
-	id?: string;
+	id: string;
+	terminalStatesRef: RefObject<Record<string, Terminal>>;
 }
-export default function TerminalOutput({ content, id }: TerminalOutputProps) {
+export default function TerminalOutput({ content, id, terminalStatesRef }: TerminalOutputProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const terminalRef = useRef<Terminal | null>(null);
 	const fitAddonRef = useRef<FitAddon | null>(null);
 	const lastContentLength = useRef(0);
 	const userScrolledUp = useRef(false);
@@ -62,17 +62,17 @@ export default function TerminalOutput({ content, id }: TerminalOutputProps) {
 		term.loadAddon(fitAddon);
 		term.open(containerRef.current);
 
-		terminalRef.current = term;
+		terminalStatesRef.current[id] = term;
 		fitAddonRef.current = fitAddon;
 
 		const handleResize = () => {
-			if (!fitAddonRef.current || !terminalRef.current) return;
+			if (!fitAddonRef.current || !terminalStatesRef.current[id]) return;
 			try {
 				fitAddonRef.current.fit();
 			} catch (e) {
 				console.error("Fit addon failed:", e);
 			}
-			const { cols, rows } = terminalRef.current;
+			const { cols, rows } = terminalStatesRef.current[id];
 			if (id) {
 				window.electron?.ipcRenderer?.send("terminal:resize", {
 					id,
@@ -98,7 +98,7 @@ export default function TerminalOutput({ content, id }: TerminalOutputProps) {
 			const scrollPosition = buffer.viewportY;
 			const maxScroll = buffer.baseY;
 
-			const isAtBottom = scrollPosition >= maxScroll - viewport - 3;
+			const isAtBottom = scrollPosition >= maxScroll - viewport - 1;
 			userScrolledUp.current = !isAtBottom;
 		};
 
@@ -113,7 +113,7 @@ export default function TerminalOutput({ content, id }: TerminalOutputProps) {
 	}, [id]);
 
 	useEffect(() => {
-		const term = terminalRef.current;
+		const term = terminalStatesRef.current[id];
 		if (!term) return;
 
 		if (!content || content.length === lastContentLength.current) return;
