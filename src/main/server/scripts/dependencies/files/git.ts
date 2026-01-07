@@ -232,6 +232,7 @@ export async function install(
 					// update environment variables
 					if (platform === "windows") {
 						addValue("PATH", path.join(depFolder, "cmd"));
+						addValue("GIT_EXEC_PATH", path.join(depFolder, "mingw64", "bin"));
 					} else {
 						// linux/macos
 						addValue("PATH", path.join(depFolder, "bin"));
