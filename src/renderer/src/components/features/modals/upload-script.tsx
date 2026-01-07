@@ -1,10 +1,10 @@
 import {
-	Button,
-	Input,
-	Modal,
-	ModalBody,
-	ModalFooter,
-	Textarea,
+    Button,
+    Input,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    Textarea,
 } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
@@ -65,7 +65,6 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 			isOpen={true}
 			onClose={onClose}
 			maxWidth="2xl"
-			showCloseButton={false}
 		>
 			<div className="flex justify-between w-full items-center mb-6">
 				<h2 className="font-semibold text-xl flex items-center justify-center">
@@ -120,14 +119,12 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 				/>
 			</ModalBody>
 			<ModalFooter className="mt-6">
-				<Button variant="secondary" size="md" onClick={onClose}>
-					{t("common.cancel")}
-				</Button>
 				<Button
 					variant="primary"
 					size="md"
 					onClick={handleUpload}
 					disabled={!scriptName || !scriptFile || isUploading}
+					className="w-full"
 				>
 					{isUploading
 						? t("local.uploadModal.uploading")

@@ -1,17 +1,17 @@
 ﻿import {
-	Button,
-	Input,
-	InputWithIcon,
-	Modal,
-	ModalBody,
-	ModalFooter,
-	Textarea,
+    Button,
+    Input,
+    InputWithIcon,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    Textarea,
 } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, apiJson } from "@/utils/api";
 import { useToast } from "@/utils/use-toast";
 import { motion } from "framer-motion";
-import { Check, Copy, Search, Trash, X } from "lucide-react";
+import { Check, Copy, Search, Trash } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface Variable {
@@ -300,7 +300,6 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 						isOpen={!!pendingRemove}
 						onClose={() => setPendingRemove(null)}
 						maxWidth="lg"
-						showCloseButton={false}
 					>
 						<ModalBody>
 							<p className="text-sm text-neutral-300">
@@ -314,13 +313,6 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 						</ModalBody>
 						<ModalFooter>
 							<Button
-								variant="secondary"
-								size="sm"
-								onClick={() => setPendingRemove(null)}
-							>
-								{t("common.cancel")}
-							</Button>
-							<Button
 								variant="danger"
 								size="sm"
 								onClick={async () => {
@@ -333,6 +325,7 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 										await handleRemoveKey(pendingRemove.key);
 									setPendingRemove(null);
 								}}
+								className="w-full"
 							>
 								{" "}
 								{t("variables.confirm")}
@@ -360,14 +353,6 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 							) : (
 								<Copy className="w-4 h-4" />
 							)}
-						</Button>
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={onClose}
-							className="text-neutral-400 hover:text-white"
-						>
-							<X className="w-5 h-5" />
 						</Button>
 					</div>
 				</div>
@@ -399,17 +384,11 @@ export default function VariablesModal({ onClose }: { onClose: () => void }) {
 							/>
 							<div className="flex justify-end gap-2">
 								<Button
-									onClick={() => setNewVariableModalOpen(false)}
-									variant="ghost"
-									size="sm"
-								>
-									{t("common.cancel")}
-								</Button>
-								<Button
 									onClick={handleAddVariable}
 									disabled={saving}
 									variant="primary"
 									size="sm"
+									className="w-full"
 								>
 									{saving ? "Adding..." : t("variables.confirm")}
 								</Button>
