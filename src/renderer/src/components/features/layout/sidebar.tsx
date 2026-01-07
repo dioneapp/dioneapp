@@ -3,7 +3,7 @@ import { useScriptsContext } from "@/components/contexts/scripts-context";
 import QuickLaunch from "@/components/features/layout/quick-launch";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import Icon from "@/components/icons/icon";
-import { Button, IconButton } from "@/components/ui";
+import { Button, IconButton, Modal } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
@@ -170,6 +170,17 @@ export default function Sidebar() {
 		fetchReleaseNotes();
 	}, [updateAvailable]);
 
+	/*
+	// FORCE UPDATE POPUP FOR TESTING
+	useEffect(() => {
+		setUpdateDownloaded(true);
+		setReleaseNotes({
+			name: "Test Update",
+			published_at: new Date().toISOString(),
+			body: "* New feature 1\n* New feature 2\n* Bug fixes and improvements",
+		});
+	}, []);
+	*/
 	useEffect(() => {
 		if (waitingForLogin && user) {
 			setWaitingForLogin(false);
@@ -272,76 +283,58 @@ export default function Sidebar() {
 			</AnimatePresence>
 			<AnimatePresence>
 				{updateDownloaded && releaseNotes && (
-					<motion.div
-						key="update-modal"
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						transition={{ duration: 0.18 }}
-						className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+					<Modal
+						isOpen={updateDownloaded}
+						onClose={() => setUpdateDownloaded(false)}
+						title={t("sidebarUpdate.newUpdateAvailable")}
+						maxWidth="2xl"
 					>
-						<div className="max-w-2xl w-full px-6">
-							<div className="bg-neutral-900/80 border border-white/6 rounded-xl p-6 shadow-2xl backdrop-blur-md text-left">
-								<div className="flex flex-col gap-3">
-									<div>
-										<h1 className="text-2xl font-semibold text-neutral-50">
-											{t("sidebarUpdate.newUpdateAvailable")}
-										</h1>
-										<p className="text-sm text-neutral-400">
-											{t("sidebarUpdate.whatsNew")}
-										</p>
-									</div>
+						<div className="flex flex-col gap-3">
+							<p className="text-sm text-neutral-400">
+								{t("sidebarUpdate.whatsNew")}
+							</p>
 
-									<div className="mt-2 bg-neutral-800/40 p-4 rounded-xl">
-										<div className="flex items-center justify-between gap-4">
-											<h3 className="text-lg text-neutral-100 font-medium break-words">
-												{releaseNotes.name}
-											</h3>
-											<span className="text-xs text-neutral-300 flex items-center gap-2">
-												<Clock className="h-4 w-4" />
-												{new Date(releaseNotes.published_at).toLocaleDateString(
-													undefined,
-													{ year: "numeric", month: "short", day: "numeric" },
-												)}
-												,{" "}
-												{new Date(releaseNotes.published_at).toLocaleTimeString(
-													[],
-													{ hour: "2-digit", minute: "2-digit" },
-												)}
-											</span>
-										</div>
-										<ul className="text-neutral-300 text-sm mt-3 list-disc pl-5 max-h-40 overflow-auto space-y-1">
-											{releaseNotes.body
-												.split(/\r?\n/)
-												.filter((line) => line.trim().startsWith("* "))
-												.map((line, idx) => (
-													<li key={idx}>{line.replace(/^\*\s*/, "")}</li>
-												))}
-										</ul>
-									</div>
-
-									<div className="mt-4 flex justify-end gap-3">
-										<Button
-											onClick={() => setUpdateDownloaded(false)}
-											variant="outline"
-											size="sm"
-										>
-											{t("updates.later")}
-										</Button>
-										<Button
-											onClick={() =>
-												window.electron.ipcRenderer.send("quit_and_install")
-											}
-											variant="accent"
-											size="sm"
-										>
-											{t("updates.install")}
-										</Button>
-									</div>
+							<div className="mt-2 bg-neutral-800/40 p-4 rounded-xl">
+								<div className="flex items-center justify-between gap-4">
+									<h3 className="text-lg text-neutral-100 font-medium break-words">
+										{releaseNotes.name}
+									</h3>
+									<span className="text-xs text-neutral-300 flex items-center gap-2">
+										<Clock className="h-4 w-4" />
+										{new Date(releaseNotes.published_at).toLocaleDateString(
+											undefined,
+											{ year: "numeric", month: "short", day: "numeric" },
+										)}
+										,{" "}
+										{new Date(releaseNotes.published_at).toLocaleTimeString(
+											[],
+											{ hour: "2-digit", minute: "2-digit" },
+										)}
+									</span>
 								</div>
+								<ul className="text-neutral-300 text-sm mt-3 list-disc pl-5 max-h-40 overflow-auto space-y-1">
+									{releaseNotes.body
+										.split(/\r?\n/)
+										.filter((line) => line.trim().startsWith("* "))
+										.map((line, idx) => (
+											<li key={idx}>{line.replace(/^\*\s*/, "")}</li>
+										))}
+								</ul>
+							</div>
+
+							<div className="mt-4 flex justify-end gap-3">
+								<Button
+									onClick={() =>
+										window.electron.ipcRenderer.send("quit_and_install")
+									}
+									variant="accent"
+									size="sm"
+								>
+									{t("updates.install")}
+								</Button>
 							</div>
 						</div>
-					</motion.div>
+					</Modal>
 				)}
 			</AnimatePresence>
 			<div
