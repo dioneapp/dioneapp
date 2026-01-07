@@ -3,11 +3,12 @@ import { useScriptsContext } from "@/components/contexts/scripts-context";
 import QuickLaunch from "@/components/features/layout/quick-launch";
 import GeneratedIcon from "@/components/icons/generated-icon";
 import Icon from "@/components/icons/icon";
-import { Button, IconButton } from "@/components/ui";
+import { Button, IconButton, Modal } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
 import { DndContext, closestCenter } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
 	SortableContext,
 	arrayMove,
@@ -85,6 +86,8 @@ export default function Sidebar() {
 	const [updateAvailable, setUpdateAvailable] = useState(false);
 	const [updateDownloaded, setUpdateDownloaded] = useState(false);
 	const [releaseNotes, setReleaseNotes] = useState<any>(null);
+	const [showLoginModal, setShowLoginModal] = useState(false);
+	const [waitingForLogin, setWaitingForLogin] = useState(false);
 
 	useEffect(() => {
 		window.electron.ipcRenderer.invoke("check-update");
@@ -167,80 +170,171 @@ export default function Sidebar() {
 		fetchReleaseNotes();
 	}, [updateAvailable]);
 
+	/*
+	// FORCE UPDATE POPUP FOR TESTING
+	useEffect(() => {
+		setUpdateDownloaded(true);
+		setReleaseNotes({
+			name: "Test Update",
+			published_at: new Date().toISOString(),
+			body: "* New feature 1\n* New feature 2\n* Bug fixes and improvements",
+		});
+	}, []);
+	*/
+	useEffect(() => {
+		if (waitingForLogin && user) {
+			setWaitingForLogin(false);
+			setShowLoginModal(false);
+		}
+	}, [user, waitingForLogin]);
+
 	return (
 		<>
 			<AnimatePresence>
-				{updateDownloaded && releaseNotes && (
+				{showLoginModal && (
 					<motion.div
-						key="update-modal"
+						key="login-modal"
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.18 }}
-						className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+						className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm"
+						onClick={() => setShowLoginModal(false)}
 					>
-						<div className="max-w-2xl w-full px-6">
-							<div className="bg-neutral-900/80 border border-white/6 rounded-xl p-6 shadow-2xl backdrop-blur-md text-left">
-								<div className="flex flex-col gap-3">
-									<div>
-										<h1 className="text-2xl font-semibold text-neutral-50">
-											{t("sidebarUpdate.newUpdateAvailable")}
+						<motion.div 
+							className="max-w-md w-full px-6"
+							onClick={(e) => e.stopPropagation()}
+							initial={{ scale: 0.95, opacity: 0, y: 10 }}
+							animate={{ scale: 1, opacity: 1, y: 0 }}
+							exit={{ scale: 0.95, opacity: 0, y: 10 }}
+							transition={{ duration: 0.18, ease: "easeOut" }}
+						>
+							<div className="bg-neutral-900/95 border border-white/10 rounded-xl p-8 shadow-2xl backdrop-blur-xl text-left relative overflow-hidden">
+								<div
+									className="absolute -top-24 -right-24 w-56 h-56 rounded-xl blur-3xl pointer-events-none"
+									style={{
+										background: "radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
+										opacity: 0.15,
+									}}
+								/>
+								<div
+									className="absolute -bottom-24 -left-24 w-56 h-56 rounded-xl blur-3xl pointer-events-none"
+									style={{
+										background: "radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
+										opacity: 0.1,
+									}}
+								/>
+								<div className="relative z-10">
+									<div className="text-center mb-8">
+										<h1 className="text-3xl font-bold text-neutral-50 mb-3">
+											{waitingForLogin ? t("sidebar.login.waitingTitle") : t("sidebar.login.title")}
 										</h1>
-										<p className="text-sm text-neutral-400">
-											{t("sidebarUpdate.whatsNew")}
+										<p className="text-sm text-neutral-400 leading-relaxed px-4">
+											{waitingForLogin ? t("sidebar.login.waitingDescription") : t("sidebar.login.description")}
 										</p>
 									</div>
 
-									<div className="mt-2 bg-neutral-800/40 p-4 rounded-xl">
-										<div className="flex items-center justify-between gap-4">
-											<h3 className="text-lg text-neutral-100 font-medium break-words">
-												{releaseNotes.name}
-											</h3>
-											<span className="text-xs text-neutral-300 flex items-center gap-2">
-												<Clock className="h-4 w-4" />
-												{new Date(releaseNotes.published_at).toLocaleDateString(
-													undefined,
-													{ year: "numeric", month: "short", day: "numeric" },
-												)}
-												,{" "}
-												{new Date(releaseNotes.published_at).toLocaleTimeString(
-													[],
-													{ hour: "2-digit", minute: "2-digit" },
-												)}
-											</span>
+									{!waitingForLogin ? (
+										<div className="flex flex-col gap-4">
+											<Button
+												onClick={() => {
+													openLink("https://getdione.app/auth/login?app=true");
+													setWaitingForLogin(true);
+												}}
+												variant="accent"
+												size="lg"
+												className="w-full shadow-lg hover:shadow-xl transition-all duration-200"
+											>
+												<User className="h-5 w-5" />
+												<span className="font-semibold text-base">{t("sidebar.login.loginButton")}</span>
+											</Button>
+											<p
+												onClick={() => setShowLoginModal(false)}
+												className="text-center text-sm text-neutral-500 hover:text-neutral-300 cursor-pointer transition-colors"
+											>
+												{t("sidebar.login.later")}
+											</p>
 										</div>
-										<ul className="text-neutral-300 text-sm mt-3 list-disc pl-5 max-h-40 overflow-auto space-y-1">
-											{releaseNotes.body
-												.split(/\r?\n/)
-												.filter((line) => line.trim().startsWith("* "))
-												.map((line, idx) => (
-													<li key={idx}>{line.replace(/^\*\s*/, "")}</li>
-												))}
-										</ul>
-									</div>
-
-									<div className="mt-4 flex justify-end gap-3">
-										<Button
-											onClick={() => setUpdateDownloaded(false)}
-											variant="outline"
-											size="sm"
-										>
-											{t("updates.later")}
-										</Button>
-										<Button
-											onClick={() =>
-												window.electron.ipcRenderer.send("quit_and_install")
-											}
-											variant="accent"
-											size="sm"
-										>
-											{t("updates.install")}
-										</Button>
-									</div>
+									) : (
+										<div className="flex flex-col gap-4">
+											<div className="flex items-center justify-center gap-2 py-4">
+												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+											</div>
+											<Button
+												onClick={() => {
+													setWaitingForLogin(false);
+													setShowLoginModal(false);
+												}}
+												variant="outline"
+												size="md"
+												className="w-full"
+											>
+												{t("sidebar.login.cancel")}
+											</Button>
+										</div>
+									)}
 								</div>
 							</div>
-						</div>
+						</motion.div>
 					</motion.div>
+				)}
+			</AnimatePresence>
+			<AnimatePresence>
+				{updateDownloaded && releaseNotes && (
+					<Modal
+						isOpen={updateDownloaded}
+						onClose={() => setUpdateDownloaded(false)}
+						title={t("sidebarUpdate.newUpdateAvailable")}
+						maxWidth="2xl"
+					>
+						<div className="flex flex-col gap-3">
+							<p className="text-sm text-neutral-400">
+								{t("sidebarUpdate.whatsNew")}
+							</p>
+
+							<div className="mt-2 bg-neutral-800/40 p-4 rounded-xl">
+								<div className="flex items-center justify-between gap-4">
+									<h3 className="text-lg text-neutral-100 font-medium break-words">
+										{releaseNotes.name}
+									</h3>
+									<span className="text-xs text-neutral-300 flex items-center gap-2">
+										<Clock className="h-4 w-4" />
+										{new Date(releaseNotes.published_at).toLocaleDateString(
+											undefined,
+											{ year: "numeric", month: "short", day: "numeric" },
+										)}
+										,{" "}
+										{new Date(releaseNotes.published_at).toLocaleTimeString(
+											[],
+											{ hour: "2-digit", minute: "2-digit" },
+										)}
+									</span>
+								</div>
+								<ul className="text-neutral-300 text-sm mt-3 list-disc pl-5 max-h-40 overflow-auto space-y-1">
+									{releaseNotes.body
+										.split(/\r?\n/)
+										.filter((line) => line.trim().startsWith("* "))
+										.map((line, idx) => (
+											<li key={idx}>{line.replace(/^\*\s*/, "")}</li>
+										))}
+								</ul>
+							</div>
+
+							<div className="mt-4 flex justify-end gap-3">
+								<Button
+									onClick={() =>
+										window.electron.ipcRenderer.send("quit_and_install")
+									}
+									variant="accent"
+									size="sm"
+								>
+									{t("updates.install")}
+								</Button>
+							</div>
+						</div>
+					</Modal>
 				)}
 			</AnimatePresence>
 			<div
@@ -320,6 +414,7 @@ export default function Sidebar() {
 								<DndContext
 									collisionDetection={closestCenter}
 									onDragEnd={handleSidebarDragEnd}
+									modifiers={[restrictToVerticalAxis]}
 								>
 									<SortableContext
 										items={sidebarOrder}
@@ -542,8 +637,8 @@ export default function Sidebar() {
 						{!config?.compactMode && (
 							<div className="flex gap-2 items-center justify-start w-full h-full">
 								{!user && (
-									<Link
-										to={"/first-time?login=true"}
+									<button
+										onClick={() => setShowLoginModal(true)}
 										className="w-9 h-9 border border-white/10 hover:bg-white hover:border-white/20 bg-white/90 rounded-xl transition-all duration-200 flex gap-1 items-center justify-center relative cursor-pointer shadow-lg hover:shadow-xl"
 										onMouseEnter={() => setHoveredTooltip("login")}
 										onMouseLeave={() => setHoveredTooltip(null)}
@@ -556,7 +651,7 @@ export default function Sidebar() {
 												{t("sidebar.tooltips.login")}
 											</div>
 										)}
-									</Link>
+									</button>
 								)}
 							</div>
 						)}
@@ -568,9 +663,7 @@ export default function Sidebar() {
 										variant="accent"
 										size="md"
 										className="w-9.5 h-9.5"
-										onClick={() =>
-											openLink("https://getdione.app/auth/login?app=true")
-										}
+										onClick={() => setShowLoginModal(true)}
 										onMouseEnter={() => setHoveredTooltip("login")}
 										onMouseLeave={() => setHoveredTooltip(null)}
 									/>

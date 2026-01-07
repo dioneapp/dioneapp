@@ -9,6 +9,7 @@ import {
 	Settings2,
 	Shield,
 } from "lucide-react";
+import { useRef, useState } from "react";
 
 export type TabType =
 	| "applications"
@@ -33,6 +34,9 @@ export default function SettingsTabs({
 	onTabChange,
 }: SettingsTabsProps) {
 	const { t } = useTranslation();
+	const containerRef = useRef<HTMLDivElement>(null);
+	const [wheelAccumulator, setWheelAccumulator] = useState(0);
+	const WHEEL_THRESHOLD = 100;
 
 	const tabs: Tab[] = [
 		{
@@ -50,8 +54,35 @@ export default function SettingsTabs({
 		{ id: "other", label: t("settings.other.title"), icon: Settings2 },
 	];
 
+	const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		setWheelAccumulator((prev) => {
+			const newAccumulator = prev + e.deltaY;
+
+			if (Math.abs(newAccumulator) >= WHEEL_THRESHOLD) {
+				const currentIndex = tabs.findIndex((tab) => tab.id === activeTab);
+				let nextIndex: number;
+
+				if (newAccumulator > 0) {
+					nextIndex = (currentIndex + 1) % tabs.length;
+				} else {
+					nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+				}
+
+				onTabChange(tabs[nextIndex].id);
+				return 0;
+			}
+
+			return newAccumulator;
+		});
+	};
+
 	return (
-		<div className="border border-white/10 bg-white/5 backdrop-blur-sm rounded-xl p-1.5 flex gap-2 overflow-x-auto">
+		<div
+			ref={containerRef}
+			onWheel={handleWheel}
+			className="border border-white/10 bg-white/5 backdrop-blur-sm rounded-xl p-1.5 flex gap-2 overflow-x-auto"
+		>
 			{tabs.map((tab) => {
 				const Icon = tab.icon;
 				return (

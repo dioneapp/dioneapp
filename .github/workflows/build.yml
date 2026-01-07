@@ -27,7 +27,7 @@ jobs:
             node-version: 20.x
             build-command: npm run build:win
             cache-key: win
-          - os: macos-latest
+          - os: macos-26
             node-version: 20.x
             build-command: npm run build:mac
             cache-key: mac
