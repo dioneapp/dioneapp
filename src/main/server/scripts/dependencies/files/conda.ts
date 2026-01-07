@@ -194,7 +194,7 @@ export async function install(
 			args: [
 				"/InstallationType=JustMe",
 				"/RegisterPython=0",
-				"/NOSHORTCUTS",
+				"/NoShortcuts=1",
 				"/S",
 				"/D=" + depFolder,
 			],

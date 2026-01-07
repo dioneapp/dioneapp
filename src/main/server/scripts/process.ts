@@ -230,6 +230,8 @@ export const executeCommand = async (
 			if (data.includes(START_TOKEN)) return;
 			if (data.includes("Microsoft Windows")) return;
 			if (data.includes("exit")) return;
+			if (data.includes("echo")) return;
+			if (data.includes("chcp")) return;
 
 			const cleanData = cleanTerminal(data);
 
