@@ -136,7 +136,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			isActive &&
 			currentView !== "logs" &&
 			currentView !== "iframe" &&
-			currentView !== "editor"
+			currentView !== "editor" &&
+			isServerRunning[data.id]
 		) {
 			setShow({ [data.id]: "logs" });
 		}

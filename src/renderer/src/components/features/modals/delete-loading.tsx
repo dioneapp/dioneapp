@@ -69,9 +69,8 @@ export default function DeleteLoadingModal({
 				{steps.map((step, index) => (
 					<div
 						key={step}
-						className={`h-1.5 rounded-xl transition-all duration-300 ${
-							index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
-						}`}
+						className={`h-1.5 rounded-xl transition-all duration-300 ${index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
+							}`}
 					/>
 				))}
 			</div>
@@ -86,10 +85,10 @@ export default function DeleteLoadingModal({
 			showCloseButton={status?.startsWith("error") || currentStep === "confirm"}
 			closeOnBackdropClick={false}
 			closeOnEscape={false}
+			title={currentStep === "confirm" ? t("deleteLoading.confirm.title") : undefined}
 		>
 			<div
-				className="flex flex-col rounded-xl w-full relative overflow-visible"
-				style={{ minHeight: "450px", maxHeight: "90vh" }}
+				className="flex flex-col rounded-xl w-full pb-6 relative overflow-visible"
 			>
 				{/* Background glow */}
 				<div className="absolute inset-0 rounded-xl overflow-visible pointer-events-none">
@@ -105,9 +104,6 @@ export default function DeleteLoadingModal({
 						}}
 					/>
 				</div>
-
-				{/* Step Indicator */}
-				{renderStepIndicator()}
 
 				{/* Content */}
 				<div className="flex-1 flex flex-col relative z-10 overflow-hidden min-h-0">
@@ -125,9 +121,6 @@ export default function DeleteLoadingModal({
 								{/* Header */}
 								<div className="flex items-center gap-3 mb-6">
 									<div className="flex-1">
-										<h1 className="font-bold text-2xl text-white">
-											{t("deleteLoading.confirm.title") || "Confirm Uninstall"}
-										</h1>
 										<p className="text-neutral-400 text-sm mt-1">
 											{t("deleteLoading.confirm.subtitle") ||
 												"Select what to remove"}
@@ -352,6 +345,8 @@ export default function DeleteLoadingModal({
 					</AnimatePresence>
 				</div>
 			</div>
+			{/* Step Indicator */}
+			{renderStepIndicator()}
 		</Modal>
 	);
 }

@@ -73,12 +73,12 @@ export default function Modal({
 						{(title || showCloseButton) && (
 							<div className="p-6 pb-0 flex items-center justify-between">
 								{title && (
-									<h2 className="text-lg font-semibold text-white">{title}</h2>
+									<h2 className="text-xl font-semibold text-white w-full">{title}</h2>
 								)}
 								{showCloseButton && (
 									<button
 										onClick={onClose}
-										className="p-2 rounded-xl hover:bg-white/10 text-neutral-300 hover:text-white transition-colors duration-200 cursor-pointer"
+										className="ml-auto p-2 rounded-xl hover:bg-white/10 text-neutral-300 hover:text-white transition-colors duration-200 cursor-pointer"
 										type="button"
 									>
 										<X className="w-5 h-5" />

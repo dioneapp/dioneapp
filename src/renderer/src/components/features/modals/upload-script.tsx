@@ -1,10 +1,10 @@
 import {
-    Button,
-    Input,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    Textarea,
+	Button,
+	Input,
+	Modal,
+	ModalBody,
+	ModalFooter,
+	Textarea,
 } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
@@ -65,12 +65,8 @@ export default function UploadModal({ onClose }: { onClose: () => void }) {
 			isOpen={true}
 			onClose={onClose}
 			maxWidth="2xl"
+			title={t("local.uploadModal.title")}
 		>
-			<div className="flex justify-between w-full items-center mb-6">
-				<h2 className="font-semibold text-xl flex items-center justify-center">
-					{t("local.uploadModal.title")}
-				</h2>
-			</div>
 			<ModalBody>
 				<Button
 					variant="secondary"
