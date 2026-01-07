@@ -83,7 +83,7 @@ export default function DeleteLoadingModal({
 			isOpen={true}
 			onClose={onClose}
 			maxWidth="2xl"
-			showCloseButton={false}
+			showCloseButton={status?.startsWith("error") || currentStep === "confirm"}
 			closeOnBackdropClick={false}
 			closeOnEscape={false}
 		>
@@ -204,13 +204,11 @@ export default function DeleteLoadingModal({
 
 								{/* Actions */}
 								<div className="flex justify-end gap-3 mt-6 pt-6 border-t border-white/10">
-									<Button variant="secondary" size="md" onClick={onClose}>
-										{t("common.cancel")}
-									</Button>
 									<Button
 										variant="primary"
 										size="md"
 										onClick={handleConfirmUninstall}
+										className="w-full"
 									>
 										{t("actions.uninstall")}
 									</Button>
@@ -312,14 +310,6 @@ export default function DeleteLoadingModal({
 													? t("deleteLoading.error.deps")
 													: t("deleteLoading.error.general")}
 											</p>
-											<Button
-												variant="secondary"
-												size="md"
-												onClick={onClose}
-												className="mt-4"
-											>
-												{t("common.close") || "Close"}
-											</Button>
 										</div>
 									</>
 								) : (

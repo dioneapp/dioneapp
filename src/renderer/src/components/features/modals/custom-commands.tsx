@@ -20,7 +20,6 @@ export default function CustomCommandsModal({
 			onClose={onCancel}
 			title={t("customCommands.title")}
 			maxWidth="xl"
-			showCloseButton={false}
 		>
 			<ModalBody>
 				<ul className="w-full rounded-xl text-sm text-neutral-300 font-mono flex flex-col gap-2 max-h-64 overflow-y-auto">
@@ -41,10 +40,7 @@ export default function CustomCommandsModal({
 			</ModalBody>
 
 			<ModalFooter>
-				<Button variant="secondary" onClick={onCancel}>
-					{t("common.cancel")}
-				</Button>
-				<Button variant="primary" onClick={onLaunch}>
+				<Button variant="primary" onClick={onLaunch} className="w-full">
 					{t("customCommands.launch")}
 				</Button>
 			</ModalFooter>
