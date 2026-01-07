@@ -10,6 +10,7 @@ export async function getSystemInfo() {
 		const graphics = await si.graphics();
 		const gpus = graphics.controllers.map((gpu) => gpu.vendor.toLowerCase());
 		if (graphics) {
+			if (gpus.length === 0) gpu = "none";
 			if (gpus.some((g) => /nvidia/i.test(g))) gpu = "nvidia";
 			if (gpus.some((g) => /amd|advanced micro devices/i.test(g))) gpu = "amd";
 			if (gpus.some((g) => /apple/i.test(g))) gpu = "apple";
