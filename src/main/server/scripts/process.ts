@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { arch, platform as getPlatform } from "node:os";
+import { arch, platform as getPlatform, platform } from "node:os";
 import path from "node:path";
 import {
 	getAllValues,
@@ -26,6 +26,23 @@ const activeProcesses = new Set<any>();
 const activePIDs = new Set<number>();
 const processesByApp = new Map<string, Set<number>>();
 const processesDimensions = new Map<string, { cols: number; rows: number }>();
+
+export const cleanTerminalByID = (id: string): void => {
+	const pids = processesByApp.get(id);
+	if (!pids) return;
+
+	pids.forEach((pid) => {
+		activeProcesses.forEach((proc) => {
+			if (proc?.pid === pid) {
+				try {
+					proc.write('\u001bc');
+				} catch (e) {
+					logger.warn(`Failed to clear process ${pid}: ${e}`);
+				}
+			}
+		});
+	});
+};
 
 export const resizeTerminal = (id: string, cols: number, rows: number) => {
 	processesDimensions.set(id, { cols, rows });
@@ -109,7 +126,10 @@ const dropProcesses = async (id?: string, pid?: number) => {
 	} else if (id) {
 		const pids = processesByApp.get(id);
 		logger.info(`Process managed by ${id}: ${pids}`);
-		if (!pids || pids.size === 0) return;
+		if (!pids || pids.size === 0) {
+			logger.info(`No processes managed by ${id}`);
+			return;
+		};
 		if (pids) {
 			for (const trackedPID of pids) {
 				activeProcesses.forEach((proc) => {
@@ -229,9 +249,8 @@ export const executeCommand = async (
 		ptyProcess.onData((data: string) => {
 			if (data.includes(START_TOKEN)) return;
 			if (data.includes("Microsoft Windows")) return;
-			if (data.includes("exit")) return;
-			if (data.includes("echo")) return;
 			if (data.includes("chcp")) return;
+			if (data.includes("exit")) return;
 
 			const cleanData = cleanTerminal(data);
 
@@ -530,7 +549,7 @@ export const executeCommands = async (
 };
 
 export const getEnhancedEnv = async (needsBuildTools: boolean) => {
-	const ENVIRONMENT = getAllValues();
+	const ENVIRONMENT = await getAllValues();
 
 	if (ENVIRONMENT === null) {
 		initDefaultEnv();
@@ -618,6 +637,8 @@ export const getEnhancedEnv = async (needsBuildTools: boolean) => {
 			})(),
 		DS_BUILD_OPS: "0",
 		DS_SKIP_CUDA_CHECK: "1",
+		// fix git
+		PATH: ENVIRONMENT.PATH,
 	};
 
 	const _cacheKey = "__buildToolsEnv";

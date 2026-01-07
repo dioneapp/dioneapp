@@ -7,8 +7,8 @@ import type {
 } from "@/components/contexts/types/context-types";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, getBackendPort } from "@/utils/api";
-import type { TerminalNormalizer } from "@/utils/terminal";
 import { useToast } from "@/utils/use-toast";
+import { Terminal } from "@xterm/xterm";
 import {
 	createContext,
 	useCallback,
@@ -35,7 +35,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	}>({});
 	const connectingRef = useRef<Record<string, Promise<void> | null>>({});
 	const socketRef = useRef<any>(null);
-	const terminalStatesRef = useRef<Record<string, TerminalNormalizer>>({});
+	const terminalStatesRef = useRef<Record<string, Terminal>>({});
 	const [exitRef, setExitRef] = useState<boolean>(false);
 	const pathname = useLocation().pathname;
 	const [installedApps, setInstalledApps] = useState<{ name: string }[]>([]);
@@ -307,15 +307,16 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	);
 
 	const clearLogs = useCallback((appId: string) => {
-		setLogs((prevLogs) => ({ ...prevLogs, [appId]: "" }));
-		if (terminalStatesRef.current[appId]) {
-			terminalStatesRef.current[appId].clear();
-			delete terminalStatesRef.current[appId];
-		}
-		setStatusLog((prevStatusLog) => ({
-			...prevStatusLog,
-			[appId]: { status: "", content: "" },
+		setLogs(prev => ({ ...prev, [appId]: '' }));
+		setStatusLog(prev => ({
+			...prev,
+			[appId]: { status: '', content: '' },
 		}));
+
+		const term = terminalStatesRef.current[appId];
+		if (term) {
+			term.clear();
+		}
 	}, []);
 
 	const getAllAppLogs = useCallback(() => {
@@ -619,6 +620,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			setShouldCatch,
 			canStop,
 			setCanStop,
+			terminalStatesRef,
 		}),
 		[
 			installedApps,
@@ -650,6 +652,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			shouldCatch,
 			canStop,
 			setCanStop,
+			terminalStatesRef,
 		],
 	);
 

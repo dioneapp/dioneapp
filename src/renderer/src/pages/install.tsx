@@ -57,6 +57,7 @@ export default function Install({
 		setWasJustInstalled,
 		shouldCatch,
 		canStop,
+		terminalStatesRef,
 	} = useScriptsContext();
 
 	const { logs, addLogLine, clearLogs, getAllAppLogs } =
@@ -960,6 +961,7 @@ export default function Install({
 									appId={data?.id}
 									executing={executing}
 									canStop={canStop[data?.id]}
+									terminalStatesRef={terminalStatesRef}
 								/>
 							)}{" "}
 							{show[data?.id] === "actions" && (

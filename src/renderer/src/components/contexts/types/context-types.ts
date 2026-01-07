@@ -1,4 +1,5 @@
-import type { Dispatch, SetStateAction } from "react";
+import { Terminal } from "@xterm/xterm";
+import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { Socket } from "socket.io-client";
 
 // Auth context
@@ -140,6 +141,7 @@ export interface ScriptsContextType {
 	isLocal?: boolean;
 	canStop: Record<string, boolean>;
 	setCanStop: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+	terminalStatesRef: RefObject<Record<string, Terminal>>;
 }
 
 // Socket types

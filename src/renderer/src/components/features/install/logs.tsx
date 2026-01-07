@@ -2,7 +2,9 @@ import { useScriptsLogsContext } from "@/components/contexts/scripts-context";
 import TerminalOutput from "@/components/features/install/terminal-output";
 import ProgressBar from "@/components/ui/progress-bar";
 import { useTranslation } from "@/translations/translation-context";
+import { Terminal } from "@xterm/xterm";
 import { Copy, ExternalLink, Square } from "lucide-react";
+import { RefObject } from "react";
 
 interface LogsProps {
 	logs: Record<string, string>;
@@ -13,6 +15,7 @@ interface LogsProps {
 	appId: string;
 	executing: string | null;
 	canStop: boolean;
+	terminalStatesRef: RefObject<Record<string, Terminal>>;
 }
 
 export default function LogsComponent({
@@ -24,6 +27,7 @@ export default function LogsComponent({
 	appId,
 	executing,
 	canStop,
+	terminalStatesRef,
 }: LogsProps) {
 	const { progress } = useScriptsLogsContext();
 	const { t } = useTranslation();
@@ -31,7 +35,7 @@ export default function LogsComponent({
 	return (
 		<div className="flex flex-col w-full h-full min-w-96 max-w-2xl justify-center items-center overflow-hidden">
 			<div className="flex flex-col gap-2 p-10 select-text rounded-xl border-tl-0 border border-white/10 shadow-lg relative overflow-hidden w-full bg-[#080808]/40 h-[500px] hide-scrollbar">
-				<TerminalOutput content={logs[appId] || ""} id={appId} />
+				<TerminalOutput content={logs[appId] || ""} id={appId} terminalStatesRef={terminalStatesRef} />
 				{progress &&
 					progress[appId]?.steps &&
 					progress[appId].steps.length > 1 &&
