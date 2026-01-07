@@ -8,11 +8,12 @@ import { useTranslation } from "@/translations/translation-context";
 import { apiJson } from "@/utils/api";
 import { openLink } from "@/utils/open-link";
 import { DndContext, closestCenter } from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
-	SortableContext,
-	arrayMove,
-	useSortable,
-	verticalListSortingStrategy,
+    SortableContext,
+    arrayMove,
+    useSortable,
+    verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { AnimatePresence, motion } from "framer-motion";
@@ -320,6 +321,7 @@ export default function Sidebar() {
 								<DndContext
 									collisionDetection={closestCenter}
 									onDragEnd={handleSidebarDragEnd}
+									modifiers={[restrictToVerticalAxis]}
 								>
 									<SortableContext
 										items={sidebarOrder}
