@@ -69,9 +69,8 @@ export default function DeleteLoadingModal({
 				{steps.map((step, index) => (
 					<div
 						key={step}
-						className={`h-1.5 rounded-xl transition-all duration-300 ${
-							index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
-						}`}
+						className={`h-1.5 rounded-xl transition-all duration-300 ${index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
+							}`}
 					/>
 				))}
 			</div>

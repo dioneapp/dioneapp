@@ -185,7 +185,7 @@ export function createScriptRouter(io: Server) {
 	});
 
 	router.post("/check-update", async (req, res) => {
-		const data = req.body
+		const data = req.body;
 		const { workingDir, dioneFile } = resolveScriptPaths(data.name);
 		logger.info(`Checking update for script '${data.name}' on '${workingDir}'`);
 		try {

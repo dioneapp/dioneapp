@@ -143,7 +143,7 @@ async function ensureDirectory(dirPath: string, maxRetries = 3): Promise<void> {
 					});
 					fs.mkdirSync(dirPath, { recursive: true });
 					return;
-				} catch {}
+				} catch { }
 			}
 
 			await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
@@ -250,12 +250,12 @@ async function downloadBootstrapperExecutable(
 	}
 
 	const tempPath = `${targetPath}.part`;
-	await fsp.rm(tempPath, { force: true }).catch(() => {});
+	await fsp.rm(tempPath, { force: true }).catch(() => { });
 
 	let handle: fsp.FileHandle | undefined;
 	let writable: fs.WriteStream | undefined;
 	const cleanupPartial = async () => {
-		await fsp.rm(tempPath, { force: true }).catch(() => {});
+		await fsp.rm(tempPath, { force: true }).catch(() => { });
 	};
 
 	try {
@@ -296,7 +296,7 @@ async function downloadBootstrapperExecutable(
 		if (handle) {
 			try {
 				await handle.close();
-			} catch {}
+			} catch { }
 			handle = undefined;
 		}
 		writable?.destroy();
@@ -488,7 +488,7 @@ async function downloadChannelManifestContent(
 	});
 }
 
-function cleanupBootstrapperCache(installPath: string, onLog?: LogSink) {
+function cleanupBootstrapperCache(onLog?: LogSink) {
 	if (!isWindows()) return;
 
 	const programData = process.env.ProgramData || "C:\\ProgramData";
@@ -538,8 +538,7 @@ function cleanupBootstrapperCache(installPath: string, onLog?: LogSink) {
 	if (removed > 0) {
 		logMessage(
 			onLog,
-			`Cleared ${removed} Visual Studio bootstrapper manifest ${
-				removed === 1 ? "file" : "files"
+			`Cleared ${removed} Visual Studio bootstrapper manifest ${removed === 1 ? "file" : "files"
 			} from ${cacheDir}.`,
 		);
 	}
@@ -577,7 +576,7 @@ async function acquireInstallMutex(
 					logger.warn(`Failed to close install mutex handle: ${closeError}`);
 				}
 
-				await fsp.unlink(lockPath).catch(() => {});
+				await fsp.unlink(lockPath).catch(() => { });
 			};
 		} catch (error) {
 			const err = error as NodeJS.ErrnoException;
@@ -836,7 +835,7 @@ try {
 			try {
 				execSync('taskkill /IM "vs_setup.exe" /F /T');
 				execSync('taskkill /IM "vsinstaller.exe" /F /T');
-			} catch {}
+			} catch { }
 		}
 
 		return {
@@ -855,12 +854,12 @@ try {
 			try {
 				execSync('taskkill /IM "vs_setup.exe" /F /T');
 				execSync('taskkill /IM "vsinstaller.exe" /F /T');
-			} catch {}
+			} catch { }
 			throw new Error("Aborted");
 		}
 		throw e;
 	} finally {
-		await fsp.rm(scriptPath, { force: true }).catch(() => {});
+		await fsp.rm(scriptPath, { force: true }).catch(() => { });
 	}
 }
 

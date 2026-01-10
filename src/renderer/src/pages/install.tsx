@@ -360,21 +360,18 @@ export default function Install({
 			await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
 		}
 		setShow({ [data.id]: "logs" });
-		const response = await apiJson(
-			`/scripts/check-update`,
-			{
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					script_url: data.script_url,
-					name: data.name,
-					id: data.id,
-				}),
-			},
-		) as any;
+		const response = (await apiJson(`/scripts/check-update`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				script_url: data.script_url,
+				name: data.name,
+				id: data.id,
+			}),
+		})) as any;
 
 		if (response.success) {
-			setActiveApps(prev => prev.filter((app) => app.appId !== data?.id));
+			setActiveApps((prev) => prev.filter((app) => app.appId !== data?.id));
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 			// setShow({ [data.id]: "actions" });
 		}
