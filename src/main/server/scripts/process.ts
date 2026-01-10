@@ -35,7 +35,7 @@ export const cleanTerminalByID = (id: string): void => {
 		activeProcesses.forEach((proc) => {
 			if (proc?.pid === pid) {
 				try {
-					proc.write('\u001bc');
+					proc.write("\x1b[2J\x1b[3J\x1b[H");
 				} catch (e) {
 					logger.warn(`Failed to clear process ${pid}: ${e}`);
 				}
@@ -247,13 +247,12 @@ export const executeCommand = async (
 		};
 
 		ptyProcess.onData((data: string) => {
-			if (data.includes(START_TOKEN)) return;
-			if (data.includes("Microsoft Windows")) return;
-			if (data.includes("chcp")) return;
-			if (data.includes("exit")) return;
+			if (data.startsWith(START_TOKEN)) return;
+			if (data.startsWith("Microsoft Windows")) return;
+			if (data.startsWith("chcp")) return;
+			if (data.startsWith("exit")) return;
 
 			const cleanData = cleanTerminal(data);
-
 			outputData += cleanData;
 			options?.onOutput?.(cleanData);
 			io.to(id).emit(logs, {
@@ -271,6 +270,7 @@ export const executeCommand = async (
 						logger.info(
 							`PTY Process (PID: ${pid}) finished with exit code ${exitCode || 0}`,
 						);
+						resolve({ code: exitCode || 0, stdout: outputData, stderr: "" });
 					}
 					if (exitCode !== 0) {
 						io.to(id).emit(logs, {

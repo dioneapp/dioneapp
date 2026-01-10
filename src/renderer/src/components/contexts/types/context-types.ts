@@ -142,6 +142,7 @@ export interface ScriptsContextType {
 	canStop: Record<string, boolean>;
 	setCanStop: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	terminalStatesRef: RefObject<Record<string, Terminal>>;
+	setActiveApps: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
 // Socket types

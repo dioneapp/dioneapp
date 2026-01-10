@@ -58,6 +58,7 @@ export default function Install({
 		shouldCatch,
 		canStop,
 		terminalStatesRef,
+		setActiveApps,
 	} = useScriptsContext();
 
 	const { logs, addLogLine, clearLogs, getAllAppLogs } =
@@ -96,7 +97,6 @@ export default function Install({
 	const [customizableCommands, setCustomizableCommands] = useState<
 		Record<string, string>
 	>({});
-
 	// state
 	const [executing, setExecuting] = useState<"start" | "install" | null>(null);
 
@@ -328,6 +328,49 @@ export default function Install({
 			fetchIfDownloaded();
 		}
 	}, [show]);
+
+	async function updateScript() {
+		const tooMuchApps = activeApps.length >= maxApps;
+		if (tooMuchApps) {
+			showToast(
+				"error",
+				t("toast.install.error.tooManyApps").replace("%s", String(maxApps)),
+			);
+			return;
+		}
+		setIsServerRunning((prev) => ({ ...prev, [data?.id]: true }));
+		// only switch to logs view if we're not already there
+		clearLogs(data?.id);
+		if (show[data?.id] !== "logs") {
+			setShow({ [data?.id]: "logs" });
+		}
+		if (!data?.id) return;
+
+		// only connect if we don't already have a socket connection
+		if (!sockets[data?.id]) {
+			await connectApp(data?.id, isLocal);
+			await new Promise((resolve) => setTimeout(resolve, 500)); // wait for socket to connect
+		}
+		setShow({ [data.id]: "logs" });
+		const response = await apiJson(
+			`/scripts/check-update`,
+			{
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					script_url: data.script_url,
+					name: data.name,
+					id: data.id,
+				}),
+			},
+		) as any;
+
+		if (response.success) {
+			setActiveApps(prev => prev.filter((app) => app.appId !== data?.id));
+			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
+			// setShow({ [data.id]: "actions" });
+		}
+	}
 
 	async function download(force?: boolean) {
 		setExecuting(null);
@@ -862,7 +905,6 @@ export default function Install({
 					const options = await apiJson(
 						`/scripts/start-options/${encodeURIComponent(data.name)}`,
 					);
-					console.log("options", options);
 					setStartOptions(options);
 				} catch (error) {
 					console.error("Failed to fetch start options", error);
@@ -982,6 +1024,7 @@ export default function Install({
 									handleShare={handleShare}
 									handleSave={handleSave}
 									saved={saved}
+									handleUpdate={updateScript}
 								/>
 							)}
 						</AnimatePresence>

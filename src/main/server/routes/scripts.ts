@@ -1,6 +1,6 @@
 import { deleteScript } from "@/server/scripts/delete";
 import { readDioneConfig } from "@/server/scripts/dependencies/dependencies";
-import { getScripts } from "@/server/scripts/download";
+import { extractInfo, getScripts } from "@/server/scripts/download";
 import { executeStartup } from "@/server/scripts/execute";
 import getAllScripts, { getInstalledScript } from "@/server/scripts/installed";
 import { stopActiveProcess } from "@/server/scripts/process";
@@ -8,6 +8,7 @@ import { resolveScriptPaths } from "@/server/scripts/utils/paths";
 import logger from "@/server/utils/logger";
 import express from "express";
 import type { Server } from "socket.io";
+import { updateScript } from "../scripts/update";
 
 const activeStarts = new Map<string, boolean>();
 
@@ -175,6 +176,21 @@ export function createScriptRouter(io: Server) {
 		} catch (error: any) {
 			logger.error(
 				`Unable to obtain start options for "${name}" script: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
+			);
+			res.status(500).send("An error occurred while processing your request.");
+		}
+	});
+
+	router.post("/check-update", async (req, res) => {
+		const data = req.body
+		const { workingDir, dioneFile } = resolveScriptPaths(data.name);
+		logger.info(`Checking update for script '${data.name}' on '${workingDir}'`);
+		try {
+			const success = await updateScript(workingDir, dioneFile, io, data.id);
+			res.status(200).json({ success });
+		} catch (error: any) {
+			logger.error(
+				`Unable to check update for "${data.name}" script: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
 			);
 			res.status(500).send("An error occurred while processing your request.");
 		}

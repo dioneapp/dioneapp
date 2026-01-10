@@ -315,7 +315,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 
 		const term = terminalStatesRef.current[appId];
 		if (term) {
-			term.clear();
+			term.write("\x1b[2J\x1b[3J\x1b[H");
 		}
 	}, []);
 
@@ -549,7 +549,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				disconnectApp(appId);
 				setAppFinished({ [appId]: false });
 				setShouldCatch({ [appId]: false });
-				setCatchPort({ [appId]: 0 });
+				// setCatchPort({ [appId]: 0 });
 				handleReloadQuickLaunch();
 			}
 		},
@@ -621,6 +621,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			canStop,
 			setCanStop,
 			terminalStatesRef,
+			setActiveApps,
 		}),
 		[
 			installedApps,
@@ -653,6 +654,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			canStop,
 			setCanStop,
 			terminalStatesRef,
+			setActiveApps,
 		],
 	);
 
