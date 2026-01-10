@@ -73,7 +73,9 @@ export default function Modal({
 						{(title || showCloseButton) && (
 							<div className="p-6 pb-0 flex items-center justify-between">
 								{title && (
-									<h2 className="text-xl font-semibold text-white w-full">{title}</h2>
+									<h2 className="text-xl font-semibold text-white w-full">
+										{title}
+									</h2>
 								)}
 								{showCloseButton && (
 									<button

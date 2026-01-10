@@ -1,11 +1,11 @@
 ﻿import {
-    Button,
-    Input,
-    InputWithIcon,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    Textarea,
+	Button,
+	Input,
+	InputWithIcon,
+	Modal,
+	ModalBody,
+	ModalFooter,
+	Textarea,
 } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, apiJson } from "@/utils/api";

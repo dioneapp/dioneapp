@@ -8,7 +8,7 @@ import type {
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch, getBackendPort } from "@/utils/api";
 import { useToast } from "@/utils/use-toast";
-import { Terminal } from "@xterm/xterm";
+import type { Terminal } from "@xterm/xterm";
 import {
 	createContext,
 	useCallback,
@@ -307,10 +307,10 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	);
 
 	const clearLogs = useCallback((appId: string) => {
-		setLogs(prev => ({ ...prev, [appId]: '' }));
-		setStatusLog(prev => ({
+		setLogs((prev) => ({ ...prev, [appId]: "" }));
+		setStatusLog((prev) => ({
 			...prev,
-			[appId]: { status: '', content: '' },
+			[appId]: { status: "", content: "" },
 		}));
 
 		const term = terminalStatesRef.current[appId];
@@ -504,9 +504,10 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${sockets[data.id]?.isLocal
-							? encodeURIComponent(data.name)
-							: data.id
+						`/install/${
+							sockets[data.id]?.isLocal
+								? encodeURIComponent(data.name)
+								: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},
