@@ -141,6 +141,7 @@ export interface ScriptsContextType {
 	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	isLocal?: boolean;
 	terminalStatesRef: RefObject<Record<string, Terminal>>;
+	setActiveApps: React.Dispatch<React.SetStateAction<any[]>>;
 	lastContentLength: React.MutableRefObject<number>;
 	currentCommand: Record<string, string>;
 	setCurrentCommand: React.Dispatch<

@@ -509,10 +509,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${
-							sockets[data.id]?.isLocal
-								? encodeURIComponent(data.name)
-								: data.id
+						`/install/${sockets[data.id]?.isLocal
+							? encodeURIComponent(data.name)
+							: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},
@@ -555,7 +554,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				disconnectApp(appId);
 				setAppFinished({ [appId]: false });
 				setShouldCatch({ [appId]: false });
-				setCatchPort({ [appId]: 0 });
+				// setCatchPort({ [appId]: 0 });
 				handleReloadQuickLaunch();
 			}
 		},
@@ -625,6 +624,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			shouldCatch,
 			setShouldCatch,
 			terminalStatesRef,
+			setActiveApps,
 			lastContentLength,
 			currentCommand,
 			setCurrentCommand,
@@ -658,6 +658,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			wasJustInstalled,
 			shouldCatch,
 			terminalStatesRef,
+			setActiveApps,
 			lastContentLength,
 			currentCommand,
 			setCurrentCommand,

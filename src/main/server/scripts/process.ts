@@ -283,6 +283,7 @@ export const executeCommand = async (
 						logger.info(
 							`PTY Process (PID: ${pid}) finished with exit code ${exitCode || 0}`,
 						);
+						resolve({ code: exitCode || 0, stdout: outputData, stderr: "" });
 					}
 					if (exitCode !== 0) {
 						io.to(id).emit(logs, {

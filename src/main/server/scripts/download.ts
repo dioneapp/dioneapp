@@ -78,7 +78,7 @@ export async function getScripts(id: string, io: Server, force?: boolean) {
 	return null;
 }
 
-function extractInfo(url: string): {
+export function extractInfo(url: string): {
 	repo: string;
 	branch?: string;
 	filePath?: string;
