@@ -166,11 +166,13 @@ export const en = {
 		},
 		login: {
 			title: "Welcome back!",
-			description: "Sign in to your Dione account to access all features, sync your projects, and personalize your experience.",
+			description:
+				"Sign in to your Dione account to access all features, sync your projects, and personalize your experience.",
 			loginButton: "Sign in with Dione",
 			later: "Maybe later",
 			waitingTitle: "Waiting for sign in...",
-			waitingDescription: "Complete the sign in process in your browser to continue.",
+			waitingDescription:
+				"Complete the sign in process in your browser to continue.",
 			cancel: "Cancel",
 		},
 		tooltips: {

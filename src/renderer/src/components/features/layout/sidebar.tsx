@@ -201,7 +201,7 @@ export default function Sidebar() {
 						className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm"
 						onClick={() => setShowLoginModal(false)}
 					>
-						<motion.div 
+						<motion.div
 							className="max-w-md w-full px-6"
 							onClick={(e) => e.stopPropagation()}
 							initial={{ scale: 0.95, opacity: 0, y: 10 }}
@@ -213,24 +213,30 @@ export default function Sidebar() {
 								<div
 									className="absolute -top-24 -right-24 w-56 h-56 rounded-xl blur-3xl pointer-events-none"
 									style={{
-										background: "radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
+										background:
+											"radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
 										opacity: 0.15,
 									}}
 								/>
 								<div
 									className="absolute -bottom-24 -left-24 w-56 h-56 rounded-xl blur-3xl pointer-events-none"
 									style={{
-										background: "radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
+										background:
+											"radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
 										opacity: 0.1,
 									}}
 								/>
 								<div className="relative z-10">
 									<div className="text-center mb-8">
 										<h1 className="text-3xl font-bold text-neutral-50 mb-3">
-											{waitingForLogin ? t("sidebar.login.waitingTitle") : t("sidebar.login.title")}
+											{waitingForLogin
+												? t("sidebar.login.waitingTitle")
+												: t("sidebar.login.title")}
 										</h1>
 										<p className="text-sm text-neutral-400 leading-relaxed px-4">
-											{waitingForLogin ? t("sidebar.login.waitingDescription") : t("sidebar.login.description")}
+											{waitingForLogin
+												? t("sidebar.login.waitingDescription")
+												: t("sidebar.login.description")}
 										</p>
 									</div>
 
@@ -246,7 +252,9 @@ export default function Sidebar() {
 												className="w-full shadow-lg hover:shadow-xl transition-all duration-200"
 											>
 												<User className="h-5 w-5" />
-												<span className="font-semibold text-base">{t("sidebar.login.loginButton")}</span>
+												<span className="font-semibold text-base">
+													{t("sidebar.login.loginButton")}
+												</span>
 											</Button>
 											<p
 												onClick={() => setShowLoginModal(false)}
@@ -258,9 +266,18 @@ export default function Sidebar() {
 									) : (
 										<div className="flex flex-col gap-4">
 											<div className="flex items-center justify-center gap-2 py-4">
-												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+												<div
+													className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
+													style={{ animationDelay: "0ms" }}
+												/>
+												<div
+													className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
+													style={{ animationDelay: "150ms" }}
+												/>
+												<div
+													className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
+													style={{ animationDelay: "300ms" }}
+												/>
 											</div>
 											<Button
 												onClick={() => {
