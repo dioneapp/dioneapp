@@ -309,7 +309,8 @@ export function setupSocket({
 				content.toLowerCase().includes("serving at") ||
 				content.toLowerCase().includes("server running")
 			) {
-				const match = content
+				const cleanContent = content.replace(/\x1b\[[0-9;?]*[a-zA-Z]/g, "");
+				const match = cleanContent
 					.replace(/\x1b\[[0-9;]*m/g, "")
 					.match(
 						/(?:https?:\/\/)?(?:localhost|127\.0\.0\.1|0\.0\.0\.0):(\d{2,5})/i,
