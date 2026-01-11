@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import { arch, platform as getPlatform, platform } from "node:os";
+import { arch, platform as getPlatform } from "node:os";
 import path from "node:path";
 import {
 	getAllValues,

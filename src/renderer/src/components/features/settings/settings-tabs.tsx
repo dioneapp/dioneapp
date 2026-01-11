@@ -35,7 +35,7 @@ export default function SettingsTabs({
 }: SettingsTabsProps) {
 	const { t } = useTranslation();
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [wheelAccumulator, setWheelAccumulator] = useState(0);
+	const [_wheelAccumulator, setWheelAccumulator] = useState(0);
 	const WHEEL_THRESHOLD = 100;
 
 	const tabs: Tab[] = [
@@ -91,11 +91,10 @@ export default function SettingsTabs({
 						onClick={() => onTabChange(tab.id)}
 						variant="ghost"
 						size="sm"
-						className={`relative flex items-center gap-2 whitespace-nowrap ${
-							activeTab === tab.id
+						className={`relative flex items-center gap-2 whitespace-nowrap ${activeTab === tab.id
 								? "text-white"
 								: "text-neutral-400 hover:text-neutral-200"
-						}`}
+							}`}
 					>
 						{activeTab === tab.id && (
 							<motion.div
