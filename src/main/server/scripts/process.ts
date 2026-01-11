@@ -35,7 +35,7 @@ export const cleanTerminalByID = (id: string): void => {
 		activeProcesses.forEach((proc) => {
 			if (proc?.pid === pid) {
 				try {
-					proc.write('\u001bc');
+					proc.write("\u001bc");
 				} catch (e) {
 					logger.warn(`Failed to clear process ${pid}: ${e}`);
 				}
@@ -129,7 +129,7 @@ const dropProcesses = async (id?: string, pid?: number) => {
 		if (!pids || pids.size === 0) {
 			logger.info(`No processes managed by ${id}`);
 			return;
-		};
+		}
 		if (pids) {
 			for (const trackedPID of pids) {
 				activeProcesses.forEach((proc) => {

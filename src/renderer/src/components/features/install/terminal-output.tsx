@@ -1,14 +1,18 @@
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal } from "@xterm/xterm";
 import "@xterm/xterm/css/xterm.css";
-import { RefObject, useEffect, useRef } from "react";
+import { type RefObject, useEffect, useRef } from "react";
 
 interface TerminalOutputProps {
 	content: string;
 	id: string;
 	terminalStatesRef: RefObject<Record<string, Terminal>>;
 }
-export default function TerminalOutput({ content, id, terminalStatesRef }: TerminalOutputProps) {
+export default function TerminalOutput({
+	content,
+	id,
+	terminalStatesRef,
+}: TerminalOutputProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const fitAddonRef = useRef<FitAddon | null>(null);
 	const lastContentLength = useRef(0);
