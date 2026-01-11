@@ -7,6 +7,7 @@ import { fr } from "@/translations/languages/fr";
 import { hi } from "@/translations/languages/hi";
 import { id } from "@/translations/languages/id";
 import { ja } from "@/translations/languages/ja";
+import { pl } from "@/translations/languages/pl";
 import { pt } from "@/translations/languages/pt";
 import { ru } from "@/translations/languages/ru";
 import { zh } from "@/translations/languages/zh";
@@ -31,6 +32,7 @@ export const languages = {
 	id: "Indonesian",
 	ja: "Japanese",
 	pt: "Portuguese",
+	pl: "Polish",
 	ru: "Russian",
 	zh: "Chinese",
 } as const;
@@ -61,6 +63,7 @@ const translations = {
 	id,
 	ja,
 	pt,
+	pl,
 	ru,
 	zh,
 } as const;

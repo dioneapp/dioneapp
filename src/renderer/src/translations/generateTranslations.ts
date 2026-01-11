@@ -24,6 +24,7 @@ const languages: Record<string, string> = {
 	id: "Indonesian",
 	ja: "Japanese",
 	pt: "Portuguese",
+	pl: "Polish",
 	ru: "Russian",
 	zh: "Chinese",
 };
