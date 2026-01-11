@@ -91,10 +91,11 @@ export default function SettingsTabs({
 						onClick={() => onTabChange(tab.id)}
 						variant="ghost"
 						size="sm"
-						className={`relative flex items-center gap-2 whitespace-nowrap ${activeTab === tab.id
+						className={`relative flex items-center gap-2 whitespace-nowrap ${
+							activeTab === tab.id
 								? "text-white"
 								: "text-neutral-400 hover:text-neutral-200"
-							}`}
+						}`}
 					>
 						{activeTab === tab.id && (
 							<motion.div
