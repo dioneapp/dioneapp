@@ -129,7 +129,7 @@ const dropProcesses = async (id?: string, pid?: number) => {
 		if (!pids || pids.size === 0) {
 			logger.info(`No processes managed by ${id}`);
 			return;
-		};
+		}
 		if (pids) {
 			for (const trackedPID of pids) {
 				activeProcesses.forEach((proc) => {

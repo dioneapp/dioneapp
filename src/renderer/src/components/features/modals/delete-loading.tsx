@@ -69,8 +69,9 @@ export default function DeleteLoadingModal({
 				{steps.map((step, index) => (
 					<div
 						key={step}
-						className={`h-1.5 rounded-xl transition-all duration-300 ${index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
-							}`}
+						className={`h-1.5 rounded-xl transition-all duration-300 ${
+							index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
+						}`}
 					/>
 				))}
 			</div>
@@ -85,11 +86,11 @@ export default function DeleteLoadingModal({
 			showCloseButton={status?.startsWith("error") || currentStep === "confirm"}
 			closeOnBackdropClick={false}
 			closeOnEscape={false}
-			title={currentStep === "confirm" ? t("deleteLoading.confirm.title") : undefined}
+			title={
+				currentStep === "confirm" ? t("deleteLoading.confirm.title") : undefined
+			}
 		>
-			<div
-				className="flex flex-col rounded-xl w-full pb-6 relative overflow-visible"
-			>
+			<div className="flex flex-col rounded-xl w-full pb-6 relative overflow-visible">
 				{/* Background glow */}
 				<div className="absolute inset-0 rounded-xl overflow-visible pointer-events-none">
 					<div
