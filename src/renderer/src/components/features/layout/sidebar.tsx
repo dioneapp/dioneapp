@@ -18,9 +18,14 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { AnimatePresence, motion } from "framer-motion";
 import { Camera, Clock, Library, Settings, User, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { saveExpiresAt, saveId, saveRefreshToken } from "../../../utils/secure-tokens";
+import {
+	saveExpiresAt,
+	saveId,
+	saveRefreshToken,
+} from "../../../utils/secure-tokens";
 
 export default function Sidebar() {
 	const { t } = useTranslation();
@@ -257,24 +262,30 @@ export default function Sidebar() {
 								<div
 									className="absolute -top-24 -right-24 w-56 h-56 rounded-xl blur-3xl pointer-events-none"
 									style={{
-										background: "radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
+										background:
+											"radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
 										opacity: 0.15,
 									}}
 								/>
 								<div
 									className="absolute -bottom-24 -left-24 w-56 h-56 rounded-xl blur-3xl pointer-events-none"
 									style={{
-										background: "radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
+										background:
+											"radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)",
 										opacity: 0.1,
 									}}
 								/>
 								<div className="relative z-10">
 									<div className="text-center mb-8">
 										<h1 className="text-3xl font-bold text-neutral-50 mb-3">
-											{waitingForLogin ? t("sidebar.login.waitingTitle") : t("sidebar.login.title")}
+											{waitingForLogin
+												? t("sidebar.login.waitingTitle")
+												: t("sidebar.login.title")}
 										</h1>
 										<p className="text-sm text-neutral-400 leading-relaxed px-4">
-											{waitingForLogin ? t("sidebar.login.waitingDescription") : t("sidebar.login.description")}
+											{waitingForLogin
+												? t("sidebar.login.waitingDescription")
+												: t("sidebar.login.description")}
 										</p>
 									</div>
 
@@ -290,7 +301,9 @@ export default function Sidebar() {
 												className="w-full shadow-lg hover:shadow-xl transition-all duration-200"
 											>
 												<User className="h-5 w-5" />
-												<span className="font-semibold text-base">{t("sidebar.login.loginButton")}</span>
+												<span className="font-semibold text-base">
+													{t("sidebar.login.loginButton")}
+												</span>
 											</Button>
 											<p
 												onClick={() => setShowLoginModal(false)}
@@ -302,9 +315,18 @@ export default function Sidebar() {
 									) : (
 										<div className="flex flex-col gap-4">
 											<div className="flex items-center justify-center gap-2 py-4">
-												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-												<div className="w-2 h-2 bg-white/60 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+												<div
+													className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
+													style={{ animationDelay: "0ms" }}
+												/>
+												<div
+													className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
+													style={{ animationDelay: "150ms" }}
+												/>
+												<div
+													className="w-2 h-2 bg-white/60 rounded-full animate-bounce"
+													style={{ animationDelay: "300ms" }}
+												/>
 											</div>
 											<Button
 												onClick={() => {
@@ -504,7 +526,7 @@ export default function Sidebar() {
 																		config?.compactMode
 																			? "w-12 h-12 rounded-xl flex items-center justify-center"
 																			: "w-full h-10 rounded-xl flex items-center gap-3 px-3" +
-																			" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
+																				" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
 																	}
 																>
 																	<div
@@ -512,7 +534,7 @@ export default function Sidebar() {
 																			config?.compactMode
 																				? "w-8 h-8"
 																				: "w-6 h-6" +
-																				" overflow-hidden shrink-0 rounded-lg"
+																					" overflow-hidden shrink-0 rounded-lg"
 																		}
 																	>
 																		{!app.isLocal ? (
@@ -645,10 +667,10 @@ export default function Sidebar() {
 									) : (
 										<>
 											{!avatarError &&
-												user?.avatar_url &&
-												user?.avatar_url !== "" &&
-												user?.avatar_url !== null &&
-												user?.avatar_url !== undefined ? (
+											user?.avatar_url &&
+											user?.avatar_url !== "" &&
+											user?.avatar_url !== null &&
+											user?.avatar_url !== undefined ? (
 												<img
 													src={user?.avatar_url}
 													alt="user avatar"

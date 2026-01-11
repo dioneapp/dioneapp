@@ -99,13 +99,21 @@ export async function loadLocalScript(name: string, io: Server) {
 
 	// format json files & copy to apps folder
 	try {
-		const sourceDione = fs.readFileSync(dioneFilePath, 'utf8');
+		const sourceDione = fs.readFileSync(dioneFilePath, "utf8");
 		const dioneObj = JSON.parse(sourceDione);
-		fs.writeFileSync(path.join(appPath, "dione.json"), JSON.stringify(dioneObj, null, 2), 'utf8');
+		fs.writeFileSync(
+			path.join(appPath, "dione.json"),
+			JSON.stringify(dioneObj, null, 2),
+			"utf8",
+		);
 
-		const sourceAppInfo = fs.readFileSync(appInfoPath, 'utf8');
+		const sourceAppInfo = fs.readFileSync(appInfoPath, "utf8");
 		const appInfoObj = JSON.parse(sourceAppInfo);
-		fs.writeFileSync(path.join(appPath, "app_info.json"), JSON.stringify(appInfoObj, null, 2), 'utf8');
+		fs.writeFileSync(
+			path.join(appPath, "app_info.json"),
+			JSON.stringify(appInfoObj, null, 2),
+			"utf8",
+		);
 	} catch (err: any) {
 		// if error, copy files without formatting
 		logger.warn(`Error formating JSON for ${sanitizedName}: ${err.message}`);
