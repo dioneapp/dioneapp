@@ -100,7 +100,7 @@ export default function ActionsComponent({
 	return (
 		<AnimatePresence mode="wait">
 			{showReportMenu && (
-				<div className="absolute bg-black/90 backdrop-blur-xs w-screen h-screen z-50">
+				<div className="absolute bg-black/90 backdrop-blur-xs w-full h-full z-50">
 					<div className="flex items-center justify-center w-full h-full">
 						<div className="bg-white/10 backdrop-blur-xs w-full max-w-xl p-6 rounded-xl">
 							<h2 className="text-xl font-semibold mb-4">
@@ -254,10 +254,10 @@ export default function ActionsComponent({
 											style={
 												saved
 													? {
-															color: "var(--theme-accent)",
-															backgroundColor:
-																"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
-														}
+														color: "var(--theme-accent)",
+														backgroundColor:
+															"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+													}
 													: {}
 											}
 										>
@@ -266,9 +266,9 @@ export default function ActionsComponent({
 												style={
 													saved
 														? {
-																fill: "var(--theme-accent)",
-																color: "var(--theme-accent)",
-															}
+															fill: "var(--theme-accent)",
+															color: "var(--theme-accent)",
+														}
 														: {}
 												}
 											/>
@@ -356,27 +356,25 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap border ${
-												installed
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap border ${installed
 													? ""
 													: "bg-neutral-500/20 text-neutral-400 border-neutral-500/30"
-											}`}
+												}`}
 											style={
 												installed
 													? {
-															backgroundColor:
-																"color-mix(in srgb, var(--theme-accent) 20%, transparent)",
-															color: "var(--theme-accent)",
-															borderColor:
-																"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
-														}
+														backgroundColor:
+															"color-mix(in srgb, var(--theme-accent) 20%, transparent)",
+														color: "var(--theme-accent)",
+														borderColor:
+															"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
+													}
 													: {}
 											}
 										>
 											<div
-												className={`w-1 h-1 rounded-xl ${
-													installed ? "" : "bg-neutral-400"
-												}`}
+												className={`w-1 h-1 rounded-xl ${installed ? "" : "bg-neutral-400"
+													}`}
 												style={
 													installed
 														? { backgroundColor: "var(--theme-accent)" }
