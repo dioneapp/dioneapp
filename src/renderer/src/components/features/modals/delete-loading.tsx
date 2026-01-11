@@ -88,7 +88,7 @@ export default function DeleteLoadingModal({
 			title={currentStep === "confirm" ? t("deleteLoading.confirm.title") : undefined}
 		>
 			<div
-				className="flex flex-col rounded-xl w-full pb-6 relative overflow-visible"
+				className="flex flex-col h-full rounded-xl w-full pb-6 relative overflow-visible"
 			>
 				{/* Background glow */}
 				<div className="absolute inset-0 rounded-xl overflow-visible pointer-events-none">
@@ -116,10 +116,10 @@ export default function DeleteLoadingModal({
 								animate={{ opacity: 1, x: 0 }}
 								exit={{ opacity: 0, x: 20 }}
 								transition={{ duration: 0.3 }}
-								className="flex flex-col h-full"
+								className="flex flex-col h-full gap-2"
 							>
 								{/* Header */}
-								<div className="flex items-center gap-3 mb-6">
+								<div className="flex items-center gap-2 pb-2">
 									<div className="flex-1">
 										<p className="text-neutral-400 text-sm mt-1">
 											{t("deleteLoading.confirm.subtitle") ||
@@ -217,7 +217,7 @@ export default function DeleteLoadingModal({
 								animate={{ opacity: 1, x: 0 }}
 								exit={{ opacity: 0, x: 20 }}
 								transition={{ duration: 0.3 }}
-								className="flex flex-col items-center justify-center gap-6 flex-1 min-h-0"
+								className="flex flex-col items-center justify-center gap-6 flex-1 min-h-80"
 							>
 								<div className="flex flex-col gap-2 text-center">
 									<h1 className="font-bold text-2xl text-white">

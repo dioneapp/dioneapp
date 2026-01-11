@@ -48,9 +48,9 @@ export default function Modal({
 	}, [isOpen, onClose, closeOnEscape]);
 
 	const modalContent = (
-		<AnimatePresence>
+		<AnimatePresence mode="wait">
 			{isOpen && (
-				<div className="fixed inset-0 w-full min-h-40 h-full z-50 flex justify-center items-center p-4">
+				<div className="fixed inset-0 w-full h-full z-50 flex justify-center items-center p-4">
 					{/* Backdrop */}
 					<motion.div
 						initial={{ opacity: 0 }}
@@ -63,15 +63,16 @@ export default function Modal({
 
 					{/* Modal Content */}
 					<motion.div
+						key={`modal-${maxWidth}`}
 						initial={{ opacity: 0, scale: 0.95, y: 20 }}
 						animate={{ opacity: 1, scale: 1, y: 0 }}
 						exit={{ opacity: 0, scale: 0.95, y: 20 }}
-						transition={{ duration: 0.2, ease: "easeOut" }}
+						transition={{ duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] }}
 						className={`relative ${maxWidthClasses[maxWidth]} w-full border border-white/10 rounded-xl bg-[#080808] flex flex-col overflow-hidden mx-auto my-auto`}
 					>
 						{/* Header */}
 						{(title || showCloseButton) && (
-							<div className="p-6 pb-0 flex items-center justify-between">
+							<div className="px-6 pt-6 pb-2 flex items-center justify-between">
 								{title && (
 									<h2 className="text-xl font-semibold text-white w-full">{title}</h2>
 								)}
