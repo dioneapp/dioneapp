@@ -20,18 +20,21 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Camera, Clock, Library, Settings, User, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { saveExpiresAt, saveId, saveRefreshToken } from "../../../utils/secure-tokens";
 
 export default function Sidebar() {
 	const { t } = useTranslation();
-	const { user, loading } = useAuthContext();
 	const [config, setConfig] = useState<any | null>(null);
 	const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
 	const { activeApps, handleStopApp } = useScriptsContext();
 	const [sidebarOrder, setSidebarOrder] = useState(() =>
 		activeApps.filter((app) => app.appId !== "ollama").map((app) => app.appId),
 	);
+	const [authToken, setAuthToken] = useState<string | null>(null);
+	const [refreshToken, setRefreshToken] = useState<string | null>(null);
+	const { user, loading, setUser, setRefreshSessionToken } = useAuthContext();
 
-	React.useEffect(() => {
+	useEffect(() => {
 		setSidebarOrder((prevOrder) => {
 			const currentIds = activeApps
 				.filter((app) => app.appId !== "ollama")
@@ -170,23 +173,64 @@ export default function Sidebar() {
 		fetchReleaseNotes();
 	}, [updateAvailable]);
 
-	/*
-	// FORCE UPDATE POPUP FOR TESTING
-	useEffect(() => {
-		setUpdateDownloaded(true);
-		setReleaseNotes({
-			name: "Test Update",
-			published_at: new Date().toISOString(),
-			body: "* New feature 1\n* New feature 2\n* Bug fixes and improvements",
-		});
-	}, []);
-	*/
 	useEffect(() => {
 		if (waitingForLogin && user) {
 			setWaitingForLogin(false);
 			setShowLoginModal(false);
 		}
 	}, [user, waitingForLogin]);
+
+	// listen oauth
+	useEffect(() => {
+		const listenForAuthToken = () => {
+			window.electron.ipcRenderer.on("auth-token", (_event, authToken) => {
+				setAuthToken(authToken);
+			});
+			window.electron.ipcRenderer.on(
+				"refresh-token",
+				(_event, refreshToken) => {
+					setRefreshToken(refreshToken);
+				},
+			);
+		};
+		listenForAuthToken();
+	}, []);
+
+	useEffect(() => {
+		if (authToken && refreshToken) {
+			async function setSessionAPI(token: string, refreshToken: string) {
+				const data = await apiJson<any>("/db/set-session", {
+					headers: {
+						accessToken: token,
+						refreshToken: refreshToken,
+						api_key: import.meta.env.LOCAL_API_KEY || "",
+					},
+				});
+				if (data.session) {
+					window.electron.ipcRenderer.send("start-session", {
+						user: data.user,
+					});
+					await saveExpiresAt(data.session.expires_at);
+					await saveRefreshToken(data.session.refresh_token);
+					setRefreshSessionToken(data.session.refresh_token);
+					getUser(data.user.id);
+					setShowLoginModal(false);
+				}
+			}
+
+			setSessionAPI(authToken, refreshToken);
+		}
+	}, [authToken, refreshToken]);
+
+	async function getUser(id: string) {
+		const data = await apiJson<any>(`/db/user/${id}`, {
+			headers: {
+				api_key: import.meta.env.LOCAL_API_KEY || "",
+			},
+		});
+		setUser(data[0]);
+		await saveId(data[0].id);
+	}
 
 	return (
 		<>
@@ -201,7 +245,7 @@ export default function Sidebar() {
 						className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm"
 						onClick={() => setShowLoginModal(false)}
 					>
-						<motion.div 
+						<motion.div
 							className="max-w-md w-full px-6"
 							onClick={(e) => e.stopPropagation()}
 							initial={{ scale: 0.95, opacity: 0, y: 10 }}
@@ -460,7 +504,7 @@ export default function Sidebar() {
 																		config?.compactMode
 																			? "w-12 h-12 rounded-xl flex items-center justify-center"
 																			: "w-full h-10 rounded-xl flex items-center gap-3 px-3" +
-																				" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
+																			" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
 																	}
 																>
 																	<div
@@ -468,7 +512,7 @@ export default function Sidebar() {
 																			config?.compactMode
 																				? "w-8 h-8"
 																				: "w-6 h-6" +
-																					" overflow-hidden shrink-0 rounded-lg"
+																				" overflow-hidden shrink-0 rounded-lg"
 																		}
 																	>
 																		{!app.isLocal ? (
@@ -601,10 +645,10 @@ export default function Sidebar() {
 									) : (
 										<>
 											{!avatarError &&
-											user?.avatar_url &&
-											user?.avatar_url !== "" &&
-											user?.avatar_url !== null &&
-											user?.avatar_url !== undefined ? (
+												user?.avatar_url &&
+												user?.avatar_url !== "" &&
+												user?.avatar_url !== null &&
+												user?.avatar_url !== undefined ? (
 												<img
 													src={user?.avatar_url}
 													alt="user avatar"
