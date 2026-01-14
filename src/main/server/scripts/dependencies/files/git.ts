@@ -269,6 +269,7 @@ export async function uninstall(binFolder: string): Promise<void> {
 		logger.info(`Removing ${depName} from environment variables...`);
 		if (getOS() === "windows") {
 			removeValue(path.join(depFolder, "cmd"), "PATH");
+			removeValue(path.join(depFolder, "mingw64", "bin"), "GIT_EXEC_PATH");
 		} else {
 			removeValue(path.join(depFolder, "bin"), "PATH");
 			removeValue(path.join(depFolder, "libexec", "git-core"), "GIT_EXEC_PATH");
