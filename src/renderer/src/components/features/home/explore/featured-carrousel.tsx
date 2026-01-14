@@ -81,7 +81,6 @@ export default function FeaturedCarousel() {
 	}, [isOnline]);
 
 	const slides = [
-		{ type: "announcement", id: "announcement" },
 		...scripts.map((s) => ({ ...s, type: "script" as const })),
 	];
 
@@ -163,24 +162,77 @@ export default function FeaturedCarousel() {
 						<div
 							className={`w-full h-72 flex transition-all duration-200 rounded-xl relative overflow-hidden group border border-white/10 hover:border-white/20 shadow-lg hover:shadow-xl ${!isOnline ? "cursor-not-allowed opacity-75" : "cursor-pointer"}`}
 						>
-							{activeItem.type === "announcement" ? (
-								<div
-									onClick={() => navigate("/quick-ai")}
-									className="absolute inset-0 w-full h-full bg-black/20 backdrop-blur-lg flex items-center justify-center"
-								>
-									<Announcements />
-								</div>
-							) : (
-								<div
-									onClick={(e) => {
-										e.preventDefault();
-										handlePromoClick(activeItem.id);
-									}}
-									className="w-full h-full relative"
-								>
-									<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
+							<div
+								onClick={(e) => {
+									e.preventDefault();
+									handlePromoClick(activeItem.id);
+								}}
+								className="w-full h-full relative"
+							>
+								<div className="absolute inset-0 w-full h-full bg-black/5 backdrop-blur-lg z-50" />
 
-									{activeItem.banner_url && isOnline ? (
+								{(() => {
+									if (!activeItem.banner_url) {
+										return (
+											<motion.div
+												aria-hidden
+												className="absolute inset-0 w-full h-full opacity-20 scale-150"
+												style={{
+													background: gradients[activeItem.id] ||
+														"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, var(--theme-accent) 100%)",
+													backgroundSize: "200% 200%",
+												}}
+												initial={{ backgroundPosition: "0% 50%" }}
+												animate={{
+													backgroundPosition: [
+														"0% 50%",
+														"100% 30%",
+														"60% 100%",
+														"20% 80%",
+														"80% 10%",
+														"0% 50%",
+													],
+												}}
+												transition={{
+													duration: 48,
+													repeat: Number.POSITIVE_INFINITY,
+													ease: "linear",
+												}}
+											/>
+										);
+									}
+
+									const urlLower = activeItem.banner_url.toLowerCase();
+									const isVideo = urlLower.endsWith('.gif') || urlLower.endsWith('.mp4') ||
+										urlLower.endsWith('.webm') || urlLower.endsWith('.mov') ||
+										urlLower.endsWith('.avi');
+
+									if (isVideo && isOnline) {
+										return (
+											<motion.video
+												aria-hidden
+												src={activeItem.banner_url}
+												className="absolute inset-0 w-full h-full object-cover opacity-50"
+												autoPlay
+												loop
+												muted
+												playsInline
+												initial={{ scale: 1, filter: "blur(0px)" }}
+												animate={{
+													scale: [1, 1.05, 1],
+													filter: ["blur(0px)", "blur(2px)", "blur(0px)"],
+												}}
+												transition={{
+													duration: 16,
+													repeat: Number.POSITIVE_INFINITY,
+													ease: "linear",
+												}}
+											/>
+										);
+									}
+
+									// fallback img
+									return (
 										<motion.img
 											aria-hidden
 											src={activeItem.banner_url}
@@ -198,63 +250,37 @@ export default function FeaturedCarousel() {
 												ease: "linear",
 											}}
 										/>
-									) : (
-										<motion.div
-											aria-hidden
-											className="absolute inset-0 w-full h-full opacity-20 scale-150"
-											style={{
-												background:
-													gradients[activeItem.id] ||
-													"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, var(--theme-accent) 100%)",
-												backgroundSize: "200% 200%",
-											}}
-											initial={{ backgroundPosition: "0% 50%" }}
-											animate={{
-												backgroundPosition: [
-													"0% 50%",
-													"100% 30%",
-													"60% 100%",
-													"20% 80%",
-													"80% 10%",
-													"0% 50%",
-												],
-											}}
-											transition={{
-												duration: 48,
-												repeat: Number.POSITIVE_INFINITY,
-												ease: "linear",
-											}}
-										/>
-									)}
-									<motion.div
-										initial={{ opacity: 0, filter: "blur(4px)", top: 10 }}
-										animate={{ opacity: 1, filter: "blur(0px)", top: 0 }}
-										exit={{ opacity: 0, filter: "blur(4px)", top: -10 }}
-										transition={{ duration: 0.3 }}
-										className="z-50 absolute inset-0 p-10"
-									>
-										<div className="flex w-full h-full flex-col justify-start items-center">
-											<div className="w-full h-full flex justify-end">
-												{activeItem.logo_url && isOnline && (
-													<img
-														src={activeItem.logo_url}
-														alt={activeItem.name}
-														className="w-24 h-24 rounded-xl object-cover drop-shadow-xl"
-													/>
-												)}
-											</div>
-											<div className="flex flex-col justify-end gap-2 w-full h-full -mt-6">
-												<h1 className="font-medium text-4xl tracking-tight">
-													{activeItem.name}
-												</h1>
-												<h3 className="text-sm mt-2 text-neutral-300 text-balance truncate">
-													{activeItem.description}
-												</h3>
-											</div>
+									);
+								})()}
+
+								<motion.div
+									initial={{ opacity: 0, filter: "blur(4px)", top: 10 }}
+									animate={{ opacity: 1, filter: "blur(0px)", top: 0 }}
+									exit={{ opacity: 0, filter: "blur(4px)", top: -10 }}
+									transition={{ duration: 0.3 }}
+									className="z-50 absolute inset-0 p-10"
+								>
+									<div className="flex w-full h-full flex-col justify-start items-center">
+										<div className="w-full h-full flex justify-end">
+											{activeItem.logo_url && isOnline && (
+												<img
+													src={activeItem.logo_url}
+													alt={activeItem.name}
+													className="w-24 h-24 rounded-xl object-cover drop-shadow-xl"
+												/>
+											)}
 										</div>
-									</motion.div>
-								</div>
-							)}
+										<div className="flex flex-col justify-end gap-2 w-full h-full -mt-6">
+											<h1 className="font-medium text-4xl tracking-tight">
+												{activeItem.name}
+											</h1>
+											<h3 className="text-sm mt-2 text-neutral-300 text-balance truncate">
+												{activeItem.description}
+											</h3>
+										</div>
+									</div>
+								</motion.div>
+							</div>
 							<div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-50">
 								{slides.map((_, index) => (
 									<button
@@ -264,11 +290,10 @@ export default function FeaturedCarousel() {
 											e.preventDefault();
 											handleDotClick(index);
 										}}
-										className={`w-2 h-2 rounded-xl transition-all duration-300 ${
-											index === currentIndex
-												? "bg-white w-6"
-												: "bg-white/50 hover:bg-white/70"
-										}`}
+										className={`w-2 h-2 rounded-xl transition-all duration-300 ${index === currentIndex
+											? "bg-white w-6"
+											: "bg-white/50 hover:bg-white/70"
+											}`}
 									/>
 								))}
 							</div>
@@ -305,9 +330,8 @@ export function CarrouselSkeleton() {
 								{[...Array(5)].map((_, index) => (
 									<div
 										key={index}
-										className={`h-2 rounded-xl bg-gray-200/30 animate-pulse ${
-											index === 0 ? "w-6" : "w-2"
-										}`}
+										className={`h-2 rounded-xl bg-gray-200/30 animate-pulse ${index === 0 ? "w-6" : "w-2"
+											}`}
 									/>
 								))}
 							</div>
@@ -318,54 +342,3 @@ export function CarrouselSkeleton() {
 		</section>
 	);
 }
-
-export const Announcements = () => {
-	return (
-		<motion.div
-			initial={{ opacity: 0 }}
-			animate={{ opacity: 1 }}
-			transition={{ duration: 0.5 }}
-			className="w-full h-full relative"
-		>
-			<div className="absolute blur-3xl inset-0 w-full h-full bg-linear-to-tl from-white/20 via-white/10 to-black " />
-			<div className="z-50 absolute top-0 right-0 m-10 p-6 bg-black/70 border border-white/5 backdrop-blur-3xl rounded-xl">
-				<Icon name="Dio" />
-			</div>
-			<div className="z-50 absolute inset-0 p-10">
-				<div className="flex flex-col justify-end gap-2 h-full w-full">
-					<h2 className="text-4xl font-semibold tracking-tight">
-						Introducing Dio AI
-					</h2>
-					<p className="text-sm text-neutral-300 text-pretty">
-						<span className="text-neutral-200 font-medium">
-							an AI tool that runs entirely on your system
-						</span>{" "}
-						(thanks to Ollama){" "}
-						<span className="text-neutral-200 font-medium">
-							to help you with all your problems within Dione
-						</span>
-						. It can help you resolve an error within the terminal, edit an
-						app's code, or interact with any app.
-					</p>
-					<p className="text-sm text-neutral-300 text-pretty">
-						You can{" "}
-						<span
-							className="font-medium"
-							style={{ color: "var(--theme-accent)" }}
-						>
-							use CTRL+K
-						</span>{" "}
-						to quickly use Dio,{" "}
-						<span
-							className="font-medium"
-							style={{ color: "var(--theme-accent)" }}
-						>
-							or click on the purple icon
-						</span>{" "}
-						inside the terminal or code editor.
-					</p>
-				</div>
-			</div>
-		</motion.div>
-	);
-};
