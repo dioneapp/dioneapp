@@ -4,7 +4,6 @@ import OfflineIndicator from "@/components/features/layout/offline-indicator";
 import Sidebar from "@/components/features/layout/sidebar";
 import Titlebar from "@/components/features/layout/titlebar";
 import TopbarNav from "@/components/features/layout/topbar-nav";
-import Account from "@/pages/account";
 import ErrorPage from "@/pages/error";
 import FirstTime from "@/pages/first-time";
 import Home from "@/pages/home";
@@ -122,7 +121,6 @@ function App() {
 		"/settings": Settings,
 		"/first-time": FirstTime,
 		"/library": Library,
-		"/account": Account,
 		"/report": Report,
 		"/quick-ai": QuickAI,
 	};

@@ -17,7 +17,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { AnimatePresence, motion } from "framer-motion";
-import { Camera, Clock, Library, Settings, User, X } from "lucide-react";
+import { BotMessageSquare, Camera, Clock, Library, Settings, Sparkle, User, X } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -526,7 +526,7 @@ export default function Sidebar() {
 																		config?.compactMode
 																			? "w-12 h-12 rounded-xl flex items-center justify-center"
 																			: "w-full h-10 rounded-xl flex items-center gap-3 px-3" +
-																				" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
+																			" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
 																	}
 																>
 																	<div
@@ -534,7 +534,7 @@ export default function Sidebar() {
 																			config?.compactMode
 																				? "w-8 h-8"
 																				: "w-6 h-6" +
-																					" overflow-hidden shrink-0 rounded-lg"
+																				" overflow-hidden shrink-0 rounded-lg"
 																		}
 																	>
 																		{!app.isLocal ? (
@@ -648,9 +648,9 @@ export default function Sidebar() {
 							{user && (
 								<Link
 									className={`cursor-pointer overflow-hidden flex items-center justify-center transition-opacity duration-200 ${loading ? "cursor-auto" : ""} h-9 w-9 rounded-xl ${!user?.avatar_url && "border border-white/20"}`}
-									to="/account"
+									to="/library"
 									onMouseEnter={
-										!loading ? () => setHoveredTooltip("account") : undefined
+										!loading ? () => setHoveredTooltip("library") : undefined
 									}
 									onMouseLeave={
 										!loading ? () => setHoveredTooltip(null) : undefined
@@ -659,7 +659,7 @@ export default function Sidebar() {
 									{loading && !user ? (
 										<div
 											className="w-full h-full border border-white/10 hover:bg-white/10 rounded-xl transition-colors flex items-center justify-center cursor-pointer"
-											onMouseEnter={() => setHoveredTooltip("account")}
+											onMouseEnter={() => setHoveredTooltip("library")}
 											onMouseLeave={() => setHoveredTooltip(null)}
 										>
 											<User className="h-5 w-5" />
@@ -667,10 +667,10 @@ export default function Sidebar() {
 									) : (
 										<>
 											{!avatarError &&
-											user?.avatar_url &&
-											user?.avatar_url !== "" &&
-											user?.avatar_url !== null &&
-											user?.avatar_url !== undefined ? (
+												user?.avatar_url &&
+												user?.avatar_url !== "" &&
+												user?.avatar_url !== null &&
+												user?.avatar_url !== undefined ? (
 												<img
 													src={user?.avatar_url}
 													alt="user avatar"
@@ -690,11 +690,11 @@ export default function Sidebar() {
 											)}
 										</>
 									)}
-									{hoveredTooltip === "account" && (
+									{hoveredTooltip === "library" && (
 										<div
 											className={`${config?.compactMode ? "absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-2 bg-black/90 text-white text-xs shadow-lg backdrop-blur-3xl duration-200 whitespace-nowrap" : "absolute left-1/2 -translate-x-1/2 top-full z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap"}`}
 										>
-											{t("sidebar.tooltips.account")}
+											{t("sidebar.tooltips.library")}
 										</div>
 									)}
 								</Link>
@@ -738,34 +738,32 @@ export default function Sidebar() {
 						)}
 						{!config?.compactMode && (
 							<div className="flex gap-2 items-center justify-end w-full h-full">
-								<IconButton
+								<Link
+									to={"/settings"}
+									className="p-2 hover:bg-white/10 rounded-xl transition-colors flex gap-1 items-center relative"
+									onMouseEnter={() => setHoveredTooltip("quick-ai")}
+									onMouseLeave={() => setHoveredTooltip(null)}
+								>
+									<BotMessageSquare className="h-5 w-5 " />
+									{hoveredTooltip === "quick-ai" && (
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-xl">
+											Dio AI
+										</div>
+									)}
+								</Link>
+								<button
 									onClick={() => window.captureScreenshot()}
-									icon={<Camera className="h-5 w-5" />}
-									variant="ghost"
-									size="md"
-									className="relative"
+									className="p-2 hover:bg-white/10 rounded-xl transition-colors flex gap-1 items-center relative cursor-pointer"
 									onMouseEnter={() => setHoveredTooltip("capture")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
+									<Camera className="h-5 w-5" />
 									{hoveredTooltip === "capture" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
 											{t("sidebar.tooltips.capture")}
 										</div>
 									)}
-								</IconButton>
-								<Link
-									to={"/library"}
-									className="p-2 hover:bg-white/10 rounded-xl transition-colors flex gap-1 items-center relative"
-									onMouseEnter={() => setHoveredTooltip("library")}
-									onMouseLeave={() => setHoveredTooltip(null)}
-								>
-									<Library className="h-5 w-5" />
-									{hoveredTooltip === "library" && (
-										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap">
-											{t("sidebar.tooltips.library")}
-										</div>
-									)}
-								</Link>
+								</button>
 								<Link
 									to={"/settings"}
 									className="p-2 hover:bg-white/10 rounded-xl transition-colors flex gap-1 items-center relative"
