@@ -100,12 +100,12 @@ export async function install(
 		});
 		await new Promise<void>((resolve, reject) => {
 			https
-				.get(url, (response) => {
+				.get(url, { headers: { "User-Agent": "Dione", family: 4, timeout: 30000, } }, (response) => {
 					if ([301, 302].includes(response.statusCode ?? 0)) {
 						const redirectUrl = response.headers.location;
 						if (redirectUrl) {
 							https
-								.get(redirectUrl, (redirectResponse) => {
+								.get(redirectUrl, { headers: { "User-Agent": "Dione", family: 4, timeout: 30000, } }, (redirectResponse) => {
 									redirectResponse.pipe(installerFile);
 									installerFile.on("close", resolve);
 									installerFile.on("error", reject);
