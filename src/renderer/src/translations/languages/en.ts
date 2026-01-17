@@ -232,6 +232,10 @@ export const en = {
 				label: "Display Language",
 				description: "Choose your preferred interface language.",
 			},
+			disableFeaturedVideos: {
+				label: "Disable Featured Videos",
+				description: "Stop featured apps from playing animations. A smooth colour gradient will be shown instead",
+			},
 			helpTranslate: "🤔 Not seeing your language? Help us add more!",
 			theme: {
 				label: "Theme",

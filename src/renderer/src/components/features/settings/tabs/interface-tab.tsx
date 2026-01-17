@@ -43,6 +43,15 @@ export default function InterfaceTab({
 				/>
 			</SettingItem>
 			<SettingItem
+				label={t("settings.interface.disableFeaturedVideos.label")}
+				description={t("settings.interface.disableFeaturedVideos.description")}
+			>
+				<ToggleSwitch
+					enabled={config.disableFeaturedVideos}
+					onChange={() => handleUpdate({ disableFeaturedVideos: !config.disableFeaturedVideos })}
+				/>
+			</SettingItem>
+			<SettingItem
 				label={t("settings.interface.theme.label")}
 				description={t("settings.interface.theme.description")}
 				layout="column"

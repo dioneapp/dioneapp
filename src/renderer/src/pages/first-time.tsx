@@ -394,11 +394,10 @@ export default function FirstTime() {
 						{[1, 2, 3, 4].map((lvl) => (
 							<div key={lvl} className="py-1">
 								<div
-									className={`w-6 h-1 rounded-xl ${
-										lvl === level || (level === 5 && lvl === 4)
-											? "w-10"
-											: "bg-white/20"
-									}`}
+									className={`w-6 h-1 rounded-xl ${lvl === level || (level === 5 && lvl === 4)
+										? "w-10"
+										: "bg-white/20"
+										}`}
 									style={
 										lvl === level || (level === 5 && lvl === 4)
 											? { backgroundColor: "var(--theme-accent)" }

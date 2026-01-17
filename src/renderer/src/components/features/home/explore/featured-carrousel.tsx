@@ -20,8 +20,17 @@ export default function FeaturedCarousel() {
 	const navigate = useNavigate();
 	const intervalRef = useRef<NodeJS.Timeout | null>(null);
 	const isOnline = useOnlineStatus();
+	const [config, setConfig] = useState<any>(null);
 
 	const interval = 12000;
+
+	useEffect(() => {
+		const fetchConfig = async () => {
+			const data = await apiJson("/config");
+			setConfig(data);
+		};
+		fetchConfig();
+	}, []);
 
 	useEffect(() => {
 		const fetchScripts = async () => {
@@ -202,12 +211,13 @@ export default function FeaturedCarousel() {
 										);
 									}
 
+									const disableFeaturedVideos = config?.disableFeaturedVideos || false;
 									const urlLower = activeItem.banner_url.toLowerCase();
 									const isVideo = urlLower.endsWith('.gif') || urlLower.endsWith('.mp4') ||
 										urlLower.endsWith('.webm') || urlLower.endsWith('.mov') ||
 										urlLower.endsWith('.avi');
 
-									if (isVideo && isOnline) {
+									if (isVideo && isOnline && !disableFeaturedVideos) {
 										return (
 											<motion.video
 												aria-hidden
@@ -233,19 +243,28 @@ export default function FeaturedCarousel() {
 
 									// fallback img
 									return (
-										<motion.img
+										<motion.div
 											aria-hidden
-											src={activeItem.banner_url}
-											alt={activeItem.name}
-											className="absolute inset-0 w-full h-full opacity-50"
-											style={{ objectFit: "cover" }}
-											initial={{ scale: 1, filter: "blur(0px)" }}
+											className="absolute inset-0 w-full h-full opacity-20 scale-150"
+											style={{
+												background:
+													gradients[activeItem.id] ||
+													"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, var(--theme-accent) 100%)",
+												backgroundSize: "200% 200%",
+											}}
+											initial={{ backgroundPosition: "0% 50%" }}
 											animate={{
-												scale: [1, 1.05, 1],
-												filter: ["blur(0px)", "blur(2px)", "blur(0px)"],
+												backgroundPosition: [
+													"0% 50%",
+													"100% 30%",
+													"60% 100%",
+													"20% 80%",
+													"80% 10%",
+													"0% 50%",
+												],
 											}}
 											transition={{
-												duration: 16,
+												duration: 48,
 												repeat: Number.POSITIVE_INFINITY,
 												ease: "linear",
 											}}

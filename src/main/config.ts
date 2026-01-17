@@ -20,6 +20,7 @@ export interface AppConfig {
 	enableDiscordRPC: boolean;
 	disableAutoUpdates: boolean;
 	enableSuccessSound: boolean;
+	disableFeaturedVideos: boolean;
 }
 
 // default config
@@ -40,6 +41,7 @@ export const defaultConfig: AppConfig = {
 	enableDiscordRPC: true,
 	disableAutoUpdates: false,
 	enableSuccessSound: true,
+	disableFeaturedVideos: false,
 };
 // get config file
 export const getConfigPath = () => {
