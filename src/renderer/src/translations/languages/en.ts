@@ -56,6 +56,7 @@ export const en = {
 					"An error occurred while selecting the path. Please try again.",
 			},
 			success: "Path configured successfully!",
+			systemLanguage: "System language",
 		},
 		ready: {
 			title: "You are ready!",

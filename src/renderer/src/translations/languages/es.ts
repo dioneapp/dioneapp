@@ -36,7 +36,27 @@ export const es = {
 			goBack: "Volver",
 		},
 		languageSelector: {
-			title: "Selecciona tu idioma",
+			title: "Set up Dione",
+			description: "Selecciona tu idioma y ruta de instalación",
+			languageSection: "Idioma",
+			installationPathSection: "Ruta de instalación",
+			pathDescription:
+				"Esta carpeta contendrá todos tus scripts instalados, dependencias y archivos de proyecto. Elige una ubicación que sea fácilmente accesible y tenga suficiente espacio de almacenamiento.",
+			selectFolder: "Seleccionar carpeta",
+			changeFolder: "Cambiar carpeta",
+			proceedButton: "Seleccionar idioma & ruta",
+			error: {
+				spaces:
+					"La ruta seleccionada no puede contener espacios. Por favor, elige una carpeta diferente.",
+				updateConfig:
+					"Ocurrió un error al actualizar la configuración. Por favor, intenta de nuevo.",
+				samePath:
+					"Para evitar errores en las actualizaciones, elige una ruta diferente a la del ejecutable de Dione.",
+				general:
+					"Ocurrió un error al seleccionar la ruta. Por favor, intenta de nuevo.",
+			},
+			success: "Ruta configurada correctamente!",
+			systemLanguage: "Idioma del sistema",
 		},
 		ready: {
 			title: "¡Estás listo!",
@@ -55,6 +75,9 @@ export const es = {
 			success: "Siguiente",
 			warning:
 				"No selecciones la misma carpeta donde está instalado Dione. Esto puede causar conflictos y errores durante las actualizaciones.",
+		},
+		navigation: {
+			back: "Volver",
 		},
 	},
 

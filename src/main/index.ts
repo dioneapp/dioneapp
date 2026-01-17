@@ -247,10 +247,10 @@ function createWindow() {
 				sandbox: false,
 				...(process.platform === "linux"
 					? {
-							enableRemoteModule: false,
-							webSecurity: false,
-							allowRunningInsecureContent: true,
-						}
+						enableRemoteModule: false,
+						webSecurity: false,
+						allowRunningInsecureContent: true,
+					}
 					: {}),
 			},
 		});
@@ -706,6 +706,10 @@ app.whenReady().then(async () => {
 		}
 	});
 
+	ipcMain.handle("get-locale", () => {
+		return app.getLocale();
+	});
+
 	ipcMain.handle("app:close", async () => {
 		mainWindow.hide();
 		// close ollama (if running)
@@ -975,8 +979,7 @@ app.whenReady().then(async () => {
 				} else {
 					const bodyText = await response.text();
 					logger.warn(
-						`/db/events returned non-JSON (${
-							contentType || "unknown"
+						`/db/events returned non-JSON (${contentType || "unknown"
 						}). Body: ${bodyText.slice(0, 200)}`,
 					);
 					data = { raw: bodyText };
@@ -1406,7 +1409,7 @@ ipcMain.handle("delete-folder", async (_event, folderPath) => {
 	) {
 		folderPath = path.join(
 			config?.defaultBinFolder ||
-				path.join(config?.defaultInstallFolder, "bin"),
+			path.join(config?.defaultInstallFolder, "bin"),
 			"cache",
 		);
 	} else {

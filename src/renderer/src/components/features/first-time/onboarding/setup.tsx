@@ -1,7 +1,7 @@
 import { languages, useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
 import { Check, FolderOpen, Globe } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface SetupProps {
 	onSelectLanguage: () => void;
@@ -57,11 +57,21 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 		}
 	};
 
+	// locale-language
+	const [localLanguage, setLocalLanguage] = useState<string | null>(null);
+	async function fetchLocalLanguage() {
+		const locale = await window.electron.ipcRenderer.invoke("get-locale");
+		setLocalLanguage(locale);
+	}
+	useEffect(() => {
+		fetchLocalLanguage();
+	}, []);
+
 	const canProceed = language && pathSuccess;
 
 	return (
 		<section className="min-h-screen flex flex-col items-center justify-center px-4">
-			<div className="flex flex-col items-center justify-center w-full max-w-screen-lg gap-4">
+			<div className="flex flex-col items-center justify-center w-full gap-4">
 				<motion.div
 					initial={{ opacity: 0, y: -20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -83,7 +93,7 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 				>
 					{/* Language Selection */}
 					<div
-						className="flex-1 p-6 rounded-xl border border-white/10 backdrop-blur-sm"
+						className="flex-1 min-w-0 p-6 rounded-xl border border-white/10 backdrop-blur-sm min-h-[500px] max-h-[500px] flex flex-col"
 						style={{
 							background:
 								"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), color-mix(in srgb, var(--theme-background) 10%, transparent))",
@@ -97,40 +107,63 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 								</h3>
 							</div>
 						</div>
-						<div className="max-h-96 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
-							{Object.entries(languages).map(([key, value]) => (
-								<button
-									type="button"
-									key={key}
-									onClick={() => setLanguage(key as any)}
-									className={`w-full cursor-pointer text-left px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-between group ${
-										language === key
-											? "bg-white/20 border border-white/30"
-											: "bg-white/5 hover:bg-white/10 border border-transparent"
-									}`}
-								>
-									<span className="font-medium">{value}</span>
-									{language === key && (
-										<motion.div
-											initial={{ scale: 0 }}
-											animate={{ scale: 1 }}
-											className="w-5 h-5 rounded-xl flex items-center justify-center"
-											style={{
-												background:
-													"linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))",
-											}}
-										>
-											<Check className="w-3 h-3 text-black" />
-										</motion.div>
-									)}
-								</button>
-							))}
+						<div className="flex-1 w-full mb-2 overflow-y-auto pr-2 space-y-2">
+							{Object.entries(languages).map(([key, value]) => {
+								const isUserLanguage = localLanguage
+									? localLanguage in languages && key === localLanguage
+									: false;
+								return (
+									<button
+										type="button"
+										key={key}
+										onClick={() => setLanguage(key as any)}
+										className={
+											`w-full cursor-pointer text-left px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-between group ${language === key
+												? "bg-white/20 border border-white/30"
+												: "bg-white/5 hover:bg-white/10 border border-transparent"
+											}` +
+											(isUserLanguage
+												? " bg-white/5 border-[var(--theme-gradient-from)]"
+												: "")
+										}
+									>
+										<span className="font-medium">{value}</span>
+										<div className="flex items-center gap-2">
+											{isUserLanguage && (
+												<span
+													className="text-xs px-2 py-0.5 rounded-full font-medium"
+													style={{
+														background:
+															"linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))",
+														color: "black",
+													}}
+												>
+													{t("firstTime.languageSelector.systemLanguage")}
+												</span>
+											)}
+											{language === key && (
+												<motion.div
+													initial={{ scale: 0 }}
+													animate={{ scale: 1 }}
+													className="w-5 h-5 rounded-xl flex items-center justify-center"
+													style={{
+														background:
+															"linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))",
+													}}
+												>
+													<Check className="w-3 h-3 text-black" />
+												</motion.div>
+											)}
+										</div>
+									</button>
+								);
+							})}
 						</div>
 						<a
 							href="https://github.com/dioneapp/dioneapp"
 							target="_blank"
 							rel="noopener noreferrer"
-							className="block text-left text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 mt-4"
+							className="block text-left text-xs text-neutral-400 hover:text-neutral-200 transition-colors duration-200 mt-auto"
 						>
 							{t("settings.interface.helpTranslate")}
 						</a>
@@ -138,7 +171,7 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 
 					{/* Installation Path */}
 					<div
-						className="flex-1 p-6 rounded-xl border border-white/10 backdrop-blur-sm"
+						className="flex-1 min-w-0 p-6 rounded-xl border border-white/10 backdrop-blur-sm min-h-[500px] max-h-[500px] flex flex-col"
 						style={{
 							background:
 								"linear-gradient(to right, color-mix(in srgb, var(--theme-accent) 5%, transparent), color-mix(in srgb, var(--theme-background) 10%, transparent))",
@@ -156,11 +189,10 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 						<button
 							type="button"
 							onClick={handlePathSelection}
-							className={`w-full cursor-pointer min-h-32 border-2 border-dashed rounded-xl transition-all duration-300 flex flex-col items-center justify-center gap-2 group p-4 ${
-								selectedPath
-									? "border-white/30 bg-white/5"
-									: "border-white/20 hover:border-white/40 hover:bg-white/5"
-							}`}
+							className={`w-full cursor-pointer min-h-32 border-2 border-dashed rounded-xl transition-all duration-300 flex flex-col items-center justify-center gap-2 group p-4 ${selectedPath
+								? "border-white/30 bg-white/5"
+								: "border-white/20 hover:border-white/40 hover:bg-white/5"
+								}`}
 						>
 							<FolderOpen className="w-8 h-8 text-white/60 group-hover:text-white/80 transition-colors" />
 							<span className="text-white/60 group-hover:text-white/80 transition-colors text-sm">
@@ -209,11 +241,10 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 						type="button"
 						onClick={onSelectLanguage}
 						disabled={!canProceed}
-						className={`px-6 py-2 mb-8 cursor-pointer transition-all duration-300 rounded-xl text-sm font-medium ${
-							canProceed
-								? "bg-white text-black hover:opacity-80 active:scale-[0.97] shadow-lg"
-								: "bg-white/10 text-white/50 cursor-not-allowed border border-white/10"
-						}`}
+						className={`px-6 py-2 mb-8 cursor-pointer transition-all duration-300 rounded-xl text-sm font-medium ${canProceed
+							? "bg-white text-black hover:opacity-80 active:scale-[0.97] shadow-lg"
+							: "bg-white/10 text-white/50 cursor-not-allowed border border-white/10"
+							}`}
 					>
 						{canProceed
 							? t("languageSelector.next")
