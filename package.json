@@ -20,6 +20,7 @@
       "electron",
       "electron-winstaller",
       "esbuild",
+      "protobufjs",
       "sharp"
     ]
   },
@@ -36,7 +37,7 @@
     "build:win": "npm run build && electron-builder --win --publish never",
     "build:mac": "electron-vite build && electron-builder --mac --publish never",
     "build:linux": "electron-vite build && electron-builder --linux --publish never",
-    "generate-translations": "npx tsx src/renderer/src/translations/generateTranslations.ts",
+    "generate-translations": "npx tsx scripts/generate-translations.ts",
     "generate-icons": "npx tsx scripts/generate-icons.ts",
     "deploy": "npx auto-changelog --package --commit-limit false --commit-url https://github.com/dioneapp/dioneapp/commits/main/ --sort-commits date-desc --release-summary && npm run build && electron-builder --win --publish always"
   },

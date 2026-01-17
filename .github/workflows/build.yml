@@ -37,9 +37,12 @@ jobs:
       run: npm ci --prefer-offline --no-audit --no-fund --silent --ignore-scripts
 
     - name: Generate translations
-      run: npm run generate-translations ${{ secrets.GEMINI_API_KEY }}
+      run: npm run generate-translations ${{ secrets.GEMINI_API_KEY }} ${{ secrets.GEMINI_API_KEY_2 }} ${{ secrets.GEMINI_API_KEY_3 }}
       env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GEMINI_API_KEY_1: ${{ secrets.GEMINI_API_KEY }}
+        GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
+        GEMINI_API_KEY_3: ${{ secrets.GEMINI_API_KEY_3 }}
+
     
     - name: Commit and push generated translations
       run: |
