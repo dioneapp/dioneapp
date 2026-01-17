@@ -9,7 +9,7 @@ on:
       generate_translations:
         description: 'Generate translations before build?'
         required: false
-        default: 'false'
+        default: true
         type: boolean
         
 permissions:
