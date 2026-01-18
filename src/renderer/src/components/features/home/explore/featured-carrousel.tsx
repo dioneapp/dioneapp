@@ -89,9 +89,7 @@ export default function FeaturedCarousel() {
 		fetchScripts();
 	}, [isOnline]);
 
-	const slides = [
-		...scripts.map((s) => ({ ...s, type: "script" as const })),
-	];
+	const slides = [...scripts.map((s) => ({ ...s, type: "script" as const }))];
 
 	useEffect(() => {
 		if (slides.length === 0) return;
@@ -187,7 +185,8 @@ export default function FeaturedCarousel() {
 												aria-hidden
 												className="absolute inset-0 w-full h-full opacity-20 scale-150"
 												style={{
-													background: gradients[activeItem.id] ||
+													background:
+														gradients[activeItem.id] ||
 														"linear-gradient(135deg, #1e1e2f 0%, #2c2c3a 50%, var(--theme-accent) 100%)",
 													backgroundSize: "200% 200%",
 												}}
@@ -211,11 +210,15 @@ export default function FeaturedCarousel() {
 										);
 									}
 
-									const disableFeaturedVideos = config?.disableFeaturedVideos || false;
+									const disableFeaturedVideos =
+										config?.disableFeaturedVideos || false;
 									const urlLower = activeItem.banner_url.toLowerCase();
-									const isVideo = urlLower.endsWith('.gif') || urlLower.endsWith('.mp4') ||
-										urlLower.endsWith('.webm') || urlLower.endsWith('.mov') ||
-										urlLower.endsWith('.avi');
+									const isVideo =
+										urlLower.endsWith(".gif") ||
+										urlLower.endsWith(".mp4") ||
+										urlLower.endsWith(".webm") ||
+										urlLower.endsWith(".mov") ||
+										urlLower.endsWith(".avi");
 
 									if (isVideo && isOnline && !disableFeaturedVideos) {
 										return (
@@ -309,10 +312,11 @@ export default function FeaturedCarousel() {
 											e.preventDefault();
 											handleDotClick(index);
 										}}
-										className={`w-2 h-2 rounded-xl transition-all duration-300 ${index === currentIndex
-											? "bg-white w-6"
-											: "bg-white/50 hover:bg-white/70"
-											}`}
+										className={`w-2 h-2 rounded-xl transition-all duration-300 ${
+											index === currentIndex
+												? "bg-white w-6"
+												: "bg-white/50 hover:bg-white/70"
+										}`}
 									/>
 								))}
 							</div>
@@ -349,8 +353,9 @@ export function CarrouselSkeleton() {
 								{[...Array(5)].map((_, index) => (
 									<div
 										key={index}
-										className={`h-2 rounded-xl bg-gray-200/30 animate-pulse ${index === 0 ? "w-6" : "w-2"
-											}`}
+										className={`h-2 rounded-xl bg-gray-200/30 animate-pulse ${
+											index === 0 ? "w-6" : "w-2"
+										}`}
 									/>
 								))}
 							</div>

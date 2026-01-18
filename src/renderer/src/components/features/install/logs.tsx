@@ -64,9 +64,7 @@ export default function LogsComponent({
 							<span className="text-sm">{t("logs.openPreview")}</span>
 						</button>
 					)}
-					<div
-						className={`flex gap-1.5 ${!iframeAvailable ? "ml-auto" : ""}`}
-					>
+					<div className={`flex gap-1.5 ${!iframeAvailable ? "ml-auto" : ""}`}>
 						<button
 							type="button"
 							className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-xl text-neutral-300 cursor-pointer border border-white/10"
@@ -79,10 +77,7 @@ export default function LogsComponent({
 							type="button"
 							className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-xl text-neutral-300 cursor-pointer border border-white/10"
 							onClick={handleStop}
-							title={
-								installingDeps ? t("logs.cancel") : t("logs.stop")
-							}
-
+							title={installingDeps ? t("logs.cancel") : t("logs.stop")}
 						>
 							<Square size={14} className="sm:w-4 sm:h-4" />
 						</button>

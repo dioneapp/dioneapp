@@ -224,12 +224,12 @@ async function downloadBootstrapperExecutable(
 	}
 
 	const tempPath = `${targetPath}.part`;
-	await fsp.rm(tempPath, { force: true }).catch(() => { });
+	await fsp.rm(tempPath, { force: true }).catch(() => {});
 
 	let handle: fsp.FileHandle | undefined;
 	let writable: fs.WriteStream | undefined;
 	const cleanupPartial = async () => {
-		await fsp.rm(tempPath, { force: true }).catch(() => { });
+		await fsp.rm(tempPath, { force: true }).catch(() => {});
 	};
 
 	try {
@@ -270,7 +270,7 @@ async function downloadBootstrapperExecutable(
 		if (handle) {
 			try {
 				await handle.close();
-			} catch { }
+			} catch {}
 			handle = undefined;
 		}
 		writable?.destroy();
@@ -468,7 +468,7 @@ async function ensureChannelManifest(
 ): Promise<string> {
 	const manifestPath = path.join(tempDir, "channelManifest.json");
 	let lastError: unknown;
-	await fsp.rm(manifestPath, { force: true }).catch(() => { });
+	await fsp.rm(manifestPath, { force: true }).catch(() => {});
 
 	for (let attempt = 0; attempt < MAX_CHANNEL_MANIFEST_ATTEMPTS; attempt += 1) {
 		if (attempt === 0) {
@@ -493,7 +493,7 @@ async function ensureChannelManifest(
 			return manifestPath;
 		} catch (error) {
 			lastError = error;
-			await fsp.rm(manifestPath, { force: true }).catch(() => { });
+			await fsp.rm(manifestPath, { force: true }).catch(() => {});
 			const message = error instanceof Error ? error.message : String(error);
 			const isLastAttempt = attempt >= MAX_CHANNEL_MANIFEST_ATTEMPTS - 1;
 			logMessage(
@@ -569,7 +569,8 @@ function cleanupBootstrapperCache(onLog?: LogSink) {
 	if (removed > 0) {
 		logMessage(
 			onLog,
-			`Cleared ${removed} Visual Studio bootstrapper manifest ${removed === 1 ? "file" : "files"
+			`Cleared ${removed} Visual Studio bootstrapper manifest ${
+				removed === 1 ? "file" : "files"
 			} from ${cacheDir}.`,
 		);
 	}
@@ -607,7 +608,7 @@ async function acquireInstallMutex(
 					logger.warn(`Failed to close install mutex handle: ${closeError}`);
 				}
 
-				await fsp.unlink(lockPath).catch(() => { });
+				await fsp.unlink(lockPath).catch(() => {});
 			};
 		} catch (error) {
 			const err = error as NodeJS.ErrnoException;
@@ -832,14 +833,14 @@ try {
 
 			const child = spawn("powershell", psArguments, {
 				windowsHide: true,
-				signal: options.signal
+				signal: options.signal,
 			});
 
 			child.stdout?.setEncoding("utf8");
-			child.stdout?.on("data", (chunk) => stdout += chunk);
+			child.stdout?.on("data", (chunk) => (stdout += chunk));
 
 			child.stderr?.setEncoding("utf8");
-			child.stderr?.on("data", (chunk) => stderr += chunk);
+			child.stderr?.on("data", (chunk) => (stderr += chunk));
 
 			child.on("close", (code, signal) => {
 				exitCode = code ?? (signal ? 1 : 0);
@@ -848,7 +849,7 @@ try {
 
 			child.on("error", (err) => {
 				error = err;
-				if (options.signal?.aborted || err.name === 'AbortError') {
+				if (options.signal?.aborted || err.name === "AbortError") {
 					reject(new Error("Aborted"));
 				} else {
 					reject(err);
@@ -883,12 +884,12 @@ try {
 			try {
 				execSync('taskkill /IM "vs_setup.exe" /F /T');
 				execSync('taskkill /IM "vsinstaller.exe" /F /T');
-			} catch { }
+			} catch {}
 			throw new Error("Aborted");
 		}
 		throw e;
 	} finally {
-		await fsp.rm(scriptPath, { force: true }).catch(() => { });
+		await fsp.rm(scriptPath, { force: true }).catch(() => {});
 	}
 }
 

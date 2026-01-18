@@ -17,7 +17,16 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { AnimatePresence, motion } from "framer-motion";
-import { BotMessageSquare, Camera, Clock, Library, Settings, Sparkle, User, X } from "lucide-react";
+import {
+	BotMessageSquare,
+	Camera,
+	Clock,
+	Library,
+	Settings,
+	Sparkle,
+	User,
+	X,
+} from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -526,7 +535,7 @@ export default function Sidebar() {
 																		config?.compactMode
 																			? "w-12 h-12 rounded-xl flex items-center justify-center"
 																			: "w-full h-10 rounded-xl flex items-center gap-3 px-3" +
-																			" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
+																				" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
 																	}
 																>
 																	<div
@@ -534,7 +543,7 @@ export default function Sidebar() {
 																			config?.compactMode
 																				? "w-8 h-8"
 																				: "w-6 h-6" +
-																				" overflow-hidden shrink-0 rounded-lg"
+																					" overflow-hidden shrink-0 rounded-lg"
 																		}
 																	>
 																		{!app.isLocal ? (
@@ -667,10 +676,10 @@ export default function Sidebar() {
 									) : (
 										<>
 											{!avatarError &&
-												user?.avatar_url &&
-												user?.avatar_url !== "" &&
-												user?.avatar_url !== null &&
-												user?.avatar_url !== undefined ? (
+											user?.avatar_url &&
+											user?.avatar_url !== "" &&
+											user?.avatar_url !== null &&
+											user?.avatar_url !== undefined ? (
 												<img
 													src={user?.avatar_url}
 													alt="user avatar"

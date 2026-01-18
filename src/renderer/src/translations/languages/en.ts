@@ -234,7 +234,8 @@ export const en = {
 			},
 			disableFeaturedVideos: {
 				label: "Disable Featured Videos",
-				description: "Stop featured apps from playing animations. A smooth colour gradient will be shown instead",
+				description:
+					"Stop featured apps from playing animations. A smooth colour gradient will be shown instead",
 			},
 			helpTranslate: "🤔 Not seeing your language? Help us add more!",
 			theme: {

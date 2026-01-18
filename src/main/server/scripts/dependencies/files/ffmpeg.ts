@@ -144,7 +144,11 @@ export async function install(
 				});
 			});
 		} catch (e: any) {
-			if (signal?.aborted || e.name === "AbortError" || e.message === "Aborted") {
+			if (
+				signal?.aborted ||
+				e.name === "AbortError" ||
+				e.message === "Aborted"
+			) {
 				return { success: false };
 			}
 			logger.error(`Error downloading ${depName}:`, e);
@@ -290,7 +294,11 @@ export async function install(
 			});
 		});
 	} catch (error: any) {
-		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+		if (
+			signal?.aborted ||
+			error.message === "Aborted" ||
+			error.name === "AbortError"
+		) {
 			return { success: false };
 		}
 		logger.error(`Error running installer for ${depName}:`, error);

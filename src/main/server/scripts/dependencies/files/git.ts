@@ -106,32 +106,50 @@ export async function install(
 			await new Promise<void>((resolve, reject) => {
 				if (signal?.aborted) return reject(new Error("Aborted"));
 				const req = https
-					.get(url, { headers: { "User-Agent": "Dione", family: 4, timeout: 30000, }, signal }, (response) => {
-						if ([301, 302].includes(response.statusCode ?? 0)) {
-							const redirectUrl = response.headers.location;
-							if (redirectUrl) {
-								https
-									.get(redirectUrl, { headers: { "User-Agent": "Dione", family: 4, timeout: 30000, }, signal }, (redirectResponse) => {
-										redirectResponse.pipe(installerFile);
-										installerFile.on("close", resolve);
-										installerFile.on("error", reject);
-									})
-									.on("error", reject);
+					.get(
+						url,
+						{
+							headers: { "User-Agent": "Dione", family: 4, timeout: 30000 },
+							signal,
+						},
+						(response) => {
+							if ([301, 302].includes(response.statusCode ?? 0)) {
+								const redirectUrl = response.headers.location;
+								if (redirectUrl) {
+									https
+										.get(
+											redirectUrl,
+											{
+												headers: {
+													"User-Agent": "Dione",
+													family: 4,
+													timeout: 30000,
+												},
+												signal,
+											},
+											(redirectResponse) => {
+												redirectResponse.pipe(installerFile);
+												installerFile.on("close", resolve);
+												installerFile.on("error", reject);
+											},
+										)
+										.on("error", reject);
+								} else {
+									reject(new Error("Redirect URL not found"));
+								}
+							} else if (response.statusCode === 200) {
+								io.to(id).emit("installDep", {
+									type: "log",
+									content: `${depName} installer downloaded successfully`,
+								});
+								response.pipe(installerFile);
+								installerFile.on("close", resolve);
+								installerFile.on("error", reject);
 							} else {
-								reject(new Error("Redirect URL not found"));
+								reject(new Error(`HTTP ${response.statusCode}`));
 							}
-						} else if (response.statusCode === 200) {
-							io.to(id).emit("installDep", {
-								type: "log",
-								content: `${depName} installer downloaded successfully`,
-							});
-							response.pipe(installerFile);
-							installerFile.on("close", resolve);
-							installerFile.on("error", reject);
-						} else {
-							reject(new Error(`HTTP ${response.statusCode}`));
-						}
-					})
+						},
+					)
 					.on("error", reject);
 
 				signal?.addEventListener("abort", () => {
@@ -141,7 +159,11 @@ export async function install(
 				});
 			});
 		} catch (e: any) {
-			if (signal?.aborted || e.name === "AbortError" || e.message === "Aborted") {
+			if (
+				signal?.aborted ||
+				e.name === "AbortError" ||
+				e.message === "Aborted"
+			) {
 				return { success: false };
 			}
 			logger.error(`Error downloading ${depName}:`, e);
@@ -287,7 +309,11 @@ export async function install(
 			});
 		});
 	} catch (error: any) {
-		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+		if (
+			signal?.aborted ||
+			error.message === "Aborted" ||
+			error.name === "AbortError"
+		) {
 			return { success: false };
 		}
 		return { success: false };

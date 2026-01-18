@@ -175,7 +175,11 @@ export async function install(
 				});
 			});
 		} catch (e: any) {
-			if (signal?.aborted || e.name === "AbortError" || e.message === "Aborted") {
+			if (
+				signal?.aborted ||
+				e.name === "AbortError" ||
+				e.message === "Aborted"
+			) {
 				return { success: false };
 			}
 			logger.error(`Error downloading ${depName}:`, e);
@@ -363,7 +367,11 @@ export async function install(
 			});
 		});
 	} catch (error: any) {
-		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+		if (
+			signal?.aborted ||
+			error.message === "Aborted" ||
+			error.name === "AbortError"
+		) {
 			return { success: false };
 		}
 		logger.error(`Error running installer for ${depName}:`, error);
@@ -411,7 +419,11 @@ export async function update(
 				{ env: ENVIRONMENT, cwd: depFolder, signal },
 				(error, stdout, stderr) => {
 					if (error) {
-						if (signal?.aborted || error.message?.includes("Aborted") || error.name === "AbortError") {
+						if (
+							signal?.aborted ||
+							error.message?.includes("Aborted") ||
+							error.name === "AbortError"
+						) {
 							reject(new Error("Aborted"));
 						} else {
 							logger.error(`Error updating ${depName}: ${error.message}`);
@@ -440,7 +452,11 @@ export async function update(
 
 		return { success: true };
 	} catch (error: any) {
-		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+		if (
+			signal?.aborted ||
+			error.message === "Aborted" ||
+			error.name === "AbortError"
+		) {
 			return { success: false };
 		}
 		io.to(id).emit("installDep", {
