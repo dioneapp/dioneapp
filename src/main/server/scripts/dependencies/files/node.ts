@@ -331,7 +331,11 @@ export async function install(
 			});
 		});
 	} catch (error: any) {
-		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+		if (
+			signal?.aborted ||
+			error.message === "Aborted" ||
+			error.name === "AbortError"
+		) {
 			return { success: false };
 		}
 		logger.error(`Error running installer for ${depName}:`, error);

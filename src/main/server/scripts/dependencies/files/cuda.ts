@@ -47,7 +47,7 @@ export async function isInstalled(
 			});
 
 			return { installed: true, reason: `nvcc-found-in-path` };
-		} catch (error) { }
+		} catch (error) {}
 	} else {
 		return { installed: false, reason: "unsupported-platform" };
 	}
@@ -124,11 +124,15 @@ export async function install(
 						response.headers.location
 					) {
 						https
-							.get(response.headers.location, { ...options }, (redirectResponse) => {
-								redirectResponse.pipe(fileStream);
-								fileStream.on("close", resolve);
-								fileStream.on("error", reject);
-							})
+							.get(
+								response.headers.location,
+								{ ...options },
+								(redirectResponse) => {
+									redirectResponse.pipe(fileStream);
+									fileStream.on("close", resolve);
+									fileStream.on("error", reject);
+								},
+							)
 							.on("error", reject);
 					} else if (response.statusCode === 200) {
 						response.pipe(fileStream);
@@ -154,7 +158,11 @@ export async function install(
 			content: `${depName} installer downloaded successfully to ${installerFilepath}`,
 		});
 	} catch (error: any) {
-		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+		if (
+			signal?.aborted ||
+			error.message === "Aborted" ||
+			error.name === "AbortError"
+		) {
 			return { success: false };
 		}
 		logger.error(`Error downloading installer for ${depName}:`, error);
@@ -283,7 +291,11 @@ export async function install(
 			});
 		});
 	} catch (error: any) {
-		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+		if (
+			signal?.aborted ||
+			error.message === "Aborted" ||
+			error.name === "AbortError"
+		) {
 			return { success: false };
 		}
 		logger.error(`Error running CUDA installer:`, error);

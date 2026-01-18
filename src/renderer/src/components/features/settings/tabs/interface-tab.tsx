@@ -48,7 +48,11 @@ export default function InterfaceTab({
 			>
 				<ToggleSwitch
 					enabled={config.disableFeaturedVideos}
-					onChange={() => handleUpdate({ disableFeaturedVideos: !config.disableFeaturedVideos })}
+					onChange={() =>
+						handleUpdate({
+							disableFeaturedVideos: !config.disableFeaturedVideos,
+						})
+					}
 				/>
 			</SettingItem>
 			<SettingItem

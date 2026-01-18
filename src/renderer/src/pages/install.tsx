@@ -831,10 +831,7 @@ export default function Install({
 				}
 			} catch (error) {
 				console.error("Failed to cancel dependencies", error);
-				showToast(
-					"error",
-					`Failed to cancel dependencies: ${error}`,
-				);
+				showToast("error", `Failed to cancel dependencies: ${error}`);
 			}
 			return;
 		}
