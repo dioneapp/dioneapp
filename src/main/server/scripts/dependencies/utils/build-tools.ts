@@ -1,4 +1,4 @@
-import { execSync, spawnSync } from "node:child_process";
+import { execSync, spawn, spawnSync } from "node:child_process";
 import crypto from "node:crypto";
 import fs from "node:fs";
 import fsp from "node:fs/promises";
@@ -47,6 +47,7 @@ interface EnsureBuildToolsOptions {
 	onLog?: LogSink;
 	preferredSdk?: string;
 	enableLayoutFallback?: boolean;
+	signal?: AbortSignal;
 }
 
 interface InstallAttemptResult {
@@ -62,6 +63,7 @@ interface InstallAttemptResult {
 
 interface AttemptInstallOptions {
 	enableLayoutFallback: boolean;
+	signal?: AbortSignal;
 }
 
 const BUILD_TOOLS_URL = "https://aka.ms/vs/17/release/vs_BuildTools.exe";
@@ -154,6 +156,7 @@ interface RunElevatedInstallerOptions {
 	requireRunAs: boolean;
 	mutexName?: string;
 	mutexTimeoutMs?: number;
+	signal?: AbortSignal;
 }
 
 interface CollectInstallerLogsOptions {
@@ -221,12 +224,12 @@ async function downloadBootstrapperExecutable(
 	}
 
 	const tempPath = `${targetPath}.part`;
-	await fsp.rm(tempPath, { force: true }).catch(() => {});
+	await fsp.rm(tempPath, { force: true }).catch(() => { });
 
 	let handle: fsp.FileHandle | undefined;
 	let writable: fs.WriteStream | undefined;
 	const cleanupPartial = async () => {
-		await fsp.rm(tempPath, { force: true }).catch(() => {});
+		await fsp.rm(tempPath, { force: true }).catch(() => { });
 	};
 
 	try {
@@ -267,7 +270,7 @@ async function downloadBootstrapperExecutable(
 		if (handle) {
 			try {
 				await handle.close();
-			} catch {}
+			} catch { }
 			handle = undefined;
 		}
 		writable?.destroy();
@@ -465,7 +468,7 @@ async function ensureChannelManifest(
 ): Promise<string> {
 	const manifestPath = path.join(tempDir, "channelManifest.json");
 	let lastError: unknown;
-	await fsp.rm(manifestPath, { force: true }).catch(() => {});
+	await fsp.rm(manifestPath, { force: true }).catch(() => { });
 
 	for (let attempt = 0; attempt < MAX_CHANNEL_MANIFEST_ATTEMPTS; attempt += 1) {
 		if (attempt === 0) {
@@ -490,7 +493,7 @@ async function ensureChannelManifest(
 			return manifestPath;
 		} catch (error) {
 			lastError = error;
-			await fsp.rm(manifestPath, { force: true }).catch(() => {});
+			await fsp.rm(manifestPath, { force: true }).catch(() => { });
 			const message = error instanceof Error ? error.message : String(error);
 			const isLastAttempt = attempt >= MAX_CHANNEL_MANIFEST_ATTEMPTS - 1;
 			logMessage(
@@ -566,8 +569,7 @@ function cleanupBootstrapperCache(onLog?: LogSink) {
 	if (removed > 0) {
 		logMessage(
 			onLog,
-			`Cleared ${removed} Visual Studio bootstrapper manifest ${
-				removed === 1 ? "file" : "files"
+			`Cleared ${removed} Visual Studio bootstrapper manifest ${removed === 1 ? "file" : "files"
 			} from ${cacheDir}.`,
 		);
 	}
@@ -605,7 +607,7 @@ async function acquireInstallMutex(
 					logger.warn(`Failed to close install mutex handle: ${closeError}`);
 				}
 
-				await fsp.unlink(lockPath).catch(() => {});
+				await fsp.unlink(lockPath).catch(() => { });
 			};
 		} catch (error) {
 			const err = error as NodeJS.ErrnoException;
@@ -655,6 +657,10 @@ async function runElevatedInstaller(
 		throw new Error(
 			"Attempted to run Windows installer on non-Windows platform",
 		);
+	}
+
+	if (options.signal?.aborted) {
+		throw new Error("Aborted");
 	}
 
 	const scriptPath = path.join(
@@ -816,18 +822,44 @@ try {
 	}
 
 	try {
-		const result = spawnSync("powershell", psArguments, {
-			windowsHide: true,
-			encoding: "utf8",
+		let exitCode = 0;
+		let stdout = "";
+		let stderr = "";
+		let error: Error | undefined;
+
+		await new Promise<void>((resolve, reject) => {
+			if (options.signal?.aborted) return reject(new Error("Aborted"));
+
+			const child = spawn("powershell", psArguments, {
+				windowsHide: true,
+				signal: options.signal
+			});
+
+			child.stdout?.setEncoding("utf8");
+			child.stdout?.on("data", (chunk) => stdout += chunk);
+
+			child.stderr?.setEncoding("utf8");
+			child.stderr?.on("data", (chunk) => stderr += chunk);
+
+			child.on("close", (code, signal) => {
+				exitCode = code ?? (signal ? 1 : 0);
+				resolve();
+			});
+
+			child.on("error", (err) => {
+				error = err;
+				if (options.signal?.aborted || err.name === 'AbortError') {
+					reject(new Error("Aborted"));
+				} else {
+					reject(err);
+				}
+			});
 		});
 
-		const exitCode =
-			typeof result.status === "number" ? result.status : result.signal ? 1 : 0;
-
-		if (result.error) {
+		if (error) {
 			logMessage(
 				onLog,
-				`Failed to launch installer via PowerShell: ${result.error}`,
+				`Failed to launch installer via PowerShell: ${error}`,
 				"error",
 			);
 		} else {
@@ -837,16 +869,26 @@ try {
 
 		return {
 			exitCode,
-			stdout: result.stdout?.toString() ?? "",
-			stderr: result.stderr?.toString() ?? "",
+			stdout: stdout,
+			stderr: stderr,
 			uacCancelled: exitCode === 1223,
 			fileLocked:
 				exitCode === FILE_LOCK_EXIT_CODE ||
 				exitCode === START_PROCESS_LOCK_EXIT_CODE,
 			mutexUnavailable: exitCode === MUTEX_ACQUIRE_EXIT_CODE,
 		};
+	} catch (e: any) {
+		if (e.message === "Aborted" || options.signal?.aborted) {
+			// Clean up related processes if aborted
+			try {
+				execSync('taskkill /IM "vs_setup.exe" /F /T');
+				execSync('taskkill /IM "vsinstaller.exe" /F /T');
+			} catch { }
+			throw new Error("Aborted");
+		}
+		throw e;
 	} finally {
-		await fsp.rm(scriptPath, { force: true }).catch(() => {});
+		await fsp.rm(scriptPath, { force: true }).catch(() => { });
 	}
 }
 
@@ -1191,6 +1233,19 @@ async function attemptInstall(
 	onLog: LogSink | undefined,
 	options: AttemptInstallOptions,
 ): Promise<InstallAttemptResult> {
+	if (options.signal?.aborted) {
+		return {
+			exitCode: 1,
+			needsReboot: false,
+			uacCancelled: false,
+			summary: "Aborted",
+			logs: [],
+			success: false,
+			sdkVersion,
+			error: "Aborted",
+		};
+	}
+
 	const installPath = path.join(binFolder, "build_tools");
 	const tempRoot = path.join(binFolder, "temp");
 	ensureDirectory(installPath);
@@ -1218,6 +1273,8 @@ async function attemptInstall(
 	}
 
 	try {
+		if (options.signal?.aborted) throw new Error("Aborted");
+
 		if (!ensureDiskSpace(installPath, onLog)) {
 			return {
 				exitCode: 1603,
@@ -1246,6 +1303,8 @@ async function attemptInstall(
 			attemptIndex < dynamicAttempts;
 			attemptIndex += 1
 		) {
+			if (options.signal?.aborted) throw new Error("Aborted");
+
 			lastAttemptParseError = false;
 			let bootstrap: { tempDir: string; installerPath: string } | undefined;
 			try {
@@ -1260,6 +1319,8 @@ async function attemptInstall(
 
 				cleanupBootstrapperCache(onLog);
 				stopVisualStudioInstallerProcesses(onLog);
+
+				if (options.signal?.aborted) throw new Error("Aborted");
 
 				logMessage(
 					onLog,
@@ -1280,6 +1341,7 @@ async function attemptInstall(
 						workingDirectory: bootstrap.tempDir,
 						tempDir: bootstrap.tempDir,
 						requireRunAs,
+						signal: options.signal,
 					},
 					onLog,
 				);
@@ -1345,7 +1407,10 @@ async function attemptInstall(
 				}
 
 				break;
-			} catch (error) {
+			} catch (error: any) {
+				if (options.signal?.aborted || error.message === "Aborted") {
+					throw error;
+				}
 				logs = collectInstallerLogs(installPath, startedAt, onLog);
 				failureSummary = `Failed to execute Visual Studio Build Tools installer: ${error}`;
 				logMessage(onLog, failureSummary, "error");
@@ -1426,6 +1491,7 @@ async function attemptInstall(
 				sdkVersion,
 				requireRunAs,
 				onLog,
+				options.signal,
 			);
 
 			if (logs.length > 0) {
@@ -1464,7 +1530,20 @@ async function attemptLayoutFallback(
 	sdkVersion: string,
 	requireRunAs: boolean,
 	onLog?: LogSink,
+	signal?: AbortSignal,
 ): Promise<InstallAttemptResult> {
+	if (signal?.aborted) {
+		return {
+			exitCode: 1,
+			needsReboot: false,
+			uacCancelled: false,
+			summary: "Aborted",
+			logs: [],
+			success: false,
+			sdkVersion,
+			error: "Aborted",
+		};
+	}
 	const layoutDir = path.join(
 		binFolder,
 		"temp",
@@ -1479,6 +1558,8 @@ async function attemptLayoutFallback(
 	try {
 		bootstrap = await ensureBootstrapperDownloadedUnlocked(binFolder, onLog);
 		const manifestPath = await ensureChannelManifest(bootstrap.tempDir, onLog);
+
+		if (signal?.aborted) throw new Error("Aborted");
 
 		logMessage(
 			onLog,
@@ -1500,6 +1581,7 @@ async function attemptLayoutFallback(
 				workingDirectory: bootstrap.tempDir,
 				tempDir: bootstrap.tempDir,
 				requireRunAs,
+				signal,
 			},
 			onLog,
 		);
@@ -1562,6 +1644,8 @@ async function attemptLayoutFallback(
 			};
 		}
 
+		if (signal?.aborted) throw new Error("Aborted");
+
 		logMessage(
 			onLog,
 			"Offline layout created successfully. Installing Visual Studio Build Tools with --noweb...",
@@ -1587,6 +1671,7 @@ async function attemptLayoutFallback(
 				workingDirectory: bootstrap.tempDir,
 				tempDir: bootstrap.tempDir,
 				requireRunAs,
+				signal,
 			},
 			onLog,
 		);
@@ -1710,6 +1795,7 @@ export async function ensureBuildToolsInstalled(
 		onLog,
 		preferredSdk,
 		enableLayoutFallback: enableLayoutFallbackOption,
+		signal,
 	} = options;
 	const installPath = path.join(binFolder, "build_tools");
 
@@ -1722,6 +1808,15 @@ export async function ensureBuildToolsInstalled(
 			status: "already-installed",
 			summary: "Build tools are not required on this platform.",
 			logs: [],
+		};
+	}
+
+	if (signal?.aborted) {
+		return {
+			status: "failed",
+			summary: "Aborted",
+			logs: [],
+			error: "Aborted",
 		};
 	}
 
@@ -1745,7 +1840,17 @@ export async function ensureBuildToolsInstalled(
 	const desiredSdk = preferredSdk || DEFAULT_SDK;
 	let attempt = await attemptInstall(binFolder, desiredSdk, onLog, {
 		enableLayoutFallback,
+		signal,
 	});
+
+	if (signal?.aborted) {
+		return {
+			status: "failed",
+			summary: "Aborted",
+			logs: [],
+			error: "Aborted",
+		};
+	}
 
 	if (!attempt.success && !attempt.uacCancelled && desiredSdk === DEFAULT_SDK) {
 		logMessage(
@@ -1756,6 +1861,7 @@ export async function ensureBuildToolsInstalled(
 		await delay(1000);
 		attempt = await attemptInstall(binFolder, FALLBACK_SDK, onLog, {
 			enableLayoutFallback,
+			signal,
 		});
 	}
 

@@ -61,6 +61,7 @@ export async function install(
 	id: string,
 	io: Server,
 	requiredVersion?: string,
+	signal?: AbortSignal,
 ): Promise<{ success: boolean }> {
 	const depFolder = path.join(binFolder, depName);
 	const tempDir = path.join(binFolder, "temp");
@@ -75,12 +76,14 @@ export async function install(
 			requiredVersion !== "latest" &&
 			checkIfInstalled.version !== requiredVersion
 		) {
-			const result = await update(binFolder, id, io, requiredVersion);
+			const result = await update(binFolder, id, io, requiredVersion, signal);
 			return { success: result.success };
 		}
 		logger.info(`No update needed for ${depName} ${requiredVersion}`);
 		return { success: true };
 	}
+
+	if (signal?.aborted) return { success: false };
 
 	const platform = getOS(); // window, linux, macos
 	const arch = getArch(); // amd64, arm64, x86
@@ -130,38 +133,58 @@ export async function install(
 			headers: {
 				"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
 			},
+			signal,
 		};
 
-		await new Promise<void>((resolve, reject) => {
-			https
-				.get(url, options, (response) => {
-					if ([301, 302].includes(response.statusCode ?? 0)) {
-						const redirectUrl = response.headers.location;
-						if (redirectUrl) {
-							https
-								.get(redirectUrl, (redirectResponse) => {
-									redirectResponse.pipe(installerFile);
-									installerFile.on("close", resolve);
-									installerFile.on("error", reject);
-								})
-								.on("error", reject);
+		try {
+			await new Promise<void>((resolve, reject) => {
+				if (signal?.aborted) return reject(new Error("Aborted"));
+				const req = https
+					.get(url, options, (response) => {
+						if ([301, 302].includes(response.statusCode ?? 0)) {
+							const redirectUrl = response.headers.location;
+							if (redirectUrl) {
+								https
+									.get(redirectUrl, { ...options }, (redirectResponse) => {
+										redirectResponse.pipe(installerFile);
+										installerFile.on("close", resolve);
+										installerFile.on("error", reject);
+									})
+									.on("error", reject);
+							} else {
+								reject(new Error("Redirect URL not found"));
+							}
+						} else if (response.statusCode === 200) {
+							io.to(id).emit("installDep", {
+								type: "log",
+								content: `${depName} installer downloaded successfully`,
+							});
+							response.pipe(installerFile);
+							installerFile.on("close", resolve);
+							installerFile.on("error", reject);
 						} else {
-							reject(new Error("Redirect URL not found"));
+							reject(new Error(`HTTP ${response.statusCode}`));
 						}
-					} else if (response.statusCode === 200) {
-						io.to(id).emit("installDep", {
-							type: "log",
-							content: `${depName} installer downloaded successfully`,
-						});
-						response.pipe(installerFile);
-						installerFile.on("close", resolve);
-						installerFile.on("error", reject);
-					} else {
-						reject(new Error(`HTTP ${response.statusCode}`));
-					}
-				})
-				.on("error", reject);
-		});
+					})
+					.on("error", reject);
+
+				signal?.addEventListener("abort", () => {
+					req.destroy();
+					installerFile.destroy();
+					reject(new Error("Aborted"));
+				});
+			});
+		} catch (e: any) {
+			if (signal?.aborted || e.name === "AbortError" || e.message === "Aborted") {
+				return { success: false };
+			}
+			logger.error(`Error downloading ${depName}:`, e);
+			io.to(id).emit("installDep", {
+				type: "error",
+				content: `Error downloading ${depName}: ${e}`,
+			});
+			return { success: false };
+		}
 	} else {
 		io.to(id).emit("installDep", {
 			type: "error",
@@ -170,6 +193,8 @@ export async function install(
 
 		return { success: false };
 	}
+
+	if (signal?.aborted) return { success: false };
 
 	io.to(id).emit("installDep", {
 		type: "log",
@@ -221,6 +246,7 @@ export async function install(
 		shell: platform === "windows",
 		windowsHide: true,
 		detached: false,
+		signal,
 		env: {
 			...ENVIRONMENT,
 			PYTHONUNBUFFERED: "1",
@@ -232,6 +258,7 @@ export async function install(
 
 	try {
 		await new Promise<void>((resolve, reject) => {
+			if (signal?.aborted) return reject(new Error("Aborted"));
 			const child = spawn(command.file, command.args, spawnOptions);
 
 			child.stdout.on("data", (data) => {
@@ -249,6 +276,7 @@ export async function install(
 			});
 
 			child.on("close", (code) => {
+				if (signal?.aborted) return reject(new Error("Aborted"));
 				console.log(`Installer exited with code ${code}`);
 				if (code === 0) {
 					io.to(id).emit("installDep", {
@@ -328,8 +356,16 @@ export async function install(
 					reject(new Error(`Installer exited with code ${code}`));
 				}
 			});
+
+			child.on("error", (err) => {
+				if (signal?.aborted) return reject(new Error("Aborted"));
+				reject(err);
+			});
 		});
-	} catch (error) {
+	} catch (error: any) {
+		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+			return { success: false };
+		}
 		logger.error(`Error running installer for ${depName}:`, error);
 		io.to(id).emit("installDep", {
 			type: "error",
@@ -346,6 +382,7 @@ export async function update(
 	id: string,
 	io: Server,
 	requiredVersion?: string,
+	signal?: AbortSignal,
 ): Promise<{ success: boolean }> {
 	const depFolder = path.join(binFolder, depName);
 	const ENVIRONMENT = getAllValues();
@@ -358,6 +395,8 @@ export async function update(
 		return { success: false };
 	}
 
+	if (signal?.aborted) return { success: false };
+
 	io.to(id).emit("installDep", {
 		type: "log",
 		content: `Attempting to update ${depName}...`,
@@ -365,19 +404,24 @@ export async function update(
 
 	try {
 		await new Promise<string>((resolve, reject) => {
-			execFile(
+			if (signal?.aborted) return reject(new Error("Aborted"));
+			const child = execFile(
 				depName,
 				["install", "-y", `conda=${requiredVersion}`],
-				{ env: ENVIRONMENT, cwd: depFolder },
+				{ env: ENVIRONMENT, cwd: depFolder, signal },
 				(error, stdout, stderr) => {
 					if (error) {
-						logger.error(`Error updating ${depName}: ${error.message}`);
-						logger.error(`stderr: ${stderr}`);
-						reject(
-							new Error(
-								`Failed to update ${depName}: ${stderr || error.message}`,
-							),
-						);
+						if (signal?.aborted || error.message?.includes("Aborted") || error.name === "AbortError") {
+							reject(new Error("Aborted"));
+						} else {
+							logger.error(`Error updating ${depName}: ${error.message}`);
+							logger.error(`stderr: ${stderr}`);
+							reject(
+								new Error(
+									`Failed to update ${depName}: ${stderr || error.message}`,
+								),
+							);
+						}
 					} else {
 						io.to(id).emit("installDep", {
 							type: "log",
@@ -396,6 +440,9 @@ export async function update(
 
 		return { success: true };
 	} catch (error: any) {
+		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+			return { success: false };
+		}
 		io.to(id).emit("installDep", {
 			type: "error",
 			content: `Error updating ${depName}: ${error.message}`,

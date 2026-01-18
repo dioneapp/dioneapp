@@ -14,8 +14,8 @@ interface LogsProps {
 	setShow: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 	appId: string;
 	executing: string | null;
-	canStop: boolean;
 	terminalStatesRef: RefObject<Record<string, Terminal>>;
+	installingDeps?: boolean;
 }
 
 export default function LogsComponent({
@@ -26,8 +26,8 @@ export default function LogsComponent({
 	setShow,
 	appId,
 	executing,
-	canStop,
 	terminalStatesRef,
+	installingDeps,
 }: LogsProps) {
 	const { progress } = useScriptsLogsContext();
 	const { t } = useTranslation();
@@ -64,28 +64,29 @@ export default function LogsComponent({
 							<span className="text-sm">{t("logs.openPreview")}</span>
 						</button>
 					)}
-					{canStop && (
-						<div
-							className={`flex gap-1.5 ${!iframeAvailable ? "ml-auto" : ""}`}
+					<div
+						className={`flex gap-1.5 ${!iframeAvailable ? "ml-auto" : ""}`}
+					>
+						<button
+							type="button"
+							className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-xl text-neutral-300 cursor-pointer border border-white/10"
+							onClick={copyLogsToClipboard}
+							title={t("logs.copyLogs")}
 						>
-							<button
-								type="button"
-								className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-xl text-neutral-300 cursor-pointer border border-white/10"
-								onClick={copyLogsToClipboard}
-								title={t("logs.copyLogs")}
-							>
-								<Copy size={14} className="sm:w-4 sm:h-4" />
-							</button>
-							<button
-								type="button"
-								className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-xl text-neutral-300 cursor-pointer border border-white/10"
-								onClick={handleStop}
-								title={t("logs.stop")}
-							>
-								<Square size={14} className="sm:w-4 sm:h-4" />
-							</button>
-						</div>
-					)}
+							<Copy size={14} className="sm:w-4 sm:h-4" />
+						</button>
+						<button
+							type="button"
+							className="p-1.5 sm:p-2 bg-white/5 hover:bg-white/10 transition-colors duration-200 rounded-xl text-neutral-300 cursor-pointer border border-white/10"
+							onClick={handleStop}
+							title={
+								installingDeps ? t("logs.cancel") : t("logs.stop")
+							}
+
+						>
+							<Square size={14} className="sm:w-4 sm:h-4" />
+						</button>
+					</div>
 				</div>
 			</div>
 			<div className="text-[11px] text-neutral-500 mt-2 mb-2 text-center mx-auto justify-center items-center flex">

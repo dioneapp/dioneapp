@@ -132,6 +132,7 @@ export async function installDependency(
 	id: string,
 	io: Server,
 	required_v?: string,
+	signal?: AbortSignal,
 ) {
 	const config = readConfig();
 	const binFolder = path.join(
@@ -153,7 +154,7 @@ export async function installDependency(
 
 	try {
 		logger.info(`Installing dependency ${depName}...`);
-		const result = await entry.install(binFolder, id, io, required_v);
+		const result = await entry.install(binFolder, id, io, required_v, signal);
 		if (result.success) {
 			logger.info(`Dependency ${depName} installed successfully`);
 			return { success: true };

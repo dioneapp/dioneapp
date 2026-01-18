@@ -120,8 +120,6 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const [wasJustInstalled, setWasJustInstalled] = useState<boolean>(false);
 	// progress state
 	const [progress, setProgress] = useState<Record<string, ProgressState>>({});
-	// stop button state
-	const [canStop, setCanStop] = useState<Record<string, boolean>>({});
 
 	useEffect(() => {
 		setData(null);
@@ -407,8 +405,6 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 					setProgress,
 					setShouldCatch,
 					shouldCatch,
-					setCanStop,
-					canStop,
 				});
 				socketsRef.current[appId] = {
 					socket: newSocket,
@@ -504,10 +500,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${
-							sockets[data.id]?.isLocal
-								? encodeURIComponent(data.name)
-								: data.id
+						`/install/${sockets[data.id]?.isLocal
+							? encodeURIComponent(data.name)
+							: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},
@@ -619,8 +614,6 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			setWasJustInstalled,
 			shouldCatch,
 			setShouldCatch,
-			canStop,
-			setCanStop,
 			terminalStatesRef,
 		}),
 		[
@@ -651,8 +644,6 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			notSupported,
 			wasJustInstalled,
 			shouldCatch,
-			canStop,
-			setCanStop,
 			terminalStatesRef,
 		],
 	);

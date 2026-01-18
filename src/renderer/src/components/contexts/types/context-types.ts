@@ -139,8 +139,6 @@ export interface ScriptsContextType {
 	shouldCatch: Record<string, boolean>;
 	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	isLocal?: boolean;
-	canStop: Record<string, boolean>;
-	setCanStop: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	terminalStatesRef: RefObject<Record<string, Terminal>>;
 }
 
@@ -188,8 +186,6 @@ export interface SetupSocketProps {
 	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	shouldCatch: Record<string, boolean>;
 	isLocal?: boolean;
-	setCanStop: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-	canStop: Record<string, boolean>;
 }
 
 export interface AIContextType {

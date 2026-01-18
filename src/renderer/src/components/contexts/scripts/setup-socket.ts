@@ -25,7 +25,6 @@ export function setupSocket({
 	setProgress,
 	shouldCatch,
 	setShouldCatch,
-	setCanStop,
 }: SetupSocketProps): Socket {
 	if (socketsRef.current[appId]?.socket) {
 		console.log(`Socket [${appId}] already exists`);
@@ -140,13 +139,6 @@ export function setupSocket({
 	socket.on("disconnect", () => {
 		console.warn(`Socket [${appId}] disconnected`);
 		delete socketsRef.current[appId];
-	});
-
-	socket.on("enableStop", () => {
-		setCanStop((prev) => ({
-			...prev,
-			[appId]: true,
-		}));
 	});
 
 	// structured progress events

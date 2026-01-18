@@ -56,8 +56,8 @@ export default function Install({
 		wasJustInstalled,
 		setWasJustInstalled,
 		shouldCatch,
-		canStop,
 		terminalStatesRef,
+		disconnectApp,
 	} = useScriptsContext();
 
 	const { logs, addLogLine, clearLogs, getAllAppLogs } =
@@ -819,6 +819,26 @@ export default function Install({
 	}, [savedApps, data]);
 
 	const stopApp = async () => {
+		if (installingDeps) {
+			try {
+				const response = await apiFetch(`/deps/cancel/${data.id}`, {
+					method: "POST",
+				});
+				addLogLine(data.id, "Cancellation requested...");
+				if (response.ok) {
+					addLogLine(data.id, "Cancellation successful");
+					disconnectApp(data.id);
+				}
+			} catch (error) {
+				console.error("Failed to cancel dependencies", error);
+				showToast(
+					"error",
+					`Failed to cancel dependencies: ${error}`,
+				);
+			}
+			return;
+		}
+
 		await fetchIfDownloaded();
 		await handleStopApp(data.id, data.name);
 		setExecuting(null);
@@ -960,8 +980,8 @@ export default function Install({
 									setShow={setShow}
 									appId={data?.id}
 									executing={executing}
-									canStop={canStop[data?.id]}
 									terminalStatesRef={terminalStatesRef}
+									installingDeps={installingDeps}
 								/>
 							)}{" "}
 							{show[data?.id] === "actions" && (

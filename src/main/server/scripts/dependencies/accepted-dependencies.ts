@@ -23,6 +23,7 @@ export const dependencyRegistry: Record<
 			id: string,
 			io: Server,
 			required_v?: string,
+			signal?: AbortSignal,
 		) => Promise<{ success: boolean }>;
 		uninstall: (binFolder: string) => Promise<void>;
 	}

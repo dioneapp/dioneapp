@@ -47,7 +47,7 @@ export async function isInstalled(
 			});
 
 			return { installed: true, reason: `nvcc-found-in-path` };
-		} catch (error) {}
+		} catch (error) { }
 	} else {
 		return { installed: false, reason: "unsupported-platform" };
 	}
@@ -75,10 +75,14 @@ export async function install(
 	binFolder: string,
 	id: string,
 	io: Server,
+	required_v?: string,
+	signal?: AbortSignal,
 ): Promise<{ success: boolean }> {
 	const tempDir = path.join(binFolder, "temp");
 	const platform = getOS();
 	const arch = getArch();
+
+	if (signal?.aborted) return { success: false };
 
 	const url = getCudaUrl(platform, arch);
 	if (!url) {
@@ -104,12 +108,14 @@ export async function install(
 
 	try {
 		await new Promise<void>((resolve, reject) => {
+			if (signal?.aborted) return reject(new Error("Aborted"));
 			const fileStream = fs.createWriteStream(installerFilepath);
 			const options = {
 				headers: { "User-Agent": "Mozilla/5.0" },
+				signal,
 			};
 
-			https
+			const req = https
 				.get(url, options, (response) => {
 					if (
 						response.statusCode &&
@@ -118,7 +124,7 @@ export async function install(
 						response.headers.location
 					) {
 						https
-							.get(response.headers.location, options, (redirectResponse) => {
+							.get(response.headers.location, { ...options }, (redirectResponse) => {
 								redirectResponse.pipe(fileStream);
 								fileStream.on("close", resolve);
 								fileStream.on("error", reject);
@@ -135,13 +141,22 @@ export async function install(
 					}
 				})
 				.on("error", reject);
+
+			signal?.addEventListener("abort", () => {
+				req.destroy();
+				fileStream.destroy();
+				reject(new Error("Aborted"));
+			});
 		});
 
 		io.to(id).emit("installDep", {
 			type: "log",
 			content: `${depName} installer downloaded successfully to ${installerFilepath}`,
 		});
-	} catch (error) {
+	} catch (error: any) {
+		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+			return { success: false };
+		}
 		logger.error(`Error downloading installer for ${depName}:`, error);
 		io.to(id).emit("installDep", {
 			type: "error",
@@ -149,6 +164,8 @@ export async function install(
 		});
 		return { success: false };
 	}
+
+	if (signal?.aborted) return { success: false };
 
 	io.to(id).emit("installDep", {
 		type: "log",
@@ -185,10 +202,12 @@ export async function install(
 		shell: true,
 		windowsHide: true,
 		env: ENVIRONMENT,
+		signal,
 	};
 
 	try {
 		await new Promise<void>((resolve, reject) => {
+			if (signal?.aborted) return reject(new Error("Aborted"));
 			let child;
 
 			if (platform === "windows") {
@@ -208,7 +227,7 @@ export async function install(
 						"-Command",
 						psCommand,
 					],
-					{ windowsHide: true, env: ENVIRONMENT },
+					{ windowsHide: true, env: ENVIRONMENT, signal },
 				);
 			} else {
 				child = spawn(command.file, command.args, spawnOptions);
@@ -234,6 +253,7 @@ export async function install(
 			}
 
 			child.on("close", (code) => {
+				if (signal?.aborted) return reject(new Error("Aborted"));
 				if (code === 0) {
 					io.to(id).emit("installDep", {
 						type: "log",
@@ -256,8 +276,16 @@ export async function install(
 					reject(new Error(`CUDA installer exited with code ${code}.`));
 				}
 			});
+
+			child.on("error", (err) => {
+				if (signal?.aborted) return reject(new Error("Aborted"));
+				reject(err);
+			});
 		});
-	} catch (error) {
+	} catch (error: any) {
+		if (signal?.aborted || error.message === "Aborted" || error.name === "AbortError") {
+			return { success: false };
+		}
 		logger.error(`Error running CUDA installer:`, error);
 		io.to(id).emit("installDep", {
 			type: "error",

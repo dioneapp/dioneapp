@@ -24,6 +24,8 @@ export const createDependenciesRouter = (io: Server) => {
 	// 	}
 	// });
 
+	const activeInstallations = new Map<string, AbortController>();
+
 	router.post("/install/:id", async (req, res) => {
 		const { id } = req.params;
 		const dependencies = Array.isArray(req.body?.dependencies)
@@ -34,17 +36,60 @@ export const createDependenciesRouter = (io: Server) => {
 			return;
 		}
 
-		let allInstalled = true;
-		for (const dep of dependencies) {
-			const depName = dep.name;
-			const required_v = dep.version;
-			logger.info(
-				`Starting installation for dependency: ${depName} ${required_v && "with version " + required_v}`,
-			);
-			const result = await installDependency(depName, id, io, required_v);
-			if (!result?.success) allInstalled = false;
+		// Cancel any existing installation for this ID
+		if (activeInstallations.has(id)) {
+			activeInstallations.get(id)?.abort();
+			activeInstallations.delete(id);
 		}
-		res.json({ success: allInstalled });
+
+		const controller = new AbortController();
+		activeInstallations.set(id, controller);
+
+		let allInstalled = true;
+		try {
+			for (const dep of dependencies) {
+				if (controller.signal.aborted) {
+					allInstalled = false;
+					break;
+				}
+				const depName = dep.name;
+				const required_v = dep.version;
+				logger.info(
+					`Starting installation for dependency: ${depName} ${required_v && "with version " + required_v}`,
+				);
+				const result = await installDependency(
+					depName,
+					id,
+					io,
+					required_v,
+					controller.signal,
+				);
+				if (!result?.success) allInstalled = false;
+			}
+			res.json({ success: allInstalled });
+		} catch (error: any) {
+			if (error.name === "AbortError" || controller.signal.aborted) {
+				logger.info(`Installation cancelled for id: ${id}`);
+				res.json({ success: false, reason: "cancelled" });
+			} else {
+				logger.error(`Installation error: ${error}`);
+				res.status(500).json({ error: "Installation failed" });
+			}
+		} finally {
+			activeInstallations.delete(id);
+		}
+	});
+
+	router.post("/cancel/:id", (req, res) => {
+		const { id } = req.params;
+		const controller = activeInstallations.get(id);
+		if (controller) {
+			controller.abort();
+			logger.info(`Cancelled installation for id: ${id}`);
+			res.status(200).json({ success: true });
+		} else {
+			res.status(404).json({ error: "No active installation found" });
+		}
 	});
 
 	// async function checkDependencies(dependencies: string[]) {
