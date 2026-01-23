@@ -1,6 +1,6 @@
+import { GoogleGenAI } from "@google/genai";
 import * as fs from "fs";
 import * as path from "path";
-import { GoogleGenAI } from "@google/genai";
 
 const apiKey = process.argv[2] || process.env.GEMINI_API_KEY_1;
 const apiKey2 = process.argv[3] || process.env.GEMINI_API_KEY_2;
@@ -38,10 +38,18 @@ const languages: Record<string, string> = {
 	fr: "French",
 	hi: "Hindi",
 	id: "Indonesian",
+	it: "Italian",
 	ja: "Japanese",
+	ko: "Korean",
+	nl: "Dutch",
 	pt: "Portuguese",
 	pl: "Polish",
 	ru: "Russian",
+	sv: "Swedish",
+	th: "Thai",
+	tr: "Turkish",
+	uk: "Ukrainian",
+	vi: "Vietnamese",
 	zh: "Chinese",
 };
 
