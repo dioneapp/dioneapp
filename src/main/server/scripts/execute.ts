@@ -10,10 +10,13 @@ import { getArch, getOS } from "@/server/scripts/dependencies/utils/system";
 import {
 	cleanTerminalByID,
 	executeCommands,
+	getEnhancedEnv,
 	log,
 	stopActiveProcess,
 } from "@/server/scripts/process";
 import { getSystemInfo } from "@/server/scripts/system";
+import type { Variable } from "@/server/scripts/types/dione-types";
+import { customEnvironment } from "@/server/scripts/utils/environment";
 import logger from "@/server/utils/logger";
 import {
 	emitRunProgress,
@@ -114,6 +117,13 @@ export default async function executeInstallation(
 					? step.commands
 					: [step.commands.toString()];
 
+				// Process variables if present
+				let customEnv: Record<string, string> = {};
+				if (step.variables && step.variables.length > 0) {
+					const baseEnv = await getEnhancedEnv(needsBuildTools || false);
+					customEnv = customEnvironment(baseEnv, step.variables as Variable[]);
+				}
+
 				let resp;
 				// if exists env property, create virtual environment and execute commands inside it
 				if (step.env) {
@@ -151,6 +161,7 @@ export default async function executeInstallation(
 						id,
 						needsBuildTools,
 						{
+							customEnv,
 							onProgress: (progress: number) => {
 								emitRunProgress(io, id, {
 									type: "step_progress",
@@ -170,6 +181,7 @@ export default async function executeInstallation(
 						id,
 						needsBuildTools,
 						{
+							customEnv,
 							onProgress: (progress: number) => {
 								emitRunProgress(io, id, {
 									type: "step_progress",
@@ -405,6 +417,13 @@ export async function executeStartup(
 				return commandStr;
 			});
 
+			// Process variables if present
+			let customEnv: Record<string, string> = {};
+			if (step.variables && step.variables.length > 0) {
+				const baseEnv = await getEnhancedEnv(needsBuildTools || false);
+				customEnv = customEnvironment(baseEnv, step.variables as Variable[]);
+			}
+
 			if (selectedStart.catch) {
 				io.to(id).emit("installUpdate", {
 					type: "catch",
@@ -476,6 +495,7 @@ export async function executeStartup(
 					id,
 					needsBuildTools,
 					{
+						customEnv,
 						onOutput: outputHandler,
 						onProgress: (progress: number) => {
 							emitRunProgress(io, id, {
@@ -495,6 +515,7 @@ export async function executeStartup(
 					id,
 					needsBuildTools,
 					{
+						customEnv,
 						onOutput: outputHandler,
 						onProgress: (progress: number) => {
 							emitRunProgress(io, id, {

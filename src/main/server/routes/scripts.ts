@@ -152,10 +152,12 @@ export function createScriptRouter(io: Server) {
 							name: s.name,
 							catch: s.catch,
 							env: s.env,
+							variables: s.variables,
 							steps: [
 								{
 									name: "Step 0",
 									commands: s.commands,
+									variables: s.variables,
 								},
 							],
 						};
@@ -164,6 +166,7 @@ export function createScriptRouter(io: Server) {
 							name: s.name,
 							catch: s.catch,
 							env: s.env,
+							variables: s.variables,
 							steps: s.steps,
 						};
 					}

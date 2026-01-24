@@ -314,6 +314,7 @@ export const executeCommands = async (
 	id: string,
 	needsBuildTools?: boolean,
 	options?: {
+		customEnv?: Record<string, string>;
 		onOutput?: (text: string) => void;
 		onProgress?: (progress: number) => void;
 	},
