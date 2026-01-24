@@ -189,7 +189,6 @@ export const executeCommand = async (
 		? options?.customEnv
 		: await getEnhancedEnv(needsBuildTools || false);
 	const logs = logsType || "installUpdate";
-	const START_TOKEN = `:::LOG_START_${Date.now()}:::`;
 
 	try {
 		const currentPlatform = getPlatform();
@@ -224,10 +223,10 @@ export const executeCommand = async (
 
 		if (isWindows) {
 			ptyProcess.write(
-				`@echo off\r\nchcp 65001 >nul\r\necho ${START_TOKEN}\r\n${command}\r\nexit %ERRORLEVEL%\r\n`,
+				`@echo off\r\n${command}\r\nexit %ERRORLEVEL%\r\n`,
 			);
 		} else {
-			ptyProcess.write(`echo "${START_TOKEN}"; ${command}; exit $?\n`);
+			ptyProcess.write(`${command}; exit $?\n`);
 		}
 
 		logger.info(
@@ -252,18 +251,9 @@ export const executeCommand = async (
 		};
 
 		ptyProcess.onData((data: string) => {
-			// Filter out only lines containing START_TOKEN, preserve other output
-			const filteredLines = data
-				.split("\n")
-				.filter((line) => !line.includes(START_TOKEN));
-			const filteredData = filteredLines.join("\n");
-			if (filteredData.trim() === "") return;
+			if (data.includes("Microsoft Windows")) return;
 
-			if (filteredData.includes("Microsoft Windows")) return;
-			if (filteredData.includes("chcp")) return;
-			if (filteredData.includes("exit")) return;
-
-			const cleanData = cleanTerminal(filteredData);
+			const cleanData = cleanTerminal(data);
 
 			outputData += cleanData;
 			options?.onOutput?.(cleanData);
