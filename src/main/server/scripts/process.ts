@@ -179,10 +179,10 @@ export const executeCommand = async (
 	id: string,
 	needsBuildTools?: boolean,
 	logsType?: string,
-	options?: { onOutput?: (text: string) => void },
+	options?: { customEnv?: Record<string, string>; onOutput?: (text: string) => void },
 ): Promise<{ code: number; stdout: string; stderr: string }> => {
 	let outputData = "";
-	const enhancedEnv = await getEnhancedEnv(needsBuildTools || false);
+	const enhancedEnv = options?.customEnv ? options?.customEnv : await getEnhancedEnv(needsBuildTools || false);
 	const logs = logsType || "installUpdate";
 	const START_TOKEN = `:::LOG_START_${Date.now()}:::`;
 
