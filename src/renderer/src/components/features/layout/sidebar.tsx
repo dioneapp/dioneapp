@@ -533,7 +533,7 @@ export default function Sidebar() {
 																		config?.compactMode
 																			? "w-12 h-12 rounded-xl flex items-center justify-center"
 																			: "w-full h-10 rounded-xl flex items-center gap-3 px-3" +
-																				" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
+																			" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
 																	}
 																>
 																	<div
@@ -541,7 +541,7 @@ export default function Sidebar() {
 																			config?.compactMode
 																				? "w-8 h-8"
 																				: "w-6 h-6" +
-																					" overflow-hidden shrink-0 rounded-lg"
+																				" overflow-hidden shrink-0 rounded-lg"
 																		}
 																	>
 																		{!app.isLocal ? (
@@ -667,10 +667,10 @@ export default function Sidebar() {
 									) : (
 										<>
 											{!avatarError &&
-											user?.avatar_url &&
-											user?.avatar_url !== "" &&
-											user?.avatar_url !== null &&
-											user?.avatar_url !== undefined ? (
+												user?.avatar_url &&
+												user?.avatar_url !== "" &&
+												user?.avatar_url !== null &&
+												user?.avatar_url !== undefined ? (
 												<img
 													src={user?.avatar_url}
 													alt="user avatar"
@@ -738,19 +738,6 @@ export default function Sidebar() {
 						)}
 						{!config?.compactMode && (
 							<div className="flex gap-2 items-center justify-end w-full h-full">
-								<Link
-									to={"/library"}
-									className="p-2 hover:bg-white/10 rounded-xl transition-colors flex gap-1 items-center relative"
-									onMouseEnter={() => setHoveredTooltip("library")}
-									onMouseLeave={() => setHoveredTooltip(null)}
-								>
-									<Library className="h-5 w-5 " />
-									{hoveredTooltip === "library" && (
-										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-xl">
-											{t("sidebar.tooltips.library")}
-										</div>
-									)}
-								</Link>
 								<button
 									onClick={() => window.captureScreenshot()}
 									className="p-2 hover:bg-white/10 rounded-xl transition-colors flex gap-1 items-center relative cursor-pointer"
@@ -764,6 +751,19 @@ export default function Sidebar() {
 										</div>
 									)}
 								</button>
+								<Link
+									to={"/library"}
+									className="p-2 hover:bg-white/10 rounded-xl transition-colors flex gap-1 items-center relative"
+									onMouseEnter={() => setHoveredTooltip("library")}
+									onMouseLeave={() => setHoveredTooltip(null)}
+								>
+									<Library className="h-5 w-5 " />
+									{hoveredTooltip === "library" && (
+										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-xl">
+											{t("sidebar.tooltips.library")}
+										</div>
+									)}
+								</Link>
 								<Link
 									to={"/settings"}
 									className="p-2 hover:bg-white/10 rounded-xl transition-colors flex gap-1 items-center relative"
