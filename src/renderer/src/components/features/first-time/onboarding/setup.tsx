@@ -1,6 +1,6 @@
 import { languages, useTranslation } from "@/translations/translation-context";
 import { motion } from "framer-motion";
-import { Check, FolderOpen, Globe } from "lucide-react";
+import { Check, FolderOpen, Globe, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface SetupProps {
@@ -59,10 +59,19 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 
 	// locale-language
 	const [localLanguage, setLocalLanguage] = useState<string | null>(null);
+	const [isInitialized, setIsInitialized] = useState(false);
+	
 	async function fetchLocalLanguage() {
 		const locale = await window.electron.ipcRenderer.invoke("get-locale");
-		setLocalLanguage(locale);
+		const langCode = locale?.split("-")[0] || null;
+		setLocalLanguage(langCode);
+		
+		if (langCode && langCode in languages) {
+			setLanguage(langCode as keyof typeof languages);
+		}
+		setIsInitialized(true);
 	}
+	
 	useEffect(() => {
 		fetchLocalLanguage();
 	}, []);
@@ -109,38 +118,51 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 						</div>
 						<div className="flex-1 w-full mb-2 overflow-y-auto pr-2 space-y-2">
 							{Object.entries(languages).map(([key, value]) => {
-								const isUserLanguage = localLanguage
-									? localLanguage in languages && key === localLanguage
-									: false;
+								const isUserLanguage = localLanguage && key === localLanguage;
 								return (
 									<button
 										type="button"
 										key={key}
 										onClick={() => setLanguage(key as any)}
 										className={
-											`w-full cursor-pointer text-left px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-between group ${
+											`w-full cursor-pointer text-left px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-between group relative overflow-hidden ${
 												language === key
-													? "bg-white/20 border border-white/30"
-													: "bg-white/5 hover:bg-white/10 border border-transparent"
-											}` +
-											(isUserLanguage
-												? " bg-white/5 border-[var(--theme-gradient-from)]"
-												: "")
+													? isUserLanguage
+														? "bg-white/20 border border-white/30 shadow-lg"
+														: "bg-white/20 border border-white/30"
+													: isUserLanguage
+														? "bg-white/10 border border-white/20 hover:bg-white/15"
+														: "bg-white/5 hover:bg-white/10 border border-transparent"
+											}` 
 										}
 									>
+										{isUserLanguage && language === key && (
+											<motion.div
+												layoutId="suggestionHighlight"
+												className="absolute inset-0 -z-10"
+												style={{
+													background:
+														"linear-gradient(135deg, var(--theme-gradient-from) 0%, var(--theme-gradient-to) 100%)",
+													opacity: 0.1,
+												}}
+											/>
+										)}
 										<span className="font-medium">{value}</span>
 										<div className="flex items-center gap-2">
 											{isUserLanguage && (
-												<span
-													className="text-xs px-2 py-0.5 rounded-full font-medium"
+												<motion.span
+													initial={{ opacity: 0, scale: 0.8 }}
+													animate={{ opacity: 1, scale: 1 }}
+													className="text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1"
 													style={{
 														background:
 															"linear-gradient(to right, var(--theme-gradient-from), var(--theme-gradient-to))",
 														color: "black",
 													}}
 												>
+													<Sparkles className="w-3 h-3" />
 													{t("firstTime.languageSelector.systemLanguage")}
-												</span>
+												</motion.span>
 											)}
 											{language === key && (
 												<motion.div

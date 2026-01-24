@@ -6,10 +6,18 @@ import { es } from "@/translations/languages/es";
 import { fr } from "@/translations/languages/fr";
 import { hi } from "@/translations/languages/hi";
 import { id } from "@/translations/languages/id";
+import { it } from "@/translations/languages/it";
 import { ja } from "@/translations/languages/ja";
+import { ko } from "@/translations/languages/ko";
+import { nl } from "@/translations/languages/nl";
 import { pl } from "@/translations/languages/pl";
 import { pt } from "@/translations/languages/pt";
 import { ru } from "@/translations/languages/ru";
+import { sv } from "@/translations/languages/sv";
+import { th } from "@/translations/languages/th";
+import { tr } from "@/translations/languages/tr";
+import { uk } from "@/translations/languages/uk";
+import { vi } from "@/translations/languages/vi";
 import { zh } from "@/translations/languages/zh";
 import { apiJson } from "@/utils/api";
 import {
@@ -35,6 +43,14 @@ export const languages = {
 	pl: "Polish",
 	ru: "Russian",
 	zh: "Chinese",
+	it: "Italian",
+	ko: "Korean",
+	tr: "Turkish",
+	nl: "Dutch",
+	vi: "Vietnamese",
+	th: "Thai",
+	uk: "Ukrainian",
+	sv: "Swedish",
 } as const;
 
 type Language = keyof typeof languages;
@@ -61,10 +77,18 @@ const translations = {
 	fr,
 	hi,
 	id,
+	it,
 	ja,
+	ko,
+	nl,
 	pt,
 	pl,
 	ru,
+	sv,
+	th,
+	tr,
+	uk,
+	vi,
 	zh,
 } as const;
 
