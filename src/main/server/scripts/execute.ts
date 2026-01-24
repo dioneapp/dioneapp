@@ -120,6 +120,10 @@ export default async function executeInstallation(
 				// Process variables if present
 				let customEnv: Record<string, string> = {};
 				if (step.variables && step.variables.length > 0) {
+					// Persist variables to the VARIABLES file
+					for (const variable of step.variables as Variable[]) {
+						addValue(variable.key, variable.value);
+					}
 					const baseEnv = await getEnhancedEnv(needsBuildTools || false);
 					customEnv = customEnvironment(baseEnv, step.variables as Variable[]);
 				} else {
@@ -422,6 +426,10 @@ export async function executeStartup(
 			// Process variables if present
 			let customEnv: Record<string, string> = {};
 			if (step.variables && step.variables.length > 0) {
+				// Persist variables to the VARIABLES file
+				for (const variable of step.variables as Variable[]) {
+					addValue(variable.key, variable.value);
+				}
 				const baseEnv = await getEnhancedEnv(needsBuildTools || false);
 				customEnv = customEnvironment(baseEnv, step.variables as Variable[]);
 			} else {
