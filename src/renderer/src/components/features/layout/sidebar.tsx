@@ -18,12 +18,10 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-	BotMessageSquare,
 	Camera,
 	Clock,
 	Library,
 	Settings,
-	Sparkle,
 	User,
 	X,
 } from "lucide-react";
@@ -655,15 +653,8 @@ export default function Sidebar() {
 							className={`relative mt-auto w-fit flex items-center gap-2 ${config?.compactMode ? "justify-center" : "justify-start"}`}
 						>
 							{user && (
-								<Link
+								<div
 									className={`cursor-pointer overflow-hidden flex items-center justify-center transition-opacity duration-200 ${loading ? "cursor-auto" : ""} h-9 w-9 rounded-xl ${!user?.avatar_url && "border border-white/20"}`}
-									to="/library"
-									onMouseEnter={
-										!loading ? () => setHoveredTooltip("library") : undefined
-									}
-									onMouseLeave={
-										!loading ? () => setHoveredTooltip(null) : undefined
-									}
 								>
 									{loading && !user ? (
 										<div
@@ -706,7 +697,7 @@ export default function Sidebar() {
 											{t("sidebar.tooltips.library")}
 										</div>
 									)}
-								</Link>
+								</div>
 							)}
 						</div>
 						{!config?.compactMode && (
@@ -748,15 +739,15 @@ export default function Sidebar() {
 						{!config?.compactMode && (
 							<div className="flex gap-2 items-center justify-end w-full h-full">
 								<Link
-									to={"/settings"}
+									to={"/library"}
 									className="p-2 hover:bg-white/10 rounded-xl transition-colors flex gap-1 items-center relative"
-									onMouseEnter={() => setHoveredTooltip("quick-ai")}
+									onMouseEnter={() => setHoveredTooltip("library")}
 									onMouseLeave={() => setHoveredTooltip(null)}
 								>
-									<BotMessageSquare className="h-5 w-5 " />
-									{hoveredTooltip === "quick-ai" && (
+									<Library className="h-5 w-5 " />
+									{hoveredTooltip === "library" && (
 										<div className="absolute left-1/2 -translate-x-1/2 top-full mt-4 z-50 px-3 py-1 text-neutral-300 text-xs shadow-lg duration-200 whitespace-nowrap rounded-xl">
-											Dio AI
+											{t("sidebar.tooltips.library")}
 										</div>
 									)}
 								</Link>
