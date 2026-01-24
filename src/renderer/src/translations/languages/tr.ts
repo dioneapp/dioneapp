@@ -46,14 +46,12 @@ export const tr = {
 			changeFolder: "Klasörü değiştir",
 			proceedButton: "Dili ve yolu seçin",
 			error: {
-				spaces:
-					"Seçilen yol boşluk içeremez. Lütfen farklı bir klasör seçin.",
+				spaces: "Seçilen yol boşluk içeremez. Lütfen farklı bir klasör seçin.",
 				updateConfig:
 					"Yapılandırma güncellenirken bir hata oluştu. Lütfen tekrar deneyin.",
 				samePath:
 					"Yeni güncellemelerde hataları önlemek için Dione yürütülebilirinden farklı bir yol seçin.",
-				general:
-					"Yol seçilirken bir hata oluştu. Lütfen tekrar deneyin.",
+				general: "Yol seçilirken bir hata oluştu. Lütfen tekrar deneyin.",
 			},
 			success: "Yol başarıyla yapılandırıldı!",
 			systemLanguage: "Sistem dili",
@@ -64,8 +62,7 @@ export const tr = {
 			finish: "Bitir",
 		},
 		clipboard: {
-			success:
-				"Panoya doğru kopyalandı, şimdi tarayıcınıza yapıştırın!",
+			success: "Panoya doğru kopyalandı, şimdi tarayıcınıza yapıştırın!",
 		},
 		navigation: {
 			back: "Geri",
@@ -137,8 +134,7 @@ export const tr = {
 				stop: "%s durdurma hatası: %s",
 				uninstall: "%s kaldırma hatası: %s",
 				serverRunning: "Sunucu zaten çalışıyor.",
-				tooManyApps:
-					"Yavaşla! Zaten 6 uygulamanız aynı anda çalışıyor.",
+				tooManyApps: "Yavaşla! Zaten 6 uygulamanız aynı anda çalışıyor.",
 			},
 		},
 	},
@@ -163,7 +159,8 @@ export const tr = {
 			title: "Güncelleme Kullanılabilir",
 			description:
 				"Dione'nin yeni bir sürümü kullanılabilir, lütfen güncellemek için uygulamayı yeniden başlatın.",
-			tooltip: "Yeni güncelleme kullanılabilir, lütfen güncellemek için Dione'yi yeniden başlatın.",
+			tooltip:
+				"Yeni güncelleme kullanılabilir, lütfen güncellemek için Dione'yi yeniden başlatın.",
 		},
 		login: {
 			title: "Tekrar hoş geldiniz!",
@@ -237,7 +234,8 @@ export const tr = {
 				description:
 					"Öne çıkan uygulamaların animasyon oynatmasını önleyin. Bunun yerine düz bir renk gradyanı gösterilecektir.",
 			},
-			helpTranslate: "🤔 Dilinizi görmüyor musunuz? Daha fazla eklememize yardım edin!",
+			helpTranslate:
+				"🤔 Dilinizi görmüyor musunuz? Daha fazla eklememize yardım edin!",
 			theme: {
 				label: "Tema",
 				description: "Uygulama için bir renk teması seçin.",
@@ -292,7 +290,8 @@ export const tr = {
 			title: "Gizlilik",
 			errorReporting: {
 				label: "Hata Raporlaması",
-				description: "Anonim hata raporları göndererek Dione'yi geliştirmeye yardım edin.",
+				description:
+					"Anonim hata raporları göndererek Dione'yi geliştirmeye yardım edin.",
 			},
 		},
 		other: {
@@ -342,8 +341,7 @@ export const tr = {
 		title: "Sorunu Açıkla",
 		description:
 			"Lütfen ne olduğunu ve ne yapmaya çalıştığınızı ayrıntılı olarak belirtin.",
-		placeholder:
-			"Örnek: Bir uygulama kurmaya çalışırken bu hata oluştu...",
+		placeholder: "Örnek: Bir uygulama kurmaya çalışırken bu hata oluştu...",
 		systemInformationTitle: "Sistem Bilgileri",
 		disclaimer:
 			"Aşağıdaki sistem bilgileri ve anonim bir kimlik raporunuza dahil edilecektir.",
@@ -351,7 +349,8 @@ export const tr = {
 		error: "Rapor gönderilmesi başarısız oldu. Lütfen tekrar deneyin.",
 		send: "Raporu Gönder",
 		sending: "Gönderiliyor...",
-		contribute: "Bu komut dosyasını tüm cihazlarla uyumlu hale getirmeye yardım edin",
+		contribute:
+			"Bu komut dosyasını tüm cihazlarla uyumlu hale getirmeye yardım edin",
 	},
 
 	// quick launch component
@@ -363,7 +362,8 @@ export const tr = {
 		},
 		selectApp: {
 			title: "Uygulama Seçin",
-			description: "{count} uygulama kullanılabilir. {max} adedine kadar seçebilirsiniz.",
+			description:
+				"{count} uygulama kullanılabilir. {max} adedine kadar seçebilirsiniz.",
 		},
 	},
 
@@ -412,7 +412,8 @@ export const tr = {
 		},
 		step3: {
 			title: "Ollama'yı Yükle",
-			description: "Dio AI, sisteminiz içinde LLM'lerle çalışmak için Ollama kullanır.",
+			description:
+				"Dio AI, sisteminiz içinde LLM'lerle çalışmak için Ollama kullanır.",
 			installing: "Yükleniyor...",
 			startingDownload: "İndirme başlatılıyor...",
 			installNow: "Şimdi Kur",
@@ -428,8 +429,7 @@ export const tr = {
 			subtitle: "Kaldırılacak öğeleri seçin",
 		},
 		dependencies: "Bağımlılıklar",
-		depsDescription:
-			"Uygulama ile birlikte kaldırılacak bağımlılıkları seçin:",
+		depsDescription: "Uygulama ile birlikte kaldırılacak bağımlılıkları seçin:",
 		uninstall: {
 			title: "Kaldır",
 			deps: "Bağımlılıkları kaldır",
@@ -453,7 +453,8 @@ export const tr = {
 			subtitle: "bir hata",
 			hasOccurred: "oluştu",
 			deps: "Dione hiçbir bağımlılığı kaldıramadı, lütfen manuel olarak yapın.",
-			general: "Daha sonra tekrar deneyin veya daha fazla bilgi için günlükleri kontrol edin.",
+			general:
+				"Daha sonra tekrar deneyin veya daha fazla bilgi için günlükleri kontrol edin.",
 		},
 		loading: {
 			title: "Yükleniyor...",
@@ -841,7 +842,8 @@ export const tr = {
 		deleted: "Silindi",
 		failedToDeleteEntry: "Girdi silinemedi",
 		workspaceNotAvailable: "Çalışma alanı kullanılamıyor",
-		selectFileOrFolderToRename: "Yeniden adlandırılacak bir dosya veya klasör seçin",
+		selectFileOrFolderToRename:
+			"Yeniden adlandırılacak bir dosya veya klasör seçin",
 		cannotRenameWorkspaceRoot: "Çalışma alanı kökünün adı değiştirilemez",
 		entryRenamed: "Girdi yeniden adlandırıldı",
 		fileSavedSuccessfully: "Dosya başarıyla kaydedildi",
@@ -892,7 +894,8 @@ export const tr = {
 	feedErrors: {
 		invalidDataFormat: "API'den geçersiz veri formatı",
 		failedToFetchScripts: "Komut dosyaları getirilemedi",
-		offline: "Çevrimdışısınız ve kullanılabilir önbelleğe alınan içerik yoktur.",
+		offline:
+			"Çevrimdışısınız ve kullanılabilir önbelleğe alınan içerik yoktur.",
 	},
 
 	// upload script modal
@@ -903,9 +906,9 @@ export const tr = {
 	// running apps
 	runningApps: {
 		running: "Çalışıyor",
-		thereIsAnAppRunningInBackground:
-			"Arka planda çalışan bir uygulama var.",
-		failedToReloadQuickLaunch: "Hızlı başlatma uygulamaları yeniden yüklenemedi",
+		thereIsAnAppRunningInBackground: "Arka planda çalışan bir uygulama var.",
+		failedToReloadQuickLaunch:
+			"Hızlı başlatma uygulamaları yeniden yüklenemedi",
 		failedToFetchInstalledApps: "Yüklü uygulamalar getirilemedi",
 	},
 } as const;

@@ -52,8 +52,7 @@ export const sv = {
 					"Ett fel uppstod vid uppdatering av konfigurationen. Försök igen.",
 				samePath:
 					"För att undvika fel vid uppdateringar väljer du en annan sökväg än Dione-körbara filen.",
-				general:
-					"Ett fel uppstod när sökvägen valdes. Försök igen.",
+				general: "Ett fel uppstod när sökvägen valdes. Försök igen.",
 			},
 			success: "Sökvägen konfigurerades framgångsrikt!",
 			systemLanguage: "Systemspråk",
@@ -137,8 +136,7 @@ export const sv = {
 				stop: "Fel vid stopp av %s: %s",
 				uninstall: "Fel vid avinstallation av %s: %s",
 				serverRunning: "Servern körs redan.",
-				tooManyApps:
-					"Sakta ned! Du har redan 6 appar som körs samtidigt.",
+				tooManyApps: "Sakta ned! Du har redan 6 appar som körs samtidigt.",
 			},
 		},
 	},
@@ -199,8 +197,7 @@ export const sv = {
 			title: "Program",
 			installationDirectory: {
 				label: "Installationskatalog",
-				description:
-					"Välj var nya program ska installeras som standard.",
+				description: "Välj var nya program ska installeras som standard.",
 			},
 			binDirectory: {
 				label: "Bin-katalog",
@@ -292,7 +289,8 @@ export const sv = {
 			title: "Sekretess",
 			errorReporting: {
 				label: "Felrapportering",
-				description: "Hjälp till att förbättra Dione genom att skicka anonyma felrapporter.",
+				description:
+					"Hjälp till att förbättra Dione genom att skicka anonyma felrapporter.",
 			},
 		},
 		other: {
@@ -340,8 +338,7 @@ export const sv = {
 	// report form
 	report: {
 		title: "Beskriv problemet",
-		description:
-			"Ange detaljer om vad som hände och vad du försökte göra.",
+		description: "Ange detaljer om vad som hände och vad du försökte göra.",
 		placeholder:
 			"Exempel: Jag försökte installera ett program när det här felet uppstod...",
 		systemInformationTitle: "Systeminformation",
@@ -363,7 +360,8 @@ export const sv = {
 		},
 		selectApp: {
 			title: "Välj en app",
-			description: "{count} appar är tillgängliga. Du kan välja upp till {max}.",
+			description:
+				"{count} appar är tillgängliga. Du kan välja upp till {max}.",
 		},
 	},
 
@@ -412,7 +410,8 @@ export const sv = {
 		},
 		step3: {
 			title: "Installera Ollama",
-			description: "Dio AI använder Ollama för att arbeta med LLM:er i ditt system.",
+			description:
+				"Dio AI använder Ollama för att arbeta med LLM:er i ditt system.",
 			installing: "Installerar...",
 			startingDownload: "Startar nedladdning...",
 			installNow: "Installera nu",
@@ -453,7 +452,8 @@ export const sv = {
 			subtitle: "fel",
 			hasOccurred: "inträffade",
 			deps: "Dione kunde inte ta bort några beroenden. Gör det manuellt.",
-			general: "Försök igen senare eller kontrollera loggarna för mer information.",
+			general:
+				"Försök igen senare eller kontrollera loggarna för mer information.",
 		},
 		loading: {
 			title: "Laddar...",
@@ -590,7 +590,8 @@ export const sv = {
 		},
 		public: {
 			shareUrl: "Offentlig URL",
-			urlDescription: "Dela denna URL med vem som helst, var som helst i världen",
+			urlDescription:
+				"Dela denna URL med vem som helst, var som helst i världen",
 			passwordTitle: "Lösenord första gången",
 			visitorMessage:
 				"Besökare kan behöva ange detta lösenord en gång per enhet för att komma åt tunneln.",
@@ -628,8 +629,7 @@ export const sv = {
 			},
 			earlyBirds: {
 				title: "Få tidiga uppdateringar",
-				description:
-					"Få nya funktioner och uppdateringar innan någon annan.",
+				description: "Få nya funktioner och uppdateringar innan någon annan.",
 			},
 			giveOutLikes: {
 				title: "Ge ut gilla-markeringar",
@@ -656,7 +656,8 @@ export const sv = {
 	// editor component
 	editor: {
 		selectFile: "Välj en fil för att börja redigera",
-		previewNotAvailable: "Förhandsgranskning är inte tillgänglig för denna fil.",
+		previewNotAvailable:
+			"Förhandsgranskning är inte tillgänglig för denna fil.",
 		mediaNotSupported: "Förhandsgranskning för denna mediatyp stöds ännu inte.",
 		previewOnly: "Endast förhandsgranskning",
 		unsaved: "Ej sparad",

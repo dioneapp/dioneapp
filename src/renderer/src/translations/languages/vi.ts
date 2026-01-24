@@ -48,12 +48,10 @@ export const vi = {
 			error: {
 				spaces:
 					"Đường dẫn đã chọn không thể chứa khoảng trắng. Vui lòng chọn thư mục khác.",
-				updateConfig:
-					"Đã xảy ra lỗi khi cập nhật cấu hình. Vui lòng thử lại.",
+				updateConfig: "Đã xảy ra lỗi khi cập nhật cấu hình. Vui lòng thử lại.",
 				samePath:
 					"Để tránh lỗi khi cập nhật, hãy chọn đường dẫn khác với tệp thực thi Dione.",
-				general:
-					"Đã xảy ra lỗi khi chọn đường dẫn. Vui lòng thử lại.",
+				general: "Đã xảy ra lỗi khi chọn đường dẫn. Vui lòng thử lại.",
 			},
 			success: "Đường dẫn được cấu hình thành công!",
 			systemLanguage: "Ngôn ngữ hệ thống",
@@ -137,8 +135,7 @@ export const vi = {
 				stop: "Lỗi dừng %s: %s",
 				uninstall: "Lỗi gỡ cài đặt %s: %s",
 				serverRunning: "Máy chủ đang chạy.",
-				tooManyApps:
-					"Chậm lại! Bạn đã có 6 ứng dụng chạy cùng lúc.",
+				tooManyApps: "Chậm lại! Bạn đã có 6 ứng dụng chạy cùng lúc.",
 			},
 		},
 	},
@@ -147,8 +144,7 @@ export const vi = {
 	titlebar: {
 		closing: {
 			title: "Đang dừng ứng dụng...",
-			description:
-				"Dione sẽ đóng tự động sau khi đóng tất cả các ứng dụng mở.",
+			description: "Dione sẽ đóng tự động sau khi đóng tất cả các ứng dụng mở.",
 		},
 	},
 
@@ -199,8 +195,7 @@ export const vi = {
 			title: "Ứng dụng",
 			installationDirectory: {
 				label: "Thư mục cài đặt",
-				description:
-					"Chọn nơi các ứng dụng mới sẽ được cài đặt theo mặc định.",
+				description: "Chọn nơi các ứng dụng mới sẽ được cài đặt theo mặc định.",
 			},
 			binDirectory: {
 				label: "Thư mục Bin",
@@ -214,12 +209,12 @@ export const vi = {
 			},
 			autoOpenAfterInstall: {
 				label: "Tự động mở sau khi cài đặt",
-				description:
-					"Tự động mở ứng dụng lần đầu tiên sau khi cài đặt.",
+				description: "Tự động mở ứng dụng lần đầu tiên sau khi cài đặt.",
 			},
 			deleteCache: {
 				label: "Xóa bộ nhớ đệm",
-				description: "Xóa tất cả dữ liệu được lưu trong bộ nhớ đệm từ các ứng dụng.",
+				description:
+					"Xóa tất cả dữ liệu được lưu trong bộ nhớ đệm từ các ứng dụng.",
 				button: "Xóa bộ nhớ đệm",
 				deleting: "Đang xóa...",
 				deleted: "Đã xóa",
@@ -259,8 +254,7 @@ export const vi = {
 			},
 			intenseBackgrounds: {
 				label: "Màu nền rực rỡ",
-				description:
-					"Sử dụng màu nền rực rỡ hơn thay vì các tones tinh tế.",
+				description: "Sử dụng màu nền rực rỡ hơn thay vì các tones tinh tế.",
 			},
 			compactView: {
 				label: "Chế độ xem nén",
@@ -272,7 +266,8 @@ export const vi = {
 			title: "Thông báo",
 			systemNotifications: {
 				label: "Thông báo hệ thống",
-				description: "Hiển thị thông báo màn hình nền cho các sự kiện quan trọng.",
+				description:
+					"Hiển thị thông báo màn hình nền cho các sự kiện quan trọng.",
 			},
 			installationAlerts: {
 				label: "Cảnh báo cài đặt",
@@ -280,12 +275,12 @@ export const vi = {
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
-				description: "Hiển thị hoạt động hiện tại của bạn trong trạng thái Discord.",
+				description:
+					"Hiển thị hoạt động hiện tại của bạn trong trạng thái Discord.",
 			},
 			successSound: {
 				label: "Bật âm thanh thành công",
-				description:
-					"Bật âm thanh phát khi ứng dụng hoàn tất cài đặt.",
+				description: "Bật âm thanh phát khi ứng dụng hoàn tất cài đặt.",
 			},
 		},
 		privacy: {
@@ -351,7 +346,8 @@ export const vi = {
 		error: "Không thể gửi báo cáo. Vui lòng thử lại.",
 		send: "Gửi báo cáo",
 		sending: "Đang gửi...",
-		contribute: "Giúp chúng tôi làm cho tập lệnh này tương thích với tất cả các thiết bị",
+		contribute:
+			"Giúp chúng tôi làm cho tập lệnh này tương thích với tất cả các thiết bị",
 	},
 
 	// quick launch component
@@ -406,13 +402,15 @@ export const vi = {
 				},
 				private: {
 					title: "Riêng tư & Bảo mật",
-					description: "Dữ liệu của bạn không bao giờ rời khỏi thiết bị của bạn.",
+					description:
+						"Dữ liệu của bạn không bao giờ rời khỏi thiết bị của bạn.",
 				},
 			},
 		},
 		step3: {
 			title: "Cài đặt Ollama",
-			description: "Dio AI sử dụng Ollama để làm việc với LLMs trong hệ thống của bạn.",
+			description:
+				"Dio AI sử dụng Ollama để làm việc với LLMs trong hệ thống của bạn.",
 			installing: "Đang cài đặt...",
 			startingDownload: "Bắt đầu tải xuống...",
 			installNow: "Cài đặt ngay",
@@ -428,8 +426,7 @@ export const vi = {
 			subtitle: "Chọn những gì cần xóa",
 		},
 		dependencies: "Phụ thuộc",
-		depsDescription:
-			"Chọn phụ thuộc để gỡ cài đặt cùng với ứng dụng:",
+		depsDescription: "Chọn phụ thuộc để gỡ cài đặt cùng với ứng dụng:",
 		uninstall: {
 			title: "Gỡ cài đặt",
 			deps: "Gỡ cài đặt phụ thuộc",
@@ -453,7 +450,8 @@ export const vi = {
 			subtitle: "lỗi",
 			hasOccurred: "đã xảy ra",
 			deps: "Dione không thể loại bỏ bất kỳ phụ thuộc nào, vui lòng thực hiện thủ công.",
-			general: "Vui lòng thử lại sau hoặc kiểm tra nhật ký để biết thêm thông tin.",
+			general:
+				"Vui lòng thử lại sau hoặc kiểm tra nhật ký để biết thêm thông tin.",
 		},
 		loading: {
 			title: "Đang tải...",
@@ -584,20 +582,24 @@ export const vi = {
 		},
 		local: {
 			shareUrl: "Chia sẻ URL",
-			urlDescription: "Chia sẻ URL này với các thiết bị trên mạng cục bộ của bạn",
+			urlDescription:
+				"Chia sẻ URL này với các thiết bị trên mạng cục bộ của bạn",
 			localNetwork: "Mạng cục bộ:",
-			description: "URL này hoạt động trên các thiết bị được kết nối với cùng một mạng.",
+			description:
+				"URL này hoạt động trên các thiết bị được kết nối với cùng một mạng.",
 		},
 		public: {
 			shareUrl: "URL công khai",
-			urlDescription: "Chia sẻ URL này với bất kỳ ai, bất kỳ nơi đâu trên thế giới",
+			urlDescription:
+				"Chia sẻ URL này với bất kỳ ai, bất kỳ nơi đâu trên thế giới",
 			passwordTitle: "Mật khẩu lần đầu tiên",
 			visitorMessage:
 				"Khách truy cập có thể cần nhập mật khẩu này một lần trên mỗi thiết bị để truy cập đường hầm.",
 			stopSharing: "Dừng chia sẻ",
 		},
 		errors: {
-			noAddress: "Không thể lấy địa chỉ mạng. Vui lòng kiểm tra kết nối của bạn.",
+			noAddress:
+				"Không thể lấy địa chỉ mạng. Vui lòng kiểm tra kết nối của bạn.",
 			loadFailed: "Không thể tải thông tin mạng.",
 			noUrl: "Không có URL khả dụng để sao chép.",
 			copyFailed: "Không thể sao chép vào clipboard.",
@@ -619,12 +621,12 @@ export const vi = {
 			},
 			createProfile: {
 				title: "Tạo hồ sơ",
-				description:
-					"Tạo hồ sơ cho cộng đồng Dione để họ hiểu biết về bạn.",
+				description: "Tạo hồ sơ cho cộng đồng Dione để họ hiểu biết về bạn.",
 			},
 			syncData: {
 				title: "Đồng bộ hóa dữ liệu của bạn",
-				description: "Đồng bộ hóa dữ liệu của bạn trên tất cả các thiết bị của bạn.",
+				description:
+					"Đồng bộ hóa dữ liệu của bạn trên tất cả các thiết bị của bạn.",
 			},
 			earlyBirds: {
 				title: "Nhận các bản cập nhật sớm",
@@ -846,7 +848,8 @@ export const vi = {
 		entryRenamed: "Mục được đổi tên",
 		fileSavedSuccessfully: "Tệp được lưu thành công",
 		failedToSaveFile: "Không thể lưu tệp",
-		mediaFilesCannotBeOpened: "Không thể mở tệp phương tiện trong trình biên tập.",
+		mediaFilesCannotBeOpened:
+			"Không thể mở tệp phương tiện trong trình biên tập.",
 		binaryFilesCannotBeOpened:
 			"Không thể mở tệp nhị phân và có thể thực thi được trong trình biên tập.",
 		thisFileTypeCannotBeEdited: "Loại tệp này chưa có thể chỉnh sửa được.",
@@ -892,7 +895,8 @@ export const vi = {
 	feedErrors: {
 		invalidDataFormat: "Định dạng dữ liệu không hợp lệ từ API",
 		failedToFetchScripts: "Không thể tải tập lệnh",
-		offline: "Bạn đang ngoại tuyến và không có nội dung được lưu trong bộ nhớ cache.",
+		offline:
+			"Bạn đang ngoại tuyến và không có nội dung được lưu trong bộ nhớ cache.",
 	},
 
 	// upload script modal
@@ -903,8 +907,7 @@ export const vi = {
 	// running apps
 	runningApps: {
 		running: "Đang chạy",
-		thereIsAnAppRunningInBackground:
-			"Có một ứng dụng đang chạy ở nền.",
+		thereIsAnAppRunningInBackground: "Có một ứng dụng đang chạy ở nền.",
 		failedToReloadQuickLaunch: "Không thể tải lại ứng dụng khởi động nhanh",
 		failedToFetchInstalledApps: "Không thể tải các ứng dụng đã cài đặt",
 	},

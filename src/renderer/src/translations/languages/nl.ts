@@ -59,8 +59,7 @@ export const nl = {
 			finish: "Voltooien",
 		},
 		clipboard: {
-			success:
-				"Correct naar klembord gekopieerd, plak het nu in je browser!",
+			success: "Correct naar klembord gekopieerd, plak het nu in je browser!",
 		},
 		navigation: {
 			back: "Terug",
@@ -79,7 +78,8 @@ export const nl = {
 			success: "Rapport verzonden!",
 			failed: "Rapport kan niet worden verzonden",
 			badContent: "Meld ongepaste inhoud",
-			badContentDescription: "Voeg vervolgens informatie over je rapport toe aan",
+			badContentDescription:
+				"Voeg vervolgens informatie over je rapport toe aan",
 		},
 	},
 	account: {
@@ -126,8 +126,7 @@ export const nl = {
 				stop: "Fout bij het stoppen van %s: %s",
 				uninstall: "Fout bij het verwijderen van %s: %s",
 				serverRunning: "Server is al aan het draaien.",
-				tooManyApps:
-					"Rustig aan! Je hebt al 6 apps tegelijk actief.",
+				tooManyApps: "Rustig aan! Je hebt al 6 apps tegelijk actief.",
 			},
 		},
 	},
@@ -148,7 +147,8 @@ export const nl = {
 			title: "Update beschikbaar",
 			description:
 				"Een nieuwe versie van Dione is beschikbaar, start de app opnieuw op om bij te werken.",
-			tooltip: "Nieuwe update beschikbaar, start Dione opnieuw op om bij te werken.",
+			tooltip:
+				"Nieuwe update beschikbaar, start Dione opnieuw op om bij te werken.",
 		},
 		login: {
 			title: "Welkom terug!",
@@ -253,11 +253,13 @@ export const nl = {
 			title: "Meldingen",
 			systemNotifications: {
 				label: "Systeemmeldingen",
-				description: "Toon bureaubladmeldingen voor belangrijke gebeurtenissen.",
+				description:
+					"Toon bureaubladmeldingen voor belangrijke gebeurtenissen.",
 			},
 			installationAlerts: {
 				label: "Installatiemeldingen",
-				description: "Ontvang meldingen wanneer toepassingsinstallaties voltooid zijn.",
+				description:
+					"Ontvang meldingen wanneer toepassingsinstallaties voltooid zijn.",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
@@ -273,7 +275,8 @@ export const nl = {
 			title: "Privacy",
 			errorReporting: {
 				label: "Foutrapporten",
-				description: "Help Dione verbeteren door anonieme foutrapporten in te dienen.",
+				description:
+					"Help Dione verbeteren door anonieme foutrapporten in te dienen.",
 			},
 		},
 		other: {
@@ -340,7 +343,8 @@ export const nl = {
 		},
 		selectApp: {
 			title: "Selecteer een app",
-			description: "{count} apps zijn beschikbaar. Je kunt er maximaal {max} selecteren.",
+			description:
+				"{count} apps zijn beschikbaar. Je kunt er maximaal {max} selecteren.",
 		},
 	},
 	missingDeps: {
@@ -385,7 +389,8 @@ export const nl = {
 		},
 		step3: {
 			title: "Installeer Ollama",
-			description: "Dio AI gebruikt Ollama om met LLM's binnen je systeem te werken.",
+			description:
+				"Dio AI gebruikt Ollama om met LLM's binnen je systeem te werken.",
 			installing: "Bezig met installeren...",
 			startingDownload: "Download starten...",
 			installNow: "Nu installeren",
@@ -424,7 +429,8 @@ export const nl = {
 			subtitle: "fout",
 			hasOccurred: "opgetreden",
 			deps: "Dione kon geen afhankelijkheid verwijderen, doe het alstublieft handmatig.",
-			general: "Probeer het later opnieuw of controleer de logbestanden voor meer informatie.",
+			general:
+				"Probeer het later opnieuw of controleer de logbestanden voor meer informatie.",
 		},
 		loading: {
 			title: "Bezig met laden...",
@@ -493,7 +499,8 @@ export const nl = {
 			uploading: "Bezig met uploaden...",
 			errors: {
 				uploadFailed: "Script kon niet worden geüpload. Probeer het opnieuw.",
-				uploadError: "Er is een fout opgetreden bij het uploaden van het script.",
+				uploadError:
+					"Er is een fout opgetreden bij het uploaden van het script.",
 			},
 		},
 	},
@@ -537,7 +544,8 @@ export const nl = {
 			shareUrl: "Deel-URL",
 			urlDescription: "Deel deze URL met apparaten op je lokale netwerk",
 			localNetwork: "Lokaal netwerk:",
-			description: "Deze URL werkt op apparaten die zijn verbonden met hetzelfde netwerk.",
+			description:
+				"Deze URL werkt op apparaten die zijn verbonden met hetzelfde netwerk.",
 		},
 		public: {
 			shareUrl: "Openbare URL",
@@ -548,7 +556,8 @@ export const nl = {
 			stopSharing: "Stop delen",
 		},
 		errors: {
-			noAddress: "Kan geen netwerkadres krijgen. Controleer alstublieft je verbinding.",
+			noAddress:
+				"Kan geen netwerkadres krijgen. Controleer alstublieft je verbinding.",
 			loadFailed: "Netwerkgegevens kunnen niet worden geladen.",
 			noUrl: "Geen URL beschikbaar om te kopiëren.",
 			copyFailed: "Kan niet naar klembord kopiëren.",
@@ -604,7 +613,8 @@ export const nl = {
 	editor: {
 		selectFile: "Selecteer een bestand om te bewerken",
 		previewNotAvailable: "Voorbeeld niet beschikbaar voor dit bestand.",
-		mediaNotSupported: "Voorbeeld voor dit mediatype wordt nog niet ondersteund.",
+		mediaNotSupported:
+			"Voorbeeld voor dit mediatype wordt nog niet ondersteund.",
 		previewOnly: "Alleen voorbeeld",
 		unsaved: "Niet opgeslagen",
 		retry: "Opnieuw proberen",
@@ -749,7 +759,8 @@ export const nl = {
 		entryRenamed: "Invoer hernoemd",
 		fileSavedSuccessfully: "Bestand succesvol opgeslagen",
 		failedToSaveFile: "Bestand kan niet worden opgeslagen",
-		mediaFilesCannotBeOpened: "Mediabestanden kunnen niet in de editor worden geopend.",
+		mediaFilesCannotBeOpened:
+			"Mediabestanden kunnen niet in de editor worden geopend.",
 		binaryFilesCannotBeOpened:
 			"Binaire en uitvoerbare bestanden kunnen niet in de editor worden geopend.",
 		thisFileTypeCannotBeEdited: "Dit bestandstype kan nog niet worden bewerkt.",
@@ -794,7 +805,9 @@ export const nl = {
 		running: "Actief",
 		thereIsAnAppRunningInBackground:
 			"Er is een applicatie op de achtergrond actief.",
-		failedToReloadQuickLaunch: "Snelstartapps kunnen niet opnieuw worden geladen",
-		failedToFetchInstalledApps: "Geïnstalleerde apps kunnen niet worden opgehaald",
+		failedToReloadQuickLaunch:
+			"Snelstartapps kunnen niet opnieuw worden geladen",
+		failedToFetchInstalledApps:
+			"Geïnstalleerde apps kunnen niet worden opgehaald",
 	},
 } as const;

@@ -60,18 +60,18 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 	// locale-language
 	const [localLanguage, setLocalLanguage] = useState<string | null>(null);
 	const [isInitialized, setIsInitialized] = useState(false);
-	
+
 	async function fetchLocalLanguage() {
 		const locale = await window.electron.ipcRenderer.invoke("get-locale");
 		const langCode = locale?.split("-")[0] || null;
 		setLocalLanguage(langCode);
-		
+
 		if (langCode && langCode in languages) {
 			setLanguage(langCode as keyof typeof languages);
 		}
 		setIsInitialized(true);
 	}
-	
+
 	useEffect(() => {
 		fetchLocalLanguage();
 	}, []);
@@ -124,17 +124,15 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 										type="button"
 										key={key}
 										onClick={() => setLanguage(key as any)}
-										className={
-											`w-full cursor-pointer text-left px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-between group relative overflow-hidden ${
-												language === key
-													? isUserLanguage
-														? "bg-white/20 border border-white/30 shadow-lg"
-														: "bg-white/20 border border-white/30"
-													: isUserLanguage
-														? "bg-white/10 border border-white/20 hover:bg-white/15"
-														: "bg-white/5 hover:bg-white/10 border border-transparent"
-											}` 
-										}
+										className={`w-full cursor-pointer text-left px-4 py-3 rounded-xl transition-all duration-200 flex items-center justify-between group relative overflow-hidden ${
+											language === key
+												? isUserLanguage
+													? "bg-white/20 border border-white/30 shadow-lg"
+													: "bg-white/20 border border-white/30"
+												: isUserLanguage
+													? "bg-white/10 border border-white/20 hover:bg-white/15"
+													: "bg-white/5 hover:bg-white/10 border border-transparent"
+										}`}
 									>
 										{isUserLanguage && language === key && (
 											<motion.div
