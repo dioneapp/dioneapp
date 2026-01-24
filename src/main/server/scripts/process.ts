@@ -179,10 +179,15 @@ export const executeCommand = async (
 	id: string,
 	needsBuildTools?: boolean,
 	logsType?: string,
-	options?: { customEnv?: Record<string, string>; onOutput?: (text: string) => void },
+	options?: {
+		customEnv?: Record<string, string>;
+		onOutput?: (text: string) => void;
+	},
 ): Promise<{ code: number; stdout: string; stderr: string }> => {
 	let outputData = "";
-	const enhancedEnv = options?.customEnv ? options?.customEnv : await getEnhancedEnv(needsBuildTools || false);
+	const enhancedEnv = options?.customEnv
+		? options?.customEnv
+		: await getEnhancedEnv(needsBuildTools || false);
 	const logs = logsType || "installUpdate";
 	const START_TOKEN = `:::LOG_START_${Date.now()}:::`;
 
@@ -247,12 +252,18 @@ export const executeCommand = async (
 		};
 
 		ptyProcess.onData((data: string) => {
-			if (data.includes(START_TOKEN)) return;
-			if (data.includes("Microsoft Windows")) return;
-			if (data.includes("chcp")) return;
-			if (data.includes("exit")) return;
+			// Filter out only lines containing START_TOKEN, preserve other output
+			const filteredLines = data
+				.split("\n")
+				.filter((line) => !line.includes(START_TOKEN));
+			const filteredData = filteredLines.join("\n");
+			if (filteredData.trim() === "") return;
 
-			const cleanData = cleanTerminal(data);
+			if (filteredData.includes("Microsoft Windows")) return;
+			if (filteredData.includes("chcp")) return;
+			if (filteredData.includes("exit")) return;
+
+			const cleanData = cleanTerminal(filteredData);
 
 			outputData += cleanData;
 			options?.onOutput?.(cleanData);

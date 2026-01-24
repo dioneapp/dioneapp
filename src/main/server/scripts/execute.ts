@@ -122,6 +122,8 @@ export default async function executeInstallation(
 				if (step.variables && step.variables.length > 0) {
 					const baseEnv = await getEnhancedEnv(needsBuildTools || false);
 					customEnv = customEnvironment(baseEnv, step.variables as Variable[]);
+				} else {
+					customEnv = await getEnhancedEnv(needsBuildTools || false);
 				}
 
 				let resp;
@@ -422,6 +424,8 @@ export async function executeStartup(
 			if (step.variables && step.variables.length > 0) {
 				const baseEnv = await getEnhancedEnv(needsBuildTools || false);
 				customEnv = customEnvironment(baseEnv, step.variables as Variable[]);
+			} else {
+				customEnv = await getEnhancedEnv(needsBuildTools || false);
 			}
 
 			if (selectedStart.catch) {
@@ -469,15 +473,14 @@ export async function executeStartup(
 						: "uv";
 				const pythonVersion =
 					typeof selectedStart.env === "object" &&
-					"version" in selectedStart.env
+						"version" in selectedStart.env
 						? selectedStart.env.version
 						: "";
 
 				log(
 					io,
 					id,
-					`INFO: Using virtual environment: ${envName} with ${envType}${
-						pythonVersion ? ` (Python ${pythonVersion})` : ""
+					`INFO: Using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""
 					}`,
 				);
 
@@ -618,54 +621,54 @@ async function createVirtualEnvCommands(
 	// filter and ensure commands is an array of strings without empty strings
 	const commandStrings = Array.isArray(commands)
 		? commands.flatMap((cmd) => {
-				if (typeof cmd === "string" && cmd.trim()) {
-					return [cmd.trim()];
-				}
-				if (
-					cmd &&
-					typeof cmd === "object" &&
-					typeof cmd.command === "string" &&
-					cmd.command.trim()
-				) {
-					// Apply platform filtering
-					if ("platform" in cmd) {
-						const cmdPlatform = cmd.platform.toLowerCase();
-						const normalizedPlatform =
-							currentPlatform === "win32"
-								? "windows"
-								: currentPlatform === "darwin"
-									? "mac"
-									: currentPlatform === "linux"
-										? "linux"
-										: currentPlatform;
+			if (typeof cmd === "string" && cmd.trim()) {
+				return [cmd.trim()];
+			}
+			if (
+				cmd &&
+				typeof cmd === "object" &&
+				typeof cmd.command === "string" &&
+				cmd.command.trim()
+			) {
+				// Apply platform filtering
+				if ("platform" in cmd) {
+					const cmdPlatform = cmd.platform.toLowerCase();
+					const normalizedPlatform =
+						currentPlatform === "win32"
+							? "windows"
+							: currentPlatform === "darwin"
+								? "mac"
+								: currentPlatform === "linux"
+									? "linux"
+									: currentPlatform;
 
-						// if platform does not match current platform, skip
-						if (cmdPlatform !== normalizedPlatform) {
-							logger.info(
-								`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
-							);
-							return [];
-						}
+					// if platform does not match current platform, skip
+					if (cmdPlatform !== normalizedPlatform) {
+						logger.info(
+							`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+						);
+						return [];
 					}
-
-					// Apply GPU filtering
-					if ("gpus" in cmd) {
-						const allowedGpus = Array.isArray(cmd.gpus)
-							? cmd.gpus.map((g: string) => g.toLowerCase())
-							: [cmd.gpus.toLowerCase()];
-
-						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
-							logger.info(
-								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
-							);
-							return [];
-						}
-					}
-
-					return [cmd.command.trim()];
 				}
-				return [];
-			})
+
+				// Apply GPU filtering
+				if ("gpus" in cmd) {
+					const allowedGpus = Array.isArray(cmd.gpus)
+						? cmd.gpus.map((g: string) => g.toLowerCase())
+						: [cmd.gpus.toLowerCase()];
+
+					if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+						logger.info(
+							`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+						);
+						return [];
+					}
+				}
+
+				return [cmd.command.trim()];
+			}
+			return [];
+		})
 		: [];
 
 	// add python version flag if specified
