@@ -86,7 +86,8 @@ export const it = {
 			success: "Segnalazione inviata!",
 			failed: "Impossibile inviare la segnalazione",
 			badContent: "Segnala contenuto inappropriato",
-			badContentDescription: "Successivamente, aggiungi informazioni sulla tua segnalazione a",
+			badContentDescription:
+				"Successivamente, aggiungi informazioni sulla tua segnalazione a",
 		},
 	},
 
@@ -219,7 +220,8 @@ export const it = {
 			},
 			deleteCache: {
 				label: "Elimina cache",
-				description: "Rimuovi tutti i dati memorizzati nella cache dalle applicazioni.",
+				description:
+					"Rimuovi tutti i dati memorizzati nella cache dalle applicazioni.",
 				button: "Elimina cache",
 				deleting: "Eliminazione in corso...",
 				deleted: "Eliminato",
@@ -259,8 +261,7 @@ export const it = {
 			},
 			intenseBackgrounds: {
 				label: "Colori di sfondo intensi",
-				description:
-					"Usa colori di sfondo più vivaci anziché toni sottili.",
+				description: "Usa colori di sfondo più vivaci anziché toni sottili.",
 			},
 			compactView: {
 				label: "Visualizzazione compatta",
@@ -276,7 +277,8 @@ export const it = {
 			},
 			installationAlerts: {
 				label: "Avvisi di installazione",
-				description: "Ricevi notifiche al completamento delle installazioni di applicazioni.",
+				description:
+					"Ricevi notifiche al completamento delle installazioni di applicazioni.",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
@@ -292,7 +294,8 @@ export const it = {
 			title: "Privacy",
 			errorReporting: {
 				label: "Segnalazione errori",
-				description: "Aiuta a migliorare Dione inviando report di errori anonimi.",
+				description:
+					"Aiuta a migliorare Dione inviando report di errori anonimi.",
 			},
 		},
 		other: {
@@ -304,7 +307,8 @@ export const it = {
 			},
 			logsDirectory: {
 				label: "Cartella log",
-				description: "Posizione in cui vengono archiviati i log dell'applicazione.",
+				description:
+					"Posizione in cui vengono archiviati i log dell'applicazione.",
 			},
 			exportLogs: {
 				label: "Esporta log di debug",
@@ -351,7 +355,8 @@ export const it = {
 		error: "Impossibile inviare la segnalazione. Riprova.",
 		send: "Invia segnalazione",
 		sending: "Invio in corso...",
-		contribute: "Aiutaci a rendere questo script compatibile con tutti i dispositivi",
+		contribute:
+			"Aiutaci a rendere questo script compatibile con tutti i dispositivi",
 	},
 
 	// quick launch component
@@ -363,7 +368,8 @@ export const it = {
 		},
 		selectApp: {
 			title: "Seleziona un'app",
-			description: "{count} app sono disponibili. Puoi sceglierne fino a {max}.",
+			description:
+				"{count} app sono disponibili. Puoi sceglierne fino a {max}.",
 		},
 	},
 
@@ -412,7 +418,8 @@ export const it = {
 		},
 		step3: {
 			title: "Installa Ollama",
-			description: "Dio AI utilizza Ollama per funzionare con LLM all'interno del tuo sistema.",
+			description:
+				"Dio AI utilizza Ollama per funzionare con LLM all'interno del tuo sistema.",
 			installing: "Installazione in corso...",
 			startingDownload: "Avvio del download...",
 			installNow: "Installa ora",
@@ -453,7 +460,8 @@ export const it = {
 			subtitle: "inaspettato",
 			hasOccurred: "si è verificato",
 			deps: "Dione non è stato in grado di rimuovere alcuna dipendenza, per favore fallo manualmente.",
-			general: "Riprova più tardi o controlla i log per ulteriori informazioni.",
+			general:
+				"Riprova più tardi o controlla i log per ulteriori informazioni.",
 		},
 		loading: {
 			title: "Caricamento in corso...",
@@ -536,7 +544,8 @@ export const it = {
 			uploading: "Caricamento in corso...",
 			errors: {
 				uploadFailed: "Impossibile caricare lo script. Riprova.",
-				uploadError: "Si è verificato un errore durante il caricamento dello script.",
+				uploadError:
+					"Si è verificato un errore durante il caricamento dello script.",
 			},
 		},
 	},
@@ -584,9 +593,11 @@ export const it = {
 		},
 		local: {
 			shareUrl: "URL di condivisione",
-			urlDescription: "Condividi questo URL con dispositivi sulla tua rete locale",
+			urlDescription:
+				"Condividi questo URL con dispositivi sulla tua rete locale",
 			localNetwork: "Rete locale:",
-			description: "Questo URL funziona sui dispositivi connessi alla stessa rete.",
+			description:
+				"Questo URL funziona sui dispositivi connessi alla stessa rete.",
 		},
 		public: {
 			shareUrl: "URL pubblico",
@@ -597,7 +608,8 @@ export const it = {
 			stopSharing: "Arresta la condivisione",
 		},
 		errors: {
-			noAddress: "Impossibile ottenere l'indirizzo di rete. Controlla la tua connessione.",
+			noAddress:
+				"Impossibile ottenere l'indirizzo di rete. Controlla la tua connessione.",
 			loadFailed: "Impossibile caricare le informazioni di rete.",
 			noUrl: "Nessun URL disponibile da copiare.",
 			copyFailed: "Impossibile copiare negli appunti.",
@@ -657,7 +669,8 @@ export const it = {
 	editor: {
 		selectFile: "Seleziona un file per iniziare a modificare",
 		previewNotAvailable: "Anteprima non disponibile per questo file.",
-		mediaNotSupported: "L'anteprima per questo tipo di media non è ancora supportata.",
+		mediaNotSupported:
+			"L'anteprima per questo tipo di media non è ancora supportata.",
 		previewOnly: "Solo anteprima",
 		unsaved: "Non salvato",
 		retry: "Riprova",
@@ -841,15 +854,18 @@ export const it = {
 		deleted: "Eliminato",
 		failedToDeleteEntry: "Impossibile eliminare la voce",
 		workspaceNotAvailable: "Il workspace non è disponibile",
-		selectFileOrFolderToRename: "Seleziona un file o una cartella da rinominare",
+		selectFileOrFolderToRename:
+			"Seleziona un file o una cartella da rinominare",
 		cannotRenameWorkspaceRoot: "Impossibile rinominare la root del workspace",
 		entryRenamed: "Voce rinominata",
 		fileSavedSuccessfully: "File salvato con successo",
 		failedToSaveFile: "Impossibile salvare il file",
-		mediaFilesCannotBeOpened: "I file multimediali non possono essere aperti nell'editor.",
+		mediaFilesCannotBeOpened:
+			"I file multimediali non possono essere aperti nell'editor.",
 		binaryFilesCannotBeOpened:
 			"I file binari ed eseguibili non possono essere aperti nell'editor.",
-		thisFileTypeCannotBeEdited: "Questo tipo di file non può ancora essere modificato.",
+		thisFileTypeCannotBeEdited:
+			"Questo tipo di file non può ancora essere modificato.",
 	},
 
 	// error messages
@@ -892,7 +908,8 @@ export const it = {
 	feedErrors: {
 		invalidDataFormat: "Formato dati non valido dall'API",
 		failedToFetchScripts: "Impossibile recuperare gli script",
-		offline: "Sei offline e non c'è contenuto memorizzato nella cache disponibile.",
+		offline:
+			"Sei offline e non c'è contenuto memorizzato nella cache disponibile.",
 	},
 
 	// upload script modal

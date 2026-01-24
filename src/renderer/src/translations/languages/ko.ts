@@ -52,8 +52,7 @@ export const ko = {
 					"설정을 업데이트하는 중에 오류가 발생했습니다. 다시 시도하세요.",
 				samePath:
 					"새 업데이트에서 오류를 피하려면 Dione 실행 파일과 다른 경로를 선택하세요.",
-				general:
-					"경로 선택 중 오류가 발생했습니다. 다시 시도하세요.",
+				general: "경로 선택 중 오류가 발생했습니다. 다시 시도하세요.",
 			},
 			success: "경로가 성공적으로 구성되었습니다!",
 			systemLanguage: "시스템 언어",
@@ -137,8 +136,7 @@ export const ko = {
 				stop: "%s 중지 오류: %s",
 				uninstall: "%s 제거 오류: %s",
 				serverRunning: "서버가 이미 실행 중입니다.",
-				tooManyApps:
-					"속도를 낮추세요! 이미 6개의 앱이 동시에 실행 중입니다.",
+				tooManyApps: "속도를 낮추세요! 이미 6개의 앱이 동시에 실행 중입니다.",
 			},
 		},
 	},
@@ -163,7 +161,8 @@ export const ko = {
 			title: "업데이트 사용 가능",
 			description:
 				"새로운 버전의 Dione이 사용 가능합니다. 업데이트하려면 앱을 다시 시작하세요.",
-			tooltip: "새 업데이트가 사용 가능합니다. Dione을 다시 시작하여 업데이트하세요.",
+			tooltip:
+				"새 업데이트가 사용 가능합니다. Dione을 다시 시작하여 업데이트하세요.",
 		},
 		login: {
 			title: "다시 환영합니다!",
@@ -172,8 +171,7 @@ export const ko = {
 			loginButton: "Dione으로 로그인",
 			later: "나중에",
 			waitingTitle: "로그인 대기 중...",
-			waitingDescription:
-				"브라우저에서 로그인 프로세스를 완료하여 계속하세요.",
+			waitingDescription: "브라우저에서 로그인 프로세스를 완료하여 계속하세요.",
 			cancel: "취소",
 		},
 		tooltips: {
@@ -199,13 +197,11 @@ export const ko = {
 			title: "애플리케이션",
 			installationDirectory: {
 				label: "설치 디렉토리",
-				description:
-					"새 애플리케이션이 기본적으로 설치될 위치를 선택하세요.",
+				description: "새 애플리케이션이 기본적으로 설치될 위치를 선택하세요.",
 			},
 			binDirectory: {
 				label: "Bin 디렉토리",
-				description:
-					"애플리케이션 이진 파일이 저장될 위치를 선택하세요.",
+				description: "애플리케이션 이진 파일이 저장될 위치를 선택하세요.",
 			},
 			cleanUninstall: {
 				label: "완전 제거",
@@ -214,8 +210,7 @@ export const ko = {
 			},
 			autoOpenAfterInstall: {
 				label: "설치 후 자동 열기",
-				description:
-					"설치 후 처음으로 애플리케이션을 자동으로 엽니다.",
+				description: "설치 후 처음으로 애플리케이션을 자동으로 엽니다.",
 			},
 			deleteCache: {
 				label: "캐시 삭제",
@@ -237,7 +232,8 @@ export const ko = {
 				description:
 					"추천 앱이 애니메이션을 재생하지 않도록 합니다. 대신 부드러운 색상 그래디언트가 표시됩니다.",
 			},
-			helpTranslate: "🤔 당신의 언어가 보이지 않습니까? 더 많이 추가하는 데 도움을 주세요!",
+			helpTranslate:
+				"🤔 당신의 언어가 보이지 않습니까? 더 많이 추가하는 데 도움을 주세요!",
 			theme: {
 				label: "테마",
 				description: "애플리케이션의 색상 테마를 선택하세요.",
@@ -259,8 +255,7 @@ export const ko = {
 			},
 			intenseBackgrounds: {
 				label: "강렬한 배경색",
-				description:
-					"미묘한 톤 대신 더 생생한 배경색을 사용합니다.",
+				description: "미묘한 톤 대신 더 생생한 배경색을 사용합니다.",
 			},
 			compactView: {
 				label: "콤팩트 뷰",
@@ -292,7 +287,8 @@ export const ko = {
 			title: "개인정보",
 			errorReporting: {
 				label: "오류 보고",
-				description: "익명의 오류 보고서를 전송하여 Dione을 개선하는 데 도움을 주세요.",
+				description:
+					"익명의 오류 보고서를 전송하여 Dione을 개선하는 데 도움을 주세요.",
 			},
 		},
 		other: {
@@ -308,8 +304,7 @@ export const ko = {
 			},
 			exportLogs: {
 				label: "디버그 로그 내보내기",
-				description:
-					"모든 로그 및 시스템 정보를 zip 파일로 내보냅니다.",
+				description: "모든 로그 및 시스템 정보를 zip 파일로 내보냅니다.",
 				button: "로그 내보내기",
 			},
 			submitFeedback: {
@@ -340,13 +335,11 @@ export const ko = {
 	// report form
 	report: {
 		title: "문제 설명",
-		description:
-			"발생한 상황과 시도하던 작업에 대해 자세히 설명해주세요.",
+		description: "발생한 상황과 시도하던 작업에 대해 자세히 설명해주세요.",
 		placeholder:
 			"예: 애플리케이션을 설치하려고 할 때 이 오류가 발생했습니다...",
 		systemInformationTitle: "시스템 정보",
-		disclaimer:
-			"다음 시스템 정보와 익명의 ID가 보고서에 포함됩니다.",
+		disclaimer: "다음 시스템 정보와 익명의 ID가 보고서에 포함됩니다.",
 		success: "보고서가 성공적으로 전송되었습니다!",
 		error: "보고서를 전송하지 못했습니다. 다시 시도하세요.",
 		send: "보고서 전송",
@@ -363,7 +356,8 @@ export const ko = {
 		},
 		selectApp: {
 			title: "앱 선택",
-			description: "{count}개의 앱을 사용할 수 있습니다. {max}개까지 선택할 수 있습니다.",
+			description:
+				"{count}개의 앱을 사용할 수 있습니다. {max}개까지 선택할 수 있습니다.",
 		},
 	},
 
@@ -428,8 +422,7 @@ export const ko = {
 			subtitle: "제거할 항목 선택",
 		},
 		dependencies: "의존성",
-		depsDescription:
-			"애플리케이션과 함께 제거할 의존성을 선택하세요:",
+		depsDescription: "애플리케이션과 함께 제거할 의존성을 선택하세요:",
 		uninstall: {
 			title: "제거",
 			deps: "의존성 제거",
@@ -657,7 +650,8 @@ export const ko = {
 	editor: {
 		selectFile: "편집을 시작할 파일을 선택하세요",
 		previewNotAvailable: "이 파일에 대해 미리보기를 사용할 수 없습니다.",
-		mediaNotSupported: "이 미디어 유형에 대한 미리보기는 아직 지원되지 않습니다.",
+		mediaNotSupported:
+			"이 미디어 유형에 대한 미리보기는 아직 지원되지 않습니다.",
 		previewOnly: "미리보기만",
 		unsaved: "저장되지 않음",
 		retry: "재시도",
@@ -860,7 +854,8 @@ export const ko = {
 		unableToOpenWorkspace: "워크스페이스를 열 수 없습니다",
 		failedToLoadFile: "파일을 로드하지 못했습니다",
 		nameCannotBeEmpty: "이름은 비어있을 수 없습니다",
-		nameContainsInvalidCharacters: "이름에 유효하지 않은 문자가 포함되어 있습니다",
+		nameContainsInvalidCharacters:
+			"이름에 유효하지 않은 문자가 포함되어 있습니다",
 		failedToCreateEntry: "항목을 만들지 못했습니다",
 		failedToRenameEntry: "항목의 이름을 바꾸지 못했습니다",
 	},

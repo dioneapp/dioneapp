@@ -46,14 +46,12 @@ export const uk = {
 			changeFolder: "Змінити папку",
 			proceedButton: "Вибрати мову та шлях",
 			error: {
-				spaces:
-					"Вибраний шлях не може містити пробіли. Виберіть іншу папку.",
+				spaces: "Вибраний шлях не може містити пробіли. Виберіть іншу папку.",
 				updateConfig:
 					"Під час оновлення конфігурації сталася помилка. Спробуйте ще раз.",
 				samePath:
 					"Щоб уникнути помилок при оновленні, виберіть інший шлях, ніж файл Dione.",
-				general:
-					"Під час вибору шляху сталася помилка. Спробуйте ще раз.",
+				general: "Під час вибору шляху сталася помилка. Спробуйте ще раз.",
 			},
 			success: "Шлях налаштовано успішно!",
 			systemLanguage: "Системна мова",
@@ -172,8 +170,7 @@ export const uk = {
 			loginButton: "Увійти з Dione",
 			later: "Можливо, пізніше",
 			waitingTitle: "Очікування входу...",
-			waitingDescription:
-				"Завершіть вхід у браузері, щоб продовжити.",
+			waitingDescription: "Завершіть вхід у браузері, щоб продовжити.",
 			cancel: "Скасувати",
 		},
 		tooltips: {
@@ -276,7 +273,8 @@ export const uk = {
 			},
 			installationAlerts: {
 				label: "Сповіщення про встановлення",
-				description: "Отримуйте сповіщення, коли встановлення додатків завершено.",
+				description:
+					"Отримуйте сповіщення, коли встановлення додатків завершено.",
 			},
 			discordRPC: {
 				label: "Discord Rich Presence",
@@ -292,7 +290,8 @@ export const uk = {
 			title: "Конфіденційність",
 			errorReporting: {
 				label: "Звіти про помилки",
-				description: "Допоможіть покращити Dione, надішлюючи анонімні звіти про помилки.",
+				description:
+					"Допоможіть покращити Dione, надішлюючи анонімні звіти про помилки.",
 			},
 		},
 		other: {
@@ -314,7 +313,8 @@ export const uk = {
 			},
 			submitFeedback: {
 				label: "Надіслати відгук",
-				description: "Повідомляйте про будь-які проблеми, з якими ви зіткнулися.",
+				description:
+					"Повідомляйте про будь-які проблеми, з якими ви зіткнулися.",
 				button: "Надіслати звіт",
 			},
 			showOnboarding: {
@@ -412,7 +412,8 @@ export const uk = {
 		},
 		step3: {
 			title: "Встановіть Ollama",
-			description: "Dio AI використовує Ollama для роботи з LLMs у вашій системі.",
+			description:
+				"Dio AI використовує Ollama для роботи з LLMs у вашій системі.",
 			installing: "Встановлення...",
 			startingDownload: "Запуск завантаження...",
 			installNow: "Встановити зараз",
@@ -428,8 +429,7 @@ export const uk = {
 			subtitle: "Виберіть, що видалити",
 		},
 		dependencies: "Залежності",
-		depsDescription:
-			"Виберіть залежності для видалення разом з програмою:",
+		depsDescription: "Виберіть залежності для видалення разом з програмою:",
 		uninstall: {
 			title: "Видалити",
 			deps: "Видалити залежності",
@@ -453,7 +453,8 @@ export const uk = {
 			subtitle: "помилка",
 			hasOccurred: "сталася",
 			deps: "Dione не змогла видалити жодних залежностей. Виконайте це вручну.",
-			general: "Спробуйте ще раз пізніше або перевірте логи для отримання докладнішої інформації.",
+			general:
+				"Спробуйте ще раз пізніше або перевірте логи для отримання докладнішої інформації.",
 		},
 		loading: {
 			title: "Завантаження...",
@@ -584,9 +585,11 @@ export const uk = {
 		},
 		local: {
 			shareUrl: "Посилання для спільного доступу",
-			urlDescription: "Поділіться цим посиланням з пристроями у вашій локальній мережі",
+			urlDescription:
+				"Поділіться цим посиланням з пристроями у вашій локальній мережі",
 			localNetwork: "Локальна мережа:",
-			description: "Це посилання працює на пристроях, підключених до однієї мережі.",
+			description:
+				"Це посилання працює на пристроях, підключених до однієї мережі.",
 		},
 		public: {
 			shareUrl: "Публічне посилання",
@@ -628,8 +631,7 @@ export const uk = {
 			},
 			earlyBirds: {
 				title: "Отримати ранні оновлення",
-				description:
-					"Отримуйте нові функції та оновлення раніше за всіх.",
+				description: "Отримуйте нові функції та оновлення раніше за всіх.",
 			},
 			giveOutLikes: {
 				title: "Ставити вподобання",
@@ -657,7 +659,8 @@ export const uk = {
 	editor: {
 		selectFile: "Виберіть файл для редагування",
 		previewNotAvailable: "Попередній перегляд недоступний для цього файлу.",
-		mediaNotSupported: "Попередній перегляд для цього типу медіа ще не підтримується.",
+		mediaNotSupported:
+			"Попередній перегляд для цього типу медіа ще не підтримується.",
 		previewOnly: "Тільки попередній перегляд",
 		unsaved: "Не збережено",
 		retry: "Повторити",
@@ -842,11 +845,13 @@ export const uk = {
 		failedToDeleteEntry: "Не вдалося видалити елемент",
 		workspaceNotAvailable: "Робочий простір недоступний",
 		selectFileOrFolderToRename: "Виберіть файл або папку для перейменування",
-		cannotRenameWorkspaceRoot: "Не можна перейменувати корінь робочого простору",
+		cannotRenameWorkspaceRoot:
+			"Не можна перейменувати корінь робочого простору",
 		entryRenamed: "Елемент перейменовано",
 		fileSavedSuccessfully: "Файл успішно збережено",
 		failedToSaveFile: "Не вдалося зберегти файл",
-		mediaFilesCannotBeOpened: "Файли медіа не можуть бути відкриті в редакторі.",
+		mediaFilesCannotBeOpened:
+			"Файли медіа не можуть бути відкриті в редакторі.",
 		binaryFilesCannotBeOpened:
 			"Двійкові та виконавчі файли не можуть бути відкриті в редакторі.",
 		thisFileTypeCannotBeEdited: "Цей тип файлу ще не можна редагувати.",
@@ -903,9 +908,9 @@ export const uk = {
 	// running apps
 	runningApps: {
 		running: "Виконання",
-		thereIsAnAppRunningInBackground:
-			"У фоні працює додаток.",
-		failedToReloadQuickLaunch: "Не вдалося перезавантажити додатки швидкого запуску",
+		thereIsAnAppRunningInBackground: "У фоні працює додаток.",
+		failedToReloadQuickLaunch:
+			"Не вдалося перезавантажити додатки швидкого запуску",
 		failedToFetchInstalledApps: "Не вдалося завантажити встановлені додатки",
 	},
 } as const;

@@ -222,9 +222,7 @@ export const executeCommand = async (
 		const pid = ptyProcess.pid;
 
 		if (isWindows) {
-			ptyProcess.write(
-				`@echo off\r\n${command}\r\nexit %ERRORLEVEL%\r\n`,
-			);
+			ptyProcess.write(`@echo off\r\n${command}\r\nexit %ERRORLEVEL%\r\n`);
 		} else {
 			ptyProcess.write(`${command}; exit $?\n`);
 		}
