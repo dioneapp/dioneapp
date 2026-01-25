@@ -238,27 +238,99 @@ export const executeCommand = async (
 
 		const cleanTerminal = (data: string): string => {
 			let cleaned = data;
+
 			cleaned = cleaned.replace(/\x1B\][^\x07]*\x07/g, "");
 			cleaned = cleaned.replace(
 				/\x1B\[2J|\x1B\[H|\x1B\?25[hl]|\x1B\?9001[hl]|\x1B\?1004[hl]/g,
 				"",
 			);
-			cleaned = cleaned.replace(/[\r\n]{4,}/g, "");
+
+			cleaned = cleaned
+				.replace(/^Microsoft Windows\[Version\s+[\d.]+\].*$/gm, "")
+				.replace(/^\[K\[[0-9;]+m?$/gm, "")
+				.replace(/^Copyright \(C\) Microsoft Corporation.*$/gm, "")
+				.replace(/^.*All rights reserved\..*$/gm, "")
+				.replace(/^C:\\.*>$/gm, "")
+				.replace(/^\[2m\[2m$/gm, "");
+
+			cleaned = cleaned.replace(/^[\$\#\>]\s*/gm, "");
+			cleaned = cleaned.replace(/^\[[^\]]+\]\s*\$\s*/gm, "");
+			cleaned = cleaned.replace(/^.*@.*\$~\s*/gm, "");
+
+			cleaned = cleaned.replace(/[\r\n]{4,}/g, "\r\n\r\n");
 
 			return cleaned;
 		};
 
+		let firstChunkProcessed = false;
+
 		ptyProcess.onData((data: string) => {
-			if (data.includes("Microsoft Windows")) return;
+			if (
+				data.includes("Microsoft Windows") ||
+				data.includes("[K[[2m[2m") ||
+				data.match(/Copyright \(C\) Microsoft Corporation/)
+			) {
+				return;
+			}
 
 			const cleanData = cleanTerminal(data);
 
-			outputData += cleanData;
-			options?.onOutput?.(cleanData);
-			io.to(id).emit(logs, {
-				type: "log",
-				content: cleanData,
-			});
+			if (!firstChunkProcessed) {
+				const lines = cleanData.split(/\r?\n/);
+				const filteredLines: string[] = [];
+
+				for (const line of lines) {
+					const trimmedLine = line.trim();
+
+					if (trimmedLine === "") {
+						continue;
+					}
+
+					if (trimmedLine.toLowerCase().startsWith("@echo off")) {
+						continue;
+					}
+
+					const commandTrimmed = command.trim();
+
+					if (
+						trimmedLine === commandTrimmed ||
+						trimmedLine === commandTrimmed + ";" ||
+						trimmedLine.startsWith(commandTrimmed + "; exit")
+					) {
+						continue;
+					}
+
+					if (
+						isWindows &&
+						trimmedLine.toLowerCase().startsWith(commandTrimmed.toLowerCase())
+					) {
+						continue;
+					}
+
+					filteredLines.push(line);
+				}
+
+				if (filteredLines.length > 0) {
+					firstChunkProcessed = true;
+				}
+
+				const finalCleanData = filteredLines.join("\r\n");
+				if (finalCleanData) {
+					outputData += finalCleanData;
+					options?.onOutput?.(finalCleanData);
+					io.to(id).emit(logs, {
+						type: "log",
+						content: finalCleanData,
+					});
+				}
+			} else {
+				outputData += cleanData;
+				options?.onOutput?.(cleanData);
+				io.to(id).emit(logs, {
+					type: "log",
+					content: cleanData,
+				});
+			}
 		});
 
 		return new Promise<{ code: number; stdout: string; stderr: string }>(
