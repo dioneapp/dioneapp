@@ -239,14 +239,12 @@ export const executeCommand = async (
 		const cleanTerminal = (data: string): string => {
 			let cleaned = data;
 
-			// Remove ANSI escape sequences
 			cleaned = cleaned.replace(/\x1B\][^\x07]*\x07/g, "");
 			cleaned = cleaned.replace(
 				/\x1B\[2J|\x1B\[H|\x1B\?25[hl]|\x1B\?9001[hl]|\x1B\?1004[hl]/g,
 				"",
 			);
 
-			// Remove Windows version/copyright lines (full lines only)
 			cleaned = cleaned
 				.replace(/^Microsoft Windows\[Version\s+[\d.]+\].*$/gm, "")
 				.replace(/^\[K\[[0-9;]+m?$/gm, "")
@@ -255,22 +253,18 @@ export const executeCommand = async (
 				.replace(/^C:\\.*>$/gm, "")
 				.replace(/^\[2m\[2m$/gm, "");
 
-			// Remove shell prompts ($, #, > at start of line followed by space)
 			cleaned = cleaned.replace(/^[\$\#\>]\s*/gm, "");
 			cleaned = cleaned.replace(/^\[[^\]]+\]\s*\$\s*/gm, "");
 			cleaned = cleaned.replace(/^.*@.*\$~\s*/gm, "");
 
-			// Remove multiple consecutive blank lines (keep max 2 newlines)
 			cleaned = cleaned.replace(/[\r\n]{4,}/g, "\r\n\r\n");
 
 			return cleaned;
 		};
 
-		// State to track if we've passed the initial echo/command output
 		let firstChunkProcessed = false;
 
 		ptyProcess.onData((data: string) => {
-			// Check for Windows copyright/version lines
 			if (
 				data.includes("Microsoft Windows") ||
 				data.includes("[K[[2m[2m") ||
@@ -281,31 +275,23 @@ export const executeCommand = async (
 
 			const cleanData = cleanTerminal(data);
 
-			// Handle first chunk - it may contain the echo of the command
 			if (!firstChunkProcessed) {
-				// Look for the echo pattern in Windows: @echo off + command
-				// or in Unix: the command itself echoed back
 				const lines = cleanData.split(/\r?\n/);
 				const filteredLines: string[] = [];
 
 				for (const line of lines) {
 					const trimmedLine = line.trim();
 
-					// Skip empty lines at the beginning
 					if (trimmedLine === "") {
 						continue;
 					}
 
-					// Skip @echo off and similar Windows batch echoes
 					if (trimmedLine.toLowerCase().startsWith("@echo off")) {
 						continue;
 					}
 
-					// Skip lines that are just the command echoed back
-					// Be careful not to skip legitimate command output
 					const commandTrimmed = command.trim();
 
-					// Check if line is exactly the command or starts with it
 					if (
 						trimmedLine === commandTrimmed ||
 						trimmedLine === commandTrimmed + ";" ||
@@ -314,7 +300,6 @@ export const executeCommand = async (
 						continue;
 					}
 
-					// Check for Windows-style command echo (command followed by exit code pattern)
 					if (
 						isWindows &&
 						trimmedLine.toLowerCase().startsWith(commandTrimmed.toLowerCase())
@@ -322,16 +307,13 @@ export const executeCommand = async (
 						continue;
 					}
 
-					// This line is part of the real output
 					filteredLines.push(line);
 				}
 
-				// If we have real content, mark as processed
 				if (filteredLines.length > 0) {
 					firstChunkProcessed = true;
 				}
 
-				// Reconstruct the cleaned data
 				const finalCleanData = filteredLines.join("\r\n");
 				if (finalCleanData) {
 					outputData += finalCleanData;
@@ -342,7 +324,6 @@ export const executeCommand = async (
 					});
 				}
 			} else {
-				// Subsequent chunks - just add the cleaned data
 				outputData += cleanData;
 				options?.onOutput?.(cleanData);
 				io.to(id).emit(logs, {
