@@ -224,12 +224,12 @@ async function downloadBootstrapperExecutable(
 	}
 
 	const tempPath = `${targetPath}.part`;
-	await fsp.rm(tempPath, { force: true }).catch(() => {});
+	await fsp.rm(tempPath, { force: true }).catch(() => { });
 
 	let handle: fsp.FileHandle | undefined;
 	let writable: fs.WriteStream | undefined;
 	const cleanupPartial = async () => {
-		await fsp.rm(tempPath, { force: true }).catch(() => {});
+		await fsp.rm(tempPath, { force: true }).catch(() => { });
 	};
 
 	try {
@@ -270,7 +270,7 @@ async function downloadBootstrapperExecutable(
 		if (handle) {
 			try {
 				await handle.close();
-			} catch {}
+			} catch { }
 			handle = undefined;
 		}
 		writable?.destroy();
@@ -415,7 +415,7 @@ async function downloadChannelManifestContent(
 			url,
 			{
 				headers: {
-					"User-Agent": "DioneApp/1.0 (BuildToolsInstaller)",
+					"User-Agent": `DioneApp/1.0 (retry:${redirectCount})`,
 				},
 			},
 			(response) => {
@@ -462,66 +462,7 @@ async function downloadChannelManifestContent(
 	});
 }
 
-async function ensureChannelManifest(
-	tempDir: string,
-	onLog?: LogSink,
-): Promise<string> {
-	const manifestPath = path.join(tempDir, "channelManifest.json");
-	let lastError: unknown;
-	await fsp.rm(manifestPath, { force: true }).catch(() => {});
-
-	for (let attempt = 0; attempt < MAX_CHANNEL_MANIFEST_ATTEMPTS; attempt += 1) {
-		if (attempt === 0) {
-			logMessage(onLog, "Prefetching Visual Studio channel manifest...");
-		} else {
-			logMessage(
-				onLog,
-				`Retrying Visual Studio channel manifest download (attempt ${attempt + 1}/${MAX_CHANNEL_MANIFEST_ATTEMPTS})...`,
-				"warn",
-			);
-		}
-
-		try {
-			const content =
-				await downloadChannelManifestContent(CHANNEL_MANIFEST_URL);
-			JSON.parse(content);
-			await fsp.writeFile(manifestPath, content, "utf8");
-			logMessage(
-				onLog,
-				`Using locally validated Visual Studio channel manifest at ${manifestPath}`,
-			);
-			return manifestPath;
-		} catch (error) {
-			lastError = error;
-			await fsp.rm(manifestPath, { force: true }).catch(() => {});
-			const message = error instanceof Error ? error.message : String(error);
-			const isLastAttempt = attempt >= MAX_CHANNEL_MANIFEST_ATTEMPTS - 1;
-			logMessage(
-				onLog,
-				`Failed to validate Visual Studio channel manifest: ${message}`,
-				isLastAttempt ? "error" : "warn",
-			);
-
-			if (!isLastAttempt) {
-				const backoff = CHANNEL_MANIFEST_BACKOFF_BASE_MS * (attempt + 1);
-				logMessage(
-					onLog,
-					`Retrying channel manifest download in ${backoff} ms...`,
-					"warn",
-				);
-				await delay(backoff);
-			}
-		}
-	}
-
-	throw new Error(
-		lastError instanceof Error
-			? lastError.message
-			: "Unable to download Visual Studio channel manifest.",
-	);
-}
-
-function cleanupBootstrapperCache(onLog?: LogSink) {
+function cleanupBootstrapperCache(installPath: string, onLog?: LogSink) {
 	if (!isWindows()) return;
 
 	const programData = process.env.ProgramData || "C:\\ProgramData";
@@ -541,6 +482,9 @@ function cleanupBootstrapperCache(onLog?: LogSink) {
 	let removed = 0;
 
 	try {
+		fs.rmSync(installPath, { recursive: true, force: true });
+
+
 		for (const entry of fs.readdirSync(cacheDir)) {
 			if (!/^vs_setup_bootstrapper_.*\.json$/i.test(entry)) {
 				continue;
@@ -569,8 +513,7 @@ function cleanupBootstrapperCache(onLog?: LogSink) {
 	if (removed > 0) {
 		logMessage(
 			onLog,
-			`Cleared ${removed} Visual Studio bootstrapper manifest ${
-				removed === 1 ? "file" : "files"
+			`Cleared ${removed} Visual Studio bootstrapper manifest ${removed === 1 ? "file" : "files"
 			} from ${cacheDir}.`,
 		);
 	}
@@ -608,7 +551,7 @@ async function acquireInstallMutex(
 					logger.warn(`Failed to close install mutex handle: ${closeError}`);
 				}
 
-				await fsp.unlink(lockPath).catch(() => {});
+				await fsp.unlink(lockPath).catch(() => { });
 			};
 		} catch (error) {
 			const err = error as NodeJS.ErrnoException;
@@ -864,8 +807,10 @@ try {
 				"error",
 			);
 		} else {
-			execSync('taskkill /IM "vs_setup.exe" /F /T');
-			execSync('taskkill /IM "vsinstaller.exe" /F /T');
+			try {
+				execSync('taskkill /IM "vs_setup.exe" /F /T');
+				execSync('taskkill /IM "vsinstaller.exe" /F /T');
+			} catch { }
 		}
 
 		return {
@@ -884,12 +829,12 @@ try {
 			try {
 				execSync('taskkill /IM "vs_setup.exe" /F /T');
 				execSync('taskkill /IM "vsinstaller.exe" /F /T');
-			} catch {}
+			} catch { }
 			throw new Error("Aborted");
 		}
 		throw e;
 	} finally {
-		await fsp.rm(scriptPath, { force: true }).catch(() => {});
+		await fsp.rm(scriptPath, { force: true }).catch(() => { });
 	}
 }
 
@@ -1157,9 +1102,9 @@ function getBuildToolsComponents(sdkVersion: string): string[] {
 function createInstallArguments(
 	installPath: string,
 	sdkVersion: string,
-	manifestPath: string,
-	options?: { layoutPath?: string; noweb?: boolean },
+	options?: { layoutPath?: string; noweb?: boolean; channelUri?: string },
 ): string[] {
+	const channelUri = options?.channelUri ?? CHANNEL_MANIFEST_URL;
 	const args = [
 		"--installPath",
 		installPath,
@@ -1172,7 +1117,7 @@ function createInstallArguments(
 		"--channelId",
 		"VisualStudio.17.Release",
 		"--channelUri",
-		manifestPath,
+		channelUri,
 	];
 
 	if (options?.layoutPath) {
@@ -1193,7 +1138,6 @@ function createInstallArguments(
 function createLayoutArguments(
 	layoutPath: string,
 	sdkVersion: string,
-	manifestPath: string,
 ): string[] {
 	const args = [
 		"--layout",
@@ -1203,7 +1147,7 @@ function createLayoutArguments(
 		"--channelId",
 		"VisualStudio.17.Release",
 		"--channelUri",
-		manifestPath,
+		CHANNEL_MANIFEST_URL,
 	];
 
 	for (const component of getBuildToolsComponents(sdkVersion)) {
@@ -1313,12 +1257,8 @@ async function attemptInstall(
 					binFolder,
 					onLog,
 				);
-				const manifestPath = await ensureChannelManifest(
-					bootstrap.tempDir,
-					onLog,
-				);
 
-				cleanupBootstrapperCache(onLog);
+				cleanupBootstrapperCache(installPath, onLog);
 				stopVisualStudioInstallerProcesses(onLog);
 
 				if (options.signal?.aborted) throw new Error("Aborted");
@@ -1333,7 +1273,6 @@ async function attemptInstall(
 				const args = createInstallArguments(
 					installPath,
 					sdkVersion,
-					manifestPath,
 				);
 				const runResult = await runElevatedInstaller(
 					{
@@ -1391,7 +1330,7 @@ async function attemptInstall(
 							"Detected Visual Studio channel manifest parse error (0x80131500). Clearing cached bootstrapper manifests and retrying once...",
 							"warn",
 						);
-						cleanupBootstrapperCache(onLog);
+						cleanupBootstrapperCache(installPath, onLog);
 						await delay(1000);
 						continue;
 					}
@@ -1558,7 +1497,6 @@ async function attemptLayoutFallback(
 
 	try {
 		bootstrap = await ensureBootstrapperDownloadedUnlocked(binFolder, onLog);
-		const manifestPath = await ensureChannelManifest(bootstrap.tempDir, onLog);
 
 		if (signal?.aborted) throw new Error("Aborted");
 
@@ -1567,13 +1505,12 @@ async function attemptLayoutFallback(
 			"Creating offline Visual Studio Build Tools layout for required components...",
 		);
 
-		cleanupBootstrapperCache(onLog);
+		cleanupBootstrapperCache(installPath, onLog);
 		stopVisualStudioInstallerProcesses(onLog);
 
 		const layoutArgs = createLayoutArguments(
 			layoutDir,
 			sdkVersion,
-			manifestPath,
 		);
 		const layoutResult = await runElevatedInstaller(
 			{
@@ -1652,13 +1589,12 @@ async function attemptLayoutFallback(
 			"Offline layout created successfully. Installing Visual Studio Build Tools with --noweb...",
 		);
 
-		cleanupBootstrapperCache(onLog);
+		cleanupBootstrapperCache(installPath, onLog);
 		stopVisualStudioInstallerProcesses(onLog);
 
 		const installArgs = createInstallArguments(
 			installPath,
 			sdkVersion,
-			manifestPath,
 			{
 				layoutPath: layoutDir,
 				noweb: true,
