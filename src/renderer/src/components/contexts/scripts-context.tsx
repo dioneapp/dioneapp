@@ -121,6 +121,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	// progress state
 	const [progress, setProgress] = useState<Record<string, ProgressState>>({});
 	const lastContentLength = useRef(0);
+	const [currentCommand, setCurrentCommand] = useState<Record<string, string>>({});
 
 	useEffect(() => {
 		setData(null);
@@ -407,6 +408,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 					setProgress,
 					setShouldCatch,
 					shouldCatch,
+					setCurrentCommand,
 				});
 				socketsRef.current[appId] = {
 					socket: newSocket,
@@ -618,6 +620,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			setShouldCatch,
 			terminalStatesRef,
 			lastContentLength,
+			currentCommand,
+			setCurrentCommand,
 		}),
 		[
 			installedApps,
@@ -649,6 +653,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			shouldCatch,
 			terminalStatesRef,
 			lastContentLength,
+			currentCommand,
+			setCurrentCommand,
 		],
 	);
 

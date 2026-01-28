@@ -58,6 +58,7 @@ export default function Install({
 		shouldCatch,
 		terminalStatesRef,
 		disconnectApp,
+		currentCommand,
 	} = useScriptsContext();
 
 	const { logs, addLogLine, clearLogs, getAllAppLogs } =
@@ -981,6 +982,7 @@ export default function Install({
 									executing={executing}
 									terminalStatesRef={terminalStatesRef}
 									installingDeps={installingDeps}
+									currentCommand={currentCommand[data?.id]}
 								/>
 							)}{" "}
 							{show[data?.id] === "actions" && (

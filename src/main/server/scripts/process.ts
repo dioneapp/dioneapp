@@ -193,6 +193,10 @@ export const executeCommand = async (
 	try {
 		const currentPlatform = getPlatform();
 		const isWindows = currentPlatform === "win32";
+		io.to(id).emit("installUpdate", {
+			type: "currentCommand",
+			content: command,
+		});
 		const dims = processesDimensions.get(id) ?? { cols: 120, rows: 40 };
 
 		logger.info(`Working on directory: ${sanitizePathForLog(workingDir)}`);
@@ -227,6 +231,12 @@ export const executeCommand = async (
 			ptyProcess.write(`${command}; exit $?\n`);
 		}
 
+		if (isWindows) {
+			ptyProcess.write(`@echo off\r\n${command}\r\nexit %ERRORLEVEL%\r\n`);
+		} else {
+			ptyProcess.write(`${command}; exit $?\n`);
+		}
+
 		logger.info(
 			`Executing: ${command.length > 300 ? command.substring(0, 300) + "..." : command}`,
 		);
@@ -236,101 +246,32 @@ export const executeCommand = async (
 			registerProcess(id, pid);
 		}
 
-		const cleanTerminal = (data: string): string => {
-			let cleaned = data;
-
-			cleaned = cleaned.replace(/\x1B\][^\x07]*\x07/g, "");
-			cleaned = cleaned.replace(
-				/\x1B\[2J|\x1B\[H|\x1B\?25[hl]|\x1B\?9001[hl]|\x1B\?1004[hl]/g,
-				"",
-			);
-
-			cleaned = cleaned
-				.replace(/^Microsoft Windows\[Version\s+[\d.]+\].*$/gm, "")
-				.replace(/^\[K\[[0-9;]+m?$/gm, "")
-				.replace(/^Copyright \(C\) Microsoft Corporation.*$/gm, "")
-				.replace(/^.*All rights reserved\..*$/gm, "")
-				.replace(/^C:\\.*>$/gm, "")
-				.replace(/^\[2m\[2m$/gm, "");
-
-			cleaned = cleaned.replace(/^[\$\#\>]\s*/gm, "");
-			cleaned = cleaned.replace(/^\[[^\]]+\]\s*\$\s*/gm, "");
-			cleaned = cleaned.replace(/^.*@.*\$~\s*/gm, "");
-
-			cleaned = cleaned.replace(/[\r\n]{4,}/g, "\r\n\r\n");
-
-			return cleaned;
+		const filterOutput = (
+			data: string,
+			isWindows: boolean,
+		): string => {
+			let text = data;
+			text = text.replace(/\x1b\][^\x07]*\x07/g, "");
+			if (isWindows) {
+				text = text.replace(/Microsoft Windows \[[^\r\n]*\](\r?\n)?/gi, "");
+				text = text.replace(/\(c\)\s*Microsoft Corporation[^\r\n]*\r?\n?/gi, "");
+				text = text.replace(/[A-Z]:\\[^\r\n>]*>@echo off\r?\n?/gi, "");
+				text = text.replace(/@echo off\r?\n?/gi, "");
+				text = text.replace(/exit %ERRORLEVEL%\r?\n?/gi, "");
+			}
+			text = text.replace(/R\r?\n/g, "\r\n");
+			return text;
 		};
 
-		let firstChunkProcessed = false;
-
 		ptyProcess.onData((data: string) => {
-			if (
-				data.includes("Microsoft Windows") ||
-				data.includes("[K[[2m[2m") ||
-				data.match(/Copyright \(C\) Microsoft Corporation/)
-			) {
-				return;
-			}
-
-			const cleanData = cleanTerminal(data);
-
-			if (!firstChunkProcessed) {
-				const lines = cleanData.split(/\r?\n/);
-				const filteredLines: string[] = [];
-
-				for (const line of lines) {
-					const trimmedLine = line.trim();
-
-					if (trimmedLine === "") {
-						continue;
-					}
-
-					if (trimmedLine.toLowerCase().startsWith("@echo off")) {
-						continue;
-					}
-
-					const commandTrimmed = command.trim();
-
-					if (
-						trimmedLine === commandTrimmed ||
-						trimmedLine === commandTrimmed + ";" ||
-						trimmedLine.startsWith(commandTrimmed + "; exit")
-					) {
-						continue;
-					}
-
-					if (
-						isWindows &&
-						trimmedLine.toLowerCase().startsWith(commandTrimmed.toLowerCase())
-					) {
-						continue;
-					}
-
-					filteredLines.push(line);
-				}
-
-				if (filteredLines.length > 0) {
-					firstChunkProcessed = true;
-				}
-
-				const finalCleanData = filteredLines.join("\r\n");
-				if (finalCleanData) {
-					outputData += finalCleanData;
-					options?.onOutput?.(finalCleanData);
-					io.to(id).emit(logs, {
-						type: "log",
-						content: finalCleanData,
-					});
-				}
-			} else {
-				outputData += cleanData;
-				options?.onOutput?.(cleanData);
-				io.to(id).emit(logs, {
-					type: "log",
-					content: cleanData,
-				});
-			}
+			const clean = filterOutput(data, isWindows);
+			if (!clean) return;
+			outputData += clean;
+			options?.onOutput?.(clean);
+			io.to(id).emit(logs, {
+				type: "log",
+				content: clean,
+			});
 		});
 
 		return new Promise<{ code: number; stdout: string; stderr: string }>(

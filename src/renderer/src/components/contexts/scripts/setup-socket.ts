@@ -25,6 +25,7 @@ export function setupSocket({
 	setProgress,
 	shouldCatch,
 	setShouldCatch,
+	setCurrentCommand,
 }: SetupSocketProps): Socket {
 	if (socketsRef.current[appId]?.socket) {
 		console.log(`Socket [${appId}] already exists`);
@@ -259,6 +260,14 @@ export function setupSocket({
 		}) => {
 			const { type, status, content, portToCatch } = message;
 			console.log(`[${appId}] LOG:`, message);
+			if (type === "currentCommand") {
+				setCurrentCommand((prev) => ({
+					...prev,
+					[appId]: content || "",
+				}));
+				return;
+			}
+
 			if (
 				(content && content.toLowerCase().includes("error")) ||
 				status === "error"
