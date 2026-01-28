@@ -127,7 +127,10 @@ export default function TerminalOutput({
 		const newContent = content.substring(lastContentLength.current);
 		if (!newContent) return;
 
-		const cmd = (currentCommand || "").replace(/\s+/g, " ").trim().toLowerCase();
+		const cmd = (currentCommand || "")
+			.replace(/\s+/g, " ")
+			.trim()
+			.toLowerCase();
 
 		const cleaned = newContent
 			.split(/\r?\n/)

@@ -246,15 +246,15 @@ export const executeCommand = async (
 			registerProcess(id, pid);
 		}
 
-		const filterOutput = (
-			data: string,
-			isWindows: boolean,
-		): string => {
+		const filterOutput = (data: string, isWindows: boolean): string => {
 			let text = data;
 			text = text.replace(/\x1b\][^\x07]*\x07/g, "");
 			if (isWindows) {
 				text = text.replace(/Microsoft Windows \[[^\r\n]*\](\r?\n)?/gi, "");
-				text = text.replace(/\(c\)\s*Microsoft Corporation[^\r\n]*\r?\n?/gi, "");
+				text = text.replace(
+					/\(c\)\s*Microsoft Corporation[^\r\n]*\r?\n?/gi,
+					"",
+				);
 				text = text.replace(/[A-Z]:\\[^\r\n>]*>@echo off\r?\n?/gi, "");
 				text = text.replace(/@echo off\r?\n?/gi, "");
 				text = text.replace(/exit %ERRORLEVEL%\r?\n?/gi, "");
