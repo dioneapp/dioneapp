@@ -120,6 +120,8 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 	const [wasJustInstalled, setWasJustInstalled] = useState<boolean>(false);
 	// progress state
 	const [progress, setProgress] = useState<Record<string, ProgressState>>({});
+	const lastContentLength = useRef(0);
+	const [currentCommand, setCurrentCommand] = useState<Record<string, string>>({});
 
 	useEffect(() => {
 		setData(null);
@@ -310,10 +312,11 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			...prev,
 			[appId]: { status: "", content: "" },
 		}));
-
+		lastContentLength.current = 0;
 		const term = terminalStatesRef.current[appId];
 		if (term) {
 			term.clear();
+			term.reset();
 		}
 	}, []);
 
@@ -405,6 +408,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 					setProgress,
 					setShouldCatch,
 					shouldCatch,
+					setCurrentCommand,
 				});
 				socketsRef.current[appId] = {
 					socket: newSocket,
@@ -500,10 +504,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${
-							sockets[data.id]?.isLocal
-								? encodeURIComponent(data.name)
-								: data.id
+						`/install/${sockets[data.id]?.isLocal
+							? encodeURIComponent(data.name)
+							: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},
@@ -616,6 +619,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			shouldCatch,
 			setShouldCatch,
 			terminalStatesRef,
+			lastContentLength,
+			currentCommand,
+			setCurrentCommand,
 		}),
 		[
 			installedApps,
@@ -646,6 +652,9 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			wasJustInstalled,
 			shouldCatch,
 			terminalStatesRef,
+			lastContentLength,
+			currentCommand,
+			setCurrentCommand,
 		],
 	);
 
@@ -663,6 +672,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			setProgress,
 			deleteLogs,
 			setDeleteLogs,
+			lastContentLength,
 		}),
 		[
 			logs,
@@ -673,6 +683,7 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 			statusLog,
 			progress,
 			deleteLogs,
+			lastContentLength,
 		],
 	);
 

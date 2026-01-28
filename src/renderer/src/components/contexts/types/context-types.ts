@@ -66,6 +66,7 @@ export interface ScriptsLogContextType {
 	>;
 	deleteLogs: any[];
 	setDeleteLogs: React.Dispatch<React.SetStateAction<any[]>>;
+	lastContentLength: React.MutableRefObject<number>;
 }
 
 export interface ScriptsContextType {
@@ -140,6 +141,9 @@ export interface ScriptsContextType {
 	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	isLocal?: boolean;
 	terminalStatesRef: RefObject<Record<string, Terminal>>;
+	lastContentLength: React.MutableRefObject<number>;
+	currentCommand: Record<string, string>;
+	setCurrentCommand: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }
 
 // Socket types
@@ -186,6 +190,7 @@ export interface SetupSocketProps {
 	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	shouldCatch: Record<string, boolean>;
 	isLocal?: boolean;
+	setCurrentCommand: React.Dispatch<React.SetStateAction<Record<string, string>>>;
 }
 
 export interface AIContextType {

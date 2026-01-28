@@ -193,6 +193,10 @@ export const executeCommand = async (
 	try {
 		const currentPlatform = getPlatform();
 		const isWindows = currentPlatform === "win32";
+		io.to(id).emit("installUpdate", {
+			type: "currentCommand",
+			content: command,
+		});
 		const dims = processesDimensions.get(id) ?? { cols: 120, rows: 40 };
 
 		logger.info(`Working on directory: ${sanitizePathForLog(workingDir)}`);
@@ -227,6 +231,12 @@ export const executeCommand = async (
 			ptyProcess.write(`${command}; exit $?\n`);
 		}
 
+		if (isWindows) {
+			ptyProcess.write(`@echo off\r\n${command}\r\nexit %ERRORLEVEL%\r\n`);
+		} else {
+			ptyProcess.write(`${command}; exit $?\n`);
+		}
+
 		logger.info(
 			`Executing: ${command.length > 300 ? command.substring(0, 300) + "..." : command}`,
 		);
@@ -236,28 +246,31 @@ export const executeCommand = async (
 			registerProcess(id, pid);
 		}
 
-		const cleanTerminal = (data: string): string => {
-			let cleaned = data;
-			cleaned = cleaned.replace(/\x1B\][^\x07]*\x07/g, "");
-			cleaned = cleaned.replace(
-				/\x1B\[2J|\x1B\[H|\x1B\?25[hl]|\x1B\?9001[hl]|\x1B\?1004[hl]/g,
-				"",
-			);
-			cleaned = cleaned.replace(/[\r\n]{4,}/g, "");
-
-			return cleaned;
+		const filterOutput = (
+			data: string,
+			isWindows: boolean,
+		): string => {
+			let text = data;
+			text = text.replace(/\x1b\][^\x07]*\x07/g, "");
+			if (isWindows) {
+				text = text.replace(/Microsoft Windows \[[^\r\n]*\](\r?\n)?/gi, "");
+				text = text.replace(/\(c\)\s*Microsoft Corporation[^\r\n]*\r?\n?/gi, "");
+				text = text.replace(/[A-Z]:\\[^\r\n>]*>@echo off\r?\n?/gi, "");
+				text = text.replace(/@echo off\r?\n?/gi, "");
+				text = text.replace(/exit %ERRORLEVEL%\r?\n?/gi, "");
+			}
+			text = text.replace(/R\r?\n/g, "\r\n");
+			return text;
 		};
 
 		ptyProcess.onData((data: string) => {
-			if (data.includes("Microsoft Windows")) return;
-
-			const cleanData = cleanTerminal(data);
-
-			outputData += cleanData;
-			options?.onOutput?.(cleanData);
+			const clean = filterOutput(data, isWindows);
+			if (!clean) return;
+			outputData += clean;
+			options?.onOutput?.(clean);
 			io.to(id).emit(logs, {
 				type: "log",
-				content: cleanData,
+				content: clean,
 			});
 		});
 

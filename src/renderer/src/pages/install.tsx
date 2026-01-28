@@ -58,6 +58,7 @@ export default function Install({
 		shouldCatch,
 		terminalStatesRef,
 		disconnectApp,
+		currentCommand,
 	} = useScriptsContext();
 
 	const { logs, addLogLine, clearLogs, getAllAppLogs } =
@@ -734,6 +735,8 @@ export default function Install({
 		// clear errors
 		setError(false);
 
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
 		// show retrying toast
 		showToast("default", t("toast.install.retrying").replace("%s", data.name));
 
@@ -979,6 +982,7 @@ export default function Install({
 									executing={executing}
 									terminalStatesRef={terminalStatesRef}
 									installingDeps={installingDeps}
+									currentCommand={currentCommand[data?.id]}
 								/>
 							)}{" "}
 							{show[data?.id] === "actions" && (

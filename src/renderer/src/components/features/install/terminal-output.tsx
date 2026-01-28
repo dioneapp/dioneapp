@@ -7,15 +7,18 @@ interface TerminalOutputProps {
 	content: string;
 	id: string;
 	terminalStatesRef: RefObject<Record<string, Terminal>>;
+	lastContentLength: RefObject<number>;
+	currentCommand: string;
 }
 export default function TerminalOutput({
 	content,
 	id,
 	terminalStatesRef,
+	lastContentLength,
+	currentCommand,
 }: TerminalOutputProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const fitAddonRef = useRef<FitAddon | null>(null);
-	const lastContentLength = useRef(0);
 	const userScrolledUp = useRef(false);
 
 	useEffect(() => {
@@ -119,28 +122,39 @@ export default function TerminalOutput({
 	useEffect(() => {
 		const term = terminalStatesRef.current[id];
 		if (!term) return;
-
 		if (!content || content.length === lastContentLength.current) return;
 
 		const newContent = content.substring(lastContentLength.current);
+		if (!newContent) return;
 
-		if (newContent) {
-			const colorizedContent = newContent
-				.replace(/^(ERROR[^•\r\n]*)/gim, "\x1b[91m$1\x1b[0m")
-				.replace(/^(INFO[^•\r\n]*)/gim, "\x1b[94m$1\x1b[0m")
-				.replace(/^(WARN[^•\r\n]*)/gim, "\x1b[93m$1\x1b[0m");
-			term.write(colorizedContent);
-			lastContentLength.current = content.length;
+		const cmd = (currentCommand || "").replace(/\s+/g, " ").trim().toLowerCase();
 
-			if (!userScrolledUp.current) {
-				requestAnimationFrame(() => {
-					if (term && !userScrolledUp.current) {
-						term.scrollToBottom();
-					}
-				});
-			}
-		}
-	}, [content]);
+		const cleaned = newContent
+			.split(/\r?\n/)
+			.filter((line) => {
+				const strippedAnsi = line.replace(/\x1b\[[0-9;?]*[A-Za-z]/g, "");
+				const trimmed = strippedAnsi.trim();
+				if (!trimmed) return true;
+				if (!cmd) return true;
+
+				const lower = trimmed.replace(/\s+/g, " ").toLowerCase();
+				const cmdNorm = cmd;
+
+				if (lower === cmdNorm) {
+					return false;
+				}
+				return true;
+			})
+			.join("\r\n");
+
+		const colorizedContent = cleaned
+			.replace(/^(ERROR[^•\r\n]*)/gim, "\x1b[91m$1\x1b[0m")
+			.replace(/^(INFO[^•\r\n]*)/gim, "\x1b[94m$1\x1b[0m")
+			.replace(/^(WARN[^•\r\n]*)/gim, "\x1b[93m$1\x1b[0m");
+
+		term.write(colorizedContent);
+		lastContentLength.current = content.length;
+	}, [content, currentCommand]);
 
 	return (
 		<div className="h-full w-full overflow-hidden rounded-xl">

@@ -16,6 +16,7 @@ interface LogsProps {
 	executing: string | null;
 	terminalStatesRef: RefObject<Record<string, Terminal>>;
 	installingDeps?: boolean;
+	currentCommand: string;
 }
 
 export default function LogsComponent({
@@ -28,8 +29,9 @@ export default function LogsComponent({
 	executing,
 	terminalStatesRef,
 	installingDeps,
+	currentCommand,
 }: LogsProps) {
-	const { progress } = useScriptsLogsContext();
+	const { progress, lastContentLength } = useScriptsLogsContext();
 	const { t } = useTranslation();
 
 	return (
@@ -39,6 +41,8 @@ export default function LogsComponent({
 					content={logs[appId] || ""}
 					id={appId}
 					terminalStatesRef={terminalStatesRef}
+					lastContentLength={lastContentLength}
+					currentCommand={currentCommand}
 				/>
 				{progress &&
 					progress[appId]?.steps &&
