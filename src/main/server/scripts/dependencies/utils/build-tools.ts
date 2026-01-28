@@ -78,10 +78,8 @@ const FILE_LOCK_EXIT_CODE = 5001;
 const START_PROCESS_LOCK_EXIT_CODE = 5002;
 const MUTEX_ACQUIRE_EXIT_CODE = 5003;
 const CHANNEL_MANIFEST_URL = "https://aka.ms/vs/17/release/channel";
-const MAX_CHANNEL_MANIFEST_ATTEMPTS = 4;
-const CHANNEL_MANIFEST_BACKOFF_BASE_MS = 1000;
-const MANIFEST_DOWNLOAD_TIMEOUT_MS = 30000;
-const MIN_MANIFEST_SIZE_BYTES = 1000;
+const MAX_CHANNEL_MANIFEST_ATTEMPTS = 3;
+const CHANNEL_MANIFEST_BACKOFF_BASE_MS = 500;
 const BOOTSTRAPPER_CACHE_RETENTION_MS = 2 * 60 * 60 * 1000;
 const CHANNEL_PARSE_ERROR_CODE = "0x80131500";
 const BUILD_TOOLS_COMPONENTS_BASE = [
@@ -452,142 +450,16 @@ async function downloadChannelManifestContent(
 					return;
 				}
 
-				// Validate content type
-				const contentType = response.headers["content-type"];
-				if (
-					contentType &&
-					!contentType.includes("application/json") &&
-					!contentType.includes("text/json")
-				) {
-					response.resume();
-					reject(
-						new Error(
-							`Invalid content type for channel manifest: ${contentType}. Expected JSON.`,
-						),
-					);
-					return;
-				}
-
-				// Track response size to detect incomplete downloads
 				const chunks: string[] = [];
-				let totalSize = 0;
-				const maxSize = 10 * 1024 * 1024; // 10MB limit
-
 				response.setEncoding("utf8");
-				response.on("data", (chunk) => {
-					chunks.push(chunk);
-					totalSize += chunk.length;
-
-					// Reject suspiciously large responses
-					if (totalSize > maxSize) {
-						response.destroy();
-						reject(
-							new Error(
-								`Channel manifest response too large: ${totalSize} bytes`,
-							),
-						);
-					}
-				});
-
-				response.on("end", () => {
-					const content = chunks.join("");
-
-					// Validate response is not empty
-					if (!content || content.trim().length === 0) {
-						reject(
-							new Error("Empty/null response received for channel manifest"),
-						);
-						return;
-					}
-
-					// Validate minimum expected size
-					if (content.length < MIN_MANIFEST_SIZE_BYTES) {
-						reject(
-							new Error(
-								`Channel manifest suspiciously small: ${content.length} bytes (minimum expected: ${MIN_MANIFEST_SIZE_BYTES} bytes)`,
-							),
-						);
-						return;
-					}
-
-					logMessage(
-						undefined,
-						`Downloaded channel manifest: ${content.length} bytes, content-type: ${contentType || "unknown"}`,
-						"info",
-					);
-
-					resolve(content);
-				});
-
+				response.on("data", (chunk) => chunks.push(chunk));
+				response.on("end", () => resolve(chunks.join("")));
 				response.on("error", (error) => reject(error));
 			},
 		);
 
-		// Set download timeout
-		const timeout = setTimeout(() => {
-			request.destroy();
-			reject(
-				new Error(
-					`Channel manifest download timeout after ${MANIFEST_DOWNLOAD_TIMEOUT_MS}ms`,
-				),
-			);
-		}, MANIFEST_DOWNLOAD_TIMEOUT_MS);
-
-		request.on("error", (error) => {
-			clearTimeout(timeout);
-			reject(error);
-		});
+		request.on("error", (error) => reject(error));
 	});
-}
-
-function validateChannelManifestSchema(manifest: any): {
-	isValid: boolean;
-	errors: string[];
-} {
-	const errors: string[] = [];
-
-	if (!manifest || typeof manifest !== "object") {
-		errors.push("Manifest is not an object");
-		return { isValid: false, errors };
-	}
-
-	// Check for critical fields
-	if (!manifest.version && !manifest.productReleaseVersion) {
-		errors.push("Missing required field: 'version' or 'productReleaseVersion'");
-	}
-
-	if (!manifest.info) {
-		errors.push("Missing required field: 'info'");
-	} else if (typeof manifest.info !== "object") {
-		errors.push("Field 'info' must be an object");
-	} else {
-		if (!manifest.info.version && !manifest.info.productReleaseVersion) {
-			errors.push(
-				"Missing required field in info: 'version' or 'productReleaseVersion'",
-			);
-		}
-	}
-
-	// Validate that the manifest has some structure (at least not completely empty)
-	const keys = Object.keys(manifest);
-	if (keys.length === 0) {
-		errors.push("Manifest is empty");
-	}
-
-	// Basic JSON structure validation - ensure it's parseable and has expected structure
-	try {
-		const jsonString = JSON.stringify(manifest);
-		if (!jsonString || jsonString.length < MIN_MANIFEST_SIZE_BYTES) {
-			errors.push("Manifest JSON is too small or empty");
-		}
-	} catch (error) {
-		errors.push(`Failed to serialize manifest: ${error}`);
-	}
-
-	return {
-		isValid: errors.length === 0,
-		errors,
-	};
 }
 
 async function ensureChannelManifest(
@@ -596,132 +468,45 @@ async function ensureChannelManifest(
 ): Promise<string> {
 	const manifestPath = path.join(tempDir, "channelManifest.json");
 	let lastError: unknown;
-	let lastValidationErrors: string[] = [];
-
-	// Force aggressive cache cleanup before attempting manifest download
-	logMessage(
-		onLog,
-		"Performing aggressive cache cleanup before manifest download...",
-		"info",
-	);
-	cleanupBootstrapperCache(onLog);
-	await aggressiveCacheCleanup(onLog);
-
 	await fsp.rm(manifestPath, { force: true }).catch(() => {});
 
 	for (let attempt = 0; attempt < MAX_CHANNEL_MANIFEST_ATTEMPTS; attempt += 1) {
 		if (attempt === 0) {
 			logMessage(onLog, "Prefetching Visual Studio channel manifest...");
 		} else {
-			const backoff =
-				CHANNEL_MANIFEST_BACKOFF_BASE_MS * Math.pow(2, attempt - 1);
 			logMessage(
 				onLog,
-				`Retrying Visual Studio channel manifest download (attempt ${attempt + 1}/${MAX_CHANNEL_MANIFEST_ATTEMPTS}) with ${backoff}ms backoff...`,
+				`Retrying Visual Studio channel manifest download (attempt ${attempt + 1}/${MAX_CHANNEL_MANIFEST_ATTEMPTS})...`,
 				"warn",
 			);
-
-			if (attempt > 1) {
-				// Additional cleanup between retries
-				await aggressiveCacheCleanup(onLog);
-			}
 		}
 
 		try {
 			const content =
 				await downloadChannelManifestContent(CHANNEL_MANIFEST_URL);
-
-			// Parse and validate JSON
-			let parsedManifest: any;
-			try {
-				parsedManifest = JSON.parse(content);
-			} catch (parseError) {
-				throw new Error(
-					`Failed to parse channel manifest as JSON: ${parseError}`,
-				);
-			}
-
-			// Validate manifest schema
-			const validation = validateChannelManifestSchema(parsedManifest);
-			if (!validation.isValid) {
-				const errorMsg = `Channel manifest schema validation failed: ${validation.errors.join(", ")}`;
-				lastValidationErrors = validation.errors;
-				throw new Error(errorMsg);
-			}
-
-			// Validate critical fields exist
-			const hasVersion =
-				parsedManifest.version || parsedManifest.productReleaseVersion;
-			const hasInfo =
-				parsedManifest.info && typeof parsedManifest.info === "object";
-
-			if (!hasVersion || !hasInfo) {
-				throw new Error(
-					`Channel manifest missing critical fields: ${!hasVersion ? "version/productReleaseVersion " : ""}${!hasInfo ? "info object" : ""}`.trim(),
-				);
-			}
-
-			// Write validated manifest to disk
+			JSON.parse(content);
 			await fsp.writeFile(manifestPath, content, "utf8");
-
-			const version =
-				parsedManifest.version || parsedManifest.productReleaseVersion;
-			const infoVersion =
-				parsedManifest.info?.version ||
-				parsedManifest.info?.productReleaseVersion;
-
 			logMessage(
 				onLog,
-				`Successfully validated and cached Visual Studio channel manifest at ${manifestPath} (version: ${version || infoVersion || "unknown"})`,
+				`Using locally validated Visual Studio channel manifest at ${manifestPath}`,
 			);
-
 			return manifestPath;
 		} catch (error) {
 			lastError = error;
-
-			// Reset validation errors unless this is specifically a validation error
-			if (
-				!(error instanceof Error) ||
-				!error.message.includes("schema validation")
-			) {
-				lastValidationErrors = [];
-			}
-
 			await fsp.rm(manifestPath, { force: true }).catch(() => {});
-
 			const message = error instanceof Error ? error.message : String(error);
 			const isLastAttempt = attempt >= MAX_CHANNEL_MANIFEST_ATTEMPTS - 1;
-
-			// Categorize error type for better debugging
-			let errorCategory = "unknown";
-			if (message.includes("timeout")) {
-				errorCategory = "network_timeout";
-			} else if (message.includes("HTTP")) {
-				errorCategory = "http_error";
-			} else if (
-				message.includes("schema validation") ||
-				message.includes("missing critical fields")
-			) {
-				errorCategory = "manifest_validation";
-			} else if (message.includes("JSON")) {
-				errorCategory = "json_parse";
-			} else if (message.includes("content type")) {
-				errorCategory = "content_type";
-			} else if (message.includes("empty") || message.includes("small")) {
-				errorCategory = "content_size";
-			}
-
 			logMessage(
 				onLog,
-				`Failed to validate Visual Studio channel manifest (attempt ${attempt + 1}, category: ${errorCategory}): ${message}`,
+				`Failed to validate Visual Studio channel manifest: ${message}`,
 				isLastAttempt ? "error" : "warn",
 			);
 
 			if (!isLastAttempt) {
-				const backoff = CHANNEL_MANIFEST_BACKOFF_BASE_MS * Math.pow(2, attempt);
+				const backoff = CHANNEL_MANIFEST_BACKOFF_BASE_MS * (attempt + 1);
 				logMessage(
 					onLog,
-					`Retrying channel manifest download in ${backoff} ms... (attempt ${attempt + 2}/${MAX_CHANNEL_MANIFEST_ATTEMPTS})`,
+					`Retrying channel manifest download in ${backoff} ms...`,
 					"warn",
 				);
 				await delay(backoff);
@@ -729,19 +514,10 @@ async function ensureChannelManifest(
 		}
 	}
 
-	// Final error with detailed information
-	const errorDetails: string[] = [];
-	if (lastValidationErrors.length > 0) {
-		errorDetails.push(
-			`Schema validation errors: ${lastValidationErrors.join("; ")}`,
-		);
-	}
-	if (lastError instanceof Error) {
-		errorDetails.push(`Last error: ${lastError.message}`);
-	}
-
 	throw new Error(
-		`Unable to download or validate Visual Studio channel manifest after ${MAX_CHANNEL_MANIFEST_ATTEMPTS} attempts. ${errorDetails.join(" | ")}`,
+		lastError instanceof Error
+			? lastError.message
+			: "Unable to download Visual Studio channel manifest.",
 	);
 }
 
@@ -797,135 +573,6 @@ function cleanupBootstrapperCache(onLog?: LogSink) {
 				removed === 1 ? "file" : "files"
 			} from ${cacheDir}.`,
 		);
-	}
-}
-
-async function aggressiveCacheCleanup(onLog?: LogSink) {
-	if (!isWindows()) return;
-
-	try {
-		logMessage(onLog, "Performing aggressive cache cleanup...", "info");
-
-		const programData = process.env.ProgramData || "C:\\ProgramData";
-		const cacheDir = path.join(
-			programData,
-			"Microsoft",
-			"VisualStudio",
-			"Packages",
-			"_bootstrapper",
-		);
-
-		// Clean bootstrapper cache directory
-		if (fs.existsSync(cacheDir)) {
-			try {
-				const files = fs.readdirSync(cacheDir);
-				let removed = 0;
-				for (const file of files) {
-					if (/^vs_setup_bootstrapper_.*\.json$/i.test(file)) {
-						try {
-							const filePath = path.join(cacheDir, file);
-							fs.rmSync(filePath, { force: true });
-							removed++;
-						} catch (error) {
-							logger.warn(`Failed to remove bootstrapper cache file: ${error}`);
-						}
-					}
-				}
-				if (removed > 0) {
-					logMessage(
-						onLog,
-						`Removed ${removed} bootstrapper cache files`,
-						"info",
-					);
-				}
-			} catch (error) {
-				logger.warn(`Failed to clean bootstrapper cache: ${error}`);
-			}
-		}
-
-		// Clear Visual Studio related temp directories manually
-		const tempLocations = [
-			os.tmpdir(),
-			path.join(process.env.LOCALAPPDATA || "", "Temp"),
-		];
-
-		for (const tempDir of tempLocations) {
-			if (fs.existsSync(tempDir)) {
-				try {
-					const files = fs.readdirSync(tempDir);
-					for (const file of files) {
-						if (
-							file.toLowerCase().includes("vs") ||
-							file.toLowerCase().includes("visualstudio")
-						) {
-							try {
-								const filePath = path.join(tempDir, file);
-								const stat = fs.statSync(filePath);
-								const ageHours = (Date.now() - stat.mtimeMs) / (1000 * 60 * 60);
-
-								// Only clean files older than 1 hour to avoid removing active files
-								if (ageHours > 1) {
-									if (stat.isDirectory()) {
-										fs.rmSync(filePath, { recursive: true, force: true });
-									} else {
-										fs.rmSync(filePath, { force: true });
-									}
-								}
-							} catch (error) {
-								logger.warn(`Failed to remove temp file ${file}: ${error}`);
-							}
-						}
-					}
-				} catch (error) {
-					logger.warn(
-						`Failed to enumerate temp directory ${tempDir}: ${error}`,
-					);
-				}
-			}
-		}
-
-		// Run PowerShell cleanup commands
-		const psCommands = [
-			// Clear Visual Studio Installer cache
-			'Get-ChildItem -Path "' +
-				path.join(
-					programData,
-					"Microsoft",
-					"VisualStudio",
-					"Packages",
-					"_bootstrapper",
-				) +
-				'" -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse 2>$null',
-
-			// Clear System.Diagnostics tracing cache
-			'Get-ChildItem -Path "' +
-				path.join(process.env.LOCALAPPDATA || "", "Temp") +
-				'" -Filter "*DiagTrack*" -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse 2>$null',
-
-			// Clear Windows temp files related to Visual Studio (only files older than 1 hour)
-			'Get-ChildItem -Path "' +
-				path.join(os.tmpdir()) +
-				'" -Filter "*vs*" -ErrorAction SilentlyContinue | Where-Object { $_.LastWriteTime -lt (Get-Date).AddHours(-1) } | Remove-Item -Force -Recurse 2>$null',
-		];
-
-		for (const command of psCommands) {
-			try {
-				spawnSync(
-					"powershell",
-					["-NoLogo", "-NoProfile", "-Command", command],
-					{
-						windowsHide: true,
-						stdio: "ignore",
-					},
-				);
-			} catch (error) {
-				logger.warn(`PowerShell cleanup command failed: ${error}`);
-			}
-		}
-
-		logMessage(onLog, "Aggressive cache cleanup completed", "info");
-	} catch (error) {
-		logMessage(onLog, `Aggressive cache cleanup failed: ${error}`, "warn");
 	}
 }
 
@@ -1567,36 +1214,11 @@ function createLayoutArguments(
 }
 
 function logsContainChannelParseError(logPaths: string[]): boolean {
-	const errorPatterns = [
-		CHANNEL_PARSE_ERROR_CODE, // 0x80131500
-		"channel manifest",
-		"manifest parse",
-		"failed to parse.*manifest",
-		"invalid.*manifest",
-		"corrupted.*manifest",
-		"manifest.*corrupt",
-		"download.*manifest.*fail",
-		"manifest.*download.*error",
-		"manifest.*validation.*fail",
-	];
-
 	for (const logPath of logPaths) {
 		try {
 			const content = fs.readFileSync(logPath, "utf8");
-
-			// Check for the specific error code
 			if (content.includes(CHANNEL_PARSE_ERROR_CODE)) {
 				return true;
-			}
-
-			// Check for related error patterns
-			for (const pattern of errorPatterns) {
-				if (pattern === CHANNEL_PARSE_ERROR_CODE) continue; // Skip already checked
-
-				const regex = new RegExp(pattern, "i");
-				if (regex.test(content)) {
-					return true;
-				}
 			}
 		} catch (error) {
 			logger.warn(`Failed to read installer log ${logPath}: ${error}`);
@@ -1669,7 +1291,7 @@ async function attemptInstall(
 
 		const requireRunAs = !isProcessElevated();
 		const startedAt = Date.now();
-		const maxBootstrapAttempts = 3; // Increased from 2 to 3
+		const maxBootstrapAttempts = 2;
 		let dynamicAttempts = maxBootstrapAttempts;
 		let lastRun: RunElevatedResult | undefined;
 		let failureSummary: string | undefined;
@@ -1691,16 +1313,6 @@ async function attemptInstall(
 					binFolder,
 					onLog,
 				);
-
-				// Force aggressive cache cleanup before manifest download
-				logMessage(
-					onLog,
-					"Performing cache cleanup before manifest download...",
-					"info",
-				);
-				cleanupBootstrapperCache(onLog);
-				await aggressiveCacheCleanup(onLog);
-
 				const manifestPath = await ensureChannelManifest(
 					bootstrap.tempDir,
 					onLog,
@@ -1715,7 +1327,7 @@ async function attemptInstall(
 					onLog,
 					attemptIndex === 0
 						? `Launching Visual Studio Build Tools installer (Windows 10 SDK ${sdkVersion})...`
-						: `Retrying Visual Studio Build Tools installer launch (attempt ${attemptIndex + 1}/${dynamicAttempts})...`,
+						: "Retrying Visual Studio Build Tools installer launch...",
 				);
 
 				const args = createInstallArguments(
@@ -1758,9 +1370,7 @@ async function attemptInstall(
 					);
 
 					if (attemptIndex === 0) {
-						// Add exponential backoff for file lock retries
-						const backoff = 1000 * Math.pow(2, attemptIndex);
-						await delay(backoff);
+						await delay(1000);
 						continue;
 					}
 				}
@@ -1776,15 +1386,13 @@ async function attemptInstall(
 					if (!channelRetryAdded) {
 						channelRetryAdded = true;
 						dynamicAttempts += 1;
-						const retryDelay = 2000 * Math.pow(2, attemptIndex); // Exponential backoff for parse errors
 						logMessage(
 							onLog,
-							`Detected Visual Studio channel manifest parse error (0x80131500). Clearing cached bootstrapper manifests and retrying in ${retryDelay}ms...`,
+							"Detected Visual Studio channel manifest parse error (0x80131500). Clearing cached bootstrapper manifests and retrying once...",
 							"warn",
 						);
 						cleanupBootstrapperCache(onLog);
-						await aggressiveCacheCleanup(onLog);
-						await delay(retryDelay);
+						await delay(1000);
 						continue;
 					}
 
@@ -1792,7 +1400,7 @@ async function attemptInstall(
 						"Visual Studio Build Tools installer failed to parse the channel manifest (0x80131500).";
 					logMessage(
 						onLog,
-						"Visual Studio Build Tools installer still failed to parse the channel manifest (0x80131500) after enhanced retry with cache cleanup.",
+						"Visual Studio Build Tools installer still failed to parse the channel manifest (0x80131500) after retry.",
 						"error",
 					);
 				} else if (!interpretation.success && !failureSummary) {
@@ -1805,31 +1413,15 @@ async function attemptInstall(
 					throw error;
 				}
 				logs = collectInstallerLogs(installPath, startedAt, onLog);
-
-				// Enhanced error categorization
-				const errorMessage = error.message || String(error);
-				let errorCategory = "unknown";
-				if (errorMessage.includes("timeout")) {
-					errorCategory = "network_timeout";
-				} else if (errorMessage.includes("manifest")) {
-					errorCategory = "manifest_error";
-				} else if (errorMessage.includes("download")) {
-					errorCategory = "download_error";
-				} else if (errorMessage.includes("validation")) {
-					errorCategory = "validation_error";
-				}
-
-				failureSummary = `Failed to execute Visual Studio Build Tools installer (category: ${errorCategory}): ${error}`;
+				failureSummary = `Failed to execute Visual Studio Build Tools installer: ${error}`;
 				logMessage(onLog, failureSummary, "error");
-
 				if (attemptIndex === 0) {
-					const backoff = 1500 * Math.pow(2, attemptIndex); // Exponential backoff for retries
 					logMessage(
 						onLog,
-						`Re-downloading the bootstrapper and retrying in ${backoff}ms...`,
+						"Re-downloading the bootstrapper and retrying once...",
 						"warn",
 					);
-					await delay(backoff);
+					await delay(1000);
 					continue;
 				}
 				break;
