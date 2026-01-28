@@ -69,9 +69,8 @@ export default function DeleteLoadingModal({
 				{steps.map((step, index) => (
 					<div
 						key={step}
-						className={`h-1.5 rounded-xl transition-all duration-300 ${
-							index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
-						}`}
+						className={`h-1.5 rounded-xl transition-all duration-300 ${index <= currentIndex ? "w-8 bg-white" : "w-8 bg-white/20"
+							}`}
 					/>
 				))}
 			</div>
@@ -204,7 +203,7 @@ export default function DeleteLoadingModal({
 										onClick={handleConfirmUninstall}
 										className="w-full"
 									>
-										{t("deleteLoading.uninstalling.title")}
+										{t("deleteLoading.uninstall.title")}
 									</Button>
 								</div>
 							</motion.div>
