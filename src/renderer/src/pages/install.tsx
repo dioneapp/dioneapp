@@ -734,6 +734,8 @@ export default function Install({
 		// clear errors
 		setError(false);
 
+		await new Promise((resolve) => setTimeout(resolve, 1000));
+
 		// show retrying toast
 		showToast("default", t("toast.install.retrying").replace("%s", data.name));
 

@@ -66,6 +66,7 @@ export interface ScriptsLogContextType {
 	>;
 	deleteLogs: any[];
 	setDeleteLogs: React.Dispatch<React.SetStateAction<any[]>>;
+	lastContentLength: React.MutableRefObject<number>;
 }
 
 export interface ScriptsContextType {
@@ -140,6 +141,7 @@ export interface ScriptsContextType {
 	setShouldCatch: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
 	isLocal?: boolean;
 	terminalStatesRef: RefObject<Record<string, Terminal>>;
+	lastContentLength: React.MutableRefObject<number>;
 }
 
 // Socket types

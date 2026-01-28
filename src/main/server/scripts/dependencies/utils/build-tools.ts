@@ -119,9 +119,29 @@ function isWindows(): boolean {
 	return process.platform === "win32";
 }
 
-function ensureDirectory(dirPath: string) {
-	if (!fs.existsSync(dirPath)) {
-		fs.mkdirSync(dirPath, { recursive: true });
+async function ensureDirectory(dirPath: string, maxRetries = 3): Promise<void> {
+	if (fs.existsSync(dirPath)) return;
+
+	for (let attempt = 0; attempt < maxRetries; attempt++) {
+		try {
+			fs.mkdirSync(dirPath, { recursive: true });
+			return;
+		} catch (error: any) {
+			if (error.code !== 'EPERM' || attempt === maxRetries - 1) throw error;
+
+			if (process.platform === 'win32') {
+				try {
+					const parent = path.dirname(dirPath);
+					const user = process.env.USERNAME || 'Users';
+					execSync(`icacls "${parent}" /setowner "${user}" /T /C /Q`, { stdio: 'ignore', timeout: 3000 });
+					execSync(`icacls "${parent}" /grant "${user}:F" /T /C /Q`, { stdio: 'ignore', timeout: 3000 });
+					fs.mkdirSync(dirPath, { recursive: true });
+					return;
+				} catch { }
+			}
+
+			await new Promise(r => setTimeout(r, 500 * (attempt + 1)));
+		}
 	}
 }
 
@@ -1295,8 +1315,6 @@ async function attemptInstall(
 					logMessage(onLog, stderr, "warn");
 				}
 
-				logs = collectInstallerLogs(installPath, startedAt, onLog);
-
 				if (runResult.fileLocked) {
 					failureSummary =
 						"Visual Studio Build Tools bootstrapper was locked by another process during launch.";
@@ -1315,7 +1333,7 @@ async function attemptInstall(
 				}
 
 				lastRun = runResult;
-
+				logs = collectInstallerLogs(installPath, startedAt, onLog);
 				const interpretation = interpretExitCode(runResult.exitCode);
 				const hasParseError = logsContainChannelParseError(logs);
 

@@ -7,15 +7,16 @@ interface TerminalOutputProps {
 	content: string;
 	id: string;
 	terminalStatesRef: RefObject<Record<string, Terminal>>;
+	lastContentLength: RefObject<number>;
 }
 export default function TerminalOutput({
 	content,
 	id,
 	terminalStatesRef,
+	lastContentLength,
 }: TerminalOutputProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const fitAddonRef = useRef<FitAddon | null>(null);
-	const lastContentLength = useRef(0);
 	const userScrolledUp = useRef(false);
 
 	useEffect(() => {

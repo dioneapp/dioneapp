@@ -29,7 +29,7 @@ export default function LogsComponent({
 	terminalStatesRef,
 	installingDeps,
 }: LogsProps) {
-	const { progress } = useScriptsLogsContext();
+	const { progress, lastContentLength } = useScriptsLogsContext();
 	const { t } = useTranslation();
 
 	return (
@@ -39,6 +39,7 @@ export default function LogsComponent({
 					content={logs[appId] || ""}
 					id={appId}
 					terminalStatesRef={terminalStatesRef}
+					lastContentLength={lastContentLength}
 				/>
 				{progress &&
 					progress[appId]?.steps &&
