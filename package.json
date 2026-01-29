@@ -24,6 +24,9 @@
       "sharp"
     ]
   },
+  "overrides": {
+    "axios": "^1.8.2"
+  },
   "scripts": {
     "format": "biome format --write ./src",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
