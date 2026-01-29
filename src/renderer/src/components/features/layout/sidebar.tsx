@@ -64,7 +64,7 @@ export default function Sidebar() {
 	function SortableSidebarApp({
 		app,
 		children,
-	}: { app: any; children: React.ReactNode }) {
+	}: { app: any; children: (listeners: any) => React.ReactNode }) {
 		const {
 			attributes,
 			listeners,
@@ -73,6 +73,7 @@ export default function Sidebar() {
 			transition,
 			isDragging,
 		} = useSortable({ id: app.appId });
+
 		return (
 			<div
 				ref={setNodeRef}
@@ -83,12 +84,12 @@ export default function Sidebar() {
 					zIndex: isDragging ? 100 : undefined,
 				}}
 				{...attributes}
-				{...listeners}
 			>
-				{children}
+				{children(listeners)}
 			</div>
 		);
 	}
+
 	const [avatarError, setAvatarError] = useState(false);
 
 	const [updateAvailable, setUpdateAvailable] = useState(false);
@@ -498,50 +499,50 @@ export default function Sidebar() {
 												if (!app) return null;
 												return (
 													<SortableSidebarApp key={app.appId} app={app}>
-														<div
-															className={
-																config?.compactMode
-																	? "w-full flex justify-center"
-																	: "w-full"
-															}
-														>
+														{(listeners) => (
 															<div
-																className={`group relative ${config?.compactMode ? "w-12 h-12" : "w-full"}`}
+																className={
+																	config?.compactMode
+																		? "w-full flex justify-center"
+																		: "w-full"
+																}
 															>
-																<IconButton
-																	onClick={() =>
-																		stopApp(app.appId, app.data?.name)
-																	}
-																	icon={<X className="h-3 w-3 text-white" />}
-																	variant="danger"
-																	size="xs"
-																	className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-all duration-200 z-10 backdrop-blur-sm"
-																/>
-																<Link
-																	to={{
-																		pathname: `/install/${app.isLocal ? app.data?.name : app.appId}`,
-																		search: `?isLocal=${app.isLocal}`,
-																	}}
-																	className={
-																		config?.compactMode
-																			? "w-12 h-12 rounded-xl flex items-center justify-center"
-																			: "w-full h-10 rounded-xl flex items-center gap-3 px-3" +
-																				" group-hover:bg-white/5 transition-all duration-200 flex items-center gap-3 px-3 overflow-hidden group"
-																	}
+																<div
+																	className={`group relative ${config?.compactMode ? "w-12 h-12" : "w-full"}`}
 																>
-																	<div
+																	<IconButton
+																		onClick={async () => await stopApp(app.appId, app.data?.name)}
+																		icon={<X className="h-3 w-3 text-white" />}
+																		variant="danger"
+																		size="xs"
+																		className="
+																			absolute -top-1 -right-1
+																			z-[9999]
+																			pointer-events-auto
+																		"
+																	/>
+
+																	<Link
+																		{...listeners}
+																		to={{
+																			pathname: `/install/${app.isLocal ? app.data?.name : app.appId}`,
+																			search: `?isLocal=${app.isLocal}`,
+																		}}
 																		className={
 																			config?.compactMode
-																				? "w-8 h-8"
-																				: "w-6 h-6" +
-																					" overflow-hidden shrink-0 rounded-lg"
+																				? "w-12 h-12 rounded-xl flex items-center justify-center"
+																				: "w-full h-10 rounded-xl flex items-center gap-3 px-3 group-hover:bg-white/5 transition-all duration-200 overflow-hidden group"
 																		}
 																	>
-																		{!app.isLocal ? (
-																			<>
-																				{app.data.logo_url?.startsWith(
-																					"http",
-																				) ? (
+																		<div
+																			className={
+																				config?.compactMode
+																					? "w-8 h-8"
+																					: "w-6 h-6 overflow-hidden shrink-0 rounded-lg"
+																			}
+																		>
+																			{!app.isLocal ? (
+																				app.data.logo_url?.startsWith("http") ? (
 																					<img
 																						src={app.data.logo_url}
 																						alt={app.data.name}
@@ -553,31 +554,32 @@ export default function Sidebar() {
 																						className="h-full w-full border border-white/10 group-hover:border-white/20"
 																						isSidebarIcon
 																					/>
-																				)}
-																			</>
-																		) : (
-																			<GeneratedIcon
-																				name={app?.data?.name}
-																				className="w-full h-full"
-																				roundedClassName="rounded-lg"
-																			/>
-																		)}
-																	</div>
-																	{!config?.compactMode && (
-																		<div className="flex-1 min-w-0">
-																			<p className="text-sm font-medium text-white truncate">
-																				{app?.data?.name || app.appId}
-																			</p>
-																			<p className="text-xs text-neutral-400 truncate">
-																				{app?.data?.description ||
-																					t("runningApps.running")}
-																			</p>
+																				)
+																			) : (
+																				<GeneratedIcon
+																					name={app?.data?.name}
+																					className="w-full h-full"
+																					roundedClassName="rounded-lg"
+																				/>
+																			)}
 																		</div>
-																	)}
-																</Link>
+
+																		{!config?.compactMode && (
+																			<div className="flex-1 min-w-0">
+																				<p className="text-sm font-medium text-white truncate">
+																					{app?.data?.name || app.appId}
+																				</p>
+																				<p className="text-xs text-neutral-400 truncate">
+																					{app?.data?.description || t("runningApps.running")}
+																				</p>
+																			</div>
+																		)}
+																	</Link>
+																</div>
 															</div>
-														</div>
+														)}
 													</SortableSidebarApp>
+
 												);
 											})}
 										</div>
@@ -660,10 +662,10 @@ export default function Sidebar() {
 									) : (
 										<>
 											{!avatarError &&
-											user?.avatar_url &&
-											user?.avatar_url !== "" &&
-											user?.avatar_url !== null &&
-											user?.avatar_url !== undefined ? (
+												user?.avatar_url &&
+												user?.avatar_url !== "" &&
+												user?.avatar_url !== null &&
+												user?.avatar_url !== undefined ? (
 												<img
 													src={user?.avatar_url}
 													alt="user avatar"
