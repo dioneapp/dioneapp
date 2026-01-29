@@ -259,7 +259,7 @@ export function setupSocket({
 			portToCatch?: string;
 		}) => {
 			const { type, status, content, portToCatch } = message;
-			console.log(`[${appId}] LOG:`, message);
+			// console.log(`[${appId}] LOG:`, message);
 			if (type === "currentCommand") {
 				setCurrentCommand((prev) => ({
 					...prev,
