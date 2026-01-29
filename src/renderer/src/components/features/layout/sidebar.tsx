@@ -511,7 +511,9 @@ export default function Sidebar() {
 																	className={`group relative ${config?.compactMode ? "w-12 h-12" : "w-full"}`}
 																>
 																	<IconButton
-																		onClick={async () => await stopApp(app.appId, app.data?.name)}
+																		onClick={async () =>
+																			await stopApp(app.appId, app.data?.name)
+																		}
 																		icon={<X className="h-3 w-3 text-white" />}
 																		variant="danger"
 																		size="xs"
@@ -542,7 +544,9 @@ export default function Sidebar() {
 																			}
 																		>
 																			{!app.isLocal ? (
-																				app.data.logo_url?.startsWith("http") ? (
+																				app.data.logo_url?.startsWith(
+																					"http",
+																				) ? (
 																					<img
 																						src={app.data.logo_url}
 																						alt={app.data.name}
@@ -570,7 +574,8 @@ export default function Sidebar() {
 																					{app?.data?.name || app.appId}
 																				</p>
 																				<p className="text-xs text-neutral-400 truncate">
-																					{app?.data?.description || t("runningApps.running")}
+																					{app?.data?.description ||
+																						t("runningApps.running")}
 																				</p>
 																			</div>
 																		)}
@@ -579,7 +584,6 @@ export default function Sidebar() {
 															</div>
 														)}
 													</SortableSidebarApp>
-
 												);
 											})}
 										</div>
@@ -662,10 +666,10 @@ export default function Sidebar() {
 									) : (
 										<>
 											{!avatarError &&
-												user?.avatar_url &&
-												user?.avatar_url !== "" &&
-												user?.avatar_url !== null &&
-												user?.avatar_url !== undefined ? (
+											user?.avatar_url &&
+											user?.avatar_url !== "" &&
+											user?.avatar_url !== null &&
+											user?.avatar_url !== undefined ? (
 												<img
 													src={user?.avatar_url}
 													alt="user avatar"
