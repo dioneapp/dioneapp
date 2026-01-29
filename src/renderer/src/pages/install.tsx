@@ -165,6 +165,13 @@ export default function Install({
 		}
 	}, [missingDependencies, data?.id]);
 
+	// on unmount, show nothing
+	useEffect(() => {
+		return () => {
+			setShow({ [data?.id]: "" });
+		};
+	}, []);
+
 	// connect to server
 	// useEffect(() => {
 	//     if (!isServerRunning || !data?.id) return;
