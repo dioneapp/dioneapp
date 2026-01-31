@@ -51,16 +51,13 @@ router.get("/name/:name", async (req, res) => {
 		if (orderBy) url.searchParams.set("order", orderBy);
 		if (orderType) url.searchParams.set("order_type", orderType);
 
-		const response = await fetch(
-			url.toString(),
-			{
-				headers: {
-					...(process.env.API_KEY
-						? { Authorization: `Bearer ${process.env.API_KEY}` }
-						: {}),
-				},
+		const response = await fetch(url.toString(), {
+			headers: {
+				...(process.env.API_KEY
+					? { Authorization: `Bearer ${process.env.API_KEY}` }
+					: {}),
 			},
-		);
+		});
 		const data = await response.json();
 		if (data.error === false && data.status === 404) {
 			res.send([]);

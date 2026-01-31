@@ -18,7 +18,7 @@ router.get("/user/:id", async (req, res) => {
 	if (
 		!api_key ||
 		api_key !==
-		(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
+			(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
 	) {
 		logger.warn(
 			app.isPackaged
@@ -62,7 +62,7 @@ router.get("/refresh-token", async (req, res) => {
 	if (
 		!api_key ||
 		api_key !==
-		(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
+			(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
 	) {
 		logger.warn(
 			app.isPackaged
@@ -112,7 +112,7 @@ router.get("/set-session", async (req, res) => {
 	if (
 		!api_key ||
 		api_key !==
-		(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
+			(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
 	) {
 		logger.warn(
 			app.isPackaged
@@ -183,8 +183,8 @@ router.get("/featured", (_req, res) => {
 				headers: {
 					...(process.env.API_KEY
 						? {
-							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-						}
+								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+							}
 						: {}),
 				},
 			},
@@ -241,8 +241,8 @@ router.get("/explore", (req, res) => {
 					headers: {
 						...(process.env.API_KEY
 							? {
-								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-							}
+									Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+								}
 							: {}),
 					},
 				},
@@ -309,8 +309,8 @@ router.get("/search/:id", (req, res) => {
 				headers: {
 					...(process.env.API_KEY
 						? {
-							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-						}
+								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+							}
 						: {}),
 				},
 			},
@@ -469,8 +469,8 @@ router.get("/search/type/:type", async (req, res) => {
 			headers: {
 				...(process.env.API_KEY
 					? {
-						Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-					}
+							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+						}
 					: {}),
 			},
 		});
