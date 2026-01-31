@@ -11,7 +11,17 @@ function findDirWithFile(rootDir: string, fileName: string): string | null {
 	try {
 		const entries = fs.readdirSync(rootDir, { withFileTypes: true });
 		for (const entry of entries) {
-			if (entry.isDirectory() && !["node_modules", ".git", ".venv", "dist", "build", "__pycache__"].includes(entry.name)) {
+			if (
+				entry.isDirectory() &&
+				![
+					"node_modules",
+					".git",
+					".venv",
+					"dist",
+					"build",
+					"__pycache__",
+				].includes(entry.name)
+			) {
 				const found = findDirWithFile(path.join(rootDir, entry.name), fileName);
 				if (found) return found;
 			}
@@ -119,7 +129,11 @@ export async function updateScript(
 	}
 
 	if (pythonCommands.length > 0) {
-		log(io, id, `INFO: Updating Python dependencies (Context: ${executionCwd})...`);
+		log(
+			io,
+			id,
+			`INFO: Updating Python dependencies (Context: ${executionCwd})...`,
+		);
 		try {
 			const wrappedCommands = await createVirtualEnvCommands(
 				envName,
