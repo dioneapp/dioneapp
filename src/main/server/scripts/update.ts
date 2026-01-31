@@ -5,6 +5,23 @@ import { readDioneConfig } from "./dependencies/dependencies";
 import { createVirtualEnvCommands } from "./dependencies/env-utils";
 import { executeCommand, executeCommands, log } from "./process";
 
+function findDirWithFile(rootDir: string, fileName: string): string | null {
+	if (fs.existsSync(path.join(rootDir, fileName))) return rootDir;
+
+	try {
+		const entries = fs.readdirSync(rootDir, { withFileTypes: true });
+		for (const entry of entries) {
+			if (entry.isDirectory() && !["node_modules", ".git", ".venv", "dist", "build", "__pycache__"].includes(entry.name)) {
+				const found = findDirWithFile(path.join(rootDir, entry.name), fileName);
+				if (found) return found;
+			}
+		}
+	} catch {
+		return null;
+	}
+	return null;
+}
+
 export async function updateScript(
 	workingDir: string,
 	dioneFile: any,
@@ -13,13 +30,12 @@ export async function updateScript(
 ) {
 	const dione = await readDioneConfig(dioneFile);
 	const dependencies = Object.keys(dione.dependencies || {});
-
 	let projectDir = workingDir;
 
 	log(io, id, "INFO: Starting update process...");
 
+	// Update git repository
 	if (dependencies.includes("git")) {
-		// Check if git repository is in current directory or subdirectory
 		if (!fs.existsSync(path.join(projectDir, ".git"))) {
 			try {
 				const entries = fs.readdirSync(projectDir, { withFileTypes: true });
@@ -56,82 +72,129 @@ export async function updateScript(
 	const envName = env.name || "env";
 	const envType = env.type || "uv";
 
-	// Check for dependency definitions
-	const reqTxt = path.join(projectDir, "requirements.txt");
-	const pyToml = path.join(projectDir, "pyproject.toml");
-	const envYml = path.join(projectDir, "environment.yml");
-	const nodeJs = path.join(projectDir, "package.json");
+	// Update Python dependencies
+	const pyReqDir = findDirWithFile(projectDir, "requirements.txt");
+	const pyTomlDir = findDirWithFile(projectDir, "pyproject.toml");
+	const pyEnvDir = findDirWithFile(projectDir, "environment.yml");
 
-	const updateCommands: string[] = [];
+	const pythonFilesDir = pyReqDir || pyTomlDir || pyEnvDir;
+	const pythonCommands: string[] = [];
 
-	// Update python dependencies
-	if (fs.existsSync(reqTxt)) {
-		if (envType === "uv") {
-			updateCommands.push(`uv pip install -U -r requirements.txt`);
-		} else if (envType === "conda") {
-			updateCommands.push(`pip install -U -r requirements.txt`);
+	let executionCwd = pythonFilesDir || workingDir;
+
+	if (pythonFilesDir) {
+		const envInRoot = fs.existsSync(path.join(workingDir, envName));
+
+		if (envInRoot) {
+			executionCwd = workingDir;
 		} else {
-			// venv
-			updateCommands.push(`pip install -U -r requirements.txt`);
+			executionCwd = pythonFilesDir;
+		}
+
+		const relPath = path.relative(executionCwd, pythonFilesDir);
+
+		const reqPath = path.join(relPath, "requirements.txt");
+		const tomlPath = relPath === "" ? "." : relPath;
+		const envYmlPath = path.join(relPath, "environment.yml");
+
+		const absReq = path.join(pythonFilesDir, "requirements.txt");
+		const absToml = path.join(pythonFilesDir, "pyproject.toml");
+		const absEnvYml = path.join(pythonFilesDir, "environment.yml");
+
+		if (fs.existsSync(absReq)) {
+			if (envType === "uv") {
+				pythonCommands.push(`uv pip install -U -r "${reqPath}"`);
+			} else if (envType === "conda") {
+				pythonCommands.push(`pip install -U -r "${reqPath}"`);
+			} else {
+				pythonCommands.push(`pip install -U -r "${reqPath}"`);
+			}
+		}
+		if (fs.existsSync(absToml) && envType === "uv") {
+			pythonCommands.push(`uv pip install -U "${tomlPath}"`);
+		}
+		if (fs.existsSync(absEnvYml) && envType === "conda") {
+			pythonCommands.push(`conda env update --file "${envYmlPath}" --prune`);
 		}
 	}
-	if (fs.existsSync(pyToml) && envType === "uv") {
-		updateCommands.push(`uv pip install -U .`);
-	}
-	if (fs.existsSync(envYml) && envType === "conda") {
-		updateCommands.push(`conda env update --file environment.yml --prune`);
+
+	if (pythonCommands.length > 0) {
+		log(io, id, `INFO: Updating Python dependencies (Context: ${executionCwd})...`);
+		try {
+			const wrappedCommands = await createVirtualEnvCommands(
+				envName,
+				pythonCommands,
+				executionCwd,
+				"",
+				envType,
+			);
+
+			const result = await executeCommands(
+				wrappedCommands,
+				executionCwd,
+				io,
+				id,
+				false,
+			);
+
+			if (result.cancelled) {
+				log(io, id, "INFO: Update cancelled.");
+				return false;
+			}
+		} catch (error: any) {
+			log(io, id, `ERROR: Python dependency update failed: ${error.message}`);
+			return false;
+		}
 	}
 
-	// Update node dependencies
-	if (fs.existsSync(nodeJs) && dependencies.includes("node")) {
-		updateCommands.push(`npm install`);
+	// Update Node dependencies
+	const nodeDir = findDirWithFile(projectDir, "package.json");
+	const nodeCommands: string[] = [];
+
+	if (nodeDir) {
+		if (dependencies.includes("node")) {
+			nodeCommands.push(`npm install`);
+		}
+		if (dependencies.includes("pnpm")) {
+			nodeCommands.push(`pnpm install`);
+		}
 	}
-	if (fs.existsSync(nodeJs) && dependencies.includes("pnpm")) {
-		updateCommands.push(`pnpm install`);
+
+	if (nodeCommands.length > 0 && nodeDir) {
+		log(io, id, `INFO: Updating Node dependencies in ${nodeDir}...`);
+		try {
+			const result = await executeCommands(
+				nodeCommands,
+				nodeDir,
+				io,
+				id,
+				false,
+			);
+
+			if (result.cancelled) {
+				log(io, id, "INFO: Update cancelled.");
+				return false;
+			}
+		} catch (error: any) {
+			log(io, id, `ERROR: Node dependency update failed: ${error.message}`);
+			return false;
+		}
 	}
+
 	// Update git large files
 	if (dependencies.includes("git_lfs")) {
-		updateCommands.push(`git lfs pull`);
+		await executeCommand("git lfs pull", io, projectDir, id);
 	}
 
-	if (updateCommands.length === 0) {
+	if (pythonCommands.length === 0 && nodeCommands.length === 0) {
 		log(
 			io,
 			id,
-			"INFO: No standard dependency files found (requirements.txt, etc.). Skipping dependency update.",
+			"INFO: No standard dependency files found. Skipping dependency update.",
 		);
 		return true;
 	}
 
-	log(io, id, `INFO: Updating dependencies using ${envType}...`);
-
-	// execute with virtual environment
-	try {
-		const wrappedCommands = await createVirtualEnvCommands(
-			envName,
-			updateCommands,
-			workingDir,
-			"",
-			envType,
-		);
-
-		const result = await executeCommands(
-			wrappedCommands,
-			projectDir,
-			io,
-			id,
-			false,
-		);
-
-		if (result.cancelled) {
-			log(io, id, "INFO: Update cancelled.");
-			return false;
-		}
-
-		log(io, id, "INFO: Dependencies updated successfully.");
-		return true;
-	} catch (error: any) {
-		log(io, id, `ERROR: Dependency update failed: ${error.message}`);
-		return false;
-	}
+	log(io, id, "INFO: Dependencies updated successfully.");
+	return true;
 }
