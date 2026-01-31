@@ -88,8 +88,11 @@ export default function DeleteLoadingModal({
 			title={
 				currentStep === "confirm" ? t("deleteLoading.confirm.title") : undefined
 			}
+			title={
+				currentStep === "confirm" ? t("deleteLoading.confirm.title") : undefined
+			}
 		>
-			<div className="flex flex-col h-full rounded-xl w-full pb-6 relative overflow-visible">
+			<div className="flex flex-col rounded-xl w-full pb-6 relative overflow-visible">
 				{/* Background glow */}
 				<div className="absolute inset-0 rounded-xl overflow-visible pointer-events-none">
 					<div

@@ -1,4 +1,5 @@
 import type { Terminal } from "@xterm/xterm";
+import type { Terminal } from "@xterm/xterm";
 import type { Dispatch, RefObject, SetStateAction } from "react";
 import type { Socket } from "socket.io-client";
 
