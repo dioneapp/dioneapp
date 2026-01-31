@@ -8,7 +8,6 @@ import {
 	log,
 	stopActiveProcess,
 } from "@/server/scripts/process";
-import { getSystemInfo } from "@/server/scripts/system";
 import type { Variable } from "@/server/scripts/types/dione-types";
 import { customEnvironment } from "@/server/scripts/utils/environment";
 import logger from "@/server/utils/logger";
@@ -18,6 +17,7 @@ import {
 } from "@/server/utils/progress-emitter";
 import type { Server } from "socket.io";
 import { createVirtualEnvCommands } from "./dependencies/env-utils";
+import { addValue } from "./dependencies/environment";
 async function readConfig(pathname: string) {
 	const config = await fs.promises.readFile(pathname, "utf8");
 	return JSON.parse(config);

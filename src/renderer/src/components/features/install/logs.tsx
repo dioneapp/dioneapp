@@ -3,9 +3,7 @@ import TerminalOutput from "@/components/features/install/terminal-output";
 import ProgressBar from "@/components/ui/progress-bar";
 import { useTranslation } from "@/translations/translation-context";
 import type { Terminal } from "@xterm/xterm";
-import type { Terminal } from "@xterm/xterm";
 import { Copy, ExternalLink, Square } from "lucide-react";
-import type { RefObject } from "react";
 import type { RefObject } from "react";
 
 interface LogsProps {

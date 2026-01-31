@@ -78,8 +78,8 @@ const FILE_LOCK_EXIT_CODE = 5001;
 const START_PROCESS_LOCK_EXIT_CODE = 5002;
 const MUTEX_ACQUIRE_EXIT_CODE = 5003;
 const CHANNEL_MANIFEST_URL = "https://aka.ms/vs/17/release/channel";
-const MAX_CHANNEL_MANIFEST_ATTEMPTS = 3;
-const CHANNEL_MANIFEST_BACKOFF_BASE_MS = 500;
+// const MAX_CHANNEL_MANIFEST_ATTEMPTS = 3;
+// const CHANNEL_MANIFEST_BACKOFF_BASE_MS = 500;
 const BOOTSTRAPPER_CACHE_RETENTION_MS = 2 * 60 * 60 * 1000;
 const CHANNEL_PARSE_ERROR_CODE = "0x80131500";
 const BUILD_TOOLS_COMPONENTS_BASE = [
@@ -432,63 +432,7 @@ async function ensureBootstrapperDownloadedUnlocked(
 	}
 }
 
-async function downloadChannelManifestContent(
-	url: string,
-	redirectCount = 0,
-): Promise<string> {
-	return await new Promise<string>((resolve, reject) => {
-		const request = https.get(
-			url,
-			{
-				headers: {
-					"User-Agent": `DioneApp/1.0 (retry:${redirectCount})`,
-				},
-			},
-			(response) => {
-				if (
-					response.statusCode &&
-					[301, 302, 307, 308].includes(response.statusCode) &&
-					response.headers.location
-				) {
-					response.resume();
-					if (redirectCount >= MAX_BOOTSTRAPPER_REDIRECTS) {
-						reject(
-							new Error(
-								"Too many redirects while downloading channel manifest.",
-							),
-						);
-						return;
-					}
-					const nextUrl = new URL(response.headers.location, url).toString();
-					downloadChannelManifestContent(nextUrl, redirectCount + 1)
-						.then(resolve)
-						.catch(reject);
-					return;
-				}
-
-				if (response.statusCode !== 200) {
-					response.resume();
-					reject(
-						new Error(
-							`Failed to download channel manifest: HTTP ${response.statusCode}`,
-						),
-					);
-					return;
-				}
-
-				const chunks: string[] = [];
-				response.setEncoding("utf8");
-				response.on("data", (chunk) => chunks.push(chunk));
-				response.on("end", () => resolve(chunks.join("")));
-				response.on("error", (error) => reject(error));
-			},
-		);
-
-		request.on("error", (error) => reject(error));
-	});
-}
-
-function cleanupBootstrapperCache(onLog?: LogSink) {
+function cleanupBootstrapperCache(installPath: string, onLog?: LogSink) {
 	if (!isWindows()) return;
 
 	const programData = process.env.ProgramData || "C:\\ProgramData";

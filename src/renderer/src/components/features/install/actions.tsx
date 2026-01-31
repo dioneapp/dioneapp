@@ -268,10 +268,10 @@ export default function ActionsComponent({
 											style={
 												saved
 													? {
-															color: "var(--theme-accent)",
-															backgroundColor:
-																"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
-														}
+														color: "var(--theme-accent)",
+														backgroundColor:
+															"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+													}
 													: {}
 											}
 										>
@@ -280,9 +280,9 @@ export default function ActionsComponent({
 												style={
 													saved
 														? {
-																fill: "var(--theme-accent)",
-																color: "var(--theme-accent)",
-															}
+															fill: "var(--theme-accent)",
+															color: "var(--theme-accent)",
+														}
 														: {}
 												}
 											/>
@@ -370,27 +370,25 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap border ${
-												installed
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap border ${installed
 													? ""
 													: "bg-neutral-500/20 text-neutral-400 border-neutral-500/30"
-											}`}
+												}`}
 											style={
 												installed
 													? {
-															backgroundColor:
-																"color-mix(in srgb, var(--theme-accent) 20%, transparent)",
-															color: "var(--theme-accent)",
-															borderColor:
-																"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
-														}
+														backgroundColor:
+															"color-mix(in srgb, var(--theme-accent) 20%, transparent)",
+														color: "var(--theme-accent)",
+														borderColor:
+															"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
+													}
 													: {}
 											}
 										>
 											<div
-												className={`w-1 h-1 rounded-xl ${
-													installed ? "" : "bg-neutral-400"
-												}`}
+												className={`w-1 h-1 rounded-xl ${installed ? "" : "bg-neutral-400"
+													}`}
 												style={
 													installed
 														? { backgroundColor: "var(--theme-accent)" }
@@ -564,20 +562,6 @@ export default function ActionsComponent({
 															<span className="text-xs sm:text-sm">
 																{t("iframe.openFolder")}
 															</span>
-														</button>
-														<button
-															type="button"
-															onClick={() => {
-																handleUpdate();
-																setMoreMenuOpen(false);
-															}}
-															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-white hover:bg-white/10 rounded-xl cursor-pointer transition-colors duration-150 flex items-center gap-2"
-														>
-															<RefreshCcw
-																size={13}
-																className="sm:w-3.5 sm:h-3.5"
-															/>
-															<span className="text-xs sm:text-sm">Update</span>
 														</button>
 														<button
 															type="button"

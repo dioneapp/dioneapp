@@ -1,6 +1,6 @@
 import { deleteScript } from "@/server/scripts/delete";
 import { readDioneConfig } from "@/server/scripts/dependencies/dependencies";
-import { extractInfo, getScripts } from "@/server/scripts/download";
+import { getScripts } from "@/server/scripts/download";
 import { executeStartup } from "@/server/scripts/execute";
 import getAllScripts, { getInstalledScript } from "@/server/scripts/installed";
 import { stopActiveProcess } from "@/server/scripts/process";

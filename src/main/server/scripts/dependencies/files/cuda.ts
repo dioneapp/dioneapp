@@ -47,7 +47,7 @@ export async function isInstalled(
 			});
 
 			return { installed: true, reason: `nvcc-found-in-path` };
-		} catch (error) {}
+		} catch (error) { }
 	} else {
 		return { installed: false, reason: "unsupported-platform" };
 	}
@@ -75,7 +75,7 @@ export async function install(
 	binFolder: string,
 	id: string,
 	io: Server,
-	required_v?: string,
+	_required_v?: string,
 	signal?: AbortSignal,
 ): Promise<{ success: boolean }> {
 	const tempDir = path.join(binFolder, "temp");

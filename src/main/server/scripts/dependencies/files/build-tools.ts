@@ -55,7 +55,7 @@ export async function install(
 	binFolder: string,
 	id: string,
 	io: Server,
-	required_v?: string,
+	_required_v?: string,
 	signal?: AbortSignal,
 ): Promise<{ success: boolean }> {
 	const emit = createSocketEmitter(io, id);
@@ -210,11 +210,11 @@ export async function uninstall(binFolder: string): Promise<void> {
 			}
 			logger.error(
 				`Build Tools uninstall failed with exit code ${spawnResult.status}` +
-					(stderrMsg ? `: ${stderrMsg}` : ""),
+				(stderrMsg ? `: ${stderrMsg}` : ""),
 			);
 			throw new Error(
 				`vs_installer.exe uninstall failed with exit code ${spawnResult.status}` +
-					(stderrMsg ? `: ${stderrMsg}` : ""),
+				(stderrMsg ? `: ${stderrMsg}` : ""),
 			);
 		}
 		logger.info("Build Tools uninstall completed successfully.");

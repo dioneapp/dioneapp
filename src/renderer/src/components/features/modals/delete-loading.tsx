@@ -88,9 +88,6 @@ export default function DeleteLoadingModal({
 			title={
 				currentStep === "confirm" ? t("deleteLoading.confirm.title") : undefined
 			}
-			title={
-				currentStep === "confirm" ? t("deleteLoading.confirm.title") : undefined
-			}
 		>
 			<div className="flex flex-col rounded-xl w-full pb-6 relative overflow-visible">
 				{/* Background glow */}
@@ -271,7 +268,7 @@ export default function DeleteLoadingModal({
 								animate={{ opacity: 1, scale: 1 }}
 								exit={{ opacity: 0, scale: 0.9 }}
 								transition={{ duration: 0.3 }}
-								className="flex flex-col items-center justify-center gap-6 flex-1 min-h-0"
+								className="flex flex-col items-center h-full justify-center gap-6 flex-1 min-h-0"
 							>
 								{status?.startsWith("error") ? (
 									<>

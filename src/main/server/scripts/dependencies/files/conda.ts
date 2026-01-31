@@ -413,7 +413,7 @@ export async function update(
 	try {
 		await new Promise<string>((resolve, reject) => {
 			if (signal?.aborted) return reject(new Error("Aborted"));
-			const child = execFile(
+			execFile(
 				depName,
 				["install", "-y", `conda=${requiredVersion}`],
 				{ env: ENVIRONMENT, cwd: depFolder, signal },
