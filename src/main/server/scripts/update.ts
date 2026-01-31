@@ -91,7 +91,7 @@ export async function updateScript(
 	}
 	// Update git large files
 	if (dependencies.includes("git_lfs")) {
-		updateCommands.push(`git lfs install`);
+		updateCommands.push(`git lfs pull`);
 	}
 
 	if (updateCommands.length === 0) {
