@@ -1,9 +1,9 @@
+import crypto from "node:crypto";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import logger from "@/server/utils/logger";
 import { app, dialog } from "electron";
-import crypto from "node:crypto";
-import os from "node:os";
 
 export interface AppConfig {
 	codename: string;
@@ -36,7 +36,12 @@ function shortHash(value: string) {
 }
 // default config
 export const defaultConfig: AppConfig = {
-	codename: shortHash(process.env.USER || process.env.USERNAME || os?.userInfo?.()?.username || crypto.randomUUID()),
+	codename: shortHash(
+		process.env.USER ||
+			process.env.USERNAME ||
+			os?.userInfo?.()?.username ||
+			crypto.randomUUID(),
+	),
 	firstLaunch: false,
 	theme: "dark",
 	language: "en",
@@ -78,11 +83,7 @@ export const readConfig = (): AppConfig => {
 			...storedConfig,
 		};
 
-		if (
-			Object.keys(defaultConfig).some(
-				(key) => !(key in storedConfig),
-			)
-		) {
+		if (Object.keys(defaultConfig).some((key) => !(key in storedConfig))) {
 			writeConfig(mergedConfig);
 		}
 

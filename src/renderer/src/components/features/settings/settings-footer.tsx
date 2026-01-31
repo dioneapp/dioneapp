@@ -39,7 +39,18 @@ export default function SettingsFooter({
 					<p className="mt-1">built with &hearts;</p>
 				</div>
 				<div className="text-right">
-					<p>CN: <span className="cursor-pointer hover:underline" onClick={() => { navigator.clipboard.writeText(codename); showToast("success", "Copied to clipboard"); }}>{codename}</span></p>
+					<p>
+						CN:{" "}
+						<span
+							className="cursor-pointer hover:underline"
+							onClick={() => {
+								navigator.clipboard.writeText(codename);
+								showToast("success", "Copied to clipboard");
+							}}
+						>
+							{codename}
+						</span>
+					</p>
 					<p>
 						{t("settingsFooter.version")} {packVersion || "0.0.0"}
 					</p>
