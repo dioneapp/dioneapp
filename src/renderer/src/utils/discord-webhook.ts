@@ -24,6 +24,11 @@ async function getComputerId(): Promise<string> {
 	const hwid = await window.electron.ipcRenderer.invoke("get-hwid");
 	return hwid;
 }
+// get codename
+async function getCodename(): Promise<string> {
+	const codename = await window.electron.ipcRenderer.invoke("get-codename");
+	return codename;
+}
 
 export async function sendDiscordReport(
 	error: Error | string,
@@ -75,7 +80,7 @@ export async function sendDiscordReport(
 	// add system info
 	embed.fields?.push({
 		name: "System Info",
-		value: `Computer ID: ${await getComputerId()}\nOS: ${window.electron.process.platform}\nDione v${version}`,
+		value: `Codename: ${await getCodename()}\nComputer ID: ${await getComputerId()}\nOS: ${window.electron.process.platform}\nDione v${version}`,
 		inline: false,
 	});
 

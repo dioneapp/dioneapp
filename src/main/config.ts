@@ -2,8 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 import logger from "@/server/utils/logger";
 import { app, dialog } from "electron";
+import crypto from "node:crypto";
+import os from "node:os";
 
 export interface AppConfig {
+	codename: string;
 	firstLaunch: boolean;
 	theme: "light" | "dark";
 	language: string;
@@ -22,9 +25,18 @@ export interface AppConfig {
 	enableSuccessSound: boolean;
 	disableFeaturedVideos: boolean;
 }
-
+// generate codename
+function shortHash(value: string) {
+	return crypto
+		.createHash("sha1")
+		.update(value)
+		.digest("hex")
+		.slice(0, 6)
+		.toUpperCase();
+}
 // default config
 export const defaultConfig: AppConfig = {
+	codename: shortHash(process.env.USER || process.env.USERNAME || os?.userInfo?.()?.username || crypto.randomUUID()),
 	firstLaunch: false,
 	theme: "dark",
 	language: "en",
@@ -48,20 +60,38 @@ export const getConfigPath = () => {
 	return path.join(app.getPath("userData"), "config.json");
 };
 // read config
-export const readConfig = (): AppConfig | null => {
+export const readConfig = (): AppConfig => {
 	try {
 		const configPath = getConfigPath();
-		if (fs.existsSync(configPath)) {
-			const storedConfig = JSON.parse(fs.readFileSync(configPath, "utf8"));
-			return { ...defaultConfig, ...storedConfig };
+
+		if (!fs.existsSync(configPath)) {
+			writeConfig(defaultConfig);
+			return defaultConfig;
 		}
-		return null;
+
+		const storedConfig = JSON.parse(
+			fs.readFileSync(configPath, "utf8"),
+		) as Partial<AppConfig>;
+
+		const mergedConfig: AppConfig = {
+			...defaultConfig,
+			...storedConfig,
+		};
+
+		if (
+			Object.keys(defaultConfig).some(
+				(key) => !(key in storedConfig),
+			)
+		) {
+			writeConfig(mergedConfig);
+		}
+
+		return mergedConfig;
 	} catch (error) {
 		logger.error("Error reading configuration:", error);
-		return null;
+		return defaultConfig;
 	}
 };
-
 // write config
 export const writeConfig = (config: AppConfig) => {
 	const root = app.isPackaged

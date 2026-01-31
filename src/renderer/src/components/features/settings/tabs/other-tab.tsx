@@ -148,6 +148,7 @@ export default function OtherTab({
 				packVersion={packVersion}
 				port={port}
 				versions={versions}
+				codename={config.codename}
 			/>
 		</motion.div>
 	);
