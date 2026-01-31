@@ -365,7 +365,8 @@ export default function Install({
 		if (response.success) {
 			setActiveApps((prev) => prev.filter((app) => app.appId !== data?.id));
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
-			// setShow({ [data.id]: "actions" });
+			showToast("success", "Script updated successfully");
+			setShow({ [data.id]: "actions" });
 		}
 	}
 
