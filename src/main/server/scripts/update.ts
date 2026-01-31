@@ -60,9 +60,11 @@ export async function updateScript(
 	const reqTxt = path.join(projectDir, "requirements.txt");
 	const pyToml = path.join(projectDir, "pyproject.toml");
 	const envYml = path.join(projectDir, "environment.yml");
+	const nodeJs = path.join(projectDir, "package.json");
 
 	const updateCommands: string[] = [];
 
+	// Update python dependencies
 	if (fs.existsSync(reqTxt)) {
 		if (envType === "uv") {
 			updateCommands.push(`uv pip install -U -r requirements.txt`);
@@ -73,13 +75,23 @@ export async function updateScript(
 			updateCommands.push(`pip install -U -r requirements.txt`);
 		}
 	}
-
 	if (fs.existsSync(pyToml) && envType === "uv") {
 		updateCommands.push(`uv pip install -U .`);
 	}
-
 	if (fs.existsSync(envYml) && envType === "conda") {
 		updateCommands.push(`conda env update --file environment.yml --prune`);
+	}
+
+	// Update node dependencies
+	if (fs.existsSync(nodeJs) && dependencies.includes("node")) {
+		updateCommands.push(`npm install`);
+	}
+	if (fs.existsSync(nodeJs) && dependencies.includes("pnpm")) {
+		updateCommands.push(`pnpm install`);
+	}
+	// Update git large files
+	if (dependencies.includes("git_lfs")) {
+		updateCommands.push(`git lfs install`);
 	}
 
 	if (updateCommands.length === 0) {
