@@ -248,7 +248,7 @@ export const executeCommand = async (
 
 		const filterOutput = (data: string, isWindows: boolean): string => {
 			let text = data;
-			text = text.replace(/\x1b\][^\x07]*\x07/g, "");
+			// text = text.replace(/\x1b\][^\x07]*\x07/g, "");
 			if (isWindows) {
 				text = text.replace(/Microsoft Windows \[[^\r\n]*\](\r?\n)?/gi, "");
 				text = text.replace(
@@ -259,7 +259,7 @@ export const executeCommand = async (
 				text = text.replace(/@echo off\r?\n?/gi, "");
 				text = text.replace(/exit %ERRORLEVEL%\r?\n?/gi, "");
 			}
-			text = text.replace(/R\r?\n/g, "\r\n");
+			// text = text.replace(/R\r?\n/g, "\r\n");
 			return text;
 		};
 
