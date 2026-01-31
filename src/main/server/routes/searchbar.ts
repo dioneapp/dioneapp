@@ -9,6 +9,9 @@ router.get("/type/:name/:type", async (req, res) => {
 	const name = req.params.name;
 	const type = req.params.type;
 
+	const orderBy = (req.query.order_by as string) || "name";
+	const orderType = (req.query.order_type as string) || "asc";
+
 	if (!supabase) {
 		logger.error("Supabase client is not initialized");
 		return res.status(500).json({ error: "Database connection not available" });
@@ -19,7 +22,7 @@ router.get("/type/:name/:type", async (req, res) => {
 			.select("*")
 			.filter("name", "ilike", `${name}%`)
 			.ilike("tags", type)
-			.order("name", { ascending: true });
+			.order(orderBy, { ascending: orderType === "asc" });
 		if (error) {
 			logger.error(
 				`Unable to search in database: [ (${error.code || "No code"}) ${error.details || "No details"} ]`,
@@ -39,9 +42,17 @@ router.get("/type/:name/:type", async (req, res) => {
 router.get("/name/:name", async (req, res) => {
 	const name = req.params.name.replace(/-/g, " ").replace(/\s+/g, " ").trim();
 
+	const orderBy = (req.query.order_by as string) || null;
+	const orderType = (req.query.order_type as string) || null;
+
 	try {
+		const url = new URL(`https://api.getdione.app/v1/scripts`);
+		url.searchParams.set("q", name);
+		if (orderBy) url.searchParams.set("order", orderBy);
+		if (orderType) url.searchParams.set("order_type", orderType);
+
 		const response = await fetch(
-			`https://api.getdione.app/v1/scripts?q=${name}`,
+			url.toString(),
 			{
 				headers: {
 					...(process.env.API_KEY

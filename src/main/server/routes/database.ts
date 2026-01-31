@@ -18,7 +18,7 @@ router.get("/user/:id", async (req, res) => {
 	if (
 		!api_key ||
 		api_key !==
-			(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
+		(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
 	) {
 		logger.warn(
 			app.isPackaged
@@ -62,7 +62,7 @@ router.get("/refresh-token", async (req, res) => {
 	if (
 		!api_key ||
 		api_key !==
-			(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
+		(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
 	) {
 		logger.warn(
 			app.isPackaged
@@ -112,7 +112,7 @@ router.get("/set-session", async (req, res) => {
 	if (
 		!api_key ||
 		api_key !==
-			(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
+		(process.env.LOCAL_API_KEY || import.meta.env.MAIN_VITE_LOCAL_API_KEY)
 	) {
 		logger.warn(
 			app.isPackaged
@@ -183,8 +183,8 @@ router.get("/featured", (_req, res) => {
 				headers: {
 					...(process.env.API_KEY
 						? {
-								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-							}
+							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+						}
 						: {}),
 				},
 			},
@@ -236,13 +236,13 @@ router.get("/explore", (req, res) => {
 	async function getData() {
 		try {
 			const response = await fetch(
-				`https://api.getdione.app/v1/scripts?order_type=desc&page=${page}&limit=${limit}`,
+				`https://api.getdione.app/v1/scripts?page=${page}&limit=${limit}&order=${req.query.order_by || "created_at"}&order_type=${req.query.order_type || "asc"}`,
 				{
 					headers: {
 						...(process.env.API_KEY
 							? {
-									Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-								}
+								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+							}
 							: {}),
 					},
 				},
@@ -309,8 +309,8 @@ router.get("/search/:id", (req, res) => {
 				headers: {
 					...(process.env.API_KEY
 						? {
-								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-							}
+							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+						}
 						: {}),
 				},
 			},
@@ -370,13 +370,13 @@ router.get("/search/name/:name", async (req, res) => {
 			? Number.parseInt(req.query.limit as string)
 			: 20;
 		const orderBy = (req.query.order_by as string) || null;
-		const orderType = (req.query.order_type as string) || null;
+		const orderType = (req.query.order_type as string) || "asc";
 		if (sanitizedName) {
 			const url = new URL("https://api.getdione.app/v1/scripts");
 			url.searchParams.set("q", sanitizedName);
 			url.searchParams.set("page", String(page));
 			url.searchParams.set("limit", String(limit));
-			if (orderBy) url.searchParams.set("order_by", orderBy);
+			if (orderBy) url.searchParams.set("order", orderBy);
 			if (orderType) url.searchParams.set("order_type", orderType);
 			const response = await fetch(url.toString(), {
 				headers: {
@@ -456,21 +456,21 @@ router.get("/search/type/:type", async (req, res) => {
 			? Number.parseInt(req.query.limit as string)
 			: 20;
 		const orderBy = (req.query.order_by as string) || null;
-		const orderType = (req.query.order_type as string) || "desc";
+		const orderType = (req.query.order_type as string) || "asc";
 
 		const url = new URL("https://api.getdione.app/v1/scripts");
 		url.searchParams.set("tags", type);
 		url.searchParams.set("page", String(page));
 		url.searchParams.set("limit", String(limit));
-		if (orderBy) url.searchParams.set("order_by", orderBy);
+		if (orderBy) url.searchParams.set("order", orderBy);
 		if (orderType) url.searchParams.set("order_type", orderType);
 
 		const response = await fetch(url.toString(), {
 			headers: {
 				...(process.env.API_KEY
 					? {
-							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-						}
+						Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+					}
 					: {}),
 			},
 		});

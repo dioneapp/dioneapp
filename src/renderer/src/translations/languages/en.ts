@@ -567,6 +567,12 @@ export const en = {
 			video: "Video",
 			chat: "Chat",
 		},
+		sort: {
+			latest: "Latest",
+			downloads: "Downloads",
+			atoz: "A to Z",
+			last_updated: "Last updated",
+		},
 	},
 
 	// network share modal

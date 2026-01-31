@@ -1,5 +1,5 @@
 import ScriptList from "@/components/features/home/feed/feed";
-import { Button, InputWithIcon } from "@/components/ui";
+import { Button, InputWithIcon, Select } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { Image, MessageCircle, Search, Video, Volume2 } from "lucide-react";
 import { useState } from "react";
@@ -8,6 +8,7 @@ export default function SearchBar() {
 	const { t } = useTranslation();
 	const [search, setSearch] = useState("");
 	const [type, setType] = useState("");
+	const [sort, setSort] = useState("created_at");
 
 	function handleType(name: string) {
 		if (type === name) {
@@ -17,17 +18,33 @@ export default function SearchBar() {
 		setType(name);
 	}
 
+	const orderType = sort === "name" ? "asc" : "desc";
+
 	return (
 		<div className="h-full min-h-screen">
 			<div className="w-full h-full space-y-4 mb-4">
-				<InputWithIcon
-					type="text"
-					onChange={(e) => setSearch(e.target.value)}
-					placeholder={t("search.placeholder")}
-					icon={<Search className="w-5 h-5" />}
-					iconPosition="right"
-					className="h-10 text-sm bg-black/30"
-				/>
+				<div className="flex gap-3">
+					<InputWithIcon
+						type="text"
+						onChange={(e) => setSearch(e.target.value)}
+						placeholder={t("search.placeholder")}
+						icon={<Search className="w-5 h-5" />}
+						iconPosition="right"
+						className="h-10 text-sm bg-black/30 flex-1"
+					/>
+					<Select
+						value={sort}
+						onChange={setSort}
+						options={[
+							{ value: "created_at", label: t("search.sort.latest") },
+							{ value: "downloads", label: t("search.sort.downloads") },
+							{ value: "version", label: t("search.sort.last_updated") },
+							{ value: "name", label: t("search.sort.atoz") },
+						]}
+						width="w-40"
+						showCheckmark={false}
+					/>
+				</div>
 				<div className="flex gap-3">
 					<Button
 						onClick={() => handleType("audio")}
@@ -72,17 +89,30 @@ export default function SearchBar() {
 				</div>
 			</div>
 			{search.length === 0 && !type && (
-				<ScriptList endpoint="/db/explore" type="explore" />
+				<ScriptList
+					key={`explore-${sort}`}
+					endpoint={`/db/explore?order_by=${sort}&order_type=${orderType}`}
+					type="explore"
+				/>
 			)}
 			{search.length > 0 && !type && (
-				<ScriptList endpoint={`/searchbar/name/${search}`} type="search_name" />
+				<ScriptList
+					key={`search-${search}-${sort}`}
+					endpoint={`/searchbar/name/${search}?order_by=${sort}&order_type=${orderType}`}
+					type="search_name"
+				/>
 			)}
 			{search.length === 0 && type && (
-				<ScriptList endpoint={`/db/search/type/${type}`} type="search_type" />
+				<ScriptList
+					key={`type-${type}-${sort}`}
+					endpoint={`/db/search/type/${type}?order_by=${sort}&order_type=${orderType}`}
+					type="search_type"
+				/>
 			)}
 			{search.length > 0 && type && (
 				<ScriptList
-					endpoint={`/searchbar/type/${search}/${type}`}
+					key={`search-type-${search}-${type}-${sort}`}
+					endpoint={`/searchbar/type/${search}/${type}?order_by=${sort}&order_type=${orderType}`}
 					type="search_name_type"
 				/>
 			)}
