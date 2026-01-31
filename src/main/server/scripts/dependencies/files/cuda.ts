@@ -47,7 +47,7 @@ export async function isInstalled(
 			});
 
 			return { installed: true, reason: `nvcc-found-in-path` };
-		} catch (error) { }
+		} catch (error) {}
 	} else {
 		return { installed: false, reason: "unsupported-platform" };
 	}

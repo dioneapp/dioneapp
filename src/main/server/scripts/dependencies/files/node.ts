@@ -64,27 +64,28 @@ export async function install(
 	const getLatestNodeVersion = async (): Promise<string> => {
 		return new Promise((resolve) => {
 			if (signal?.aborted) return resolve(fallbackVersion);
-			https.get("https://nodejs.org/dist/index.json", { signal }, (response) => {
-				let data = "";
-				response.on("data", (chunk) => {
-					data += chunk;
-				});
-				response.on("end", () => {
-					try {
-						const releases = JSON.parse(data);
-						const latestV22 = releases.find((release: any) =>
-							release.version.startsWith("v22."),
-						);
-						if (latestV22) {
-							resolve(latestV22.version);
-						} else {
+			https
+				.get("https://nodejs.org/dist/index.json", { signal }, (response) => {
+					let data = "";
+					response.on("data", (chunk) => {
+						data += chunk;
+					});
+					response.on("end", () => {
+						try {
+							const releases = JSON.parse(data);
+							const latestV22 = releases.find((release: any) =>
+								release.version.startsWith("v22."),
+							);
+							if (latestV22) {
+								resolve(latestV22.version);
+							} else {
+								resolve(fallbackVersion);
+							}
+						} catch (error) {
 							resolve(fallbackVersion);
 						}
-					} catch (error) {
-						resolve(fallbackVersion);
-					}
-				});
-			})
+					});
+				})
 				.on("error", () => {
 					resolve(fallbackVersion);
 				});
