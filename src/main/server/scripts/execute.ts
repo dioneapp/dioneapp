@@ -474,14 +474,15 @@ export async function executeStartup(
 						: "uv";
 				const pythonVersion =
 					typeof selectedStart.env === "object" &&
-						"version" in selectedStart.env
+					"version" in selectedStart.env
 						? selectedStart.env.version
 						: "";
 
 				log(
 					io,
 					id,
-					`INFO: Using virtual environment: ${envName} with ${envType}${pythonVersion ? ` (Python ${pythonVersion})` : ""
+					`INFO: Using virtual environment: ${envName} with ${envType}${
+						pythonVersion ? ` (Python ${pythonVersion})` : ""
 					}`,
 				);
 

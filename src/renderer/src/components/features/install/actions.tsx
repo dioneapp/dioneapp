@@ -268,10 +268,10 @@ export default function ActionsComponent({
 											style={
 												saved
 													? {
-														color: "var(--theme-accent)",
-														backgroundColor:
-															"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
-													}
+															color: "var(--theme-accent)",
+															backgroundColor:
+																"color-mix(in srgb, var(--theme-accent) 10%, transparent)",
+														}
 													: {}
 											}
 										>
@@ -280,9 +280,9 @@ export default function ActionsComponent({
 												style={
 													saved
 														? {
-															fill: "var(--theme-accent)",
-															color: "var(--theme-accent)",
-														}
+																fill: "var(--theme-accent)",
+																color: "var(--theme-accent)",
+															}
 														: {}
 												}
 											/>
@@ -370,25 +370,27 @@ export default function ActionsComponent({
 
 										{/* Status Badge */}
 										<div
-											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap border ${installed
+											className={`flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded-xl text-[9px] sm:text-[10px] font-medium whitespace-nowrap border ${
+												installed
 													? ""
 													: "bg-neutral-500/20 text-neutral-400 border-neutral-500/30"
-												}`}
+											}`}
 											style={
 												installed
 													? {
-														backgroundColor:
-															"color-mix(in srgb, var(--theme-accent) 20%, transparent)",
-														color: "var(--theme-accent)",
-														borderColor:
-															"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
-													}
+															backgroundColor:
+																"color-mix(in srgb, var(--theme-accent) 20%, transparent)",
+															color: "var(--theme-accent)",
+															borderColor:
+																"color-mix(in srgb, var(--theme-accent) 30%, transparent)",
+														}
 													: {}
 											}
 										>
 											<div
-												className={`w-1 h-1 rounded-xl ${installed ? "" : "bg-neutral-400"
-													}`}
+												className={`w-1 h-1 rounded-xl ${
+													installed ? "" : "bg-neutral-400"
+												}`}
 												style={
 													installed
 														? { backgroundColor: "var(--theme-accent)" }

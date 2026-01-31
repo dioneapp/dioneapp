@@ -509,9 +509,10 @@ export function ScriptsContext({ children }: { children: React.ReactNode }) {
 				"Return",
 				() => {
 					navigate(
-						`/install/${sockets[data.id]?.isLocal
-							? encodeURIComponent(data.name)
-							: data.id
+						`/install/${
+							sockets[data.id]?.isLocal
+								? encodeURIComponent(data.name)
+								: data.id
 						}?isLocal=${sockets[data.id]?.isLocal}`,
 					);
 				},

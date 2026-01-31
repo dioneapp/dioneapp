@@ -311,10 +311,11 @@ export default function FeaturedCarousel() {
 											e.preventDefault();
 											handleDotClick(index);
 										}}
-										className={`w-2 h-2 rounded-xl transition-all duration-300 ${index === currentIndex
+										className={`w-2 h-2 rounded-xl transition-all duration-300 ${
+											index === currentIndex
 												? "bg-white w-6"
 												: "bg-white/50 hover:bg-white/70"
-											}`}
+										}`}
 									/>
 								))}
 							</div>
@@ -351,8 +352,9 @@ export function CarrouselSkeleton() {
 								{[...Array(5)].map((_, index) => (
 									<div
 										key={index}
-										className={`h-2 rounded-xl bg-gray-200/30 animate-pulse ${index === 0 ? "w-6" : "w-2"
-											}`}
+										className={`h-2 rounded-xl bg-gray-200/30 animate-pulse ${
+											index === 0 ? "w-6" : "w-2"
+										}`}
 									/>
 								))}
 							</div>
