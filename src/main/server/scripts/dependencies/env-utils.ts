@@ -26,54 +26,54 @@ export async function createVirtualEnvCommands(
 	// filter and ensure commands is an array of strings without empty strings
 	const commandStrings = Array.isArray(commands)
 		? commands.flatMap((cmd) => {
-				if (typeof cmd === "string" && cmd.trim()) {
-					return [cmd.trim()];
-				}
-				if (
-					cmd &&
-					typeof cmd === "object" &&
-					typeof cmd.command === "string" &&
-					cmd.command.trim()
-				) {
-					// Apply platform filtering
-					if ("platform" in cmd) {
-						const cmdPlatform = cmd.platform.toLowerCase();
-						const normalizedPlatform =
-							currentPlatform === "win32"
-								? "windows"
-								: currentPlatform === "darwin"
-									? "mac"
-									: currentPlatform === "linux"
-										? "linux"
-										: currentPlatform;
+			if (typeof cmd === "string" && cmd.trim()) {
+				return [cmd.trim()];
+			}
+			if (
+				cmd &&
+				typeof cmd === "object" &&
+				typeof cmd.command === "string" &&
+				cmd.command.trim()
+			) {
+				// Apply platform filtering
+				if ("platform" in cmd) {
+					const cmdPlatform = cmd.platform.toLowerCase();
+					const normalizedPlatform =
+						currentPlatform === "win32"
+							? "windows"
+							: currentPlatform === "darwin"
+								? "mac"
+								: currentPlatform === "linux"
+									? "linux"
+									: currentPlatform;
 
-						// if platform does not match current platform, skip
-						if (cmdPlatform !== normalizedPlatform) {
-							logger.info(
-								`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
-							);
-							return [];
-						}
+					// if platform does not match current platform, skip
+					if (cmdPlatform !== normalizedPlatform) {
+						logger.info(
+							`Skipping command for platform ${cmdPlatform} on current platform ${currentPlatform}`,
+						);
+						return [];
 					}
-
-					// Apply GPU filtering
-					if ("gpus" in cmd) {
-						const allowedGpus = Array.isArray(cmd.gpus)
-							? cmd.gpus.map((g: string) => g.toLowerCase())
-							: [cmd.gpus.toLowerCase()];
-
-						if (!allowedGpus.includes(currentGpu.toLowerCase())) {
-							logger.info(
-								`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
-							);
-							return [];
-						}
-					}
-
-					return [cmd.command.trim()];
 				}
-				return [];
-			})
+
+				// Apply GPU filtering
+				if ("gpus" in cmd) {
+					const allowedGpus = Array.isArray(cmd.gpus)
+						? cmd.gpus.map((g: string) => g.toLowerCase())
+						: [cmd.gpus.toLowerCase()];
+
+					if (!allowedGpus.includes(currentGpu.toLowerCase())) {
+						logger.info(
+							`Skipping command for GPU ${allowedGpus.join(", ")} on current ${currentGpu} GPU`,
+						);
+						return [];
+					}
+				}
+
+				return [cmd.command.trim()];
+			}
+			return [];
+		})
 		: [];
 
 	// add python version flag if specified
@@ -123,7 +123,7 @@ export async function createVirtualEnvCommands(
 			const between = middle ? ` && ${middle} && ` : " && ";
 			return [
 				`if [ ! -d "${envPath}" ]; then "${condaUC}" create -p "${envPath}" ${pythonArg} -y; fi`,
-				`. "${condaU}" "${envPath}"${between}conda deactivate`,
+				`bash -c 'source "${condaU}" "${envPath}" && ${middle}'`
 			];
 		}
 	}
@@ -146,8 +146,8 @@ export async function createVirtualEnvCommands(
 
 	// for linux and mac
 	const activateScript = path.join(envPath, "bin", "activate");
-	if (!variables.PATH.includes(path.join(envPath, "Scripts"))) {
-		addValue("PATH", path.join(envPath, "Scripts"));
+	if (!variables.PATH.includes(path.join(envPath, "bin"))) {
+		addValue("PATH", path.join(envPath, "bin"));
 	}
 
 	const existsEnv = fs.existsSync(envPath);
@@ -179,13 +179,13 @@ export async function createVirtualEnvCommands(
 				// create new env
 				`"${uvPath}" venv ${pythonFlag} "${envPath}"`,
 				// use it
-				`. "${activateScript}"${between}deactivate`,
+				`bash -c 'source "${activateScript}" && ${middle}'`,
 			];
 		}
 	}
 	const between = middle ? ` && ${middle} && ` : " && ";
 	return [
 		// use existing env
-		`. "${activateScript}"${between}deactivate`,
+		`bash -c 'source "${activateScript}" && ${middle}'`,
 	];
 }
