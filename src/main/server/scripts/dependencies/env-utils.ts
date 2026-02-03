@@ -120,7 +120,7 @@ export async function createVirtualEnvCommands(
 		}
 		// for linux and mac
 		{
-			const between = middle ? ` && ${middle} && ` : " && ";
+			// const between = middle ? ` && ${middle} && ` : " && ";
 			return [
 				`if [ ! -d "${envPath}" ]; then "${condaUC}" create -p "${envPath}" ${pythonArg} -y; fi`,
 				`bash -c 'source "${condaU}" "${envPath}" && ${middle}'`
@@ -174,7 +174,7 @@ export async function createVirtualEnvCommands(
 
 	if (!existsEnv) {
 		{
-			const between = middle ? ` && ${middle} && ` : " && ";
+			// const between = middle ? ` && ${middle} && ` : " && ";
 			return [
 				// create new env
 				`"${uvPath}" venv ${pythonFlag} "${envPath}"`,
@@ -183,7 +183,7 @@ export async function createVirtualEnvCommands(
 			];
 		}
 	}
-	const between = middle ? ` && ${middle} && ` : " && ";
+	// const between = middle ? ` && ${middle} && ` : " && ";
 	return [
 		// use existing env
 		`bash -c 'source "${activateScript}" && ${middle}'`,
