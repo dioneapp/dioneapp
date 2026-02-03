@@ -248,7 +248,7 @@ export const executeCommand = async (
 
 		const filterOutput = (data: string, isWindows: boolean): string => {
 			let text = data;
-			// text = text.replace(/\x1b\][^\x07]*\x07/g, "");
+			text = text.replace(/\x1b\][^\x07]*\x07/g, "");
 			if (isWindows) {
 				text = text.replace(/Microsoft Windows \[[^\r\n]*\](\r?\n)?/gi, "");
 				text = text.replace(
@@ -259,12 +259,20 @@ export const executeCommand = async (
 				text = text.replace(/@echo off\r?\n?/gi, "");
 				text = text.replace(/exit %ERRORLEVEL%\r?\n?/gi, "");
 			}
-			// text = text.replace(/R\r?\n/g, "\r\n");
+			text = text.replace(/R\r?\n/g, "\r\n");
 			return text;
 		};
+		const cleanANSI = (data: string) => {
+			const pattern = [
+				'[\\u001B\\u009B][[\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]+)*|[a-zA-Z\\d]+(?:;[-a-zA-Z\\d\\/#&.:=?%@~_]*)*)?\\u0007)',
+				'(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-Za-z=><~]))'
+			].join('|');
+			const regex = new RegExp(pattern, 'gi')
+			return data.replaceAll(regex, '');
+		}
 
 		ptyProcess.onData((data: string) => {
-			const clean = filterOutput(data, isWindows);
+			const clean = cleanANSI(filterOutput(data, isWindows));
 			if (!clean) return;
 			outputData += clean;
 			options?.onOutput?.(clean);
@@ -283,6 +291,7 @@ export const executeCommand = async (
 						logger.info(
 							`PTY Process (PID: ${pid}) finished with exit code ${exitCode || 0}`,
 						);
+						resolve({ code: exitCode || 0, stdout: outputData, stderr: "" });
 					}
 					if (exitCode !== 0) {
 						io.to(id).emit(logs, {

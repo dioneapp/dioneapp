@@ -2,7 +2,13 @@ import { useScriptsContext } from "@/components/contexts/scripts-context";
 import { IconButton, Modal, ModalBody } from "@/components/ui";
 import { useTranslation } from "@/translations/translation-context";
 import { apiFetch } from "@/utils/api";
-import { Maximize, Minimize as Minimize2, Minus, X } from "lucide-react";
+import {
+	LoaderCircle,
+	Maximize,
+	Minimize as Minimize2,
+	Minus,
+	X,
+} from "lucide-react";
 import { useState } from "react";
 
 export default function Titlebar() {
@@ -44,13 +50,15 @@ export default function Titlebar() {
 
 	return (
 		<>
-			<Modal isOpen={showModal} onClose={() => setShowModal(false)}>
-				<ModalBody>
-					<div className="flex flex-col items-center justify-center py-8">
-						<h1 className="text-4xl font-semibold mb-4">
-							{t("titlebar.closing.title")}
-						</h1>
-						<p className="text-neutral-400 text-balance text-center max-w-xl">
+			<Modal
+				isOpen={showModal}
+				onClose={() => setShowModal(false)}
+				title={t("titlebar.closing.title")}
+			>
+				<ModalBody className="h-full">
+					<div className="flex flex-col gap-4 h-full mt-auto items-center justify-center">
+						<LoaderCircle className="h-12 w-12 text-white animate-spin" />
+						<p className="text-neutral-400 text-balance text-center max-w-xl text-sm h-full mt-auto">
 							{t("titlebar.closing.description")}
 						</p>
 					</div>

@@ -75,7 +75,7 @@ export async function install(
 	binFolder: string,
 	id: string,
 	io: Server,
-	required_v?: string,
+	_required_v?: string,
 	signal?: AbortSignal,
 ): Promise<{ success: boolean }> {
 	const tempDir = path.join(binFolder, "temp");

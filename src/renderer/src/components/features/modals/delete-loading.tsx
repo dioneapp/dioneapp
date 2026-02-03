@@ -90,7 +90,7 @@ export default function DeleteLoadingModal({
 				currentStep === "confirm" ? t("deleteLoading.confirm.title") : undefined
 			}
 		>
-			<div className="flex flex-col h-full rounded-xl w-full pb-6 relative overflow-visible">
+			<div className="flex flex-col rounded-xl w-full pb-6 relative overflow-visible">
 				{/* Background glow */}
 				<div className="absolute inset-0 rounded-xl overflow-visible pointer-events-none">
 					<div
@@ -269,7 +269,7 @@ export default function DeleteLoadingModal({
 								animate={{ opacity: 1, scale: 1 }}
 								exit={{ opacity: 0, scale: 0.9 }}
 								transition={{ duration: 0.3 }}
-								className="flex flex-col items-center justify-center gap-6 flex-1 min-h-0"
+								className="flex flex-col items-center h-full justify-center gap-6 flex-1 min-h-0"
 							>
 								{status?.startsWith("error") ? (
 									<>

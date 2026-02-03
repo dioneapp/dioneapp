@@ -59,7 +59,7 @@ export default function Setup({ onSelectLanguage }: SetupProps) {
 
 	// locale-language
 	const [localLanguage, setLocalLanguage] = useState<string | null>(null);
-	const [isInitialized, setIsInitialized] = useState(false);
+	const [_isInitialized, setIsInitialized] = useState(false);
 
 	async function fetchLocalLanguage() {
 		const locale = await window.electron.ipcRenderer.invoke("get-locale");

@@ -16,6 +16,7 @@ import {
 	Folder,
 	MoreHorizontal,
 	Play,
+	RefreshCcw,
 	Share2,
 	Trash2,
 	User,
@@ -42,6 +43,7 @@ interface ActionsProps {
 	handleShare?: () => void;
 	handleSave?: () => void;
 	saved?: boolean;
+	handleUpdate: () => void;
 }
 
 export default function ActionsComponent({
@@ -60,6 +62,7 @@ export default function ActionsComponent({
 	handleShare,
 	handleSave,
 	saved,
+	handleUpdate,
 }: ActionsProps) {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -561,6 +564,20 @@ export default function ActionsComponent({
 															<span className="text-xs sm:text-sm">
 																{t("iframe.openFolder")}
 															</span>
+														</button>
+														<button
+															type="button"
+															onClick={() => {
+																handleUpdate();
+																setMoreMenuOpen(false);
+															}}
+															className="w-full px-2 sm:px-3 py-1.5 sm:py-2 text-left text-white hover:bg-white/10 rounded-xl cursor-pointer transition-colors duration-150 flex items-center gap-2"
+														>
+															<RefreshCcw
+																size={13}
+																className="sm:w-3.5 sm:h-3.5"
+															/>
+															<span className="text-xs sm:text-sm">Update</span>
 														</button>
 														<button
 															type="button"

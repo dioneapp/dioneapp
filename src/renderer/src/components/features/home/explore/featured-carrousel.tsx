@@ -1,6 +1,5 @@
 import { useAuthContext } from "@/components/contexts/auth-context";
 import type { Script } from "@/components/features/home/feed/types";
-import Icon from "@/components/icons/icon";
 import { apiJson } from "@/utils/api";
 import { FeedCache } from "@/utils/cache";
 import sendEvent from "@/utils/events";
