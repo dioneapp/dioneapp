@@ -371,7 +371,13 @@ export default function Install({
 		})) as any;
 
 		if (response.success) {
-			setActiveApps((prev) => prev.filter((app) => app.appId !== data?.id));
+			await new Promise((resolve) => setTimeout(resolve, 300));
+			setExecuting(null);
+			disconnectApp(data?.id);
+			setActiveApps((prev) => {
+				const filtered = prev.filter((app) => app.appId !== data?.id);
+				return filtered;
+			});
 			setIsServerRunning((prev) => ({ ...prev, [data?.id]: false }));
 			showToast("success", "Script updated successfully");
 			setShow({ [data.id]: "actions" });
