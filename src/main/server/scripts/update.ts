@@ -33,15 +33,13 @@ function findDirWithFile(rootDir: string, fileName: string): string | null {
 }
 
 function getProjectEnv(dione: any) {
-	const fromInstall =
-		Array.isArray(dione.installation)
-			? dione.installation.find((s: any) => s.env)?.env
-			: null;
+	const fromInstall = Array.isArray(dione.installation)
+		? dione.installation.find((s: any) => s.env)?.env
+		: null;
 
-	const fromStart =
-		Array.isArray(dione.start)
-			? dione.start.find((s: any) => s.env)?.env
-			: null;
+	const fromStart = Array.isArray(dione.start)
+		? dione.start.find((s: any) => s.env)?.env
+		: null;
 
 	return fromInstall || fromStart || null;
 }
@@ -97,7 +95,6 @@ export async function updateScript(
 	const envName = projectEnv?.name ?? "env";
 	const envType = projectEnv?.type ?? "uv";
 	const pythonVersion = projectEnv?.version ?? "";
-
 
 	// Update Python dependencies
 	const pyReqDir = findDirWithFile(projectDir, "requirements.txt");
