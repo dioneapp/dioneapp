@@ -53,8 +53,6 @@ jobs:
         git push
 
   build:
-    needs: [generate-translations]
-    if: always()
     runs-on: ${{ matrix.os }}
     
     strategy:
@@ -65,14 +63,17 @@ jobs:
             node-version: 20.x
             build-command: npm run build:win
             cache-key: win
+            id: win
           - os: macos-26
             node-version: 20.x
             build-command: npm run build:mac
             cache-key: mac
+            id: mac
           - os: ubuntu-latest
             node-version: 20.x
             build-command: npm run build:linux
             cache-key: linux
+            id: linux
     
     steps:
     - name: Checkout code
