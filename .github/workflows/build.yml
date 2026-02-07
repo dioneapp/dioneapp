@@ -54,7 +54,7 @@ jobs:
 
   build:
     needs: [generate-translations]
-    if: always() && (needs.generate-translations.result == 'success' || needs.generate-translations.result == 'skipped')
+    if: always()
     runs-on: ${{ matrix.os }}
     
     strategy:
