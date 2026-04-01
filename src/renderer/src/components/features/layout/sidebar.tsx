@@ -291,7 +291,9 @@ export default function Sidebar() {
 										<div className="flex flex-col gap-4">
 											<Button
 												onClick={() => {
-													openLink("https://getdione-app.deeivihh.workers.dev/auth/login?app=true");
+													openLink(
+														"https://getdione-app.deeivihh.workers.dev/auth/login?app=true",
+													);
 													setWaitingForLogin(true);
 												}}
 												variant="accent"
@@ -713,7 +715,9 @@ export default function Sidebar() {
 						{!config?.compactMode && (
 							<div className="flex gap-2 items-center justify-start w-full h-full">
 								<button
-									onClick={() => openLink("https://getdione-app.deeivihh.workers.dev/github")}
+									onClick={() =>
+										openLink("https://getdione-app.deeivihh.workers.dev/github")
+									}
 									className="p-2 hover:bg-white/10 rounded-xl transition-colors flex gap-1 items-center relative cursor-pointer"
 								>
 									<Icon name="GitHub" className="h-5 w-5 text-white" />

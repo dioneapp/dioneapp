@@ -85,8 +85,8 @@ export async function get_latest_apps(io: any) {
 					headers: {
 						...(process.env.API_KEY
 							? {
-								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-							}
+									Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+								}
 							: {}),
 					},
 				},
@@ -155,8 +155,8 @@ export async function get_app_by_name(io: any, name: string) {
 			headers: {
 				...(process.env.API_KEY
 					? {
-						Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-					}
+							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+						}
 					: {}),
 			},
 		},
