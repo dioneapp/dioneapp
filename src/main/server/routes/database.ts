@@ -182,8 +182,8 @@ router.get("/featured", (_req, res) => {
 				headers: {
 					...(process.env.API_KEY
 						? {
-							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-						}
+								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+							}
 						: {}),
 				},
 			},
@@ -240,8 +240,8 @@ router.get("/explore", (req, res) => {
 					headers: {
 						...(process.env.API_KEY
 							? {
-								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-							}
+									Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+								}
 							: {}),
 					},
 				},
@@ -308,8 +308,8 @@ router.get("/search/:id", (req, res) => {
 				headers: {
 					...(process.env.API_KEY
 						? {
-							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-						}
+								Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+							}
 						: {}),
 				},
 			},
@@ -371,7 +371,9 @@ router.get("/search/name/:name", async (req, res) => {
 		const orderBy = (req.query.order_by as string) || null;
 		const orderType = (req.query.order_type as string) || "asc";
 		if (sanitizedName) {
-			const url = new URL("https://api-getdione-app.deeivihh.workers.dev/v1/scripts");
+			const url = new URL(
+				"https://api-getdione-app.deeivihh.workers.dev/v1/scripts",
+			);
 			url.searchParams.set("q", sanitizedName);
 			url.searchParams.set("page", String(page));
 			url.searchParams.set("limit", String(limit));
@@ -457,7 +459,9 @@ router.get("/search/type/:type", async (req, res) => {
 		const orderBy = (req.query.order_by as string) || null;
 		const orderType = (req.query.order_type as string) || "asc";
 
-		const url = new URL("https://api-getdione-app.deeivihh.workers.dev/v1/scripts");
+		const url = new URL(
+			"https://api-getdione-app.deeivihh.workers.dev/v1/scripts",
+		);
 		url.searchParams.set("tags", type);
 		url.searchParams.set("page", String(page));
 		url.searchParams.set("limit", String(limit));
@@ -468,8 +472,8 @@ router.get("/search/type/:type", async (req, res) => {
 			headers: {
 				...(process.env.API_KEY
 					? {
-						Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
-					}
+							Authorization: `Bearer ${process.env.API_KEY || import.meta.env.MAIN_VITE_API_KEY}`,
+						}
 					: {}),
 			},
 		});

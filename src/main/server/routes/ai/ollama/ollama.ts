@@ -144,14 +144,17 @@ export function createOllamaRouter(io: SocketIOServer) {
 
 	OllamaRouter.get("/available-models", async (_req, res) => {
 		try {
-			const response = await fetch("https://api-getdione-app.deeivihh.workers.dev/v1/ai/models", {
-				method: "GET",
-				headers: {
-					...(process.env.API_KEY
-						? { Authorization: `Bearer ${process.env.API_KEY}` }
-						: {}),
+			const response = await fetch(
+				"https://api-getdione-app.deeivihh.workers.dev/v1/ai/models",
+				{
+					method: "GET",
+					headers: {
+						...(process.env.API_KEY
+							? { Authorization: `Bearer ${process.env.API_KEY}` }
+							: {}),
+					},
 				},
-			});
+			);
 
 			if (!response.ok) {
 				const errorText = await response.text();
@@ -375,7 +378,7 @@ export function createOllamaRouter(io: SocketIOServer) {
 						continue;
 					}
 				}
-			} catch { }
+			} catch {}
 
 			// 5. if nothing matched, return normal content
 			if (thoughtMatch) {

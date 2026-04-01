@@ -39,7 +39,11 @@ export default function PromoBanner() {
 					</div>
 					<button
 						type="button"
-						onClick={() => openLink("https://getdione-app.deeivihh.workers.dev/featured/join")}
+						onClick={() =>
+							openLink(
+								"https://getdione-app.deeivihh.workers.dev/featured/join",
+							)
+						}
 						className="px-5 py-2 bg-white hover:bg-white/90 rounded-xl transition-all duration-300 text-sm font-semibold whitespace-nowrap cursor-pointer text-black shadow-lg hover:shadow-xl"
 					>
 						{t("promo.button")}
